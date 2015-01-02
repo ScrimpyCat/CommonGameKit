@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk.a */; };
 		F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3F5D6341A56E8B4006D7F16 /* Images.xcassets */; };
 		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
 		F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
@@ -19,6 +20,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F32393C81A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D3E5F0490AA32FDE004E361B;
+			remoteInfo = ChipmunkDemo;
+		};
+		F32393CA1A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D34963BB0B56CAA300CAD239;
+			remoteInfo = ChipmunkStatic;
+		};
+		F32393CC1A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D3C3787A11063B1B003EF1D9;
+			remoteInfo = "ChipmunkStatic-iPhone";
+		};
+		F32393CE1A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D39ECD8617ED70D900319DBA;
+			remoteInfo = "Benchmark iPhone";
+		};
+		F32393D01A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D309B21317EFE2EF00AA52C8;
+			remoteInfo = "ObjectiveChipmunk-iPhone";
+		};
+		F32393D21A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D309B22017EFE2EF00AA52C8;
+			remoteInfo = ObjectiveChipmunkTests;
+		};
+		F32393D41A572148007BD168 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D333C5F018639A0500BBC4FF;
+			remoteInfo = ObjectiveChipmunk;
+		};
 		F3C401EA1A56E52800095ECD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3C401CE1A56E52800095ECD /* Project object */;
@@ -232,6 +282,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -254,6 +305,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */,
 				F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */,
 				F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */,
 				F3F5D6FC1A5700F3006D7F16 /* OpenGL.framework in Frameworks */,
@@ -273,6 +325,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F32393BF1A572148007BD168 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F32393C91A572148007BD168 /* ChipmunkDemo.app */,
+				F32393CB1A572148007BD168 /* libChipmunk.a */,
+				F32393CD1A572148007BD168 /* libChipmunk-iPhone.a */,
+				F32393CF1A572148007BD168 /* Benchmark iPhone.app */,
+				F32393D11A572148007BD168 /* libObjectiveChipmunk-iPhone.a */,
+				F32393D31A572148007BD168 /* ObjectiveChipmunkTests.xctest */,
+				F32393D51A572148007BD168 /* libObjectiveChipmunk.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3C401CD1A56E52800095ECD = {
 			isa = PBXGroup;
 			children = (
@@ -348,6 +414,7 @@
 		F3F5D6911A56F723006D7F16 /* dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */,
 				F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */,
 				F3F5D6F61A5700AB006D7F16 /* IOKit.framework */,
 				F3F5D6F41A570099006D7F16 /* OpenGL.framework */,
@@ -373,18 +440,18 @@
 			isa = PBXGroup;
 			children = (
 				F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */,
-				F3F5D6BE1A56FBDC006D7F16 /* Boing */,
-				F3F5D6C01A56FBDC006D7F16 /* Gears */,
-				F3F5D6C21A56FBDC006D7F16 /* Particles */,
-				F3F5D6C41A56FBDC006D7F16 /* Simple */,
-				F3F5D6C61A56FBDC006D7F16 /* SplitView */,
-				F3F5D6C81A56FBDC006D7F16 /* Wave */,
-				F3F5D6CA1A56FBDC006D7F16 /* accuracy */,
+				F3F5D6BE1A56FBDC006D7F16 /* Boing.app */,
+				F3F5D6C01A56FBDC006D7F16 /* Gears.app */,
+				F3F5D6C21A56FBDC006D7F16 /* Particles.app */,
+				F3F5D6C41A56FBDC006D7F16 /* Simple.app */,
+				F3F5D6C61A56FBDC006D7F16 /* SplitView.app */,
+				F3F5D6C81A56FBDC006D7F16 /* Wave.app */,
+				F3F5D6CA1A56FBDC006D7F16 /* accuracy.app */,
 				F3F5D6CC1A56FBDC006D7F16 /* clipboard */,
 				F3F5D6CE1A56FBDC006D7F16 /* cursor */,
-				F3F5D6D01A56FBDC006D7F16 /* cursoranim */,
+				F3F5D6D01A56FBDC006D7F16 /* cursoranim.app */,
 				F3F5D6D21A56FBDC006D7F16 /* defaults */,
-				F3F5D6D41A56FBDC006D7F16 /* empty */,
+				F3F5D6D41A56FBDC006D7F16 /* empty.app */,
 				F3F5D6D61A56FBDC006D7F16 /* events */,
 				F3F5D6D81A56FBDC006D7F16 /* fsaa */,
 				F3F5D6DA1A56FBDC006D7F16 /* gamma */,
@@ -394,11 +461,11 @@
 				F3F5D6E21A56FBDC006D7F16 /* modes */,
 				F3F5D6E41A56FBDC006D7F16 /* peter */,
 				F3F5D6E61A56FBDC006D7F16 /* reopen */,
-				F3F5D6E81A56FBDC006D7F16 /* sharing */,
-				F3F5D6EA1A56FBDC006D7F16 /* tearing */,
-				F3F5D6EC1A56FBDC006D7F16 /* threads */,
-				F3F5D6EE1A56FBDC006D7F16 /* title */,
-				F3F5D6F01A56FBDC006D7F16 /* windows */,
+				F3F5D6E81A56FBDC006D7F16 /* sharing.app */,
+				F3F5D6EA1A56FBDC006D7F16 /* tearing.app */,
+				F3F5D6EC1A56FBDC006D7F16 /* threads.app */,
+				F3F5D6EE1A56FBDC006D7F16 /* title.app */,
+				F3F5D6F01A56FBDC006D7F16 /* windows.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -472,6 +539,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F32393BF1A572148007BD168 /* Products */;
+					ProjectRef = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
+				},
+				{
 					ProductGroup = F3F5D6831A56F562006D7F16 /* Products */;
 					ProjectRef = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
 				},
@@ -489,6 +560,55 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F32393C91A572148007BD168 /* ChipmunkDemo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ChipmunkDemo.app;
+			remoteRef = F32393C81A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F32393CB1A572148007BD168 /* libChipmunk.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libChipmunk.a;
+			remoteRef = F32393CA1A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F32393CD1A572148007BD168 /* libChipmunk-iPhone.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libChipmunk-iPhone.a";
+			remoteRef = F32393CC1A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F32393CF1A572148007BD168 /* Benchmark iPhone.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Benchmark iPhone.app";
+			remoteRef = F32393CE1A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F32393D11A572148007BD168 /* libObjectiveChipmunk-iPhone.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libObjectiveChipmunk-iPhone.a";
+			remoteRef = F32393D01A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F32393D31A572148007BD168 /* ObjectiveChipmunkTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ObjectiveChipmunkTests.xctest;
+			remoteRef = F32393D21A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F32393D51A572148007BD168 /* libObjectiveChipmunk.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libObjectiveChipmunk.a;
+			remoteRef = F32393D41A572148007BD168 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3F5D68B1A56F562006D7F16 /* Common.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -510,58 +630,51 @@
 			remoteRef = F3F5D6BB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6BE1A56FBDC006D7F16 /* Boing */ = {
+		F3F5D6BE1A56FBDC006D7F16 /* Boing.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Boing;
+			fileType = wrapper.application;
 			path = Boing.app;
 			remoteRef = F3F5D6BD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6C01A56FBDC006D7F16 /* Gears */ = {
+		F3F5D6C01A56FBDC006D7F16 /* Gears.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Gears;
+			fileType = wrapper.application;
 			path = Gears.app;
 			remoteRef = F3F5D6BF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6C21A56FBDC006D7F16 /* Particles */ = {
+		F3F5D6C21A56FBDC006D7F16 /* Particles.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Particles;
+			fileType = wrapper.application;
 			path = Particles.app;
 			remoteRef = F3F5D6C11A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6C41A56FBDC006D7F16 /* Simple */ = {
+		F3F5D6C41A56FBDC006D7F16 /* Simple.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Simple;
+			fileType = wrapper.application;
 			path = Simple.app;
 			remoteRef = F3F5D6C31A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6C61A56FBDC006D7F16 /* SplitView */ = {
+		F3F5D6C61A56FBDC006D7F16 /* SplitView.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SplitView;
+			fileType = wrapper.application;
 			path = SplitView.app;
 			remoteRef = F3F5D6C51A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6C81A56FBDC006D7F16 /* Wave */ = {
+		F3F5D6C81A56FBDC006D7F16 /* Wave.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Wave;
+			fileType = wrapper.application;
 			path = Wave.app;
 			remoteRef = F3F5D6C71A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6CA1A56FBDC006D7F16 /* accuracy */ = {
+		F3F5D6CA1A56FBDC006D7F16 /* accuracy.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = accuracy;
+			fileType = wrapper.application;
 			path = accuracy.app;
 			remoteRef = F3F5D6C91A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -580,10 +693,9 @@
 			remoteRef = F3F5D6CD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6D01A56FBDC006D7F16 /* cursoranim */ = {
+		F3F5D6D01A56FBDC006D7F16 /* cursoranim.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = cursoranim;
+			fileType = wrapper.application;
 			path = cursoranim.app;
 			remoteRef = F3F5D6CF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -595,10 +707,9 @@
 			remoteRef = F3F5D6D11A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6D41A56FBDC006D7F16 /* empty */ = {
+		F3F5D6D41A56FBDC006D7F16 /* empty.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = empty;
+			fileType = wrapper.application;
 			path = empty.app;
 			remoteRef = F3F5D6D31A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -666,42 +777,37 @@
 			remoteRef = F3F5D6E51A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6E81A56FBDC006D7F16 /* sharing */ = {
+		F3F5D6E81A56FBDC006D7F16 /* sharing.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = sharing;
+			fileType = wrapper.application;
 			path = sharing.app;
 			remoteRef = F3F5D6E71A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6EA1A56FBDC006D7F16 /* tearing */ = {
+		F3F5D6EA1A56FBDC006D7F16 /* tearing.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = tearing;
+			fileType = wrapper.application;
 			path = tearing.app;
 			remoteRef = F3F5D6E91A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6EC1A56FBDC006D7F16 /* threads */ = {
+		F3F5D6EC1A56FBDC006D7F16 /* threads.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = threads;
+			fileType = wrapper.application;
 			path = threads.app;
 			remoteRef = F3F5D6EB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6EE1A56FBDC006D7F16 /* title */ = {
+		F3F5D6EE1A56FBDC006D7F16 /* title.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = title;
+			fileType = wrapper.application;
 			path = title.app;
 			remoteRef = F3F5D6ED1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6F01A56FBDC006D7F16 /* windows */ = {
+		F3F5D6F01A56FBDC006D7F16 /* windows.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = windows;
+			fileType = wrapper.application;
 			path = windows.app;
 			remoteRef = F3F5D6EF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -843,7 +949,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include";
 			};
 			name = Debug;
 		};
@@ -860,7 +966,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include";
 			};
 			name = Release;
 		};
