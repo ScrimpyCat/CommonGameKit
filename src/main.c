@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Stefan Johnson. All rights reserved.
 //
 
+#define GLFW_INCLUDE_GLCOREARB
+
 #include <stdio.h>
 #include <CommonC/Common.h>
 #include <GLFW/glfw3.h>
