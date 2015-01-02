@@ -144,11 +144,20 @@
 		F3F5D6911A56F723006D7F16 /* dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				F3F5D6981A56FA05006D7F16 /* stdatomic */,
 				F3F5D6901A56F714006D7F16 /* tinycthread */,
 				F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */,
 				F3F5D6821A56F562006D7F16 /* Common.xcodeproj */,
 			);
 			name = dependencies;
+			sourceTree = "<group>";
+		};
+		F3F5D6981A56FA05006D7F16 /* stdatomic */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = stdatomic;
+			path = "Blob Game";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,7 +393,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/tinycthread/source;
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source";
 			};
 			name = Debug;
 		};
@@ -401,7 +410,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/tinycthread/source;
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source";
 			};
 			name = Release;
 		};
