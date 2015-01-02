@@ -23,6 +23,7 @@ static int RenderLoop(GLFWwindow *Window)
     
     while (!glfwWindowShouldClose(Window))
     {
+        glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(Window);
     }
     
@@ -40,9 +41,20 @@ int main(int argc, const char *argv[])
     }
     
     
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    
     GLFWwindow *Window = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
     if (!Window)
     {
+        /*
+         Mentions window creation may fail due to some of the above hints, depending on if an extension is no available
+         http://www.glfw.org/docs/latest/compat.html
+         
+         TODO: See if need to handle this case
+         */
         CC_LOG_ERROR("Failed to create window");
         glfwTerminate();
         return EXIT_FAILURE;
