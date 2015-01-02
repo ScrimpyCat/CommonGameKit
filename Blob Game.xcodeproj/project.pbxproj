@@ -11,6 +11,7 @@
 		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
 		F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6951A56F73E006D7F16 /* tinycthread.c */; };
+		F3F5D6F11A56FC70006D7F16 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,195 @@
 			remoteGlobalIDString = F362024517AC3FDD00153E85;
 			remoteInfo = CommonTests;
 		};
+		F3F5D6BB1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 09146205B4F34575B5E08051;
+			remoteInfo = glfw;
+		};
+		F3F5D6BD1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C55D5F203C1D480097E0455A;
+			remoteInfo = Boing;
+		};
+		F3F5D6BF1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 91358848214A4C8890436DBD;
+			remoteInfo = Gears;
+		};
+		F3F5D6C11A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 54CFB2C3B28E48F18BA0A29A;
+			remoteInfo = Particles;
+		};
+		F3F5D6C31A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19E0B7E256A04E4D9FFA601E;
+			remoteInfo = Simple;
+		};
+		F3F5D6C51A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 04908A72F43544EAA8B70870;
+			remoteInfo = SplitView;
+		};
+		F3F5D6C71A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D7FCB252B7834E52B257A45C;
+			remoteInfo = Wave;
+		};
+		F3F5D6C91A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC29000F7518491EAFF7EAF1;
+			remoteInfo = accuracy;
+		};
+		F3F5D6CB1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DFF4AAA81AC04738BBF9E59F;
+			remoteInfo = clipboard;
+		};
+		F3F5D6CD1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D7C8688816A34FCD912CC3AB;
+			remoteInfo = cursor;
+		};
+		F3F5D6CF1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BD983FC0EA24EDA92DD2627;
+			remoteInfo = cursoranim;
+		};
+		F3F5D6D11A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5FDAB81C2BC941629ACC0DFB;
+			remoteInfo = defaults;
+		};
+		F3F5D6D31A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 260E3C9854F94605B3002327;
+			remoteInfo = empty;
+		};
+		F3F5D6D51A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6DDCB2F5275C47B9AC326DCA;
+			remoteInfo = events;
+		};
+		F3F5D6D71A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 065C007FEF2A4E0781818B9B;
+			remoteInfo = fsaa;
+		};
+		F3F5D6D91A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BA8A4EA502E8493F81083006;
+			remoteInfo = gamma;
+		};
+		F3F5D6DB1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9BB1DCE7092241829F49C659;
+			remoteInfo = glfwinfo;
+		};
+		F3F5D6DD1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 47F0609E9E2D46F28AC750DD;
+			remoteInfo = iconify;
+		};
+		F3F5D6DF1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0FBA2195E3A40CAA7EFF060;
+			remoteInfo = joysticks;
+		};
+		F3F5D6E11A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 66FBB42EFE4746DA87F31719;
+			remoteInfo = modes;
+		};
+		F3F5D6E31A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 37976D78370F46AC92254F5B;
+			remoteInfo = peter;
+		};
+		F3F5D6E51A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DD13D92482A04730A81F17DA;
+			remoteInfo = reopen;
+		};
+		F3F5D6E71A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A158F1A9FA9C40ACA7530300;
+			remoteInfo = sharing;
+		};
+		F3F5D6E91A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 969FF7B00CD345459B9B4490;
+			remoteInfo = tearing;
+		};
+		F3F5D6EB1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A6A98981E90C46A6B805AB15;
+			remoteInfo = threads;
+		};
+		F3F5D6ED1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 70E8236E0B734AA6B8C19894;
+			remoteInfo = title;
+		};
+		F3F5D6EF1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 65C0D30E55E6498199FB5C4F;
+			remoteInfo = windows;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +238,7 @@
 		F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CommonC.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug/CommonC.framework"; sourceTree = "<group>"; };
 		F3F5D6951A56F73E006D7F16 /* tinycthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tinycthread.c; path = deps/tinycthread/source/tinycthread.c; sourceTree = SOURCE_ROOT; };
 		F3F5D6961A56F73E006D7F16 /* tinycthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinycthread.h; path = deps/tinycthread/source/tinycthread.h; sourceTree = SOURCE_ROOT; };
+		F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GLFW.xcodeproj; path = deps/glfw/build/GLFW.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +246,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3F5D6F11A56FC70006D7F16 /* libglfw3.a in Frameworks */,
 				F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -144,6 +336,7 @@
 		F3F5D6911A56F723006D7F16 /* dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */,
 				F3F5D6981A56FA05006D7F16 /* stdatomic */,
 				F3F5D6901A56F714006D7F16 /* tinycthread */,
 				F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */,
@@ -158,6 +351,40 @@
 			);
 			name = stdatomic;
 			path = "Blob Game";
+			sourceTree = "<group>";
+		};
+		F3F5D69A1A56FBDB006D7F16 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */,
+				F3F5D6BE1A56FBDC006D7F16 /* Boing */,
+				F3F5D6C01A56FBDC006D7F16 /* Gears */,
+				F3F5D6C21A56FBDC006D7F16 /* Particles */,
+				F3F5D6C41A56FBDC006D7F16 /* Simple */,
+				F3F5D6C61A56FBDC006D7F16 /* SplitView */,
+				F3F5D6C81A56FBDC006D7F16 /* Wave */,
+				F3F5D6CA1A56FBDC006D7F16 /* accuracy */,
+				F3F5D6CC1A56FBDC006D7F16 /* clipboard */,
+				F3F5D6CE1A56FBDC006D7F16 /* cursor */,
+				F3F5D6D01A56FBDC006D7F16 /* cursoranim */,
+				F3F5D6D21A56FBDC006D7F16 /* defaults */,
+				F3F5D6D41A56FBDC006D7F16 /* empty */,
+				F3F5D6D61A56FBDC006D7F16 /* events */,
+				F3F5D6D81A56FBDC006D7F16 /* fsaa */,
+				F3F5D6DA1A56FBDC006D7F16 /* gamma */,
+				F3F5D6DC1A56FBDC006D7F16 /* glfwinfo */,
+				F3F5D6DE1A56FBDC006D7F16 /* iconify */,
+				F3F5D6E01A56FBDC006D7F16 /* joysticks */,
+				F3F5D6E21A56FBDC006D7F16 /* modes */,
+				F3F5D6E41A56FBDC006D7F16 /* peter */,
+				F3F5D6E61A56FBDC006D7F16 /* reopen */,
+				F3F5D6E81A56FBDC006D7F16 /* sharing */,
+				F3F5D6EA1A56FBDC006D7F16 /* tearing */,
+				F3F5D6EC1A56FBDC006D7F16 /* threads */,
+				F3F5D6EE1A56FBDC006D7F16 /* title */,
+				F3F5D6F01A56FBDC006D7F16 /* windows */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,6 +459,10 @@
 					ProductGroup = F3F5D6831A56F562006D7F16 /* Products */;
 					ProjectRef = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
 				},
+				{
+					ProductGroup = F3F5D69A1A56FBDB006D7F16 /* Products */;
+					ProjectRef = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -254,6 +485,209 @@
 			fileType = wrapper.cfbundle;
 			path = CommonTests.octest;
 			remoteRef = F3F5D68C1A56F562006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libglfw3.a;
+			remoteRef = F3F5D6BB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6BE1A56FBDC006D7F16 /* Boing */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = Boing;
+			path = Boing.app;
+			remoteRef = F3F5D6BD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6C01A56FBDC006D7F16 /* Gears */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = Gears;
+			path = Gears.app;
+			remoteRef = F3F5D6BF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6C21A56FBDC006D7F16 /* Particles */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = Particles;
+			path = Particles.app;
+			remoteRef = F3F5D6C11A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6C41A56FBDC006D7F16 /* Simple */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = Simple;
+			path = Simple.app;
+			remoteRef = F3F5D6C31A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6C61A56FBDC006D7F16 /* SplitView */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = SplitView;
+			path = SplitView.app;
+			remoteRef = F3F5D6C51A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6C81A56FBDC006D7F16 /* Wave */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = Wave;
+			path = Wave.app;
+			remoteRef = F3F5D6C71A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6CA1A56FBDC006D7F16 /* accuracy */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = accuracy;
+			path = accuracy.app;
+			remoteRef = F3F5D6C91A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6CC1A56FBDC006D7F16 /* clipboard */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = clipboard;
+			remoteRef = F3F5D6CB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6CE1A56FBDC006D7F16 /* cursor */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = cursor;
+			remoteRef = F3F5D6CD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6D01A56FBDC006D7F16 /* cursoranim */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = cursoranim;
+			path = cursoranim.app;
+			remoteRef = F3F5D6CF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6D21A56FBDC006D7F16 /* defaults */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = defaults;
+			remoteRef = F3F5D6D11A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6D41A56FBDC006D7F16 /* empty */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = empty;
+			path = empty.app;
+			remoteRef = F3F5D6D31A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6D61A56FBDC006D7F16 /* events */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = events;
+			remoteRef = F3F5D6D51A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6D81A56FBDC006D7F16 /* fsaa */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = fsaa;
+			remoteRef = F3F5D6D71A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6DA1A56FBDC006D7F16 /* gamma */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = gamma;
+			remoteRef = F3F5D6D91A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6DC1A56FBDC006D7F16 /* glfwinfo */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = glfwinfo;
+			remoteRef = F3F5D6DB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6DE1A56FBDC006D7F16 /* iconify */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = iconify;
+			remoteRef = F3F5D6DD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6E01A56FBDC006D7F16 /* joysticks */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = joysticks;
+			remoteRef = F3F5D6DF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6E21A56FBDC006D7F16 /* modes */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = modes;
+			remoteRef = F3F5D6E11A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6E41A56FBDC006D7F16 /* peter */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = peter;
+			remoteRef = F3F5D6E31A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6E61A56FBDC006D7F16 /* reopen */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = reopen;
+			remoteRef = F3F5D6E51A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6E81A56FBDC006D7F16 /* sharing */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = sharing;
+			path = sharing.app;
+			remoteRef = F3F5D6E71A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6EA1A56FBDC006D7F16 /* tearing */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = tearing;
+			path = tearing.app;
+			remoteRef = F3F5D6E91A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6EC1A56FBDC006D7F16 /* threads */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = threads;
+			path = threads.app;
+			remoteRef = F3F5D6EB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6EE1A56FBDC006D7F16 /* title */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = title;
+			path = title.app;
+			remoteRef = F3F5D6ED1A56FBDC006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D6F01A56FBDC006D7F16 /* windows */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = windows;
+			path = windows.app;
+			remoteRef = F3F5D6EF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -393,7 +827,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include";
 			};
 			name = Debug;
 		};
@@ -410,7 +844,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include";
 			};
 			name = Release;
 		};
