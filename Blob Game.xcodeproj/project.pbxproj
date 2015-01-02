@@ -1,0 +1,390 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3F5D6341A56E8B4006D7F16 /* Images.xcassets */; };
+		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F3C401EA1A56E52800095ECD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3C401CE1A56E52800095ECD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3C401D51A56E52800095ECD;
+			remoteInfo = "Blob Game";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F3F5D6341A56E8B4006D7F16 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = src/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		F3F5D6351A56E8B4006D7F16 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
+		F3F5D6801A56F4A9006D7F16 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = src/main.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3C401D31A56E52800095ECD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3C401E61A56E52800095ECD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F3C401CD1A56E52800095ECD = {
+			isa = PBXGroup;
+			children = (
+				F3C401D81A56E52800095ECD /* Blob Game */,
+				F3C401EC1A56E52800095ECD /* Blob GameTests */,
+				F3C401D71A56E52800095ECD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F3C401D71A56E52800095ECD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3C401D61A56E52800095ECD /* Blob Game.app */,
+				F3C401E91A56E52800095ECD /* Blob GameTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3C401D81A56E52800095ECD /* Blob Game */ = {
+			isa = PBXGroup;
+			children = (
+				F3F5D6801A56F4A9006D7F16 /* main.c */,
+				F3C401D91A56E52800095ECD /* Supporting Files */,
+			);
+			path = "Blob Game";
+			sourceTree = "<group>";
+		};
+		F3C401D91A56E52800095ECD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F3F5D6341A56E8B4006D7F16 /* Images.xcassets */,
+				F3F5D6351A56E8B4006D7F16 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F3C401EC1A56E52800095ECD /* Blob GameTests */ = {
+			isa = PBXGroup;
+			children = (
+				F3C401ED1A56E52800095ECD /* Supporting Files */,
+			);
+			path = "Blob GameTests";
+			sourceTree = "<group>";
+		};
+		F3C401ED1A56E52800095ECD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F3C401EE1A56E52800095ECD /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F3C401D51A56E52800095ECD /* Blob Game */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3C401F31A56E52800095ECD /* Build configuration list for PBXNativeTarget "Blob Game" */;
+			buildPhases = (
+				F3C401D21A56E52800095ECD /* Sources */,
+				F3C401D31A56E52800095ECD /* Frameworks */,
+				F3C401D41A56E52800095ECD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Blob Game";
+			productName = "Blob Game";
+			productReference = F3C401D61A56E52800095ECD /* Blob Game.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F3C401E81A56E52800095ECD /* Blob GameTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3C401F61A56E52800095ECD /* Build configuration list for PBXNativeTarget "Blob GameTests" */;
+			buildPhases = (
+				F3C401E51A56E52800095ECD /* Sources */,
+				F3C401E61A56E52800095ECD /* Frameworks */,
+				F3C401E71A56E52800095ECD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F3C401EB1A56E52800095ECD /* PBXTargetDependency */,
+			);
+			name = "Blob GameTests";
+			productName = "Blob GameTests";
+			productReference = F3C401E91A56E52800095ECD /* Blob GameTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3C401CE1A56E52800095ECD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Stefan Johnson";
+				TargetAttributes = {
+					F3C401D51A56E52800095ECD = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					F3C401E81A56E52800095ECD = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = F3C401D51A56E52800095ECD;
+					};
+				};
+			};
+			buildConfigurationList = F3C401D11A56E52800095ECD /* Build configuration list for PBXProject "Blob Game" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F3C401CD1A56E52800095ECD;
+			productRefGroup = F3C401D71A56E52800095ECD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3C401D51A56E52800095ECD /* Blob Game */,
+				F3C401E81A56E52800095ECD /* Blob GameTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3C401D41A56E52800095ECD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3C401E71A56E52800095ECD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3C401D21A56E52800095ECD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F3C401E51A56E52800095ECD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F3C401EB1A56E52800095ECD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F3C401D51A56E52800095ECD /* Blob Game */;
+			targetProxy = F3C401EA1A56E52800095ECD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F3C401F11A56E52800095ECD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F3C401F21A56E52800095ECD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F3C401F41A56E52800095ECD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F3C401F51A56E52800095ECD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		F3C401F71A56E52800095ECD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Blob GameTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blob Game.app/Contents/MacOS/Blob Game";
+			};
+			name = Debug;
+		};
+		F3C401F81A56E52800095ECD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "Blob GameTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blob Game.app/Contents/MacOS/Blob Game";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F3C401D11A56E52800095ECD /* Build configuration list for PBXProject "Blob Game" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3C401F11A56E52800095ECD /* Debug */,
+				F3C401F21A56E52800095ECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3C401F31A56E52800095ECD /* Build configuration list for PBXNativeTarget "Blob Game" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3C401F41A56E52800095ECD /* Debug */,
+				F3C401F51A56E52800095ECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3C401F61A56E52800095ECD /* Build configuration list for PBXNativeTarget "Blob GameTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3C401F71A56E52800095ECD /* Debug */,
+				F3C401F81A56E52800095ECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3C401CE1A56E52800095ECD /* Project object */;
+}
