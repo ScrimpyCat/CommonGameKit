@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3F5D6341A56E8B4006D7F16 /* Images.xcassets */; };
 		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
+		F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -19,6 +20,20 @@
 			remoteGlobalIDString = F3C401D51A56E52800095ECD;
 			remoteInfo = "Blob Game";
 		};
+		F3F5D68A1A56F562006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F362022D17AC3FD900153E85;
+			remoteInfo = Common;
+		};
+		F3F5D68C1A56F562006D7F16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F362024517AC3FDD00153E85;
+			remoteInfo = CommonTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +43,8 @@
 		F3F5D6341A56E8B4006D7F16 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = src/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		F3F5D6351A56E8B4006D7F16 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
 		F3F5D6801A56F4A9006D7F16 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = src/main.c; sourceTree = SOURCE_ROOT; };
+		F3F5D6821A56F562006D7F16 /* Common.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Common.xcodeproj; path = deps/Common/Common.xcodeproj; sourceTree = "<group>"; };
+		F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CommonC.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug/CommonC.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,6 +69,8 @@
 		F3C401CD1A56E52800095ECD = {
 			isa = PBXGroup;
 			children = (
+				F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */,
+				F3F5D6821A56F562006D7F16 /* Common.xcodeproj */,
 				F3C401D81A56E52800095ECD /* Blob Game */,
 				F3C401EC1A56E52800095ECD /* Blob GameTests */,
 				F3C401D71A56E52800095ECD /* Products */,
@@ -98,6 +118,15 @@
 				F3C401EE1A56E52800095ECD /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F3F5D6831A56F562006D7F16 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3F5D68B1A56F562006D7F16 /* Common.framework */,
+				F3F5D68D1A56F562006D7F16 /* CommonTests.octest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +196,12 @@
 			mainGroup = F3C401CD1A56E52800095ECD;
 			productRefGroup = F3C401D71A56E52800095ECD /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F3F5D6831A56F562006D7F16 /* Products */;
+					ProjectRef = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F3C401D51A56E52800095ECD /* Blob Game */,
@@ -174,6 +209,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F3F5D68B1A56F562006D7F16 /* Common.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Common.framework;
+			remoteRef = F3F5D68A1A56F562006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3F5D68D1A56F562006D7F16 /* CommonTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CommonTests.octest;
+			remoteRef = F3F5D68C1A56F562006D7F16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		F3C401D41A56E52800095ECD /* Resources */ = {
@@ -301,6 +353,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -312,6 +368,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";

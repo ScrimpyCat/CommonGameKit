@@ -1,0 +1,3 @@
+[submodule "deps/Common"]
+	path = deps/Common
+	url = https://github.com/ScrimpyCat/Common.git
