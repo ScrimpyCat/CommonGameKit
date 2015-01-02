@@ -12,6 +12,10 @@
 		F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6951A56F73E006D7F16 /* tinycthread.c */; };
 		F3F5D6F11A56FC70006D7F16 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */; };
+		F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */; };
+		F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
+		F3F5D6FC1A5700F3006D7F16 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F41A570099006D7F16 /* OpenGL.framework */; };
+		F3F5D6FD1A5700F3006D7F16 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F21A570093006D7F16 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -239,6 +243,10 @@
 		F3F5D6951A56F73E006D7F16 /* tinycthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tinycthread.c; path = deps/tinycthread/source/tinycthread.c; sourceTree = SOURCE_ROOT; };
 		F3F5D6961A56F73E006D7F16 /* tinycthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinycthread.h; path = deps/tinycthread/source/tinycthread.h; sourceTree = SOURCE_ROOT; };
 		F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GLFW.xcodeproj; path = deps/glfw/build/GLFW.xcodeproj; sourceTree = "<group>"; };
+		F3F5D6F21A570093006D7F16 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		F3F5D6F41A570099006D7F16 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		F3F5D6F61A5700AB006D7F16 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +254,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */,
+				F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */,
+				F3F5D6FC1A5700F3006D7F16 /* OpenGL.framework in Frameworks */,
+				F3F5D6FD1A5700F3006D7F16 /* Cocoa.framework in Frameworks */,
 				F3F5D6F11A56FC70006D7F16 /* libglfw3.a in Frameworks */,
 				F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */,
 			);
@@ -336,6 +348,10 @@
 		F3F5D6911A56F723006D7F16 /* dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */,
+				F3F5D6F61A5700AB006D7F16 /* IOKit.framework */,
+				F3F5D6F41A570099006D7F16 /* OpenGL.framework */,
+				F3F5D6F21A570093006D7F16 /* Cocoa.framework */,
 				F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */,
 				F3F5D6981A56FA05006D7F16 /* stdatomic */,
 				F3F5D6901A56F714006D7F16 /* tinycthread */,
