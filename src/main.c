@@ -16,7 +16,11 @@
 
 #if CC_PLATFORM_OS_X
 #define GLFW_INCLUDE_GLCOREARB
+#else
+#include <gl_core.h>
+#define GLFW_INCLUDE_NONE
 #endif
+
 #include <GLFW/glfw3.h>
 
 
@@ -49,12 +53,10 @@ int main(int argc, const char *argv[])
     }
     
     
-#if CC_PLATFORM_OS_X
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-#endif
     
     GLFWwindow *Window = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
     if (!Window)

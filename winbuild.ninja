@@ -1,11 +1,8 @@
 rule cc
-    command = gcc $in -c -o $out $flags $headers
+    command = gcc $in -c -o $out $flags $headers -std=c11
 
 rule ld
-    command = gcc $in -o $out $libs
-
-rule bld
-    command = ninja -C $in
+    command = gcc $in $objects -o $out $libs
 
 #Deps inclusions
 tinycthread_header = -I./deps/tinycthread/source
@@ -16,16 +13,22 @@ stdatomic_header = -I./deps/stdatomic
 glfw_header = -I./deps/glfw/include
 glfw_lib = ./deps/glfw/build/src/libglfw3.a
 
+gl_header = -I./deps/GL
+gl_object = ./build/gl_core.o
+
 #todo: add Chipmunk2D and Common
 
-all_deps_headers = $tinycthread_header $stdatomic_header $glfw_header
-all_deps_objects = $tinycthread_object
+all_deps_headers = $tinycthread_header $stdatomic_header $glfw_header $gl_header
+all_deps_objects = $tinycthread_object $gl_object
 all_deps_libs = $glfw_lib -lopengl32 -mwindows
 
 #Build TinyCThread
 build $tinycthread_object: cc ./deps/tinycthread/source/tinycthread.c
     flags = -Wall
 
+#Build gl_core
+build $gl_object: cc ./deps/GL/gl_core.c
+    flags = -Wall
 
 
 #Build Main Project
@@ -33,5 +36,6 @@ build build/main.o: cc src/main.c
     flags = -Wall
     headers = $all_deps_headers
 
-build build/blob_game: ld build/main.o $all_deps_objects
+build build/blob_game: ld build/main.o
+    objects = $all_deps_objects
     libs = $all_deps_libs
