@@ -298,6 +298,7 @@
 		F3F5D6F41A570099006D7F16 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F3F5D6F61A5700AB006D7F16 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		F3FF25311A58418800E437EB /* stdatomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic.h; path = deps/stdatomic/stdatomic.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -431,6 +432,7 @@
 		F3F5D6981A56FA05006D7F16 /* stdatomic */ = {
 			isa = PBXGroup;
 			children = (
+				F3FF25311A58418800E437EB /* stdatomic.h */,
 			);
 			name = stdatomic;
 			path = "Blob Game";
