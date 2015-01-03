@@ -58,6 +58,15 @@ int main(int argc, const char *argv[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     
+    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    
+    glfwWindowHint(GLFW_RED_BITS, 8);
+    glfwWindowHint(GLFW_GREEN_BITS, 8);
+    glfwWindowHint(GLFW_BLUE_BITS, 8);
+    glfwWindowHint(GLFW_ALPHA_BITS, 0);
+    glfwWindowHint(GLFW_DEPTH_BITS, 0);
+    glfwWindowHint(GLFW_STENCIL_BITS, 0);
+    
     GLFWwindow *Window = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
     if (!Window)
     {
