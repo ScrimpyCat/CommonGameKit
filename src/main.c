@@ -10,6 +10,7 @@
 #define CC_LOG_OPTION CCLogOptionOutputAll
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <CommonC/Common.h>
 #include <GLFW/glfw3.h>
 #include <stdatomic.h>
