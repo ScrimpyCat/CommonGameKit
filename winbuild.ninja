@@ -1,0 +1,37 @@
+rule cc
+    command = gcc $in -c -o $out $flags $headers
+
+rule ld
+    command = gcc $in -o $out $libs
+
+rule bld
+    command = ninja -C $in
+
+#Deps inclusions
+tinycthread_header = -I./deps/tinycthread/source
+tinycthread_object = ./build/tinycthread.o
+
+stdatomic_header = -I./deps/stdatomic
+
+glfw_header = -I./deps/glfw/include
+glfw_lib = ./deps/glfw/build/src/libglfw3.a
+
+#todo: add Chipmunk2D and Common
+
+all_deps_headers = $tinycthread_header $stdatomic_header $glfw_header
+all_deps_objects = $tinycthread_object
+all_deps_libs = $glfw_lib -lopengl32 -mwindows
+
+#Build TinyCThread
+build $tinycthread_object: cc ./deps/tinycthread/source/tinycthread.c
+    flags = -Wall
+
+
+
+#Build Main Project
+build build/main.o: cc src/main.c
+    flags = -Wall
+    headers = $all_deps_headers
+
+build build/blob_game: ld build/main.o $all_deps_objects
+    libs = $all_deps_libs
