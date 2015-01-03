@@ -6,15 +6,19 @@
 //  Copyright (c) 2015 Stefan Johnson. All rights reserved.
 //
 
-#define GLFW_INCLUDE_GLCOREARB
 #define CC_LOG_OPTION CCLogOptionOutputAll
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <CommonC/Common.h>
-#include <GLFW/glfw3.h>
 #include <stdatomic.h>
 #include <tinycthread.h>
+
+#if CC_PLATFORM_OS_X
+#define GLFW_INCLUDE_GLCOREARB
+#endif
+#include <GLFW/glfw3.h>
+
 
 static void ErrorCallback(int Error, const char *Description)
 {
@@ -45,20 +49,16 @@ int main(int argc, const char *argv[])
     }
     
     
+#if CC_PLATFORM_OS_X
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+#endif
     
     GLFWwindow *Window = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
     if (!Window)
     {
-        /*
-         Mentions window creation may fail due to some of the above hints, depending on if an extension is no available
-         http://www.glfw.org/docs/latest/compat.html
-         
-         TODO: See if need to handle this case
-         */
         CC_LOG_ERROR("Failed to create window");
         glfwTerminate();
         return EXIT_FAILURE;
