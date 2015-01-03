@@ -47,9 +47,18 @@ Linux
 Mac
 ---
 
-Requirements:
+Requirements:  
 Xcode - Install it from the Mac App Store
+CMake - Simplest way is to just install it through a package manager (homebrew, macports, etc.)
 
+
+Build GLFW (/deps/glfw/):
+```
+mkdir build
+cd build
+cmake -G Xcode ..
+#Gets built from the Xcode project
+```
 
 Build Game:
 Compile the xcode project (either with xcodebuild or with the IDE itself).
