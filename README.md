@@ -48,7 +48,7 @@ Mac
 ---
 
 Requirements:  
-Xcode - Install it from the Mac App Store
+Xcode - Install it from the Mac App Store  
 CMake - Simplest way is to just install it through a package manager (homebrew, macports, etc.)
 
 
