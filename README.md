@@ -28,8 +28,12 @@ sed "s/-I\.\.\/include\/chipmunk/-I..\/include -I..\/include\/chipmunk/g" build.
 ninja
 ```
 
-Build Common (/deps/Common/):
-*Todo*
+Build CommonC (/deps/Common/CommonC/):
+```
+mkdir build
+#Built from our own ninja build file (winbuild-common.ninja)
+```
+
 
 Build Game:
 ```

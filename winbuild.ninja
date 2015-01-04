@@ -1,34 +1,38 @@
 rule cc
-    command = gcc $in -c -o $out $flags $headers -std=c11
+    command = gcc $in -c -o $out $flags $headers -std=gnu11
 
 rule ld
     command = gcc $in $objects -o $out $libs
 
 #Deps inclusions
+#TinyCThread
 tinycthread_header = -I./deps/tinycthread/source
 tinycthread_object = ./build/tinycthread.o
+build $tinycthread_object: cc ./deps/tinycthread/source/tinycthread.c
+    flags = -Wall
 
+#stdatomic
 stdatomic_header = -I./deps/stdatomic
 
+#GLFW
 glfw_header = -I./deps/glfw/include
 glfw_lib = ./deps/glfw/build/src/libglfw3.a
 
+#gl_core
 gl_header = -I./deps/GL
 gl_object = ./build/gl_core.o
+build $gl_object: cc ./deps/GL/gl_core.c
+    flags = -Wall
 
-#todo: add Chipmunk2D and Common
+#CommonC
+subninja winbuild-common.ninja
+
+#todo: add Chipmunk2D
 
 all_deps_headers = $tinycthread_header $stdatomic_header $glfw_header $gl_header
 all_deps_objects = $tinycthread_object $gl_object
 all_deps_libs = $glfw_lib -lopengl32 -mwindows
 
-#Build TinyCThread
-build $tinycthread_object: cc ./deps/tinycthread/source/tinycthread.c
-    flags = -Wall
-
-#Build gl_core
-build $gl_object: cc ./deps/GL/gl_core.c
-    flags = -Wall
 
 
 #Build Main Project

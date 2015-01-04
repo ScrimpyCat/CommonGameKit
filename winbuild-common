@@ -1,0 +1,24 @@
+#Include CommonC
+commonc_header = -I./deps/Common/CommonC
+
+#Build CommonC
+build deps/Common/CommonC/build/Allocator.o: cc deps/Common/CommonC/CommonC/Allocator.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/CFAllocator.o: cc deps/Common/CommonC/CommonC/CFAllocator.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/CustomFormatSpecifiers.o: cc deps/Common/CommonC/CommonC/CustomFormatSpecifiers.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/CustomInputFilters.o: cc deps/Common/CommonC/CommonC/CustomInputFilters.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/DebugTypes.o: cc deps/Common/CommonC/CommonC/DebugTypes.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/File.o: cc deps/Common/CommonC/CommonC/File.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/Logging.o: cc deps/Common/CommonC/CommonC/Logging.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/MemoryAllocation.o: cc deps/Common/CommonC/CommonC/MemoryAllocation.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/ProcessInfo.o: cc deps/Common/CommonC/CommonC/ProcessInfo.c
+    headers = $commonc_header
+build deps/Common/CommonC/build/SystemInfo.o: cc deps/Common/CommonC/CommonC/SystemInfo.c
+    headers = $commonc_header
