@@ -64,6 +64,7 @@ int main(int argc, const char *argv[])
     GLFWwindow *Window = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
     if (!Window)
     {
+        //TODO: Fallback to legacy GL profile? 
         CC_LOG_ERROR("Failed to create window");
         glfwTerminate();
         return EXIT_FAILURE;
