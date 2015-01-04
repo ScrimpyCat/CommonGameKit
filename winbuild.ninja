@@ -25,13 +25,12 @@ build $gl_object: cc ./deps/GL/gl_core.c
     flags = -Wall
 
 #CommonC
-commonc_header = -I./deps/Common/CommonC
-subninja winbuild-common.ninja
+include winbuild-common.ninja
 
 #todo: add Chipmunk2D
 
 all_deps_headers = $tinycthread_header $stdatomic_header $glfw_header $gl_header $commonc_header
-all_deps_objects = $tinycthread_object $gl_object
+all_deps_objects = $tinycthread_object $gl_object $commonc_object
 all_deps_libs = $glfw_lib -lopengl32 -mwindows
 
 
