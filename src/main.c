@@ -14,14 +14,8 @@
 #include <stdatomic.h>
 #include <tinycthread.h>
 
-#if CC_PLATFORM_OS_X
-#define GLFW_INCLUDE_GLCOREARB
-#else
-#include <gl_core.h>
-#define GLFW_INCLUDE_NONE
-#endif
-
-#include <GLFW/glfw3.h>
+#include "GLSetup.h"
+#include "PlatformSetup.h"
 
 
 static void ErrorCallback(int Error, const char *Description)
@@ -75,6 +69,8 @@ int main(int argc, const char *argv[])
         return EXIT_FAILURE;
     }
     
+    
+    PlatformSetup(Window);
     
     CC_LOG_INFO("Vendor: %s", glGetString(GL_VENDOR));
     CC_LOG_INFO("Renderer: %s", glGetString(GL_RENDERER));

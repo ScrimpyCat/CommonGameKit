@@ -39,7 +39,10 @@ all_deps_libs = $glfw_lib -lopengl32 -mwindows
 build build/main.o: cc src/main.c
     flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
     headers = $all_deps_headers
+build build/PlatformSetup_win.o: cc src/PlatformSetup_win.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
 
-build build/blob_game: ld build/main.o
+build build/blob_game: ld build/main.o build/PlatformSetup_win.o
     objects = $all_deps_objects
     libs = $all_deps_libs

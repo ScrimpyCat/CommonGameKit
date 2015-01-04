@@ -17,6 +17,7 @@
 		F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
 		F3F5D6FC1A5700F3006D7F16 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F41A570099006D7F16 /* OpenGL.framework */; };
 		F3F5D6FD1A5700F3006D7F16 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F21A570093006D7F16 /* Cocoa.framework */; };
+		F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */ = {isa = PBXBuildFile; fileRef = F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -298,6 +299,11 @@
 		F3F5D6F41A570099006D7F16 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F3F5D6F61A5700AB006D7F16 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlatformSetup_mac.m; path = src/PlatformSetup_mac.m; sourceTree = SOURCE_ROOT; };
+		F3F6C4A41A599A6200B9D6BA /* PlatformSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlatformSetup.h; path = src/PlatformSetup.h; sourceTree = SOURCE_ROOT; };
+		F3F6C4A51A599AEA00B9D6BA /* GLSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GLSetup.h; path = src/GLSetup.h; sourceTree = SOURCE_ROOT; };
+		F3F6C4A61A599DB700B9D6BA /* PlatformSetup_win.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PlatformSetup_win.c; path = src/PlatformSetup_win.c; sourceTree = SOURCE_ROOT; };
+		F3F6C4AA1A599DF800B9D6BA /* PlatformSetup_linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PlatformSetup_linux.c; path = src/PlatformSetup_linux.c; sourceTree = SOURCE_ROOT; };
 		F3FF25311A58418800E437EB /* stdatomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic.h; path = deps/stdatomic/stdatomic.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -363,6 +369,7 @@
 			isa = PBXGroup;
 			children = (
 				F3F5D6801A56F4A9006D7F16 /* main.c */,
+				F3F6C4A31A599A3C00B9D6BA /* Setup */,
 				F3C401D91A56E52800095ECD /* Supporting Files */,
 			);
 			path = "Blob Game";
@@ -470,6 +477,18 @@
 				F3F5D6F01A56FBDC006D7F16 /* windows.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F3F6C4A31A599A3C00B9D6BA /* Setup */ = {
+			isa = PBXGroup;
+			children = (
+				F3F6C4A51A599AEA00B9D6BA /* GLSetup.h */,
+				F3F6C4A41A599A6200B9D6BA /* PlatformSetup.h */,
+				F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */,
+				F3F6C4A61A599DB700B9D6BA /* PlatformSetup_win.c */,
+				F3F6C4AA1A599DF800B9D6BA /* PlatformSetup_linux.c */,
+			);
+			name = Setup;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -841,6 +860,7 @@
 			files = (
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
+				F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
