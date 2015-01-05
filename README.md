@@ -24,7 +24,7 @@ Build Chipmunk2D (/deps/Chipmunk2D/):
 mkdir build
 cd build
 cmake -G Ninja -DBUILD_DEMOS=OFF ..
-sed "s/-I\.\.\/include\/chipmunk/-I..\/include -I..\/include\/chipmunk/g" build.ninja
+sed "s/-I\.\.\/include\/chipmunk/-I..\/include -I..\/include\/chipmunk/g" build.ninja > tmp-build.ninja ; mv tmp-build.ninja build.ninja
 ninja
 ```
 
