@@ -11,6 +11,7 @@
 
 #include "PlatformSetup.h"
 #include <GLFW/glfw3native.h>
+#include <stdio.h>
 
 void PlatformSetup(GLFWwindow *Window)
 {
