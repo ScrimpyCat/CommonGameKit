@@ -12,12 +12,12 @@
 #include "PlatformSetup.h"
 #include <GLFW/glfw3native.h>
 
-void PlatformSetup(void)
+void CCPlatformSetup(void)
 {
     
 }
 
-void PlatformWindowSetup(GLFWwindow *Window)
+void CCPlatformWindowSetup(GLFWwindow *Window)
 {
     
 }

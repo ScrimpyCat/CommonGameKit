@@ -38,7 +38,7 @@ static int RenderLoop(GLFWwindow *Window)
 
 int main(int argc, const char *argv[])
 {
-    PlatformSetup();
+    CCPlatformSetup();
     glfwSetErrorCallback(ErrorCallback);
     
     if (!glfwInit())
@@ -72,7 +72,7 @@ int main(int argc, const char *argv[])
     }
     
     
-    PlatformWindowSetup(Window);
+    CCPlatformWindowSetup(Window);
     
     CC_LOG_INFO("Vendor: %s", glGetString(GL_VENDOR));
     CC_LOG_INFO("Renderer: %s", glGetString(GL_RENDERER));
