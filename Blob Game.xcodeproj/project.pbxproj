@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk.a */; };
+		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
+		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3F5D6341A56E8B4006D7F16 /* Images.xcassets */; };
 		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
 		F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
@@ -284,6 +286,10 @@
 
 /* Begin PBXFileReference section */
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
+		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Component.h; path = src/Component.h; sourceTree = SOURCE_ROOT; };
+		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Component.c; path = src/Component.c; sourceTree = SOURCE_ROOT; };
+		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ComponentSystem.h; path = src/ComponentSystem.h; sourceTree = SOURCE_ROOT; };
+		F397970B1A5C7CF7007C3422 /* ComponentSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ComponentSystem.c; path = src/ComponentSystem.c; sourceTree = SOURCE_ROOT; };
 		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -299,6 +305,8 @@
 		F3F5D6F41A570099006D7F16 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F3F5D6F61A5700AB006D7F16 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		F3F696A61A5C8E3800E486B5 /* stdatomic_clang.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic_clang.h; path = deps/stdatomic/stdatomic_clang.h; sourceTree = SOURCE_ROOT; };
+		F3F696A71A5C8E3800E486B5 /* stdatomic_portable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic_portable.h; path = deps/stdatomic/stdatomic_portable.h; sourceTree = SOURCE_ROOT; };
 		F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlatformSetup_mac.m; path = src/PlatformSetup_mac.m; sourceTree = SOURCE_ROOT; };
 		F3F6C4A41A599A6200B9D6BA /* PlatformSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlatformSetup.h; path = src/PlatformSetup.h; sourceTree = SOURCE_ROOT; };
 		F3F6C4A51A599AEA00B9D6BA /* GLSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GLSetup.h; path = src/GLSetup.h; sourceTree = SOURCE_ROOT; };
@@ -346,6 +354,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F39796DD1A5C7748007C3422 /* Component System */ = {
+			isa = PBXGroup;
+			children = (
+				F397970A1A5C7CDC007C3422 /* ComponentSystem.h */,
+				F397970B1A5C7CF7007C3422 /* ComponentSystem.c */,
+				F39797071A5C7791007C3422 /* Component.h */,
+				F39797081A5C77A0007C3422 /* Component.c */,
+			);
+			name = "Component System";
+			sourceTree = "<group>";
+		};
 		F3C401CD1A56E52800095ECD = {
 			isa = PBXGroup;
 			children = (
@@ -369,10 +388,12 @@
 			isa = PBXGroup;
 			children = (
 				F3F5D6801A56F4A9006D7F16 /* main.c */,
+				F39796DD1A5C7748007C3422 /* Component System */,
 				F3F6C4A31A599A3C00B9D6BA /* Setup */,
 				F3C401D91A56E52800095ECD /* Supporting Files */,
 			);
-			path = "Blob Game";
+			name = "Blob Game";
+			path = src;
 			sourceTree = "<group>";
 		};
 		F3C401D91A56E52800095ECD /* Supporting Files */ = {
@@ -440,6 +461,8 @@
 			isa = PBXGroup;
 			children = (
 				F3FF25311A58418800E437EB /* stdatomic.h */,
+				F3F696A61A5C8E3800E486B5 /* stdatomic_clang.h */,
+				F3F696A71A5C8E3800E486B5 /* stdatomic_portable.h */,
 			);
 			name = stdatomic;
 			path = "Blob Game";
@@ -859,8 +882,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
+				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
 				F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */,
+				F39797091A5C77A0007C3422 /* Component.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
