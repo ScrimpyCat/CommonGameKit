@@ -13,9 +13,14 @@
 #include <GLFW/glfw3native.h>
 #include <stdio.h>
 
-void PlatformSetup(GLFWwindow *Window)
+void PlatformSetup(void)
 {
     AllocConsole();
     freopen("CONOUT$", "w", stdout);
     freopen("CONOUT$", "w", stderr);
+}
+
+void PlatformWindowSetup(GLFWwindow *Window)
+{
+    
 }

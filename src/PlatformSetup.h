@@ -11,6 +11,7 @@
 
 #include "GLSetup.h"
 
-void PlatformSetup(GLFWwindow *Window);
+void PlatformSetup(void);
+void PlatformWindowSetup(GLFWwindow *Window);
 
 #endif
