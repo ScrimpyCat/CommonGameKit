@@ -19,6 +19,7 @@
 		F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
 		F3F5D6FC1A5700F3006D7F16 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F41A570099006D7F16 /* OpenGL.framework */; };
 		F3F5D6FD1A5700F3006D7F16 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F21A570093006D7F16 /* Cocoa.framework */; };
+		F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3F696D41A5D047400E486B5 /* ComponentTests.m */; };
 		F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */ = {isa = PBXBuildFile; fileRef = F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */; };
 /* End PBXBuildFile section */
 
@@ -307,6 +308,7 @@
 		F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F3F696A61A5C8E3800E486B5 /* stdatomic_clang.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic_clang.h; path = deps/stdatomic/stdatomic_clang.h; sourceTree = SOURCE_ROOT; };
 		F3F696A71A5C8E3800E486B5 /* stdatomic_portable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic_portable.h; path = deps/stdatomic/stdatomic_portable.h; sourceTree = SOURCE_ROOT; };
+		F3F696D41A5D047400E486B5 /* ComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComponentTests.m; sourceTree = "<group>"; };
 		F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlatformSetup_mac.m; path = src/PlatformSetup_mac.m; sourceTree = SOURCE_ROOT; };
 		F3F6C4A41A599A6200B9D6BA /* PlatformSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PlatformSetup.h; path = src/PlatformSetup.h; sourceTree = SOURCE_ROOT; };
 		F3F6C4A51A599AEA00B9D6BA /* GLSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GLSetup.h; path = src/GLSetup.h; sourceTree = SOURCE_ROOT; };
@@ -408,6 +410,7 @@
 		F3C401EC1A56E52800095ECD /* Blob GameTests */ = {
 			isa = PBXGroup;
 			children = (
+				F3F696D31A5D041E00E486B5 /* Component System */,
 				F3C401ED1A56E52800095ECD /* Supporting Files */,
 			);
 			path = "Blob GameTests";
@@ -500,6 +503,14 @@
 				F3F5D6F01A56FBDC006D7F16 /* windows.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F3F696D31A5D041E00E486B5 /* Component System */ = {
+			isa = PBXGroup;
+			children = (
+				F3F696D41A5D047400E486B5 /* ComponentTests.m */,
+			);
+			name = "Component System";
 			sourceTree = "<group>";
 		};
 		F3F6C4A31A599A3C00B9D6BA /* Setup */ = {
@@ -893,6 +904,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

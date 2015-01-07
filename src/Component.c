@@ -60,6 +60,20 @@ void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType All
     atomic_flag_clear(&Lock);
 }
 
+void CCComponentDeregister(CCComponentID id)
+{
+    //Note: Really only needed for unit tests, so doesn't matter if not correct (thread safe)
+    for (size_t Loop = 0, Count = ComponentsCount; Loop < Count; Loop++)
+    {
+        if (ComponentList[Loop].id == id)
+        {
+            memset(&ComponentList[Loop], 0, sizeof(CCComponentInfo));
+        }
+    }
+    
+    CC_LOG_WARNING("Could not find component with id (%" PRIu32 ")", id);
+}
+
 static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
 {
     CCComponent Component = CCMalloc(Info->allocator, Info->size, NULL, CC_DEFAULT_ERROR_CALLBACK);

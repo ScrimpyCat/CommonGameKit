@@ -28,6 +28,7 @@ typedef void (*CCComponentInitializer)(CCComponent Component, CCComponentID id);
 
 
 void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer);
+void CCComponentDeregister(CCComponentID id);
 CCComponent CCComponentCreate(CCComponentID id);
 CCComponent CCComponentCreateForName(const char *Name);
 void CCComponentDestroy(CCComponent Component);
