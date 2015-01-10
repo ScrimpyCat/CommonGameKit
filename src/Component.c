@@ -7,7 +7,6 @@
 //
 
 #include "Component.h"
-#include <stdatomic.h>
 #include <string.h>
 
 
@@ -24,13 +23,9 @@ CCComponentInfo *ComponentList = NULL; //TODO: Probably more optimal if it is a 
 static size_t ComponentsCount = 0;
 void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer)
 {
-    static atomic_flag Lock = ATOMIC_FLAG_INIT;
-    while (atomic_flag_test_and_set(&Lock));
-    
     CC_SAFE_Realloc(ComponentList, sizeof(typeof(*ComponentList)) * ++ComponentsCount,
                     CC_LOG_ERROR("Failed to add new component (%" PRIu32 " : %s) due to realloc failing. Allocation size: %zu", id, Name, sizeof(typeof(*ComponentList)) * ComponentsCount);
                     ComponentsCount--;
-                    atomic_flag_clear(&Lock);
                     return;
                     );
     
@@ -40,7 +35,6 @@ void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType All
         CC_SAFE_Malloc(ComponentName, sizeof(char) * (strlen(Name) + 1),
                        CC_LOG_ERROR("Failed to add new component (%" PRIu32 " : %s) due to allocation space for name failing. Allocation size: %zu", id, Name, sizeof(char) * (strlen(Name) + 1));
                        ComponentsCount--;
-                       atomic_flag_clear(&Lock);
                        return;
                        );
         
@@ -55,14 +49,11 @@ void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType All
         .initializer = Initializer,
         .size = Size
     };
-    
-    
-    atomic_flag_clear(&Lock);
 }
 
 void CCComponentDeregister(CCComponentID id)
 {
-    //Note: Really only needed for unit tests, so doesn't matter if not correct (thread safe)
+    //Note: Really only needed for unit tests, so doesn't matter if not correct
     for (size_t Loop = 0, Count = ComponentsCount; Loop < Count; Loop++)
     {
         if (ComponentList[Loop].id == id)
