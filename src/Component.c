@@ -61,8 +61,6 @@ void CCComponentDeregister(CCComponentID id)
             memset(&ComponentList[Loop], 0, sizeof(CCComponentInfo));
         }
     }
-    
-    CC_LOG_WARNING("Could not find component with id (%" PRIu32 ")", id);
 }
 
 static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
