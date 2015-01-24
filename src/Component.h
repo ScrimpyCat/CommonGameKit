@@ -11,20 +11,13 @@
 
 #include <stdint.h>
 #include <CommonC/Common.h>
-#include "Entity.h"
 
-#define CC_COMPONENT_ID 0
 #define CC_COMPONENT_INHERIT(component) component __inherit
 
 /*!
  * @brief The unique ID of the component.
  */
 typedef uint32_t CCComponentID;
-
-typedef struct {
-    CCComponentID id;
-    CCEntity entity;
-} CCComponentClass, *CCComponentPrivate;
 
 /*!
  * @brief Generic Component handler.
@@ -79,27 +72,5 @@ CCComponent CCComponentCreateForName(const char *Name);
  * @param Component The component to be destroyed.
  */
 void CCComponentDestroy(CCComponent Component);
-
-
-#pragma mark - Base Component Functions
-static inline void CCComponentInitialize(CCComponent Component, CCComponentID id)
-{
-    *(CCComponentPrivate)Component = (CCComponentClass){ .id = id };
-}
-
-static inline CCComponentID CCComponentGetID(CCComponent Component)
-{
-    return ((CCComponentPrivate)Component)->id;
-}
-
-static inline void *CCComponentGetEntity(CCComponent Component)
-{
-    return ((CCComponentPrivate)Component)->entity;
-}
-
-static inline void CCComponentSetEntity(CCComponent Component, CCEntity Entity)
-{
-    ((CCComponentPrivate)Component)->entity = Entity;
-}
 
 #endif

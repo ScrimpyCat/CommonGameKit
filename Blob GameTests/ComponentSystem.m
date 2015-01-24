@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 #import "ComponentSystem.h"
+#import "ComponentBase.h"
 
 
 #define TEST_SYSTEM_ID 1

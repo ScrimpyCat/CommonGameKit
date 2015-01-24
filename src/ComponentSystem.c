@@ -10,6 +10,7 @@
 #include <CommonC/Common.h>
 #include <stdatomic.h>
 #include "GLSetup.h"
+#include "ComponentBase.h"
 
 
 typedef struct {
