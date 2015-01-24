@@ -245,6 +245,8 @@ CCComponentList CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystem
         if (System->components.active)
         {
             CCComponentList Active = System->components.active, Removed = System->components.removed;
+            CCComponentList Head = Active;
+            
             do
             {
                 if (CCComponentListGetCurrentComponent(Active) == CCComponentListGetCurrentComponent(Removed))
@@ -253,10 +255,16 @@ CCComponentList CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystem
                     
                     CCComponentList Dead = Active;
                     Active = CCComponentListEnumerateNext(Active);
+                    
+                    if (Dead == Head) Head = Active;
+                    
                     CCLinkedListDestroyNode((CCLinkedList)Dead);
-                    continue;
                 }
-            } while ((Active = CCComponentListEnumerateNext(Active)));
+                
+                else Active = CCComponentListEnumerateNext(Active);
+            } while ((Active) && (Removed));
+            
+            System->components.active = Head;
         }
         
         System->components.destroy = System->components.removed;
