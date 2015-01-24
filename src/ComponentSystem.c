@@ -45,7 +45,7 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
                     return;
                     );
     
-    const size_t Index = SystemsCount[ExecutionType];
+    const size_t Index = SystemsCount[ExecutionType] - 1;
     Systems[ExecutionType][Index] = (CCComponentSystem){
         .id = id,
         .executionType = ExecutionType,
