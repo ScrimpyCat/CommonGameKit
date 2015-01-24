@@ -76,10 +76,10 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
     {
         if (Systems[ExecutionType][Loop].id == id)
         {
-            CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.active);
-            CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.added);
-            CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.removed);
-            CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.destroy);
+            if (Systems[ExecutionType][Loop].components.active) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.active);
+            if (Systems[ExecutionType][Loop].components.added) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.added);
+            if (Systems[ExecutionType][Loop].components.removed) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.removed);
+            if (Systems[ExecutionType][Loop].components.destroy) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.destroy);
             
             memset(&Systems[ExecutionType][Loop], 0, sizeof(CCComponentSystem));
             break;
