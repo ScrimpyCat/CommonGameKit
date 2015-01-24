@@ -11,6 +11,7 @@
 
 #include <stdint.h>
 #include <CommonC/Common.h>
+#include "Entity.h"
 
 #define CC_COMPONENT_ID 0
 #define CC_COMPONENT_INHERIT(component) component __inherit
@@ -22,7 +23,7 @@ typedef uint32_t CCComponentID;
 
 typedef struct {
     CCComponentID id;
-    void *entity;
+    CCEntity entity;
 } CCComponentClass, *CCComponentPrivate;
 
 /*!
@@ -94,6 +95,11 @@ static inline CCComponentID CCComponentGetID(CCComponent Component)
 static inline void *CCComponentGetEntity(CCComponent Component)
 {
     return ((CCComponentPrivate)Component)->entity;
+}
+
+static inline void CCComponentSetEntity(CCComponent Component, CCEntity Entity)
+{
+    ((CCComponentPrivate)Component)->entity = Entity;
 }
 
 #endif
