@@ -9,6 +9,7 @@
 #include "ComponentSystem.h"
 #include <CommonC/Common.h>
 #include <stdatomic.h>
+#include "GLSetup.h"
 
 
 typedef struct {
@@ -31,11 +32,13 @@ typedef struct {
     } components;
 } CCComponentSystem;
 
-static CCComponentSystem *Systems[CCComponentSystemExecutionMax];
-static size_t SystemsCount[CCComponentSystemExecutionMax];
+static CCComponentSystem *Systems[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
+static size_t SystemsCount[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
+static double ElapsedTime[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 
 void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
 {
+    ExecutionType &= CCComponentSystemExecutionTypeMask;
     CC_SAFE_Realloc(Systems[ExecutionType], sizeof(CCComponentSystem) * ++SystemsCount[ExecutionType],
                     CC_LOG_ERROR("Failed to add new system (%" PRIu32 ") due to realloc failing. Allocation size: %zu", id, sizeof(CCComponentSystem) * SystemsCount[ExecutionType]);
                     SystemsCount[ExecutionType]--;
@@ -67,6 +70,7 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
 void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType)
 {
     //Note: Really only needed for unit tests, so doesn't matter if not correct
+    ExecutionType &= CCComponentSystemExecutionTypeMask;
     const size_t Count = SystemsCount[ExecutionType];
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
@@ -85,13 +89,25 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
 
 void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
 {
+    _Bool TimedUpdate = ExecutionType & CCComponentSystemExecutionOptionTimedUpdate;
+    ExecutionType &= CCComponentSystemExecutionTypeMask;
+    
+    double Delta = 0.0;
+    if (TimedUpdate)
+    {
+        const double CurrentTime = glfwGetTime();
+        if (ElapsedTime[ExecutionType] != 0.0) Delta = CurrentTime - ElapsedTime[ExecutionType];
+        ElapsedTime[ExecutionType] = CurrentTime;
+    }
+    
     const size_t Count = SystemsCount[ExecutionType];
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
         if (Systems[ExecutionType][Loop].update)
         {
             if (Systems[ExecutionType][Loop].lock) Systems[ExecutionType][Loop].lock();
-            Systems[ExecutionType][Loop].update(NULL, Systems[ExecutionType][Loop].components.active);
+            if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)Systems[ExecutionType][Loop].update)(Delta, Systems[ExecutionType][Loop].components.active);
+            else Systems[ExecutionType][Loop].update(NULL, Systems[ExecutionType][Loop].components.active);
             if (Systems[ExecutionType][Loop].unlock) Systems[ExecutionType][Loop].unlock();
         }
     }
@@ -99,7 +115,7 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
 
 static CCComponentSystem *CCComponentSystemHandlesComponentFind(CCComponent Component)
 {
-    for (size_t Loop = 0; Loop < CCComponentSystemExecutionMax; Loop++)
+    for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
         const size_t Count = SystemsCount[Loop];
         for (size_t Loop2 = 0; Loop2 < Count; Loop2++)
@@ -172,7 +188,7 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
 
 static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
 {
-    for (size_t Loop = 0; Loop < CCComponentSystemExecutionMax; Loop++)
+    for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
         const size_t Count = SystemsCount[Loop];
         for (size_t Loop2 = 0; Loop2 < Count; Loop2++)

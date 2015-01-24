@@ -24,18 +24,24 @@
  * @constant CCComponentSystemExecutionMax The maximum amount of execution types.
  */
 typedef enum {
+    ///The options mask.
+    CCComponentSystemExecutionOptionMask = 0xff000000,
+    ///The execution type uses the timed update.
+    CCComponentSystemExecutionOptionTimedUpdate = (1 << 24),
+    
+    CCComponentSystemExecutionTypeMask = 0x000000ff,
     ///Needs to be manually called (CCComponentSystemUpdateCallback).
-    CCComponentSystemExecutionTypeManual,
+    CCComponentSystemExecutionTypeManual = 0,
     ///Runs on the render thread (CCComponentSystemTimedUpdateCallback).
-    CCComponentSystemExecutionTypeRender,
+    CCComponentSystemExecutionTypeRender = 1 | CCComponentSystemExecutionOptionTimedUpdate,
     ///Runs on the physics thread (CCComponentSystemTimedUpdateCallback).
-    CCComponentSystemExecutionTypePhysics,
+    CCComponentSystemExecutionTypePhysics = 2 | CCComponentSystemExecutionOptionTimedUpdate,
     ///Runs on the update thread (CCComponentSystemTimedUpdateCallback).
-    CCComponentSystemExecutionTypeUpdate,
+    CCComponentSystemExecutionTypeUpdate = 3 | CCComponentSystemExecutionOptionTimedUpdate,
     ///Runs on the input/main thread (CCComponentSystemUpdateCallback).
-    CCComponentSystemExecutionTypeInput,
+    CCComponentSystemExecutionTypeInput = 4,
     ///Runs on the IO thread (CCComponentSystemUpdateCallback).
-    CCComponentSystemExecutionTypeIO,
+    CCComponentSystemExecutionTypeIO = 5,
     ///The maximum amount of execution types.
     CCComponentSystemExecutionMax
 } CCComponentSystemExecutionType;
