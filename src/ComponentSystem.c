@@ -105,9 +105,11 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
     {
         if (Systems[ExecutionType][Loop].update)
         {
+            CCComponentList *ActiveComponents = &Systems[ExecutionType][Loop].components.active;
+            
             if (Systems[ExecutionType][Loop].lock) Systems[ExecutionType][Loop].lock();
-            if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)Systems[ExecutionType][Loop].update)(Delta, Systems[ExecutionType][Loop].components.active);
-            else Systems[ExecutionType][Loop].update(NULL, Systems[ExecutionType][Loop].components.active);
+            if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)Systems[ExecutionType][Loop].update)(Delta, ActiveComponents);
+            else Systems[ExecutionType][Loop].update(NULL, ActiveComponents);
             if (Systems[ExecutionType][Loop].unlock) Systems[ExecutionType][Loop].unlock();
         }
     }

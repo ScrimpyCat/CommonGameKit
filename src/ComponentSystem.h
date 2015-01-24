@@ -60,12 +60,12 @@ typedef struct {
 /*!
  * @brief Generic system update callback.
  */
-typedef void (*CCComponentSystemUpdateCallback)(void *Context, CCComponentList Components);
+typedef void (*CCComponentSystemUpdateCallback)(void *Context, CCComponentList *Components);
 
 /*!
  * @brief Time based system update callback.
  */
-typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCComponentList Components);
+typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCComponentList *Components);
 
 
 /*!
