@@ -172,7 +172,12 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
                 if (List->component == Component) break;
             } while ((List = CCComponentListEnumerateNext(List)));
             
-            if (List) CCLinkedListDestroyNode((CCLinkedListNode*)List);
+            if (List)
+            {
+                if (List == System->components.active) System->components.active = CCComponentListEnumerateNext(List);
+                
+                CCLinkedListDestroyNode((CCLinkedListNode*)List);
+            }
             
             if (System->unlock) System->unlock();
         }
