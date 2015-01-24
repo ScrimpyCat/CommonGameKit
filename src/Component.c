@@ -71,7 +71,7 @@ static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
         CC_LOG_ERROR("Failed to create component (%" PRIu32 " : %s) of size (%zu)", Info->id, Info->name, Info->size);
     }
     
-    if (Info->initializer)
+    else if (Info->initializer)
     {
         Info->initializer(Component, Info->id);
     }
