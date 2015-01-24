@@ -145,6 +145,24 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
 void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType);
 
 /*!
+ * @brief Add component to the system.
+ * @description Finds a system that manages the component and adds it to it. If no manager is found, it is
+ *              not added, and is left as an unmanaged component.
+ *
+ * @param Component The component to be added.
+ */
+void CCComponentSystemAddComponent(CCComponent Component);
+
+/*!
+ * @brief Remove component from the system.
+ * @description Removes the components from the system that manages it. If it is an unmanaged component, then
+ *              it does nothing.
+ *
+ * @param Component The component to be removed.
+ */
+void CCComponentSystemRemoveComponent(CCComponent Component);
+
+/*!
  * @brief Get the current components for the system.
  * @warning Should obtain locks to the system prior to calling this function.
  * @return The current component list.
