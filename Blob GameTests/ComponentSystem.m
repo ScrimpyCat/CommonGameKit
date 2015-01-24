@@ -11,7 +11,7 @@
 #import "ComponentSystem.h"
 
 
-#define TEST_SYSTEM_ID 0
+#define TEST_SYSTEM_ID 1
 
 @interface ComponentSystem : XCTestCase
 
@@ -59,7 +59,7 @@ static void TestSystemAddingComponentNonCallbackUpdate(void *Context, CCComponen
 
 static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID id)
 {
-    return id == TEST_SYSTEM_ID;
+    return id == CC_COMPONENT_ID;
 }
 
 -(void) testSystemAddingComponentNonCallback
@@ -95,6 +95,7 @@ static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID 
     XCTAssertFalse(TestSystemAddingComponentNonCallbackHasAddedComponents, @"Should not have any added components");
     XCTAssertFalse(TestSystemAddingComponentNonCallbackHasRemovedComponents, @"Should not have any removed components"); //as removed has been cleared
     
+    CCComponentDestroy(Component);
     CCComponentSystemDeregister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual);
 }
 
@@ -131,6 +132,7 @@ static void TestSystemAddingComponentCallbackRemovingComponent(CCComponent Compo
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertFalse(TestSystemAddingComponentCallbackHasActiveComponents, @"Should not have any active components");
     
+    CCComponentDestroy(Component);
     CCComponentSystemDeregister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual);
 }
 
