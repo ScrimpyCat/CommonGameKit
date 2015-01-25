@@ -1,5 +1,5 @@
 //
-//  ComponentSystem.m
+//  ComponentSystemTests.m
 //  Blob Game
 //
 //  Created by Stefan Johnson on 23/01/2015.
@@ -14,11 +14,11 @@
 
 #define TEST_SYSTEM_ID 1
 
-@interface ComponentSystem : XCTestCase
+@interface ComponentSystemTests : XCTestCase
 
 @end
 
-@implementation ComponentSystem
+@implementation ComponentSystemTests
 
 -(void) setUp
 {
