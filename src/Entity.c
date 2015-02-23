@@ -45,6 +45,7 @@ void CCEntityDestroy(CCEntity Entity)
 void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
 {
     CCAssertLog(CCComponentGetEntity(Component) == NULL, "Component must not be attached to another entity");
+    
     CCComponentSetEntity(Component, Entity);
     CCCollectionInsertElement(Entity->components, &Component);
 }
@@ -52,7 +53,7 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
 void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
 {
     CCAssertLog(CCComponentGetEntity(Component) == Entity, "Component must be attached to this entity");
-    CCComponentSetEntity(Component, NULL);
     
+    CCComponentSetEntity(Component, NULL);
     CCCollectionRemoveElement(Entity->components, CCCollectionFindElement(Entity->components, &Component, NULL));
 }
