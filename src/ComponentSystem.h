@@ -51,21 +51,16 @@ typedef enum {
  */
 typedef uint32_t CCComponentSystemID;
 
-typedef struct {
-    CCLinkedListNode node;
-    CCComponent component;
-} *CCComponentList;
-
 
 /*!
  * @brief Generic system update callback.
  */
-typedef void (*CCComponentSystemUpdateCallback)(void *Context, CCComponentList *Components);
+typedef void (*CCComponentSystemUpdateCallback)(void *Context, CCCollection Components);
 
 /*!
  * @brief Time based system update callback.
  */
-typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCComponentList *Components);
+typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCCollection Components);
 
 
 /*!
@@ -167,7 +162,7 @@ void CCComponentSystemRemoveComponent(CCComponent Component);
  * @warning Should obtain locks to the system prior to calling this function.
  * @return The current component list.
  */
-CCComponentList CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
+CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Get the current added components for the system.
@@ -177,9 +172,9 @@ CCComponentList CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
  * @warning This call must be made within a system lock.
  *
  * @param id The unique ID of the system.
- * @return The component list of the added components.
+ * @return The list of the added components. Note: This collection must be destroyed.
  */
-CCComponentList CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id);
+CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Get the current removed components for the system.
@@ -189,9 +184,9 @@ CCComponentList CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID
  * @warning This call must be made within a system lock.
  *
  * @param id The unique ID of the system.
- * @return The component list of the removed components.
+ * @return The component list of the removed components. Note: This collection must be destroyed.
  */
-CCComponentList CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id);
+CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Attempt to lock the system.
@@ -211,27 +206,5 @@ void CCComponentSystemLock(CCComponentSystemID id);
  * @param The unique ID of the system.
  */
 void CCComponentSystemUnlock(CCComponentSystemID id);
-
-
-#pragma mark - Component List Functions
-/*!
- * @brief Enumerate to the next component in the list.
- * @param List The current list.
- * @return The new list where the current component is the next one.
- */
-static inline CCComponentList CCComponentListEnumerateNext(CCComponentList List)
-{
-    return (CCComponentList)CCLinkedListEnumerateNext((CCLinkedList)List);
-}
-
-/*!
- * @brief Get the current component from the list.
- * @param List The current list.
- * @return The current component in the list.
- */
-static inline CCComponent CCComponentListGetCurrentComponent(CCComponentList List)
-{
-    return List? List->component : NULL;
-}
 
 #endif

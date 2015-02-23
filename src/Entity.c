@@ -13,7 +13,7 @@
 
 typedef struct CCEntityInfo {
     CCEntityID id;
-    CCArray components; //TODO: Change later so doesn't waste memory
+    CCCollection components;
 } CCEntityInfo;
 
 CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator)
@@ -24,7 +24,7 @@ CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator)
     {
         *Entity = (CCEntityInfo){
             .id = id,
-            .components = CCArrayCreate(Allocator, sizeof(CCComponent), 1)
+            .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), NULL)
         };
     }
     
@@ -38,6 +38,7 @@ CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator)
 
 void CCEntityDestroy(CCEntity Entity)
 {
+    CCCollectionDestroy(Entity->components);
     CC_SAFE_Free(Entity);
 }
 
@@ -45,7 +46,7 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
 {
     CCAssertLog(CCComponentGetEntity(Component) == NULL, "Component must not be attached to another entity");
     CCComponentSetEntity(Component, Entity);
-    CCArrayAppendElement(Entity->components, &Component);
+    CCCollectionInsertElement(Entity->components, &Component);
 }
 
 void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
@@ -53,12 +54,5 @@ void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
     CCAssertLog(CCComponentGetEntity(Component) == Entity, "Component must be attached to this entity");
     CCComponentSetEntity(Component, NULL);
     
-    for (size_t Loop = 0, Count = CCArrayGetCount(Entity->components); Loop < Count; Loop++)
-    {
-        if (*(CCComponent*)CCArrayGetElementAtIndex(Entity->components, Loop) == Component)
-        {
-            CCArrayReplaceElementAtIndex(Entity->components, Loop, &(CCComponent){ NULL });
-            break;
-        }
-    }
+    CCCollectionRemoveElement(Entity->components, CCCollectionFindElement(Entity->components, &Component, NULL));
 }

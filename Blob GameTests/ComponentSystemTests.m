@@ -35,7 +35,7 @@
 }
 
 static _Bool TestSystemRegisteringUpdateCalled = FALSE;
-static void TestSystemRegisteringUpdate(void *Context, CCComponentList *Components)
+static void TestSystemRegisteringUpdate(void *Context, CCCollection Components)
 {
     TestSystemRegisteringUpdateCalled = TRUE;
 }
@@ -51,11 +51,15 @@ static void TestSystemRegisteringUpdate(void *Context, CCComponentList *Componen
 }
 
 static _Bool TestSystemAddingComponentNonCallbackHasActiveComponents, TestSystemAddingComponentNonCallbackHasAddedComponents, TestSystemAddingComponentNonCallbackHasRemovedComponents;
-static void TestSystemAddingComponentNonCallbackUpdate(void *Context, CCComponentList *Components)
+static void TestSystemAddingComponentNonCallbackUpdate(void *Context, CCCollection Components)
 {
-    TestSystemAddingComponentNonCallbackHasAddedComponents = CCComponentSystemGetAddedComponentsForSystem(TEST_SYSTEM_ID) != NULL;
-    TestSystemAddingComponentNonCallbackHasRemovedComponents = CCComponentSystemGetRemovedComponentsForSystem(TEST_SYSTEM_ID) != NULL;
-    TestSystemAddingComponentNonCallbackHasActiveComponents = *Components != NULL;
+    CCCollection Added = CCComponentSystemGetAddedComponentsForSystem(TEST_SYSTEM_ID), Removed = CCComponentSystemGetRemovedComponentsForSystem(TEST_SYSTEM_ID);
+    TestSystemAddingComponentNonCallbackHasAddedComponents = CCCollectionGetCount(Added) != 0;
+    TestSystemAddingComponentNonCallbackHasRemovedComponents = CCCollectionGetCount(Removed) != 0;
+    TestSystemAddingComponentNonCallbackHasActiveComponents = CCCollectionGetCount(Components) != 0;
+    
+    CCCollectionDestroy(Added);
+    CCCollectionDestroy(Removed);
 }
 
 static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID id)
@@ -101,9 +105,9 @@ static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID 
 }
 
 static _Bool TestSystemAddingComponentCallbackHasActiveComponents;
-static void TestSystemAddingComponentCallbackUpdate(void *Context, CCComponentList *Components)
+static void TestSystemAddingComponentCallbackUpdate(void *Context, CCCollection Components)
 {
-    TestSystemAddingComponentCallbackHasActiveComponents = *Components != NULL;
+    TestSystemAddingComponentCallbackHasActiveComponents = CCCollectionGetCount(Components) != 0;
 }
 
 static void TestSystemAddingComponentCallbackAddingComponent(CCComponent Component)

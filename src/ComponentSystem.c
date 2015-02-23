@@ -28,7 +28,7 @@ typedef struct {
     CCComponentSystemUnlockCallback unlock;
     
     struct {
-        CCComponentList active, added, removed, destroy;
+        CCCollection active, added, removed, destroy;
         atomic_flag addedLock, removedLock;
     } components;
 } CCComponentSystem;
@@ -58,10 +58,10 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
         .lock = SystemLock,
         .unlock = SystemUnlock,
         .components = {
-            .active = NULL,
-            .added = NULL,
-            .removed = NULL,
-            .destroy = NULL,
+            .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL),
+            .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL),
+            .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL),
+            .destroy = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL),
             .addedLock = ATOMIC_FLAG_INIT,
             .removedLock = ATOMIC_FLAG_INIT
         }
@@ -77,10 +77,10 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
     {
         if (Systems[ExecutionType][Loop].id == id)
         {
-            if (Systems[ExecutionType][Loop].components.active) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.active);
-            if (Systems[ExecutionType][Loop].components.added) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.added);
-            if (Systems[ExecutionType][Loop].components.removed) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.removed);
-            if (Systems[ExecutionType][Loop].components.destroy) CCLinkedListDestroy((CCLinkedList)Systems[ExecutionType][Loop].components.destroy);
+            if (Systems[ExecutionType][Loop].components.active) CCCollectionDestroy(Systems[ExecutionType][Loop].components.active);
+            if (Systems[ExecutionType][Loop].components.added) CCCollectionDestroy(Systems[ExecutionType][Loop].components.added);
+            if (Systems[ExecutionType][Loop].components.removed) CCCollectionDestroy(Systems[ExecutionType][Loop].components.removed);
+            if (Systems[ExecutionType][Loop].components.destroy) CCCollectionDestroy(Systems[ExecutionType][Loop].components.destroy);
             
             memset(&Systems[ExecutionType][Loop], 0, sizeof(CCComponentSystem));
             break;
@@ -106,7 +106,7 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
     {
         if (Systems[ExecutionType][Loop].update)
         {
-            CCComponentList *ActiveComponents = &Systems[ExecutionType][Loop].components.active;
+            CCCollection ActiveComponents = Systems[ExecutionType][Loop].components.active;
             
             if (Systems[ExecutionType][Loop].lock) Systems[ExecutionType][Loop].lock();
             if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)Systems[ExecutionType][Loop].update)(Delta, ActiveComponents);
@@ -136,21 +136,19 @@ void CCComponentSystemAddComponent(CCComponent Component)
     CCComponentSystem *System = CCComponentSystemHandlesComponentFind(Component);
     if (System)
     {
-        CCLinkedListNode *Node = CCLinkedListCreateNode(CC_STD_ALLOCATOR, sizeof(CCComponent), &Component);
-        
         if (System->addingComponent)
         {
             System->addingComponent(Component);
             
             if (System->lock) System->lock();
-            System->components.active = System->components.active ? (CCComponentList)CCLinkedListInsert((CCLinkedList)System->components.active , Node) : (CCComponentList)Node;
+            CCCollectionInsertElement(System->components.active, &Component);
             if (System->unlock) System->unlock();
         }
         
         else
         {
             while (!atomic_flag_test_and_set(&System->components.addedLock));
-            System->components.added = System->components.added ? (CCComponentList)CCLinkedListInsert((CCLinkedList)System->components.added, Node) : (CCComponentList)Node;
+            CCCollectionInsertElement(System->components.added, &Component);
             atomic_flag_clear(&System->components.addedLock);
         }
     }
@@ -166,29 +164,14 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
             System->removingComponent(Component);
             
             if (System->lock) System->lock();
-            
-            CCComponentList List = System->components.active;
-            do
-            {
-                if (List->component == Component) break;
-            } while ((List = CCComponentListEnumerateNext(List)));
-            
-            if (List)
-            {
-                if (List == System->components.active) System->components.active = CCComponentListEnumerateNext(List);
-                
-                CCLinkedListDestroyNode((CCLinkedListNode*)List);
-            }
-            
+            CCCollectionRemoveElement(System->components.active, CCCollectionFindElement(System->components.active, &Component, NULL));
             if (System->unlock) System->unlock();
         }
         
         else
         {
-            CCLinkedListNode *Node = CCLinkedListCreateNode(CC_STD_ALLOCATOR, sizeof(CCComponent), &Component);
-            
             while (!atomic_flag_test_and_set(&System->components.removedLock));
-            System->components.removed = System->components.removed ? (CCComponentList)CCLinkedListInsert((CCLinkedList)System->components.removed, Node) : (CCComponentList)Node;
+            CCCollectionInsertElement(System->components.removed, &Component);
             atomic_flag_clear(&System->components.removedLock);
         }
     }
@@ -208,76 +191,57 @@ static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
     return NULL;
 }
 
-CCComponentList CCComponentSystemGetComponentsForSystem(CCComponentSystemID id)
+CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
-    return System ? System->components.active : NULL;
+    return System->components.active;
 }
 
-CCComponentList CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id)
+CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
     
-    CCComponentList List = NULL;
-    if ((System) && (System->components.added))
+    CCCollection Added = NULL;
+    if (System)
     {
-        List = System->components.added;
-        
         while (!atomic_flag_test_and_set(&System->components.addedLock));
-        System->components.active = System->components.active ? (CCComponentList)CCLinkedListInsert((CCLinkedList)System->components.active, (CCLinkedList)System->components.added) : System->components.added;
+        CCCollectionInsertCollection(System->components.active, System->components.added, NULL); //TODO: make a consumed insert or a retained list?
         
-        System->components.added = NULL;
+        Added = System->components.added;
+        System->components.added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL);
+        
         atomic_flag_clear(&System->components.addedLock);
     }
     
-    return List;
+    return Added;
 }
 
-CCComponentList CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id)
+CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
     
-    CCComponentList List = NULL;
-    if ((System) && (System->components.removed))
+    CCCollection Removed = NULL;
+    if (System)
     {
-        if (System->components.destroy)
-        {
-            CCLinkedListDestroy((CCLinkedList)System->components.destroy);
-            System->components.destroy = NULL;
-        }
+        CCCollectionDestroy(System->components.destroy);
         
-        List = System->components.removed;
-        
-        if (System->components.active)
-        {
-            CCComponentList Active = System->components.active, Removed = System->components.removed;
-            CCComponentList Head = Active;
-            
-            do
-            {
-                if (CCComponentListGetCurrentComponent(Active) == CCComponentListGetCurrentComponent(Removed))
-                {
-                    Removed = CCComponentListEnumerateNext(Removed);
-                    
-                    CCComponentList Dead = Active;
-                    Active = CCComponentListEnumerateNext(Active);
-                    
-                    if (Dead == Head) Head = Active;
-                    
-                    CCLinkedListDestroyNode((CCLinkedList)Dead);
-                }
-                
-                else Active = CCComponentListEnumerateNext(Active);
-            } while ((Active) && (Removed));
-            
-            System->components.active = Head;
-        }
+        while (!atomic_flag_test_and_set(&System->components.removedLock));
         
         System->components.destroy = System->components.removed;
-        System->components.removed = NULL;
+        System->components.removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL);
+        
+        atomic_flag_clear(&System->components.removedLock);
+        
+        
+        CCCollection Entries = CCCollectionFindCollection(System->components.active, System->components.destroy, NULL);
+        CCCollectionRemoveCollection(System->components.active, Entries);
+        CCCollectionDestroy(Entries);
+        
+        Removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL);
+        CCCollectionInsertCollection(Removed, System->components.destroy, NULL);
     }
     
-    return List;
+    return Removed;
 }
 
 _Bool CCComponentSystemTryLock(CCComponentSystemID id)
