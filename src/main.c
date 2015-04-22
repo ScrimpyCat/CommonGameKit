@@ -71,7 +71,7 @@ int main(int argc, const char *argv[])
         return EXIT_FAILURE;
     }
     
-    
+    glfwMakeContextCurrent(Window);
     CCPlatformWindowSetup(Window);
     
     CC_LOG_INFO("Vendor: %s", glGetString(GL_VENDOR));
