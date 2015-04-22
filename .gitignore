@@ -1,3 +1,7 @@
+# Ninja Build
+.ninja_deps
+.ninja_log
+
 # Mac
 .DS_Store
 
