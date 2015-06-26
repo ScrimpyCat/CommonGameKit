@@ -56,4 +56,10 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component);
  */
 void CCEntityDetachComponent(CCEntity Entity, CCComponent Component);
 
+/*!
+* @brief Get the current components for the entity.
+* @return The current component list.
+*/
+CCCollection CCEntityGetComponents(CCEntity Entity);
+
 #endif

@@ -16,6 +16,14 @@ typedef struct CCEntityInfo {
     CCCollection components;
 } CCEntityInfo;
 
+static void CCEntityComponentDestructor(CCCollection Collection, CCComponent *Component)
+{
+    CCAssertLog(!CCComponentGetIsManaged(*Component), "Entity should not be destroying managed components");
+    
+    CCComponentSetEntity(*Component, NULL);
+    CCComponentDestroy(*Component);
+}
+
 CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator)
 {
     CCEntity Entity = CCMalloc(Allocator, sizeof(CCEntityInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -24,7 +32,7 @@ CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator)
     {
         *Entity = (CCEntityInfo){
             .id = id,
-            .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), NULL)
+            .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), (CCCollectionElementDestructor)CCEntityComponentDestructor)
         };
     }
     
@@ -47,7 +55,7 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
     CCAssertLog(CCComponentGetEntity(Component) == NULL, "Component must not be attached to another entity");
     
     CCComponentSetEntity(Component, Entity);
-    CCCollectionInsertElement(Entity->components, &Component);
+    CCCollectionInsertElement(Entity->components, &Component); //TODO: will components be attached/detached from multiple threads?
 }
 
 void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
@@ -55,5 +63,10 @@ void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
     CCAssertLog(CCComponentGetEntity(Component) == Entity, "Component must be attached to this entity");
     
     CCComponentSetEntity(Component, NULL);
-    CCCollectionRemoveElement(Entity->components, CCCollectionFindElement(Entity->components, &Component, NULL));
+    CCCollectionRemoveElement(Entity->components, CCCollectionFindElement(Entity->components, &Component, NULL)); //TODO: will components be attached/detached from multiple threads?
+}
+
+CCCollection CCEntityGetComponents(CCEntity Entity)
+{
+    return Entity->components; //TODO: will components be attached/detached from multiple threads?
 }

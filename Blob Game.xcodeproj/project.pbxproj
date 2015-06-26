@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk.a */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
+		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
+		F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
@@ -291,6 +293,9 @@
 
 /* Begin PBXFileReference section */
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
+		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
+		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
+		F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityManagerTests.m; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Component.h; path = src/Component.h; sourceTree = SOURCE_ROOT; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Component.c; path = src/Component.c; sourceTree = SOURCE_ROOT; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ComponentSystem.h; path = src/ComponentSystem.h; sourceTree = SOURCE_ROOT; };
@@ -369,6 +374,8 @@
 		F39796DD1A5C7748007C3422 /* Component System */ = {
 			isa = PBXGroup;
 			children = (
+				F3511D611A9B371C006893F9 /* EntityManager.h */,
+				F3511D621A9B372A006893F9 /* EntityManager.c */,
 				F3AE99701A73E2F000212838 /* Entity.h */,
 				F3AE996F1A73E2F000212838 /* Entity.c */,
 				F397970A1A5C7CDC007C3422 /* ComponentSystem.h */,
@@ -521,6 +528,7 @@
 		F3F696D31A5D041E00E486B5 /* Component System */ = {
 			isa = PBXGroup;
 			children = (
+				F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */,
 				F3AE99B51A750D6500212838 /* EntityTests.m */,
 				F3AE99421A725AC500212838 /* ComponentSystemTests.m */,
 				F3F696D41A5D047400E486B5 /* ComponentTests.m */,
@@ -907,6 +915,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
@@ -922,6 +931,7 @@
 			files = (
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
+				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

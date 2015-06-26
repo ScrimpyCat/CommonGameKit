@@ -37,6 +37,11 @@ static CCComponentSystem *Systems[CCComponentSystemExecutionMax & CCComponentSys
 static size_t SystemsCount[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 static double ElapsedTime[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 
+static void CCComponentDestructor(CCCollection Collection, CCComponent *Component)
+{
+    CCComponentSetIsManaged(*Component, FALSE);
+}
+
 void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
 {
     ExecutionType &= CCComponentSystemExecutionTypeMask;
@@ -136,6 +141,7 @@ void CCComponentSystemAddComponent(CCComponent Component)
     CCComponentSystem *System = CCComponentSystemHandlesComponentFind(Component);
     if (System)
     {
+        CCComponentSetIsManaged(Component, TRUE);
         if (System->addingComponent)
         {
             System->addingComponent(Component);
@@ -166,6 +172,7 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
             if (System->lock) System->lock();
             CCCollectionRemoveElement(System->components.active, CCCollectionFindElement(System->components.active, &Component, NULL));
             if (System->unlock) System->unlock();
+            CCComponentSetIsManaged(Component, FALSE);
         }
         
         else
@@ -237,7 +244,7 @@ CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID 
         CCCollectionRemoveCollection(System->components.active, Entries);
         CCCollectionDestroy(Entries);
         
-        Removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL);
+        Removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), (CCCollectionElementDestructor)CCComponentDestructor);
         CCCollectionInsertCollection(Removed, System->components.destroy, NULL);
     }
     

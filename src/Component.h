@@ -13,9 +13,11 @@
 #include <CommonC/Common.h>
 
 #define CC_COMPONENT_INHERIT(component) component __inherit
+#define CC_COMPONENT_ID_RESERVED_MASK ~((CCComponentID)-1)
 
 /*!
  * @brief The unique ID of the component.
+ * @description Highest bit is reserved for internal use, see CC_COMPONENT_ID_RESERVED_MASK.
  */
 typedef uint32_t CCComponentID;
 
