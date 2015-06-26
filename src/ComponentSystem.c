@@ -33,8 +33,7 @@ typedef struct {
     } components;
 } CCComponentSystem;
 
-static CCComponentSystem *Systems[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
-static size_t SystemsCount[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
+static CCOrderedCollection Systems[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 static double ElapsedTime[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 
 static void CCComponentDestructor(CCCollection Collection, CCComponent *Component)
@@ -42,17 +41,20 @@ static void CCComponentDestructor(CCCollection Collection, CCComponent *Componen
     CCComponentSetIsManaged(*Component, FALSE);
 }
 
+static void CCComponentSystemDestructor(CCCollection Collection, CCComponentSystem *System)
+{
+    if (System->components.active) CCCollectionDestroy(System->components.active);
+    if (System->components.added) CCCollectionDestroy(System->components.added);
+    if (System->components.removed) CCCollectionDestroy(System->components.removed);
+    if (System->components.destroy) CCCollectionDestroy(System->components.destroy);
+}
+
 void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
 {
     ExecutionType &= CCComponentSystemExecutionTypeMask;
-    CC_SAFE_Realloc(Systems[ExecutionType], sizeof(CCComponentSystem) * ++SystemsCount[ExecutionType],
-                    CC_LOG_ERROR("Failed to add new system (%" PRIu32 ") due to realloc failing. Allocation size: %zu", id, sizeof(CCComponentSystem) * SystemsCount[ExecutionType]);
-                    SystemsCount[ExecutionType]--;
-                    return;
-                    );
+    if (!Systems[ExecutionType]) Systems[ExecutionType] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintHeavyEnumerating, sizeof(CCComponentSystem), (CCCollectionElementDestructor)CCComponentSystemDestructor);
     
-    const size_t Index = SystemsCount[ExecutionType] - 1;
-    Systems[ExecutionType][Index] = (CCComponentSystem){
+    CCOrderedCollectionAppendElement(Systems[ExecutionType], &(CCComponentSystem){
         .id = id,
         .executionType = ExecutionType,
         .update = Update,
@@ -70,27 +72,18 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
             .addedLock = ATOMIC_FLAG_INIT,
             .removedLock = ATOMIC_FLAG_INIT
         }
-    };
+    });
+}
+
+static CCComparisonResult CCComponentSystemIDComparator(CCComponentSystem *System, CCComponentSystemID *id)
+{
+    return System->id == *id ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType)
 {
-    //Note: Really only needed for unit tests, so doesn't matter if not correct
     ExecutionType &= CCComponentSystemExecutionTypeMask;
-    const size_t Count = SystemsCount[ExecutionType];
-    for (size_t Loop = 0; Loop < Count; Loop++)
-    {
-        if (Systems[ExecutionType][Loop].id == id)
-        {
-            if (Systems[ExecutionType][Loop].components.active) CCCollectionDestroy(Systems[ExecutionType][Loop].components.active);
-            if (Systems[ExecutionType][Loop].components.added) CCCollectionDestroy(Systems[ExecutionType][Loop].components.added);
-            if (Systems[ExecutionType][Loop].components.removed) CCCollectionDestroy(Systems[ExecutionType][Loop].components.removed);
-            if (Systems[ExecutionType][Loop].components.destroy) CCCollectionDestroy(Systems[ExecutionType][Loop].components.destroy);
-            
-            memset(&Systems[ExecutionType][Loop], 0, sizeof(CCComponentSystem));
-            break;
-        }
-    }
+    CCCollectionRemoveElement(Systems[ExecutionType], CCCollectionFindElement(Systems[ExecutionType], &id, (CCComparator)CCComponentSystemIDComparator));
 }
 
 void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
@@ -106,31 +99,30 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
         ElapsedTime[ExecutionType] = CurrentTime;
     }
     
-    const size_t Count = SystemsCount[ExecutionType];
-    for (size_t Loop = 0; Loop < Count; Loop++)
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(Systems[ExecutionType], &Enumerator);
+    for (CCComponentSystem *System = CCCollectionEnumeratorGetCurrent(&Enumerator); System; System = CCCollectionEnumeratorNext(&Enumerator))
     {
-        if (Systems[ExecutionType][Loop].update)
-        {
-            CCCollection ActiveComponents = Systems[ExecutionType][Loop].components.active;
-            
-            if (Systems[ExecutionType][Loop].lock) Systems[ExecutionType][Loop].lock();
-            if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)Systems[ExecutionType][Loop].update)(Delta, ActiveComponents);
-            else Systems[ExecutionType][Loop].update(NULL, ActiveComponents);
-            if (Systems[ExecutionType][Loop].unlock) Systems[ExecutionType][Loop].unlock();
-        }
+        CCCollection ActiveComponents = System->components.active;
+        
+        if (System->lock) System->lock();
+        if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)System->update)(Delta, ActiveComponents);
+        else System->update(NULL, ActiveComponents);
+        if (System->unlock) System->unlock();
     }
+}
+
+static CCComparisonResult CCComponentSystemComponentComparator(CCComponentSystem *System, CCComponent *Component)
+{
+    return (System->handlesComponent) && (System->handlesComponent(CCComponentGetID(*Component))) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 static CCComponentSystem *CCComponentSystemHandlesComponentFind(CCComponent Component)
 {
     for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
-        const size_t Count = SystemsCount[Loop];
-        for (size_t Loop2 = 0; Loop2 < Count; Loop2++)
-        {
-            CCComponentSystem *System = &Systems[Loop][Loop2];
-            if ((System->handlesComponent) && (System->handlesComponent(CCComponentGetID(Component)))) return System;
-        }
+        CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &Component, (CCComparator)CCComponentSystemComponentComparator));
+        if (System) return System;
     }
     
     return NULL;
@@ -188,11 +180,8 @@ static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
 {
     for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
-        const size_t Count = SystemsCount[Loop];
-        for (size_t Loop2 = 0; Loop2 < Count; Loop2++)
-        {
-            if (Systems[Loop][Loop2].id == id) return &Systems[Loop][Loop2];
-        }
+        CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &id, (CCComparator)CCComponentSystemIDComparator));
+        if (System) return System;
     }
     
     return NULL;

@@ -19,22 +19,21 @@ typedef struct {
     //TODO: Dependencies
 } CCComponentInfo;
 
-CCComponentInfo *ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
-static size_t ComponentsCount = 0;
+static void CCComponentListElementDestructor(CCCollection Collection, CCComponentInfo *Element)
+{
+    CC_SAFE_Free(Element->name);
+}
+
+CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
 void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer)
 {
-    CC_SAFE_Realloc(ComponentList, sizeof(typeof(*ComponentList)) * ++ComponentsCount,
-                    CC_LOG_ERROR("Failed to add new component (%" PRIu32 " : %s) due to realloc failing. Allocation size: %zu", id, Name, sizeof(typeof(*ComponentList)) * ComponentsCount);
-                    ComponentsCount--;
-                    return;
-                    );
+    if (!ComponentList) ComponentList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCComponentInfo), (CCCollectionElementDestructor)CCComponentListElementDestructor);
     
     char *ComponentName = NULL;
     if (Name)
     {
         CC_SAFE_Malloc(ComponentName, sizeof(char) * (strlen(Name) + 1),
                        CC_LOG_ERROR("Failed to add new component (%" PRIu32 " : %s) due to allocation space for name failing. Allocation size: %zu", id, Name, sizeof(char) * (strlen(Name) + 1));
-                       ComponentsCount--;
                        return;
                        );
         
@@ -42,25 +41,28 @@ void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType All
     }
     
     
-    ComponentList[ComponentsCount - 1] = (typeof(*ComponentList)){
+    CCCollectionInsertElement(ComponentList, &(CCComponentInfo){
         .id = id,
         .name = ComponentName,
         .allocator = Allocator,
         .initializer = Initializer,
         .size = Size
-    };
+    });
+}
+
+static CCComparisonResult CCComponentIDComparator(const CCComponentInfo *Component, const CCComponentID *id)
+{
+    return Component->id == *id ? CCComparisonResultEqual : CCComparisonResultInvalid;
+}
+
+static CCComparisonResult CCComponentNameComparator(const CCComponentInfo *Component, const char **Name)
+{
+    return (Component->name) && (!strcmp(*Name, Component->name)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 void CCComponentDeregister(CCComponentID id)
 {
-    //Note: Really only needed for unit tests, so doesn't matter if not correct
-    for (size_t Loop = 0, Count = ComponentsCount; Loop < Count; Loop++)
-    {
-        if (ComponentList[Loop].id == id)
-        {
-            memset(&ComponentList[Loop], 0, sizeof(CCComponentInfo));
-        }
-    }
+    CCCollectionRemoveElement(ComponentList, CCCollectionFindElement(ComponentList, &id, (CCComparator)CCComponentIDComparator));
 }
 
 static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
@@ -81,10 +83,9 @@ static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
 
 CCComponent CCComponentCreate(CCComponentID id)
 {
-    for (size_t Loop = 0, Count = ComponentsCount; Loop < Count; Loop++)
-    {
-        if (ComponentList[Loop].id == id) return CCComponentCreateFromInfo(&ComponentList[Loop]);
-    }
+    CCComponentInfo *Info = CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &id, (CCComparator)CCComponentIDComparator));
+    
+    if (Info) return CCComponentCreateFromInfo(Info);
     
     CC_LOG_WARNING("Could not find component with id (%" PRIu32 ")", id);
     
@@ -95,10 +96,9 @@ CCComponent CCComponentCreateForName(const char *Name)
 {
     CCAssertLog(Name, "Name cannot be NULL");
     
-    for (size_t Loop = 0, Count = ComponentsCount; Loop < Count; Loop++)
-    {
-        if ((ComponentList[Loop].name) && (!strcmp(Name, ComponentList[Loop].name))) return CCComponentCreateFromInfo(&ComponentList[Loop]);
-    }
+    CCComponentInfo *Info = CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &Name, (CCComparator)CCComponentNameComparator));
+    
+    if (Info) return CCComponentCreateFromInfo(Info);
     
     CC_LOG_WARNING("Could not find component with name (%s)", Name);
     
