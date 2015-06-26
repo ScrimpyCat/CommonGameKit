@@ -35,7 +35,7 @@
 {
     CCEntity Entity = CCEntityCreate(1, CC_STD_ALLOCATOR);
     CCComponent Component = CCComponentCreate(CC_COMPONENT_ID);
-    printf("%p\n", CCComponentGetEntity(Component));
+    
     XCTAssertEqual(CCCollectionGetCount(CCEntityGetComponents(Entity)), 0, "Entity should have the correct number of components attached to it");
     
     CCEntityAttachComponent(Entity, Component);
