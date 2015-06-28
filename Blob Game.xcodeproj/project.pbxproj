@@ -11,6 +11,9 @@
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
 		F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */; };
+		F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */; };
+		F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */; };
+		F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
@@ -296,6 +299,12 @@
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
 		F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityManagerTests.m; sourceTree = "<group>"; };
+		F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EngineSetup.c; sourceTree = "<group>"; };
+		F35CD6F01B3EB8130032E3A7 /* EngineSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineSetup.h; sourceTree = "<group>"; };
+		F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RenderSystem.c; sourceTree = "<group>"; };
+		F35CD6F41B3EC62E0032E3A7 /* RenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSystem.h; sourceTree = "<group>"; };
+		F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RenderComponent.c; sourceTree = "<group>"; };
+		F35CD6F91B3F034F0032E3A7 /* RenderComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderComponent.h; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Component.h; path = src/Component.h; sourceTree = SOURCE_ROOT; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Component.c; path = src/Component.c; sourceTree = SOURCE_ROOT; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ComponentSystem.h; path = src/ComponentSystem.h; sourceTree = SOURCE_ROOT; };
@@ -371,6 +380,32 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F35CD6F21B3EBBE70032E3A7 /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				F35CD6F41B3EC62E0032E3A7 /* RenderSystem.h */,
+				F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */,
+			);
+			name = Systems;
+			sourceTree = "<group>";
+		};
+		F35CD6F61B3F02F80032E3A7 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F35CD6F71B3F03020032E3A7 /* Rendering */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
+		F35CD6F71B3F03020032E3A7 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				F35CD6F91B3F034F0032E3A7 /* RenderComponent.h */,
+				F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */,
+			);
+			name = Rendering;
+			sourceTree = "<group>";
+		};
 		F39796DD1A5C7748007C3422 /* Component System */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +445,8 @@
 			isa = PBXGroup;
 			children = (
 				F3F5D6801A56F4A9006D7F16 /* main.c */,
+				F35CD6F61B3F02F80032E3A7 /* Components */,
+				F35CD6F21B3EBBE70032E3A7 /* Systems */,
 				F39796DD1A5C7748007C3422 /* Component System */,
 				F3F6C4A31A599A3C00B9D6BA /* Setup */,
 				F3C401D91A56E52800095ECD /* Supporting Files */,
@@ -544,6 +581,8 @@
 				F3F6C4781A599A2300B9D6BA /* PlatformSetup_mac.m */,
 				F3F6C4A61A599DB700B9D6BA /* PlatformSetup_win.c */,
 				F3F6C4AA1A599DF800B9D6BA /* PlatformSetup_linux.c */,
+				F35CD6F01B3EB8130032E3A7 /* EngineSetup.h */,
+				F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */,
 			);
 			name = Setup;
 			sourceTree = "<group>";
@@ -917,9 +956,12 @@
 			files = (
 				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
+				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
+				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
 				F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */,
+				F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */,
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,
 			);

@@ -16,6 +16,8 @@
 
 #include "GLSetup.h"
 #include "PlatformSetup.h"
+#include "EngineSetup.h"
+#include "ComponentSystem.h"
 
 
 static void ErrorCallback(int Error, const char *Description)
@@ -30,12 +32,16 @@ static int RenderLoop(GLFWwindow *Window)
     while (!glfwWindowShouldClose(Window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
+        
+        CCComponentSystemRun(CCComponentSystemExecutionTypeRender);
+        
         glfwSwapBuffers(Window);
     }
     
     return EXIT_SUCCESS;
 }
-
+#include "RenderSystem.h"
+#include "RenderComponent.h"
 int main(int argc, const char *argv[])
 {
     CCPlatformSetup();
@@ -55,9 +61,9 @@ int main(int argc, const char *argv[])
     
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
     
-    glfwWindowHint(GLFW_RED_BITS, 8);
-    glfwWindowHint(GLFW_GREEN_BITS, 8);
-    glfwWindowHint(GLFW_BLUE_BITS, 8);
+    glfwWindowHint(GLFW_RED_BITS, 32);
+    glfwWindowHint(GLFW_GREEN_BITS, 32);
+    glfwWindowHint(GLFW_BLUE_BITS, 32);
     glfwWindowHint(GLFW_ALPHA_BITS, 0);
     glfwWindowHint(GLFW_DEPTH_BITS, 0);
     glfwWindowHint(GLFW_STENCIL_BITS, 0);
@@ -86,6 +92,7 @@ int main(int argc, const char *argv[])
         CC_LOG_INFO("Extensions: %s", glGetStringi(GL_EXTENSIONS, Loop));
     }
     
+    CCEngineSetup();
     
     int err;
     thrd_t RenderThread;
@@ -102,6 +109,16 @@ int main(int argc, const char *argv[])
     
     while (!glfwWindowShouldClose(Window))
     {
+        CCComponentSystemLock(CC_RENDER_SYSTEM_ID);
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(CCComponentSystemGetComponentsForSystem(CC_RENDER_SYSTEM_ID), &Enumerator);
+        
+        for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
+        {
+            CCRenderComponentSetColour(*Component, CCVector3DMake(CCRandomRangef(0.0f, 1.0f), CCRandomRangef(0.0f, 1.0f), CCRandomRangef(0.0f, 1.0f)));
+        }
+        CCComponentSystemUnlock(CC_RENDER_SYSTEM_ID);
+        
         glfwWaitEvents();
     }
     
