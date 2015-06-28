@@ -121,8 +121,11 @@ static CCComponentSystem *CCComponentSystemHandlesComponentFind(CCComponent Comp
 {
     for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
-        CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &Component, (CCComparator)CCComponentSystemComponentComparator));
-        if (System) return System;
+        if (Systems[Loop])
+        {
+            CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &Component, (CCComparator)CCComponentSystemComponentComparator));
+            if (System) return System;
+        }
     }
     
     return NULL;
@@ -180,8 +183,11 @@ static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
 {
     for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
-        CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &id, (CCComparator)CCComponentSystemIDComparator));
-        if (System) return System;
+        if (Systems[Loop])
+        {
+            CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &id, (CCComparator)CCComponentSystemIDComparator));
+            if (System) return System;
+        }
     }
     
     return NULL;
