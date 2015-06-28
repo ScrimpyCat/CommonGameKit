@@ -44,7 +44,7 @@ static inline void CCComponentSetEntity(CCComponent Component, CCEntity Entity)
 
 static inline void CCComponentSetIsManaged(CCComponent Component, _Bool Managed)
 {
-    ((CCComponentPrivate)Component)->id = (CC_COMPONENT_ID_RESERVED_MASK * Managed) & CCComponentGetID(Component);
+    ((CCComponentPrivate)Component)->id = (CC_COMPONENT_ID_RESERVED_MASK * Managed) | CCComponentGetID(Component);
 }
 
 static inline _Bool CCComponentGetIsManaged(CCComponent Component)

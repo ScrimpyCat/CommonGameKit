@@ -13,7 +13,7 @@
 #include <CommonC/Common.h>
 
 #define CC_COMPONENT_INHERIT(component) component __inherit
-#define CC_COMPONENT_ID_RESERVED_MASK ~((CCComponentID)-1)
+#define CC_COMPONENT_ID_RESERVED_MASK ~((CCComponentID)-1 >> 1)
 
 /*!
  * @brief The unique ID of the component.
