@@ -84,9 +84,9 @@ void CCEntityManagerUpdate(void)
         CCCollectionGetEnumerator(CCEntityGetComponents(*Entity), &ComponentEnumerator);
         for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&ComponentEnumerator); Component; Component = CCCollectionEnumeratorNext(&ComponentEnumerator))
         {
-            if (CCComponentGetIsManaged(Component))
+            if (CCComponentGetIsManaged(*Component))
             {
-                CCComponentSystemRemoveComponent(Component);
+                CCComponentSystemRemoveComponent(*Component);
                 DestroyEntity = FALSE;
             }
         }
