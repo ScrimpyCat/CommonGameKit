@@ -20,6 +20,9 @@
 #include "ComponentSystem.h"
 
 
+GLFWwindow *CCWindow = NULL;
+
+
 static void ErrorCallback(int Error, const char *Description)
 {
     CC_LOG_ERROR("GLFW Error [%d]: %s", Error, Description);
@@ -68,8 +71,8 @@ int main(int argc, const char *argv[])
     glfwWindowHint(GLFW_DEPTH_BITS, 0);
     glfwWindowHint(GLFW_STENCIL_BITS, 0);
     
-    GLFWwindow *Window = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
-    if (!Window)
+    CCWindow = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
+    if (!CCWindow)
     {
         //TODO: Fallback to legacy GL profile? 
         CC_LOG_ERROR("Failed to create window");
@@ -77,8 +80,8 @@ int main(int argc, const char *argv[])
         return EXIT_FAILURE;
     }
     
-    glfwMakeContextCurrent(Window);
-    CCPlatformWindowSetup(Window);
+    glfwMakeContextCurrent(CCWindow);
+    CCPlatformWindowSetup(CCWindow);
     
     CC_LOG_INFO("Vendor: %s", glGetString(GL_VENDOR));
     CC_LOG_INFO("Renderer: %s", glGetString(GL_RENDERER));
@@ -96,18 +99,18 @@ int main(int argc, const char *argv[])
     
     int err;
     thrd_t RenderThread;
-    if ((err = thrd_create(&RenderThread, (thrd_start_t)RenderLoop, Window)) != thrd_success)
+    if ((err = thrd_create(&RenderThread, (thrd_start_t)RenderLoop, CCWindow)) != thrd_success)
     {
         //Possibly fallback to single threaded implementation?
         CC_LOG_ERROR("Failed to create render thread (%d)", err);
         
-        glfwDestroyWindow(Window);
+        glfwDestroyWindow(CCWindow);
         glfwTerminate();
         
         return EXIT_FAILURE;
     }
     
-    while (!glfwWindowShouldClose(Window))
+    while (!glfwWindowShouldClose(CCWindow))
     {
         CCComponentSystemLock(CC_RENDER_SYSTEM_ID);
         CCEnumerator Enumerator;
@@ -125,7 +128,7 @@ int main(int argc, const char *argv[])
     
     thrd_detach(RenderThread);
     
-    glfwDestroyWindow(Window);
+    glfwDestroyWindow(CCWindow);
     glfwTerminate();
     
     return EXIT_SUCCESS;

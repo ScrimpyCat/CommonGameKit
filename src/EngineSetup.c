@@ -12,6 +12,7 @@
 
 //TODO: Probably make this file generated (could add a define so it knows what functions to call from here)
 #include "RenderSystem.h"
+#include "InputSystem.h"
 
 #include "RenderComponent.h"
 
@@ -21,6 +22,7 @@ void CCEngineSetup(void)
     
     //Register Systems
     CCRenderSystemRegister();
+    CCInputSystemRegister();
     
     //Register Components
     CCRenderComponentRegister();
