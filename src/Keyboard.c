@@ -8,15 +8,9 @@
 
 #include "Keyboard.h"
 #include "stdatomic.h"
+#include "InputSystem.h"
+#include "InputMapKeyboardComponent.h"
 
-
-typedef struct {
-    int32_t keycode;
-    uint32_t character;
-    uint32_t flags;
-    double timestamp;
-    _Bool down, repeat;
-} CCKeyboardMap;
 
 static _Atomic(CCKeyboardMap) KeyList[GLFW_KEY_LAST + 1];
 
@@ -47,9 +41,32 @@ void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, 
             TempKey.down = Action == GLFW_PRESS;
             TempKey.repeat = FALSE;
         }
+        
+        if (!TempKey.down)
+        {
+            TempKey.character = 0;
+            
+            CCCollection InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
+            
+            CCEnumerator Enumerator;
+            CCCollectionGetEnumerator(InputKeys, &Enumerator);
+            
+            for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
+            {
+                CCInputMapKeyboardCallback Callback = CCInputMapComponentGetCallback(*Input);
+                if (Callback)
+                {
+                    if ((CCInputMapKeyboardComponentGetIsKeycode(*Input) && (CCInputMapKeyboardComponentGetKeycode(*Input) == Keycode)) &&
+                        (CCInputMapKeyboardComponentGetIgnoreModifier(*Input) || (CCInputMapKeyboardComponentGetFlags(*Input) == Mods)))
+                    {
+                        Callback(*Input, TempKey);
+                    }
+                }
+            }
+            
+            CCCollectionDestroy(InputKeys);
+        }
     }
-    
-    //call callbacks
 }
 
 void CCKeyboardCharInput(GLFWwindow *Window, unsigned int Codepoint, int Mods)
@@ -58,9 +75,29 @@ void CCKeyboardCharInput(GLFWwindow *Window, unsigned int Codepoint, int Mods)
     {
         TempKey.character = Codepoint;
         atomic_store(&KeyList[TempKey.keycode], TempKey);
+        
+        
+        CCCollection InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
+        
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(InputKeys, &Enumerator);
+        
+        for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
+        {
+            CCInputMapKeyboardCallback Callback = CCInputMapComponentGetCallback(*Input);
+            if (Callback)
+            {
+                if (((CCInputMapKeyboardComponentGetIsKeycode(*Input) && (CCInputMapKeyboardComponentGetKeycode(*Input) == TempKey.keycode)) ||
+                     (CCInputMapKeyboardComponentGetCharacter(*Input) == Codepoint)) &&
+                    (CCInputMapKeyboardComponentGetIgnoreModifier(*Input) || (CCInputMapKeyboardComponentGetFlags(*Input) == Mods)))
+                {
+                    Callback(*Input, TempKey);
+                }
+            }
+        }
+        
+        CCCollectionDestroy(InputKeys);
     }
-    
-    //call callbacks, make sure to check modifiers
 }
 
 void CCKeyboardStateReset(void)

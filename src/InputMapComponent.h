@@ -12,7 +12,7 @@
 #include "InputSystem.h"
 #include "ComponentBase.h"
 
-#define CC_INPUT_MAP_COMPONENT_ID (1 | CC_INPUT_COMPONENT_FLAG)
+#define CC_INPUT_MAP_COMPONENT_ID (CCInputMapTypeNone | CC_INPUT_COMPONENT_FLAG)
 
 const char * const CCInputMapComponentName;
 
@@ -23,14 +23,15 @@ typedef struct {
 } CCInputMapComponentClass, *CCInputMapComponentPrivate;
 
 
-void CCInputMapComponentRegister(void);
-void CCInputMapComponentDeregister(void);
-
-
 static inline void CCInputMapComponentInitialize(CCComponent Component, CCComponentID id)
 {
     CCComponentInitialize(Component, id);
     ((CCInputMapComponentPrivate)Component)->action = NULL;
+}
+
+static inline void CCInputMapComponentDestroy(CCComponent Component)
+{
+    CC_SAFE_Free(((CCInputMapComponentPrivate)Component)->action);
 }
 
 static inline const char *CCInputMapComponentGetAction(CCComponent Component)

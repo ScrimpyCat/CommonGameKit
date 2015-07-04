@@ -15,6 +15,7 @@
 #include "InputSystem.h"
 
 #include "RenderComponent.h"
+#include "InputMapKeyboardComponent.h"
 
 void CCEngineSetup(void)
 {
@@ -26,19 +27,28 @@ void CCEngineSetup(void)
     
     //Register Components
     CCRenderComponentRegister();
+    CCInputMapKeyboardComponentRegister();
     
     
     //Initial Scene Setup
 #warning demo
     CCEntity Player = CCEntityCreate(1, CC_STD_ALLOCATOR);
     CCComponent Renderer = CCComponentCreate(CC_RENDER_COMPONENT_ID);
+    CCComponent Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
     
     CCRenderComponentSetColour(Renderer, (CCColourRGB){ .r = 1.0f, .g = 0.0, .b = 0.0f });
     CCRenderComponentSetRect(Renderer, (CCRect){ .position = CCVector2DZero, .size = CCVector2DMake(1.0f, 1.0f) });
     
+    CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_SPACE);
+    CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
+    CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
+    CCInputMapComponentSetAction(Key, "recolour");
+    
     CCEntityAttachComponent(Player, Renderer);
+    CCEntityAttachComponent(Player, Key);
     CCEntityManagerAddEntity(Player);
     CCComponentSystemAddComponent(Renderer);
+    CCComponentSystemAddComponent(Key);
     
     
     

@@ -21,7 +21,6 @@
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
-		F3E814D71B4811CD00AD5D10 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D51B4811CD00AD5D10 /* InputMapComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
 		F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3F5D6341A56E8B4006D7F16 /* Images.xcassets */; };
 		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
@@ -325,7 +324,6 @@
 		F3E814A81B4801DF00AD5D10 /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapKeyboardComponent.c; sourceTree = "<group>"; };
 		F3E814D31B48116A00AD5D10 /* InputMapKeyboardComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapKeyboardComponent.h; sourceTree = "<group>"; };
-		F3E814D51B4811CD00AD5D10 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
 		F3E814D61B4811CD00AD5D10 /* InputMapComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapComponent.h; sourceTree = "<group>"; };
 		F3E84D531B45A3730082E510 /* InputSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputSystem.c; sourceTree = "<group>"; };
 		F3E84D541B45A3730082E510 /* InputSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputSystem.h; sourceTree = "<group>"; };
@@ -511,7 +509,6 @@
 			isa = PBXGroup;
 			children = (
 				F3E814D61B4811CD00AD5D10 /* InputMapComponent.h */,
-				F3E814D51B4811CD00AD5D10 /* InputMapComponent.c */,
 				F3E814D31B48116A00AD5D10 /* InputMapKeyboardComponent.h */,
 				F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */,
 			);
@@ -1005,7 +1002,6 @@
 				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
-				F3E814D71B4811CD00AD5D10 /* InputMapComponent.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,

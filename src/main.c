@@ -122,6 +122,7 @@ int main(int argc, const char *argv[])
         }
         CCComponentSystemUnlock(CC_RENDER_SYSTEM_ID);
         
+        CCComponentSystemRun(CCComponentSystemExecutionTypeInput);
         glfwWaitEvents();
     }
     

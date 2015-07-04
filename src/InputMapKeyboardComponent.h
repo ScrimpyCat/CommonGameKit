@@ -11,7 +11,7 @@
 
 #include "InputMapComponent.h"
 
-#define CC_INPUT_MAP_KEYBOARD_COMPONENT_ID (2 | CC_INPUT_COMPONENT_FLAG)
+#define CC_INPUT_MAP_KEYBOARD_COMPONENT_ID (CCInputMapTypeKeyboard | CC_INPUT_COMPONENT_FLAG)
 
 const char * const CCInputMapKeyboardComponentName;
 
