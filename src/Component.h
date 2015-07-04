@@ -36,6 +36,15 @@ typedef void *CCComponent;
  */
 typedef void (*CCComponentInitializer)(CCComponent Component, CCComponentID id);
 
+/*!
+ * @brief The custom component destructor callback.
+ * @description Perform all cleanup for your component's fields in here, and call the destructor of
+ *              the inherited component.
+ *
+ * @param Component The component to be destroyed.
+ */
+typedef void (*CCComponentDestructor)(CCComponent Component);
+
 
 /*!
  * @brief Register a component type.
@@ -45,7 +54,7 @@ typedef void (*CCComponentInitializer)(CCComponent Component, CCComponentID id);
  * @param Size The total size of this component.
  * @param Initializer The callback to use for initialization of this component.
  */
-void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer);
+void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentDestructor Destructor);
 
 /*!
  * @brief Deregister a component type.

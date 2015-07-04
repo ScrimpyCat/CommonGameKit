@@ -12,7 +12,7 @@ const char * const CCRenderComponentName = "render";
 
 void CCRenderComponentRegister(void)
 {
-    CCComponentRegister(CC_RENDER_COMPONENT_ID, CCRenderComponentName, CC_STD_ALLOCATOR, sizeof(CCRenderComponentClass), CCRenderComponentInitialize);
+    CCComponentRegister(CC_RENDER_COMPONENT_ID, CCRenderComponentName, CC_STD_ALLOCATOR, sizeof(CCRenderComponentClass), CCRenderComponentInitialize, NULL);
 }
 
 void CCRenderComponentDeregister(void)

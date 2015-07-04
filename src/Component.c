@@ -8,6 +8,7 @@
 
 #include "Component.h"
 #include <string.h>
+#include "ComponentBase.h"
 
 
 typedef struct {
@@ -15,6 +16,7 @@ typedef struct {
     char *name; //TODO: Could be put into its own hashmap
     CCAllocatorType allocator;
     CCComponentInitializer initializer;
+    CCComponentDestructor destructor;
     size_t size;
     //TODO: Dependencies
 } CCComponentInfo;
@@ -25,7 +27,7 @@ static void CCComponentListElementDestructor(CCCollection Collection, CCComponen
 }
 
 CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
-void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer)
+void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentDestructor Destructor)
 {
     if (!ComponentList) ComponentList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCComponentInfo), (CCCollectionElementDestructor)CCComponentListElementDestructor);
     
@@ -46,6 +48,7 @@ void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType All
         .name = ComponentName,
         .allocator = Allocator,
         .initializer = Initializer,
+        .destructor = Destructor,
         .size = Size
     });
 }
@@ -81,9 +84,19 @@ static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
     return Component;
 }
 
+static CCComponentInfo *CCComponentInfoFindByID(CCComponentID id)
+{
+    return CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &id, (CCComparator)CCComponentIDComparator));
+}
+
+static CCComponentInfo *CCComponentInfoFindByName(const char *Name)
+{
+    return CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &Name, (CCComparator)CCComponentNameComparator));
+}
+
 CCComponent CCComponentCreate(CCComponentID id)
 {
-    CCComponentInfo *Info = CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &id, (CCComparator)CCComponentIDComparator));
+    CCComponentInfo *Info = CCComponentInfoFindByID(id);
     
     if (Info) return CCComponentCreateFromInfo(Info);
     
@@ -96,7 +109,7 @@ CCComponent CCComponentCreateForName(const char *Name)
 {
     CCAssertLog(Name, "Name cannot be NULL");
     
-    CCComponentInfo *Info = CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &Name, (CCComparator)CCComponentNameComparator));
+    CCComponentInfo *Info = CCComponentInfoFindByName(Name);
     
     if (Info) return CCComponentCreateFromInfo(Info);
     
@@ -107,5 +120,15 @@ CCComponent CCComponentCreateForName(const char *Name)
 
 void CCComponentDestroy(CCComponent Component)
 {
-    CC_SAFE_Free(Component);
+    if (Component)
+    {
+        CCComponentInfo *Info = CCComponentInfoFindByID(CCComponentGetID(Component));
+        
+        if (Info)
+        {
+            if (Info->destructor) Info->destructor(Component);
+        }
+        
+        CC_SAFE_Free(Component);
+    }
 }

@@ -36,7 +36,7 @@ typedef struct {
 static CCOrderedCollection Systems[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 static double ElapsedTime[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 
-static void CCComponentDestructor(CCCollection Collection, CCComponent *Component)
+static void CCComponentElementDestructor(CCCollection Collection, CCComponent *Component)
 {
     CCComponentSetIsManaged(*Component, FALSE);
 }
@@ -239,7 +239,7 @@ CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID 
         CCCollectionRemoveCollection(System->components.active, Entries);
         CCCollectionDestroy(Entries);
         
-        Removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), (CCCollectionElementDestructor)CCComponentDestructor);
+        Removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), (CCCollectionElementDestructor)CCComponentElementDestructor);
         CCCollectionInsertCollection(Removed, System->components.destroy, NULL);
     }
     

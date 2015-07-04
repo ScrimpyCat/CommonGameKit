@@ -12,7 +12,7 @@ const char * const CCInputMapComponentName = "input_map";
 
 void CCInputMapComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_COMPONENT_ID, CCInputMapComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapComponentClass), CCInputMapComponentInitialize);
+    CCComponentRegister(CC_INPUT_MAP_COMPONENT_ID, CCInputMapComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapComponentClass), CCInputMapComponentInitialize, NULL);
 }
 
 void CCInputMapComponentDeregister(void)

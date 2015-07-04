@@ -55,7 +55,7 @@ static inline int TestComponentGetValue(CCComponent Component)
     XCTAssertEqual(CCComponentCreate(TEST_COMPONENT_ID), NULL, "Test component has not yet been registered and should not be available");
     XCTAssertEqual(CCComponentCreateForName(TestComponentName), NULL, "Test component has not yet been registered and should not be available");
     
-    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize);
+    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL);
     
     CCComponent a = CCComponentCreate(TEST_COMPONENT_ID), b = CCComponentCreateForName(TestComponentName);
     XCTAssertNotEqual(a, NULL, "Test component has been registered and should be available");
@@ -74,8 +74,8 @@ static inline int TestComponentGetValue(CCComponent Component)
 
 -(void) testComponentCreationForID
 {
-    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize);
-    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize);
+    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL);
+    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL);
     
     XCTAssertEqual(CCComponentCreate(2), NULL, "No component with id 2 has been registered and should not be available");
     
@@ -92,8 +92,8 @@ static inline int TestComponentGetValue(CCComponent Component)
 
 -(void) testComponentCreationForName
 {
-    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize);
-    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize);
+    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL);
+    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL);
     
     XCTAssertEqual(CCComponentCreateForName("blah"), NULL, "No component with name \"blah\" has been registered and should not be available");
     

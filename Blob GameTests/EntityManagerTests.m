@@ -69,7 +69,7 @@ static _Bool TestComponentSystemHandlesComponentCallback(CCComponentID id)
     [super setUp];
     
     CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestComponentSystemUpdateCallback, TestComponentSystemHandlesComponentCallback, NULL, NULL, NULL, NULL, NULL);
-    CCComponentRegister(TEST_COMPONENT_ID, "Test", CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize);
+    CCComponentRegister(TEST_COMPONENT_ID, "Test", CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL);
     CCEntityManagerCreate();
 }
 
