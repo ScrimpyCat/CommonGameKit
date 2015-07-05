@@ -23,6 +23,7 @@ void CCEntityManagerDestroy(void);
 
 /*!
  * @brief Updates the global entity manager.
+ * @warning This call must be made within an entity manager lock.
  */
 void CCEntityManagerUpdate(void);
 
@@ -38,5 +39,28 @@ void CCEntityManagerAddEntity(CCEntity Entity);
  * @param Entity The entity being managed.
  */
 void CCEntityManagerRemoveEntity(CCEntity Entity);
+
+/*!
+ * @brief Get the current entities from the manager.
+ * @warning Should obtain locks to the entity manager prior to calling this function.
+ * @return The current entity list.
+ */
+CCCollection CCEntityManagerGetEntities(void);
+
+/*!
+ * @brief Attempt to lock the entity manager.
+ * @return True if was able to lock the entity manager, otherwise false.
+ */
+_Bool CCEntityManagerTryLock(void);
+
+/*!
+ * @brief Lock the entity manager.
+ */
+void CCEntityManagerLock(void);
+
+/*!
+ * @brief Unlock the entity manager.
+ */
+void CCEntityManagerUnlock(void);
 
 #endif

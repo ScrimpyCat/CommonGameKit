@@ -30,8 +30,16 @@ static void CCEntityDestructor(CCCollection Collection, CCEntity *Entity)
     CCEntityDestroy(*Entity);
 }
 
+static mtx_t Lock;
 void CCEntityManagerCreate(void)
 {
+    int err;
+    if ((err = mtx_init(&Lock, mtx_plain | mtx_recursive)) != thrd_success)
+    {
+        CC_LOG_ERROR("Failed to create entity manager lock (%d)", err);
+        exit(EXIT_FAILURE); //TODO: How should we handle this?
+    }
+    
     EntityManager = (CCEntityManager){
         .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
         .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
@@ -44,6 +52,8 @@ void CCEntityManagerCreate(void)
 
 void CCEntityManagerDestroy(void)
 {
+    mtx_destroy(&Lock);
+    
     if (EntityManager.active) CCCollectionDestroy(EntityManager.active);
     if (EntityManager.added) CCCollectionDestroy(EntityManager.added);
     if (EntityManager.removed) CCCollectionDestroy(EntityManager.removed);
@@ -111,4 +121,38 @@ void CCEntityManagerRemoveEntity(CCEntity Entity)
     while (!atomic_flag_test_and_set(&EntityManager.removedLock));
     CCCollectionInsertElement(EntityManager.removed, &Entity);
     atomic_flag_clear(&EntityManager.removedLock);
+}
+
+CCCollection CCEntityManagerGetEntities(void)
+{
+    return EntityManager.active;
+}
+
+_Bool CCEntityManagerTryLock(void)
+{
+    int err = mtx_trylock(&Lock);
+    if ((err != thrd_success) && (err != thrd_busy))
+    {
+        CC_LOG_ERROR("Failed to lock entity manager (%d)", err);
+    }
+    
+    return err == thrd_success;
+}
+
+void CCEntityManagerLock(void)
+{
+    int err;
+    if ((err = mtx_lock(&Lock)) != thrd_success)
+    {
+        CC_LOG_ERROR("Failed to lock entity manager (%d)", err);
+    }
+}
+
+void CCEntityManagerUnlock(void)
+{
+    int err;
+    if ((err = mtx_unlock(&Lock)) != thrd_success)
+    {
+        CC_LOG_ERROR("Failed to unlock entity manager (%d)", err);
+    }
 }
