@@ -119,7 +119,8 @@ CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
         CCKeyboardMap Key = atomic_load(&KeyList[CCInputMapKeyboardComponentGetKeycode(Component)]);
         if (((CCInputMapKeyboardComponentGetIsKeycode(Component)) ||
              (CCInputMapKeyboardComponentGetCharacter(Component) == Key.character)) &&
-            (CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags)))
+            (CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags)) &&
+            (CCInputMapKeyboardComponentGetRepeats(Component) || (!Key.state.repeat)))
         {
             return Key.state;
         }
@@ -135,7 +136,8 @@ CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
             CCKeyboardMap Key = atomic_load(&KeyList[Loop]);
             if (Key.character == Character)
             {
-                if (CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags))
+                if ((CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags)) &&
+                    (CCInputMapKeyboardComponentGetRepeats(Component) || (!Key.state.repeat)))
                 {
                     return Key.state;
                 }
