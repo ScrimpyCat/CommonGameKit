@@ -17,6 +17,8 @@ static void CCInputSystemUpdate(void *Context, CCCollection Components);
 
 void CCInputSystemRegister(void)
 {
+    CCKeyboardStateReset();
+    
     glfwSetWindowFocusCallback(CCWindow, CCWindowFocus);
     glfwSetKeyCallback(CCWindow, CCKeyboardInput);
     glfwSetCharModsCallback(CCWindow, CCKeyboardCharInput);

@@ -11,6 +11,7 @@
 #include "stdatomic.h"
 #include "InputSystem.h"
 #include "InputMapKeyboardComponent.h"
+#include <math.h>
 
 
 static _Atomic(CCKeyboardMap) KeyList[GLFW_KEY_LAST + 1];
@@ -108,7 +109,7 @@ void CCKeyboardStateReset(void)
 {
     for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
     {
-        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (uint32_t)Loop }));
+        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (uint32_t)Loop, .state.timestamp = -INFINITY }));
     }
 }
 
