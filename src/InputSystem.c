@@ -99,6 +99,13 @@ CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
     return CCInputStateInactive;
 }
 
+static float CCInputSystemPressureForBinaryInput(CCInputState State, double Timestamp, float Ramp)
+{
+    Ramp *= (glfwGetTime() - Timestamp);
+    Ramp = Ramp == 0.0f ? 1.0f : Ramp;
+    return CCClampf((State == CCInputStateActive ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
+}
+
 float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action)
 {
     CCComponent Input = CCInputSystemFindComponentForAction(Entity, Action);
@@ -108,9 +115,7 @@ float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action)
         {
             case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
                 CCKeyboardState State = CCKeyboardGetStateForComponent(Input);
-                float Ramp = (glfwGetTime() - State.timestamp) * CCInputMapKeyboardComponentGetRamp(Input);
-                Ramp = Ramp == 0.0f ? 1.0f : Ramp;
-                return CCClampf((State.down ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
+                return CCInputSystemPressureForBinaryInput(State.down ? CCInputStateActive : CCInputStateInactive, State.timestamp, CCInputMapKeyboardComponentGetRamp(Input));
                 
                 //case id == input map group
                 
