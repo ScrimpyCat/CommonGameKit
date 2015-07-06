@@ -20,6 +20,7 @@ typedef struct {
     int32_t keycode;
     uint32_t character;
     uint32_t flags;
+    float ramp;
     _Bool isKeycode, ignoreModifier, repeats;
 } CCInputMapKeyboardComponentClass, *CCInputMapKeyboardComponentPrivate;
 
@@ -34,6 +35,7 @@ static inline void CCInputMapKeyboardComponentInitialize(CCComponent Component, 
     ((CCInputMapKeyboardComponentPrivate)Component)->keycode = 0;
     ((CCInputMapKeyboardComponentPrivate)Component)->character = 0;
     ((CCInputMapKeyboardComponentPrivate)Component)->flags = 0;
+    ((CCInputMapKeyboardComponentPrivate)Component)->ramp = 0.0f;
     ((CCInputMapKeyboardComponentPrivate)Component)->isKeycode = FALSE;
     ((CCInputMapKeyboardComponentPrivate)Component)->ignoreModifier = FALSE;
     ((CCInputMapKeyboardComponentPrivate)Component)->repeats = FALSE;
@@ -67,6 +69,16 @@ static inline uint32_t CCInputMapKeyboardComponentGetFlags(CCComponent Component
 static inline void CCInputMapKeyboardComponentSetFlags(CCComponent Component, uint32_t Flags)
 {
     ((CCInputMapKeyboardComponentPrivate)Component)->flags = Flags;
+}
+
+static inline float CCInputMapKeyboardComponentGetRamp(CCComponent Component)
+{
+    return ((CCInputMapKeyboardComponentPrivate)Component)->ramp;
+}
+
+static inline void CCInputMapKeyboardComponentSetRamp(CCComponent Component, float Ramp)
+{
+    ((CCInputMapKeyboardComponentPrivate)Component)->ramp = Ramp;
 }
 
 static inline _Bool CCInputMapKeyboardComponentGetIsKeycode(CCComponent Component)

@@ -29,16 +29,18 @@ void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, 
         CCAssertLog(Keycode >= 0 && Keycode <= GLFW_KEY_LAST, "Keycode is not within bounds");
         
         TempKey.flags = Mods;
-        TempKey.state.timestamp = glfwGetTime();
         
         if (Action == GLFW_REPEAT)
         {
+            CCKeyboardMap Prev = atomic_load(&KeyList[Keycode]);
+            TempKey.state.timestamp = Prev.state.timestamp;
             TempKey.state.down = TRUE;
             TempKey.state.repeat = TRUE;
         }
         
         else
         {
+            TempKey.state.timestamp = glfwGetTime();
             TempKey.state.down = Action == GLFW_PRESS;
             TempKey.state.repeat = FALSE;
         }

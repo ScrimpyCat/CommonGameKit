@@ -97,6 +97,29 @@ CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
     return CCInputStateInactive;
 }
 
+float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action)
+{
+    CCComponent Input = CCInputSystemFindComponentForAction(Entity, Action);
+    if (Input)
+    {
+        switch (CCComponentGetID(Input))
+        {
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
+                CCKeyboardState State = CCKeyboardGetStateForComponent(Input);
+                float Ramp = (glfwGetTime() - State.timestamp) * CCInputMapKeyboardComponentGetRamp(Input);
+                Ramp = Ramp == 0.0f ? 1.0f : Ramp;
+                return CCClampf((State.down ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
+                
+                //case id == input map group
+                
+            default:
+                break;
+        }
+    }
+    
+    return 0.0f;
+}
+
 static void CCWindowFocus(GLFWwindow *Window, int Focus)
 {
     if (!Focus)
