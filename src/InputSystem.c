@@ -56,6 +56,47 @@ CCCollection CCInputSystemGetComponents(CCInputMapType InputType)
     return InputComponents;
 }
 
+static CCComponent CCInputSystemFindComponentForAction(CCEntity Entity, const char *Action)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCEntityGetComponents(Entity), &Enumerator);
+    
+    for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
+    {
+        CCComponentID id = CCComponentGetID(*Component);
+        if ((id & CC_INPUT_COMPONENT_FLAG) == CC_INPUT_COMPONENT_FLAG)
+        {
+            const char *InputAction = CCInputMapComponentGetAction(*Component);
+            if ((InputAction) && (!strcmp(InputAction, Action))) return *Component;
+            
+            //if id == input map group
+        }
+    }
+    
+    return NULL;
+}
+
+CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
+{
+    CCComponent Input = CCInputSystemFindComponentForAction(Entity, Action);
+    if (Input)
+    {
+        switch (CCComponentGetID(Input))
+        {
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
+                CCKeyboardState State = CCKeyboardGetStateForComponent(Input);
+                return State.down ? CCInputStateActive : CCInputStateInactive;
+                
+                //case id == input map group
+                
+            default:
+                break;
+        }
+    }
+    
+    return CCInputStateInactive;
+}
+
 static void CCWindowFocus(GLFWwindow *Window, int Focus)
 {
     if (!Focus)

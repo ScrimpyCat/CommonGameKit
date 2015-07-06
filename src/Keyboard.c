@@ -7,6 +7,7 @@
 //
 
 #include "Keyboard.h"
+#include "Window.h"
 #include "stdatomic.h"
 #include "InputSystem.h"
 #include "InputMapKeyboardComponent.h"
@@ -28,23 +29,24 @@ void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, 
         CCAssertLog(Keycode >= 0 && Keycode <= GLFW_KEY_LAST, "Keycode is not within bounds");
         
         TempKey.flags = Mods;
-        TempKey.timestamp = glfwGetTime();
+        TempKey.state.timestamp = glfwGetTime();
         
         if (Action == GLFW_REPEAT)
         {
-            TempKey.down = TRUE;
-            TempKey.repeat = TRUE;
+            TempKey.state.down = TRUE;
+            TempKey.state.repeat = TRUE;
         }
         
         else
         {
-            TempKey.down = Action == GLFW_PRESS;
-            TempKey.repeat = FALSE;
+            TempKey.state.down = Action == GLFW_PRESS;
+            TempKey.state.repeat = FALSE;
         }
         
-        if (!TempKey.down)
+        if (!TempKey.state.down)
         {
             TempKey.character = 0;
+            atomic_store(&KeyList[TempKey.keycode], TempKey);
             
             CCCollection InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
             
@@ -106,4 +108,40 @@ void CCKeyboardStateReset(void)
     {
         atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (uint32_t)Loop }));
     }
+}
+
+CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
+{
+    CCAssertLog(CCComponentGetID(Component) == CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, "Must be a input map keyboard component");
+    
+    if (CCInputMapKeyboardComponentGetKeycode(Component) != GLFW_KEY_UNKNOWN)
+    {
+        CCKeyboardMap Key = atomic_load(&KeyList[CCInputMapKeyboardComponentGetKeycode(Component)]);
+        if (((CCInputMapKeyboardComponentGetIsKeycode(Component)) ||
+             (CCInputMapKeyboardComponentGetCharacter(Component) == Key.character)) &&
+            (CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags)))
+        {
+            return Key.state;
+        }
+    }
+    
+    else
+    {
+        CCAssertLog(!CCInputMapKeyboardComponentGetIsKeycode(Component), "Must be a character match");
+        
+        const uint32_t Character = CCInputMapKeyboardComponentGetCharacter(Component);
+        for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
+        {
+            CCKeyboardMap Key = atomic_load(&KeyList[Loop]);
+            if (Key.character == Character)
+            {
+                if (CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags))
+                {
+                    return Key.state;
+                }
+            }
+        }
+    }
+    
+    return (CCKeyboardState){ .timestamp = 0.0, .down = FALSE, .repeat = FALSE };
 }

@@ -27,6 +27,7 @@ static inline void CCInputMapComponentInitialize(CCComponent Component, CCCompon
 {
     CCComponentInitialize(Component, id);
     ((CCInputMapComponentPrivate)Component)->action = NULL;
+    ((CCInputMapComponentPrivate)Component)->callback = NULL;
 }
 
 static inline void CCInputMapComponentDestroy(CCComponent Component)

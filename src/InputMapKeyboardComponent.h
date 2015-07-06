@@ -30,7 +30,7 @@ void CCInputMapKeyboardComponentDeregister(void);
 
 static inline void CCInputMapKeyboardComponentInitialize(CCComponent Component, CCComponentID id)
 {
-    CCComponentInitialize(Component, id);
+    CCInputMapComponentInitialize(Component, id);
     ((CCInputMapKeyboardComponentPrivate)Component)->keycode = 0;
     ((CCInputMapKeyboardComponentPrivate)Component)->character = 0;
     ((CCInputMapKeyboardComponentPrivate)Component)->flags = 0;

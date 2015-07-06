@@ -45,6 +45,8 @@ static int RenderLoop(GLFWwindow *Window)
 }
 #include "RenderSystem.h"
 #include "RenderComponent.h"
+#include "InputSystem.h"
+#include "EntityManager.h"
 int main(int argc, const char *argv[])
 {
     CCPlatformSetup();
@@ -112,15 +114,30 @@ int main(int argc, const char *argv[])
     
     while (!glfwWindowShouldClose(CCWindow))
     {
-        CCComponentSystemLock(CC_RENDER_SYSTEM_ID);
-        CCEnumerator Enumerator;
-        CCCollectionGetEnumerator(CCComponentSystemGetComponentsForSystem(CC_RENDER_SYSTEM_ID), &Enumerator);
+        CCEntityManagerLock();
+        CCEntityManagerUpdate();
         
-        for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(CCEntityManagerGetEntities(), &Enumerator);
+        
+        for (CCEntity *Entity = CCCollectionEnumeratorGetCurrent(&Enumerator); Entity; Entity = CCCollectionEnumeratorNext(&Enumerator))
         {
-            CCRenderComponentSetColour(*Component, CCVector3DMake(CCRandomRangef(0.0f, 1.0f), CCRandomRangef(0.0f, 1.0f), CCRandomRangef(0.0f, 1.0f)));
+            if (CCInputSystemGetStateForAction(*Entity, "recolour") == CCInputStateActive)
+            {
+                CCComponentSystemLock(CC_RENDER_SYSTEM_ID);
+                CCEnumerator Enumerator;
+                CCCollectionGetEnumerator(CCComponentSystemGetComponentsForSystem(CC_RENDER_SYSTEM_ID), &Enumerator);
+                
+                for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
+                {
+                    CCRenderComponentSetColour(*Component, CCVector3DMake(CCRandomRangef(0.0f, 1.0f), CCRandomRangef(0.0f, 1.0f), CCRandomRangef(0.0f, 1.0f)));
+                }
+                CCComponentSystemUnlock(CC_RENDER_SYSTEM_ID);
+            }
         }
-        CCComponentSystemUnlock(CC_RENDER_SYSTEM_ID);
+        
+        CCEntityManagerUnlock();
+        
         
         CCComponentSystemRun(CCComponentSystemExecutionTypeInput);
         glfwWaitEvents();

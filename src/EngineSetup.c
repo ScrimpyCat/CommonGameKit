@@ -34,11 +34,10 @@ void CCEngineSetup(void)
 #warning demo
     CCEntity Player = CCEntityCreate(1, CC_STD_ALLOCATOR);
     CCComponent Renderer = CCComponentCreate(CC_RENDER_COMPONENT_ID);
-    CCComponent Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
-    
     CCRenderComponentSetColour(Renderer, (CCColourRGB){ .r = 1.0f, .g = 0.0, .b = 0.0f });
     CCRenderComponentSetRect(Renderer, (CCRect){ .position = CCVector2DZero, .size = CCVector2DMake(1.0f, 1.0f) });
     
+    CCComponent Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
     CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_SPACE);
     CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
     CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
