@@ -44,6 +44,36 @@ build build/main.o: cc src/main.c
 build build/PlatformSetup_win.o: cc src/PlatformSetup_win.c
     flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
     headers = $all_deps_headers
+build build/Component.o: cc src/Component.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/ComponentSystem.o: cc src/ComponentSystem.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/EngineSetup.o: cc src/EngineSetup.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/Entity.o: cc src/Entity.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/EntityManager.o: cc src/EntityManager.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/InputMapKeyboardComponent.o: cc src/InputMapKeyboardComponent.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/InputSystem.o: cc src/InputSystem.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/Keyboard.o: cc src/Keyboard.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/RenderComponent.o: cc src/RenderComponent.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
+build build/RenderSystem.o: cc src/RenderSystem.c
+    flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
+    headers = $all_deps_headers
 
 build build/blob_game: ld build/main.o build/PlatformSetup_win.o
     objects = $all_deps_objects
