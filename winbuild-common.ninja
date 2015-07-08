@@ -7,6 +7,7 @@ commonc_object = ./deps/Common/CommonC/build/Allocator.o ./deps/Common/CommonC/b
 build deps/Common/CommonC/build/Allocator.o: cc deps/Common/CommonC/CommonC/Allocator.c
     headers = $commonc_header
 build deps/Common/CommonC/build/Array.o: cc deps/Common/CommonC/CommonC/Array.c
+    headers = $commonc_header
 build deps/Common/CommonC/build/CFAllocator.o: cc deps/Common/CommonC/CommonC/CFAllocator.c
     headers = $commonc_header
 build deps/Common/CommonC/build/Collection.o: cc deps/Common/CommonC/CommonC/Collection.c

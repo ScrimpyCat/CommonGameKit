@@ -75,6 +75,6 @@ build build/RenderSystem.o: cc src/RenderSystem.c
     flags = -Wall -Wno-unknown-pragmas -Wno-missing-braces
     headers = $all_deps_headers
 
-build build/blob_game: ld build/main.o build/PlatformSetup_win.o
+build build/blob_game: ld build/main.o build/PlatformSetup_win.o build/Component.o build/ComponentSystem.o build/EngineSetup.o build/Entity.o build/EntityManager.o build/InputMapKeyboardComponent.o build/InputSystem.o build/Keyboard.o build/RenderComponent.o build/RenderSystem.o
     objects = $all_deps_objects
     libs = $all_deps_libs

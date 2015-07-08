@@ -9,6 +9,7 @@
 #include "Entity.h"
 #include "Component.h"
 #include "ComponentBase.h"
+#include <inttypes.h>
 
 
 typedef struct CCEntityInfo {
