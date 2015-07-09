@@ -19,6 +19,7 @@
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
+		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
@@ -317,6 +318,8 @@
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		F3AE99721A7402BB00212838 /* ComponentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentBase.h; sourceTree = "<group>"; };
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
+		F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
+		F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
 		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -511,6 +514,8 @@
 				F3E814D61B4811CD00AD5D10 /* InputMapComponent.h */,
 				F3E814D31B48116A00AD5D10 /* InputMapKeyboardComponent.h */,
 				F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */,
+				F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */,
+				F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -998,6 +1003,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
+				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
 				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,

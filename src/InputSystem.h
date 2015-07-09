@@ -22,7 +22,8 @@ typedef enum {
     CCInputMapTypeNone = 1,
     CCInputMapTypeKeyboard,
     CCInputMapTypeMouse,
-    CCInputMapTypeController
+    CCInputMapTypeController,
+    CCInputMapTypeGroup
 } CCInputMapType;
 
 typedef enum {

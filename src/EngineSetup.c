@@ -16,6 +16,7 @@
 
 #include "RenderComponent.h"
 #include "InputMapKeyboardComponent.h"
+#include "InputMapGroupComponent.h"
 
 void CCEngineSetup(void)
 {
@@ -28,23 +29,57 @@ void CCEngineSetup(void)
     //Register Components
     CCRenderComponentRegister();
     CCInputMapKeyboardComponentRegister();
+    CCInputMapGroupComponentRegister();
     
     
     //Initial Scene Setup
 #warning demo
     CCEntity Player = CCEntityCreate(1, CC_STD_ALLOCATOR);
+    
     CCComponent Renderer = CCComponentCreate(CC_RENDER_COMPONENT_ID);
     CCRenderComponentSetColour(Renderer, (CCColourRGB){ .r = 1.0f, .g = 0.0, .b = 0.0f });
     CCRenderComponentSetRect(Renderer, (CCRect){ .position = CCVector2DZero, .size = CCVector2DMake(1.0f, 1.0f) });
+    CCEntityAttachComponent(Player, Renderer);
     
     CCComponent Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
     CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_SPACE);
     CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
     CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
     CCInputMapComponentSetAction(Key, "recolour");
-    
-    CCEntityAttachComponent(Player, Renderer);
     CCEntityAttachComponent(Player, Key);
+    
+    CCComponent Group = CCComponentCreate(CC_INPUT_MAP_GROUP_COMPONENT_ID);
+    Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_A);
+    CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
+    CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
+    CCInputMapKeyboardComponentSetRepeats(Key, TRUE);
+    CCInputMapKeyboardComponentSetRamp(Key, 1.0);
+    CCInputMapGroupComponentAddInputMap(Group, Key);
+    Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_S);
+    CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
+    CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
+    CCInputMapKeyboardComponentSetRepeats(Key, TRUE);
+    CCInputMapKeyboardComponentSetRamp(Key, 1.0);
+    CCInputMapGroupComponentAddInputMap(Group, Key);
+    Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_D);
+    CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
+    CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
+    CCInputMapKeyboardComponentSetRepeats(Key, TRUE);
+    CCInputMapKeyboardComponentSetRamp(Key, 1.0);
+    CCInputMapGroupComponentAddInputMap(Group, Key);
+    Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_W);
+    CCInputMapKeyboardComponentSetIsKeycode(Key, TRUE);
+    CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
+    CCInputMapKeyboardComponentSetRepeats(Key, TRUE);
+    CCInputMapKeyboardComponentSetRamp(Key, 1.0);
+    CCInputMapGroupComponentAddInputMap(Group, Key);
+    CCInputMapComponentSetAction(Group, "move");
+    CCEntityAttachComponent(Player, Group);
+    
     CCEntityManagerAddEntity(Player);
     CCComponentSystemAddComponent(Renderer);
     CCComponentSystemAddComponent(Key);
