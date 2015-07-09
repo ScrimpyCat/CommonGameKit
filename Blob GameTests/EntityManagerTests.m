@@ -105,6 +105,10 @@ static _Bool TestComponentSystemHandlesComponentCallback(CCComponentID id)
     CCEntityManagerRemoveEntity(Entity);
     CCEntityManagerUpdate();
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    
+    
+    CCEntityManagerUpdate();
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
 }
 
 @end
