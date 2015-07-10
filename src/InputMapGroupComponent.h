@@ -18,7 +18,7 @@ const char * const CCInputMapGroupComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);
-    CCCollection inputMaps;
+    CCOrderedCollection inputMaps;
     _Bool wantsAllActive;
 } CCInputMapGroupComponentClass, *CCInputMapGroupComponentPrivate;
 
@@ -41,7 +41,7 @@ static inline void CCInputMapGroupComponentDestroy(CCComponent Component)
     CCInputMapComponentDestroy(Component);
 }
 
-static inline CCCollection CCInputMapGroupComponentGetInputMaps(CCComponent Component)
+static inline CCOrderedCollection CCInputMapGroupComponentGetInputMaps(CCComponent Component)
 {
     return ((CCInputMapGroupComponentPrivate)Component)->inputMaps;
 }

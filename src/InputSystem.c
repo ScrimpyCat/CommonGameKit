@@ -29,6 +29,7 @@ void CCInputSystemRegister(void)
     CCKeyboardStateReset();
     
     glfwSetWindowFocusCallback(CCWindow, CCWindowFocus);
+    
     glfwSetKeyCallback(CCWindow, CCKeyboardInput);
     glfwSetCharModsCallback(CCWindow, CCKeyboardCharInput);
     
@@ -261,7 +262,7 @@ static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent C
 
 static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component)
 {
-    CCCollection Inputs = CCInputMapGroupComponentGetInputMaps(Component);
+    CCOrderedCollection Inputs = CCInputMapGroupComponentGetInputMaps(Component);
     const size_t Count = CCCollectionGetCount(Inputs);
     
     CCAssertLog(Count == 2 || Count == 4, "To correctly simulate a 2 axis input device, there must either be 2 or 4 single axis inputs");
@@ -291,7 +292,7 @@ static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component)
 
 static CCVector3D CCInputSystemGetSimulatedGroupPressure3(CCComponent Component)
 {
-    CCCollection Inputs = CCInputMapGroupComponentGetInputMaps(Component);
+    CCOrderedCollection Inputs = CCInputMapGroupComponentGetInputMaps(Component);
     const size_t Count = CCCollectionGetCount(Inputs);
     
     CCAssertLog(Count == 3 || Count == 6, "To correctly simulate a 3 axis input device, there must either be 3 or 6 single axis inputs");
