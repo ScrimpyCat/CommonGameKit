@@ -20,6 +20,11 @@
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
 		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
+		F3C020461B4F375E00F546E7 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020441B4F375E00F546E7 /* Mouse.c */; };
+		F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */; };
+		F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020541B50DCDE00F546E7 /* InputMapMouseDropComponent.c */; };
+		F3C020591B50DD1E00F546E7 /* InputMapMouseButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020571B50DD1E00F546E7 /* InputMapMouseButtonComponent.c */; };
+		F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0205A1B50DD3400F546E7 /* InputMapMouseScrollComponent.c */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
@@ -320,6 +325,16 @@
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
 		F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
 		F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
+		F3C020441B4F375E00F546E7 /* Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Mouse.c; sourceTree = "<group>"; };
+		F3C020451B4F375E00F546E7 /* Mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mouse.h; sourceTree = "<group>"; };
+		F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMousePositionComponent.c; sourceTree = "<group>"; };
+		F3C0204C1B50A33400F546E7 /* InputMapMousePositionComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMousePositionComponent.h; sourceTree = "<group>"; };
+		F3C020541B50DCDE00F546E7 /* InputMapMouseDropComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMouseDropComponent.c; sourceTree = "<group>"; };
+		F3C020551B50DCDE00F546E7 /* InputMapMouseDropComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMouseDropComponent.h; sourceTree = "<group>"; };
+		F3C020571B50DD1E00F546E7 /* InputMapMouseButtonComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMouseButtonComponent.c; sourceTree = "<group>"; };
+		F3C020581B50DD1E00F546E7 /* InputMapMouseButtonComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMouseButtonComponent.h; sourceTree = "<group>"; };
+		F3C0205A1B50DD3400F546E7 /* InputMapMouseScrollComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMouseScrollComponent.c; sourceTree = "<group>"; };
+		F3C0205B1B50DD3400F546E7 /* InputMapMouseScrollComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMouseScrollComponent.h; sourceTree = "<group>"; };
 		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -502,6 +517,8 @@
 			children = (
 				F3E814A81B4801DF00AD5D10 /* Keyboard.h */,
 				F3E814A71B4801DF00AD5D10 /* Keyboard.c */,
+				F3C020451B4F375E00F546E7 /* Mouse.h */,
+				F3C020441B4F375E00F546E7 /* Mouse.c */,
 				F3E84D811B45A3AC0082E510 /* Systems */,
 				F3E84D801B45A3A50082E510 /* Components */,
 			);
@@ -516,6 +533,14 @@
 				F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */,
 				F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */,
 				F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */,
+				F3C0204C1B50A33400F546E7 /* InputMapMousePositionComponent.h */,
+				F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */,
+				F3C020581B50DD1E00F546E7 /* InputMapMouseButtonComponent.h */,
+				F3C020571B50DD1E00F546E7 /* InputMapMouseButtonComponent.c */,
+				F3C0205B1B50DD3400F546E7 /* InputMapMouseScrollComponent.h */,
+				F3C0205A1B50DD3400F546E7 /* InputMapMouseScrollComponent.c */,
+				F3C020551B50DCDE00F546E7 /* InputMapMouseDropComponent.h */,
+				F3C020541B50DCDE00F546E7 /* InputMapMouseDropComponent.c */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -1002,9 +1027,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
+				F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */,
+				F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */,
+				F3C020461B4F375E00F546E7 /* Mouse.c in Sources */,
 				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
@@ -1012,6 +1041,7 @@
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
+				F3C020591B50DD1E00F546E7 /* InputMapMouseButtonComponent.c in Sources */,
 				F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */,
 				F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */,
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,

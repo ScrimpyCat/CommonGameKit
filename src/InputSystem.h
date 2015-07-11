@@ -12,6 +12,7 @@
 #include "ComponentSystem.h"
 #include "Entity.h"
 #include "Keyboard.h"
+#include "Mouse.h"
 
 //Note: Currently just a demo system
 
@@ -19,9 +20,13 @@
 #define CC_INPUT_COMPONENT_FLAG 0x2000000
 
 typedef enum {
+    CCInputMapTypeMask = 0xff,
     CCInputMapTypeNone = 1,
     CCInputMapTypeKeyboard,
-    CCInputMapTypeMouse,
+    CCInputMapTypeMousePosition,
+    CCInputMapTypeMouseButton,
+    CCInputMapTypeMouseScroll,
+    CCInputMapTypeMouseDrop,
     CCInputMapTypeController,
     CCInputMapTypeGroup
 } CCInputMapType;
@@ -32,6 +37,7 @@ typedef enum {
 } CCInputState;
 
 typedef void (*CCInputMapKeyboardCallback)(CCComponent Component, CCKeyboardMap State);
+typedef void (*CCInputMapMouseCallback)(CCComponent Component, CCMouseEvent Event, CCMouseMap State);
 
 void CCInputSystemRegister(void);
 void CCInputSystemDeregister(void);

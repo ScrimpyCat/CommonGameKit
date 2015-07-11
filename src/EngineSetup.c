@@ -17,6 +17,17 @@
 #include "RenderComponent.h"
 #include "InputMapKeyboardComponent.h"
 #include "InputMapGroupComponent.h"
+#include "InputMapMousePositionComponent.h"
+#include "InputMapMouseButtonComponent.h"
+#include "InputMapMouseScrollComponent.h"
+#include "InputMapMouseDropComponent.h"
+static void func(CCComponent Component, CCMouseEvent Event, CCMouseMap State)
+{
+    if (Event == CCMouseEventMove)
+    {
+        CC_LOG_DEBUG("%f,%f (%f,%f)", State.move.delta.x, State.move.delta.y, State.position.x, State.position.y);
+    }
+}
 
 void CCEngineSetup(void)
 {
@@ -30,6 +41,10 @@ void CCEngineSetup(void)
     CCRenderComponentRegister();
     CCInputMapKeyboardComponentRegister();
     CCInputMapGroupComponentRegister();
+    CCInputMapMousePositionComponentRegister();
+    CCInputMapMouseButtonComponentRegister();
+    CCInputMapMouseScrollComponentRegister();
+    CCInputMapMouseDropComponentRegister();
     
     
     //Initial Scene Setup
@@ -40,6 +55,11 @@ void CCEngineSetup(void)
     CCRenderComponentSetColour(Renderer, (CCColourRGB){ .r = 1.0f, .g = 0.0, .b = 0.0f });
     CCRenderComponentSetRect(Renderer, (CCRect){ .position = CCVector2DZero, .size = CCVector2DMake(1.0f, 1.0f) });
     CCEntityAttachComponent(Player, Renderer);
+    
+    CCComponent Mouse = CCComponentCreate(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID);
+    CCInputMapComponentSetCallback(Mouse, func);
+    CCEntityAttachComponent(Player, Mouse);
+    CCComponentSystemAddComponent(Mouse);
     
     CCComponent Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
     CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_SPACE);

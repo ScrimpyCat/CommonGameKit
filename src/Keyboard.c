@@ -109,7 +109,7 @@ void CCKeyboardStateReset(void)
 {
     for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
     {
-        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (uint32_t)Loop, .state.timestamp = -INFINITY }));
+        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (uint32_t)Loop, .state = { .timestamp = -INFINITY, .down = FALSE, .repeat = FALSE } }));
     }
 }
 

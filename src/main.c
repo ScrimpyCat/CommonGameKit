@@ -122,8 +122,8 @@ int main(int argc, const char *argv[])
         
         for (CCEntity *Entity = CCCollectionEnumeratorGetCurrent(&Enumerator); Entity; Entity = CCCollectionEnumeratorNext(&Enumerator))
         {
-            CCVector2D Move = CCInputSystemGetPressure2ForAction(*Entity, "move");
-            CC_LOG_DEBUG("%f, %f", Move.x, Move.y);
+//            CCVector2D Move = CCInputSystemGetPressure2ForAction(*Entity, "move");
+//            CC_LOG_DEBUG("%f, %f", Move.x, Move.y);
             
             if (CCInputSystemGetStateForAction(*Entity, "recolour") == CCInputStateActive)
             {
