@@ -28,6 +28,8 @@ typedef enum {
     CCInputMapTypeMouseScroll,
     CCInputMapTypeMouseDrop,
     CCInputMapTypeController,
+    CCInputMapTypeControllerAxes,
+    CCInputMapTypeControllerButton,
     CCInputMapTypeGroup
 } CCInputMapType;
 

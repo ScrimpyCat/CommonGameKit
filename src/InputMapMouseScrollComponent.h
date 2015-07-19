@@ -13,7 +13,7 @@
 
 #define CC_INPUT_MAP_MOUSE_SCROLL_COMPONENT_ID (CCInputMapTypeMouseScroll | CC_INPUT_COMPONENT_FLAG)
 
-const char * const CCInputMapMouseScrollComponentName;
+extern const char * const CCInputMapMouseScrollComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);

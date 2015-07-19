@@ -17,7 +17,7 @@
 
 static struct {
     _Atomic(CCVector2D) position;
-    _Atomic(CCMouseButtonMap) buttons[GLFW_MOUSE_BUTTON_LAST];
+    _Atomic(CCMouseButtonMap) buttons[GLFW_MOUSE_BUTTON_LAST + 1];
 } Mouse;
 
 void CCMouseDropInput(GLFWwindow *Window, int Count, const char **Files)

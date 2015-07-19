@@ -14,7 +14,7 @@
 
 #define CC_INPUT_MAP_COMPONENT_ID (CCInputMapTypeNone | CC_INPUT_COMPONENT_FLAG)
 
-const char * const CCInputMapComponentName;
+extern const char * const CCInputMapComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);

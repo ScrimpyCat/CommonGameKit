@@ -10,12 +10,15 @@
 #include "Window.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Controller.h"
 #include "InputMapKeyboardComponent.h"
 #include "InputMapGroupComponent.h"
 #include "InputMapMousePositionComponent.h"
 #include "InputMapMouseButtonComponent.h"
 #include "InputMapMouseScrollComponent.h"
 #include "InputMapMouseDropComponent.h"
+#include "InputMapControllerAxesComponent.h"
+#include "InputMapControllerButtonComponent.h"
 
 typedef struct {
     double timestamp;
@@ -44,6 +47,8 @@ void CCInputSystemRegister(void)
     glfwSetCursorPosCallback(CCWindow, CCMousePositionInput);
     glfwSetCursorEnterCallback(CCWindow, CCMouseEnterInput);
     
+    CCControllerSetup();
+    
     CCComponentSystemRegister(CC_INPUT_SYSTEM_ID, CCComponentSystemExecutionTypeInput, CCInputSystemUpdate, CCInputSystemHandlesComponent, NULL, NULL, NULL, NULL, NULL);
 }
 
@@ -54,14 +59,21 @@ void CCInputSystemDeregister(void)
 
 static CCCollection CCInputSystemGetComponentsInCollection(CCCollection Group, CCInputMapType InputType)
 {
+    /*
+     TODO: Types could be cleaned up, and possibly incorporate base components for the different types of inputs
+     e.g. single state vs variable state inputs
+     */
     CCAssertLog(InputType != CCInputMapTypeNone, "Should not try find components for this type");
+    CCAssertLog(InputType != CCInputMapTypeController, "Should not try find components for this type");
     _Static_assert(CCInputMapTypeKeyboard == 2 &&
                    CCInputMapTypeMousePosition == 3 &&
                    CCInputMapTypeMouseButton == 4 &&
                    CCInputMapTypeMouseScroll == 5 &&
                    CCInputMapTypeMouseDrop == 6 &&
                    CCInputMapTypeController == 7 &&
-                   CCInputMapTypeGroup == 8, "Expects input types to have these values");
+                   CCInputMapTypeControllerAxes == 8 &&
+                   CCInputMapTypeControllerButton == 9 &&
+                   CCInputMapTypeGroup == 10, "Expects input types to have these values");
     
     CCComponentID Type = (CCComponentID[]){
         CC_INPUT_MAP_KEYBOARD_COMPONENT_ID,
@@ -70,6 +82,8 @@ static CCCollection CCInputSystemGetComponentsInCollection(CCCollection Group, C
         CC_INPUT_MAP_MOUSE_SCROLL_COMPONENT_ID,
         CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID,
         0,
+        CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID,
+        CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID,
         CC_INPUT_MAP_GROUP_COMPONENT_ID
     }[InputType - CCInputMapTypeKeyboard];
     
@@ -131,17 +145,23 @@ CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
     {
         switch (CCComponentGetID(Input))
         {
-            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
-                CCKeyboardState KeyState = CCKeyboardGetStateForComponent(Input);
-                return KeyState.down ? CCInputStateActive : CCInputStateInactive;
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:
+                return CCKeyboardGetStateForComponent(Input).down ? CCInputStateActive : CCInputStateInactive;
                 
-            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:;
-                CCMouseButtonState MouseButtonState = CCMouseButtonGetStateForComponent(Input);
-                return MouseButtonState.down ? CCInputStateActive : CCInputStateInactive;
+            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:
+                return CCMouseButtonGetStateForComponent(Input).down ? CCInputStateActive : CCInputStateInactive;
                 
-            case CC_INPUT_MAP_GROUP_COMPONENT_ID:;
-                CCInputMapGroupState GroupState = CCInputSystemGetGroupStateForComponent(Input);
-                return GroupState.active;
+            case CC_INPUT_MAP_GROUP_COMPONENT_ID:
+                return CCInputSystemGetGroupStateForComponent(Input).active;
+                
+            case CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID:
+                return CCControllerGetStateForComponent(Input).button.down ? CCInputStateActive : CCInputStateInactive;
+                
+            case CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID:
+            {
+                const CCControllerAxesState ControllerAxesState = CCControllerGetStateForComponent(Input).axes;
+                return (ControllerAxesState.position.x != 0.0f) || (ControllerAxesState.position.y != 0.0f) || (ControllerAxesState.position.z != 0.0f);
+            }
                 
             default:
                 break;
@@ -165,17 +185,35 @@ float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action)
     {
         switch (CCComponentGetID(Input))
         {
-            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:
+            {
                 CCKeyboardState KeyState = CCKeyboardGetStateForComponent(Input);
                 return CCInputSystemPressureForBinaryInput(KeyState.down ? CCInputStateActive : CCInputStateInactive, KeyState.timestamp, CCInputMapKeyboardComponentGetRamp(Input));
+            }
                 
-            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:;
+            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:
+            {
                 CCMouseButtonState MouseButtonState = CCMouseButtonGetStateForComponent(Input);
                 return CCInputSystemPressureForBinaryInput(MouseButtonState.down ? CCInputStateActive : CCInputStateInactive, MouseButtonState.timestamp, CCInputMapMouseButtonComponentGetRamp(Input));
+            }
                 
-            case CC_INPUT_MAP_GROUP_COMPONENT_ID:;
+            case CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID:
+            {
+                const CCControllerButtonState ControllerButtonState = CCControllerGetStateForComponent(Input).button;
+                return CCInputSystemPressureForBinaryInput(ControllerButtonState.down ? CCInputStateActive : CCInputStateInactive, ControllerButtonState.timestamp, CCInputMapControllerButtonComponentGetRamp(Input));
+            }
+                
+            case CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID:
+            {
+                const CCControllerAxesState ControllerAxesState = CCControllerGetStateForComponent(Input).axes;
+                return ControllerAxesState.position.x;
+            }
+                
+            case CC_INPUT_MAP_GROUP_COMPONENT_ID:
+            {
                 CCInputMapGroupState GroupState = CCInputSystemGetGroupStateForComponent(Input);
                 return CCInputSystemPressureForBinaryInput(GroupState.active, GroupState.timestamp, 0.0f); //TODO: would we want groups to have value ramps?
+            }
                 
             default:
                 break;
@@ -195,6 +233,12 @@ CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Actio
             case CC_INPUT_MAP_GROUP_COMPONENT_ID:
                 return CCInputSystemGetSimulatedGroupPressure2(Input);
                 
+            case CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID:
+            {
+                const CCControllerAxesState ControllerAxesState = CCControllerGetStateForComponent(Input).axes;
+                return CCVector2DMake(ControllerAxesState.position.x, ControllerAxesState.position.y);
+            }
+                
             default:
                 break;
         }
@@ -212,6 +256,9 @@ CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, const char *Actio
         {
             case CC_INPUT_MAP_GROUP_COMPONENT_ID:
                 return CCInputSystemGetSimulatedGroupPressure3(Input);
+                
+            case CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID:
+                return CCControllerGetStateForComponent(Input).axes.position;
                 
             default:
                 break;
@@ -238,6 +285,8 @@ static void CCInputSystemUpdate(void *Context, CCCollection Components)
 {
     CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(CC_INPUT_SYSTEM_ID));
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_INPUT_SYSTEM_ID));
+    
+    CCControllerUpdateState();
 }
 
 static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent Component)
@@ -251,7 +300,8 @@ static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent C
     {
         switch (CCComponentGetID(*Input))
         {
-            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:
+            {
                 const CCKeyboardState KeyState = CCKeyboardGetStateForComponent(*Input);
                 if (KeyState.down)
                 {
@@ -264,9 +314,12 @@ static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent C
                     AllActive = CCInputStateInactive;
                     if (LatestInactiveTimestamp < KeyState.timestamp) LatestInactiveTimestamp = KeyState.timestamp;
                 }
-                break;
                 
-            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:;
+                break;
+            }
+                
+            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:
+            {
                 const CCMouseButtonState MouseButtonState = CCMouseButtonGetStateForComponent(Input);
                 if (MouseButtonState.down)
                 {
@@ -279,9 +332,12 @@ static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent C
                     AllActive = CCInputStateInactive;
                     if (LatestInactiveTimestamp < MouseButtonState.timestamp) LatestInactiveTimestamp = MouseButtonState.timestamp;
                 }
-                break;
                 
-            case CC_INPUT_MAP_GROUP_COMPONENT_ID:;
+                break;
+            }
+                
+            case CC_INPUT_MAP_GROUP_COMPONENT_ID:
+            {
                 const CCInputMapGroupState ChildState = CCInputSystemGetGroupStateForComponent(*Input);
                 if (ChildState.active)
                 {
@@ -294,7 +350,27 @@ static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent C
                     AllActive = CCInputStateInactive;
                     if (LatestInactiveTimestamp < ChildState.timestamp) LatestInactiveTimestamp = ChildState.timestamp;
                 }
+                
                 break;
+            }
+                
+            case CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID:
+            {
+                const CCControllerButtonState ControllerButtonState = CCControllerGetStateForComponent(Input).button;
+                if (ControllerButtonState.down)
+                {
+                    OneActive = CCInputStateActive;
+                    if (LatestActiveTimestamp < ControllerButtonState.timestamp) LatestActiveTimestamp = ControllerButtonState.timestamp;
+                }
+                
+                else
+                {
+                    AllActive = CCInputStateInactive;
+                    if (LatestInactiveTimestamp < ControllerButtonState.timestamp) LatestInactiveTimestamp = ControllerButtonState.timestamp;
+                }
+                
+                break;
+            }
                 
             default:
                 break;
@@ -321,15 +397,26 @@ static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component)
         const size_t Index = CCOrderedCollectionGetIndex(Inputs, CCCollectionEnumeratorGetEntry(&Enumerator));
         switch (CCComponentGetID(*Input))
         {
-            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
-                CCKeyboardState KeyState = CCKeyboardGetStateForComponent(*Input);
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:
+            {
+                const CCKeyboardState KeyState = CCKeyboardGetStateForComponent(*Input);
                 Pressure[Index] = CCInputSystemPressureForBinaryInput(KeyState.down ? CCInputStateActive : CCInputStateInactive, KeyState.timestamp, CCInputMapKeyboardComponentGetRamp(*Input));
                 break;
+            }
                 
-            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:; //TODO: Should create a base component for binary single axis inputs
-                CCMouseButtonState MouseButtonState = CCMouseButtonGetStateForComponent(*Input);
+            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID: //TODO: Should create a base component for binary single axis inputs
+            {
+                const CCMouseButtonState MouseButtonState = CCMouseButtonGetStateForComponent(*Input);
                 Pressure[Index] = CCInputSystemPressureForBinaryInput(MouseButtonState.down ? CCInputStateActive : CCInputStateInactive, MouseButtonState.timestamp, CCInputMapMouseButtonComponentGetRamp(*Input));
                 break;
+            }
+                
+            case CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID:
+            {
+                const CCControllerButtonState ControllerButtonState = CCControllerGetStateForComponent(Input).button;
+                Pressure[Index] = CCInputSystemPressureForBinaryInput(ControllerButtonState.down ? CCInputStateActive : CCInputStateInactive, ControllerButtonState.timestamp, CCInputMapControllerButtonComponentGetRamp(*Input));
+                break;
+            }
                 
             default:
                 CCAssertLog(0, "Must contain only single axis inputs");
@@ -356,15 +443,26 @@ static CCVector3D CCInputSystemGetSimulatedGroupPressure3(CCComponent Component)
         const size_t Index = CCOrderedCollectionGetIndex(Inputs, CCCollectionEnumeratorGetEntry(&Enumerator));
         switch (CCComponentGetID(*Input))
         {
-            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:;
+            case CC_INPUT_MAP_KEYBOARD_COMPONENT_ID:
+            {
                 CCKeyboardState KeyState = CCKeyboardGetStateForComponent(*Input);
                 Pressure[Index] = CCInputSystemPressureForBinaryInput(KeyState.down ? CCInputStateActive : CCInputStateInactive, KeyState.timestamp, CCInputMapKeyboardComponentGetRamp(*Input));
                 break;
+            }
                 
-            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID:; //TODO: Should create a base component for binary single axis inputs
+            case CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID: //TODO: Should create a base component for binary single axis inputs
+            {
                 CCMouseButtonState MouseButtonState = CCMouseButtonGetStateForComponent(*Input);
                 Pressure[Index] = CCInputSystemPressureForBinaryInput(MouseButtonState.down ? CCInputStateActive : CCInputStateInactive, MouseButtonState.timestamp, CCInputMapMouseButtonComponentGetRamp(*Input));
                 break;
+            }
+                
+            case CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID:
+            {
+                const CCControllerButtonState ControllerButtonState = CCControllerGetStateForComponent(Input).button;
+                Pressure[Index] = CCInputSystemPressureForBinaryInput(ControllerButtonState.down ? CCInputStateActive : CCInputStateInactive, ControllerButtonState.timestamp, CCInputMapControllerButtonComponentGetRamp(*Input));
+                break;
+            }
                 
             default:
                 CCAssertLog(0, "Must contain only single axis inputs");

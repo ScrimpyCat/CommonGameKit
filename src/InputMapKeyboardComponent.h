@@ -13,7 +13,7 @@
 
 #define CC_INPUT_MAP_KEYBOARD_COMPONENT_ID (CCInputMapTypeKeyboard | CC_INPUT_COMPONENT_FLAG)
 
-const char * const CCInputMapKeyboardComponentName;
+extern const char * const CCInputMapKeyboardComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);

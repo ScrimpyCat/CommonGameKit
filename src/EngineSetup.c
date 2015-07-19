@@ -21,13 +21,8 @@
 #include "InputMapMouseButtonComponent.h"
 #include "InputMapMouseScrollComponent.h"
 #include "InputMapMouseDropComponent.h"
-static void func(CCComponent Component, CCMouseEvent Event, CCMouseMap State)
-{
-    if (Event == CCMouseEventMove)
-    {
-        CC_LOG_DEBUG("%f,%f (%f,%f)", State.move.delta.x, State.move.delta.y, State.position.x, State.position.y);
-    }
-}
+#include "InputMapControllerAxesComponent.h"
+#include "InputMapControllerButtonComponent.h"
 
 void CCEngineSetup(void)
 {
@@ -45,6 +40,8 @@ void CCEngineSetup(void)
     CCInputMapMouseButtonComponentRegister();
     CCInputMapMouseScrollComponentRegister();
     CCInputMapMouseDropComponentRegister();
+    CCInputMapControllerAxesComponentRegister();
+    CCInputMapControllerButtonComponentRegister();
     
     
     //Initial Scene Setup
@@ -55,11 +52,7 @@ void CCEngineSetup(void)
     CCRenderComponentSetColour(Renderer, (CCColourRGB){ .r = 1.0f, .g = 0.0, .b = 0.0f });
     CCRenderComponentSetRect(Renderer, (CCRect){ .position = CCVector2DZero, .size = CCVector2DMake(1.0f, 1.0f) });
     CCEntityAttachComponent(Player, Renderer);
-    
-    CCComponent Mouse = CCComponentCreate(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Mouse, func);
-    CCEntityAttachComponent(Player, Mouse);
-    CCComponentSystemAddComponent(Mouse);
+    CCComponentSystemAddComponent(Renderer);
     
     CCComponent Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
     CCInputMapKeyboardComponentSetKeycode(Key, GLFW_KEY_SPACE);
@@ -67,6 +60,7 @@ void CCEngineSetup(void)
     CCInputMapKeyboardComponentSetIgnoreModifier(Key, TRUE);
     CCInputMapComponentSetAction(Key, "recolour");
     CCEntityAttachComponent(Player, Key);
+    CCComponentSystemAddComponent(Key);
     
     CCComponent Group = CCComponentCreate(CC_INPUT_MAP_GROUP_COMPONENT_ID);
     Key = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
@@ -99,10 +93,9 @@ void CCEngineSetup(void)
     CCInputMapGroupComponentAddInputMap(Group, Key);
     CCInputMapComponentSetAction(Group, "move");
     CCEntityAttachComponent(Player, Group);
+    CCComponentSystemAddComponent(Group);
     
     CCEntityManagerAddEntity(Player);
-    CCComponentSystemAddComponent(Renderer);
-    CCComponentSystemAddComponent(Key);
     
     
     
