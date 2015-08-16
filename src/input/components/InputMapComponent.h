@@ -14,8 +14,6 @@
 
 #define CC_INPUT_MAP_COMPONENT_ID (CCInputMapTypeNone | CC_INPUT_COMPONENT_FLAG)
 
-extern const char * const CCInputMapComponentName;
-
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);
     char *action; //TODO: Should probably make a string type
@@ -30,9 +28,10 @@ static inline void CCInputMapComponentInitialize(CCComponent Component, CCCompon
     ((CCInputMapComponentPrivate)Component)->callback = NULL;
 }
 
-static inline void CCInputMapComponentDestroy(CCComponent Component)
+static inline void CCInputMapComponentDeallocate(CCComponent Component)
 {
     CC_SAFE_Free(((CCInputMapComponentPrivate)Component)->action);
+    CCComponentDeallocate(Component);
 }
 
 static inline const char *CCInputMapComponentGetAction(CCComponent Component)

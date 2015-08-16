@@ -37,6 +37,11 @@ static inline void CCInputMapMouseButtonComponentInitialize(CCComponent Componen
     ((CCInputMapMouseButtonComponentPrivate)Component)->ignoreModifier = FALSE;
 }
 
+static inline void CCInputMapMouseButtonComponentDeallocate(CCComponent Component)
+{
+    CCInputMapComponentDeallocate(Component);
+}
+
 static inline int32_t CCInputMapMouseButtonComponentGetButton(CCComponent Component)
 {
     return ((CCInputMapMouseButtonComponentPrivate)Component)->button;

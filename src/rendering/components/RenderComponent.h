@@ -38,6 +38,11 @@ static inline void CCRenderComponentInitialize(CCComponent Component, CCComponen
     ((CCRenderComponentPrivate)Component)->colour = CCVector3DZero;
 }
 
+static inline void CCRenderComponentDeallocate(CCComponent Component)
+{
+    CCComponentDeallocate(Component);
+}
+
 static inline CCRect CCRenderComponentGetRect(CCComponent Component)
 {
     return ((CCRenderComponentPrivate)Component)->rect;

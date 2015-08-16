@@ -45,6 +45,11 @@ static inline void CCInputMapControllerAxesComponentInitialize(CCComponent Compo
     ((CCInputMapControllerAxesComponentPrivate)Component)->flipZ = FALSE;
 }
 
+static inline void CCInputMapControllerAxesComponentDeallocate(CCComponent Component)
+{
+    CCInputMapControllerComponentDeallocate(Component);
+}
+
 static inline float CCInputMapControllerAxesComponentGetDeadzone(CCComponent Component)
 {
     return ((CCInputMapControllerAxesComponentPrivate)Component)->deadzone;

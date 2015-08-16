@@ -29,4 +29,9 @@ static inline void CCInputMapMouseScrollComponentInitialize(CCComponent Componen
     CCInputMapComponentInitialize(Component, id);
 }
 
+static inline void CCInputMapMouseScrollComponentDeallocate(CCComponent Component)
+{
+    CCInputMapComponentDeallocate(Component);
+}
+
 #endif

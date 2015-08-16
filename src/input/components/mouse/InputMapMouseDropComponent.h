@@ -29,4 +29,9 @@ static inline void CCInputMapMouseDropComponentInitialize(CCComponent Component,
     CCInputMapComponentInitialize(Component, id);
 }
 
+static inline void CCInputMapMouseDropComponentDeallocate(CCComponent Component)
+{
+    CCInputMapComponentDeallocate(Component);
+}
+
 #endif

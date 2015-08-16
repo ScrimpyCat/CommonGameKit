@@ -12,7 +12,7 @@ const char * const CCInputMapGroupComponentName = "input_map_group";
 
 void CCInputMapGroupComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_GROUP_COMPONENT_ID, CCInputMapGroupComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapGroupComponentClass), CCInputMapGroupComponentInitialize, CCInputMapGroupComponentDestroy);
+    CCComponentRegister(CC_INPUT_MAP_GROUP_COMPONENT_ID, CCInputMapGroupComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapGroupComponentClass), CCInputMapGroupComponentInitialize, CCInputMapGroupComponentDeallocate);
 }
 
 void CCInputMapGroupComponentDeregister(void)

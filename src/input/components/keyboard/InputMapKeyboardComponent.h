@@ -41,6 +41,11 @@ static inline void CCInputMapKeyboardComponentInitialize(CCComponent Component, 
     ((CCInputMapKeyboardComponentPrivate)Component)->repeats = FALSE;
 }
 
+static inline void CCInputMapKeyboardComponentDeallocate(CCComponent Component)
+{
+    CCInputMapComponentDeallocate(Component);
+}
+
 static inline int32_t CCInputMapKeyboardComponentGetKeycode(CCComponent Component)
 {
     return ((CCInputMapKeyboardComponentPrivate)Component)->keycode;

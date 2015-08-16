@@ -12,7 +12,7 @@ const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
 
 void CCInputMapKeyboardComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapComponentDestroy);
+    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
 }
 
 void CCInputMapKeyboardComponentDeregister(void)

@@ -33,9 +33,10 @@ static inline void CCInputMapControllerComponentInitialize(CCComponent Component
     ((CCInputMapControllerComponentPrivate)Component)->connection = 0;
 }
 
-static inline void CCInputMapControllerComponentDestroy(CCComponent Component)
+static inline void CCInputMapControllerComponentDeallocate(CCComponent Component)
 {
     CC_SAFE_Free(((CCInputMapControllerComponentPrivate)Component)->device);
+    CCInputMapComponentDeallocate(Component);
 }
 
 static inline const char *CCInputMapControllerComponentGetDevice(CCComponent Component)

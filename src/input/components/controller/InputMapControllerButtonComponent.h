@@ -33,6 +33,11 @@ static inline void CCInputMapControllerButtonComponentInitialize(CCComponent Com
     ((CCInputMapControllerButtonComponentPrivate)Component)->ramp = 0.0f;
 }
 
+static inline void CCInputMapControllerButtonComponentDeallocate(CCComponent Component)
+{
+    CCInputMapControllerComponentDeallocate(Component);
+}
+
 static inline int32_t CCInputMapControllerButtonComponentGetButton(CCComponent Component)
 {
     return ((CCInputMapControllerButtonComponentPrivate)Component)->button;

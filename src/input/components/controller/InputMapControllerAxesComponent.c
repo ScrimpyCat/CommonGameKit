@@ -12,7 +12,7 @@ const char * const CCInputMapControllerAxesComponentName = "input_map_controller
 
 void CCInputMapControllerAxesComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID, CCInputMapControllerAxesComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapControllerAxesComponentClass), CCInputMapControllerAxesComponentInitialize, CCInputMapControllerComponentDestroy);
+    CCComponentRegister(CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID, CCInputMapControllerAxesComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapControllerAxesComponentClass), CCInputMapControllerAxesComponentInitialize, CCInputMapControllerAxesComponentDeallocate);
 }
 
 void CCInputMapControllerAxesComponentDeregister(void)

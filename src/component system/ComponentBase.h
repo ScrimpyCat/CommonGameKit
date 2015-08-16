@@ -27,6 +27,10 @@ static inline void CCComponentInitialize(CCComponent Component, CCComponentID id
     *(CCComponentPrivate)Component = (CCComponentClass){ .id = id, .entity = NULL };
 }
 
+static inline void CCComponentDeallocate(CCComponent Component)
+{
+}
+
 static inline CCComponentID CCComponentGetID(CCComponent Component)
 {
     return ((CCComponentPrivate)Component)->id & ~CC_COMPONENT_ID_RESERVED_MASK;

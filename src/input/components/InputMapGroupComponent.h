@@ -35,10 +35,10 @@ static inline void CCInputMapGroupComponentInitialize(CCComponent Component, CCC
     ((CCInputMapGroupComponentPrivate)Component)->wantsAllActive = FALSE;
 }
 
-static inline void CCInputMapGroupComponentDestroy(CCComponent Component)
+static inline void CCInputMapGroupComponentDeallocate(CCComponent Component)
 {
     CCCollectionDestroy(((CCInputMapGroupComponentPrivate)Component)->inputMaps);
-    CCInputMapComponentDestroy(Component);
+    CCInputMapComponentDeallocate(Component);
 }
 
 static inline CCOrderedCollection CCInputMapGroupComponentGetInputMaps(CCComponent Component)
