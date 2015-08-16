@@ -13,6 +13,7 @@
 //TODO: Probably make this file generated (could add a define so it knows what functions to call from here)
 #include "RenderSystem.h"
 #include "InputSystem.h"
+#include "AnimationSystem.h"
 
 #include "RenderComponent.h"
 #include "InputMapKeyboardComponent.h"
@@ -23,6 +24,8 @@
 #include "InputMapMouseDropComponent.h"
 #include "InputMapControllerAxesComponent.h"
 #include "InputMapControllerButtonComponent.h"
+#include "AnimationComponent.h"
+#include "AnimationKeyframeComponent.h"
 
 void CCEngineSetup(void)
 {
@@ -31,6 +34,7 @@ void CCEngineSetup(void)
     //Register Systems
     CCRenderSystemRegister();
     CCInputSystemRegister();
+    CCAnimationSystemRegister();
     
     //Register Components
     CCRenderComponentRegister();
@@ -42,6 +46,8 @@ void CCEngineSetup(void)
     CCInputMapMouseDropComponentRegister();
     CCInputMapControllerAxesComponentRegister();
     CCInputMapControllerButtonComponentRegister();
+    CCAnimationComponentRegister();
+    CCAnimationKeyframeComponentRegister();
     
     
     //Initial Scene Setup
@@ -94,6 +100,29 @@ void CCEngineSetup(void)
     CCInputMapComponentSetAction(Group, "move");
     CCEntityAttachComponent(Player, Group);
     CCComponentSystemAddComponent(Group);
+    
+    CCComponent Animation = CCComponentCreate(CC_ANIMATION_KEYFRAME_COMPONENT_ID);
+    CCAnimationComponentSetPlaying(Animation, TRUE);
+//    CCAnimationKeyframeComponentSetFrame(Animation, 0.1);
+    CCOrderedCollection Frames = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(double), NULL);
+    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+    CCOrderedCollectionAppendElement(Frames, &(double){ 0.5 });
+    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+    CCAnimationKeyframeComponentSetFrames(Animation, Frames);
+    CCOrderedCollection Data = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(int), NULL);
+    CCOrderedCollectionAppendElement(Data, &(int){ 10 });
+    CCOrderedCollectionAppendElement(Data, &(int){ 20 });
+    CCOrderedCollectionAppendElement(Data, &(int){ 30 });
+    CCOrderedCollectionAppendElement(Data, &(int){ 40 });
+    CCOrderedCollectionAppendElement(Data, &(int){ 50 });
+    CCOrderedCollectionAppendElement(Data, &(int){ 60 });
+    CCAnimationKeyframeComponentSetData(Animation, Data);
+    CCAnimationComponentSetLoop(Animation, CCAnimationLoopRepeatFlip);
+    CCEntityAttachComponent(Player, Animation);
+    CCComponentSystemAddComponent(Animation);
     
     CCEntityManagerAddEntity(Player);
     

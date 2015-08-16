@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */; };
+		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
+		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
 		F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk.a */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
@@ -308,6 +311,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F313F9781B7DE7A9006F5CF5 /* AnimationComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationComponent.h; sourceTree = "<group>"; };
+		F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationSystem.c; sourceTree = "<group>"; };
+		F313F9A31B7FB888006F5CF5 /* AnimationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationSystem.h; sourceTree = "<group>"; };
+		F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationKeyframeComponent.c; sourceTree = "<group>"; };
+		F313F9A61B804EEC006F5CF5 /* AnimationKeyframeComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationKeyframeComponent.h; sourceTree = "<group>"; };
+		F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationComponent.c; sourceTree = "<group>"; };
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
@@ -522,6 +531,7 @@
 			children = (
 				F3F5D6801A56F4A9006D7F16 /* main.c */,
 				F3E84D821B45A51F0082E510 /* Window.h */,
+				F3FF0F211B63FBE4005B1927 /* Animation */,
 				F3E84D7F1B45A3980082E510 /* Input */,
 				F3E84D7E1B45A37E0082E510 /* Rendering */,
 				F39796DD1A5C7748007C3422 /* Component System */,
@@ -713,6 +723,38 @@
 			);
 			name = Setup;
 			path = setup;
+			sourceTree = "<group>";
+		};
+		F3FF0F211B63FBE4005B1927 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				F3FF0F4A1B63FC12005B1927 /* Systems */,
+				F3FF0F4B1B63FC18005B1927 /* Components */,
+			);
+			name = Animation;
+			path = animation;
+			sourceTree = "<group>";
+		};
+		F3FF0F4A1B63FC12005B1927 /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				F313F9A31B7FB888006F5CF5 /* AnimationSystem.h */,
+				F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */,
+			);
+			name = Systems;
+			path = systems;
+			sourceTree = "<group>";
+		};
+		F3FF0F4B1B63FC18005B1927 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F313F9781B7DE7A9006F5CF5 /* AnimationComponent.h */,
+				F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */,
+				F313F9A61B804EEC006F5CF5 /* AnimationKeyframeComponent.h */,
+				F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */,
+			);
+			name = Components;
+			path = components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1086,16 +1128,19 @@
 				F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */,
 				F3C020931B51D32600F546E7 /* Controller.c in Sources */,
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
+				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
 				F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */,
 				F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */,
 				F3C020461B4F375E00F546E7 /* Mouse.c in Sources */,
+				F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */,
 				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
 				F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
+				F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */,
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
