@@ -109,14 +109,4 @@ static inline void CCAnimationComponentSetPlaying(CCComponent Component, _Bool P
     ((CCAnimationComponentPrivate)Component)->control.playing = Playing;
 }
 
-//static inline CCAnimationLoop CCAnimationComponentGetLoop(CCComponent Component)
-//{
-//    return ((CCAnimationComponentPrivate)Component)->loop;
-//}
-//
-//static inline void CCAnimationComponentSetLoop(CCComponent Component, CCAnimationLoop Loop)
-//{
-//    ((CCAnimationComponentPrivate)Component)->loop = Loop;
-//}
-
 #endif

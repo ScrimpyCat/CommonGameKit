@@ -11,6 +11,7 @@
 #include <CommonC/Common.h>
 #include "AnimationComponent.h"
 #include "AnimationKeyframeComponent.h"
+#include "AnimationInterpolateComponent.h"
 
 static _Bool CCAnimationSystemTryLock(void);
 static void CCAnimationSystemLock(void);
@@ -87,6 +88,7 @@ static void CCAnimationSystemUpdate(double DeltaTime, CCCollection Components)
                     break;
                     
                 case CCAnimationTypeKeyframe:
+                case CCAnimationTypeInterpolate:
                 {
                     if (CCAnimationKeyframeComponentGetIsFinished(Animation)) break;
                     

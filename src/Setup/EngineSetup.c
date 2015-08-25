@@ -26,6 +26,12 @@
 #include "InputMapControllerButtonComponent.h"
 #include "AnimationComponent.h"
 #include "AnimationKeyframeComponent.h"
+#include "AnimationInterpolateComponent.h"
+
+void AnimationInterpolator(int *Previous, int *Next, double Time, int *Result)
+{
+    *Result = (int)(((1.0 - Time) * (double)*Previous) + (Time * (double)*Next)); //basic lerp
+}
 
 void CCEngineSetup(void)
 {
@@ -48,6 +54,7 @@ void CCEngineSetup(void)
     CCInputMapControllerButtonComponentRegister();
     CCAnimationComponentRegister();
     CCAnimationKeyframeComponentRegister();
+    CCAnimationInterpolateComponentRegister();
     
     
     //Initial Scene Setup
@@ -101,17 +108,18 @@ void CCEngineSetup(void)
     CCEntityAttachComponent(Player, Group);
     CCComponentSystemAddComponent(Group);
     
-    CCComponent Animation = CCComponentCreate(CC_ANIMATION_KEYFRAME_COMPONENT_ID);
+    CCComponent Animation = CCComponentCreate(CC_ANIMATION_INTERPOLATE_COMPONENT_ID);
     CCAnimationComponentSetPlaying(Animation, TRUE);
-//    CCAnimationKeyframeComponentSetFrame(Animation, 0.1);
-    CCOrderedCollection Frames = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(double), NULL);
-    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
-    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
-    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
-    CCOrderedCollectionAppendElement(Frames, &(double){ 0.5 });
-    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
-    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
-    CCAnimationKeyframeComponentSetFrames(Animation, Frames);
+    CCAnimationKeyframeComponentSetFrame(Animation, 1.0);
+//    CCOrderedCollection Frames = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(double), NULL);
+//    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+//    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+//    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+//    CCOrderedCollectionAppendElement(Frames, &(double){ 0.5 });
+//    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+//    CCOrderedCollectionAppendElement(Frames, &(double){ 0.1 });
+//    CCAnimationKeyframeComponentSetFrames(Animation, Frames);
+    CCAnimationInterpolateComponentSetInterpolator(Animation, (CCAnimationInterpolator)AnimationInterpolator);
     CCOrderedCollection Data = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(int), NULL);
     CCOrderedCollectionAppendElement(Data, &(int){ 10 });
     CCOrderedCollectionAppendElement(Data, &(int){ 20 });
