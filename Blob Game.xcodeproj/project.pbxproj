@@ -11,7 +11,7 @@
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
 		F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */; };
-		F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk.a */; };
+		F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk-Mac.a */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
 		F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */; };
@@ -398,7 +398,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F32393F71A572155007BD168 /* libChipmunk.a in Frameworks */,
+				F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */,
 				F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */,
 				F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */,
 				F3F5D6FC1A5700F3006D7F16 /* OpenGL.framework in Frameworks */,
@@ -423,12 +423,12 @@
 			isa = PBXGroup;
 			children = (
 				F32393C91A572148007BD168 /* ChipmunkDemo.app */,
-				F32393CB1A572148007BD168 /* libChipmunk.a */,
-				F32393CD1A572148007BD168 /* libChipmunk-iPhone.a */,
+				F32393CB1A572148007BD168 /* libChipmunk-Mac.a */,
+				F32393CD1A572148007BD168 /* libChipmunk-iOS.a */,
 				F32393CF1A572148007BD168 /* Benchmark iPhone.app */,
-				F32393D11A572148007BD168 /* libObjectiveChipmunk-iPhone.a */,
+				F32393D51A572148007BD168 /* libObjectiveChipmunk-Mac.a */,
+				F32393D11A572148007BD168 /* libObjectiveChipmunk-iOS.a */,
 				F32393D31A572148007BD168 /* ObjectiveChipmunkTests.xctest */,
-				F32393D51A572148007BD168 /* libObjectiveChipmunk.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -859,17 +859,17 @@
 			remoteRef = F32393C81A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F32393CB1A572148007BD168 /* libChipmunk.a */ = {
+		F32393CB1A572148007BD168 /* libChipmunk-Mac.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libChipmunk.a;
+			path = "libChipmunk-Mac.a";
 			remoteRef = F32393CA1A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F32393CD1A572148007BD168 /* libChipmunk-iPhone.a */ = {
+		F32393CD1A572148007BD168 /* libChipmunk-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libChipmunk-iPhone.a";
+			path = "libChipmunk-iOS.a";
 			remoteRef = F32393CC1A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -880,10 +880,10 @@
 			remoteRef = F32393CE1A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F32393D11A572148007BD168 /* libObjectiveChipmunk-iPhone.a */ = {
+		F32393D11A572148007BD168 /* libObjectiveChipmunk-iOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libObjectiveChipmunk-iPhone.a";
+			path = "libObjectiveChipmunk-iOS.a";
 			remoteRef = F32393D01A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -894,10 +894,10 @@
 			remoteRef = F32393D21A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F32393D51A572148007BD168 /* libObjectiveChipmunk.a */ = {
+		F32393D51A572148007BD168 /* libObjectiveChipmunk-Mac.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libObjectiveChipmunk.a;
+			path = "libObjectiveChipmunk-Mac.a";
 			remoteRef = F32393D41A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1269,6 +1269,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include";
 			};
@@ -1286,6 +1287,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include";
 			};

@@ -10,3 +10,6 @@
 [submodule "deps/Chipmunk2D"]
 	path = deps/Chipmunk2D
 	url = https://github.com/slembcke/Chipmunk2D.git
+[submodule "deps/chibi-scheme"]
+	path = deps/chibi-scheme
+	url = https://github.com/ashinn/chibi-scheme.git
