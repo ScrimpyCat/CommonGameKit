@@ -22,6 +22,8 @@
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
 		F39E23C61BFF63FB00DB0B71 /* CommonC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ASSET_TAGS = (); }; };
+		F39E26711BFF6F6900DB0B71 /* libchibi-scheme.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
@@ -319,6 +321,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F39E26711BFF6F6900DB0B71 /* libchibi-scheme.dylib in Copy Frameworks */,
 				F39E23C61BFF63FB00DB0B71 /* CommonC.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -351,6 +354,12 @@
 		F397970B1A5C7CF7007C3422 /* ComponentSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentSystem.c; sourceTree = "<group>"; };
 		F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapControllerButtonComponent.c; sourceTree = "<group>"; };
 		F3996F9D1B5B38040065F7DB /* InputMapControllerButtonComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapControllerButtonComponent.h; sourceTree = "<group>"; };
+		F39E266A1BFF6F4E00DB0B71 /* bignum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bignum.h; path = "deps/chibi-scheme/build/include/chibi/bignum.h"; sourceTree = "<group>"; };
+		F39E266B1BFF6F4E00DB0B71 /* eval.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = eval.h; path = "deps/chibi-scheme/build/include/chibi/eval.h"; sourceTree = "<group>"; };
+		F39E266C1BFF6F4E00DB0B71 /* features.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = features.h; path = "deps/chibi-scheme/build/include/chibi/features.h"; sourceTree = "<group>"; };
+		F39E266D1BFF6F4E00DB0B71 /* install.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = install.h; path = "deps/chibi-scheme/build/include/chibi/install.h"; sourceTree = "<group>"; };
+		F39E266E1BFF6F4E00DB0B71 /* sexp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sexp.h; path = "deps/chibi-scheme/build/include/chibi/sexp.h"; sourceTree = "<group>"; };
+		F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libchibi-scheme.dylib"; path = "deps/chibi-scheme/build/lib/libchibi-scheme.dylib"; sourceTree = "<group>"; };
 		F3AE99421A725AC500212838 /* ComponentSystemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComponentSystemTests.m; sourceTree = "<group>"; };
 		F3AE996F1A73E2F000212838 /* Entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Entity.c; sourceTree = "<group>"; };
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
@@ -420,6 +429,7 @@
 				F3F5D6FD1A5700F3006D7F16 /* Cocoa.framework in Frameworks */,
 				F3F5D6F11A56FC70006D7F16 /* libglfw3.a in Frameworks */,
 				F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */,
+				F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +493,19 @@
 			);
 			name = "Component System";
 			path = "component system";
+			sourceTree = "<group>";
+		};
+		F39E23C71BFF65D200DB0B71 /* chibi-scheme */ = {
+			isa = PBXGroup;
+			children = (
+				F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */,
+				F39E266A1BFF6F4E00DB0B71 /* bignum.h */,
+				F39E266B1BFF6F4E00DB0B71 /* eval.h */,
+				F39E266C1BFF6F4E00DB0B71 /* features.h */,
+				F39E266D1BFF6F4E00DB0B71 /* install.h */,
+				F39E266E1BFF6F4E00DB0B71 /* sexp.h */,
+			);
+			name = "chibi-scheme";
 			sourceTree = "<group>";
 		};
 		F3C020661B51D0A200F546E7 /* Keyboard */ = {
@@ -658,6 +681,7 @@
 		F3F5D6911A56F723006D7F16 /* dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				F39E23C71BFF65D200DB0B71 /* chibi-scheme */,
 				F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */,
 				F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */,
 				F3F5D6F61A5700AB006D7F16 /* IOKit.framework */,
@@ -788,6 +812,7 @@
 				F3C401D31A56E52800095ECD /* Frameworks */,
 				F3C401D41A56E52800095ECD /* Resources */,
 				F39E23C51BFF63D600DB0B71 /* Copy Frameworks */,
+				F39E26721BFF6FD300DB0B71 /* Update DYLIB install names */,
 			);
 			buildRules = (
 			);
@@ -1140,6 +1165,23 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		F39E26721BFF6FD300DB0B71 /* Update DYLIB install names */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Update DYLIB install names";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\nEXECFILE=$BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\nLIBPATH=$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\nNEWLIBPATH=\"@executable_path/../Frameworks\"\n\nfor DYLIB in \"$LIBPATH\"/*.dylib; do\nTARGETID=$(otool -DX \"$DYLIB\")\nNEWTARGETID=\"$NEWLIBPATH/$(basename \"$DYLIB\")\"\ninstall_name_tool -change \"$TARGETID\" \"$NEWTARGETID\" \"$EXECFILE\"\ndone";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		F3C401D21A56E52800095ECD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1286,10 +1328,13 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/chibi-scheme/build/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/chibi-scheme/build/include";
 			};
 			name = Debug;
 		};
@@ -1305,10 +1350,13 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/chibi-scheme/build/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/chibi-scheme/build/include";
 			};
 			name = Release;
 		};
