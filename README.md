@@ -92,5 +92,12 @@ cmake -G Xcode ..
 #Gets built from the Xcode project
 ```
 
+Build Chibi Scheme (/deps/chibi-scheme/):
+```
+mkdir build
+make PREFIX=build install
+```
+
+
 Build Game:
 Compile the xcode project (either with xcodebuild or with the IDE itself).
