@@ -10,9 +10,9 @@
 #include <inttypes.h>
 
 
-CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type);
-CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length);
-CCExpression CCExpressionParse(const char **Source);
+static CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type);
+static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length);
+static CCExpression CCExpressionParse(const char **Source);
 
 
 static void CCExpressionElementDestructor(CCCollection Collection, CCExpression *Element)
@@ -20,7 +20,7 @@ static void CCExpressionElementDestructor(CCCollection Collection, CCExpression 
     CCExpressionDestroy(*Element);
 }
 
-CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
+static CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
 {
     CCExpression Expression = CCMalloc(Allocator, sizeof(*Expression), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (!Expression)
@@ -70,7 +70,7 @@ CCExpression CCExpressionCreateFromSource(const char *Source)
     return CCExpressionParse(&Source);
 }
 
-CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length)
+static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length)
 {
     CCExpressionValueType Type = CCExpressionValueTypeAtom;
     if (*Input == '"')
@@ -123,7 +123,7 @@ CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, 
     return Val;
 }
 
-CCExpression CCExpressionParse(const char **Source)
+static CCExpression CCExpressionParse(const char **Source)
 {
     CCExpression Expr = NULL;
     const char *Value = NULL;
