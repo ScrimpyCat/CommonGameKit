@@ -76,8 +76,8 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     }
     
     else if (isdigit(*Input)) Type = CCExpressionValueTypeInteger;
-    else if (*Input == '.') Type = CCExpressionValueTypeFloat;
-    else if (*Input == '-') Type = CCExpressionValueTypeInteger;
+    else if ((*Input == '.') && (Length > 1) && (isdigit(Input[1]))) Type = CCExpressionValueTypeFloat;
+    else if ((*Input == '-') && (Length > 1) && (isdigit(Input[1]))) Type = CCExpressionValueTypeInteger;
     
     char *String;
     CC_SAFE_Malloc(String, sizeof(char) * Length,

@@ -29,6 +29,7 @@
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
 		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; settings = {ASSET_TAGS = (); }; };
 		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; settings = {ASSET_TAGS = (); }; };
+		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; settings = {ASSET_TAGS = (); }; };
 		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
 		F3C020461B4F375E00F546E7 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020441B4F375E00F546E7 /* Mouse.c */; };
 		F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */; };
@@ -371,6 +372,9 @@
 		F3BD17731C00857800B3849E /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
 		F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionEvaluator.c; sourceTree = "<group>"; };
 		F3BD17771C00B35E00B3849E /* ExpressionEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionEvaluator.h; sourceTree = "<group>"; };
+		F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionSetup.c; sourceTree = "<group>"; };
+		F3BD177B1C00DB5600B3849E /* ExpressionSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionSetup.h; sourceTree = "<group>"; };
+		F3BD177E1C00DCE800B3849E /* MathExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathExpressions.h; sourceTree = "<group>"; };
 		F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
 		F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
 		F3C020441B4F375E00F546E7 /* Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Mouse.c; sourceTree = "<group>"; };
@@ -530,6 +534,7 @@
 		F3BD17751C00B33800B3849E /* Evaluators */ = {
 			isa = PBXGroup;
 			children = (
+				F3BD177E1C00DCE800B3849E /* MathExpressions.h */,
 			);
 			name = Evaluators;
 			path = evaluators;
@@ -790,6 +795,8 @@
 				F3F6C4AA1A599DF800B9D6BA /* PlatformSetup_linux.c */,
 				F35CD6F01B3EB8130032E3A7 /* EngineSetup.h */,
 				F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */,
+				F3BD177B1C00DB5600B3849E /* ExpressionSetup.h */,
+				F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */,
 			);
 			name = Setup;
 			path = setup;
@@ -1218,6 +1225,7 @@
 				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
 				F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */,
 				F3C020931B51D32600F546E7 /* Controller.c in Sources */,
+				F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */,
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
