@@ -28,6 +28,7 @@
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
 		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; settings = {ASSET_TAGS = (); }; };
+		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; settings = {ASSET_TAGS = (); }; };
 		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
 		F3C020461B4F375E00F546E7 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020441B4F375E00F546E7 /* Mouse.c */; };
 		F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */; };
@@ -368,6 +369,8 @@
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
 		F3BD17721C00857800B3849E /* Expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Expression.c; sourceTree = "<group>"; };
 		F3BD17731C00857800B3849E /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
+		F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionEvaluator.c; sourceTree = "<group>"; };
+		F3BD17771C00B35E00B3849E /* ExpressionEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionEvaluator.h; sourceTree = "<group>"; };
 		F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
 		F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
 		F3C020441B4F375E00F546E7 /* Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Mouse.c; sourceTree = "<group>"; };
@@ -516,9 +519,20 @@
 			children = (
 				F3BD17731C00857800B3849E /* Expression.h */,
 				F3BD17721C00857800B3849E /* Expression.c */,
+				F3BD17771C00B35E00B3849E /* ExpressionEvaluator.h */,
+				F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */,
+				F3BD17751C00B33800B3849E /* Evaluators */,
 			);
 			name = Scripting;
 			path = scripting;
+			sourceTree = "<group>";
+		};
+		F3BD17751C00B33800B3849E /* Evaluators */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Evaluators;
+			path = evaluators;
 			sourceTree = "<group>";
 		};
 		F3C020661B51D0A200F546E7 /* Keyboard */ = {
@@ -1217,6 +1231,7 @@
 				F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
+				F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
 				F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */,
 				F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */,

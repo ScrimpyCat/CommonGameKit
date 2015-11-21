@@ -8,9 +8,9 @@
 
 #include "Expression.h"
 #include <inttypes.h>
+#include "ExpressionEvaluator.h"
 
 
-static CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type);
 static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length);
 static CCExpression CCExpressionParse(const char **Source);
 
@@ -20,7 +20,7 @@ static void CCExpressionElementDestructor(CCCollection Collection, CCExpression 
     CCExpressionDestroy(*Element);
 }
 
-static CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
+CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
 {
     CCExpression Expression = CCMalloc(Allocator, sizeof(*Expression), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (!Expression)
@@ -30,9 +30,21 @@ static CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionVa
     }
     
     Expression->type = Type;
-    if (Type == CCExpressionValueTypeList)
+    switch (Type)
     {
-        Expression->list = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
+        case CCExpressionValueTypeAtom:
+        case CCExpressionValueTypeString:
+            Expression->destructor = CCFree;
+            break;
+            
+        case CCExpressionValueTypeList:
+            Expression->list = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
+            Expression->destructor = (CCExpressionValueDestructor)CCCollectionDestroy;
+            break;
+            
+        default:
+            Expression->destructor = NULL;
+            break;
     }
     
     return Expression;
@@ -42,24 +54,7 @@ void CCExpressionDestroy(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    switch (Expression->type)
-    {
-        case CCExpressionValueTypeAtom:
-            CC_SAFE_Free(Expression->atom);
-            break;
-            
-        case CCExpressionValueTypeString:
-            CC_SAFE_Free(Expression->string);
-            break;
-            
-        case CCExpressionValueTypeList:
-            CCCollectionDestroy(Expression->list);
-            break;
-            
-        default:
-            break;
-    }
-    
+    if (Expression->destructor) Expression->destructor(Expression->data);
     CC_SAFE_Free(Expression);
 }
 
@@ -249,4 +244,31 @@ void CCExpressionPrint(CCExpression Expression)
             break;
         }
     }
+}
+
+CCExpression CCExpressionEvaluate(CCExpression Expression)
+{
+    if (Expression->type == CCExpressionValueTypeExpression)
+    {
+        CC_COLLECTION_FOREACH(CCExpression, Expr, Expression->list)
+        {
+            if (Expr->type == CCExpressionValueTypeExpression)
+            {
+                CCExpression Res = CCExpressionEvaluate(Expr);
+                if ((Res) && (Res != Expr)) CCOrderedCollectionReplaceElementAtIndex(Expression->list, &Res, CCOrderedCollectionGetIndex(Expression->list, CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR)));
+            }
+        }
+        
+        CCExpression *Expr = CCOrderedCollectionGetElementAtIndex(Expression->list, 0);
+        if ((Expr) && ((*Expr)->type == CCExpressionValueTypeAtom))
+        {
+            CCExpressionEvaluator Eval = CCExpressionEvaluatorForName((*Expr)->atom);
+            if (Eval)
+            {
+                return Eval(Expression);
+            }
+        }
+    }
+    
+    return Expression;
 }
