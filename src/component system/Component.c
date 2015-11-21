@@ -27,7 +27,7 @@ static void CCComponentListElementDestructor(CCCollection Collection, CCComponen
     CC_SAFE_Free(Element->name);
 }
 
-CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
+static CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
 void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentDestructor Destructor)
 {
     if (!ComponentList) ComponentList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCComponentInfo), (CCCollectionElementDestructor)CCComponentListElementDestructor);
