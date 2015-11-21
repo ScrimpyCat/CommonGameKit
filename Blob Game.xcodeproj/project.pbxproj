@@ -27,6 +27,7 @@
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
+		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; settings = {ASSET_TAGS = (); }; };
 		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
 		F3C020461B4F375E00F546E7 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020441B4F375E00F546E7 /* Mouse.c */; };
 		F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */; };
@@ -365,6 +366,8 @@
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		F3AE99721A7402BB00212838 /* ComponentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentBase.h; sourceTree = "<group>"; };
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
+		F3BD17721C00857800B3849E /* Expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Expression.c; sourceTree = "<group>"; };
+		F3BD17731C00857800B3849E /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
 		F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
 		F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
 		F3C020441B4F375E00F546E7 /* Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Mouse.c; sourceTree = "<group>"; };
@@ -508,6 +511,16 @@
 			name = "chibi-scheme";
 			sourceTree = "<group>";
 		};
+		F3BD17481C00845D00B3849E /* Scripting */ = {
+			isa = PBXGroup;
+			children = (
+				F3BD17731C00857800B3849E /* Expression.h */,
+				F3BD17721C00857800B3849E /* Expression.c */,
+			);
+			name = Scripting;
+			path = scripting;
+			sourceTree = "<group>";
+		};
 		F3C020661B51D0A200F546E7 /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -576,6 +589,7 @@
 				F3E84D7F1B45A3980082E510 /* Input */,
 				F3E84D7E1B45A37E0082E510 /* Rendering */,
 				F39796DD1A5C7748007C3422 /* Component System */,
+				F3BD17481C00845D00B3849E /* Scripting */,
 				F3F6C4A31A599A3C00B9D6BA /* Setup */,
 				F3C401D91A56E52800095ECD /* Supporting Files */,
 			);
@@ -1196,6 +1210,7 @@
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
 				F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */,
 				F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */,
+				F3BD17741C00857800B3849E /* Expression.c in Sources */,
 				F3C020461B4F375E00F546E7 /* Mouse.c in Sources */,
 				F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */,
 				F3511D631A9B372A006893F9 /* EntityManager.c in Sources */,
