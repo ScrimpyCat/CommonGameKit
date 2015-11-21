@@ -65,6 +65,8 @@ void CCExpressionDestroy(CCExpression Expression)
 
 CCExpression CCExpressionCreateFromSource(const char *Source)
 {
+    CCAssertLog(Source, "Source must not be NULL");
+    
     return CCExpressionParse(&Source);
 }
 
