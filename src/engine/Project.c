@@ -9,10 +9,11 @@
 #include "Project.h"
 #include "Configuration.h"
 #include "Expression.h"
+#include "ProjectExpressions.h"
 
 static const char CCProjectGamepkg[] =
 "(game \"Game\" ; title\n"
-"    (default-window-size 640 480) ; window size\n"
+"    (default-resolution 640 480) ; resolution or window size\n"
 "    (default-fullscreen false) ; fullscreen mode\n"
 "\n"
 "    (dir-fonts \"font/\") ; font directories\n"
@@ -137,7 +138,17 @@ void CCProjectLoad(FSPath ProjectPath)
     {
         if (FSHandleRead(Handle, &Size, Source, FSBehaviourDefault) == FSOperationSuccess)
         {
+            CCExpression Expression = CCExpressionCreateFromSource(Source);
+            Expression = CCExpressionEvaluate(Expression);
             
+            if (Expression->type == CCProjectExpressionValueTypeGameConfig)
+            {
+                ((CCEngineConfig*)Expression->data)->launch = CCEngineConfiguration.launch;
+                CCEngineConfiguration = *(CCEngineConfig*)Expression->data;
+                CCEngineConfiguration.project = ProjectPath;
+            }
+            
+            else CC_LOG_ERROR("Failed to evaluate the project source file.");
         }
         
         else CC_LOG_ERROR("Failed to read the project source file.");

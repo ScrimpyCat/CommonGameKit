@@ -11,6 +11,7 @@
 #include "ExpressionEvaluator.h"
 
 #include "MathExpressions.h"
+#include "ProjectExpressions.h"
 
 void CCExpressionSetup(void)
 {
@@ -18,4 +19,5 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("-", CCMathExpressionSubtract);
     CCExpressionEvaluatorRegister("*", CCMathExpressionMultiply);
     CCExpressionEvaluatorRegister("/", CCMathExpressionDivide);
+    CCExpressionEvaluatorRegister("game", CCProjectExpressionGame);
 }

@@ -17,8 +17,8 @@ CCEngineConfig CCEngineConfiguration = {
     .project = NULL,
     .title = NULL,
     .window = {
-        .width = 640,
-        .height = 480,
+        .width = 0,
+        .height = 0,
         .fullscreen = FALSE
     },
     .directory = {

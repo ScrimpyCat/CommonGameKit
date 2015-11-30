@@ -78,7 +78,7 @@ int main(int argc, const char *argv[])
     glfwWindowHint(GLFW_DEPTH_BITS, 0);
     glfwWindowHint(GLFW_STENCIL_BITS, 0);
     
-    CCWindow = glfwCreateWindow(640, 480, "Blob Game", NULL, NULL);
+    CCWindow = glfwCreateWindow(CCEngineConfiguration.window.width, CCEngineConfiguration.window.height, CCEngineConfiguration.title, CCEngineConfiguration.window.fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
     if (!CCWindow)
     {
         //TODO: Fallback to legacy GL profile? 

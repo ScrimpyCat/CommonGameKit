@@ -346,6 +346,7 @@
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
+		F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectExpressions.h; sourceTree = "<group>"; };
 		F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityManagerTests.m; sourceTree = "<group>"; };
 		F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EngineSetup.c; sourceTree = "<group>"; };
 		F35CD6F01B3EB8130032E3A7 /* EngineSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineSetup.h; sourceTree = "<group>"; };
@@ -541,6 +542,7 @@
 			isa = PBXGroup;
 			children = (
 				F3BD177E1C00DCE800B3849E /* MathExpressions.h */,
+				F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */,
 			);
 			name = Evaluators;
 			path = evaluators;
