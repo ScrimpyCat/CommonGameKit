@@ -80,12 +80,13 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     else if ((*Input == '-') && (Length > 1) && (isdigit(Input[1]))) Type = CCExpressionValueTypeInteger;
     
     char *String;
-    CC_SAFE_Malloc(String, sizeof(char) * Length,
-                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * Length);
+    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
+                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
                    return NULL;
                    );
     
     strncpy(String, Input, Length);
+    String[Length] = 0;
     
     if ((Type == CCExpressionValueTypeInteger) && (strchr(String, '.'))) Type = CCExpressionValueTypeFloat;
     

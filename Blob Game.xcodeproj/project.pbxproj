@@ -30,6 +30,8 @@
 		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; settings = {ASSET_TAGS = (); }; };
 		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; settings = {ASSET_TAGS = (); }; };
 		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; settings = {ASSET_TAGS = (); }; };
+		F3BD17851C00FDC200B3849E /* Configuration.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17831C00FDC200B3849E /* Configuration.c */; settings = {ASSET_TAGS = (); }; };
+		F3BD17BD1C02B67900B3849E /* Project.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17BB1C02B67900B3849E /* Project.c */; settings = {ASSET_TAGS = (); }; };
 		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
 		F3C020461B4F375E00F546E7 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020441B4F375E00F546E7 /* Mouse.c */; };
 		F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */; };
@@ -375,6 +377,10 @@
 		F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionSetup.c; sourceTree = "<group>"; };
 		F3BD177B1C00DB5600B3849E /* ExpressionSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionSetup.h; sourceTree = "<group>"; };
 		F3BD177E1C00DCE800B3849E /* MathExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathExpressions.h; sourceTree = "<group>"; };
+		F3BD17831C00FDC200B3849E /* Configuration.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Configuration.c; sourceTree = "<group>"; };
+		F3BD17841C00FDC200B3849E /* Configuration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Configuration.h; sourceTree = "<group>"; };
+		F3BD17BB1C02B67900B3849E /* Project.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Project.c; sourceTree = "<group>"; };
+		F3BD17BC1C02B67900B3849E /* Project.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Project.h; sourceTree = "<group>"; };
 		F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
 		F3C020171B4ED68D00F546E7 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
 		F3C020441B4F375E00F546E7 /* Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Mouse.c; sourceTree = "<group>"; };
@@ -540,6 +546,16 @@
 			path = evaluators;
 			sourceTree = "<group>";
 		};
+		F3BD17BA1C02B62100B3849E /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				F3BD17BC1C02B67900B3849E /* Project.h */,
+				F3BD17BB1C02B67900B3849E /* Project.c */,
+			);
+			name = Engine;
+			path = engine;
+			sourceTree = "<group>";
+		};
 		F3C020661B51D0A200F546E7 /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,6 +620,7 @@
 			children = (
 				F3F5D6801A56F4A9006D7F16 /* main.c */,
 				F3E84D821B45A51F0082E510 /* Window.h */,
+				F3BD17BA1C02B62100B3849E /* Engine */,
 				F3FF0F211B63FBE4005B1927 /* Animation */,
 				F3E84D7F1B45A3980082E510 /* Input */,
 				F3E84D7E1B45A37E0082E510 /* Rendering */,
@@ -797,6 +814,8 @@
 				F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */,
 				F3BD177B1C00DB5600B3849E /* ExpressionSetup.h */,
 				F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */,
+				F3BD17841C00FDC200B3849E /* Configuration.h */,
+				F3BD17831C00FDC200B3849E /* Configuration.c */,
 			);
 			name = Setup;
 			path = setup;
@@ -1239,6 +1258,7 @@
 				F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */,
 				F3F5D6811A56F4A9006D7F16 /* main.c in Sources */,
 				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
+				F3BD17BD1C02B67900B3849E /* Project.c in Sources */,
 				F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
 				F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */,
@@ -1251,6 +1271,7 @@
 				F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */,
 				F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */,
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,
+				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

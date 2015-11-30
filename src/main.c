@@ -18,6 +18,8 @@
 #include "PlatformSetup.h"
 #include "EngineSetup.h"
 #include "ComponentSystem.h"
+#include "ExpressionSetup.h"
+#include "Configuration.h"
 
 
 GLFWwindow *CCWindow = NULL;
@@ -49,6 +51,9 @@ static int RenderLoop(GLFWwindow *Window)
 #include "EntityManager.h"
 int main(int argc, const char *argv[])
 {
+    CCExpressionSetup();
+    CCConfigureOptions(argc, argv);
+    
     CCPlatformSetup();
     glfwSetErrorCallback(ErrorCallback);
     
