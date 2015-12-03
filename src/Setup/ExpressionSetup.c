@@ -2,11 +2,13 @@
 #include "ExpressionSetup.h"
 #include "ExpressionEvaluator.h"
 
+#include "IOExpressions.h"
 #include "MathExpressions.h"
 #include "ProjectExpressions.h"
 
 void CCExpressionSetup(void)
 {
+    CCExpressionEvaluatorRegister("print", CCIOExpressionPrint);
     CCExpressionEvaluatorRegister("+", CCMathExpressionAddition);
     CCExpressionEvaluatorRegister("-", CCMathExpressionSubtract);
     CCExpressionEvaluatorRegister("*", CCMathExpressionMultiply);
