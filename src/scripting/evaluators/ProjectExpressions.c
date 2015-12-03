@@ -26,7 +26,7 @@
 #include "ProjectExpressions.h"
 #include "Configuration.h"
 
-
+#warning Need to add a copy function
 static void CCProjectExpressionValueGameConfigDestructor(CCEngineConfig *Data)
 {
     CC_SAFE_Free(Data->title);
