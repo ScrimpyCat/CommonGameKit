@@ -56,7 +56,7 @@ CCExpression CCIOExpressionPrint(CCExpression Expression)
                 break;
                 
             default:
-                CC_EXPRESSION_EVALUATOR_LOG("%p", (*Expr)->data);
+                CC_EXPRESSION_EVALUATOR_LOG("(%d):%p", (*Expr)->type, (*Expr)->data);
                 break;
         }
     }
