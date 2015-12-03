@@ -56,6 +56,15 @@ typedef enum {
 static void CCProjectExpressionValueGameConfigDestructor(CCEngineConfig *Data)
 {
     CC_SAFE_Free(Data->title);
+    if (Data->directory.fonts) CCCollectionDestroy(Data->directory.fonts);
+    if (Data->directory.levels) CCCollectionDestroy(Data->directory.levels);
+    if (Data->directory.rules) CCCollectionDestroy(Data->directory.rules);
+    if (Data->directory.textures) CCCollectionDestroy(Data->directory.textures);
+    if (Data->directory.shaders) CCCollectionDestroy(Data->directory.shaders);
+    if (Data->directory.sounds) CCCollectionDestroy(Data->directory.sounds);
+    if (Data->directory.layouts) CCCollectionDestroy(Data->directory.layouts);
+    if (Data->directory.logs) FSPathDestroy(Data->directory.logs);
+    if (Data->directory.tmp) FSPathDestroy(Data->directory.tmp);
     CC_SAFE_Free(Data);
 }
 
@@ -82,7 +91,9 @@ static CC_EXPRESSION_EVALUATOR(game) CCExpression CCProjectExpressionGame(CCExpr
             .textures = NULL,
             .shaders = NULL,
             .sounds = NULL,
-            .layouts = NULL
+            .layouts = NULL,
+            .logs = NULL,
+            .tmp = NULL
         }
     };
     
@@ -204,6 +215,8 @@ static CC_EXPRESSION_EVALUATOR(game) CCExpression CCProjectExpressionGame(CCExpr
         *(CCEngineConfig*)Result->data = Config;
         Result->destructor = (CCExpressionValueDestructor)CCProjectExpressionValueGameConfigDestructor;
     }
+    
+    else CCProjectExpressionValueGameConfigDestructor(&Config);
         
     return Result;
 }
