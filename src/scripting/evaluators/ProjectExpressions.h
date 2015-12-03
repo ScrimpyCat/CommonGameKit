@@ -31,19 +31,19 @@
 
 /*
  (game "Game" ; title
-    (default-resolution 640 480) ; resolution or window size
-    (default-fullscreen false) ; fullscreen mode
+ (default-resolution 640 480) ; resolution or window size
+ (default-fullscreen false) ; fullscreen mode
  
-    (dir-fonts "font/") ; font directories
-    (dir-levels "logic/levels/") ; level directories
-    (dir-rules "logic/rules/") ; rule directories
-    (dir-textures "graphics/textures/") ; texture directories
-    (dir-shaders "graphics/shaders/") ; shader directories
-    (dir-sounds "audio/") ; sound directories
-    (dir-layouts "ui/") ; layout directories
-    (dir-entities "logic/entities/") ; entity directories
-    (dir-logs "logs/") ; log directory
-    (dir-tmp "tmp/") ; tmp directory
+ (dir-fonts "font/") ; font directories
+ (dir-levels "logic/levels/") ; level directories
+ (dir-rules "logic/rules/") ; rule directories
+ (dir-textures "graphics/textures/") ; texture directories
+ (dir-shaders "graphics/shaders/") ; shader directories
+ (dir-sounds "audio/") ; sound directories
+ (dir-layouts "ui/") ; layout directories
+ (dir-entities "logic/entities/") ; entity directories
+ (dir-logs "logs/") ; log directory
+ (dir-tmp "tmp/") ; tmp directory
  )
  */
 
@@ -161,44 +161,57 @@ static CC_EXPRESSION_EVALUATOR(game) CCExpression CCProjectExpressionGame(CCExpr
                 {
                     const char *Dir = (*Expr)->atom + 4;
                     
-                    if (ArgCount == 1)
-                    {
-                        Expr = CCCollectionEnumeratorNext(&Enumerator);
-                        if ((*Expr)->type == CCExpressionValueTypeString)
-                        {
-                            FSPath Path = FSPathCreate((*Expr)->string);
-                            
-                            if (!strcmp(Dir, "logs")) Config.directory.logs = Path;
-                            else if (!strcmp(Dir, "tmp")) Config.directory.tmp = Path;
-                            else FSPathDestroy(Path);
-                        }
-                        
-                        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Dir - 4, "path:string");
-                    }
+                    struct {
+                        const char *atom;
+                        void *attribute;
+                        _Bool path;
+                    } Commands[] = {
+                        { "fonts", &Config.directory.fonts, FALSE },
+                        { "levels", &Config.directory.levels, FALSE },
+                        { "rules", &Config.directory.rules, FALSE },
+                        { "textures", &Config.directory.textures, FALSE },
+                        { "shaders", &Config.directory.shaders, FALSE },
+                        { "sounds", &Config.directory.sounds, FALSE },
+                        { "layouts", &Config.directory.layouts, FALSE },
+                        { "entities", &Config.directory.entities, FALSE },
+                        { "logs", &Config.directory.logs, TRUE },
+                        { "tmp", &Config.directory.tmp, TRUE }
+                    };
                     
-                    else
+                    for (size_t Loop = 0; Loop < sizeof(Commands) / sizeof(typeof(*Commands)); Loop++)
                     {
-                        CCCollection Directories = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCProjectExpressionGameConfigDirectoryElementDestructor);
-                        
-                        //TODO: Make a directory expression
-                        for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+                        if (!strcmp(Dir, Commands[Loop].atom))
                         {
-                            if ((*Expr)->type == CCExpressionValueTypeString)
+                            if (Commands[Loop].path)
                             {
-                                CCCollectionInsertElement(Directories, &(FSPath){ FSPathCreate((*Expr)->string) });
+                                if (ArgCount == 1)
+                                {
+                                    Expr = CCCollectionEnumeratorNext(&Enumerator);
+                                    if ((*Expr)->type == CCExpressionValueTypeString)
+                                    {
+                                        *(FSPath*)(Commands[Loop].attribute) = FSPathCreate((*Expr)->string);
+                                    }
+                                }
+                                
+                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Dir - 4, "path:string");
+                            }
+                            
+                            else
+                            {
+                                CCCollection Directories = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCProjectExpressionGameConfigDirectoryElementDestructor);
+                                
+                                //TODO: Make a directory expression
+                                for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+                                {
+                                    if ((*Expr)->type == CCExpressionValueTypeString)
+                                    {
+                                        CCCollectionInsertElement(Directories, &(FSPath){ FSPathCreate((*Expr)->string) });
+                                    }
+                                }
+                                
+                                *(CCCollection*)(Commands[Loop].attribute) = Directories;
                             }
                         }
-                        
-                        if (!strcmp(Dir, "fonts")) Config.directory.fonts = Directories;
-                        else if (!strcmp(Dir, "levels")) Config.directory.levels = Directories;
-                        else if (!strcmp(Dir, "rules")) Config.directory.rules = Directories;
-                        else if (!strcmp(Dir, "textures")) Config.directory.textures = Directories;
-                        else if (!strcmp(Dir, "shaders")) Config.directory.shaders = Directories;
-                        else if (!strcmp(Dir, "sounds")) Config.directory.sounds = Directories;
-                        else if (!strcmp(Dir, "layouts")) Config.directory.layouts = Directories;
-                        else if (!strcmp(Dir, "entities")) Config.directory.entities = Directories;
-                        else if ((!strcmp(Dir, "logs")) || (!strcmp(Dir, "tmp"))) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Dir - 4, "path:string");
-                        else CCCollectionDestroy(Directories);
                     }
                 }
             }
@@ -217,7 +230,7 @@ static CC_EXPRESSION_EVALUATOR(game) CCExpression CCProjectExpressionGame(CCExpr
     }
     
     else CCProjectExpressionValueGameConfigDestructor(&Config);
-        
+    
     return Result;
 }
 
