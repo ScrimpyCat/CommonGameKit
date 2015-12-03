@@ -11,5 +11,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("-", CCMathExpressionSubtract);
     CCExpressionEvaluatorRegister("*", CCMathExpressionMultiply);
     CCExpressionEvaluatorRegister("/", CCMathExpressionDivide);
+    CCExpressionEvaluatorRegister("min", CCMathExpressionMinimum);
+    CCExpressionEvaluatorRegister("max", CCMathExpressionMaximum);
     CCExpressionEvaluatorRegister("game", CCProjectExpressionGame);
 }

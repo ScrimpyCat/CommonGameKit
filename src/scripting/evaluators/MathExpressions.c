@@ -179,3 +179,65 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
     
     return Expr;
 }
+
+CCExpression CCMathExpressionMinimum(CCExpression Expression)
+{
+    int32_t MinI = INT32_MAX;
+    float MinF = INFINITY;
+    
+    _Bool IsInteger = TRUE;
+    
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+    {
+        if ((*Expr)->type == CCExpressionValueTypeInteger)
+        {
+            if ((*Expr)->integer < MinI) MinI = (*Expr)->integer;
+        }
+        
+        else if ((*Expr)->type == CCExpressionValueTypeFloat)
+        {
+            if ((*Expr)->real < MinF) MinF = (*Expr)->real;
+            IsInteger = FALSE;
+        }
+    }
+    
+    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
+    if (IsInteger) Expr->integer = MinI;
+    else Expr->real = (float)MinI < MinF ? (float)MinI : MinF;
+    
+    return Expr;
+}
+
+CCExpression CCMathExpressionMaximum(CCExpression Expression)
+{
+    int32_t MaxI = INT32_MIN;
+    float MaxF = -INFINITY;
+    
+    _Bool IsInteger = TRUE;
+    
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+    {
+        if ((*Expr)->type == CCExpressionValueTypeInteger)
+        {
+            if ((*Expr)->integer > MaxI) MaxI = (*Expr)->integer;
+        }
+        
+        else if ((*Expr)->type == CCExpressionValueTypeFloat)
+        {
+            if ((*Expr)->real > MaxF) MaxF = (*Expr)->real;
+            IsInteger = FALSE;
+        }
+    }
+    
+    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
+    if (IsInteger) Expr->integer = MaxI;
+    else Expr->real = (float)MaxI > MaxF ? (float)MaxI : MaxF;
+    
+    return Expr;
+}

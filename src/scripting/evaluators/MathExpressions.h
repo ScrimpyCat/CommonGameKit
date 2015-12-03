@@ -33,5 +33,7 @@ CC_EXPRESSION_EVALUATOR(+) CCExpression CCMathExpressionAddition(CCExpression Ex
 CC_EXPRESSION_EVALUATOR(-) CCExpression CCMathExpressionSubtract(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(*) CCExpression CCMathExpressionMultiply(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(/) CCExpression CCMathExpressionDivide(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(min) CCExpression CCMathExpressionMinimum(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(max) CCExpression CCMathExpressionMaximum(CCExpression Expression);
 
 #endif
