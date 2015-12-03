@@ -13,5 +13,6 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("/", CCMathExpressionDivide);
     CCExpressionEvaluatorRegister("min", CCMathExpressionMinimum);
     CCExpressionEvaluatorRegister("max", CCMathExpressionMaximum);
+    CCExpressionEvaluatorRegister("random", CCMathExpressionRandom);
     CCExpressionEvaluatorRegister("game", CCProjectExpressionGame);
 }

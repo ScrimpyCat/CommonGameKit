@@ -241,3 +241,66 @@ CCExpression CCMathExpressionMaximum(CCExpression Expression)
     
     return Expr;
 }
+
+CCExpression CCMathExpressionRandom(CCExpression Expression)
+{    
+    CCExpression Expr = Expression;
+    const size_t ArgCount = CCCollectionGetCount(Expression->list) - 1;
+    
+    if (!ArgCount)
+    {
+        Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
+        Expr->integer = CCRandom();
+    }
+    
+    else if (ArgCount <= 2)
+    {
+        int32_t MinI = 0, MaxI = 0;
+        float MinF = 0, MaxF = 0;
+        
+        _Bool IsInteger = TRUE;
+        
+        CCExpression *Arg = CCOrderedCollectionGetElementAtIndex(Expression->list, 1);
+        if ((*Arg)->type == CCExpressionValueTypeInteger)
+        {
+            MaxI = (*Arg)->integer;
+        }
+        
+        else if ((*Arg)->type == CCExpressionValueTypeFloat)
+        {
+            MaxF = (*Arg)->real;
+            IsInteger = FALSE;
+        }
+        
+        
+        if (ArgCount == 2)
+        {
+            MinI = MaxI;
+            MinF = MaxF;
+            
+            MaxI = 0;
+            MaxF = 0.0f;
+            
+            Arg = CCOrderedCollectionGetElementAtIndex(Expression->list, 2);
+            if ((*Arg)->type == CCExpressionValueTypeInteger)
+            {
+                MaxI = (*Arg)->integer;
+            }
+            
+            else if ((*Arg)->type == CCExpressionValueTypeFloat)
+            {
+                MaxF = (*Arg)->real;
+                IsInteger = FALSE;
+            }
+        }
+        
+        
+        Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
+        if (IsInteger) Expr->integer = CCRandomRangei(MinI, MaxI);
+        else Expr->real = CCRandomRangef(MinF + (float)MinI, MaxF + (float)MaxI);
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("(random) (random max:number) (random min:number max:number)");
+    
+    return Expr;
+}

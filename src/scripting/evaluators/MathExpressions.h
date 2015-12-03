@@ -35,5 +35,6 @@ CC_EXPRESSION_EVALUATOR(*) CCExpression CCMathExpressionMultiply(CCExpression Ex
 CC_EXPRESSION_EVALUATOR(/) CCExpression CCMathExpressionDivide(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(min) CCExpression CCMathExpressionMinimum(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(max) CCExpression CCMathExpressionMaximum(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(random) CCExpression CCMathExpressionRandom(CCExpression Expression);
 
 #endif
