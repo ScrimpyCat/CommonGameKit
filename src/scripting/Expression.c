@@ -37,6 +37,40 @@ static void CCExpressionElementDestructor(CCCollection Collection, CCExpression 
     CCExpressionDestroy(*Element);
 }
 
+static CCExpression CCExpressionValueAtomOrStringCopy(CCExpression Value)
+{
+    char *String;
+    const size_t Length = strlen(Value->type == CCExpressionValueTypeAtom ? Value->atom : Value->string);
+    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
+                   CC_LOG_ERROR("Failed to copy expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
+                   return NULL;
+                   );
+    
+    strcpy(String, Value->type == CCExpressionValueTypeAtom ? Value->atom : Value->string);
+    
+    CCExpression Copy = CCExpressionCreate(CC_STD_ALLOCATOR, Value->type);
+    Copy->destructor = Value->destructor;
+    Copy->copy = Value->copy;
+    *(Value->type == CCExpressionValueTypeAtom ? &Copy->atom : &Copy->string) = String;
+    
+    return Copy;
+}
+
+static CCExpression CCExpressionValueListCopy(CCExpression Value)
+{
+    CCExpression Copy = CCExpressionCreate(CC_STD_ALLOCATOR, Value->type);
+    Copy->destructor = Value->destructor;
+    Copy->copy = Value->copy;
+    Copy->list = CCCollectionCreate(Value->list->allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), Value->list->destructor);
+    
+    CC_COLLECTION_FOREACH(CCExpression, Element, Value->list)
+    {
+        CCOrderedCollectionAppendElement(Copy->list, &(CCExpression){ CCExpressionCopy(Element) });
+    }
+    
+    return Copy;
+}
+
 CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
 {
     CCExpression Expression = CCMalloc(Allocator, sizeof(*Expression), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -52,15 +86,18 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
         case CCExpressionValueTypeAtom:
         case CCExpressionValueTypeString:
             Expression->destructor = CCFree;
+            Expression->copy = CCExpressionValueAtomOrStringCopy;
             break;
             
         case CCExpressionValueTypeList:
             Expression->list = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
             Expression->destructor = (CCExpressionValueDestructor)CCCollectionDestroy;
+            Expression->copy = CCExpressionValueListCopy;
             break;
             
         default:
             Expression->destructor = NULL;
+            Expression->copy = NULL;
             break;
     }
     
@@ -73,6 +110,20 @@ void CCExpressionDestroy(CCExpression Expression)
     
     if (Expression->destructor) Expression->destructor(Expression->data);
     CC_SAFE_Free(Expression);
+}
+
+CCExpression CCExpressionCopy(CCExpression Expression)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    if (Expression->copy) return Expression->copy(Expression);
+    else
+    {
+        CCExpression Copy = CCExpressionCreate(CC_STD_ALLOCATOR, Expression->type);
+        memcpy(Copy, Expression, sizeof(CCExpressionValue));
+        
+        return Copy;
+    }
 }
 
 CCExpression CCExpressionCreateFromSource(const char *Source)

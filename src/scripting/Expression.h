@@ -45,6 +45,13 @@ typedef enum {
 typedef struct CCExpressionValue *CCExpression;
 
 /*!
+ * @brief The expression value copy.
+ * @description Create a new copy of your expression value.
+ * @param Value The expression value to be copied.
+ */
+typedef CCExpression (*CCExpressionValueCopy)(CCExpression Value);
+
+/*!
  * @brief The expression value destructor.
  * @description Perform all destruction for your expression value.
  * @param Data The data held by the expression value.
@@ -62,6 +69,7 @@ typedef struct CCExpressionValue {
         void *data;
     };
     
+    CCExpressionValueCopy copy;
     CCExpressionValueDestructor destructor;
 } CCExpressionValue;
 
@@ -80,6 +88,13 @@ CCExpression CCExpressionCreateFromSource(const char *Source);
  * @return The created expression.
  */
 CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type);
+
+/*!
+ * @brief Create a new copy of the expression.
+ * @param Expression The expression to be copied.
+ * @return The created expression.
+ */
+CCExpression CCExpressionCopy(CCExpression Expression);
 
 /*!
  * @brief Destroy an expression.

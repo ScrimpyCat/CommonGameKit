@@ -2,6 +2,7 @@
 #include "ExpressionSetup.h"
 #include "ExpressionEvaluator.h"
 
+#include "ControlFlowExpressions.h"
 #include "EqualityExpressions.h"
 #include "IOExpressions.h"
 #include "MathExpressions.h"
@@ -9,6 +10,7 @@
 
 void CCExpressionSetup(void)
 {
+    CCExpressionEvaluatorRegister("if", CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister("=", CCEqualityExpressionEqual);
     CCExpressionEvaluatorRegister("!=", CCEqualityExpressionNotEqual);
     CCExpressionEvaluatorRegister("<=", CCEqualityExpressionLessThanEqual);
