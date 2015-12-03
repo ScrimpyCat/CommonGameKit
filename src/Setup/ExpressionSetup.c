@@ -2,12 +2,19 @@
 #include "ExpressionSetup.h"
 #include "ExpressionEvaluator.h"
 
+#include "EqualityExpressions.h"
 #include "IOExpressions.h"
 #include "MathExpressions.h"
 #include "ProjectExpressions.h"
 
 void CCExpressionSetup(void)
 {
+    CCExpressionEvaluatorRegister("=", CCEqualityExpressionEqual);
+    CCExpressionEvaluatorRegister("!=", CCEqualityExpressionNotEqual);
+    CCExpressionEvaluatorRegister("<=", CCEqualityExpressionLessThanEqual);
+    CCExpressionEvaluatorRegister(">=", CCEqualityExpressionGreaterThanEqual);
+    CCExpressionEvaluatorRegister("<", CCEqualityExpressionLessThan);
+    CCExpressionEvaluatorRegister(">", CCEqualityExpressionGreaterThan);
     CCExpressionEvaluatorRegister("print", CCIOExpressionPrint);
     CCExpressionEvaluatorRegister("+", CCMathExpressionAddition);
     CCExpressionEvaluatorRegister("-", CCMathExpressionSubtract);
