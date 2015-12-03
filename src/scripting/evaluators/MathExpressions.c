@@ -51,7 +51,7 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
     }
     
     CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = SumI + (int32_t)SumF;
+    if (IsInteger) Expr->integer = SumI;
     else Expr->real = (float)SumI + SumF;
     
     return Expr;
@@ -97,7 +97,7 @@ CCExpression CCMathExpressionSubtract(CCExpression Expression)
     }
     
     CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = (FirstI + (int32_t)FirstF) - (SumI + (int32_t)SumF);
+    if (IsInteger) Expr->integer = FirstI - SumI;
     else Expr->real = ((float)FirstI + FirstF) - ((float)SumI + SumF);
     
     return Expr;
@@ -128,7 +128,7 @@ CCExpression CCMathExpressionMultiply(CCExpression Expression)
     }
     
     CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = MulI * (int32_t)MulF;
+    if (IsInteger) Expr->integer = MulI;
     else Expr->real = (float)MulI * MulF;
     
     return Expr;
@@ -174,7 +174,7 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
     }
     
     CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = (FirstI + (int32_t)FirstF) / (MulI * (int32_t)MulF);
+    if (IsInteger) Expr->integer = FirstI / MulI;
     else Expr->real = ((float)FirstI + FirstF) / ((float)MulI * MulF);
     
     return Expr;
