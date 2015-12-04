@@ -47,6 +47,11 @@ static void ErrorCallback(int Error, const char *Description)
     CC_LOG_ERROR("GLFW Error [%d]: %s", Error, Description);
 }
 
+void FramebufferSizeCallback(GLFWwindow *Window, int Width, int Height)
+{
+    glViewport(0, 0, Width, Height);
+}
+
 static int RenderLoop(GLFWwindow *Window)
 {
     glfwMakeContextCurrent(Window);
@@ -103,6 +108,8 @@ int main(int argc, const char *argv[])
         glfwTerminate();
         return EXIT_FAILURE;
     }
+    
+    glfwSetFramebufferSizeCallback(CCWindow, FramebufferSizeCallback);
     
     glfwMakeContextCurrent(CCWindow);
     CCPlatformWindowSetup(CCWindow);
