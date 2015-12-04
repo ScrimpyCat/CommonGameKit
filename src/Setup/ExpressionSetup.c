@@ -7,6 +7,7 @@
 #include "IOExpressions.h"
 #include "MathExpressions.h"
 #include "ProjectExpressions.h"
+#include "WindowExpressions.h"
 
 void CCExpressionSetup(void)
 {
@@ -26,4 +27,8 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("max", CCMathExpressionMaximum);
     CCExpressionEvaluatorRegister("random", CCMathExpressionRandom);
     CCExpressionEvaluatorRegister("game", CCProjectExpressionGame);
+    CCExpressionEvaluatorRegister("window-percent-width", CCWindowExpressionPercentageWidth);
+    CCExpressionEvaluatorRegister("window-percent-height", CCWindowExpressionPercentageHeight);
+    CCExpressionEvaluatorRegister("window-width", CCWindowExpressionWidth);
+    CCExpressionEvaluatorRegister("window-height", CCWindowExpressionHeight);
 }
