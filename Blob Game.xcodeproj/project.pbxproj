@@ -24,6 +24,8 @@
 		F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376997C1C105C7800F24A44 /* EqualityExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376997F1C105DA700F24A44 /* ControlFlowExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F37699841C11113D00F24A44 /* WindowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699821C11113D00F24A44 /* WindowExpressions.c */; settings = {ASSET_TAGS = (); }; };
+		F37699BF1C118B9000F24A44 /* ColourFormat.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699BE1C118B9000F24A44 /* ColourFormat.c */; settings = {ASSET_TAGS = (); }; };
+		F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37699F01C11DE3300F24A44 /* ColourFormatTests.m */; settings = {ASSET_TAGS = (); }; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -370,6 +372,13 @@
 		F37699801C105DA700F24A44 /* ControlFlowExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControlFlowExpressions.h; sourceTree = "<group>"; };
 		F37699821C11113D00F24A44 /* WindowExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WindowExpressions.c; sourceTree = "<group>"; };
 		F37699831C11113D00F24A44 /* WindowExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowExpressions.h; sourceTree = "<group>"; };
+		F37699B71C1172FB00F24A44 /* Pipeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Pipeline.h; sourceTree = "<group>"; };
+		F37699BA1C1181C900F24A44 /* PipelineVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PipelineVersion.h; sourceTree = "<group>"; };
+		F37699BB1C1183FF00F24A44 /* GLVersionMacro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLVersionMacro.h; sourceTree = "<group>"; };
+		F37699BD1C118B8500F24A44 /* ColourFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColourFormat.h; sourceTree = "<group>"; };
+		F37699BE1C118B9000F24A44 /* ColourFormat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColourFormat.c; sourceTree = "<group>"; };
+		F37699C61C11DCEA00F24A44 /* ColourFormatRGB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColourFormatRGB.h; sourceTree = "<group>"; };
+		F37699F01C11DE3300F24A44 /* ColourFormatTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColourFormatTests.m; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -509,6 +518,55 @@
 			);
 			name = Components;
 			path = components;
+			sourceTree = "<group>";
+		};
+		F376998E1C11721500F24A44 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F37699BC1C11899A00F24A44 /* Colour */,
+				F37699B81C117CF000F24A44 /* Pipeline */,
+			);
+			name = Utilities;
+			path = utilities;
+			sourceTree = "<group>";
+		};
+		F37699B81C117CF000F24A44 /* Pipeline */ = {
+			isa = PBXGroup;
+			children = (
+				F37699B71C1172FB00F24A44 /* Pipeline.h */,
+				F37699BA1C1181C900F24A44 /* PipelineVersion.h */,
+				F37699B91C1181A200F24A44 /* GL */,
+			);
+			name = Pipeline;
+			path = pipeline;
+			sourceTree = "<group>";
+		};
+		F37699B91C1181A200F24A44 /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				F37699BB1C1183FF00F24A44 /* GLVersionMacro.h */,
+			);
+			name = GL;
+			path = gl;
+			sourceTree = "<group>";
+		};
+		F37699BC1C11899A00F24A44 /* Colour */ = {
+			isa = PBXGroup;
+			children = (
+				F37699BD1C118B8500F24A44 /* ColourFormat.h */,
+				F37699BE1C118B9000F24A44 /* ColourFormat.c */,
+				F37699C61C11DCEA00F24A44 /* ColourFormatRGB.h */,
+			);
+			name = Colour;
+			path = colour;
+			sourceTree = "<group>";
+		};
+		F37699EF1C11DE2800F24A44 /* Colour */ = {
+			isa = PBXGroup;
+			children = (
+				F37699F01C11DE3300F24A44 /* ColourFormatTests.m */,
+			);
+			name = Colour;
 			sourceTree = "<group>";
 		};
 		F39796DD1A5C7748007C3422 /* Component System */ = {
@@ -673,6 +731,7 @@
 		F3C401EC1A56E52800095ECD /* Blob GameTests */ = {
 			isa = PBXGroup;
 			children = (
+				F37699EF1C11DE2800F24A44 /* Colour */,
 				F3F696D31A5D041E00E486B5 /* Component System */,
 				F3C401ED1A56E52800095ECD /* Supporting Files */,
 			);
@@ -690,6 +749,7 @@
 		F3E84D7E1B45A37E0082E510 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				F376998E1C11721500F24A44 /* Utilities */,
 				F35CD6F21B3EBBE70032E3A7 /* Systems */,
 				F35CD6F61B3F02F80032E3A7 /* Components */,
 			);
@@ -1294,6 +1354,7 @@
 				F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */,
 				F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */,
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
+				F37699BF1C118B9000F24A44 /* ColourFormat.c in Sources */,
 				F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
@@ -1315,6 +1376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
+				F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,

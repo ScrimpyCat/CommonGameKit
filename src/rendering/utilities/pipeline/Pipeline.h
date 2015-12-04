@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2014, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,21 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLSetup_h
-#define Blob_Game_GLSetup_h
+#ifndef Blob_Game_Pipeline_h
+#define Blob_Game_Pipeline_h
 
-#include <CommonC/Common.h>
-
-#if CC_PLATFORM_OS_X
-#define GLFW_INCLUDE_GLCOREARB
+#if defined(__gl_h_) || defined(__gl3_h_)
+#define CC_OPENGL 1
+#elif defined(ES1_GL_H_GUARD) || defined(__gl_es20_h_) || defined(__gl_es30_h_)
+#define CC_OPENGL_ES 1
 #else
-#include <gl_core.h>
-#define GLFW_INCLUDE_NONE
+#error Unknown pipeline
 #endif
-
-#include <GLFW/glfw3.h>
-
-#include "Pipeline.h"
-#include "PipelineVersion.h"
 
 #endif
