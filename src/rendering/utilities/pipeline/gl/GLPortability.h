@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2014, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,31 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLSetup_h
-#define Blob_Game_GLSetup_h
-
-#include <CommonC/Common.h>
-
-#if CC_PLATFORM_OS_X
-#define GLFW_INCLUDE_GLCOREARB
-#else
-#include <gl_core.h>
-#define GLFW_INCLUDE_NONE
-#endif
-
-#include <GLFW/glfw3.h>
-#define CC_GL_PIPELINE_GLFW
+#ifndef Blob_Game_Types_h
+#define Blob_Game_Types_h
 
 #include "Pipeline.h"
-#include "PipelineVersion.h"
 
-#if CC_OPENGL || CC_OPENGL_ES
-#include "GLPortability.h"
-#include "GLExtensions.h"
-#include "GLSelectedState.h"
-#include "GLStateChange.h"
-#include "GLState.h"
-#include "GLDebug.h"
+#if CC_OPENGL_ES
+typedef /*double*/ GLfloat GLdouble;
+typedef /*double*/ GLclampf GLclampd;
+
+#define glGetDoublev(pname, params) glGetFloatv(pname, params)
 #endif
 
 #endif

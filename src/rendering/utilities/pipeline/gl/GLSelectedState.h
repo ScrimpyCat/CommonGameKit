@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2014, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,31 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLSetup_h
-#define Blob_Game_GLSetup_h
+#ifndef Blob_Game_SelectedState_h
+#define Blob_Game_SelectedState_h
 
-#include <CommonC/Common.h>
+/*
+ Define here the state required by the application that you want to keep track of.
+ */
 
-#if CC_PLATFORM_OS_X
-#define GLFW_INCLUDE_GLCOREARB
-#else
-#include <gl_core.h>
-#define GLFW_INCLUDE_NONE
-#endif
-
-#include <GLFW/glfw3.h>
-#define CC_GL_PIPELINE_GLFW
-
-#include "Pipeline.h"
-#include "PipelineVersion.h"
-
-#if CC_OPENGL || CC_OPENGL_ES
-#include "GLPortability.h"
-#include "GLExtensions.h"
-#include "GLSelectedState.h"
-#include "GLStateChange.h"
-#include "GLState.h"
-#include "GLDebug.h"
-#endif
+#define CC_GL_STATE_COMPLETE 1
 
 #endif

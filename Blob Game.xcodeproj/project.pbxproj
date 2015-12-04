@@ -11,6 +11,8 @@
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
 		F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */; };
+		F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = F31619591C120F0C008E09A1 /* GLDebug.c */; settings = {ASSET_TAGS = (); }; };
+		F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F316195B1C12114B008E09A1 /* GLDebugTests.m */; settings = {ASSET_TAGS = (); }; };
 		F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk-Mac.a */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
@@ -28,6 +30,12 @@
 		F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37699F01C11DE3300F24A44 /* ColourFormatTests.m */; settings = {ASSET_TAGS = (); }; };
 		F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A221C11E1DD00F24A44 /* ColourComponent.c */; settings = {ASSET_TAGS = (); }; };
 		F3769A261C11E29300F24A44 /* Colour.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A251C11E29300F24A44 /* Colour.c */; settings = {ASSET_TAGS = (); }; };
+		F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A2B1C11F4B400F24A44 /* GLState.c */; settings = {ASSET_TAGS = (); }; };
+		F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */; settings = {ASSET_TAGS = (); }; };
+		F3769A301C11F96A00F24A44 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */; };
+		F3769A311C11F98200F24A44 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */; };
+		F3769A321C11F98700F24A44 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
+		F3769A331C11F99700F24A44 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F41A570099006D7F16 /* OpenGL.framework */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -353,6 +361,10 @@
 		F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationComponent.c; sourceTree = "<group>"; };
 		F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationInterpolateComponent.c; sourceTree = "<group>"; };
 		F313F9AE1B80E24B006F5CF5 /* AnimationInterpolateComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationInterpolateComponent.h; sourceTree = "<group>"; };
+		F316192F1C120EA5008E09A1 /* GLExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLExtensions.h; sourceTree = "<group>"; };
+		F31619581C120F00008E09A1 /* GLDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLDebug.h; sourceTree = "<group>"; };
+		F31619591C120F0C008E09A1 /* GLDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLDebug.c; sourceTree = "<group>"; };
+		F316195B1C12114B008E09A1 /* GLDebugTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLDebugTests.m; sourceTree = "<group>"; };
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
@@ -385,6 +397,12 @@
 		F3769A221C11E1DD00F24A44 /* ColourComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColourComponent.c; sourceTree = "<group>"; };
 		F3769A241C11E28B00F24A44 /* Colour.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Colour.h; sourceTree = "<group>"; };
 		F3769A251C11E29300F24A44 /* Colour.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Colour.c; sourceTree = "<group>"; };
+		F3769A271C11F1A500F24A44 /* GLSelectedState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLSelectedState.h; sourceTree = "<group>"; };
+		F3769A281C11F1D000F24A44 /* GLStateChange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLStateChange.h; sourceTree = "<group>"; };
+		F3769A291C11F22300F24A44 /* GLState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLState.h; sourceTree = "<group>"; };
+		F3769A2A1C11F30500F24A44 /* GLPortability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLPortability.h; sourceTree = "<group>"; };
+		F3769A2B1C11F4B400F24A44 /* GLState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLState.c; sourceTree = "<group>"; };
+		F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLStateModernTests.m; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -485,6 +503,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3769A331C11F99700F24A44 /* OpenGL.framework in Frameworks */,
+				F3769A321C11F98700F24A44 /* IOKit.framework in Frameworks */,
+				F3769A311C11F98200F24A44 /* CoreVideo.framework in Frameworks */,
+				F3769A301C11F96A00F24A44 /* libglfw3.a in Frameworks */,
 				F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -551,6 +573,14 @@
 			isa = PBXGroup;
 			children = (
 				F37699BB1C1183FF00F24A44 /* GLVersionMacro.h */,
+				F316192F1C120EA5008E09A1 /* GLExtensions.h */,
+				F3769A2A1C11F30500F24A44 /* GLPortability.h */,
+				F3769A271C11F1A500F24A44 /* GLSelectedState.h */,
+				F3769A281C11F1D000F24A44 /* GLStateChange.h */,
+				F3769A291C11F22300F24A44 /* GLState.h */,
+				F3769A2B1C11F4B400F24A44 /* GLState.c */,
+				F31619581C120F00008E09A1 /* GLDebug.h */,
+				F31619591C120F0C008E09A1 /* GLDebug.c */,
 			);
 			name = GL;
 			path = gl;
@@ -577,6 +607,15 @@
 				F37699F01C11DE3300F24A44 /* ColourFormatTests.m */,
 			);
 			name = Colour;
+			sourceTree = "<group>";
+		};
+		F3769A2F1C11F8E500F24A44 /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */,
+				F316195B1C12114B008E09A1 /* GLDebugTests.m */,
+			);
+			name = GL;
 			sourceTree = "<group>";
 		};
 		F39796DD1A5C7748007C3422 /* Component System */ = {
@@ -741,6 +780,7 @@
 		F3C401EC1A56E52800095ECD /* Blob GameTests */ = {
 			isa = PBXGroup;
 			children = (
+				F3769A2F1C11F8E500F24A44 /* GL */,
 				F37699EF1C11DE2800F24A44 /* Colour */,
 				F3F696D31A5D041E00E486B5 /* Component System */,
 				F3C401ED1A56E52800095ECD /* Supporting Files */,
@@ -1339,6 +1379,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */,
 				F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */,
 				F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */,
 				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
@@ -1378,6 +1419,7 @@
 				F3F6C4791A599A2300B9D6BA /* PlatformSetup_mac.m in Sources */,
 				F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */,
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,
+				F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */,
 				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,
 			);
@@ -1387,8 +1429,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */,
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
 				F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */,
+				F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
@@ -1530,6 +1574,7 @@
 		F3C401F71A56E52800095ECD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1546,12 +1591,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blob Game.app/Contents/MacOS/Blob Game";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/glfw/include;
 			};
 			name = Debug;
 		};
 		F3C401F81A56E52800095ECD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1564,6 +1611,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blob Game.app/Contents/MacOS/Blob Game";
+				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/glfw/include;
 			};
 			name = Release;
 		};
