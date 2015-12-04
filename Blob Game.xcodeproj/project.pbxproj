@@ -26,6 +26,8 @@
 		F37699841C11113D00F24A44 /* WindowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699821C11113D00F24A44 /* WindowExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F37699BF1C118B9000F24A44 /* ColourFormat.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699BE1C118B9000F24A44 /* ColourFormat.c */; settings = {ASSET_TAGS = (); }; };
 		F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37699F01C11DE3300F24A44 /* ColourFormatTests.m */; settings = {ASSET_TAGS = (); }; };
+		F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A221C11E1DD00F24A44 /* ColourComponent.c */; settings = {ASSET_TAGS = (); }; };
+		F3769A261C11E29300F24A44 /* Colour.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A251C11E29300F24A44 /* Colour.c */; settings = {ASSET_TAGS = (); }; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -379,6 +381,10 @@
 		F37699BE1C118B9000F24A44 /* ColourFormat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColourFormat.c; sourceTree = "<group>"; };
 		F37699C61C11DCEA00F24A44 /* ColourFormatRGB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColourFormatRGB.h; sourceTree = "<group>"; };
 		F37699F01C11DE3300F24A44 /* ColourFormatTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColourFormatTests.m; sourceTree = "<group>"; };
+		F3769A211C11E1D400F24A44 /* ColourComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColourComponent.h; sourceTree = "<group>"; };
+		F3769A221C11E1DD00F24A44 /* ColourComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColourComponent.c; sourceTree = "<group>"; };
+		F3769A241C11E28B00F24A44 /* Colour.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Colour.h; sourceTree = "<group>"; };
+		F3769A251C11E29300F24A44 /* Colour.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Colour.c; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -556,6 +562,10 @@
 				F37699BD1C118B8500F24A44 /* ColourFormat.h */,
 				F37699BE1C118B9000F24A44 /* ColourFormat.c */,
 				F37699C61C11DCEA00F24A44 /* ColourFormatRGB.h */,
+				F3769A211C11E1D400F24A44 /* ColourComponent.h */,
+				F3769A221C11E1DD00F24A44 /* ColourComponent.c */,
+				F3769A241C11E28B00F24A44 /* Colour.h */,
+				F3769A251C11E29300F24A44 /* Colour.c */,
 			);
 			name = Colour;
 			path = colour;
@@ -1334,6 +1344,7 @@
 				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
 				F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */,
 				F3C020931B51D32600F546E7 /* Controller.c in Sources */,
+				F3769A261C11E29300F24A44 /* Colour.c in Sources */,
 				F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */,
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
@@ -1356,6 +1367,7 @@
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
 				F37699BF1C118B9000F24A44 /* ColourFormat.c in Sources */,
 				F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */,
+				F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
 				F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */,

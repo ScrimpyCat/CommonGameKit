@@ -26,6 +26,8 @@
 @import Cocoa;
 @import XCTest;
 #import "ColourFormat.h"
+#import "ColourComponent.h"
+#import "Colour.h"
 
 @interface ColourFormatTests : XCTestCase
 
@@ -103,7 +105,7 @@
     XCTAssertEqual(Channels[2], 0, @"Should not contain any element");
     XCTAssertEqual(Channels[3], 0, @"Should not contain any element");
 }
-/*
+
 -(void) testPackIntoBuffer
 {
     uint8_t Data[64] = {0};
@@ -171,8 +173,8 @@
     
     Pixel = (CCColour){
         .type = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
-            | ((CCColourFormatChannelRed  | (50 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-            | ((CCColourFormatChannelBlue | (50 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1),
+            | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed, 50, CCColourFormatChannelOffset0)
+            | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue, 50, CCColourFormatChannelOffset1),
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (50 << CCColourFormatChannelBitSize), .u64 = 0x3000000000001 },
             [1] = { .type = CCColourFormatChannelBlue   | (50 << CCColourFormatChannelBitSize), .u64 = 0x2000000000003 },
@@ -188,10 +190,10 @@
     
     Pixel = (CCColour){
         .type = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
-            | ((CCColourFormatChannelRed    | (8 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex0) << CCColourFormatChannelOffset0)
-            | ((CCColourFormatChannelGreen  | (8 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex1) << CCColourFormatChannelOffset1)
-            | ((CCColourFormatChannelBlue   | (8 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex0) << CCColourFormatChannelOffset2)
-            | ((CCColourFormatChannelAlpha  | (8 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex0) << CCColourFormatChannelOffset3),
+            | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelRed, 8, CCColourFormatChannelOffset0, CCColourFormatChannelPlanarIndex0)
+            | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelGreen, 8, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)
+            | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelBlue, 8, CCColourFormatChannelOffset2, CCColourFormatChannelPlanarIndex0)
+            | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelAlpha, 8, CCColourFormatChannelOffset3, CCColourFormatChannelPlanarIndex0),
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (8 << CCColourFormatChannelBitSize), .u8 = 1 },
             [1] = { .type = CCColourFormatChannelGreen  | (8 << CCColourFormatChannelBitSize), .u8 = 2 },
@@ -218,7 +220,7 @@
 -(void) testUnpackFromBuffer
 {
     uint8_t Buffer1[128], Buffer2[128];
-    CCColour Colour = CCColourUnpackFromBuffer((CCColourFormat)CCColourFormatR5G6B5Uint, (const void*[4]){
+    CCColour Colour = CCColourUnpackFromBuffer(CCColourFormatR5G6B5Uint, (const void*[4]){
         &(uint16_t){ 2080 }, NULL, NULL, NULL
     });
     
@@ -235,7 +237,7 @@
     
     
     
-    Colour = CCColourUnpackFromBuffer((CCColourFormat)CCColourFormatRGBA8Uint, (const void*[4]){
+    Colour = CCColourUnpackFromBuffer(CCColourFormatRGBA8Uint, (const void*[4]){
         &(uint32_t){ 0x04030201 }, NULL, NULL, NULL
     });
     
@@ -255,8 +257,8 @@
     
     
     Colour = CCColourUnpackFromBuffer(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
-                             | ((CCColourFormatChannelRed  | (50 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-                             | ((CCColourFormatChannelBlue | (50 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1), (const void*[4]){
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed, 50, CCColourFormatChannelOffset0)
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue, 50, CCColourFormatChannelOffset1), (const void*[4]){
         (uint64_t[]){ 0xf000000000001, 0x800000000 }, NULL, NULL, NULL
     });
     
@@ -273,8 +275,8 @@
     
     
     Colour = CCColourUnpackFromBuffer(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
-                             | ((CCColourFormatChannelRed  | (12 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-                             | ((CCColourFormatChannelBlue | (12 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1), (const void*[4]){
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed, 12, CCColourFormatChannelOffset0)
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue, 12, CCColourFormatChannelOffset1), (const void*[4]){
         &(uint32_t){ 0x123456 }, NULL, NULL, NULL
     });
     
@@ -290,9 +292,9 @@
     
     
     Colour = CCColourUnpackFromBuffer(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
-                             | ((CCColourFormatChannelRed   | (2 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-                             | ((CCColourFormatChannelGreen | (2 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2)
-                             | ((CCColourFormatChannelBlue  | (2 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1), (const void*[4]){
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed, 2, CCColourFormatChannelOffset0)
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 2, CCColourFormatChannelOffset2)
+                             | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue, 2, CCColourFormatChannelOffset1), (const void*[4]){
         &(uint8_t){ 0x39 }, NULL, NULL, NULL
     });
     
@@ -310,9 +312,9 @@
     
     
     Colour = CCColourUnpackFromBuffer(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
-                             | ((CCColourFormatChannelRed   | (2 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex0) << CCColourFormatChannelOffset0)
-                             | ((CCColourFormatChannelGreen | (2 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex0) << CCColourFormatChannelOffset2)
-                             | ((CCColourFormatChannelBlue  | (2 << CCColourFormatChannelBitSize) | CCColourFormatChannelPlanarIndex2) << CCColourFormatChannelOffset1), (const void*[4]){
+                             | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelRed, 2, CCColourFormatChannelOffset0, CCColourFormatChannelPlanarIndex0)
+                             | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelGreen, 2, CCColourFormatChannelOffset2, CCColourFormatChannelPlanarIndex0)
+                             | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelBlue, 2, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex2), (const void*[4]){
         &(uint8_t){ 0xd }, NULL, &(uint8_t){ 0x2 }, NULL
     });
     
@@ -333,7 +335,7 @@
 -(void) testGetComponent
 {
     CCColour Pixel = {
-        .type = (CCColourFormat)CCColourFormatR5G6B5Uint,
+        .type = CCColourFormatR5G6B5Uint,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (5 << CCColourFormatChannelBitSize), .u8 = 1 },
             [1] = { .type = CCColourFormatChannelGreen  | (6 << CCColourFormatChannelBitSize), .u8 = 2 },
@@ -358,7 +360,7 @@
 -(void) testGetComponentWithPrecision
 {
     CCColour Pixel = {
-        .type = (CCColourFormat)CCColourFormatR5G6B5Uint,
+        .type = CCColourFormatR5G6B5Uint,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (5 << CCColourFormatChannelBitSize), .u8 = 1 },
             [1] = { .type = CCColourFormatChannelGreen  | (6 << CCColourFormatChannelBitSize), .u8 = 63 },
@@ -404,7 +406,7 @@
     
     
     Pixel = (CCColour){
-        .type = (CCColourFormat)CCColourFormatRGBA8Sint,
+        .type = CCColourFormatRGBA8Sint,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (8 << CCColourFormatChannelBitSize), .i8 = 0 },
             [1] = { .type = CCColourFormatChannelGreen  | (8 << CCColourFormatChannelBitSize), .i8 = -1 },
@@ -505,7 +507,7 @@
     XCTAssertEqual(Component.f32, 1.0f, @"Should convert value to the new representation");
     
     Pixel = (CCColour){
-        .type = (CCColourFormat)CCColourFormatRGBA32Float,
+        .type = CCColourFormatRGBA32Float,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (32 << CCColourFormatChannelBitSize), .f32 = 0.5f },
             [1] = { .type = CCColourFormatChannelGreen  | (32 << CCColourFormatChannelBitSize), .f32 = 1.0f },
@@ -590,7 +592,7 @@
 -(void) testConversion
 {
     CCColour Pixel = {
-        .type = (CCColourFormat)CCColourFormatRGBA32Float | CCColourFormatNormalized,
+        .type = CCColourFormatRGBA32Float | CCColourFormatNormalized,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (32 << CCColourFormatChannelBitSize), .f32 = 1.0f },
             [1] = { .type = CCColourFormatChannelGreen  | (32 << CCColourFormatChannelBitSize), .f32 = 0.0f },
@@ -600,9 +602,9 @@
     };
     
     CCColour PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-        | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-        | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-        | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset0)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset1)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset2));
     
     CCColourComponent Component = CCColourGetComponent(PixelHSV, CCColourFormatChannelHue);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelHue, @"Should retrieve the correct component");
@@ -629,9 +631,9 @@
     
     Pixel.channel[0].f32 = 0.5f;
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-        | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-        | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-        | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset0)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset1)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset2));
     
     Component = CCColourGetComponent(PixelHSV, CCColourFormatChannelHue);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelHue, @"Should retrieve the correct component");
@@ -652,9 +654,9 @@
     
     
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-        | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2)
-        | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-        | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0));
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset2)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset1)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset0));
     
     Component = CCColourGetComponent(PixelHSV, CCColourFormatChannelHue);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelHue, @"Should retrieve the correct component");
@@ -675,9 +677,9 @@
     
     
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeUnsignedInteger | CCColourFormatNormalized
-        | ((CCColourFormatChannelHue        | (8 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-        | ((CCColourFormatChannelSaturation | (8 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-        | ((CCColourFormatChannelValue      | (8 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        8, CCColourFormatChannelOffset0)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 8, CCColourFormatChannelOffset1)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      8, CCColourFormatChannelOffset2));
     
     Component = CCColourGetComponent(PixelHSV, CCColourFormatChannelHue);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelHue, @"Should retrieve the correct component");
@@ -695,9 +697,9 @@
     
     
     CCColour PixelRGB = CCColourConversion(Pixel, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger | CCColourFormatNormalized
-        | ((CCColourFormatChannelRed        | (8 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-        | ((CCColourFormatChannelGreen      | (8 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-        | ((CCColourFormatChannelBlue       | (8 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   8, CCColourFormatChannelOffset0)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 8, CCColourFormatChannelOffset1)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  8, CCColourFormatChannelOffset2));
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -715,10 +717,10 @@
     
     
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-        | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-        | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-        | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
-    PixelRGB = CCColourConversion(PixelHSV, (CCColourFormat)CCColourFormatRGBA32Float | CCColourFormatNormalized);
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset0)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset1)
+        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset2));
+    PixelRGB = CCColourConversion(PixelHSV, CCColourFormatRGBA32Float | CCColourFormatNormalized);
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -741,10 +743,10 @@
     
     Pixel.channel[0].f32 = 1.0f;
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-                                        | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-                                        | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-                                        | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
-    PixelRGB = CCColourConversion(PixelHSV, (CCColourFormat)CCColourFormatRGBA32Float | CCColourFormatNormalized);
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset0)
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset1)
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset2));
+    PixelRGB = CCColourConversion(PixelHSV, CCColourFormatRGBA32Float | CCColourFormatNormalized);
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -764,10 +766,10 @@
     Pixel.channel[0].f32 = 1.0f;
     Pixel.channel[1].f32 = 0.5f;
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-                                        | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-                                        | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1)
-                                        | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2));
-    PixelRGB = CCColourConversion(PixelHSV, (CCColourFormat)CCColourFormatRGBA32Float | CCColourFormatNormalized);
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset0)
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset1)
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset2));
+    PixelRGB = CCColourConversion(PixelHSV, CCColourFormatRGBA32Float | CCColourFormatNormalized);
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -785,10 +787,10 @@
     
     
     PixelHSV = CCColourConversion(Pixel, CCColourFormatSpaceHS_HSB | CCColourFormatTypeFloat | CCColourFormatNormalized
-                                  | ((CCColourFormatChannelHue        | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset2)
-                                  | ((CCColourFormatChannelSaturation | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset0)
-                                  | ((CCColourFormatChannelValue      | (32 << CCColourFormatChannelBitSize)) << CCColourFormatChannelOffset1));
-    PixelRGB = CCColourConversion(PixelHSV, (CCColourFormat)CCColourFormatRGBA32Float | CCColourFormatNormalized);
+                                  | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelHue,        32, CCColourFormatChannelOffset2)
+                                  | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelSaturation, 32, CCColourFormatChannelOffset0)
+                                  | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelValue,      32, CCColourFormatChannelOffset1));
+    PixelRGB = CCColourConversion(PixelHSV, CCColourFormatRGBA32Float | CCColourFormatNormalized);
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -808,7 +810,7 @@
     
     
     
-    PixelRGB = CCColourConversion(Pixel, (CCColourFormat)CCColourFormatRGBA32Float | CCColourFormatNormalized);
+    PixelRGB = CCColourConversion(Pixel, CCColourFormatRGBA32Float | CCColourFormatNormalized);
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -833,7 +835,7 @@
     
     
     
-    PixelRGB = CCColourConversion(Pixel, (CCColourFormat)CCColourFormatBGRA32Float | CCColourFormatNormalized);
+    PixelRGB = CCColourConversion(Pixel, CCColourFormatBGRA32Float | CCColourFormatNormalized);
     
     Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
@@ -855,5 +857,5 @@
     XCTAssertEqual(Component.f32, Pixel.channel[3].f32, @"Should retrieve the correct component value");
     XCTAssertEqual(PixelRGB.channel[3].f32, Pixel.channel[3].f32, @"Should be correctly positioned");
 }
-*/
+
 @end

@@ -23,12 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#include "GLSetup.h"
 #include "ColourFormat.h"
 #include <CommonC/Common.h>
 
 //Retrieves channels for the specified plane, and restructures the channel offsets so they're ordered in the plane
-size_t CCColourFormatChannelsInPlanar(CCColourFormat ColourFormat, unsigned int PlanarIndex, CCColourFormat Channels[4])
+size_t CCColourFormatChannelsInPlanar(CCColourFormat ColourFormat, CCColourFormat PlanarIndex, CCColourFormat Channels[4])
 {
     CCAssertLog((ColourFormat & CCColourFormatOptionMask) == CCColourFormatOptionChannel4, "Only works on formats that use the channel 4 structure");
     
@@ -260,7 +259,7 @@ size_t CCColourFormatSampleSizeForPlanar(CCColourFormat ColourFormat, CCColourFo
     CCColourFormat Channels[4];
     size_t BitCount = 0;
     
-    for (size_t Loop = 0, Count = CCColourFormatChannelsInPlanar(ColourFormat, (unsigned int)PlanarIndex, Channels); Loop < Count; Loop++)
+    for (size_t Loop = 0, Count = CCColourFormatChannelsInPlanar(ColourFormat, PlanarIndex, Channels); Loop < Count; Loop++)
     {
         BitCount += (Channels[Loop] & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize;
     }

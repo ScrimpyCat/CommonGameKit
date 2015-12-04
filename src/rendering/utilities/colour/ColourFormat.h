@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommonGL_ColourFormat_h
-#define CommonGL_ColourFormat_h
+#ifndef Blob_Game_ColourFormat_h
+#define Blob_Game_ColourFormat_h
 
 #include <CommonC/Extensions.h>
 #include <stdint.h>
@@ -216,7 +216,7 @@ enum {
 #pragma mark -
 
 
-size_t CCColourFormatChannelsInPlanar(CCColourFormat ColourFormat, unsigned int PlanarIndex, CCColourFormat Channels[4]);
+size_t CCColourFormatChannelsInPlanar(CCColourFormat ColourFormat, CCColourFormat PlanarIndex, CCColourFormat Channels[4]);
 //_Bool CCColourFormatGLRepresentation(CCColourFormat ColourFormat, unsigned int PlanarIndex, GLenum *InputType, GLenum *InputFormat, GLenum *InternalFormat);
 _Bool CCColourFormatHasChannel(CCColourFormat ColourFormat, CCColourFormat Index);
 unsigned int CCColourFormatPlaneCount(CCColourFormat ColourFormat);
