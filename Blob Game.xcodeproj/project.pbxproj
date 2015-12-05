@@ -13,9 +13,14 @@
 		F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */; };
 		F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = F31619591C120F0C008E09A1 /* GLDebug.c */; settings = {ASSET_TAGS = (); }; };
 		F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F316195B1C12114B008E09A1 /* GLDebugTests.m */; settings = {ASSET_TAGS = (); }; };
+		F316198E1C1213A9008E09A1 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F316198C1C1213A9008E09A1 /* PixelData.c */; settings = {ASSET_TAGS = (); }; };
 		F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk-Mac.a */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
+		F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */ = {isa = PBXBuildFile; fileRef = F359CFE51C128F810028B86B /* PixelDataStatic.c */; settings = {ASSET_TAGS = (); }; };
+		F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = F359D0111C1297A10028B86B /* PixelDataGenerator.c */; settings = {ASSET_TAGS = (); }; };
+		F359D0151C1299600028B86B /* PixelDataStaticTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F359D0141C1299600028B86B /* PixelDataStaticTests.m */; settings = {ASSET_TAGS = (); }; };
+		F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F359D0161C1299670028B86B /* PixelDataGeneratorTests.m */; settings = {ASSET_TAGS = (); }; };
 		F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */; };
 		F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */; };
 		F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */; };
@@ -365,10 +370,18 @@
 		F31619581C120F00008E09A1 /* GLDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLDebug.h; sourceTree = "<group>"; };
 		F31619591C120F0C008E09A1 /* GLDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLDebug.c; sourceTree = "<group>"; };
 		F316195B1C12114B008E09A1 /* GLDebugTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLDebugTests.m; sourceTree = "<group>"; };
+		F316198C1C1213A9008E09A1 /* PixelData.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PixelData.c; sourceTree = "<group>"; };
+		F316198D1C1213A9008E09A1 /* PixelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelData.h; sourceTree = "<group>"; };
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
 		F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectExpressions.h; sourceTree = "<group>"; };
+		F359CFE51C128F810028B86B /* PixelDataStatic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PixelDataStatic.c; sourceTree = "<group>"; };
+		F359CFE61C128F810028B86B /* PixelDataStatic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelDataStatic.h; sourceTree = "<group>"; };
+		F359D0101C1297980028B86B /* PixelDataGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelDataGenerator.h; sourceTree = "<group>"; };
+		F359D0111C1297A10028B86B /* PixelDataGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PixelDataGenerator.c; sourceTree = "<group>"; };
+		F359D0141C1299600028B86B /* PixelDataStaticTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PixelDataStaticTests.m; sourceTree = "<group>"; };
+		F359D0161C1299670028B86B /* PixelDataGeneratorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PixelDataGeneratorTests.m; sourceTree = "<group>"; };
 		F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityManagerTests.m; sourceTree = "<group>"; };
 		F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EngineSetup.c; sourceTree = "<group>"; };
 		F35CD6F01B3EB8130032E3A7 /* EngineSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EngineSetup.h; sourceTree = "<group>"; };
@@ -514,6 +527,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F31619631C12130A008E09A1 /* Pixel Data */ = {
+			isa = PBXGroup;
+			children = (
+				F316198D1C1213A9008E09A1 /* PixelData.h */,
+				F316198C1C1213A9008E09A1 /* PixelData.c */,
+				F359CFE61C128F810028B86B /* PixelDataStatic.h */,
+				F359CFE51C128F810028B86B /* PixelDataStatic.c */,
+				F359D0101C1297980028B86B /* PixelDataGenerator.h */,
+				F359D0111C1297A10028B86B /* PixelDataGenerator.c */,
+			);
+			name = "Pixel Data";
+			path = "pixel data";
+			sourceTree = "<group>";
+		};
 		F32393BF1A572148007BD168 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -526,6 +553,15 @@
 				F32393D31A572148007BD168 /* ObjectiveChipmunkTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F359D0131C1299530028B86B /* Pixel Data */ = {
+			isa = PBXGroup;
+			children = (
+				F359D0141C1299600028B86B /* PixelDataStaticTests.m */,
+				F359D0161C1299670028B86B /* PixelDataGeneratorTests.m */,
+			);
+			name = "Pixel Data";
 			sourceTree = "<group>";
 		};
 		F35CD6F21B3EBBE70032E3A7 /* Systems */ = {
@@ -596,6 +632,7 @@
 				F3769A221C11E1DD00F24A44 /* ColourComponent.c */,
 				F3769A241C11E28B00F24A44 /* Colour.h */,
 				F3769A251C11E29300F24A44 /* Colour.c */,
+				F31619631C12130A008E09A1 /* Pixel Data */,
 			);
 			name = Colour;
 			path = colour;
@@ -605,6 +642,7 @@
 			isa = PBXGroup;
 			children = (
 				F37699F01C11DE3300F24A44 /* ColourFormatTests.m */,
+				F359D0131C1299530028B86B /* Pixel Data */,
 			);
 			name = Colour;
 			sourceTree = "<group>";
@@ -1412,6 +1450,7 @@
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
 				F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */,
+				F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */,
 				F3C020591B50DD1E00F546E7 /* InputMapMouseButtonComponent.c in Sources */,
 				F37699781C10262400F24A44 /* ProjectExpressions.c in Sources */,
 				F37699841C11113D00F24A44 /* WindowExpressions.c in Sources */,
@@ -1420,7 +1459,9 @@
 				F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */,
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,
 				F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */,
+				F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */,
 				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
+				F316198E1C1213A9008E09A1 /* PixelData.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1429,12 +1470,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F359D0151C1299600028B86B /* PixelDataStaticTests.m in Sources */,
 				F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */,
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
 				F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */,
 				F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
+				F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
