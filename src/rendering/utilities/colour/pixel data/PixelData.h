@@ -36,7 +36,7 @@ typedef void *(*CCPixelDataConstructorCallback)(CCAllocatorType Allocator);
 typedef void (*CCPixelDataDestructorCallback)(void *Internal);
 typedef CCColour (*CCPixelDataGetColourCallback)(CCPixelData Pixels, size_t x, size_t y, size_t z);
 typedef void (*CCPixelDataGetSizeCallback)(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
-typedef void (*CCPixelDataGetPackedDataCallback)(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
+typedef _Bool (*CCPixelDataGetPackedDataCallback)(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
 
 
 typedef struct {

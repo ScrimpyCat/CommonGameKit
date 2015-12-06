@@ -94,15 +94,18 @@ void CCPixelDataGetPackedDataWithFormat(CCPixelData Pixels, CCColourFormat Type,
 {
     CCAssertLog(Pixels, "Pixel data must not be null");
     
-    for (size_t LoopZ = 0; LoopZ < Depth; LoopZ++)
+    if ((!Pixels->interface->optional.packedData) || (!Pixels->interface->optional.packedData(Pixels, Type, Width, Height, Depth, Data)))
     {
-        for (size_t LoopY = 0; LoopY < Height; LoopY++)
+        for (size_t LoopZ = 0; LoopZ < Depth; LoopZ++)
         {
-            for (size_t LoopX = 0; LoopX < Width; LoopX++)
+            for (size_t LoopY = 0; LoopY < Height; LoopY++)
             {
-                CCColour Pixel = CCColourConversion(CCPixelDataGetColour(Pixels, LoopX, LoopY, LoopZ), Type);
-                
-                Data += CCColourPackIntoBuffer(Pixel, Data);
+                for (size_t LoopX = 0; LoopX < Width; LoopX++)
+                {
+                    CCColour Pixel = CCColourConversion(CCPixelDataGetColour(Pixels, LoopX, LoopY, LoopZ), Type);
+                    
+                    Data += CCColourPackIntoBuffer(Pixel, Data);
+                }
             }
         }
     }

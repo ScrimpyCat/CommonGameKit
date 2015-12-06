@@ -107,4 +107,17 @@
     XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
 }
 
+-(void) testPackedData
+{
+    uint8_t PixelData[6];
+    CCPixelDataGetPackedData(pixelData, 3, 2, 1, PixelData);
+    
+    XCTAssertEqual(PixelData[0], 1, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[1], 4, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[2], 7, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[3], 2, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[4], 3, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[5], 0, @"Should contain the correct value");
+}
+
 @end

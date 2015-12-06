@@ -35,6 +35,7 @@ static void *CCPixelDataStaticConstructor(CCAllocatorType Allocator);
 static void CCPixelDataStaticDestructor(CCPixelDataStaticInternal *Internal);
 static CCColour CCPixelDataStaticGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z);
 static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
+static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
 
 const CCPixelDataInterface CCPixelDataStaticInterface = {
     .create = CCPixelDataStaticConstructor,
@@ -42,7 +43,7 @@ const CCPixelDataInterface CCPixelDataStaticInterface = {
     .colour = CCPixelDataStaticGetColour,
     .optional = {
         .size = CCPixelDataStaticGetSize,
-        .packedData = NULL
+        .packedData = CCPixelDataStaticGetPackedData
     }
 };
 
@@ -101,6 +102,27 @@ static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *
     if (Width) *Width = ((CCPixelDataStaticInternal*)Pixels->internal)->width;
     if (Height) *Height = ((CCPixelDataStaticInternal*)Pixels->internal)->height;
     if (Depth) *Depth = ((CCPixelDataStaticInternal*)Pixels->internal)->depth;
+}
+
+static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data)
+{
+    if ((Pixels->format == Type) && (CCColourFormatPlaneCount(Type) == 1) &&
+        (((CCPixelDataStaticInternal*)Pixels->internal)->width == Width) &&
+        (((CCPixelDataStaticInternal*)Pixels->internal)->height == Height) &&
+        (((CCPixelDataStaticInternal*)Pixels->internal)->depth == Depth))
+    {
+        CCData Buffer = NULL;
+        if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[0]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[0];
+        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[1]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[1];
+        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[2]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[2];
+        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[3]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[3];
+        
+        if (Buffer) CCDataReadBuffer(Buffer, 0, Width * Height * Depth, Data);
+        
+        return TRUE;
+    }
+    
+    return FALSE;
 }
 
 CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
