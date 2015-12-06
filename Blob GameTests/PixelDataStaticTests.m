@@ -45,7 +45,7 @@
         2, 3, 0 //green, yellow, black
     };
     
-    pixelData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, PixelData, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+    pixelData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataHintRead, sizeof(PixelData), PixelData, NULL, NULL), CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
                                         | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   1, CCColourFormatChannelOffset0)
                                         | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 1, CCColourFormatChannelOffset1)
                                         | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  1, CCColourFormatChannelOffset2), 3, 2, 1);

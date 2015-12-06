@@ -27,7 +27,7 @@
 #include <CommonC/Common.h>
 
 typedef struct {
-    void *buffer[4]; //TODO: Create generic data type
+    CCData buffer[4];
     size_t width, height, depth;
 } CCPixelDataStaticInternal;
 
@@ -72,10 +72,10 @@ static void *CCPixelDataStaticConstructor(CCAllocatorType Allocator)
 
 static void CCPixelDataStaticDestructor(CCPixelDataStaticInternal *Internal)
 {
-//    CC_SAFE_Free(Internal->buffer[0]);
-//    CC_SAFE_Free(Internal->buffer[1]);
-//    CC_SAFE_Free(Internal->buffer[2]);
-//    CC_SAFE_Free(Internal->buffer[3]);
+    if (Internal->buffer[0]) CCDataDestroy(Internal->buffer[0]);
+    if (Internal->buffer[1]) CCDataDestroy(Internal->buffer[1]);
+    if (Internal->buffer[2]) CCDataDestroy(Internal->buffer[2]);
+    if (Internal->buffer[3]) CCDataDestroy(Internal->buffer[3]);
     
     CCFree(Internal);
 }
@@ -84,15 +84,15 @@ static CCColour CCPixelDataStaticGetColour(CCPixelData Pixels, size_t x, size_t 
 {
     if (!CCPixelDataInsideBounds(Pixels, x, y, z)) return (CCColour){ .type = 0 }; //Or should we have proper sampling behaviour?
     
-    void **Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer;
+    CCData *Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer;
     const size_t Width = ((CCPixelDataStaticInternal*)Pixels->internal)->width, Height = ((CCPixelDataStaticInternal*)Pixels->internal)->height;
     const CCColourFormat Format = Pixels->format;
     
     return CCColourUnpackFromBuffer(Pixels->format, (const void*[4]){
-        Buffer[0] + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * (x + (Width * y) + (Height * z))),
-        Buffer[1] + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex1) * (x + (Width * y) + (Height * z))),
-        Buffer[2] + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex2) * (x + (Width * y) + (Height * z))),
-        Buffer[3] + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex3) * (x + (Width * y) + (Height * z)))
+        (Buffer[0] ? CCDataGetBuffer(Buffer[0]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * (x + (Width * y) + (Height * z))),
+        (Buffer[1] ? CCDataGetBuffer(Buffer[1]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex1) * (x + (Width * y) + (Height * z))),
+        (Buffer[2] ? CCDataGetBuffer(Buffer[2]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex2) * (x + (Width * y) + (Height * z))),
+        (Buffer[3] ? CCDataGetBuffer(Buffer[3]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex3) * (x + (Width * y) + (Height * z)))
     });
 }
 
@@ -103,12 +103,12 @@ static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *
     if (Depth) *Depth = ((CCPixelDataStaticInternal*)Pixels->internal)->depth;
 }
 
-CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, void *Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
+CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
 {
-    return CCPixelDataStaticCreateWithMultiPlanar(Allocator, (void*[4]){ Data, NULL, NULL, NULL }, Format, Width, Height, Depth);
+    return CCPixelDataStaticCreateWithMultiPlanar(Allocator, (CCData[4]){ Data, NULL, NULL, NULL }, Format, Width, Height, Depth);
 }
 
-CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, void *Data[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
+CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, CCData Data[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
 {
     CCPixelData Pixels = CCPixelDataCreate(Allocator, Format, CCPixelDataStatic);
     

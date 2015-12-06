@@ -27,10 +27,11 @@
 #define Blob_Game_PixelDataStatic_h
 
 #include "PixelData.h"
+#include <CommonC/Common.h>
 
 extern const CCPixelDataInterface * const CCPixelDataStatic;
 
-CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, void *Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
-CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, void *Data[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, CCData Data[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
 
 #endif
