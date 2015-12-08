@@ -42,7 +42,7 @@ typedef struct {
 
 
 const char *CCGLErrorString(GLenum ErrorType);
-void *CCGLErrorCheck(GLenum ErrorType, const char * const Filename, const char * const FunctionName, int Line, void *CallbackData, CCErrorCallback ErrorCallback);
+GLenum CCGLErrorCheck(GLenum ErrorType, const char * const Filename, const char * const FunctionName, int Line, void *CallbackData, CCErrorCallback ErrorCallback);
 char *CCGLGetObjectLabel(GLenum type, GLuint object);
 
 

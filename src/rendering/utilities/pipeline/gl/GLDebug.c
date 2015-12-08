@@ -58,11 +58,11 @@ const char *CCGLErrorString(GLenum ErrorType)
     return ErrorType == GL_NO_ERROR ? "GL_NO_ERROR" : ErrorString[ErrorType - GL_INVALID_ENUM];
 }
 
-void *CCGLErrorCheck(GLenum ErrorType, const char * const Filename, const char * const FunctionName, int Line, void *CallbackData, CCErrorCallback ErrorCallback)
+GLenum CCGLErrorCheck(GLenum ErrorType, const char * const Filename, const char * const FunctionName, int Line, void *CallbackData, CCErrorCallback ErrorCallback)
 {
     if (ErrorType != GL_NO_ERROR)
     {
-        if (ErrorCallback) return ErrorCallback((CCFunctionData*)&(CCFunctionDataGLError){
+        if (ErrorCallback) ErrorCallback((CCFunctionData*)&(CCFunctionDataGLError){
             .indicator = CCGLErrorCheck,
             .info = CCGLErrorString(ErrorType),
             .filename = Filename,
@@ -72,7 +72,7 @@ void *CCGLErrorCheck(GLenum ErrorType, const char * const Filename, const char *
         }, CallbackData);
     }
     
-    return NULL;
+    return ErrorType;
 }
 
 char *CCGLGetObjectLabel(GLenum type, GLuint object)
