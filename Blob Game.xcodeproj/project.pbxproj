@@ -25,6 +25,10 @@
 		F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */; };
 		F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */; };
 		F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */; };
+		F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F365311D1C15FDEE00A3B009 /* GFXBuffer.c */; settings = {ASSET_TAGS = (); }; };
+		F36531251C16163400A3B009 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531231C16163400A3B009 /* GFXMain.c */; settings = {ASSET_TAGS = (); }; };
+		F36531281C16213300A3B009 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531261C16213300A3B009 /* GLGFX.c */; settings = {ASSET_TAGS = (); }; };
+		F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531291C171F0300A3B009 /* GLBuffer.c */; settings = {ASSET_TAGS = (); }; };
 		F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376994D1C1023C200F24A44 /* MathExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F37699781C10262400F24A44 /* ProjectExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699771C10262400F24A44 /* ProjectExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699791C1053C400F24A44 /* IOExpressions.c */; settings = {ASSET_TAGS = (); }; };
@@ -389,6 +393,16 @@
 		F35CD6F41B3EC62E0032E3A7 /* RenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSystem.h; sourceTree = "<group>"; };
 		F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RenderComponent.c; sourceTree = "<group>"; };
 		F35CD6F91B3F034F0032E3A7 /* RenderComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderComponent.h; sourceTree = "<group>"; };
+		F365311D1C15FDEE00A3B009 /* GFXBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXBuffer.c; sourceTree = "<group>"; };
+		F365311E1C15FDEE00A3B009 /* GFXBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXBuffer.h; sourceTree = "<group>"; };
+		F36531201C160C9100A3B009 /* GFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFX.h; sourceTree = "<group>"; };
+		F36531211C160D7000A3B009 /* GFXInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXInterface.h; sourceTree = "<group>"; };
+		F36531231C16163400A3B009 /* GFXMain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXMain.c; sourceTree = "<group>"; };
+		F36531241C16163400A3B009 /* GFXMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXMain.h; sourceTree = "<group>"; };
+		F36531261C16213300A3B009 /* GLGFX.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLGFX.c; sourceTree = "<group>"; };
+		F36531271C16213300A3B009 /* GLGFX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLGFX.h; sourceTree = "<group>"; };
+		F36531291C171F0300A3B009 /* GLBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLBuffer.c; sourceTree = "<group>"; };
+		F365312A1C171F0300A3B009 /* GLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBuffer.h; sourceTree = "<group>"; };
 		F376994D1C1023C200F24A44 /* MathExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MathExpressions.c; sourceTree = "<group>"; };
 		F37699771C10262400F24A44 /* ProjectExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ProjectExpressions.c; sourceTree = "<group>"; };
 		F37699791C1053C400F24A44 /* IOExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IOExpressions.c; sourceTree = "<group>"; };
@@ -584,6 +598,20 @@
 			path = components;
 			sourceTree = "<group>";
 		};
+		F36530F11C15FDA900A3B009 /* GFX */ = {
+			isa = PBXGroup;
+			children = (
+				F36531201C160C9100A3B009 /* GFX.h */,
+				F36531211C160D7000A3B009 /* GFXInterface.h */,
+				F36531241C16163400A3B009 /* GFXMain.h */,
+				F36531231C16163400A3B009 /* GFXMain.c */,
+				F365311E1C15FDEE00A3B009 /* GFXBuffer.h */,
+				F365311D1C15FDEE00A3B009 /* GFXBuffer.c */,
+			);
+			name = GFX;
+			path = gfx;
+			sourceTree = "<group>";
+		};
 		F376998E1C11721500F24A44 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -599,6 +627,7 @@
 			children = (
 				F37699B71C1172FB00F24A44 /* Pipeline.h */,
 				F37699BA1C1181C900F24A44 /* PipelineVersion.h */,
+				F36530F11C15FDA900A3B009 /* GFX */,
 				F37699B91C1181A200F24A44 /* GL */,
 			);
 			name = Pipeline;
@@ -617,6 +646,10 @@
 				F3769A2B1C11F4B400F24A44 /* GLState.c */,
 				F31619581C120F00008E09A1 /* GLDebug.h */,
 				F31619591C120F0C008E09A1 /* GLDebug.c */,
+				F36531271C16213300A3B009 /* GLGFX.h */,
+				F36531261C16213300A3B009 /* GLGFX.c */,
+				F365312A1C171F0300A3B009 /* GLBuffer.h */,
+				F36531291C171F0300A3B009 /* GLBuffer.c */,
 			);
 			name = GL;
 			path = gl;
@@ -1419,6 +1452,7 @@
 			files = (
 				F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */,
 				F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */,
+				F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */,
 				F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */,
 				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
 				F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */,
@@ -1440,7 +1474,9 @@
 				F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */,
 				F3BD17BD1C02B67900B3849E /* Project.c in Sources */,
 				F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */,
+				F36531251C16163400A3B009 /* GFXMain.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
+				F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */,
 				F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */,
 				F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */,
 				F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */,
@@ -1449,6 +1485,7 @@
 				F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
+				F36531281C16213300A3B009 /* GLGFX.c in Sources */,
 				F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */,
 				F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */,
 				F3C020591B50DD1E00F546E7 /* InputMapMouseButtonComponent.c in Sources */,

@@ -24,6 +24,8 @@
  */
 
 #include "EngineSetup.h"
+#include "GFXMain.h"
+#include "GLGFX.h"
 #include "ComponentSystem.h"
 #include "EntityManager.h"
 
@@ -52,6 +54,8 @@ void AnimationInterpolator(int *Previous, int *Next, double Time, int *Result)
 
 void CCEngineSetup(void)
 {
+    GLGFXSetup();
+    
     CCEntityManagerCreate();
     
     //Register Systems
