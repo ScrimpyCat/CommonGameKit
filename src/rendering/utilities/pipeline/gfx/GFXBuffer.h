@@ -68,8 +68,7 @@ typedef enum {
     GFXBufferHintData = 0,
     GFXBufferHintDataVertex,
     GFXBufferHintDataIndex,
-    GFXBufferHintDataUniform,
-    GFXBufferHintDataTexture
+    GFXBufferHintDataUniform
 } GFXBufferHint;
 
 

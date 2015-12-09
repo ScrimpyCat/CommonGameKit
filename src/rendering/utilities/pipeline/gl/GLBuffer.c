@@ -51,12 +51,11 @@ const GFXBufferInterface GLBufferInterface = {
 
 static inline CC_CONSTANT_FUNCTION GLenum GLBufferTarget(GFXBufferHint Hint)
 {
-    return (GLenum[5]){
+    return (GLenum[4]){
         0,
         GL_ARRAY_BUFFER,
         GL_ELEMENT_ARRAY_BUFFER,
-        GL_UNIFORM_BUFFER,
-        GL_TEXTURE_BUFFER
+        GL_UNIFORM_BUFFER
     }[(Hint & GFXBufferHintDataMask)];
 }
 
@@ -135,7 +134,6 @@ static GLBuffer GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hin
             case GFXBufferHintDataVertex:
             case GFXBufferHintDataIndex:
             case GFXBufferHintDataUniform:
-            case GFXBufferHintDataTexture:
             {
                 const GLenum Target = GLBufferTarget(Hint);
                 
@@ -163,7 +161,6 @@ static void GLBufferDestructor(GLBuffer Buffer)
         case GFXBufferHintDataVertex:
         case GFXBufferHintDataIndex:
         case GFXBufferHintDataUniform:
-        case GFXBufferHintDataTexture:
             glDeleteBuffers(1, &Buffer->gl.buffer); CC_GL_CHECK();
             break;
     }
@@ -186,7 +183,6 @@ static size_t GLBufferGetSize(GLBuffer Buffer)
         case GFXBufferHintDataVertex:
         case GFXBufferHintDataIndex:
         case GFXBufferHintDataUniform:
-        case GFXBufferHintDataTexture:
             return Buffer->gl.size;
     }
     
@@ -203,7 +199,6 @@ static size_t GLBufferReadBuffer(GLBuffer Buffer, ptrdiff_t Offset, size_t Size,
         case GFXBufferHintDataVertex:
         case GFXBufferHintDataIndex:
         case GFXBufferHintDataUniform:
-        case GFXBufferHintDataTexture:
         {
             const GLenum Target = GLBufferTarget(Buffer->hint);
             
@@ -226,7 +221,6 @@ static size_t GLBufferWriteBuffer(GLBuffer Buffer, ptrdiff_t Offset, size_t Size
         case GFXBufferHintDataVertex:
         case GFXBufferHintDataIndex:
         case GFXBufferHintDataUniform:
-        case GFXBufferHintDataTexture:
         {
             const GLenum Target = GLBufferTarget(Buffer->hint);
             
@@ -250,7 +244,6 @@ static void GLBufferInvalidate(GLBuffer Buffer)
         case GFXBufferHintDataVertex:
         case GFXBufferHintDataIndex:
         case GFXBufferHintDataUniform:
-        case GFXBufferHintDataTexture:
         {
             const GLenum Target = GLBufferTarget(Buffer->hint);
             
