@@ -23,18 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "GFXTexture.h"
+#include "GFXMain.h"
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
+{
+    return GFXMain->texture->create(Allocator, Hint, Format, Width, Height, Depth, Data);
+}
 
-#include "GFXInterface.h"
+void GFXTextureDestroy(GFXTexture Texture)
+{
+    GFXMain->texture->destroy(Texture);
+}
 
-typedef struct {
-    void *internal;
-    const GFXBufferInterface *buffer;
-    const GFXTextureInterface *texture;
-} GFXMainInfo;
+GFXTextureHint GFXTextureGetHints(GFXTexture Texture)
+{
+    return GFXMain->texture->hints(Texture);
+}
 
-extern GFXMainInfo *GFXMain;
+void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
+{
+    GFXMain->texture->size(Texture, Width, Height, Depth);
+}
 
-#endif
+void GFXTextureSetFilterMode(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)
+{
+    GFXMain->texture->setFilterMode(Texture, FilterType, FilterMode);
+}
+
+void GFXTextureSetAddressMode(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode)
+{
+    GFXMain->texture->setAddressMode(Texture, Coordinate, AddressMode);
+}
+
+void GFXTextureInvalidate(GFXTexture Texture)
+{
+    GFXMain->texture->optional.invalidate(Texture);
+}

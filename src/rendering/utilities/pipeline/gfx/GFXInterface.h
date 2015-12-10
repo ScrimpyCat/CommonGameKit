@@ -28,6 +28,7 @@
 
 #include <CommonC/Allocator.h>
 #include "GFXBuffer.h"
+#include "GFXTexture.h"
 
 #pragma mark - Required Callbacks
 typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
@@ -37,11 +38,20 @@ typedef size_t (*GFXBufferGetSizeCallback)(GFXBuffer Internal);
 typedef size_t (*GFXBufferReadBufferCallback)(GFXBuffer Internal, ptrdiff_t Offset, size_t Size, void *Data);
 typedef size_t (*GFXBufferWriteBufferCallback)(GFXBuffer Internal, ptrdiff_t Offset, size_t Size, const void *Data);
 
+typedef GFXTexture (*GFXTextureConstructorCallback)(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+typedef void (*GFXTextureDestructorCallback)(GFXTexture Texture);
+typedef GFXTextureHint (*GFXTextureGetHintCallback)(GFXTexture Texture);
+typedef void (*GFXTextureGetSizeCallback)(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
+typedef void (*GFXTextureSetFilterModeCallback)(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
+typedef void (*GFXTextureSetAddressModeCallback)(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
+
 
 #pragma mark - Optional Callbacks
 typedef void (*GFXBufferInvalidateCallback)(GFXBuffer Internal);
 typedef size_t (*GFXBufferCopyBufferCallback)(GFXBuffer SrcInternal, ptrdiff_t SrcOffset, size_t Size, GFXBuffer DstInternal, ptrdiff_t DstOffset);
 typedef size_t (*GFXBufferFillBufferCallback)(GFXBuffer Internal, ptrdiff_t Offset, size_t Size, uint8_t Fill);
+
+typedef void (*GFXTextureInvalidateCallback)(GFXTexture Texture);
 
 
 #pragma mark -
@@ -59,5 +69,17 @@ typedef struct {
         GFXBufferFillBufferCallback fill;
     } optional;
 } GFXBufferInterface;
+
+typedef struct {
+    GFXTextureConstructorCallback create;
+    GFXTextureDestructorCallback destroy;
+    GFXTextureGetHintCallback hints;
+    GFXTextureGetSizeCallback size;
+    GFXTextureSetFilterModeCallback setFilterMode;
+    GFXTextureSetAddressModeCallback setAddressMode;
+    struct {
+        GFXTextureInvalidateCallback invalidate;
+    } optional;
+} GFXTextureInterface;
 
 #endif

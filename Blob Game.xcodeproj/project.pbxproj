@@ -29,6 +29,7 @@
 		F36531251C16163400A3B009 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531231C16163400A3B009 /* GFXMain.c */; settings = {ASSET_TAGS = (); }; };
 		F36531281C16213300A3B009 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531261C16213300A3B009 /* GLGFX.c */; settings = {ASSET_TAGS = (); }; };
 		F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531291C171F0300A3B009 /* GLBuffer.c */; settings = {ASSET_TAGS = (); }; };
+		F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = F365312C1C173C5900A3B009 /* GFXTexture.c */; settings = {ASSET_TAGS = (); }; };
 		F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376994D1C1023C200F24A44 /* MathExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F37699781C10262400F24A44 /* ProjectExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699771C10262400F24A44 /* ProjectExpressions.c */; settings = {ASSET_TAGS = (); }; };
 		F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699791C1053C400F24A44 /* IOExpressions.c */; settings = {ASSET_TAGS = (); }; };
@@ -403,6 +404,8 @@
 		F36531271C16213300A3B009 /* GLGFX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLGFX.h; sourceTree = "<group>"; };
 		F36531291C171F0300A3B009 /* GLBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLBuffer.c; sourceTree = "<group>"; };
 		F365312A1C171F0300A3B009 /* GLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBuffer.h; sourceTree = "<group>"; };
+		F365312C1C173C5900A3B009 /* GFXTexture.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXTexture.c; sourceTree = "<group>"; };
+		F365312D1C173C5900A3B009 /* GFXTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXTexture.h; sourceTree = "<group>"; };
 		F376994D1C1023C200F24A44 /* MathExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MathExpressions.c; sourceTree = "<group>"; };
 		F37699771C10262400F24A44 /* ProjectExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ProjectExpressions.c; sourceTree = "<group>"; };
 		F37699791C1053C400F24A44 /* IOExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IOExpressions.c; sourceTree = "<group>"; };
@@ -607,6 +610,8 @@
 				F36531231C16163400A3B009 /* GFXMain.c */,
 				F365311E1C15FDEE00A3B009 /* GFXBuffer.h */,
 				F365311D1C15FDEE00A3B009 /* GFXBuffer.c */,
+				F365312D1C173C5900A3B009 /* GFXTexture.h */,
+				F365312C1C173C5900A3B009 /* GFXTexture.c */,
 			);
 			name = GFX;
 			path = gfx;
@@ -1497,6 +1502,7 @@
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,
 				F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */,
 				F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */,
+				F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */,
 				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
 				F316198E1C1213A9008E09A1 /* PixelData.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,
