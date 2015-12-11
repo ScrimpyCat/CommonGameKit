@@ -30,7 +30,7 @@
 #include "PixelData.h"
 
 typedef enum {
-    GFXTextureHintMask = 3,
+    GFXTextureHintDimensionMask = 3,
     GFXTextureHintDimension1D = 0,
     GFXTextureHintDimension2D,
     GFXTextureHintDimension3D,

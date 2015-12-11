@@ -23,22 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Blob_Game_GLTexture_h
+#define Blob_Game_GLTexture_h
+
 #include "GLGFX.h"
 #include "GLSetup.h"
-#include "GLBuffer.h"
-#include "GLTexture.h"
 
 
-static GFXMainInfo GLGFXInfo = {
-    .internal = NULL,
-    .buffer = &GLBufferInterface,
-    .texture = &GLTextureInterface
-};
+typedef struct {
+    GFXTextureHint hint;
+    CCPixelData data;
+    CCColourFormat format;
+    size_t width;
+    size_t height;
+    size_t depth;
+    GLuint texture;
+} GLTextureInfo, *GLTexture;
 
-GFXMainInfo * const GLGFX = &GLGFXInfo;
+extern const GFXTextureInterface GLTextureInterface;
 
-void GLGFXSetup(void)
-{
-    GFXMain = GLGFX;
-    CCGLCurrentState = CCGLStateCreate();
-}
+#endif

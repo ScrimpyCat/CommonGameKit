@@ -29,5 +29,6 @@
 #include "GFXInterface.h"
 #include "GFXMain.h"
 #include "GFXBuffer.h"
+#include "GFXTexture.h"
 
 #endif
