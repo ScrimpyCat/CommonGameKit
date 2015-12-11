@@ -1,4 +1,4 @@
-/*
+ /*
  *  Copyright (c) 2015, Stefan Johnson
  *  All rights reserved.
  *
@@ -33,7 +33,7 @@ static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType,
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
 
 
-const GFXTextureInterface GLBufferInterface = {
+const GFXTextureInterface GLTextureInterface = {
     .create = (GFXTextureConstructorCallback)GLTextureConstructor,
     .destroy = (GFXTextureDestructorCallback)GLTextureDestructor,
     .hints = (GFXTextureGetHintCallback)GLTextureGetHint,
@@ -143,11 +143,12 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
                 break;
         }
         
-        const GLenum InputFormat = GLTextureInputFormat(Data->format), InputType = GLTextureInputFormatType(Data->format), InternalFormat = GLTextureInternalFormat(Format);
+        const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Uint;
+        const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat), InternalFormat = GLTextureInternalFormat(Format);
         
         _Bool FreePixels = FALSE;
         void *Pixels = NULL; //TODO: Add optional internal buffer access
-        if (!Pixels)
+        if ((!Pixels) && (Data))
         {
             FreePixels = TRUE;
             
@@ -186,7 +187,7 @@ static void GLTextureDestructor(GLTexture Texture)
 {
     CCAssertLog(Texture, "Texture must not be null");
     
-    CCPixelDataDestroy(Texture->data);
+    if (Texture->data) CCPixelDataDestroy(Texture->data);
     glDeleteTextures(1, &Texture->texture); CC_GL_CHECK();
     
     CC_SAFE_Free(Texture);

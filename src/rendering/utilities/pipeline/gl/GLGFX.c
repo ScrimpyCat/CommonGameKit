@@ -41,4 +41,5 @@ void GLGFXSetup(void)
 {
     GFXMain = GLGFX;
     CCGLCurrentState = CCGLStateCreate();
+    CCGLStateInitializeWithCurrent(CCGLCurrentState);
 }
