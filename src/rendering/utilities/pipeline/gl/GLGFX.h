@@ -27,6 +27,13 @@
 #define Blob_Game_GLGFX_h
 
 #include "GFX.h"
+#include "GLSetup.h"
+
+typedef struct {
+    struct {
+        GLint maxColourAttachments;
+    } limits;
+} GLInternal;
 
 extern GFXMainInfo * const GLGFX;
 

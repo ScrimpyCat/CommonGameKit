@@ -26,7 +26,7 @@
 #include "GFXFramebuffer.h"
 #include "GFXMain.h"
 
-GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment Attachments, size_t Count)
+GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count)
 {
     return GFXMain->framebuffer->create(Allocator, Attachments, Count);
 }

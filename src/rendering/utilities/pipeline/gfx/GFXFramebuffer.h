@@ -59,7 +59,7 @@ typedef struct GFXFramebuffer *GFXFramebuffer;
 
 static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour);
 
-GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment Attachments, size_t Count); //takes ownership of textures in attachments
+GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count); //takes ownership of textures in attachments
 void GFXFramebufferDestroy(GFXFramebuffer Framebuffer);
 GFXFramebufferAttachment *GFXFramebufferGetAttachment(GFXFramebuffer Framebuffer, size_t Index);
 

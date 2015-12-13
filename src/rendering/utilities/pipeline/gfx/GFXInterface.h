@@ -46,7 +46,7 @@ typedef void (*GFXTextureGetSizeCallback)(GFXTexture Texture, size_t *Width, siz
 typedef void (*GFXTextureSetFilterModeCallback)(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 typedef void (*GFXTextureSetAddressModeCallback)(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
 
-typedef GFXFramebuffer (*GFXFramebufferConstructorCallback)(CCAllocatorType Allocator, GFXFramebufferAttachment Attachments, size_t Count);
+typedef GFXFramebuffer (*GFXFramebufferConstructorCallback)(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
 typedef void (*GFXFramebufferDestructorCallback)(GFXFramebuffer Framebuffer);
 typedef GFXFramebufferAttachment *(*GFXFramebufferGetAttachmentCallback)(GFXFramebuffer Framebuffer, size_t Index);
 

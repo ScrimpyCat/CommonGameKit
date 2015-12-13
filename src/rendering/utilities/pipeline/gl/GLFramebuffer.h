@@ -23,31 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLTexture_h
-#define Blob_Game_GLTexture_h
+#ifndef Blob_Game_GLFramebuffer_h
+#define Blob_Game_GLFramebuffer_h
 
 #include "GLGFX.h"
 #include "GLSetup.h"
+#include "GLTexture.h"
 
 
 typedef struct {
-    GFXTextureHint hint;
-    CCPixelData data;
-    CCColourFormat format;
-    size_t width;
-    size_t height;
-    size_t depth;
-    GLuint texture;
-} GLTextureInfo, *GLTexture;
+    GLuint fbo;
+    size_t attachmentCount;
+    GFXFramebufferAttachment attachments[];
+} GLFBO;
 
-extern const GFXTextureInterface GLTextureInterface;
+typedef struct {
+    size_t fboCount;
+    GLFBO *framebuffers[];
+} GLFramebufferInfo, *GLFramebuffer;
 
-static inline GLuint GLTextureGetID(GLTexture Texture);
-
-
-static inline GLuint GLTextureGetID(GLTexture Texture)
-{
-    return Texture->texture;
-}
+extern const GFXFramebufferInterface GLFramebufferInterface;
 
 #endif

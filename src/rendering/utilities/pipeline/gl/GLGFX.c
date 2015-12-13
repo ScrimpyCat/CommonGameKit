@@ -24,15 +24,71 @@
  */
 
 #include "GLGFX.h"
-#include "GLSetup.h"
 #include "GLBuffer.h"
 #include "GLTexture.h"
+#include "GLFramebuffer.h"
 
+
+static const GLenum ColourAttachments[] = {
+    GL_COLOR_ATTACHMENT0,
+#ifdef GL_COLOR_ATTACHMENT1
+    GL_COLOR_ATTACHMENT1,
+#endif
+#ifdef GL_COLOR_ATTACHMENT2
+    GL_COLOR_ATTACHMENT2,
+#endif
+#ifdef GL_COLOR_ATTACHMENT3
+    GL_COLOR_ATTACHMENT3,
+#endif
+#ifdef GL_COLOR_ATTACHMENT4
+    GL_COLOR_ATTACHMENT4,
+#endif
+#ifdef GL_COLOR_ATTACHMENT5
+    GL_COLOR_ATTACHMENT5,
+#endif
+#ifdef GL_COLOR_ATTACHMENT6
+    GL_COLOR_ATTACHMENT6,
+#endif
+#ifdef GL_COLOR_ATTACHMENT7
+    GL_COLOR_ATTACHMENT7,
+#endif
+#ifdef GL_COLOR_ATTACHMENT8
+    GL_COLOR_ATTACHMENT8,
+#endif
+#ifdef GL_COLOR_ATTACHMENT9
+    GL_COLOR_ATTACHMENT9,
+#endif
+#ifdef GL_COLOR_ATTACHMENT10
+    GL_COLOR_ATTACHMENT10,
+#endif
+#ifdef GL_COLOR_ATTACHMENT11
+    GL_COLOR_ATTACHMENT11,
+#endif
+#ifdef GL_COLOR_ATTACHMENT12
+    GL_COLOR_ATTACHMENT12,
+#endif
+#ifdef GL_COLOR_ATTACHMENT13
+    GL_COLOR_ATTACHMENT13,
+#endif
+#ifdef GL_COLOR_ATTACHMENT14
+    GL_COLOR_ATTACHMENT14,
+#endif
+#ifdef GL_COLOR_ATTACHMENT15
+    GL_COLOR_ATTACHMENT15
+#endif
+};
+
+static GLInternal GLInfo = {
+    .limits = {
+        .maxColourAttachments = sizeof(ColourAttachments) / sizeof(GLenum)
+    }
+};
 
 static GFXMainInfo GLGFXInfo = {
-    .internal = NULL,
+    .internal = &GLInfo,
     .buffer = &GLBufferInterface,
-    .texture = &GLTextureInterface
+    .texture = &GLTextureInterface,
+    .framebuffer = &GLFramebufferInterface
 };
 
 GFXMainInfo * const GLGFX = &GLGFXInfo;
@@ -42,4 +98,10 @@ void GLGFXSetup(void)
     GFXMain = GLGFX;
     CCGLCurrentState = CCGLStateCreate();
     CCGLStateInitializeWithCurrent(CCGLCurrentState);
+    
+    
+    //Initialize GLInternal state
+#ifdef GL_MAX_COLOR_ATTACHMENTS
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &GLInfo.limits.maxColourAttachments); CC_GL_CHECK();
+#endif
 }
