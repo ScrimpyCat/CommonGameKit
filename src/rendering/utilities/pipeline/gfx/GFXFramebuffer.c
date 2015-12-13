@@ -23,19 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "GFXFramebuffer.h"
+#include "GFXMain.h"
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment Attachments, size_t Count)
+{
+    return GFXMain->framebuffer->create(Allocator, Attachments, Count);
+}
 
-#include "GFXInterface.h"
+void GFXFramebufferDestroy(GFXFramebuffer Framebuffer)
+{
+    GFXMain->framebuffer->destroy(Framebuffer);
+}
 
-typedef struct {
-    void *internal;
-    const GFXBufferInterface *buffer;
-    const GFXTextureInterface *texture;
-    const GFXFramebufferInterface *framebuffer;
-} GFXMainInfo;
-
-extern GFXMainInfo *GFXMain;
-
-#endif
+GFXFramebufferAttachment *GFXFramebufferGetAttachment(GFXFramebuffer Framebuffer, size_t Index)
+{
+    return GFXMain->framebuffer->attachment(Framebuffer, Index);
+}

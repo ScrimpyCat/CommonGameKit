@@ -53,6 +53,7 @@
 		F39E23C61BFF63FB00DB0B71 /* CommonC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ASSET_TAGS = (); }; };
 		F39E26711BFF6F6900DB0B71 /* libchibi-scheme.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		F3A9D5641C1D6B480042BD2A /* GFXFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */; settings = {ASSET_TAGS = (); }; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
@@ -448,6 +449,8 @@
 		F39E266D1BFF6F4E00DB0B71 /* install.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = install.h; path = "deps/chibi-scheme/build/include/chibi/install.h"; sourceTree = "<group>"; };
 		F39E266E1BFF6F4E00DB0B71 /* sexp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sexp.h; path = "deps/chibi-scheme/build/include/chibi/sexp.h"; sourceTree = "<group>"; };
 		F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libchibi-scheme.dylib"; path = "deps/chibi-scheme/build/lib/libchibi-scheme.dylib"; sourceTree = "<group>"; };
+		F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXFramebuffer.c; sourceTree = "<group>"; };
+		F3A9D5631C1D6B480042BD2A /* GFXFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXFramebuffer.h; sourceTree = "<group>"; };
 		F3AE99421A725AC500212838 /* ComponentSystemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComponentSystemTests.m; sourceTree = "<group>"; };
 		F3AE996F1A73E2F000212838 /* Entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Entity.c; sourceTree = "<group>"; };
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
@@ -615,6 +618,8 @@
 				F365311D1C15FDEE00A3B009 /* GFXBuffer.c */,
 				F365312D1C173C5900A3B009 /* GFXTexture.h */,
 				F365312C1C173C5900A3B009 /* GFXTexture.c */,
+				F3A9D5631C1D6B480042BD2A /* GFXFramebuffer.h */,
+				F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */,
 			);
 			name = GFX;
 			path = gfx;
@@ -1486,6 +1491,7 @@
 				F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */,
 				F36531251C16163400A3B009 /* GFXMain.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
+				F3A9D5641C1D6B480042BD2A /* GFXFramebuffer.c in Sources */,
 				F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */,
 				F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */,
 				F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */,
