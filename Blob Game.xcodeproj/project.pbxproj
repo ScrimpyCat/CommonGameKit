@@ -56,6 +56,7 @@
 		F3A9D5641C1D6B480042BD2A /* GFXFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */; settings = {ASSET_TAGS = (); }; };
 		F3A9D58F1C1DA1570042BD2A /* GLFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D58D1C1DA1570042BD2A /* GLFramebuffer.c */; settings = {ASSET_TAGS = (); }; };
 		F3A9D5921C1F70E30042BD2A /* GFXShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5901C1F70E30042BD2A /* GFXShaderLibrary.c */; settings = {ASSET_TAGS = (); }; };
+		F3A9D5951C1F76430042BD2A /* GLShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5931C1F76430042BD2A /* GLShaderLibrary.c */; settings = {ASSET_TAGS = (); }; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
@@ -457,6 +458,8 @@
 		F3A9D58E1C1DA1570042BD2A /* GLFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLFramebuffer.h; sourceTree = "<group>"; };
 		F3A9D5901C1F70E30042BD2A /* GFXShaderLibrary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXShaderLibrary.c; sourceTree = "<group>"; };
 		F3A9D5911C1F70E30042BD2A /* GFXShaderLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXShaderLibrary.h; sourceTree = "<group>"; };
+		F3A9D5931C1F76430042BD2A /* GLShaderLibrary.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLShaderLibrary.c; sourceTree = "<group>"; };
+		F3A9D5941C1F76430042BD2A /* GLShaderLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLShaderLibrary.h; sourceTree = "<group>"; };
 		F3AE99421A725AC500212838 /* ComponentSystemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComponentSystemTests.m; sourceTree = "<group>"; };
 		F3AE996F1A73E2F000212838 /* Entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Entity.c; sourceTree = "<group>"; };
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
@@ -675,6 +678,8 @@
 				F365312F1C19F50700A3B009 /* GLTexture.c */,
 				F3A9D58E1C1DA1570042BD2A /* GLFramebuffer.h */,
 				F3A9D58D1C1DA1570042BD2A /* GLFramebuffer.c */,
+				F3A9D5941C1F76430042BD2A /* GLShaderLibrary.h */,
+				F3A9D5931C1F76430042BD2A /* GLShaderLibrary.c */,
 			);
 			name = GL;
 			path = gl;
@@ -1500,6 +1505,7 @@
 				F3BD17BD1C02B67900B3849E /* Project.c in Sources */,
 				F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */,
 				F36531251C16163400A3B009 /* GFXMain.c in Sources */,
+				F3A9D5951C1F76430042BD2A /* GLShaderLibrary.c in Sources */,
 				F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */,
 				F3A9D5641C1D6B480042BD2A /* GFXFramebuffer.c in Sources */,
 				F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */,
