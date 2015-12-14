@@ -30,5 +30,7 @@
 #include "GFXMain.h"
 #include "GFXBuffer.h"
 #include "GFXTexture.h"
+#include "GFXFramebuffer.h"
+#include "GFXShaderLibrary.h"
 
 #endif

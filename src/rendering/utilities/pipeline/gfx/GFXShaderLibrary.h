@@ -23,20 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Blob_Game_GFXShaderLibrary_h
+#define Blob_Game_GFXShaderLibrary_h
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+#include <CommonC/Common.h>
 
-#include "GFXInterface.h"
+typedef enum {
+    GFXShaderSourceTypeVertex,
+    GFXShaderSourceTypeFragment
+} GFXShaderSourceType;
 
-typedef struct {
-    void *internal;
-    const GFXBufferInterface *buffer;
-    const GFXTextureInterface *texture;
-    const GFXFramebufferInterface *framebuffer;
-    const GFXShaderLibraryInterface *library;
-} GFXMainInfo;
 
-extern GFXMainInfo *GFXMain;
+typedef struct GFXShaderLibrary *GFXShaderLibrary;
+typedef struct GFXShaderSource *GFXShaderSource;
+
+
+GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator);
+//GFXShaderLibrary GFXShaderLibraryCreateFromProject(CCAllocatorType Allocator, FSPath Path);
+void GFXShaderLibraryDestroy(GFXShaderLibrary Library);
+const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
+const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, const char *Name);
 
 #endif

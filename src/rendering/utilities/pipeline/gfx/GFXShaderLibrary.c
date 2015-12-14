@@ -23,20 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "GFXShaderLibrary.h"
+#include "GFXMain.h"
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator)
+{
+    return GFXMain->library->create(Allocator);
+}
 
-#include "GFXInterface.h"
+void GFXShaderLibraryDestroy(GFXShaderLibrary Library)
+{
+    GFXMain->library->destroy(Library);
+}
 
-typedef struct {
-    void *internal;
-    const GFXBufferInterface *buffer;
-    const GFXTextureInterface *texture;
-    const GFXFramebufferInterface *framebuffer;
-    const GFXShaderLibraryInterface *library;
-} GFXMainInfo;
+const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source)
+{
+    return GFXMain->library->compile(Library, Type, Name, Source);
+}
 
-extern GFXMainInfo *GFXMain;
-
-#endif
+const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, const char *Name)
+{
+    return GFXMain->library->source(Library, Name);
+}
