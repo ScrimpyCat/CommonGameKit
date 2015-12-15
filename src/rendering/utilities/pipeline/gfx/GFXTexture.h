@@ -55,14 +55,98 @@ typedef enum {
 typedef struct GFXTexture *GFXTexture;
 
 
+/*!
+ * @brief Create a texture.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Hint The required usage for the texture.
+ * @param Format The colour format of the texture.
+ * @param Width The width of the texture.
+ * @param Height The height of the texture.
+ * @param Depth The depth of the texture.
+ * @param Data The pixel data to be used for the texture.
+ * @return The created texture.
+ */
 GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+
+/*!
+ * @brief Destroy a texture.
+ * @param Texture The texture to be destroyed.
+ */
 void GFXTextureDestroy(GFXTexture Texture);
+
+/*!
+ * @brief Get the hints for the texture.
+ * @param Texture The texture to get the hints.
+ * @return The hints for the texture.
+ */
 GFXTextureHint GFXTextureGetHints(GFXTexture Texture);
+
+/*!
+ * @brief Get the dimensions of the texture.
+ * @param Texture The texture get the dimension sizes for.
+ * @param Width The width of the texture. May be NULL if not needed.
+ * @param Height The height of the texture. May be NULL if not needed.
+ * @param Depth The depth of the texture. May be NULL if not needed.
+ */
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
+
+/*!
+ * @brief Get the filter mode for the filter type of the texture.
+ * @param Texture The texture get the filter mode for.
+ * @param FilterType The filter type to get the filter mode for.
+ *        @b GFXTextureHintFilterMin
+ *        @b GFXTextureHintFilterMag
+ *
+ * @return The filter mode for that type.
+ */
 static inline GFXTextureHint GFXTextureGetFilterMode(GFXTexture Texture, GFXTextureHint FilterType);
+
+/*!
+ * @brief Set the filter mode for the filter type of the texture.
+ * @param Texture The texture to set the filter mode of.
+ * @param FilterType The filter type to set the filter mode of.
+ *        @b GFXTextureHintFilterMin
+ *        @b GFXTextureHintFilterMag
+ *
+ * @param FilterMode The filter mode for that type.
+ *        @b GFXTextureHintFilterModeNearest
+ *        @b GFXTextureHintFilterModeLinear
+ *
+ */
 void GFXTextureSetFilterMode(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
+
+/*!
+ * @brief Get the address mode for the coordinate of the texture.
+ * @param Texture The texture get the address mode for.
+ * @param Coordinate The coordinate to get the address mode for.
+ *        @b GFXTextureHintAddress_S
+ *        @b GFXTextureHintAddress_T
+ *        @b GFXTextureHintAddress_R
+ *
+ * @return The address mode for that coordinate.
+ */
 static inline GFXTextureHint GFXTextureGetAddressMode(GFXTexture Texture, GFXTextureHint Coordinate);
+
+/*!
+ * @brief Set the address mode for the coordinate of the texture.
+ * @param Texture The texture to set the address mode of.
+ * @param Coordinate The coordinate to set the address mode of.
+ *        @b GFXTextureHintAddress_S
+ *        @b GFXTextureHintAddress_T
+ *        @b GFXTextureHintAddress_R
+ *
+ * @param AddressMode The address mode for that coordinate.
+ *        @b GFXTextureHintAddressModeClampToEdge
+ *        @b GFXTextureHintAddressModeRepeat
+ *        @b GFXTextureHintAddressModeRepeatMirror
+ *
+ */
 void GFXTextureSetAddressMode(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
+
+/*!
+ * @brief Invalidate the texture, replacing it with a new texture.
+ * @param Texture The texture to be invalidated.
+ */
 void GFXTextureInvalidate(GFXTexture Texture);
 
 
