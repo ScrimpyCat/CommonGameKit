@@ -75,14 +75,81 @@ typedef enum {
 typedef struct GFXBuffer *GFXBuffer;
 
 
+/*!
+ * @brief Create a buffer of memory available to the GPU.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Hint The required usage for the buffer.
+ * @param Size The size of the buffer.
+ * @param Data The data to be copied into the buffer.
+ * @return The created buffer.
+ */
 GFXBuffer GFXBufferCreate(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
+
+/*!
+ * @brief Destroy the buffer.
+ * @param Buffer The buffer to be destroyed.
+ */
 void GFXBufferDestroy(GFXBuffer Buffer);
+
+/*!
+ * @brief Get the usage hints for the buffer.
+ * @param Buffer The buffer to get the hints for.
+ * @return The hints.
+ */
 GFXBufferHint GFXBufferGetHints(GFXBuffer Buffer);
+
+/*!
+ * @brief Get the size of buffer.
+ * @param Buffer The buffer to get the size of.
+ * @return The size.
+ */
 size_t GFXBufferGetSize(GFXBuffer Buffer);
+
+/*!
+ * @brief Invalidate the buffer, replacing it with a new buffer.
+ * @param Buffer The buffer to be invalidated.
+ */
 void GFXBufferInvalidate(GFXBuffer Buffer);
+
+/*!
+ * @brief Read the contents of the buffer.
+ * @param Buffer The buffer to be read.
+ * @param Offset The offset to begin reading from.
+ * @param Size The amount to read.
+ * @param Data The buffer the contents should be written to.
+ * @return The amount successfully read.
+ */
 size_t GFXBufferReadBuffer(GFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data);
+
+/*!
+ * @brief Write over the contents of the buffer.
+ * @param Buffer The buffer to be written to.
+ * @param Offset The offset to begin writing from.
+ * @param Size The amount to write.
+ * @param Data The buffer the contents should be read from.
+ * @return The amount successfully written.
+ */
 size_t GFXBufferWriteBuffer(GFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data);
+
+/*!
+ * @brief Copy the contents of one buffer to another buffer.
+ * @param SrcBuffer The buffer to copy from.
+ * @param SrcOffset The offset to begin copying from.
+ * @param Size The amount to copy.
+ * @param DstBuffer The buffer to copy to.
+ * @param DstOffset The offset to begin copying to.
+ * @return The amount successfully copied.
+ */
 size_t GFXBufferCopyBuffer(GFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size_t Size, GFXBuffer DstBuffer, ptrdiff_t DstOffset);
+
+/*!
+ * @brief Fill the contents of the buffer.
+ * @param Buffer The buffer to be filled.
+ * @param Offset The offset to begin filling from.
+ * @param Size The amount to fill.
+ * @param Fill The value to be used to fill.
+ * @return The amount successfully filled.
+ */
 size_t GFXBufferFillBuffer(GFXBuffer Buffer, ptrdiff_t Offset, size_t Size, uint8_t Fill);
 
 #endif
