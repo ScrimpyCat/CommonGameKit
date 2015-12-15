@@ -57,10 +57,39 @@ typedef struct GFXFramebufferAttachment {
 
 typedef struct GFXFramebuffer *GFXFramebuffer;
 
+/*!
+ * @brief Create a framebuffer colour attachment.
+ * @param Texture The texture to be use for the attachment.
+ * @param Load The load action.
+ * @param Store The store action.
+ * @param ClearColour The clear colour to be used for clear actions.
+ * @return The framebuffer attachment.
+ */
 static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour);
 
-GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count); //takes ownership of textures in attachments
+/*!
+ * @brief Create a framebuffer.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Attachments The attachments to be used for the framebuffer (their order is the same
+ *        order they are indexed in. The framebuffer takes over any textures in the attachments.
+ *
+ * @param Count The number of attachments.
+ * @return The created framebuffer.
+ */
+GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
+
+/*!
+ * @brief Destroy a framebuffer.
+ * @param Framebuffer The framebuffer to be destroyed.
+ */
 void GFXFramebufferDestroy(GFXFramebuffer Framebuffer);
+
+/*!
+ * @brief Get a framebuffer attachment for a framebuffer.
+ * @param Framebuffer The framebuffer to get the attachment from.
+ * @param Index The index of the attachment.
+ * @return The framebuffer attachment.
+ */
 GFXFramebufferAttachment *GFXFramebufferGetAttachment(GFXFramebuffer Framebuffer, size_t Index);
 
 
