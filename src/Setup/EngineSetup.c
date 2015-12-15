@@ -28,6 +28,7 @@
 #include "GLGFX.h"
 #include "ComponentSystem.h"
 #include "EntityManager.h"
+#include "ExpressionSetup.h"
 
 //TODO: Probably make this file generated (could add a define so it knows what functions to call from here)
 #include "RenderSystem.h"
@@ -50,6 +51,16 @@
 void AnimationInterpolator(int *Previous, int *Next, double Time, int *Result)
 {
     *Result = (int)(((1.0 - Time) * (double)*Previous) + (Time * (double)*Next)); //basic lerp
+}
+
+void CCEnginePreSetup(void)
+{
+    char Path[] = __FILE__;
+    Path[sizeof(__FILE__) - sizeof("setup/EngineSetup.c")] = 0;
+    CCFileFilterInputAddPath(Path);
+    CCLogAddFilter(CCLogFilterInput, CCFileFilterInput);
+    
+    CCExpressionSetup();
 }
 
 void CCEngineSetup(void)

@@ -26,6 +26,7 @@
 #ifndef Blob_Game_EngineSetup_h
 #define Blob_Game_EngineSetup_h
 
+void CCEnginePreSetup(void);
 void CCEngineSetup(void);
 
 #endif

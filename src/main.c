@@ -35,7 +35,6 @@
 #include "PlatformSetup.h"
 #include "EngineSetup.h"
 #include "ComponentSystem.h"
-#include "ExpressionSetup.h"
 #include "Configuration.h"
 
 
@@ -73,7 +72,7 @@ static int RenderLoop(GLFWwindow *Window)
 #include "EntityManager.h"
 int main(int argc, const char *argv[])
 {
-    CCExpressionSetup();
+    CCEnginePreSetup();
     CCConfigureOptions(argc, argv);
     
     CCPlatformSetup();
