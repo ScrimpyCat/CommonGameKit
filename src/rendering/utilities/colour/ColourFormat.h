@@ -266,6 +266,7 @@ unsigned int CCColourFormatPlaneCount(CCColourFormat ColourFormat);
  *         @b CCColourFormatChannelOffset1
  *         @b CCColourFormatChannelOffset2
  *         @b CCColourFormatChannelOffset3
+ *
  */
 CCColourFormat CCColourFormatChannelOffsetForChannelIndex(CCColourFormat ColourFormat, CCColourFormat Index);
 
@@ -305,6 +306,7 @@ static CC_FORCE_INLINE size_t CCColourFormatChannelOffsetToLiteralIndex(CCColour
  *         @b CCColourFormatChannelOffset1
  *         @b CCColourFormatChannelOffset2
  *         @b CCColourFormatChannelOffset3
+ *
  */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelOffset(size_t Index);
 
@@ -330,6 +332,7 @@ static CC_FORCE_INLINE size_t CCColourFormatChannelPlanarToLiteralIndex(CCColour
  *         @b CCColourFormatChannelPlanarIndex1
  *         @b CCColourFormatChannelPlanarIndex2
  *         @b CCColourFormatChannelPlanarIndex3
+ *
  */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelPlanar(size_t Index);
 
@@ -355,6 +358,7 @@ static CC_FORCE_INLINE size_t CCColourFormatChannelIndexToLiteralIndex(CCColourF
  *         @b CCColourFormatChannelIndex1
  *         @b CCColourFormatChannelIndex2
  *         @b CCColourFormatChannelIndex3
+ *
  */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelIndex(size_t Index);
 
