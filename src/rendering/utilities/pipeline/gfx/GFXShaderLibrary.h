@@ -29,6 +29,7 @@
 #include <CommonC/Common.h>
 
 typedef enum {
+    //GFXShaderSourceTypeHeader, //TODO: add a header type
     GFXShaderSourceTypeVertex,
     GFXShaderSourceTypeFragment
 } GFXShaderSourceType;
@@ -38,10 +39,37 @@ typedef struct GFXShaderLibrary *GFXShaderLibrary;
 typedef struct GFXShaderSource *GFXShaderSource;
 
 
+/*!
+ * @brief Create a shader library.
+ * @description A library to lookup shader sources from to use to create shaders.
+ * @param Allocator The allocator to be used for the allocations.
+ * @return The created shader library.
+ */
 GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator);
 //GFXShaderLibrary GFXShaderLibraryCreateFromProject(CCAllocatorType Allocator, FSPath Path);
+
+/*!
+ * @brief Destroy a shader library.
+ * @param Library The shader library to be destroyed.
+ */
 void GFXShaderLibraryDestroy(GFXShaderLibrary Library);
+
+/*!
+ * @brief Compile a shader.
+ * @param Library The shader library to compile the shader.
+ * @param Type The shader source type.
+ * @param Name The name to reference the compiled shader source.
+ * @param Source The sourcecode for the shader.
+ * @return The compiled shader source.
+ */
 const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
+
+/*!
+ * @brief Lookup a compiled shader.
+ * @param Library The shader library to lookup the shader in.
+ * @param Name The name of the compiled shader source.
+ * @return The compiled shader source.
+ */
 const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, const char *Name);
 
 #endif
