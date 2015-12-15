@@ -128,7 +128,7 @@ CCColourComponent CCColourGetComponent(CCColour Colour, CCColourFormat Index);
 CCColourComponent CCColourGetComponentWithPrecision(CCColour Colour, CCColourFormat Index, CCColourFormat Type, int Precision);
 
 /*!
- * @brief Convert a colour to another format
+ * @brief Convert a colour to another format.
  * @param Colour The pixel colour to be converted.
  * @param NewFormat The new colour format.
  * @return The converted colour.

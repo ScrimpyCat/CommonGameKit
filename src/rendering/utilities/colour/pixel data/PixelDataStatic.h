@@ -31,7 +31,30 @@
 
 extern const CCPixelDataInterface * const CCPixelDataStatic;
 
+/*!
+ * @brief Create a pixel data container for static data.
+ * @param Allocator The allocator to be used.
+ * @param Data The data to be used. Note: Takes the container takes ownership of the data.
+ * @param Format The colour format of the data.
+ * @param Width The width of the data.
+ * @param Height The height of the data.
+ * @param Depth The depth of the data.
+ * @return The pixel data container.
+ */
 CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+
+/*!
+ * @brief Create a pixel data container for multi-planar static data.
+ * @param Allocator The allocator to be used.
+ * @param Data The multi-planar data to be used. Note: Takes the container takes ownership of
+ *        the data.
+ *
+ * @param Format The colour format of the data.
+ * @param Width The width of the data.
+ * @param Height The height of the data.
+ * @param Depth The depth of the data.
+ * @return The pixel data container.
+ */
 CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, CCData Data[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
 
 #endif

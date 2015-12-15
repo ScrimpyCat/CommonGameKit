@@ -32,6 +32,13 @@ typedef CCColour (*CCPixelDataGeneratorFunction)(size_t x, size_t y, size_t z);
 
 extern const CCPixelDataInterface * const CCPixelDataGenerator;
 
+/*!
+ * @brief Create a pixel data container for a generator function.
+ * @param Allocator The allocator to be used.
+ * @param Func The generator function.
+ * @param Format The colour format of the data.
+ * @return The pixel data container.
+ */
 CCPixelData CCPixelDataGeneratorCreate(CCAllocatorType Allocator, CCPixelDataGeneratorFunction Func, CCColourFormat Format);
 
 #endif
