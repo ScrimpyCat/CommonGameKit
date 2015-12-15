@@ -48,7 +48,31 @@ typedef struct {
 } CCColourComponent;
 
 
+/*!
+ * @brief Get the bit size of a colour component.
+ * @param Component The colour component.
+ * @return The bit size of the component.
+ */
 unsigned int CCColourComponentGetBitSize(CCColourComponent Component) CC_CONSTANT_FUNCTION;
+
+/*!
+ * @brief Do a linear precision conversion to convert the component from one type to
+ *        the new type.
+ *
+ * @param Component The colour component.
+ * @param OldType The old type of the component.
+ *        @b CCColourFormatTypeUnsignedInteger
+ *        @b CCColourFormatTypeSignedInteger
+ *        @b CCColourFormatTypeFloat
+ *
+ * @param NewType The new type of the component.
+ *        @b CCColourFormatTypeUnsignedInteger
+ *        @b CCColourFormatTypeSignedInteger
+ *        @b CCColourFormatTypeFloat
+ *
+ * @param NewPrecision The precision for the new type.
+ * @return The converted colour component.
+ */
 CCColourComponent CCColourComponentLinearPrecisionConversion(CCColourComponent Component, CCColourFormat OldType, CCColourFormat NewType, int NewPrecision) CC_CONSTANT_FUNCTION;
 
 #endif

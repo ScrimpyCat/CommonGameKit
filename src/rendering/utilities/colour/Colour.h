@@ -49,17 +49,90 @@ size_t CCColourPackIntoBuffer(CCColour Colour, void *Data);
  * @brief Packs the pixel colour of a certain plane into the buffer.
  * @param Colour The pixel colour to be packed into the buffer.
  * @param PlanarIndex The plane to be used.
+ *        @b CCColourFormatChannelPlanarIndex0
+ *        @b CCColourFormatChannelPlanarIndex1
+ *        @b CCColourFormatChannelPlanarIndex2
+ *        @b CCColourFormatChannelPlanarIndex3
+ *
  * @param Data The buffer to store the colour.
  * @return The amount of bytes written to the buffer (bits rounded up to the next byte).
  */
-size_t CCColourPackIntoBufferInPlanar(CCColour Colour, unsigned int PlanarIndex, void *Data);
+size_t CCColourPackIntoBufferInPlanar(CCColour Colour, CCColourFormat PlanarIndex, void *Data);
 
+/*!
+ * @brief Unpack the pixel colour from a buffer or multi-planar buffer.
+ * @param ColourFormat The colour format of the data.
+ * @param Data The multi-planar buffer to unpack the colour from.
+ * @return The colour from the data.
+ */
 CCColour CCColourUnpackFromBuffer(CCColourFormat ColourFormat, const void *Data[4]);
-size_t CCColourGetChannelsInPlanar(CCColour Colour, unsigned int PlanarIndex, CCColourComponent Channels[4]);
+
+/*!
+ * @brief Retrieve the channels in a plane.
+ * @param Colour The pixel colour to get the channels of.
+ * @param PlanarIndex The plane to be used.
+ *        @b CCColourFormatChannelPlanarIndex0
+ *        @b CCColourFormatChannelPlanarIndex1
+ *        @b CCColourFormatChannelPlanarIndex2
+ *        @b CCColourFormatChannelPlanarIndex3
+ *
+ * @param Channels The channels on that plane.
+ * @return The amount of channels found.
+ */
+size_t CCColourGetChannelsInPlanar(CCColour Colour, CCColourFormat PlanarIndex, CCColourComponent Channels[4]);
+
+/*!
+ * @brief Get the channel index for a given channel.
+ * @discussion The index of Colour.channel[i].
+ * @param Colour The pixel colour to get the channel index of.
+ * @param Index The channel index.
+ *        @b CCColourFormatChannelIndex0
+ *        @b CCColourFormatChannelIndex1
+ *        @b CCColourFormatChannelIndex2
+ *        @b CCColourFormatChannelIndex3
+ *
+ * @return The channel index or SIZE_MAX on not found.
+ */
 size_t CCColourGetComponentChannelIndex(CCColour Colour, CCColourFormat Index);
+
+/*!
+ * @brief Get the colour component for a given channel.
+ * @param Colour The pixel colour to get the colour component for.
+ * @param Index The channel index.
+ *        @b CCColourFormatChannelIndex0
+ *        @b CCColourFormatChannelIndex1
+ *        @b CCColourFormatChannelIndex2
+ *        @b CCColourFormatChannelIndex3
+ *
+ * @return The colour component.
+ */
 CCColourComponent CCColourGetComponent(CCColour Colour, CCColourFormat Index);
+
+/*!
+ * @brief Get the colour component for a given channel in the specified type and precision.
+ * @param Colour The pixel colour to get the colour component for.
+ * @param Index The channel index.
+ *        @b CCColourFormatChannelIndex0
+ *        @b CCColourFormatChannelIndex1
+ *        @b CCColourFormatChannelIndex2
+ *        @b CCColourFormatChannelIndex3
+ *
+ * @param Type The new type of the component.
+ *        @b CCColourFormatTypeUnsignedInteger
+ *        @b CCColourFormatTypeSignedInteger
+ *        @b CCColourFormatTypeFloat
+ *
+ * @param Precision The precision for the new type.
+ * @return The converted colour component.
+ */
 CCColourComponent CCColourGetComponentWithPrecision(CCColour Colour, CCColourFormat Index, CCColourFormat Type, int Precision);
 
+/*!
+ * @brief Convert a colour to another format
+ * @param Colour The pixel colour to be converted.
+ * @param NewFormat The new colour format.
+ * @return The converted colour.
+ */
 CCColour CCColourConversion(CCColour Colour, CCColourFormat NewFormat);
 
 

@@ -216,18 +216,146 @@ enum {
 #pragma mark -
 
 
+/*!
+ * @brief Retrieve the inidividual channels on a plane.
+ * @param ColourFormat The colour format.
+ * @param PlanarIndex The plane to get the channels from.
+ *        @b CCColourFormatChannelPlanarIndex0
+ *        @b CCColourFormatChannelPlanarIndex1
+ *        @b CCColourFormatChannelPlanarIndex2
+ *        @b CCColourFormatChannelPlanarIndex3
+ *
+ * @param Channels The channels in that plane.
+ * @return The number of channels.
+ */
 size_t CCColourFormatChannelsInPlanar(CCColourFormat ColourFormat, CCColourFormat PlanarIndex, CCColourFormat Channels[4]);
+
 //_Bool CCColourFormatGLRepresentation(CCColourFormat ColourFormat, unsigned int PlanarIndex, GLenum *InputType, GLenum *InputFormat, GLenum *InternalFormat);
+
+/*!
+ * @brief Check if a colour format contains a channel.
+ * @param ColourFormat The colour format.
+ * @param Index The channel index.
+ *        @b CCColourFormatChannelIndex0
+ *        @b CCColourFormatChannelIndex1
+ *        @b CCColourFormatChannelIndex2
+ *        @b CCColourFormatChannelIndex3
+ *
+ * @return TRUE if the channel is in the format, otherwise FALSE.
+ */
 _Bool CCColourFormatHasChannel(CCColourFormat ColourFormat, CCColourFormat Index);
+
+/*!
+ * @brief Retrieve the number of planes in the colour format.
+ * @param ColourFormat The colour format.
+ * @return The number of planes.
+ */
 unsigned int CCColourFormatPlaneCount(CCColourFormat ColourFormat);
+
+/*!
+ * @brief Get the channel offset of a channel.
+ * @param ColourFormat The colour format.
+ * @param Index The channel index.
+ *        @b CCColourFormatChannelIndex0
+ *        @b CCColourFormatChannelIndex1
+ *        @b CCColourFormatChannelIndex2
+ *        @b CCColourFormatChannelIndex3
+ *
+ * @return The channel offset, or 0 if no channel is found.
+ *         @b CCColourFormatChannelOffset0
+ *         @b CCColourFormatChannelOffset1
+ *         @b CCColourFormatChannelOffset2
+ *         @b CCColourFormatChannelOffset3
+ */
 CCColourFormat CCColourFormatChannelOffsetForChannelIndex(CCColourFormat ColourFormat, CCColourFormat Index);
+
+/*!
+ * @brief Get the sample size for a plane.
+ * @discussion The number of bytes needed to sample a pixel in that plane.
+ * @param ColourFormat The colour format.
+ * @param PlanarIndex The plane to get the sample size for.
+ *        @b CCColourFormatChannelPlanarIndex0
+ *        @b CCColourFormatChannelPlanarIndex1
+ *        @b CCColourFormatChannelPlanarIndex2
+ *        @b CCColourFormatChannelPlanarIndex3
+ *
+ * @return The sample size.
+ */
 size_t CCColourFormatSampleSizeForPlanar(CCColourFormat ColourFormat, CCColourFormat PlanarIndex);
 
+/*!
+ * @brief Convert a channel offset to a literal index.
+ * @param ColourFormat The colour format.
+ * @param Index The offset.
+ *        @b CCColourFormatChannelOffset0
+ *        @b CCColourFormatChannelOffset1
+ *        @b CCColourFormatChannelOffset2
+ *        @b CCColourFormatChannelOffset3
+ *
+ * @return The literal index for an offset.
+ */
 static CC_FORCE_INLINE size_t CCColourFormatChannelOffsetToLiteralIndex(CCColourFormat Index);
+
+/*!
+ * @brief Convert a literal index to a channel offset.
+ * @param ColourFormat The colour format.
+ * @param Index The literal index.
+ * @return The offset for the literal index.
+ *         @b CCColourFormatChannelOffset0
+ *         @b CCColourFormatChannelOffset1
+ *         @b CCColourFormatChannelOffset2
+ *         @b CCColourFormatChannelOffset3
+ */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelOffset(size_t Index);
+
+/*!
+ * @brief Convert a planar index to a literal index.
+ * @param ColourFormat The colour format.
+ * @param Index The planar index.
+ *        @b CCColourFormatChannelPlanarIndex0
+ *        @b CCColourFormatChannelPlanarIndex1
+ *        @b CCColourFormatChannelPlanarIndex2
+ *        @b CCColourFormatChannelPlanarIndex3
+ *
+ * @return The literal index for a planar index.
+ */
 static CC_FORCE_INLINE size_t CCColourFormatChannelPlanarToLiteralIndex(CCColourFormat Index);
+
+/*!
+ * @brief Convert a literal index to a planar index.
+ * @param ColourFormat The colour format.
+ * @param Index The literal index.
+ * @return The planar index for the literal index.
+ *         @b CCColourFormatChannelPlanarIndex0
+ *         @b CCColourFormatChannelPlanarIndex1
+ *         @b CCColourFormatChannelPlanarIndex2
+ *         @b CCColourFormatChannelPlanarIndex3
+ */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelPlanar(size_t Index);
+
+/*!
+ * @brief Convert a channel index to a literal index.
+ * @param ColourFormat The colour format.
+ * @param Index The channel index.
+ *        @b CCColourFormatChannelIndex0
+ *        @b CCColourFormatChannelIndex1
+ *        @b CCColourFormatChannelIndex2
+ *        @b CCColourFormatChannelIndex3
+ *
+ * @return The literal index for a channel index.
+ */
 static CC_FORCE_INLINE size_t CCColourFormatChannelIndexToLiteralIndex(CCColourFormat Index);
+
+/*!
+ * @brief Convert a literal index to a channel index.
+ * @param ColourFormat The colour format.
+ * @param Index The literal index.
+ * @return The channel index for the literal index.
+ *         @b CCColourFormatChannelIndex0
+ *         @b CCColourFormatChannelIndex1
+ *         @b CCColourFormatChannelIndex2
+ *         @b CCColourFormatChannelIndex3
+ */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelIndex(size_t Index);
 
 #pragma mark -

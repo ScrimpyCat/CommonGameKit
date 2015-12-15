@@ -76,7 +76,7 @@ size_t CCColourPackIntoBuffer(CCColour Colour, void *Data)
     return CCPackComponentsIntoBuffer(Colour.channel, 4, Data);
 }
 
-size_t CCColourPackIntoBufferInPlanar(CCColour Colour, unsigned int PlanarIndex, void *Data)
+size_t CCColourPackIntoBufferInPlanar(CCColour Colour, CCColourFormat PlanarIndex, void *Data)
 {
     CCAssertLog((Colour.type & CCColourFormatOptionMask) == CCColourFormatOptionChannel4, "Only supports colour formats with 4 channel configuration");
     _Static_assert((CCColourFormatChannelBitSizeMask >> CCColourFormatChannelBitSize) <= (sizeof(uint64_t) * 8), "Exceeds limit of packed data");
@@ -141,7 +141,7 @@ CCColour CCColourUnpackFromBuffer(CCColourFormat ColourFormat, const void *Data[
     return Colour;
 }
 
-size_t CCColourGetChannelsInPlanar(CCColour Colour, unsigned int PlanarIndex, CCColourComponent Channels[4])
+size_t CCColourGetChannelsInPlanar(CCColour Colour, CCColourFormat PlanarIndex, CCColourComponent Channels[4])
 {
     CCColourFormat Formats[4];
     size_t Count = CCColourFormatChannelsInPlanar(Colour.type, PlanarIndex, Formats);
