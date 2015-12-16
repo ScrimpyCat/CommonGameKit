@@ -31,6 +31,7 @@
 #include "GFXTexture.h"
 #include "GFXFramebuffer.h"
 #include "GFXShaderLibrary.h"
+#include "GFXShader.h"
 
 #pragma mark - Required Buffer Callbacks
 typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
@@ -59,6 +60,12 @@ typedef GFXShaderLibrary (*GFXShaderLibraryConstructorCallback)(CCAllocatorType 
 typedef void (*GFXShaderLibraryDestructorCallback)(GFXShaderLibrary Library);
 typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
 typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibrary Library, const char *Name);
+
+#pragma mark Required Shader Callbacks
+
+typedef GFXShader (*GFXShaderConstructorCallback)(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
+typedef void (*GFXShaderDestructorCallback)(GFXShader Library);
+typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, const char *Name);
 
 
 
@@ -111,5 +118,11 @@ typedef struct {
     GFXShaderLibraryCompileCallback compile;
     GFXShaderLibraryGetSourceCallback source;
 } GFXShaderLibraryInterface;
+
+typedef struct {
+    GFXShaderConstructorCallback create;
+    GFXShaderDestructorCallback destroy;
+    GFXShaderGetInputCallback input;
+} GFXShaderInterface;
 
 #endif

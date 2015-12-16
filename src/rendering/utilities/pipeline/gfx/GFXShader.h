@@ -23,21 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Blob_Game_GFXShader_h
+#define Blob_Game_GFXShader_h
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+#include "GFXShaderLibrary.h"
+#include <CommonC/Common.h>
 
-#include "GFXInterface.h"
 
-typedef struct {
-    void *internal;
-    const GFXBufferInterface *buffer;
-    const GFXTextureInterface *texture;
-    const GFXFramebufferInterface *framebuffer;
-    const GFXShaderLibraryInterface *library;
-    const GFXShaderInterface *shader;
-} GFXMainInfo;
+typedef struct GFXShaderInput *GFXShaderInput;
 
-extern GFXMainInfo *GFXMain;
+typedef struct GFXShader *GFXShader;
+
+/*!
+ * @brief Create a shader.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Vertex The vertex source.
+ * @param Fragment The fragment source.
+ * @return The created shader.
+ */
+GFXShader GFXShaderCreate(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
+
+/*!
+ * @brief Destroy a shader.
+ * @param Shader The shader to be destroyed.
+ */
+void GFXShaderDestroy(GFXShader Shader);
+
+/*!
+ * @brief Get the input handle for name.
+ * @param Shader The shader to get the input to.
+ * @param Name The name of the input.
+ * @return The shader input.
+ */
+GFXShaderInput GFXShaderGetInput(GFXShader Shader, const char *Name);
 
 #endif

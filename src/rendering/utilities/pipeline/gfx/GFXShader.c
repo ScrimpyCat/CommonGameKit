@@ -23,21 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "GFXShader.h"
+#include "GFXMain.h"
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+GFXShader GFXShaderCreate(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment)
+{
+    return GFXMain->shader->create(Allocator, Vertex, Fragment);
+}
 
-#include "GFXInterface.h"
+void GFXShaderDestroy(GFXShader Shader)
+{
+    GFXMain->shader->destroy(Shader);
+}
 
-typedef struct {
-    void *internal;
-    const GFXBufferInterface *buffer;
-    const GFXTextureInterface *texture;
-    const GFXFramebufferInterface *framebuffer;
-    const GFXShaderLibraryInterface *library;
-    const GFXShaderInterface *shader;
-} GFXMainInfo;
-
-extern GFXMainInfo *GFXMain;
-
-#endif
+GFXShaderInput GFXShaderGetInput(GFXShader Shader, const char *Name)
+{
+    return GFXMain->shader->input(Shader, Name);
+}
