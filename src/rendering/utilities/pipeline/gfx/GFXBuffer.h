@@ -27,6 +27,7 @@
 #define Blob_Game_GFXBuffer_h
 
 #include <CommonC/Common.h>
+#include "GFXBufferFormat.h"
 
 typedef enum {
     GFXBufferHintAccessMask = 3,

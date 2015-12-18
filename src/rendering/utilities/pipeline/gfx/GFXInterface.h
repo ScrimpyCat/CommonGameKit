@@ -64,7 +64,7 @@ typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibr
 #pragma mark Required Shader Callbacks
 
 typedef GFXShader (*GFXShaderConstructorCallback)(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
-typedef void (*GFXShaderDestructorCallback)(GFXShader Library);
+typedef void (*GFXShaderDestructorCallback)(GFXShader Shader);
 typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, const char *Name);
 
 
