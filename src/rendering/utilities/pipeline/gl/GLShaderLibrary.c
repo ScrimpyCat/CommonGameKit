@@ -106,11 +106,14 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         char *ErrorLog = NULL;
         CC_TEMP_Malloc(ErrorLog, Length,
                        CC_LOG_ERROR("Failed to compile %s shader (%s). Unable to get reason.", GLShaderTypeString(Type), Name);
+                       CC_GL_POP_GROUP_MARKER();
                        return NULL;
                        );
         
         glGetShaderInfoLog(Shader, Length, NULL, ErrorLog); CC_GL_CHECK();
         CC_LOG_ERROR("Failed to compile %s shader (%s). Reason:\n%s", GLShaderTypeString(Type), Name, ErrorLog);
+        
+        glDeleteShader(Shader); CC_GL_CHECK();
         
         CC_TEMP_Free(ErrorLog);
         CC_GL_POP_GROUP_MARKER();
