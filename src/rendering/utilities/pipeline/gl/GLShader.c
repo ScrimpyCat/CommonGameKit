@@ -46,6 +46,7 @@ static void GLShaderAttributeElementDestructor(CCCollection Collection, GLShader
 static void GLShaderUniformElementDestructor(CCCollection Collection, GLShaderUniformInfo *Element)
 {
     CC_SAFE_Free(Element->name);
+    CC_SAFE_Free(Element->value);
 }
 
 static GFXBufferFormat GLShaderBufferFormatFromType(GLenum Type)
@@ -323,7 +324,8 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 Array[1] = 0;
             }
             
-            memset(CurrentUniform.value, 0, sizeof(CurrentUniform.value));
+            const size_t BufferSize = GFXBufferFormatGetSize(CurrentUniform.type) * CurrentUniform.count;
+            if ((CurrentUniform.value = CCMalloc(Allocator, BufferSize, NULL, CC_DEFAULT_ERROR_CALLBACK))) memset(CurrentUniform.value, 0, BufferSize);
             
             CCCollectionInsertElement(Uniforms, &CurrentUniform);
         }

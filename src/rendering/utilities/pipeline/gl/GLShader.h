@@ -53,7 +53,7 @@ typedef struct {
     GLint location;
     GFXBufferFormat type;
     GLint count;
-    _Alignas(double) uint8_t value[sizeof(double) * 4 * 4];
+    void *value;
 } GLShaderUniformInfo;
 
 typedef struct {
