@@ -401,7 +401,7 @@ void GLShaderSetUniform(GLShader Shader, GLShaderUniformInfo *Uniform, size_t Co
         {
             CCAssertLog(GFXBufferFormatIsFloat(Uniform->type), "Matrix must be of float type");
             
-            void (*MatrixUniforms[2][3][3])(GLint, GLsizei, GLboolean, const void *) = {
+            static void (*MatrixUniforms[2][3][3])(GLint, GLsizei, GLboolean, const void *) = {
                 {
                     {
                         (void(*)(GLint,GLsizei,GLboolean,const void*))glUniformMatrix2fv,
@@ -454,29 +454,44 @@ void GLShaderSetUniform(GLShader Shader, GLShaderUniformInfo *Uniform, size_t Co
                     break;
             }
             
-            MatrixUniform[GFXBufferFormatGetMatrixM(Uniform->type)][GFXBufferFormatGetMatrixN(Uniform->type)](Uniform->location, (GLsizei)Count, GL_FALSE, Data);
+            MatrixUniform[GFXBufferFormatGetMatrixM(Uniform->type) - 2][GFXBufferFormatGetMatrixN(Uniform->type) - 2](Uniform->location, (GLsizei)Count, GL_FALSE, Data); CC_GL_CHECK();
         }
         
         else //vector or scalar
         {
+            static void (*VectorIntegerUniforms[2][4])(GLint, GLsizei, const void *) = {
+                {
+                    (void(*)(GLint,GLsizei,const void*))glUniform1iv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform2iv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform3iv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform4iv
+                },
+                {
+                    (void(*)(GLint,GLsizei,const void*))glUniform1uiv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform2uiv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform3uiv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform4uiv
+                }
+            };
+            
+            static void (*VectorFloatUniforms[2][4])(GLint, GLsizei, const void *) = {
+                {
+                    (void(*)(GLint,GLsizei,const void*))glUniform1fv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform2fv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform3fv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform4fv
+                },
+                {
+                    (void(*)(GLint,GLsizei,const void*))glUniform1dv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform2dv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform3dv,
+                    (void(*)(GLint,GLsizei,const void*))glUniform4dv
+                }
+            };
+            
             void (*VectorUniform)(GLint, GLsizei, const void *) = NULL;
             if (GFXBufferFormatIsInteger(Uniform->type))
             {
-                void (*VectorIntegerUniforms[2][4])(GLint, GLsizei, const void *) = {
-                    {
-                        (void(*)(GLint,GLsizei,const void*))glUniform1iv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform2iv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform3iv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform4iv
-                    },
-                    {
-                        (void(*)(GLint,GLsizei,const void*))glUniform1uiv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform2uiv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform3uiv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform4uiv
-                    }
-                };
-                
                 CCAssertLog(GFXBufferFormatGetBitSize(Uniform->type) == 32, "Unsupported uniform type %d", Uniform->type); //TODO: Support other sizes (GL_BOOL)
                 
                 VectorUniform = VectorIntegerUniforms[GFXBufferFormatIsUnsigned(Uniform->type)][GFXBufferFormatGetElementCount(Uniform->type) - 1];
@@ -484,21 +499,6 @@ void GLShaderSetUniform(GLShader Shader, GLShaderUniformInfo *Uniform, size_t Co
             
             else //float
             {
-                void (*VectorFloatUniforms[2][4])(GLint, GLsizei, const void *) = {
-                    {
-                        (void(*)(GLint,GLsizei,const void*))glUniform1fv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform2fv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform3fv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform4fv
-                    },
-                    {
-                        (void(*)(GLint,GLsizei,const void*))glUniform1dv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform2dv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform3dv,
-                        (void(*)(GLint,GLsizei,const void*))glUniform4dv
-                    }
-                };
-                
                 void (**FloatUniform)(GLint, GLsizei, const void *) = NULL;
                 switch (GFXBufferFormatGetBitSize(Uniform->type))
                 {

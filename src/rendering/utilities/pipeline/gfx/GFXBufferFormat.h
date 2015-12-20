@@ -192,9 +192,13 @@ static inline _Bool GFXBufferFormatIsVector(GFXBufferFormat Format);
 static inline _Bool GFXBufferFormatIsMatrix(GFXBufferFormat Format);
 static inline _Bool GFXBufferFormatIsInteger(GFXBufferFormat Format);
 static inline _Bool GFXBufferFormatIsFloat(GFXBufferFormat Format);
+static inline _Bool GFXBufferFormatIsSigned(GFXBufferFormat Format);
+static inline _Bool GFXBufferFormatIsUnsigned(GFXBufferFormat Format);
 static inline size_t GFXBufferFormatGetBitSize(GFXBufferFormat Format);
 static inline size_t GFXBufferFormatGetElementCount(GFXBufferFormat Format);
 static inline size_t GFXBufferFormatGetSize(GFXBufferFormat Format);
+static inline size_t GFXBufferFormatGetMatrixM(GFXBufferFormat Format); //GFXBufferFormatElementMatrixMxN
+static inline size_t GFXBufferFormatGetMatrixN(GFXBufferFormat Format); //GFXBufferFormatElementMatrixMxN
 
 
 static inline _Bool GFXBufferFormatIsScalar(GFXBufferFormat Format)
@@ -214,12 +218,22 @@ static inline _Bool GFXBufferFormatIsMatrix(GFXBufferFormat Format)
 
 static inline _Bool GFXBufferFormatIsInteger(GFXBufferFormat Format)
 {
-    return (Format & GFXBufferFormatTypeMask) == GFXBufferFormatTypeInt;
+    return (Format & GFXBufferFormatTypeMask) == GFXBufferFormatTypeInt || (Format & GFXBufferFormatTypeMask) == GFXBufferFormatTypeUInt;
 }
 
 static inline _Bool GFXBufferFormatIsFloat(GFXBufferFormat Format)
 {
     return (Format & GFXBufferFormatTypeMask) == GFXBufferFormatTypeFloat;
+}
+
+static inline _Bool GFXBufferFormatIsSigned(GFXBufferFormat Format)
+{
+    return GFXBufferFormatIsFloat(Format) || (Format & GFXBufferFormatTypeMask) == GFXBufferFormatTypeInt;
+}
+
+static inline _Bool GFXBufferFormatIsUnsigned(GFXBufferFormat Format)
+{
+    return (Format & GFXBufferFormatTypeMask) == GFXBufferFormatTypeUInt;
 }
 
 static inline size_t GFXBufferFormatGetBitSize(GFXBufferFormat Format)
@@ -235,6 +249,16 @@ static inline size_t GFXBufferFormatGetElementCount(GFXBufferFormat Format)
 static inline size_t GFXBufferFormatGetSize(GFXBufferFormat Format)
 {
     return (GFXBufferFormatGetElementCount(Format) * GFXBufferFormatGetBitSize(Format)) / 8;
+}
+
+static inline size_t GFXBufferFormatGetMatrixM(GFXBufferFormat Format)
+{
+    return ((Format & GFXBufferFormatElementMatrixMask) >> (GFXBufferFormatElementShift + 2)) + 1;
+}
+
+static inline size_t GFXBufferFormatGetMatrixN(GFXBufferFormat Format)
+{
+    return ((Format & GFXBufferFormatElementVectorMask) >> GFXBufferFormatElementShift) + 1;
 }
 
 #endif
