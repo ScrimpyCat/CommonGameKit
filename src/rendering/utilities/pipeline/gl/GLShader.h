@@ -64,4 +64,6 @@ typedef struct {
 
 extern const GFXShaderInterface GLShaderInterface;
 
+void GLShaderSetUniform(GLShader Shader, GLShaderUniformInfo *Uniform, size_t Count, const void *Data);
+
 #endif
