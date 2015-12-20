@@ -234,7 +234,7 @@ static inline size_t GFXBufferFormatGetElementCount(GFXBufferFormat Format)
 
 static inline size_t GFXBufferFormatGetSize(GFXBufferFormat Format)
 {
-    return GFXBufferFormatGetElementCount(Format) * GFXBufferFormatGetBitSize(Format);
+    return (GFXBufferFormatGetElementCount(Format) * GFXBufferFormatGetBitSize(Format)) / 8;
 }
 
 #endif
