@@ -79,6 +79,11 @@ typedef struct {
 
 /*!
  * @brief Create a draw operation.
+ * @description To commit a draw it must be submitted either using @b GFXDrawSubmit
+ *              or @b GFXDrawSubmitIndexed. One draw command can be reused and
+ *              submitted as many times as needed. State of a draw command can also
+ *              be changed before each submit.
+ *
  * @param Allocator The allocator to be used for the allocations.
  * @return The created draw operation.
  */
