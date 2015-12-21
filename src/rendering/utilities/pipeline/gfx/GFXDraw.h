@@ -29,6 +29,7 @@
 #include "GFXBuffer.h"
 #include "GFXShader.h"
 #include "GFXTexture.h"
+#include "GFXFramebuffer.h"
 #include <CommonC/Common.h>
 
 
@@ -69,11 +70,17 @@ typedef struct {
 } GFXDrawIndexBuffer;
 
 typedef struct {
+    GFXFramebuffer framebuffer;
+    size_t index;
+} GFXDrawDestination;
+
+typedef struct {
     void *internal;
     GFXShader shader;
     CCCollection vertexBuffers;
     CCCollection buffers;
     CCCollection textures;
+    GFXDrawDestination destination;
     GFXDrawIndexBuffer index;
 } GFXDrawInfo, *GFXDraw;
 
@@ -119,6 +126,14 @@ void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offse
  * @param Shader The shader to be used for the draw operation.
  */
 void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader);
+
+/*!
+ * @brief Set the framebuffer to be used for the draw command.
+ * @param Draw The draw operation.
+ * @param Framebuffer The framebuffer to be used as the destination.
+ * @param Index The attachment of that framebuffer to be used as the destination.
+ */
+void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Index);
 
 /*!
  * @brief Set the index buffer of the draw command.

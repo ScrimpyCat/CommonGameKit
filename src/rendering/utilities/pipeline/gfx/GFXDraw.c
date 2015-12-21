@@ -42,6 +42,10 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
             .vertexBuffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputVertexBuffer), (CCCollectionElementDestructor)GFXDrawInputElementDestructor),
             .buffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputBuffer), (CCCollectionElementDestructor)GFXDrawInputElementDestructor),
             .textures = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputTexture), (CCCollectionElementDestructor)GFXDrawInputElementDestructor),
+            .destination = {
+                .framebuffer = NULL,
+                .index = 0
+            },
             .index = {
                 .buffer = NULL,
                 .format = 0
@@ -108,6 +112,18 @@ void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader)
     }
     
     if (GFXMain->draw->optional.setShader) GFXMain->draw->optional.setShader(Draw, Shader);
+}
+
+void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Index)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->destination = (GFXDrawDestination){
+        .framebuffer = Framebuffer,
+        .index = Index
+    };
+    
+    if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, &Draw->destination);
 }
 
 void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Format)

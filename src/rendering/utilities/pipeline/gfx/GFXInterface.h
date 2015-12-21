@@ -84,6 +84,7 @@ typedef void (*GFXTextureInvalidateCallback)(GFXTexture Texture);
 typedef void (*GFXDrawConstructorCallback)(CCAllocatorType Allocator, GFXDraw Draw);
 typedef void (*GFXDrawDestructorCallback)(GFXDraw Draw);
 typedef void (*GFXDrawSetShaderCallback)(GFXDraw Draw, GFXShader Shader);
+typedef void (*GFXDrawSetFramebufferCallback)(GFXDraw, GFXDrawDestination *Destination);
 typedef void (*GFXDrawSetIndexBufferCallback)(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
 typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
 typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
@@ -144,6 +145,7 @@ typedef struct {
         GFXDrawConstructorCallback create;
         GFXDrawDestructorCallback destroy;
         GFXDrawSetShaderCallback setShader;
+        GFXDrawSetFramebufferCallback setFramebuffer;
         GFXDrawSetIndexBufferCallback setIndexBuffer;
         GFXDrawSetVertexBufferCallback setVertexBuffer;
         GFXDrawSetBufferCallback setBuffer;
