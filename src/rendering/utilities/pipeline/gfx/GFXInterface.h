@@ -32,6 +32,7 @@
 #include "GFXFramebuffer.h"
 #include "GFXShaderLibrary.h"
 #include "GFXShader.h"
+#include "GFXDraw.h"
 
 #pragma mark - Required Buffer Callbacks
 typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
@@ -55,17 +56,19 @@ typedef void (*GFXFramebufferDestructorCallback)(GFXFramebuffer Framebuffer);
 typedef GFXFramebufferAttachment *(*GFXFramebufferGetAttachmentCallback)(GFXFramebuffer Framebuffer, size_t Index);
 
 #pragma mark Required Shader Library Callbacks
-
 typedef GFXShaderLibrary (*GFXShaderLibraryConstructorCallback)(CCAllocatorType Allocator);
 typedef void (*GFXShaderLibraryDestructorCallback)(GFXShaderLibrary Library);
 typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
 typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibrary Library, const char *Name);
 
 #pragma mark Required Shader Callbacks
-
 typedef GFXShader (*GFXShaderConstructorCallback)(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
 typedef void (*GFXShaderDestructorCallback)(GFXShader Shader);
 typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, const char *Name);
+
+#pragma mark Required Draw Callbacks
+typedef void (*GFXDrawSubmitCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+typedef void (*GFXDrawSubmitIndexedCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 
 
 
@@ -76,6 +79,15 @@ typedef size_t (*GFXBufferFillBufferCallback)(GFXBuffer Internal, ptrdiff_t Offs
 
 #pragma mark Optional Texture Callbacks
 typedef void (*GFXTextureInvalidateCallback)(GFXTexture Texture);
+
+#pragma mark Optional Draw Callbacks
+typedef void (*GFXDrawConstructorCallback)(CCAllocatorType Allocator, GFXDraw Draw);
+typedef void (*GFXDrawDestructorCallback)(GFXDraw Draw);
+typedef void (*GFXDrawSetShaderCallback)(GFXDraw Draw, GFXShader Shader);
+typedef void (*GFXDrawSetIndexBufferCallback)(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
+typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
+typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
+typedef void (*GFXDrawSetTextureCallback)(GFXDraw Draw, GFXDrawInputTexture *Texture);
 
 
 #pragma mark -
@@ -124,5 +136,19 @@ typedef struct {
     GFXShaderDestructorCallback destroy;
     GFXShaderGetInputCallback input;
 } GFXShaderInterface;
+
+typedef struct {
+    GFXDrawSubmitCallback submit;
+    GFXDrawSubmitIndexedCallback indexedSubmit;
+    struct {
+        GFXDrawConstructorCallback create;
+        GFXDrawDestructorCallback destroy;
+        GFXDrawSetShaderCallback setShader;
+        GFXDrawSetIndexBufferCallback setIndexBuffer;
+        GFXDrawSetVertexBufferCallback setVertexBuffer;
+        GFXDrawSetBufferCallback setBuffer;
+        GFXDrawSetTextureCallback setTexture;
+    } optional;
+} GFXDrawInterface;
 
 #endif

@@ -36,6 +36,7 @@ typedef struct {
     const GFXFramebufferInterface *framebuffer;
     const GFXShaderLibraryInterface *library;
     const GFXShaderInterface *shader;
+    const GFXDrawInterface *draw;
 } GFXMainInfo;
 
 extern GFXMainInfo *GFXMain;

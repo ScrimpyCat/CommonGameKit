@@ -59,6 +59,7 @@
 		F3A9D5951C1F76430042BD2A /* GLShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5931C1F76430042BD2A /* GLShaderLibrary.c */; settings = {ASSET_TAGS = (); }; };
 		F3A9D5A11C2045ED0042BD2A /* GFXShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D59F1C2045ED0042BD2A /* GFXShader.c */; settings = {ASSET_TAGS = (); }; };
 		F3A9D5CC1C21DC220042BD2A /* GLShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5CA1C21DC220042BD2A /* GLShader.c */; settings = {ASSET_TAGS = (); }; };
+		F3A9D5D01C2767D30042BD2A /* GFXDraw.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5CE1C2767D30042BD2A /* GFXDraw.c */; settings = {ASSET_TAGS = (); }; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
@@ -467,6 +468,8 @@
 		F3A9D5CA1C21DC220042BD2A /* GLShader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLShader.c; sourceTree = "<group>"; };
 		F3A9D5CB1C21DC220042BD2A /* GLShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLShader.h; sourceTree = "<group>"; };
 		F3A9D5CD1C2384D70042BD2A /* GFXBufferFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXBufferFormat.h; sourceTree = "<group>"; };
+		F3A9D5CE1C2767D30042BD2A /* GFXDraw.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXDraw.c; sourceTree = "<group>"; };
+		F3A9D5CF1C2767D30042BD2A /* GFXDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXDraw.h; sourceTree = "<group>"; };
 		F3AE99421A725AC500212838 /* ComponentSystemTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComponentSystemTests.m; sourceTree = "<group>"; };
 		F3AE996F1A73E2F000212838 /* Entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Entity.c; sourceTree = "<group>"; };
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
@@ -641,6 +644,8 @@
 				F3A9D5901C1F70E30042BD2A /* GFXShaderLibrary.c */,
 				F3A9D5A01C2045ED0042BD2A /* GFXShader.h */,
 				F3A9D59F1C2045ED0042BD2A /* GFXShader.c */,
+				F3A9D5CF1C2767D30042BD2A /* GFXDraw.h */,
+				F3A9D5CE1C2767D30042BD2A /* GFXDraw.c */,
 			);
 			name = GFX;
 			path = gfx;
@@ -1505,6 +1510,7 @@
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
+				F3A9D5D01C2767D30042BD2A /* GFXDraw.c in Sources */,
 				F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */,
 				F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */,
 				F3BD17741C00857800B3849E /* Expression.c in Sources */,
