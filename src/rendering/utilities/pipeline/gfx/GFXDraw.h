@@ -36,9 +36,9 @@
 typedef enum {
     GFXPrimitiveTypePoint,
     GFXPrimitiveTypeLine,
+    GFXPrimitiveTypeLineStrip,
     GFXPrimitiveTypeTriangle,
-    GFXPrimitiveTypeTriangleStrip,
-    GFXPrimitiveTypeTriangleFan
+    GFXPrimitiveTypeTriangleStrip
 } GFXPrimitiveType;
 
 typedef struct {
