@@ -23,32 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLTexture_h
-#define Blob_Game_GLTexture_h
+#ifndef Blob_Game_GLDraw_h
+#define Blob_Game_GLDraw_h
 
 #include "GLGFX.h"
 #include "GLSetup.h"
 
 
 typedef struct {
-    GFXTextureHint hint;
-    CCPixelData data;
-    CCColourFormat format;
-    size_t width;
-    size_t height;
-    size_t depth;
-    GLuint texture;
-} GLTextureInfo, *GLTexture;
+    GLuint vao;
+} GLDrawState;
 
-extern const GFXTextureInterface GLTextureInterface;
-
-GLenum GLTextureTarget(GFXTextureHint Hint) CC_CONSTANT_FUNCTION;
-static inline GLuint GLTextureGetID(GLTexture Texture);
-
-
-static inline GLuint GLTextureGetID(GLTexture Texture)
-{
-    return Texture->texture;
-}
+extern const GFXDrawInterface GLDrawInterface;
 
 #endif

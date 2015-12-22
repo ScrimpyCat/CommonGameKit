@@ -44,4 +44,7 @@ typedef struct {
 
 extern const GFXFramebufferInterface GLFramebufferInterface;
 
+GLuint GLFramebufferGetID(GLFramebuffer Framebuffer, size_t Index);
+GLenum GLFramebufferGetAttachmentIndex(GLFramebuffer Framebuffer, size_t Index);
+
 #endif

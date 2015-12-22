@@ -46,7 +46,7 @@ const GFXTextureInterface GLTextureInterface = {
 };
 
 
-static inline CC_CONSTANT_FUNCTION GLenum GLTextureTarget(GFXTextureHint Hint)
+CC_CONSTANT_FUNCTION GLenum GLTextureTarget(GFXTextureHint Hint)
 {
     return (GLenum[3]){
         GL_TEXTURE_1D,

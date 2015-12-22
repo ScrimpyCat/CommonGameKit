@@ -50,7 +50,7 @@ typedef struct {
     GFXDrawInput input;
     GFXBuffer buffer;
     size_t stride;
-    size_t size;
+    size_t offset;
     GFXBufferFormat format;
 } GFXDrawInputVertexBuffer;
 
@@ -150,9 +150,9 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
  * @param Buffer The vertex buffer.
  * @param Format The format of the data.
  * @param Stride The stride of the data.
- * @param Size The size of the data.
+ * @param Offset The offset of the data.
  */
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, size_t Size);
+void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, size_t Offset);
 
 /*!
  * @brief Set the uniform of the draw command.

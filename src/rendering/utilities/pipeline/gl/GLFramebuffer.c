@@ -182,3 +182,25 @@ static GFXFramebufferAttachment *GLFramebufferGetAttachment(GLFramebuffer Frameb
     
     return GLFBOGetAttachment(Framebuffer->framebuffers[FBOIndex], Index - (FBOIndex * ((GLInternal*)GLGFX->internal)->limits.maxColourAttachments));
 }
+
+GLuint GLFramebufferGetID(GLFramebuffer Framebuffer, size_t Index)
+{
+    if (!Framebuffer) return 0;
+    
+    size_t FBOIndex = Index / ((GLInternal*)GLGFX->internal)->limits.maxColourAttachments;
+    
+    CCAssertLog(FBOIndex < Framebuffer->fboCount, "Index must not exceed bounds");
+    
+    return Framebuffer->framebuffers[FBOIndex]->fbo;
+}
+
+GLenum GLFramebufferGetAttachmentIndex(GLFramebuffer Framebuffer, size_t Index)
+{
+    CCAssertLog(Framebuffer, "Framebuffer must not be null");
+    
+    size_t FBOIndex = Index / ((GLInternal*)GLGFX->internal)->limits.maxColourAttachments;
+    
+    CCAssertLog(FBOIndex < Framebuffer->fboCount, "Index must not exceed bounds");
+    
+    return GL_COLOR_ATTACHMENT0 + (GLenum)(Index - (FBOIndex * ((GLInternal*)GLGFX->internal)->limits.maxColourAttachments));
+}

@@ -143,7 +143,7 @@ static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDr
     return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, size_t Size)
+void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, size_t Offset)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
@@ -151,7 +151,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
     if (VertexBuffer)
     {
         VertexBuffer->buffer = Buffer;
-        VertexBuffer->size = Size;
+        VertexBuffer->offset = Offset;
         VertexBuffer->stride = Stride;
         VertexBuffer->format = Format;
     }
@@ -172,7 +172,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
             .buffer = Buffer,
-            .size = Size,
+            .offset = Offset,
             .stride = Stride,
             .format = Format
         }));
