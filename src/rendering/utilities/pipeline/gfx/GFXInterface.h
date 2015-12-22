@@ -54,6 +54,7 @@ typedef void (*GFXTextureSetAddressModeCallback)(GFXTexture Texture, GFXTextureH
 #pragma mark Required Framebuffer Callbacks
 typedef GFXFramebuffer (*GFXFramebufferConstructorCallback)(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
 typedef void (*GFXFramebufferDestructorCallback)(GFXFramebuffer Framebuffer);
+typedef GFXFramebuffer (*GFXFramebufferDefaultCallback)(void);
 typedef GFXFramebufferAttachment *(*GFXFramebufferGetAttachmentCallback)(GFXFramebuffer Framebuffer, size_t Index);
 
 #pragma mark Required Shader Library Callbacks
@@ -124,6 +125,7 @@ typedef struct {
 typedef struct {
     GFXFramebufferConstructorCallback create;
     GFXFramebufferDestructorCallback destroy;
+    GFXFramebufferDefaultCallback getDefault;
     GFXFramebufferGetAttachmentCallback attachment;
 } GFXFramebufferInterface;
 

@@ -36,6 +36,11 @@ void GFXFramebufferDestroy(GFXFramebuffer Framebuffer)
     GFXMain->framebuffer->destroy(Framebuffer);
 }
 
+GFXFramebuffer GFXFramebufferDefault(void)
+{
+    return GFXMain->framebuffer->getDefault();
+}
+
 GFXFramebufferAttachment *GFXFramebufferGetAttachment(GFXFramebuffer Framebuffer, size_t Index)
 {
     return GFXMain->framebuffer->attachment(Framebuffer, Index);

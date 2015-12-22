@@ -227,6 +227,7 @@ static void CCRenderSystemLoadResources(void)
     
     Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
     GFXDrawSetShader(Drawer, DemoShader);
+    GFXDrawSetFramebuffer(Drawer, GFXFramebufferDefault(), 0);
     GFXDrawSetIndexBuffer(Drawer, IBO, GFXBufferFormatUInt16);
     GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
     GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));

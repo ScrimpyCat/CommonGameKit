@@ -132,7 +132,7 @@ static void GLDrawSetFramebufferState(GLFramebuffer Framebuffer, size_t Index)
 {
     CC_GL_BIND_FRAMEBUFFER(GL_FRAMEBUFFER, GLFramebufferGetID(Framebuffer, Index));
 #ifdef GL_COLOR_ATTACHMENT1
-    if (Framebuffer)
+    if ((GFXFramebuffer)Framebuffer != GFXFramebufferDefault())
     {
         glDrawBuffers(1, &(GLenum){ GLFramebufferGetAttachmentIndex(Framebuffer, Index) }); CC_GL_CHECK();
     }
@@ -208,14 +208,14 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     GLDrawSetUniformState((GLShader)Draw->shader, Draw->buffers);
     GLDrawSetUniformTextureState((GLShader)Draw->shader, Draw->textures);
     
-    //TODO: Add default FBO
-    //    GLDrawSetFramebufferState((GLFramebuffer)Draw->destination.framebuffer, Draw->destination.index);
-    //    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
-    //    if (Attachment->load == GFXFramebufferAttachmentActionClear)
-    //    {
-    //        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-    //        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
-    //    }
+    
+    GLDrawSetFramebufferState((GLFramebuffer)Draw->destination.framebuffer, Draw->destination.index);
+    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
+    if (Attachment->load == GFXFramebufferAttachmentActionClear)
+    {
+        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+    }
     
     
     CC_GL_BIND_VERTEX_ARRAY(((GLDrawState*)Draw->internal)->vao);
@@ -245,10 +245,10 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     }
     
     
-    //    if (Attachment->store == GFXFramebufferAttachmentActionClear)
-    //    {
-    //        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
-    //    }
+    if (Attachment->store == GFXFramebufferAttachmentActionClear)
+    {
+        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+    }
     
     CC_GL_BIND_VERTEX_ARRAY(0);
 }

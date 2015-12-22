@@ -68,6 +68,12 @@ typedef struct GFXFramebuffer *GFXFramebuffer;
 static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour);
 
 /*!
+ * @brief Return the default framebuffer.
+ * @return The default framebuffer. Do not destroy.
+ */
+GFXFramebuffer GFXFramebufferDefault(void);
+
+/*!
  * @brief Create a framebuffer.
  * @param Allocator The allocator to be used for the allocations.
  * @param Attachments The attachments to be used for the framebuffer (their order is the same

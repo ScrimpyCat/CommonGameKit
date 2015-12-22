@@ -27,11 +27,13 @@
 
 static GLFramebuffer GLFramebufferConstructor(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
 static void GLFramebufferDestructor(GLFramebuffer Framebuffer);
+static GLFramebuffer GLFramebufferDefault(void);
 static GFXFramebufferAttachment *GLFramebufferGetAttachment(GLFramebuffer Framebuffer, size_t Index);
 
 const GFXFramebufferInterface GLFramebufferInterface = {
     .create = (GFXFramebufferConstructorCallback)GLFramebufferConstructor,
     .destroy = (GFXFramebufferDestructorCallback)GLFramebufferDestructor,
+    .getDefault = (GFXFramebufferDefaultCallback)GLFramebufferDefault,
     .attachment = (GFXFramebufferGetAttachmentCallback)GLFramebufferGetAttachment,
 };
 
@@ -163,6 +165,7 @@ static GLFramebuffer GLFramebufferConstructor(CCAllocatorType Allocator, GFXFram
 static void GLFramebufferDestructor(GLFramebuffer Framebuffer)
 {
     CCAssertLog(Framebuffer, "Framebuffer must not be null");
+    CCAssertLog(Framebuffer != GLFramebufferDefault(), "Cannot destroy default framebuffer");
     
     for (size_t Loop = 0; Loop < Framebuffer->fboCount; Loop++)
     {
@@ -170,6 +173,30 @@ static void GLFramebufferDestructor(GLFramebuffer Framebuffer)
     }
     
     CC_SAFE_Free(Framebuffer);
+}
+
+static GLFramebuffer GLFramebufferDefault(void)
+{
+    static GLFBO DefaultFBO = {
+        .fbo = 0,
+        .attachmentCount = 1,
+        .attachments = {
+            (GFXFramebufferAttachment){
+                .type = GFXFramebufferAttachmentTypeColour,
+                .texture = NULL,
+                .load = GFXFramebufferAttachmentActionLoad,
+                .store = GFXFramebufferAttachmentActionStore,
+                .colour.clear = { 0.0f, 0.0f, 0.0f, 0.0f }
+            }
+        }
+    };
+    
+    static GLFramebufferInfo DefaultFramebuffer = {
+        .fboCount = 1,
+        .framebuffers = { &DefaultFBO }
+    };
+    
+    return &DefaultFramebuffer;
 }
 
 static GFXFramebufferAttachment *GLFramebufferGetAttachment(GLFramebuffer Framebuffer, size_t Index)
