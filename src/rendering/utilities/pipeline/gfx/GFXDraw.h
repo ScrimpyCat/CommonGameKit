@@ -138,7 +138,7 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
 /*!
  * @brief Set the index buffer of the draw command.
  * @param Draw The draw operation.
- * @param Indexes The index buffer of type @b GFXBufferHintDataIndex or @b GFXBufferHintData.
+ * @param Indexes The index buffer of type @b GFXBufferHintDataIndex.
  * @param Format The format of the data.
  */
 void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Format);
@@ -147,12 +147,12 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
  * @brief Set the vertex attributes of the draw command.
  * @param Draw The draw operation.
  * @param Input The input name from in the shader.
- * @param Buffer The vertex buffer.
+ * @param Buffer The vertex buffer of type @b GFXBufferHintDataVertex.
  * @param Format The format of the data.
  * @param Stride The stride of the data.
  * @param Offset The offset of the data.
  */
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, size_t Offset);
+void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset);
 
 /*!
  * @brief Set the uniform of the draw command.

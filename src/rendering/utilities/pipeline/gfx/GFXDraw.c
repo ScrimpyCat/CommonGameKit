@@ -143,7 +143,7 @@ static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDr
     return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, size_t Offset)
+void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset)
 {
     CCAssertLog(Draw, "Draw must not be null");
     

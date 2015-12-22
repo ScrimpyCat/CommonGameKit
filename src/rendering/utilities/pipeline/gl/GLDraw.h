@@ -32,6 +32,8 @@
 
 typedef struct {
     GLuint vao;
+    _Bool rebindIBO;
+    _Bool rebindVBO;
 } GLDrawState;
 
 extern const GFXDrawInterface GLDrawInterface;

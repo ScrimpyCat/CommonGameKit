@@ -30,29 +30,21 @@
 #include "GLShader.h"
 
 static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
-//static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 static void GLDrawConstructor(CCAllocatorType Allocator, GFXDraw Draw);
 static void GLDrawDestructor(GFXDraw Draw);
-//static void GLDrawSetShader(GFXDraw Draw, GFXShader Shader);
-//static void GLDrawSetFramebuffer(GFXDraw, GFXDrawDestination *Destination);
-//static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
-//static void GLDrawSetVertexBuffer(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
-//static void GLDrawSetBuffer(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
-//static void GLDrawSetTexture(GFXDraw Draw, GFXDrawInputTexture *Texture);
+static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
+static void GLDrawSetVertexBuffer(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
 
 
 const GFXDrawInterface GLDrawInterface = {
     .submit = GLDrawSubmit,
-//    .indexedSubmit = GLDrawSubmitIndexed,
+    .indexedSubmit = GLDrawSubmitIndexed,
     .optional = {
         .create = GLDrawConstructor,
         .destroy = GLDrawDestructor,
-//        .setShader = GLDrawSetShader,
-//        .setFramebuffer = GLDrawSetFramebuffer,
-//        .setIndexBuffer = GLDrawSetIndexBuffer,
-//        .setVertexBuffer = GLDrawSetVertexBuffer,
-//        .setBuffer = GLDrawSetBuffer,
-//        .setTexture = GLDrawSetTexture
+        .setIndexBuffer = GLDrawSetIndexBuffer,
+        .setVertexBuffer = GLDrawSetVertexBuffer,
     }
 };
 
@@ -63,6 +55,8 @@ static void GLDrawConstructor(CCAllocatorType Allocator, GFXDraw Draw)
     if (Draw)
     {
         glGenVertexArrays(1, &((GLDrawState*)Draw->internal)->vao); CC_GL_CHECK();
+        ((GLDrawState*)Draw->internal)->rebindIBO = FALSE;
+        ((GLDrawState*)Draw->internal)->rebindVBO = FALSE;
     }
     
     else CC_LOG_ERROR("Failed to create internal GL draw state due to allocation failure. Allocation size (%zu)", sizeof(GLDrawState));
@@ -147,37 +141,34 @@ static void GLDrawSetFramebufferState(GLFramebuffer Framebuffer, size_t Index)
 
 static GLenum GLDrawTypeFromBufferFormat(GFXBufferFormat Format)
 {
-    switch (Format)
+    if (GFXBufferFormatIsInteger(Format))
     {
-        case GFXBufferFormatInt8:
-            return GL_BYTE;
-            
-        case GFXBufferFormatUInt8:
-            return GL_UNSIGNED_BYTE;
-            
-        case GFXBufferFormatInt16:
-            return GL_SHORT;
-            
-        case GFXBufferFormatUInt16:
-            return GL_UNSIGNED_SHORT;
-            
-        case GFXBufferFormatInt32:
-            return GL_INT;
-            
-        case GFXBufferFormatUInt32:
-            return GL_UNSIGNED_INT;
-            
-        case GFXBufferFormatFloat16:
-            return GL_HALF_FLOAT;
-            
-        case GFXBufferFormatFloat32:
-            return GL_FLOAT;
-            
-        case GFXBufferFormatFloat64:
-            return GL_DOUBLE;
-            
-        default:
-            break;
+        switch (GFXBufferFormatGetBitSize(Format))
+        {
+            case 8:
+                return GFXBufferFormatIsSigned(Format) ? GL_BYTE : GL_UNSIGNED_BYTE;
+                
+            case 16:
+                return GFXBufferFormatIsSigned(Format) ? GL_SHORT : GL_UNSIGNED_SHORT;
+                
+            case 32:
+                return GFXBufferFormatIsSigned(Format) ? GL_INT : GL_UNSIGNED_INT;
+        }
+    }
+    
+    else //float
+    {
+        switch (GFXBufferFormatGetBitSize(Format))
+        {
+            case 16:
+                return GL_HALF_FLOAT;
+                
+            case 32:
+                return GL_FLOAT;
+                
+            case 64:
+                return GL_DOUBLE;
+        }
     }
     
     CCAssertLog(0, "Unsupported format %d", Format);
@@ -191,58 +182,93 @@ static void GLDrawSetVertexBufferState(CCCollection VertexBuffers)
     for (GFXDrawInputVertexBuffer *Vertex = CCCollectionEnumeratorGetCurrent(&Enumerator); Vertex; Vertex = CCCollectionEnumeratorNext(&Enumerator))
     {
         const GLuint Index = ((GLShaderAttributeInfo*)Vertex->input.shaderInput)->location;
-        glEnableVertexAttribArray(Index); CC_GL_CHECK();
         
-        const GLvoid *Data = NULL;
-        if ((((GLBuffer)Vertex->buffer)->hint & GFXBufferHintDataMask) == GFXBufferHintData)
+        if (Vertex->buffer)
         {
-            Data = CCDataGetBuffer(((GLBuffer)Vertex->buffer)->data);
+            glEnableVertexAttribArray(Index); CC_GL_CHECK();
+            
+            CC_GL_BIND_BUFFER(GL_ARRAY_BUFFER, ((GLBuffer)Vertex->buffer)->gl.buffer);
+            glVertexAttribPointer(Index, (GLint)GFXBufferFormatGetElementCount(Vertex->format), GLDrawTypeFromBufferFormat(Vertex->format), Vertex->format & GFXBufferFormatNormalized ? GL_TRUE : GL_FALSE, (GLsizei)Vertex->stride, NULL + Vertex->offset); CC_GL_CHECK();
         }
         
         else
         {
-            CC_GL_BIND_BUFFER(GL_ARRAY_BUFFER, ((GLBuffer)Vertex->buffer)->gl.buffer);
+            glDisableVertexAttribArray(Index); CC_GL_CHECK();
         }
-        
-        glVertexAttribPointer(Index, (GLint)GFXBufferFormatGetElementCount(Vertex->format), GLDrawTypeFromBufferFormat(Vertex->format), Vertex->format & GFXBufferFormatNormalized ? GL_TRUE : GL_FALSE, (GLsizei)Vertex->stride, Data + Vertex->offset); CC_GL_CHECK();
     }
 }
 
-static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, _Bool Indexed)
 {
     CCAssertLog(Draw->internal, "GL implementation must not be null"); //TODO: handle if it is?
-    CCAssertLog((GLint)Offset < Offset, "GL implementation cannot support offsets of that size");
-    CCAssertLog((GLsizei)Count < Count, "GL implementation cannot support counts of that size");
+    CCAssertLog((GLint)Offset == Offset, "GL implementation cannot support offsets of that size");
+    CCAssertLog((GLsizei)Count == Count, "GL implementation cannot support counts of that size");
     
     CC_GL_USE_PROGRAM(((GLShader)Draw->shader)->program);
     GLDrawSetUniformState((GLShader)Draw->shader, Draw->buffers);
     GLDrawSetUniformTextureState((GLShader)Draw->shader, Draw->textures);
     
-    GLDrawSetFramebufferState((GLFramebuffer)Draw->destination.framebuffer, Draw->destination.index);
-    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
-    if (Attachment->load == GFXFramebufferAttachmentActionClear)
-    {
-        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
-    }
+    //TODO: Add default FBO
+    //    GLDrawSetFramebufferState((GLFramebuffer)Draw->destination.framebuffer, Draw->destination.index);
+    //    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
+    //    if (Attachment->load == GFXFramebufferAttachmentActionClear)
+    //    {
+    //        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+    //        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+    //    }
     
     
     CC_GL_BIND_VERTEX_ARRAY(((GLDrawState*)Draw->internal)->vao);
     
-    //if rebind vao state
-    //bind IBO
-    GLDrawSetVertexBufferState(Draw->vertexBuffers);
+    if (((GLDrawState*)Draw->internal)->rebindIBO)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Draw->index.buffer ? ((GLBuffer)Draw->index.buffer)->gl.buffer : 0); CC_GL_CHECK();
+        ((GLDrawState*)Draw->internal)->rebindIBO = FALSE;
+    }
     
-    //else
+    if (((GLDrawState*)Draw->internal)->rebindVBO)
+    {
+        GLDrawSetVertexBufferState(Draw->vertexBuffers); //TODO: optimize later to only do partial rebinding
+        ((GLDrawState*)Draw->internal)->rebindVBO = FALSE;
+    }
+    
     
     //TODO: blending
-    glDrawArrays(GLDrawPrimitive(Primitive), (GLint)Offset, (GLsizei)Count); CC_GL_CHECK();
-    
-    
-    if (Attachment->store == GFXFramebufferAttachmentActionClear)
+    if (Indexed)
     {
-        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+        glDrawElementsBaseVertex(GLDrawPrimitive(Primitive), (GLsizei)Count, GLDrawTypeFromBufferFormat(Draw->index.format), NULL, (GLint)Offset); CC_GL_CHECK();
     }
+    
+    else
+    {
+        glDrawArrays(GLDrawPrimitive(Primitive), (GLint)Offset, (GLsizei)Count); CC_GL_CHECK();
+    }
+    
+    
+    //    if (Attachment->store == GFXFramebufferAttachmentActionClear)
+    //    {
+    //        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+    //    }
+    
+    CC_GL_BIND_VERTEX_ARRAY(0);
 }
 
-//static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+{
+    GLDraw(Draw, Primitive, Offset, Count, FALSE);
+}
+
+static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+{
+    GLDraw(Draw, Primitive, Offset, Count, TRUE);
+}
+
+static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer)
+{
+    ((GLDrawState*)Draw->internal)->rebindIBO = TRUE;
+}
+
+static void GLDrawSetVertexBuffer(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer)
+{
+    ((GLDrawState*)Draw->internal)->rebindVBO = TRUE;
+}
