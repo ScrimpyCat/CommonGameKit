@@ -198,6 +198,109 @@ static void GLDrawSetVertexBufferState(CCCollection VertexBuffers)
     }
 }
 
+static GLenum GLDrawBlendFunc(GFXBlend Factor)
+{
+    switch (Factor)
+    {
+        case GFXBlendFactorZero:
+            return GL_ZERO;
+            
+        case GFXBlendFactorOne:
+            return GL_ONE;
+            
+        case GFXBlendFactorSourceColour:
+            return GL_SRC_COLOR;
+            
+        case GFXBlendFactorOneMinusSourceColor:
+            return GL_ONE_MINUS_SRC_COLOR;
+            
+        case GFXBlendFactorSourceAlpha:
+            return GL_SRC_ALPHA;
+            
+        case GFXBlendFactorOneMinusSourceAlpha:
+            return GL_ONE_MINUS_SRC_ALPHA;
+            
+        case GFXBlendFactorDestinationColor:
+            return GL_DST_COLOR;
+            
+        case GFXBlendFactorOneMinusDestinationColor:
+            return GL_ONE_MINUS_DST_COLOR;
+            
+        case GFXBlendFactorDestinationAlpha:
+            return GL_DST_ALPHA;
+            
+        case GFXBlendFactorOneMinusDestinationAlpha:
+            return GL_ONE_MINUS_DST_ALPHA;
+            
+        case GFXBlendFactorSourceAlphaSaturated:
+            return GL_SRC_ALPHA_SATURATE;
+            
+        case GFXBlendFactorBlendColor:
+            return GL_CONSTANT_COLOR;
+            
+        case GFXBlendFactorOneMinusBlendColor:
+            return GL_ONE_MINUS_CONSTANT_COLOR;
+            
+        case GFXBlendFactorBlendAlpha:
+            return GL_CONSTANT_ALPHA;
+            
+        case GFXBlendFactorOneMinusBlendAlpha:
+            return GL_ONE_MINUS_CONSTANT_ALPHA;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported factor %d", Factor);
+}
+
+static GLenum GLDrawBlendOp(GFXBlend Op)
+{
+    switch (Op)
+    {
+        case GFXBlendOperationAdd:
+            return GL_FUNC_ADD;
+            
+        case GFXBlendOperationSubtract:
+            return GL_FUNC_SUBTRACT;
+            
+        case GFXBlendOperationReverseSubtract:
+            return GL_FUNC_REVERSE_SUBTRACT;
+            
+        case GFXBlendOperationMin:
+            return GL_MIN;
+            
+        case GFXBlendOperationMax:
+            return GL_MAX;
+
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported operation %d", Op);
+}
+
+static void GLDrawSetBlending(GFXBlend BlendMask)
+{
+    if (BlendMask != GFXBlendOpaque)
+    {
+        CC_GL_ENABLE(GL_BLEND);
+        
+        CC_GL_BLEND_FUNC_SEPARATE(GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentRGB, GFXBlendSource)),
+                                  GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentRGB, GFXBlendDestination)),
+                                  GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentAlpha, GFXBlendSource)),
+                                  GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentAlpha, GFXBlendDestination)));
+        
+        CC_GL_BLEND_EQUATION_SEPARATE(GLDrawBlendOp(GFXBlendGetOperation(BlendMask, GFXBlendComponentRGB)),
+                                      GLDrawBlendOp(GFXBlendGetOperation(BlendMask, GFXBlendComponentAlpha)));
+    }
+    
+    else
+    {
+        CC_GL_DISABLE(GL_BLEND);
+    }
+}
+
 static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, _Bool Indexed)
 {
     CCAssertLog(Draw->internal, "GL implementation must not be null"); //TODO: handle if it is?
@@ -233,7 +336,8 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     }
     
     
-    //TODO: blending
+    GLDrawSetBlending(Draw->blending);
+    
     if (Indexed)
     {
         glDrawElementsBaseVertex(GLDrawPrimitive(Primitive), (GLsizei)Count, GLDrawTypeFromBufferFormat(Draw->index.format), NULL, (GLint)Offset); CC_GL_CHECK();

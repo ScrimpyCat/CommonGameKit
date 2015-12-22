@@ -538,6 +538,7 @@
 		F3F6C4A51A599AEA00B9D6BA /* GLSetup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLSetup.h; sourceTree = "<group>"; };
 		F3F6C4A61A599DB700B9D6BA /* PlatformSetup_win.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PlatformSetup_win.c; sourceTree = "<group>"; };
 		F3F6C4AA1A599DF800B9D6BA /* PlatformSetup_linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PlatformSetup_linux.c; sourceTree = "<group>"; };
+		F3F838621C29628900773291 /* GFXBlend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXBlend.h; sourceTree = "<group>"; };
 		F3FF25311A58418800E437EB /* stdatomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = stdatomic.h; path = deps/stdatomic/stdatomic.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -647,6 +648,7 @@
 				F3A9D5901C1F70E30042BD2A /* GFXShaderLibrary.c */,
 				F3A9D5A01C2045ED0042BD2A /* GFXShader.h */,
 				F3A9D59F1C2045ED0042BD2A /* GFXShader.c */,
+				F3F838621C29628900773291 /* GFXBlend.h */,
 				F3A9D5CF1C2767D30042BD2A /* GFXDraw.h */,
 				F3A9D5CE1C2767D30042BD2A /* GFXDraw.c */,
 			);

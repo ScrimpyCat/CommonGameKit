@@ -30,6 +30,7 @@
 #include "GFXShader.h"
 #include "GFXTexture.h"
 #include "GFXFramebuffer.h"
+#include "GFXBlend.h"
 #include <CommonC/Common.h>
 
 
@@ -82,6 +83,7 @@ typedef struct {
     CCCollection textures;
     GFXDrawDestination destination;
     GFXDrawIndexBuffer index;
+    GFXBlend blending;
 } GFXDrawInfo, *GFXDraw;
 
 /*!
@@ -169,5 +171,12 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer);
  * @param Texture The texture.
  */
 void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture);
+
+/*!
+ * @brief Set the blending for the draw command.
+ * @param Draw The draw operation.
+ * @param BlendMask The blend mask.
+ */
+void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask);
 
 #endif

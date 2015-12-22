@@ -49,8 +49,8 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
             .index = {
                 .buffer = NULL,
                 .format = 0
-            }
-
+            },
+            .blending = GFXBlendOpaque
         };
         
         if (GFXMain->draw->optional.create) GFXMain->draw->optional.create(Allocator, Draw);
@@ -243,4 +243,13 @@ void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture)
     }
     
     if (GFXMain->draw->optional.setTexture) GFXMain->draw->optional.setTexture(Draw, UniformTexture);
+}
+
+void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->blending = BlendMask;
+    
+    if (GFXMain->draw->optional.setBlend) GFXMain->draw->optional.setBlend(Draw, BlendMask);
 }

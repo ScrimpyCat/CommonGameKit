@@ -91,6 +91,7 @@ typedef void (*GFXDrawSetIndexBufferCallback)(GFXDraw Draw, GFXDrawIndexBuffer *
 typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
 typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
 typedef void (*GFXDrawSetTextureCallback)(GFXDraw Draw, GFXDrawInputTexture *Texture);
+typedef void (*GFXDrawSetBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask);
 
 
 #pragma mark -
@@ -154,6 +155,7 @@ typedef struct {
         GFXDrawSetVertexBufferCallback setVertexBuffer;
         GFXDrawSetBufferCallback setBuffer;
         GFXDrawSetTextureCallback setTexture;
+        GFXDrawSetBlendingCallback setBlend;
     } optional;
 } GFXDrawInterface;
 
