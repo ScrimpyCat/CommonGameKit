@@ -26,7 +26,7 @@
 #include "RenderSystem.h"
 #include "tinycthread.h"
 #include <CommonC/Common.h>
-#include "GLSetup.h"
+#include "GFX.h"
 
 static _Bool CCRenderSystemTryLock(void);
 static void CCRenderSystemLock(void);
@@ -106,22 +106,18 @@ typedef struct {
 #define DEMO_QUAD_BATCH_SIZE ((DEMO_IBO_SIZE + 2) / 6)
 #define DEMO_DEGENERATE_STRIPS(quads) (((quads) - 1) * 2)
 
-static GLuint DemoShader;
-static GLuint VertBuffer;
-static GLuint VAO;
-static GLuint IBO;
+static GFXShader DemoShader;
+static GFXBuffer VertBuffer;
+static GFXDraw Drawer;
+static GFXBuffer IBO;
 static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components)
 {
 //    printf("draw: %f\n", DeltaTime);
     
-    
-    glUseProgram(DemoShader);
-    glBindVertexArray(VAO);
-    
     CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(CC_RENDER_SYSTEM_ID));
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_RENDER_SYSTEM_ID));
     
-    const GLsizei Count = (GLsizei)CCCollectionGetCount(Components);
+    const size_t Count = CCCollectionGetCount(Components);
     
     DemoVertData *Data;
     CC_SAFE_Malloc(Data, sizeof(DemoVertData) * 4 * Count);
@@ -150,19 +146,20 @@ static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components)
         }
     }
     
-    glBufferData(GL_ARRAY_BUFFER, sizeof(DemoVertData) * 4 * Count, Data, GL_DYNAMIC_DRAW);
+    GFXBufferSetSize(VertBuffer, sizeof(DemoVertData) * 4 * Count);
+    GFXBufferWriteBuffer(VertBuffer, 0, sizeof(DemoVertData) * 4 * Count, Data);
     CC_SAFE_Free(Data);
     
     
-    GLsizei Vertices = (Count * 4) + DEMO_DEGENERATE_STRIPS(Count);
-    GLint Loop = 0;
+    size_t Vertices = (Count * 4) + DEMO_DEGENERATE_STRIPS(Count);
+    size_t Loop = 0;
     if (Count > DEMO_QUAD_BATCH_SIZE)
     {
-        const GLsizei Batch = (DEMO_QUAD_BATCH_SIZE * 4) + DEMO_DEGENERATE_STRIPS(DEMO_QUAD_BATCH_SIZE);
+        const size_t Batch = (DEMO_QUAD_BATCH_SIZE * 4) + DEMO_DEGENERATE_STRIPS(DEMO_QUAD_BATCH_SIZE);
         
-        for (GLsizei C = DEMO_QUAD_BATCH_SIZE * (Count / DEMO_QUAD_BATCH_SIZE); Loop < C; Loop += DEMO_QUAD_BATCH_SIZE)
+        for (size_t C = DEMO_QUAD_BATCH_SIZE * (Count / DEMO_QUAD_BATCH_SIZE); Loop < C; Loop += DEMO_QUAD_BATCH_SIZE)
         {
-            glDrawElementsBaseVertex(GL_TRIANGLE_STRIP, Batch, GL_UNSIGNED_SHORT, NULL, Loop * 4);
+            GFXDrawSubmitIndexed(Drawer, GFXPrimitiveTypeTriangleStrip, Loop * 4, Batch);
         }
         
         Vertices = ((Count - Loop) * 4) + DEMO_DEGENERATE_STRIPS((Count - Loop));
@@ -170,85 +167,36 @@ static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components)
     
     if (Vertices)
     {
-        glDrawElementsBaseVertex(GL_TRIANGLE_STRIP, Vertices, GL_UNSIGNED_SHORT, NULL, Loop);
+        GFXDrawSubmitIndexed(Drawer, GFXPrimitiveTypeTriangleStrip, Loop * 4, Vertices);
     }
 }
 
 static void CCRenderSystemLoadResources(void)
 {
-    GLuint Vert = glCreateShader(GL_VERTEX_SHADER), Frag = glCreateShader(GL_FRAGMENT_SHADER);
+    GFXShaderLibrary Lib = GFXShaderLibraryCreate(CC_STD_ALLOCATOR);
+    const GFXShaderSource Vert = GFXShaderLibraryCompile(Lib, GFXShaderSourceTypeVertex, "vert",
+                                                         "#version 330 core\n"
+                                                         "layout (location = 0) in vec4 vPosition;\n"
+                                                         "layout (location = 1) in vec4 vColour;\n"
+                                                         "out vec4 colour;\n"
+                                                         "uniform mat4 modelViewProjectionMatrix;\n"
+                                                         "void main()\n"
+                                                         "{\n"
+                                                         "	colour = vColour;\n"
+                                                         "	gl_Position = /*modelViewProjectionMatrix * */vPosition;\n"
+                                                         "}\n");
     
-    glShaderSource(Vert, 1, (const GLchar*[]){
-        "#version 330 core\n"
-        "layout (location = 0) in vec4 vPosition;\n"
-        "layout (location = 1) in vec4 vColour;\n"
-        "out vec4 colour;\n"
-        "uniform mat4 modelViewProjectionMatrix;\n"
-        "void main()\n"
-        "{\n"
-        "	colour = vColour;\n"
-        "	gl_Position = /*modelViewProjectionMatrix * */vPosition;\n"
-        "}\n"
-    }, NULL);
+    const GFXShaderSource Frag = GFXShaderLibraryCompile(Lib, GFXShaderSourceTypeFragment, "frag",
+                                                         "#version 330 core\n"
+                                                         "in vec4 colour;\n"
+                                                         "out vec4 fragColour;\n"
+                                                         "void main()\n"
+                                                         "{\n"
+                                                         "	fragColour = colour;\n"
+                                                         "}\n");
     
-    glShaderSource(Frag, 1, (const GLchar*[]){
-        "#version 330 core\n"
-        "in vec4 colour;\n"
-        "out vec4 fragColour;\n"
-        "void main()\n"
-        "{\n"
-        "	fragColour = colour;\n"
-        "}\n"
-    }, NULL);
-    
-    glCompileShader(Vert);
-    glCompileShader(Frag);
-    
-    
-    GLint Compiled;
-    glGetShaderiv(Vert, GL_COMPILE_STATUS, &Compiled);
-    
-    if (!Compiled)
-    {
-        char ErrorLog[1024];
-        glGetShaderInfoLog(Vert, sizeof(ErrorLog), NULL, ErrorLog);
-        
-        CC_LOG_ERROR("Shader compilation failed:\n%s", ErrorLog);
-        exit(EXIT_FAILURE);
-    }
-    
-    
-    glGetShaderiv(Frag, GL_COMPILE_STATUS, &Compiled);
-    
-    if (!Compiled)
-    {
-        char ErrorLog[1024];
-        glGetShaderInfoLog(Frag, sizeof(ErrorLog), NULL, ErrorLog);
-        
-        CC_LOG_ERROR("Shader compilation failed:\n%s", ErrorLog);
-        exit(EXIT_FAILURE);
-    }
-    
-    
-    
-    DemoShader = glCreateProgram();
-    glAttachShader(DemoShader, Vert);
-    glAttachShader(DemoShader, Frag);
-    glBindFragDataLocation(DemoShader, 0, "fragColour");
-    glLinkProgram(DemoShader);
-    
-    GLint Linked;
-    glGetProgramiv(DemoShader, GL_LINK_STATUS, (GLint*)&Linked);
-    
-    if (!Linked)
-    {
-        char ErrorLog[1024];
-        glGetProgramInfoLog(DemoShader, sizeof(ErrorLog), NULL, ErrorLog);
-        
-        CC_LOG_ERROR("Shader linking failed:\n%s", ErrorLog);
-        exit(EXIT_FAILURE);
-    }
-    
+    DemoShader = GFXShaderCreate(CC_STD_ALLOCATOR, Vert, Frag);
+    GFXShaderLibraryDestroy(Lib);
     
     
     unsigned short *Indices;
@@ -272,24 +220,16 @@ static void CCRenderSystemLoadResources(void)
         }
     }
     
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    
-    glGenBuffers(1, &IBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * DEMO_IBO_SIZE, Indices, GL_STATIC_DRAW);
+    IBO = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataIndex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(unsigned short) * DEMO_IBO_SIZE, Indices);
     CC_SAFE_Free(Indices);
     
-    glGenBuffers(1, &VertBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, VertBuffer);
+    VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, 0, NULL);
     
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(DemoVertData), (void*)offsetof(DemoVertData, position));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(DemoVertData), (void*)offsetof(DemoVertData, colour));
-    
-    glBindVertexArray(0);
+    Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
+    GFXDrawSetShader(Drawer, DemoShader);
+    GFXDrawSetIndexBuffer(Drawer, IBO, GFXBufferFormatUInt16);
+    GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
+    GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
 }
 
 static void CCRenderSystemUnloadResources(void)
