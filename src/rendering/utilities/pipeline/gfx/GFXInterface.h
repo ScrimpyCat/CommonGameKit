@@ -39,6 +39,7 @@ typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFX
 typedef void (*GFXBufferDestructorCallback)(GFXBuffer Internal);
 typedef GFXBufferHint (*GFXBufferGetHintCallback)(GFXBuffer Internal);
 typedef size_t (*GFXBufferGetSizeCallback)(GFXBuffer Internal);
+typedef _Bool (*GFXBufferResizeCallback)(GFXBuffer Buffer, size_t Size);
 typedef size_t (*GFXBufferReadBufferCallback)(GFXBuffer Internal, ptrdiff_t Offset, size_t Size, void *Data);
 typedef size_t (*GFXBufferWriteBufferCallback)(GFXBuffer Internal, ptrdiff_t Offset, size_t Size, const void *Data);
 
@@ -98,6 +99,7 @@ typedef struct {
     GFXBufferDestructorCallback destroy;
     GFXBufferGetHintCallback hints;
     GFXBufferGetSizeCallback size;
+    GFXBufferResizeCallback resize;
     GFXBufferReadBufferCallback read;
     GFXBufferWriteBufferCallback write;
     struct {

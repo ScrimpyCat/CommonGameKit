@@ -107,6 +107,15 @@ GFXBufferHint GFXBufferGetHints(GFXBuffer Buffer);
 size_t GFXBufferGetSize(GFXBuffer Buffer);
 
 /*!
+ * @brief Set the size of buffer.
+ * @description Contents of the buffer are lost after resizing.
+ * @param Buffer The buffer to set the size of.
+ * @param Size The new size of the data.
+ * @return Whether the resize was successful or not.
+ */
+_Bool GFXBufferSetSize(GFXBuffer Buffer, size_t Size);
+
+/*!
  * @brief Invalidate the buffer, replacing it with a new buffer.
  * @param Buffer The buffer to be invalidated.
  */

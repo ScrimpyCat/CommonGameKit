@@ -29,6 +29,7 @@ static GLBuffer GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hin
 static void GLBufferDestructor(GLBuffer Buffer);
 static GFXBufferHint GLBufferGetHint(GLBuffer Buffer);
 static size_t GLBufferGetSize(GLBuffer Buffer);
+static _Bool GLBufferResize(GLBuffer Buffer, size_t Size);
 static size_t GLBufferReadBuffer(GLBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data);
 static size_t GLBufferWriteBuffer(GLBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data);
 static void GLBufferInvalidate(GLBuffer Buffer);
@@ -39,6 +40,7 @@ const GFXBufferInterface GLBufferInterface = {
     .destroy = (GFXBufferDestructorCallback)GLBufferDestructor,
     .hints = (GFXBufferGetHintCallback)GLBufferGetHint,
     .size = (GFXBufferGetSizeCallback)GLBufferGetSize,
+    .resize = (GFXBufferResizeCallback)GLBufferResize,
     .read = (GFXBufferReadBufferCallback)GLBufferReadBuffer,
     .write = (GFXBufferWriteBufferCallback)GLBufferWriteBuffer,
     .optional = {
@@ -187,6 +189,29 @@ static size_t GLBufferGetSize(GLBuffer Buffer)
     }
     
     return 0;
+}
+
+static _Bool GLBufferResize(GLBuffer Buffer, size_t Size)
+{
+    switch (Buffer->hint & GFXBufferHintDataMask)
+    {
+        case GFXBufferHintData: //cpu store
+            return CCDataSetSize(Buffer->data, Size);
+            
+        case GFXBufferHintDataVertex:
+        case GFXBufferHintDataIndex:
+        case GFXBufferHintDataUniform:
+        {
+            const GLenum Target = GLBufferTarget(Buffer->hint);
+            
+            CC_GL_BIND_BUFFER_TARGET(Target, Buffer->gl.buffer);
+            glBufferData(Target, (Buffer->gl.size = Size), NULL, GLBufferUsage(Buffer->hint));
+            
+            return CC_GL_CHECK() == GL_NO_ERROR;
+        }
+    }
+    
+    return FALSE;
 }
 
 static size_t GLBufferReadBuffer(GLBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data)

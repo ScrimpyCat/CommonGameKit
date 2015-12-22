@@ -46,6 +46,11 @@ size_t GFXBufferGetSize(GFXBuffer Buffer)
     return GFXMain->buffer->size(Buffer);
 }
 
+_Bool GFXBufferSetSize(GFXBuffer Buffer, size_t Size)
+{
+    return GFXMain->buffer->resize(Buffer, Size);
+}
+
 void GFXBufferInvalidate(GFXBuffer Buffer)
 {
     if (GFXMain->buffer->optional.invalidate) GFXMain->buffer->optional.invalidate(Buffer);
