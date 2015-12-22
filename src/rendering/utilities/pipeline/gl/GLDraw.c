@@ -35,6 +35,7 @@ static void GLDrawConstructor(CCAllocatorType Allocator, GFXDraw Draw);
 static void GLDrawDestructor(GFXDraw Draw);
 static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
 static void GLDrawSetVertexBuffer(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
+static void GLDrawSetShader(GFXDraw Draw, GFXShader Shader);
 
 
 const GFXDrawInterface GLDrawInterface = {
@@ -45,6 +46,7 @@ const GFXDrawInterface GLDrawInterface = {
         .destroy = GLDrawDestructor,
         .setIndexBuffer = GLDrawSetIndexBuffer,
         .setVertexBuffer = GLDrawSetVertexBuffer,
+        .setShader = GLDrawSetShader
     }
 };
 
@@ -280,7 +282,7 @@ static GLenum GLDrawBlendOp(GFXBlend Op)
     CCAssertLog(0, "Unsupported operation %d", Op);
 }
 
-static void GLDrawSetBlending(GFXBlend BlendMask)
+static void GLDrawSetBlendingState(GFXBlend BlendMask)
 {
     if (BlendMask != GFXBlendOpaque)
     {
@@ -336,7 +338,7 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     }
     
     
-    GLDrawSetBlending(Draw->blending);
+    GLDrawSetBlendingState(Draw->blending);
     
     if (Indexed)
     {
@@ -373,6 +375,11 @@ static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer)
 }
 
 static void GLDrawSetVertexBuffer(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer)
+{
+    ((GLDrawState*)Draw->internal)->rebindVBO = TRUE;
+}
+
+static void GLDrawSetShader(GFXDraw Draw, GFXShader Shader)
 {
     ((GLDrawState*)Draw->internal)->rebindVBO = TRUE;
 }
