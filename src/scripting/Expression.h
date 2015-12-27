@@ -36,7 +36,7 @@ typedef enum {
     CCExpressionValueTypeList,
     CCExpressionValueTypeExpression = CCExpressionValueTypeList,
     
-    CCExpressionValueTypeReservedCount = 20
+    CCExpressionValueTypeReservedCount = 20,
 } CCExpressionValueType;
 
 /*!
@@ -58,6 +58,11 @@ typedef CCExpression (*CCExpressionValueCopy)(CCExpression Value);
  */
 typedef void (*CCExpressionValueDestructor)(void *Data);
 
+typedef struct CCExpressionState {
+    CCCollection values;
+    CCExpression super;
+} CCExpressionState;
+
 typedef struct CCExpressionValue {
     CCExpressionValueType type;
     union {
@@ -69,8 +74,10 @@ typedef struct CCExpressionValue {
         void *data;
     };
     
+    CCExpressionState state;
     CCExpressionValueCopy copy;
     CCExpressionValueDestructor destructor;
+    CCAllocatorType allocator;
 } CCExpressionValue;
 
 
@@ -115,5 +122,10 @@ void CCExpressionPrint(CCExpression Expression);
  * @return The resulting expression.
  */
 CCExpression CCExpressionEvaluate(CCExpression Expression);
+
+void CCExpressionCreateState(CCExpression Expression, const char *Name, CCExpression Value);
+CCExpression CCExpressionGetState(CCExpression Expression, const char *Name);
+CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value);
+void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
 
 #endif

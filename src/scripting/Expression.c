@@ -101,6 +101,9 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
             break;
     }
     
+    Expression->state = (CCExpressionState){ .values = NULL, .super = NULL };
+    Expression->allocator = Allocator;
+    
     return Expression;
 }
 
@@ -109,6 +112,7 @@ void CCExpressionDestroy(CCExpression Expression)
     CCAssertLog(Expression, "Expression must not be NULL");
     
     if (Expression->destructor) Expression->destructor(Expression->data);
+    if (Expression->state.values) CCCollectionDestroy(Expression->state.values);
     CC_SAFE_Free(Expression);
 }
 
@@ -116,14 +120,20 @@ CCExpression CCExpressionCopy(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    if (Expression->copy) return Expression->copy(Expression);
+    CCExpression Copy = NULL;
+    if (Expression->copy) Copy = Expression->copy(Expression);
     else
     {
-        CCExpression Copy = CCExpressionCreate(CC_STD_ALLOCATOR, Expression->type);
+        Copy = CCExpressionCreate(Expression->allocator, Expression->type);
         memcpy(Copy, Expression, sizeof(CCExpressionValue));
-        
-        return Copy;
     }
+    
+    if (Copy)
+    {
+        CCExpressionCopyState(Expression, Copy);
+    }
+    
+    return Copy;
 }
 
 CCExpression CCExpressionCreateFromSource(const char *Source)
@@ -312,20 +322,81 @@ void CCExpressionPrint(CCExpression Expression)
             printf(")");
             break;
         }
+            
+        default:
+            break;
     }
 }
 
-CCExpression CCExpressionEvaluate(CCExpression Expression)
+typedef struct {
+    CCCollectionEntry entry;
+    CCExpression temp;
+} CCExpressionTemp;
+
+CCExpression CCExpressionEvaluate(CCExpression Expression) //TODO: Either get one of the implementations working or rewrite this because it's very inefficient.
 {
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    CCExpression Result = Expression;
     if (Expression->type == CCExpressionValueTypeExpression)
     {
+        CCCollection Remove = NULL, Temp = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall, sizeof(CCExpressionTemp), NULL);
         CC_COLLECTION_FOREACH(CCExpression, Expr, Expression->list)
         {
             if (Expr->type == CCExpressionValueTypeExpression)
             {
+                Expr->state.super = Expression;
+                
                 CCExpression Res = CCExpressionEvaluate(Expr);
-                if ((Res) && (Res != Expr)) CCOrderedCollectionReplaceElementAtIndex(Expression->list, &Res, CCOrderedCollectionGetIndex(Expression->list, CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR)));
+                if (!Res)
+                {
+                    if (!Remove) Remove = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall, sizeof(CCCollectionEntry), NULL);
+                    
+                    CCCollectionInsertElement(Remove, &(CCCollectionEntry){ CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR) });
+                }
+                
+                else if (Res != Expr)
+                {
+                    CCCollectionEntry Entry = CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR);
+                    CCExpression *Arg = CCCollectionGetElement(Expression->list, Entry);
+                    
+                    CCCollectionInsertElement(Temp, &(CCExpressionTemp){
+                        .entry = Entry,
+                        .temp = *Arg
+                    });
+                    
+                    *Arg = Res;
+                }
+                
+                Expr->state.super = NULL;
             }
+            
+            else if ((Expr->type == CCExpressionValueTypeAtom) && (CCOrderedCollectionGetIndex(Expression->list, CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR))))
+            {
+                CCExpression State = CCExpressionGetState(Expression, Expr->atom);
+                if (State)
+                {
+                    CCCollectionEntry Entry = CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR);
+                    CCExpression *Arg = CCCollectionGetElement(Expression->list, Entry);
+                    
+                    CCCollectionInsertElement(Temp, &(CCExpressionTemp){
+                        .entry = Entry,
+                        .temp = *Arg
+                    });
+                    
+                    *Arg = CCExpressionCopy(State);
+                }
+            }
+        }
+        
+        if (Remove)
+        {
+            CC_COLLECTION_FOREACH(CCCollectionEntry, Entry, Remove)
+            {
+                CCCollectionRemoveElement(Expression->list, Entry);
+            }
+            
+            CCCollectionDestroy(Remove);
         }
         
         CCExpression *Expr = CCOrderedCollectionGetElementAtIndex(Expression->list, 0);
@@ -334,10 +405,140 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             CCExpressionEvaluator Eval = CCExpressionEvaluatorForName((*Expr)->atom);
             if (Eval)
             {
-                return Eval(Expression);
+                Result = Eval(Expression);
             }
+            
+            else //set state
+            {
+                CCExpression State = NULL;
+                if (CCCollectionGetCount(Expression->list) == 2)
+                {
+                    State = CCExpressionSetState(Expression, (*Expr)->atom, *(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, 1));
+                }
+                
+                else
+                {
+                    State = CCExpressionSetState(Expression, (*Expr)->atom, Expression);
+                    if (State)
+                    {
+                        CCOrderedCollectionRemoveElementAtIndex(State->list, 0);
+                    }
+                }
+                
+                if (State) Result = CCExpressionCopy(State);
+            }
+        }
+        
+        
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(Temp, &Enumerator);
+        
+        for (CCExpressionTemp *Saved = CCCollectionEnumeratorGetCurrent(&Enumerator); Saved; Saved = CCCollectionEnumeratorNext(&Enumerator))
+        {
+            CCOrderedCollectionReplaceElementAtIndex(Expression->list, &Saved->temp, CCOrderedCollectionGetIndex(Expression->list, Saved->entry));
+        }
+        
+        CCCollectionDestroy(Temp);
+    }
+    
+    return Result;
+}
+
+typedef struct {
+    char *name;
+    CCExpression value;
+} CCExpressionStateValue;
+
+static CCComparisonResult CCExpressionStateValueElementFind(const CCExpressionStateValue *left, const CCExpressionStateValue *right)
+{
+    return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+}
+
+static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression, const char *Name)
+{
+    if (!Expression) return NULL;
+    
+    CCExpressionStateValue *Value = NULL;
+    if (Expression->state.values) Value = CCCollectionGetElement(Expression->state.values, CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = (char*)Name }, (CCComparator)CCExpressionStateValueElementFind));
+    
+    return Value ? Value : CCExpressionGetStateValue(Expression->state.super, Name);
+}
+
+static void CCExpressionStateValueElementDestructor(CCCollection Collection, CCExpressionStateValue *Element)
+{
+    CC_SAFE_Free(Element->name);
+    CCExpressionDestroy(Element->value);
+}
+
+void CCExpressionCreateState(CCExpression Expression, const char *Name, CCExpression Value)
+{
+    if ((Expression->state.values) && (CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = (char*)Name }, (CCComparator)CCExpressionStateValueElementFind)))
+    {
+        CC_LOG_ERROR("Creating duplicate state (%s)", Name);
+    }
+    
+    else
+    {
+        if (!Expression->state.values) Expression->state.values = CCCollectionCreate(Expression->allocator, CCCollectionHintHeavyFinding, sizeof(CCExpressionStateValue), (CCCollectionElementDestructor)CCExpressionStateValueElementDestructor);
+        
+        char *ValueName;
+        CC_SAFE_Malloc(ValueName, sizeof(char) * (strlen(Name) + 1),
+                       CC_LOG_ERROR("Failed to add expression state (%s) due to allocation space for name failing. Allocation size: %zu", Name, sizeof(char) * (strlen(Name) + 1));
+                       return;
+                       );
+        
+        strcpy(ValueName, Name);
+        
+        CCCollectionInsertElement(Expression->state.values, &(CCExpressionStateValue){
+            .name = ValueName,
+            .value = Value ? CCExpressionCopy(Value) : NULL
+        });
+    }
+}
+
+CCExpression CCExpressionGetState(CCExpression Expression, const char *Name)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
+    
+    return State ? State->value : NULL;
+}
+
+CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
+    if (State)
+    {
+        if (State->value) CCExpressionDestroy(State->value);
+        State->value = CCExpressionCopy(Value);
+        
+        return State->value;
+    }
+    
+    return NULL;
+}
+
+void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
+{
+    CCAssertLog(Source && Destination, "Source and destination expressions must not be NULL");
+    
+    if (Source->state.values)
+    {
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(Source->state.values, &Enumerator);
+        
+        for (CCExpressionStateValue *State = CCCollectionEnumeratorGetCurrent(&Enumerator); State; State = CCCollectionEnumeratorNext(&Enumerator))
+        {
+            CCExpressionCreateState(Destination, State->name, State->value);
         }
     }
     
-    return Expression;
+    else if (Destination->state.values)
+    {
+        CCCollectionDestroy(Destination->state.values);
+        Destination->state.values = NULL;
+    }
 }
