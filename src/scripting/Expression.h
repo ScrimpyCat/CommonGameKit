@@ -61,6 +61,8 @@ typedef void (*CCExpressionValueDestructor)(void *Data);
 typedef struct CCExpressionState {
     CCCollection values;
     CCExpression super;
+    CCExpression result;
+    CCCollection remove;
 } CCExpressionState;
 
 typedef struct CCExpressionValue {
