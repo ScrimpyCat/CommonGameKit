@@ -130,4 +130,57 @@ CCExpression CCExpressionGetState(CCExpression Expression, const char *Name);
 CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value);
 void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
 
+//Convenience getters and initializers for when introducing tagged types.
+CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, const char *Atom, size_t Length); //copies
+CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value);
+CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value);
+CCExpression CCExpressionCreateString(CCAllocatorType Allocator, const char *String, size_t Length); //copies
+CCExpression CCExpressionCreateList(CCAllocatorType Allocator);
+CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
+void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
+
+static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression);
+static inline const char *CCExpressionGetAtom(CCExpression Expression);
+static inline int32_t CCExpressionGetInteger(CCExpression Expression);
+static inline float CCExpressionGetFloat(CCExpression Expression);
+static inline const char *CCExpressionGetString(CCExpression Expression);
+static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression);
+static inline void *CCExpressionGetData(CCExpression Expression);
+
+
+static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
+{
+    return Expression->type;
+}
+
+static inline const char *CCExpressionGetAtom(CCExpression Expression)
+{
+    return Expression->atom;
+}
+
+static inline int32_t CCExpressionGetInteger(CCExpression Expression)
+{
+    return Expression->integer;
+}
+
+static inline float CCExpressionGetFloat(CCExpression Expression)
+{
+    return Expression->real;
+}
+
+static inline const char *CCExpressionGetString(CCExpression Expression)
+{
+    return Expression->string;
+}
+
+static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression)
+{
+    return Expression->list;
+}
+
+static inline void *CCExpressionGetData(CCExpression Expression)
+{
+    return Expression->data;
+}
+
 #endif

@@ -39,33 +39,16 @@ static void CCExpressionElementDestructor(CCCollection Collection, CCExpression 
 
 static CCExpression CCExpressionValueAtomOrStringCopy(CCExpression Value)
 {
-    char *String;
-    const size_t Length = strlen(Value->type == CCExpressionValueTypeAtom ? Value->atom : Value->string);
-    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
-                   CC_LOG_ERROR("Failed to copy expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
-                   return NULL;
-                   );
-    
-    strcpy(String, Value->type == CCExpressionValueTypeAtom ? Value->atom : Value->string);
-    
-    CCExpression Copy = CCExpressionCreate(CC_STD_ALLOCATOR, Value->type);
-    Copy->destructor = Value->destructor;
-    Copy->copy = Value->copy;
-    *(Value->type == CCExpressionValueTypeAtom ? &Copy->atom : &Copy->string) = String;
-    
-    return Copy;
+    return (CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionCreateAtom : CCExpressionCreateString)(Value->allocator, CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value), strlen(CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value)));
 }
 
 static CCExpression CCExpressionValueListCopy(CCExpression Value)
 {
-    CCExpression Copy = CCExpressionCreate(CC_STD_ALLOCATOR, Value->type);
-    Copy->destructor = Value->destructor;
-    Copy->copy = Value->copy;
-    Copy->list = CCCollectionCreate(Value->list->allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), Value->list->destructor);
+    CCExpression Copy = CCExpressionCreateList(Value->allocator);
     
-    CC_COLLECTION_FOREACH(CCExpression, Element, Value->list)
+    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Value))
     {
-        CCOrderedCollectionAppendElement(Copy->list, &(CCExpression){ CCExpressionCopy(Element) });
+        CCOrderedCollectionAppendElement(CCExpressionGetList(Copy), &(CCExpression){ CCExpressionCopy(Element) });
     }
     
     return Copy;
@@ -107,14 +90,87 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
     return Expression;
 }
 
+CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, const char *Atom, size_t Length)
+{
+    char *String;
+    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
+                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
+                   return NULL;
+                   );
+    
+    strncpy(String, Atom, Length);
+    String[Length] = 0;
+    
+    CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeAtom);
+    Expression->atom = String;
+    
+    return Expression;
+}
+
+CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
+{
+    CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeInteger);
+    Expression->integer = Value;
+    
+    return Expression;
+}
+
+CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
+{
+    CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeFloat);
+    Expression->real = Value;
+    
+    return Expression;
+}
+
+CCExpression CCExpressionCreateString(CCAllocatorType Allocator, const char *Input, size_t Length)
+{
+    char *String;
+    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
+                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
+                   return NULL;
+                   );
+    
+    strncpy(String, Input, Length);
+    String[Length] = 0;
+    
+    CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeString);
+    Expression->string = String;
+    
+    return Expression;
+}
+
+CCExpression CCExpressionCreateList(CCAllocatorType Allocator)
+{
+    return CCExpressionCreate(Allocator, CCExpressionValueTypeList);
+}
+
+CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor)
+{
+    CCExpression Expression = CCExpressionCreate(Allocator, Type);
+    Expression->data = Data;
+    Expression->copy = Copy;
+    Expression->destructor = Destructor;
+    
+    return Expression;
+}
+
 void CCExpressionDestroy(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    if (Expression->destructor) Expression->destructor(Expression->data);
+    if (Expression->destructor) Expression->destructor(CCExpressionGetData(Expression));
     if (Expression->state.values) CCCollectionDestroy(Expression->state.values);
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
     CC_SAFE_Free(Expression);
+}
+
+void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    Expression->copy = Copy;
+    Expression->destructor = Destructor;
 }
 
 CCExpression CCExpressionCopy(CCExpression Expression)
@@ -125,7 +181,7 @@ CCExpression CCExpressionCopy(CCExpression Expression)
     if (Expression->copy) Copy = Expression->copy(Expression);
     else
     {
-        Copy = CCExpressionCreate(Expression->allocator, Expression->type);
+        Copy = CCExpressionCreate(Expression->allocator, CCExpressionGetType(Expression));
         memcpy(Copy, Expression, sizeof(CCExpressionValue));
     }
     
@@ -158,44 +214,27 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     else if ((*Input == '.') && (Length > 1) && (isdigit(Input[1]))) Type = CCExpressionValueTypeFloat;
     else if ((*Input == '-') && (Length > 1) && (isdigit(Input[1]))) Type = CCExpressionValueTypeInteger;
     
-    char *String;
-    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
-                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
-                   return NULL;
-                   );
-    
-    strncpy(String, Input, Length);
-    String[Length] = 0;
-    
-    if ((Type == CCExpressionValueTypeInteger) && (strchr(String, '.'))) Type = CCExpressionValueTypeFloat;
-    
-    CCExpression Val = CCExpressionCreate(CC_STD_ALLOCATOR, Type);
+    if ((Type == CCExpressionValueTypeInteger) && (memchr(Input, '.', Length))) Type = CCExpressionValueTypeFloat;
     
     switch (Type)
     {
         case CCExpressionValueTypeAtom:
-            Val->atom = String;
-            break;
+            return CCExpressionCreateAtom(Allocator, Input, Length);
             
         case CCExpressionValueTypeInteger:
-            Val->integer = atoi(String);
-            CC_SAFE_Free(String);
-            break;
+            return CCExpressionCreateInteger(Allocator, (int32_t)strtol(Input, NULL, 10));
             
         case CCExpressionValueTypeFloat:
-            Val->real = (float)atof(String);
-            CC_SAFE_Free(String);
-            break;
+            return CCExpressionCreateFloat(Allocator, (float)strtod(Input, NULL));
             
         case CCExpressionValueTypeString:
-            Val->string = String;
-            break;
+            return CCExpressionCreateString(Allocator, Input, Length);
             
         default:
             break;
     }
     
-    return Val;
+    return NULL;
 }
 
 static CCExpression CCExpressionParse(const char **Source)
@@ -210,7 +249,7 @@ static CCExpression CCExpressionParse(const char **Source)
             if (Expr)
             {
                 CCExpression Val = CCExpressionParse(Source);
-                CCOrderedCollectionAppendElement(Expr->list, &Val);
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
             }
             
             else Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeExpression);
@@ -227,7 +266,7 @@ static CCExpression CCExpressionParse(const char **Source)
                     return NULL;
                 }
                 
-                CCOrderedCollectionAppendElement(Expr->list, &Val);
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
                 
                 Value = NULL;
             }
@@ -246,7 +285,7 @@ static CCExpression CCExpressionParse(const char **Source)
                     return NULL;
                 }
                 
-                CCOrderedCollectionAppendElement(Expr->list, &Val);
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
                 
                 Value = NULL;
             }
@@ -277,7 +316,7 @@ static CCExpression CCExpressionParse(const char **Source)
                     return NULL;
                 }
                 
-                CCOrderedCollectionAppendElement(Expr->list, &Val);
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
                 
                 Value = NULL;
             }
@@ -294,28 +333,28 @@ static CCExpression CCExpressionParse(const char **Source)
 
 static void CCExpressionPrintStatement(CCExpression Expression)
 {
-    switch (Expression->type)
+    switch (CCExpressionGetType(Expression))
     {
         case CCExpressionValueTypeAtom:
-            printf("%s", Expression->atom);
+            printf("%s", CCExpressionGetAtom(Expression));
             break;
             
         case CCExpressionValueTypeInteger:
-            printf("%" PRId32, Expression->integer);
+            printf("%" PRId32, CCExpressionGetInteger(Expression));
             break;
             
         case CCExpressionValueTypeFloat:
-            printf("%f", Expression->real);
+            printf("%f", CCExpressionGetFloat(Expression));
             break;
             
         case CCExpressionValueTypeString:
-            printf("\"%s\"", Expression->string);
+            printf("\"%s\"", CCExpressionGetString(Expression));
             break;
             
         case CCExpressionValueTypeList:
         {
             printf("( ");
-            CC_COLLECTION_FOREACH(CCExpression, Expr, Expression->list)
+            CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
             {
                 CCExpressionPrintStatement(Expr);
                 printf(" ");
@@ -341,22 +380,22 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
     
     Expression->state.result = Expression;
-    if (Expression->type == CCExpressionValueTypeExpression)
+    if (CCExpressionGetType(Expression) == CCExpressionValueTypeExpression)
     {
         _Bool IsList = TRUE;
-        CC_COLLECTION_FOREACH(CCExpression, Expr, Expression->list)
+        CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
         {
             Expr->state.super = Expression;
         }
         
-        CCExpression *Expr = CCOrderedCollectionGetElementAtIndex(Expression->list, 0);
+        CCExpression *Expr = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
         if (Expr)
         {
-            CCExpression Func = (*Expr)->type == CCExpressionValueTypeExpression ? CCExpressionEvaluate(*Expr) : *Expr;
+            CCExpression Func = CCExpressionGetType(*Expr) == CCExpressionValueTypeExpression ? CCExpressionEvaluate(*Expr) : *Expr;
             
-            if (Func->type == CCExpressionValueTypeAtom)
+            if (CCExpressionGetType(Func) == CCExpressionValueTypeAtom)
             {
-                CCExpressionEvaluator Eval = CCExpressionEvaluatorForName(Func->atom);
+                CCExpressionEvaluator Eval = CCExpressionEvaluatorForName(CCExpressionGetAtom(Func));
                 if (Eval)
                 {
                     Expression->state.result = Eval(Expression);
@@ -366,17 +405,17 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                 else //set state
                 {
                     CCExpression State = NULL;
-                    if (CCCollectionGetCount(Expression->list) == 2)
+                    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
                     {
-                        State = CCExpressionSetState(Expression, Func->atom, CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, 1)));
+                        State = CCExpressionSetState(Expression, CCExpressionGetAtom(Func), CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1)));
                     }
                     
                     else
                     {
-                        State = CCExpressionSetState(Expression, Func->atom, Expression);
+                        State = CCExpressionSetState(Expression, CCExpressionGetAtom(Func), Expression);
                         if (State)
                         {
-                            CCOrderedCollectionRemoveElementAtIndex(State->list, 0);
+                            CCOrderedCollectionRemoveElementAtIndex(CCExpressionGetList(State), 0);
                         }
                     }
                     
@@ -393,7 +432,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                 CCExpression Super = Expression->state.super;
                 if (!Super->state.remove) Super->state.remove = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall, sizeof(CCCollectionEntry), NULL);
                 
-                CCCollectionInsertElement(Super->state.remove, &(CCCollectionEntry){ CCCollectionFindElement(Super->list, &Expression, NULL) });
+                CCCollectionInsertElement(Super->state.remove, &(CCCollectionEntry){ CCCollectionFindElement(CCExpressionGetList(Super), &Expression, NULL) });
             }
         }
         
@@ -401,7 +440,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         {
             CC_COLLECTION_FOREACH(CCCollectionEntry, Entry, Expression->state.remove)
             {
-                CCCollectionRemoveElement(Expression->list, Entry);
+                CCCollectionRemoveElement(CCExpressionGetList(Expression), Entry);
             }
 
             CCCollectionDestroy(Expression->state.remove);
@@ -410,18 +449,18 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         
         if (IsList) //evaluate list
         {
-            Expression->state.result = CCExpressionCreate(Expression->allocator, CCExpressionValueTypeList);
+            Expression->state.result = CCExpressionCreateList(Expression->allocator);
             
-            CC_COLLECTION_FOREACH(CCExpression, Expr, Expression->list)
+            CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
             {
-                CCOrderedCollectionAppendElement(Expression->state.result->list, &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(Expr)) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(Expr)) });
             }
         }
     }
     
-    else if (Expression->type == CCExpressionValueTypeAtom) //get state
+    else if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom) //get state
     {
-        CCExpression State = CCExpressionGetState(Expression->state.super, Expression->atom);
+        CCExpression State = CCExpressionGetState(Expression->state.super, CCExpressionGetAtom(Expression));
         if (State) Expression->state.result = CCExpressionCopy(State);
     }
     
