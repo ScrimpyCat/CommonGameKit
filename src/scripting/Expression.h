@@ -144,7 +144,9 @@ CCExpression CCExpressionCreateList(CCAllocatorType Allocator);
 CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 
+static inline _Bool CCExpressionIsTagged(CCExpression Expression);
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression);
+static inline CCExpression CCExpressionGetResult(CCExpression Expression);
 static inline const char *CCExpressionGetAtom(CCExpression Expression);
 static inline int32_t CCExpressionGetInteger(CCExpression Expression);
 static inline float CCExpressionGetFloat(CCExpression Expression);
@@ -152,6 +154,16 @@ static inline const char *CCExpressionGetString(CCExpression Expression);
 static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression);
 static inline void *CCExpressionGetData(CCExpression Expression);
 
+
+static inline _Bool CCExpressionIsTagged(CCExpression Expression)
+{
+    return FALSE;
+}
+
+static inline CCExpression CCExpressionGetResult(CCExpression Expression)
+{
+    return Expression->state.result;
+}
 
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
 {

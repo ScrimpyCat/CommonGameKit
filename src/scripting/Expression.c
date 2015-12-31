@@ -393,7 +393,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         {
             CCExpression Func = CCExpressionGetType(*Expr) == CCExpressionValueTypeExpression ? CCExpressionEvaluate(*Expr) : *Expr;
             
-            if (CCExpressionGetType(Func) == CCExpressionValueTypeAtom)
+            if ((Func) && (CCExpressionGetType(Func) == CCExpressionValueTypeAtom))
             {
                 CCExpressionEvaluator Eval = CCExpressionEvaluatorForName(CCExpressionGetAtom(Func));
                 if (Eval)
@@ -457,7 +457,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
             if (Expr)
             {
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy((*Expr)->state.result ? (*Expr)->state.result : CCExpressionEvaluate(*Expr)) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy(CCExpressionGetResult(*Expr) ? CCExpressionGetResult(*Expr) : CCExpressionEvaluate(*Expr)) });
                 
                 while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
                 {
@@ -467,7 +467,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         }
     }
     
-    else if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom) //get state
+    else if ((Expression->state.super) && (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)) //get state
     {
         CCExpression State = CCExpressionGetState(Expression->state.super, CCExpressionGetAtom(Expression));
         if (State) Expression->state.result = CCExpressionCopy(State);
@@ -576,4 +576,5 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
     
     Destination->state.remove = NULL;
     Destination->state.result = NULL;
+    Destination->state.super = NULL; //Source->state.super;
 }

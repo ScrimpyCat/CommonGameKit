@@ -34,27 +34,30 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
     _Bool IsInteger = TRUE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
     {
-        if ((*Expr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            SumI += (*Expr)->integer;
+            SumI += CCExpressionGetInteger(Result);
         }
         
-        else if ((*Expr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            SumF += (*Expr)->real;
+            SumF += CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            return Expression;
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = SumI;
-    else Expr->real = (float)SumI + SumF;
-    
-    return Expr;
+    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, SumI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)SumI + SumF);
 }
 
 CCExpression CCMathExpressionSubtract(CCExpression Expression)
@@ -65,42 +68,52 @@ CCExpression CCMathExpressionSubtract(CCExpression Expression)
     _Bool IsInteger = TRUE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            return Expression;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                SumI += (*Expr)->integer;
+                SumI += CCExpressionGetInteger(Result);
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                SumF += (*Expr)->real;
+                SumF += CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
+            }
+            
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+                return Expression;
             }
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = FirstI - SumI;
-    else Expr->real = ((float)FirstI + FirstF) - ((float)SumI + SumF);
-    
-    return Expr;
+    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, FirstI - SumI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((float)FirstI + FirstF) - ((float)SumI + SumF));
 }
 
 CCExpression CCMathExpressionMultiply(CCExpression Expression)
@@ -111,27 +124,30 @@ CCExpression CCMathExpressionMultiply(CCExpression Expression)
     _Bool IsInteger = TRUE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
     {
-        if ((*Expr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            MulI *= (*Expr)->integer;
+            MulI *= CCExpressionGetInteger(Result);
         }
         
-        else if ((*Expr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            MulF *= (*Expr)->real;
+            MulF *= CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            return Expression;
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = MulI;
-    else Expr->real = (float)MulI * MulF;
-    
-    return Expr;
+    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, MulI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)MulI * MulF);
 }
 
 CCExpression CCMathExpressionDivide(CCExpression Expression)
@@ -142,42 +158,52 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
     _Bool IsInteger = TRUE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            return Expression;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                MulI *= (*Expr)->integer;
+                MulI *= CCExpressionGetInteger(Result);
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                MulF *= (*Expr)->real;
+                MulF *= CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
+            }
+            
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+                return Expression;
             }
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = FirstI / MulI;
-    else Expr->real = ((float)FirstI + FirstF) / ((float)MulI * MulF);
-    
-    return Expr;
+    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, FirstI / MulI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((float)FirstI + FirstF) / ((float)MulI * MulF));
 }
 
 CCExpression CCMathExpressionMinimum(CCExpression Expression)
@@ -188,27 +214,30 @@ CCExpression CCMathExpressionMinimum(CCExpression Expression)
     _Bool IsInteger = TRUE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
     {
-        if ((*Expr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            if ((*Expr)->integer < MinI) MinI = (*Expr)->integer;
+            if (CCExpressionGetInteger(Result) < MinI) MinI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*Expr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            if ((*Expr)->real < MinF) MinF = (*Expr)->real;
+            if (CCExpressionGetFloat(Result) < MinF) MinF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            return Expression;
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = MinI;
-    else Expr->real = (float)MinI < MinF ? (float)MinI : MinF;
-    
-    return Expr;
+    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, MinI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)MinI < MinF ? (float)MinI : MinF);
 }
 
 CCExpression CCMathExpressionMaximum(CCExpression Expression)
@@ -219,38 +248,40 @@ CCExpression CCMathExpressionMaximum(CCExpression Expression)
     _Bool IsInteger = TRUE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
     {
-        if ((*Expr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            if ((*Expr)->integer > MaxI) MaxI = (*Expr)->integer;
+            if (CCExpressionGetInteger(Result) > MaxI) MaxI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*Expr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            if ((*Expr)->real > MaxF) MaxF = (*Expr)->real;
+            if (CCExpressionGetFloat(Result) > MaxF) MaxF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            return Expression;
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-    if (IsInteger) Expr->integer = MaxI;
-    else Expr->real = (float)MaxI > MaxF ? (float)MaxI : MaxF;
-    
-    return Expr;
+    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, MaxI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)MaxI > MaxF ? (float)MaxI : MaxF);
 }
 
 CCExpression CCMathExpressionRandom(CCExpression Expression)
 {    
     CCExpression Expr = Expression;
-    const size_t ArgCount = CCCollectionGetCount(Expression->list) - 1;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     
     if (!ArgCount)
     {
-        Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-        Expr->integer = CCRandom();
+        Expr = CCExpressionCreateInteger(CC_STD_ALLOCATOR, CCRandom());
     }
     
     else if (ArgCount <= 2)
@@ -260,16 +291,22 @@ CCExpression CCMathExpressionRandom(CCExpression Expression)
         
         _Bool IsInteger = TRUE;
         
-        CCExpression *Arg = CCOrderedCollectionGetElementAtIndex(Expression->list, 1);
-        if ((*Arg)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            MaxI = (*Arg)->integer;
+            MaxI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*Arg)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            MaxF = (*Arg)->real;
+            MaxF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), ArgCount == 2 ? "min:number max:number" : "max:number");
+            return Expression;
         }
         
         
@@ -281,23 +318,27 @@ CCExpression CCMathExpressionRandom(CCExpression Expression)
             MaxI = 0;
             MaxF = 0.0f;
             
-            Arg = CCOrderedCollectionGetElementAtIndex(Expression->list, 2);
-            if ((*Arg)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                MaxI = (*Arg)->integer;
+                MaxI = CCExpressionGetInteger(Result);
             }
             
-            else if ((*Arg)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                MaxF = (*Arg)->real;
+                MaxF = CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
+            }
+            
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "min:number max:number");
+                return Expression;
             }
         }
         
         
-        Expr = CCExpressionCreate(CC_STD_ALLOCATOR, IsInteger ? CCExpressionValueTypeInteger : CCExpressionValueTypeFloat);
-        if (IsInteger) Expr->integer = CCRandomRangei(MinI, MaxI);
-        else Expr->real = CCRandomRangef(MinF + (float)MinI, MaxF + (float)MaxI);
+        Expr = IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, CCRandomRangei(MinI, MaxI)) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, CCRandomRangef(MinF + (float)MinI, MaxF + (float)MaxI));
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_ERROR("(random) (random max:number) (random min:number max:number)");

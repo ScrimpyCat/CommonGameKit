@@ -29,24 +29,22 @@
 static CCExpression CCWindowExpressionPercentage(CCExpression Expression, const char *Name, _Bool UseHeight)
 {
     CCExpression Expr = Expression;
-    const size_t ArgCount = CCCollectionGetCount(Expression->list) - 1;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     
     if (ArgCount == 1)
     {
         int Size[2];
         glfwGetFramebufferSize(CCWindow, Size, Size + 1);
         
-        CCExpression Percent = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, 1);
-        if (Percent->type == CCExpressionValueTypeInteger)
+        CCExpression Percent = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Percent) == CCExpressionValueTypeInteger)
         {
-            Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-            Expr->integer = (int32_t)((float)Size[UseHeight] * ((float)Percent->integer / 100));
+            Expr = CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)((float)Size[UseHeight] * ((float)CCExpressionGetInteger(Percent) / 100)));
         }
         
-        else if (Percent->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Percent) == CCExpressionValueTypeFloat)
         {
-            Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeFloat);
-            Expr->real = (float)Size[UseHeight] * Percent->real;
+            Expr = CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)Size[UseHeight] * CCExpressionGetFloat(Percent));
         }
         
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Name, "percent:number");
@@ -72,10 +70,7 @@ static CCExpression CCWindowExpressionSize(_Bool UseHeight)
     int Size[2];
     glfwGetFramebufferSize(CCWindow, Size, Size + 1);
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Size[UseHeight];
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Size[UseHeight]);
 }
 
 CCExpression CCWindowExpressionWidth(CCExpression Expression)

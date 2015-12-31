@@ -25,33 +25,37 @@
 
 #include "ControlFlowExpressions.h"
 
+CCExpression CCControlFlowExpressionBegin(CCExpression Expression)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    CCExpression Result = Expression;
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+    {
+        Result = CCExpressionEvaluate(*Expr);
+    }
+    
+    return CCExpressionCopy(Result);
+}
+
 CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
 {
     CCExpression Expr = Expression;
-    const size_t ArgCount = CCCollectionGetCount(Expression->list) - 1;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     
-    if (ArgCount == 3)
+    if (ArgCount >= 2)
     {
-        CCExpression Result = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, 1);
+        CCExpression Result = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         
-        _Bool ShouldFree = FALSE, Predicate = FALSE;
-        if (Result->type == CCExpressionValueTypeExpression)
-        {
-            Result = CCExpressionEvaluate(Result);
-            ShouldFree = TRUE;
-        }
+        _Bool Predicate = FALSE;
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger) Predicate = CCExpressionGetInteger(Result);
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:integer true:expr [false:expr]");
         
-        if (Result->type == CCExpressionValueTypeInteger) Predicate = Result->integer;
-        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:expr->integer true:expr false:expr");
-        
-        if (ShouldFree) CCExpressionDestroy(Result);
-        
-        
-        Result = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, Predicate ? 2 : 3);
-        Expr = (Result->type == CCExpressionValueTypeExpression ? CCExpressionEvaluate : CCExpressionCopy)(Result);
+        if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3));
     }
     
-    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:expr true:expr false:expr");
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:integer true:expr [false:expr]");
     
     return Expr;
 }

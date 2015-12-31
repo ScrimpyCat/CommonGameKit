@@ -12,6 +12,7 @@
 
 void CCExpressionSetup(void)
 {
+    CCExpressionEvaluatorRegister("begin", CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister("if", CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister("=", CCEqualityExpressionEqual);
     CCExpressionEvaluatorRegister("!=", CCEqualityExpressionNotEqual);

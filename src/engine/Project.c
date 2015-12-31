@@ -158,19 +158,18 @@ void CCProjectLoad(FSPath ProjectPath)
             CCExpression Expression = CCExpressionCreateFromSource(Source);
             CCExpression Result = CCExpressionEvaluate(Expression);
             
-            if (Result->type == CCProjectExpressionValueTypeGameConfig)
+            if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeGameConfig)
             {
-                ((CCEngineConfig*)Result->data)->launch = CCEngineConfiguration.launch;
-                CCEngineConfiguration = *(CCEngineConfig*)Result->data;
+                ((CCEngineConfig*)CCExpressionGetData(Result))->launch = CCEngineConfiguration.launch;
+                CCEngineConfiguration = *(CCEngineConfig*)CCExpressionGetData(Result);
                 CCEngineConfiguration.project = ProjectPath;
                 
-                Result->destructor = CCFree;
+                CCExpressionChangeOwnership(Result, NULL, CCFree);
             }
             
             else CC_LOG_ERROR("Failed to evaluate the project source file.");
             
-            CCExpressionDestroy(Result);
-            if (Expression != Result) CCExpressionDestroy(Expression);
+            CCExpressionDestroy(Expression);
         }
         
         else CC_LOG_ERROR("Failed to read the project source file.");

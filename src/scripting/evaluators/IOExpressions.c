@@ -29,34 +29,36 @@
 CCExpression CCIOExpressionPrint(CCExpression Expression)
 {
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
     {
-        switch ((*Expr)->type)
+        CCExpression Arg = CCExpressionEvaluate(*Expr);
+        switch (CCExpressionGetType(Arg))
         {
             case CCExpressionValueTypeAtom:
-                CC_EXPRESSION_EVALUATOR_LOG("%s", (*Expr)->atom);
+                CC_EXPRESSION_EVALUATOR_LOG("%s", CCExpressionGetAtom(Arg));
                 break;
                 
             case CCExpressionValueTypeInteger:
-                CC_EXPRESSION_EVALUATOR_LOG("%" PRId32, (*Expr)->integer);
+                CC_EXPRESSION_EVALUATOR_LOG("%" PRId32, CCExpressionGetInteger(Arg));
                 break;
                 
             case CCExpressionValueTypeFloat:
-                CC_EXPRESSION_EVALUATOR_LOG("%f", (*Expr)->real);
+                CC_EXPRESSION_EVALUATOR_LOG("%f", CCExpressionGetFloat(Arg));
                 break;
                 
             case CCExpressionValueTypeString:
-                CC_EXPRESSION_EVALUATOR_LOG("\"%s\"", (*Expr)->string);
+                CC_EXPRESSION_EVALUATOR_LOG("\"%s\"", CCExpressionGetString(Arg));
                 break;
                 
             case CCExpressionValueTypeList:
-                CC_EXPRESSION_EVALUATOR_LOG("[%p]", (*Expr)->list);
+                CC_EXPRESSION_EVALUATOR_LOG("[%p]", CCExpressionGetList(Arg));
+                CCExpressionPrint(Arg);
                 break;
                 
             default:
-                CC_EXPRESSION_EVALUATOR_LOG("(%d):%p", (*Expr)->type, (*Expr)->data);
+                CC_EXPRESSION_EVALUATOR_LOG("(%d):%p", CCExpressionGetType(Arg), CCExpressionGetData(Arg));
                 break;
         }
     }

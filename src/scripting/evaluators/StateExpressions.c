@@ -27,11 +27,11 @@
 
 CCExpression CCStateExpressionCreateState(CCExpression Expression)
 {
-    size_t ArgCount = CCCollectionGetCount(Expression->list) - 1;
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     if ((ArgCount == 1) || (ArgCount == 2))
     {
-        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, 1);
-        if (Name->type == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, Name->string, ArgCount == 2 ? *(CCExpression*)CCOrderedCollectionGetElementAtIndex(Expression->list, 2) : NULL);
+        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2) : NULL);
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
     }
     

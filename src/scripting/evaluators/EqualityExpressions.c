@@ -33,44 +33,43 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
     _Bool IsInteger = TRUE, Equal = FALSE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                if (IsInteger) Equal = FirstI == (*Expr)->integer;
-                else Equal = FirstF == (float)(*Expr)->integer;
+                if (IsInteger) Equal = FirstI == CCExpressionGetInteger(Result);
+                else Equal = FirstF == (float)CCExpressionGetInteger(Result);
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                if (IsInteger) Equal = (float)FirstI == (*Expr)->real;
-                else Equal = FirstF == (*Expr)->real;
+                if (IsInteger) Equal = (float)FirstI == CCExpressionGetFloat(Result);
+                else Equal = FirstF == CCExpressionGetFloat(Result);
             }
             
             if (!Equal) break;
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Equal;
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }
 
 CCExpression CCEqualityExpressionNotEqual(CCExpression Expression)
@@ -81,44 +80,43 @@ CCExpression CCEqualityExpressionNotEqual(CCExpression Expression)
     _Bool IsInteger = TRUE, Equal = FALSE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                if (IsInteger) Equal = FirstI != (*Expr)->integer;
-                else Equal = FirstF != (float)(*Expr)->integer;
+                if (IsInteger) Equal = FirstI != CCExpressionGetInteger(Result);
+                else Equal = FirstF != (float)CCExpressionGetInteger(Result);
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                if (IsInteger) Equal = (float)FirstI != (*Expr)->real;
-                else Equal = FirstF != (*Expr)->real;
+                if (IsInteger) Equal = (float)FirstI != CCExpressionGetFloat(Result);
+                else Equal = FirstF != CCExpressionGetFloat(Result);
             }
             
             if (!Equal) break;
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Equal;
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }
 
 CCExpression CCEqualityExpressionLessThanEqual(CCExpression Expression)
@@ -129,39 +127,41 @@ CCExpression CCEqualityExpressionLessThanEqual(CCExpression Expression)
     _Bool IsInteger = TRUE, Equal = FALSE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                if (IsInteger) Equal = FirstI <= (*Expr)->integer;
-                else Equal = FirstF <= (float)(*Expr)->integer;
+                if (IsInteger) Equal = FirstI <= CCExpressionGetInteger(Result);
+                else Equal = FirstF <= (float)CCExpressionGetInteger(Result);
                 
-                FirstI = (*Expr)->integer;
+                FirstI = CCExpressionGetInteger(Result);
                 IsInteger = TRUE;
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                if (IsInteger) Equal = (float)FirstI <= (*Expr)->real;
-                else Equal = FirstF <= (*Expr)->real;
+                if (IsInteger) Equal = (float)FirstI <= CCExpressionGetFloat(Result);
+                else Equal = FirstF <= CCExpressionGetFloat(Result);
                 
-                FirstF = (*Expr)->real;
+                FirstF = CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
             }
             
@@ -169,10 +169,7 @@ CCExpression CCEqualityExpressionLessThanEqual(CCExpression Expression)
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Equal;
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }
 
 CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression)
@@ -183,39 +180,41 @@ CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression)
     _Bool IsInteger = TRUE, Equal = FALSE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                if (IsInteger) Equal = FirstI >= (*Expr)->integer;
-                else Equal = FirstF >= (float)(*Expr)->integer;
+                if (IsInteger) Equal = FirstI >= CCExpressionGetInteger(Result);
+                else Equal = FirstF >= (float)CCExpressionGetInteger(Result);
                 
-                FirstI = (*Expr)->integer;
+                FirstI = CCExpressionGetInteger(Result);
                 IsInteger = TRUE;
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                if (IsInteger) Equal = (float)FirstI >= (*Expr)->real;
-                else Equal = FirstF >= (*Expr)->real;
+                if (IsInteger) Equal = (float)FirstI >= CCExpressionGetFloat(Result);
+                else Equal = FirstF >= CCExpressionGetFloat(Result);
                 
-                FirstF = (*Expr)->real;
+                FirstF = CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
             }
             
@@ -223,10 +222,7 @@ CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression)
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Equal;
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }
 
 CCExpression CCEqualityExpressionLessThan(CCExpression Expression)
@@ -237,39 +233,41 @@ CCExpression CCEqualityExpressionLessThan(CCExpression Expression)
     _Bool IsInteger = TRUE, Equal = FALSE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                if (IsInteger) Equal = FirstI < (*Expr)->integer;
-                else Equal = FirstF < (float)(*Expr)->integer;
+                if (IsInteger) Equal = FirstI < CCExpressionGetInteger(Result);
+                else Equal = FirstF < (float)CCExpressionGetInteger(Result);
                 
-                FirstI = (*Expr)->integer;
+                FirstI = CCExpressionGetInteger(Result);
                 IsInteger = TRUE;
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                if (IsInteger) Equal = (float)FirstI < (*Expr)->real;
-                else Equal = FirstF < (*Expr)->real;
+                if (IsInteger) Equal = (float)FirstI < CCExpressionGetFloat(Result);
+                else Equal = FirstF < CCExpressionGetFloat(Result);
                 
-                FirstF = (*Expr)->real;
+                FirstF = CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
             }
             
@@ -277,10 +275,7 @@ CCExpression CCEqualityExpressionLessThan(CCExpression Expression)
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Equal;
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }
 
 CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression)
@@ -291,39 +286,41 @@ CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression)
     _Bool IsInteger = TRUE, Equal = FALSE;
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *FirstExpr = CCCollectionEnumeratorNext(&Enumerator);
     if (FirstExpr)
     {
-        if ((*FirstExpr)->type == CCExpressionValueTypeInteger)
+        CCExpression Result = CCExpressionEvaluate(*FirstExpr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
         {
-            FirstI = (*FirstExpr)->integer;
+            FirstI = CCExpressionGetInteger(Result);
         }
         
-        else if ((*FirstExpr)->type == CCExpressionValueTypeFloat)
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
         {
-            FirstF = (*FirstExpr)->real;
+            FirstF = CCExpressionGetFloat(Result);
             IsInteger = FALSE;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            if ((*Expr)->type == CCExpressionValueTypeInteger)
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                if (IsInteger) Equal = FirstI > (*Expr)->integer;
-                else Equal = FirstF > (float)(*Expr)->integer;
+                if (IsInteger) Equal = FirstI > CCExpressionGetInteger(Result);
+                else Equal = FirstF > (float)CCExpressionGetInteger(Result);
                 
-                FirstI = (*Expr)->integer;
+                FirstI = CCExpressionGetInteger(Result);
                 IsInteger = TRUE;
             }
             
-            else if ((*Expr)->type == CCExpressionValueTypeFloat)
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                if (IsInteger) Equal = (float)FirstI > (*Expr)->real;
-                else Equal = FirstF > (*Expr)->real;
+                if (IsInteger) Equal = (float)FirstI > CCExpressionGetFloat(Result);
+                else Equal = FirstF > CCExpressionGetFloat(Result);
                 
-                FirstF = (*Expr)->real;
+                FirstF = CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
             }
             
@@ -331,8 +328,5 @@ CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression)
         }
     }
     
-    CCExpression Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeInteger);
-    Expr->integer = Equal;
-    
-    return Expr;
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }

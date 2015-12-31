@@ -72,118 +72,134 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
     };
     
     CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Expression->list, &Enumerator);
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator);
-    if ((Expr) && ((*Expr)->type == CCExpressionValueTypeString))
+    if (Expr)
     {
-        Config.title = (*Expr)->string;
-        (*Expr)->destructor = NULL;
-    }
-    
-    for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
-    {
-        if ((*Expr)->type == CCExpressionValueTypeExpression)
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
         {
-            size_t ArgCount = CCCollectionGetCount((*Expr)->list) - 1;
-            
-            CCEnumerator Enumerator;
-            CCCollectionGetEnumerator((*Expr)->list, &Enumerator);
-            
-            Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
-            
-            if ((Expr) && ((*Expr)->type == CCExpressionValueTypeAtom))
+            Config.title = (char*)CCExpressionGetString(Result);
+            CCExpressionChangeOwnership(Result, NULL, NULL);
+        }
+        
+        for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+        {
+            Result = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeExpression)
             {
-                if (!strcmp((*Expr)->atom, "default-resolution"))
-                {
-                    if (ArgCount == 2)
-                    {
-                        CCExpression *Width = CCCollectionEnumeratorNext(&Enumerator), *Height = CCCollectionEnumeratorNext(&Enumerator);
-                        
-                        if (((*Width)->type == CCExpressionValueTypeInteger) && ((*Height)->type == CCExpressionValueTypeInteger))
-                        {
-                            Config.window.width = (*Width)->integer;
-                            Config.window.height = (*Height)->integer;
-                        }
-                        
-                        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-resolution", "width:integer height:integer");
-                    }
-                    
-                    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-resolution", "width:integer height:integer");
-                }
+                size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Result)) - 1;
                 
-                else if (!strcmp((*Expr)->atom, "default-fullscreen"))
-                {
-                    CCExpression *Fullscreen = CCCollectionEnumeratorNext(&Enumerator);
-                    if ((ArgCount == 1) && ((*Fullscreen)->type == CCExpressionValueTypeAtom)) //TODO: Later add atom evaluators, so this can instead be changed to an integer
-                    {
-                        if (!strcmp((*Fullscreen)->atom, "true"))
-                        {
-                            Config.window.fullscreen = TRUE;
-                        }
-                        
-                        else if (!strcmp((*Fullscreen)->atom, "false"))
-                        {
-                            Config.window.fullscreen = FALSE;
-                        }
-                    }
-                    
-                    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-fullscreen", "fullscreen:atom");
-                }
+                CCEnumerator Enumerator;
+                CCCollectionGetEnumerator(CCExpressionGetList(Result), &Enumerator);
                 
-                else if (!strncmp((*Expr)->atom, "dir-", 4))
+                Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
+                
+                if (Expr)
                 {
-                    const char *Dir = (*Expr)->atom + 4;
-                    
-                    struct {
-                        const char *atom;
-                        void *attribute;
-                        _Bool path;
-                    } Commands[] = {
-                        { "fonts", &Config.directory.fonts, FALSE },
-                        { "levels", &Config.directory.levels, FALSE },
-                        { "rules", &Config.directory.rules, FALSE },
-                        { "textures", &Config.directory.textures, FALSE },
-                        { "shaders", &Config.directory.shaders, FALSE },
-                        { "sounds", &Config.directory.sounds, FALSE },
-                        { "layouts", &Config.directory.layouts, FALSE },
-                        { "entities", &Config.directory.entities, FALSE },
-                        { "logs", &Config.directory.logs, TRUE },
-                        { "tmp", &Config.directory.tmp, TRUE }
-                    };
-                    
-                    for (size_t Loop = 0; Loop < sizeof(Commands) / sizeof(typeof(*Commands)); Loop++)
+                    Result = CCExpressionEvaluate(*Expr);
+                    if (CCExpressionGetType(Result) == CCExpressionValueTypeAtom)
                     {
-                        if (!strcmp(Dir, Commands[Loop].atom))
+                        if (!strcmp(CCExpressionGetAtom(Result), "default-resolution"))
                         {
-                            if (Commands[Loop].path)
+                            if (ArgCount == 2)
                             {
-                                if (ArgCount == 1)
+                                CCExpression Width = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator)), Height = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
+                                
+                                if ((CCExpressionGetType(Width) == CCExpressionValueTypeInteger) && (CCExpressionGetType(Height) == CCExpressionValueTypeInteger))
                                 {
-                                    Expr = CCCollectionEnumeratorNext(&Enumerator);
-                                    if ((*Expr)->type == CCExpressionValueTypeString)
-                                    {
-                                        *(FSPath*)(Commands[Loop].attribute) = FSPathCreate((*Expr)->string);
-                                    }
+                                    Config.window.width = CCExpressionGetInteger(Width);
+                                    Config.window.height = CCExpressionGetInteger(Height);
                                 }
                                 
-                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Dir - 4, "path:string");
+                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-resolution", "width:integer height:integer");
                             }
                             
-                            else
+                            else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-resolution", "width:integer height:integer");
+                        }
+                        
+                        else if (!strcmp(CCExpressionGetAtom(Result), "default-fullscreen"))
+                        {
+                            if (ArgCount == 1)
                             {
-                                CCCollection Directories = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCProjectExpressionGameConfigDirectoryElementDestructor);
+                                CCExpression Fullscreen = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
                                 
-                                //TODO: Make a directory expression
-                                for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+                                if (CCExpressionGetType(Fullscreen) == CCExpressionValueTypeAtom) //TODO: Later add atom evaluators, so this can instead be changed to an integer
                                 {
-                                    if ((*Expr)->type == CCExpressionValueTypeString)
+                                    if (!strcmp(CCExpressionGetAtom(Fullscreen), "true"))
                                     {
-                                        CCCollectionInsertElement(Directories, &(FSPath){ FSPathCreate((*Expr)->string) });
+                                        Config.window.fullscreen = TRUE;
+                                    }
+                                    
+                                    else if (!strcmp(CCExpressionGetAtom(Fullscreen), "false"))
+                                    {
+                                        Config.window.fullscreen = FALSE;
                                     }
                                 }
                                 
-                                *(CCCollection*)(Commands[Loop].attribute) = Directories;
+                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-fullscreen", "fullscreen:atom");
+                            }
+                            
+                            else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-fullscreen", "fullscreen:atom");
+                        }
+                        
+                        else if (!strncmp(CCExpressionGetAtom(Result), "dir-", 4))
+                        {
+                            const char *Dir = CCExpressionGetAtom(Result) + 4;
+                            
+                            struct {
+                                const char *atom;
+                                void *attribute;
+                                _Bool path;
+                            } Commands[] = {
+                                { "fonts", &Config.directory.fonts, FALSE },
+                                { "levels", &Config.directory.levels, FALSE },
+                                { "rules", &Config.directory.rules, FALSE },
+                                { "textures", &Config.directory.textures, FALSE },
+                                { "shaders", &Config.directory.shaders, FALSE },
+                                { "sounds", &Config.directory.sounds, FALSE },
+                                { "layouts", &Config.directory.layouts, FALSE },
+                                { "entities", &Config.directory.entities, FALSE },
+                                { "logs", &Config.directory.logs, TRUE },
+                                { "tmp", &Config.directory.tmp, TRUE }
+                            };
+                            
+                            for (size_t Loop = 0; Loop < sizeof(Commands) / sizeof(typeof(*Commands)); Loop++)
+                            {
+                                if (!strcmp(Dir, Commands[Loop].atom))
+                                {
+                                    if (Commands[Loop].path)
+                                    {
+                                        if (ArgCount == 1)
+                                        {
+                                            Result = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
+                                            if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
+                                            {
+                                                *(FSPath*)(Commands[Loop].attribute) = FSPathCreate(CCExpressionGetString(Result));
+                                            }
+                                        }
+                                        
+                                        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Dir - 4, "path:string");
+                                    }
+                                    
+                                    else
+                                    {
+                                        CCCollection Directories = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCProjectExpressionGameConfigDirectoryElementDestructor);
+                                        
+                                        //TODO: Make a directory expression
+                                        for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+                                        {
+                                            Result = CCExpressionEvaluate(*Expr);
+                                            if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
+                                            {
+                                                CCCollectionInsertElement(Directories, &(FSPath){ FSPathCreate(CCExpressionGetString(Result)) });
+                                            }
+                                        }
+                                        
+                                        *(CCCollection*)(Commands[Loop].attribute) = Directories;
+                                    }
+                                }
                             }
                         }
                     }
@@ -191,19 +207,20 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
             }
         }
     }
-    
-    CCExpression Result = CCExpressionCreate(CC_STD_ALLOCATOR, (CCExpressionValueType)CCProjectExpressionValueTypeGameConfig);
-    CC_SAFE_Malloc(Result->data, sizeof(CCEngineConfig),
+
+    CCEngineConfig *Result;
+    CC_SAFE_Malloc(Result, sizeof(CCEngineConfig),
                    CC_LOG_ERROR("Failed to allocate CCEngineConfig for expression. Allocation size: %zu", sizeof(CCEngineConfig));
                    );
     
-    if (Result->data)
+    if (Result)
     {
-        *(CCEngineConfig*)Result->data = Config;
-        Result->destructor = (CCExpressionValueDestructor)CCProjectExpressionValueGameConfigDestructor;
+        *(CCEngineConfig*)Result = Config;
+        
+        return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCProjectExpressionValueTypeGameConfig, Result, NULL, (CCExpressionValueDestructor)CCProjectExpressionValueGameConfigDestructor);
     }
     
     else CCProjectExpressionValueGameConfigDestructor(&Config);
     
-    return Result;
+    return Expression;
 }
