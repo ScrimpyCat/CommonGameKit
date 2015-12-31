@@ -66,6 +66,11 @@ typedef struct CCExpressionState {
 } CCExpressionState;
 
 typedef struct CCExpressionValue {
+    //TODO: Include tagged expression types.
+    /*
+     Where integers (that can fit) and atoms can be tagged. Tagged atoms could be a way to avoid
+     more expensive lookups.
+     */
     CCExpressionValueType type;
     union {
         char *atom;

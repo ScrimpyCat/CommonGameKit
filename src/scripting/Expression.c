@@ -451,9 +451,18 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         {
             Expression->state.result = CCExpressionCreateList(Expression->allocator);
             
-            CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
+            CCEnumerator Enumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+            
+            CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
+            if (Expr)
             {
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(Expr)) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy((*Expr)->state.result ? (*Expr)->state.result : CCExpressionEvaluate(*Expr)) });
+                
+                while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+                {
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(*Expr)) });
+                }
             }
         }
     }
