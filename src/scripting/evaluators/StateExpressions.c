@@ -30,12 +30,53 @@ CCExpression CCStateExpressionCreateState(CCExpression Expression)
     size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     if ((ArgCount == 1) || (ArgCount == 2))
     {
-        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
-        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2) : NULL);
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL);
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
+    
+    return NULL;
+}
+
+CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    int32_t Index = 0;
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); Index++)
+    {
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
+        {
+            CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Result), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index));
+        }
+        
+        else if ((CCExpressionGetType(Result) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Result)) == 2))
+        {
+            CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), NewIndex = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1));
+            
+            if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(NewIndex) == CCExpressionValueTypeInteger))
+            {
+                Index = CCExpressionGetInteger(NewIndex);
+                CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index));
+            }
+            
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("enum!", "[name:string] [(name:string index:integer)]");
+                break;
+            }
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("enum!", "[name:string] [(name:string index:integer)]");
+            break;
+        }
+    }
     
     return NULL;
 }

@@ -30,6 +30,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("random", CCMathExpressionRandom);
     CCExpressionEvaluatorRegister("game", CCProjectExpressionGame);
     CCExpressionEvaluatorRegister("state!", CCStateExpressionCreateState);
+    CCExpressionEvaluatorRegister("enum!", CCStateExpressionCreateEnum);
     CCExpressionEvaluatorRegister("window-percent-width", CCWindowExpressionPercentageWidth);
     CCExpressionEvaluatorRegister("window-percent-height", CCWindowExpressionPercentageHeight);
     CCExpressionEvaluatorRegister("window-width", CCWindowExpressionWidth);
