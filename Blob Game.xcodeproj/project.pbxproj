@@ -11,38 +11,39 @@
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
 		F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */; };
-		F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = F31619591C120F0C008E09A1 /* GLDebug.c */; settings = {ASSET_TAGS = (); }; };
-		F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F316195B1C12114B008E09A1 /* GLDebugTests.m */; settings = {ASSET_TAGS = (); }; };
-		F316198E1C1213A9008E09A1 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F316198C1C1213A9008E09A1 /* PixelData.c */; settings = {ASSET_TAGS = (); }; };
+		F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = F31619591C120F0C008E09A1 /* GLDebug.c */; };
+		F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F316195B1C12114B008E09A1 /* GLDebugTests.m */; };
+		F316198E1C1213A9008E09A1 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F316198C1C1213A9008E09A1 /* PixelData.c */; };
 		F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk-Mac.a */; };
+		F32555441C35F59200B1623C /* MacroExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F32555421C35F59200B1623C /* MacroExpressions.c */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
-		F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */ = {isa = PBXBuildFile; fileRef = F359CFE51C128F810028B86B /* PixelDataStatic.c */; settings = {ASSET_TAGS = (); }; };
-		F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = F359D0111C1297A10028B86B /* PixelDataGenerator.c */; settings = {ASSET_TAGS = (); }; };
-		F359D0151C1299600028B86B /* PixelDataStaticTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F359D0141C1299600028B86B /* PixelDataStaticTests.m */; settings = {ASSET_TAGS = (); }; };
-		F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F359D0161C1299670028B86B /* PixelDataGeneratorTests.m */; settings = {ASSET_TAGS = (); }; };
+		F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */ = {isa = PBXBuildFile; fileRef = F359CFE51C128F810028B86B /* PixelDataStatic.c */; };
+		F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = F359D0111C1297A10028B86B /* PixelDataGenerator.c */; };
+		F359D0151C1299600028B86B /* PixelDataStaticTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F359D0141C1299600028B86B /* PixelDataStaticTests.m */; };
+		F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F359D0161C1299670028B86B /* PixelDataGeneratorTests.m */; };
 		F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6C51B3DDBFD0032E3A7 /* EntityManagerTests.m */; };
 		F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */; };
 		F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */; };
 		F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */; };
-		F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F365311D1C15FDEE00A3B009 /* GFXBuffer.c */; settings = {ASSET_TAGS = (); }; };
-		F36531251C16163400A3B009 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531231C16163400A3B009 /* GFXMain.c */; settings = {ASSET_TAGS = (); }; };
-		F36531281C16213300A3B009 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531261C16213300A3B009 /* GLGFX.c */; settings = {ASSET_TAGS = (); }; };
-		F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531291C171F0300A3B009 /* GLBuffer.c */; settings = {ASSET_TAGS = (); }; };
-		F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = F365312C1C173C5900A3B009 /* GFXTexture.c */; settings = {ASSET_TAGS = (); }; };
-		F36531311C19F50700A3B009 /* GLTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = F365312F1C19F50700A3B009 /* GLTexture.c */; settings = {ASSET_TAGS = (); }; };
-		F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376994D1C1023C200F24A44 /* MathExpressions.c */; settings = {ASSET_TAGS = (); }; };
-		F37699781C10262400F24A44 /* ProjectExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699771C10262400F24A44 /* ProjectExpressions.c */; settings = {ASSET_TAGS = (); }; };
-		F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699791C1053C400F24A44 /* IOExpressions.c */; settings = {ASSET_TAGS = (); }; };
-		F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376997C1C105C7800F24A44 /* EqualityExpressions.c */; settings = {ASSET_TAGS = (); }; };
-		F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376997F1C105DA700F24A44 /* ControlFlowExpressions.c */; settings = {ASSET_TAGS = (); }; };
-		F37699841C11113D00F24A44 /* WindowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699821C11113D00F24A44 /* WindowExpressions.c */; settings = {ASSET_TAGS = (); }; };
-		F37699BF1C118B9000F24A44 /* ColourFormat.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699BE1C118B9000F24A44 /* ColourFormat.c */; settings = {ASSET_TAGS = (); }; };
-		F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37699F01C11DE3300F24A44 /* ColourFormatTests.m */; settings = {ASSET_TAGS = (); }; };
-		F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A221C11E1DD00F24A44 /* ColourComponent.c */; settings = {ASSET_TAGS = (); }; };
-		F3769A261C11E29300F24A44 /* Colour.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A251C11E29300F24A44 /* Colour.c */; settings = {ASSET_TAGS = (); }; };
-		F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A2B1C11F4B400F24A44 /* GLState.c */; settings = {ASSET_TAGS = (); }; };
-		F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */; settings = {ASSET_TAGS = (); }; };
+		F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F365311D1C15FDEE00A3B009 /* GFXBuffer.c */; };
+		F36531251C16163400A3B009 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531231C16163400A3B009 /* GFXMain.c */; };
+		F36531281C16213300A3B009 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531261C16213300A3B009 /* GLGFX.c */; };
+		F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531291C171F0300A3B009 /* GLBuffer.c */; };
+		F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = F365312C1C173C5900A3B009 /* GFXTexture.c */; };
+		F36531311C19F50700A3B009 /* GLTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = F365312F1C19F50700A3B009 /* GLTexture.c */; };
+		F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376994D1C1023C200F24A44 /* MathExpressions.c */; };
+		F37699781C10262400F24A44 /* ProjectExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699771C10262400F24A44 /* ProjectExpressions.c */; };
+		F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699791C1053C400F24A44 /* IOExpressions.c */; };
+		F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376997C1C105C7800F24A44 /* EqualityExpressions.c */; };
+		F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F376997F1C105DA700F24A44 /* ControlFlowExpressions.c */; };
+		F37699841C11113D00F24A44 /* WindowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699821C11113D00F24A44 /* WindowExpressions.c */; };
+		F37699BF1C118B9000F24A44 /* ColourFormat.c in Sources */ = {isa = PBXBuildFile; fileRef = F37699BE1C118B9000F24A44 /* ColourFormat.c */; };
+		F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37699F01C11DE3300F24A44 /* ColourFormatTests.m */; };
+		F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A221C11E1DD00F24A44 /* ColourComponent.c */; };
+		F3769A261C11E29300F24A44 /* Colour.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A251C11E29300F24A44 /* Colour.c */; };
+		F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */ = {isa = PBXBuildFile; fileRef = F3769A2B1C11F4B400F24A44 /* GLState.c */; };
+		F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */; };
 		F3769A301C11F96A00F24A44 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */; };
 		F3769A311C11F98200F24A44 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */; };
 		F3769A321C11F98700F24A44 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
@@ -51,24 +52,27 @@
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
 		F39E23C61BFF63FB00DB0B71 /* CommonC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ASSET_TAGS = (); }; };
+		F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; };
 		F39E26711BFF6F6900DB0B71 /* libchibi-scheme.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F3A9D5641C1D6B480042BD2A /* GFXFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D58F1C1DA1570042BD2A /* GLFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D58D1C1DA1570042BD2A /* GLFramebuffer.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D5921C1F70E30042BD2A /* GFXShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5901C1F70E30042BD2A /* GFXShaderLibrary.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D5951C1F76430042BD2A /* GLShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5931C1F76430042BD2A /* GLShaderLibrary.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D5A11C2045ED0042BD2A /* GFXShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D59F1C2045ED0042BD2A /* GFXShader.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D5CC1C21DC220042BD2A /* GLShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5CA1C21DC220042BD2A /* GLShader.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D5D01C2767D30042BD2A /* GFXDraw.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5CE1C2767D30042BD2A /* GFXDraw.c */; settings = {ASSET_TAGS = (); }; };
-		F3A9D5D31C28987D0042BD2A /* GLDraw.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5D11C28987D0042BD2A /* GLDraw.c */; settings = {ASSET_TAGS = (); }; };
+		F3A3A7291C2ED39100EC1F18 /* StateExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */; };
+		F3A3A75B1C30152200EC1F18 /* GUIObject.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A7591C30152200EC1F18 /* GUIObject.c */; };
+		F3A3A75E1C303A0B00EC1F18 /* GUIContainer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A75C1C303A0B00EC1F18 /* GUIContainer.c */; };
+		F3A9D5641C1D6B480042BD2A /* GFXFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */; };
+		F3A9D58F1C1DA1570042BD2A /* GLFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D58D1C1DA1570042BD2A /* GLFramebuffer.c */; };
+		F3A9D5921C1F70E30042BD2A /* GFXShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5901C1F70E30042BD2A /* GFXShaderLibrary.c */; };
+		F3A9D5951C1F76430042BD2A /* GLShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5931C1F76430042BD2A /* GLShaderLibrary.c */; };
+		F3A9D5A11C2045ED0042BD2A /* GFXShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D59F1C2045ED0042BD2A /* GFXShader.c */; };
+		F3A9D5CC1C21DC220042BD2A /* GLShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5CA1C21DC220042BD2A /* GLShader.c */; };
+		F3A9D5D01C2767D30042BD2A /* GFXDraw.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5CE1C2767D30042BD2A /* GFXDraw.c */; };
+		F3A9D5D31C28987D0042BD2A /* GLDraw.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9D5D11C28987D0042BD2A /* GLDraw.c */; };
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
-		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; settings = {ASSET_TAGS = (); }; };
-		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; settings = {ASSET_TAGS = (); }; };
-		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; settings = {ASSET_TAGS = (); }; };
-		F3BD17851C00FDC200B3849E /* Configuration.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17831C00FDC200B3849E /* Configuration.c */; settings = {ASSET_TAGS = (); }; };
-		F3BD17BD1C02B67900B3849E /* Project.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17BB1C02B67900B3849E /* Project.c */; settings = {ASSET_TAGS = (); }; };
+		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; };
+		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; };
+		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; };
+		F3BD17851C00FDC200B3849E /* Configuration.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17831C00FDC200B3849E /* Configuration.c */; };
+		F3BD17BD1C02B67900B3849E /* Project.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17BB1C02B67900B3849E /* Project.c */; };
 		F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020161B4ED68D00F546E7 /* InputMapGroupComponent.c */; };
 		F3C020461B4F375E00F546E7 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020441B4F375E00F546E7 /* Mouse.c */; };
 		F3C0204D1B50A33400F546E7 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C0204B1B50A33400F546E7 /* InputMapMousePositionComponent.c */; };
@@ -387,6 +391,8 @@
 		F316198C1C1213A9008E09A1 /* PixelData.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PixelData.c; sourceTree = "<group>"; };
 		F316198D1C1213A9008E09A1 /* PixelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelData.h; sourceTree = "<group>"; };
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
+		F32555421C35F59200B1623C /* MacroExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MacroExpressions.c; sourceTree = "<group>"; };
+		F32555431C35F59200B1623C /* MacroExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroExpressions.h; sourceTree = "<group>"; };
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
 		F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectExpressions.h; sourceTree = "<group>"; };
@@ -456,6 +462,12 @@
 		F39E266D1BFF6F4E00DB0B71 /* install.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = install.h; path = "deps/chibi-scheme/build/include/chibi/install.h"; sourceTree = "<group>"; };
 		F39E266E1BFF6F4E00DB0B71 /* sexp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sexp.h; path = "deps/chibi-scheme/build/include/chibi/sexp.h"; sourceTree = "<group>"; };
 		F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libchibi-scheme.dylib"; path = "deps/chibi-scheme/build/lib/libchibi-scheme.dylib"; sourceTree = "<group>"; };
+		F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StateExpressions.c; sourceTree = "<group>"; };
+		F3A3A7281C2ED39100EC1F18 /* StateExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateExpressions.h; sourceTree = "<group>"; };
+		F3A3A7591C30152200EC1F18 /* GUIObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIObject.c; sourceTree = "<group>"; };
+		F3A3A75A1C30152200EC1F18 /* GUIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIObject.h; sourceTree = "<group>"; };
+		F3A3A75C1C303A0B00EC1F18 /* GUIContainer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIContainer.c; sourceTree = "<group>"; };
+		F3A3A75D1C303A0B00EC1F18 /* GUIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIContainer.h; sourceTree = "<group>"; };
 		F3A9D5621C1D6B480042BD2A /* GFXFramebuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXFramebuffer.c; sourceTree = "<group>"; };
 		F3A9D5631C1D6B480042BD2A /* GFXFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXFramebuffer.h; sourceTree = "<group>"; };
 		F3A9D58D1C1DA1570042BD2A /* GLFramebuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLFramebuffer.c; sourceTree = "<group>"; };
@@ -773,6 +785,18 @@
 			name = "chibi-scheme";
 			sourceTree = "<group>";
 		};
+		F3A3A7551C30146200EC1F18 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+				F3A3A75A1C30152200EC1F18 /* GUIObject.h */,
+				F3A3A7591C30152200EC1F18 /* GUIObject.c */,
+				F3A3A75D1C303A0B00EC1F18 /* GUIContainer.h */,
+				F3A3A75C1C303A0B00EC1F18 /* GUIContainer.c */,
+			);
+			name = GUI;
+			path = gui;
+			sourceTree = "<group>";
+		};
 		F3BD17481C00845D00B3849E /* Scripting */ = {
 			isa = PBXGroup;
 			children = (
@@ -789,6 +813,10 @@
 		F3BD17751C00B33800B3849E /* Evaluators */ = {
 			isa = PBXGroup;
 			children = (
+				F32555431C35F59200B1623C /* MacroExpressions.h */,
+				F32555421C35F59200B1623C /* MacroExpressions.c */,
+				F3A3A7281C2ED39100EC1F18 /* StateExpressions.h */,
+				F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */,
 				F3BD177E1C00DCE800B3849E /* MathExpressions.h */,
 				F376994D1C1023C200F24A44 /* MathExpressions.c */,
 				F376997D1C105C7800F24A44 /* EqualityExpressions.h */,
@@ -885,6 +913,7 @@
 				F3E84D7F1B45A3980082E510 /* Input */,
 				F3E84D7E1B45A37E0082E510 /* Rendering */,
 				F39796DD1A5C7748007C3422 /* Component System */,
+				F3A3A7551C30146200EC1F18 /* GUI */,
 				F3BD17481C00845D00B3849E /* Scripting */,
 				F3F6C4A31A599A3C00B9D6BA /* Setup */,
 				F3C401D91A56E52800095ECD /* Supporting Files */,
@@ -1505,6 +1534,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */,
+				F3A3A75E1C303A0B00EC1F18 /* GUIContainer.c in Sources */,
 				F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */,
 				F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */,
 				F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */,
@@ -1559,8 +1589,11 @@
 				F3AE99711A73E2F000212838 /* Entity.c in Sources */,
 				F3A9D5A11C2045ED0042BD2A /* GFXShader.c in Sources */,
 				F3769A2C1C11F4B400F24A44 /* GLState.c in Sources */,
+				F32555441C35F59200B1623C /* MacroExpressions.c in Sources */,
+				F3A3A7291C2ED39100EC1F18 /* StateExpressions.c in Sources */,
 				F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */,
 				F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */,
+				F3A3A75B1C30152200EC1F18 /* GUIObject.c in Sources */,
 				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
 				F316198E1C1213A9008E09A1 /* PixelData.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,

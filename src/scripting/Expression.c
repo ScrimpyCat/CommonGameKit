@@ -534,7 +534,7 @@ CCExpression CCExpressionGetState(CCExpression Expression, const char *Name)
     
     CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
     
-    return State ? State->value : NULL;
+    return State ? CCExpressionEvaluate(State->value) : NULL;
 }
 
 CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value)
@@ -547,7 +547,7 @@ CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCE
         if (State->value) CCExpressionDestroy(State->value);
         State->value = CCExpressionCopy(Value);
         
-        return State->value;
+        return CCExpressionEvaluate(State->value);
     }
     
     return NULL;
@@ -576,5 +576,5 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
     
     Destination->state.remove = NULL;
     Destination->state.result = NULL;
-    Destination->state.super = NULL; //Source->state.super;
+    Destination->state.super = Source->state.super;
 }
