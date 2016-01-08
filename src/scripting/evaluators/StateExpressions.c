@@ -31,7 +31,7 @@ CCExpression CCStateExpressionCreateState(CCExpression Expression)
     if ((ArgCount == 1) || (ArgCount == 2))
     {
         CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
-        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL);
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL, TRUE);
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
     }
     
@@ -51,7 +51,7 @@ CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
         CCExpression Result = CCExpressionEvaluate(*Expr);
         if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
         {
-            CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Result), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index));
+            CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Result), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index), FALSE);
         }
         
         else if ((CCExpressionGetType(Result) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Result)) == 2))
@@ -61,7 +61,7 @@ CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
             if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(NewIndex) == CCExpressionValueTypeInteger))
             {
                 Index = CCExpressionGetInteger(NewIndex);
-                CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index));
+                CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index), FALSE);
             }
             
             else
@@ -79,4 +79,44 @@ CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
     }
     
     return NULL;
+}
+
+CCExpression CCStateExpressionSuper(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 1)
+    {
+        CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+        
+        CCExpression Super = Expression->state.super;
+        while ((Super) && (!Super->state.values)) Super = Super->state.super; //first state
+        for (Super = Super->state.super; (Super) && (!Super->state.values); Super = Super->state.super); //second state
+        
+        if (Super)
+        {
+            Expr->state.super = Super;
+            
+            return CCExpressionCopy(CCExpressionEvaluate(Expr));
+        }
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("super", "expression:expr");
+    
+    return Expression;
+}
+
+CCExpression CCStateExpressionStrictSuper(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 1)
+    {
+        CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+        Expr->state.super = Expression->state.super->state.super;
+        
+        return CCExpressionCopy(CCExpressionEvaluate(Expr));
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("strict-super", "expression:expr");
+    
+    return Expression;
 }

@@ -109,6 +109,32 @@ It uses a bracket (Scheme/Lisp) style syntax, where everything separated by a sp
 
 **print** Prints the expressions. e.g. `(print 1) ;CCIOExpressionPrint: 1`
 
+**super** Evaluates the expression in the former in-use state.
+
+    (begin
+        (state! "x" 10)
+        (begin
+            (state! "x" 20)
+            (begin
+                (super x) ;10
+                (super (super x)) ;x
+            )
+        )
+    )
+
+**strict-super** Evaluates the expression in next level up state.
+
+    (begin
+        (state! "x" 10)
+        (begin
+            (state! "x" 20)
+            (begin
+                (strict-super x) ;20
+                (strict-super (strict-super x)) ;10
+            )
+        )
+    )
+
 
 ###Engine Functions###
 

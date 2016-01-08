@@ -31,5 +31,7 @@
 
 CC_EXPRESSION_EVALUATOR(state!) CCExpression CCStateExpressionCreateState(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(enum!) CCExpression CCStateExpressionCreateEnum(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(super) CCExpression CCStateExpressionSuper(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(strict-super) CCExpression CCStateExpressionStrictSuper(CCExpression Expression);
 
 #endif
