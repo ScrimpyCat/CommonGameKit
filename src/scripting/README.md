@@ -32,7 +32,7 @@ It uses a bracket (Scheme/Lisp) style syntax, where everything separated by a sp
 
 **-** Subtracts all the inputs from the first input, same float/integer behaviour as additions. e.g. `(- 3 2 2) ;-1`, `(- 1 0.5) ;0.5`
 
-***** Multiplies all inputs together, same float/integer behaviour as additions. e.g.`(* 2 2 2) ;8`, `(* 2 0.5) ;1`
+__*__ Multiplies all inputs together, same float/integer behaviour as additions. e.g.`(* 2 2 2) ;8`, `(* 2 0.5) ;1`
 
 **/** Divides all inputs from the first input, same float/integer behaviour as additions. e.g. `(/ 2 2 2) ;0`, `(/ 2 2 2.0) ;0.5`
 
