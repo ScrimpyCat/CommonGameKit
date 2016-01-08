@@ -35,6 +35,7 @@ typedef enum {
     CCExpressionValueTypeString,
     CCExpressionValueTypeList,
     CCExpressionValueTypeExpression = CCExpressionValueTypeList,
+    CCExpressionValueTypeUnspecified,
     
     CCExpressionValueTypeReservedCount = 20,
 } CCExpressionValueType;
@@ -130,10 +131,11 @@ void CCExpressionPrint(CCExpression Expression);
  */
 CCExpression CCExpressionEvaluate(CCExpression Expression);
 
-void CCExpressionCreateState(CCExpression Expression, const char *Name, CCExpression Value);
+void CCExpressionCreateState(CCExpression Expression, const char *Name, CCExpression Value, _Bool Copy);
 CCExpression CCExpressionGetState(CCExpression Expression, const char *Name);
-CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value);
+CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value, _Bool Copy);
 void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
+void CCExpressionPrintState(CCExpression Expression);
 
 //Convenience getters and initializers for when introducing tagged types.
 CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, const char *Atom, size_t Length); //copies

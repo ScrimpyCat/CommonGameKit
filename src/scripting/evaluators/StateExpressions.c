@@ -90,13 +90,16 @@ CCExpression CCStateExpressionSuper(CCExpression Expression)
         
         CCExpression Super = Expression->state.super;
         while ((Super) && (!Super->state.values)) Super = Super->state.super; //first state
-        for (Super = Super->state.super; (Super) && (!Super->state.values); Super = Super->state.super); //second state
-        
         if (Super)
         {
-            Expr->state.super = Super;
+            for (Super = Super->state.super; (Super) && (!Super->state.values); Super = Super->state.super); //second state
             
-            return CCExpressionCopy(CCExpressionEvaluate(Expr));
+            if (Super)
+            {
+                Expr->state.super = Super;
+                
+                return CCExpressionCopy(CCExpressionEvaluate(Expr));
+            }
         }
     }
     

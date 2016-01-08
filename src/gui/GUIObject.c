@@ -55,7 +55,7 @@ void GUIObjectDestroy(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    Object->interface->destroy(Object);
+    Object->interface->destroy(Object->internal);
     CC_SAFE_Free(Object);
 }
 
@@ -77,14 +77,28 @@ CCRect GUIObjectGetRect(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    return Object->interface->getRect(Object);
+    return Object->interface->rect.get(Object);
 }
 
 void GUIObjectSetRect(GUIObject Object, CCRect Rect)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    Object->interface->setRect(Object, Rect);
+    Object->interface->rect.set(Object, Rect);
+}
+
+_Bool GUIObjectGetEnabled(GUIObject Object)
+{
+    CCAssertLog(Object, "GUI object must not be null");
+    
+    return Object->interface->enabled.get(Object);
+}
+
+void GUIObjectSetEnabled(GUIObject Object, _Bool Enabled)
+{
+    CCAssertLog(Object, "GUI object must not be null");
+    
+    Object->interface->enabled.set(Object, Enabled);
 }
 
 GUIObject GUIObjectGetParent(GUIObject Object)
@@ -99,8 +113,8 @@ void GUIObjectAddChild(GUIObject Object, GUIObject Child)
     CCAssertLog(Object, "GUI object must not be null");
     CCAssertLog(Child, "Child GUI object must not be null");
     
-    Object->interface->addChild(Object, Child);
     Child->parent = Object;
+    Object->interface->child.add(Object, Child);
 }
 
 void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
@@ -108,7 +122,7 @@ void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
     CCAssertLog(Object, "GUI object must not be null");
     CCAssertLog(Child, "Child GUI object must not be null");
     
-    Object->interface->removeChild(Object, Child);
+    Object->interface->child.remove(Object, Child);
     Child->parent = NULL;
 }
 
@@ -124,4 +138,11 @@ CCExpression GUIObjectEvaluateExpression(GUIObject Object, CCExpression Expressi
     CCAssertLog(Object, "GUI object must not be null");
     
     return Object->interface->evaluate(Object, Expression);
+}
+
+CCExpression GUIObjectGetExpressionState(GUIObject Object)
+{
+    CCAssertLog(Object, "GUI object must not be null");
+    
+    return Object->interface->state(Object);
 }

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GUIObject_h
-#define GUIObject_h
+#ifndef Blob_Game_GUIObject_h
+#define Blob_Game_GUIObject_h
 
 #include <CommonC/Common.h>
 #include "GFX.h"
@@ -61,18 +61,28 @@ typedef void (*GUIObjectAddChildCallback)(GUIObject Object, GUIObject Child);
 typedef void (*GUIObjectRemoveChildCallback)(GUIObject Object, GUIObject Child);
 typedef _Bool (*GUIObjectHasChangedCallback)(GUIObject Object); //clear on render
 typedef CCExpression (*GUIObjectEvaluatorCallback)(GUIObject Object, CCExpression Expression);
+typedef CCExpression (*GUIObjectGetExpressionStateCallback)(GUIObject Object);
 
 typedef struct {
     GUIObjectConstructorCallback create;
     GUIObjectDestructorCallback destroy;
     GUIObjectRenderCallback render;
     GUIObjectEventCallback event;
-    GUIObjectGetRectCallback getRect;
-    GUIObjectSetRectCallback setRect;
-    GUIObjectAddChildCallback addChild;
-    GUIObjectRemoveChildCallback removeChild;
+    struct {
+        GUIObjectGetRectCallback get;
+        GUIObjectSetRectCallback set;
+    } rect;
+    struct {
+        GUIObjectGetEnabledCallback get;
+        GUIObjectSetEnabledCallback set;
+    } enabled;
+    struct {
+        GUIObjectAddChildCallback add;
+        GUIObjectRemoveChildCallback remove;
+    } child;
     GUIObjectHasChangedCallback changed;
     GUIObjectEvaluatorCallback evaluate;
+    GUIObjectGetExpressionStateCallback state;
 } GUIObjectInterface;
 
 typedef struct GUIObjectInfo {
@@ -84,14 +94,18 @@ typedef struct GUIObjectInfo {
 
 
 GUIObject GUIObjectCreate(CCAllocatorType Allocator, const GUIObjectInterface *Interface);
+void GUIObjectDestroy(GUIObject Object);
 void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer);
 void GUIObjectEvent(GUIObject Object, GUIEvent Event);
 CCRect GUIObjectGetRect(GUIObject Object);
 void GUIObjectSetRect(GUIObject Object, CCRect Rect);
+_Bool GUIObjectGetEnabled(GUIObject Object);
+void GUIObjectSetEnabled(GUIObject Object, _Bool Enabled);
 GUIObject GUIObjectGetParent(GUIObject Object);
 void GUIObjectAddChild(GUIObject Object, GUIObject Child);
 void GUIObjectRemoveChild(GUIObject Object, GUIObject Child);
 _Bool GUIObjectHasChanged(GUIObject Object);
 CCExpression GUIObjectEvaluateExpression(GUIObject Object, CCExpression Expression);
+CCExpression GUIObjectGetExpressionState(GUIObject Object);
 
 #endif

@@ -2,9 +2,11 @@
 #include "ExpressionSetup.h"
 #include "ExpressionEvaluator.h"
 
+#include "GUIExpression.h"
 #include "ControlFlowExpressions.h"
 #include "EqualityExpressions.h"
 #include "IOExpressions.h"
+#include "ListExpressions.h"
 #include "MacroExpressions.h"
 #include "MathExpressions.h"
 #include "ProjectExpressions.h"
@@ -13,6 +15,7 @@
 
 void CCExpressionSetup(void)
 {
+    CCExpressionEvaluatorRegister("gui", GUIExpressionRegisterObject);
     CCExpressionEvaluatorRegister("begin", CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister("if", CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister("=", CCEqualityExpressionEqual);
@@ -22,6 +25,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("<", CCEqualityExpressionLessThan);
     CCExpressionEvaluatorRegister(">", CCEqualityExpressionGreaterThan);
     CCExpressionEvaluatorRegister("print", CCIOExpressionPrint);
+    CCExpressionEvaluatorRegister("get", CCListExpressionGetter);
     CCExpressionEvaluatorRegister("quote", CCMacroExpressionQuote);
     CCExpressionEvaluatorRegister("unquote", CCMacroExpressionUnquote);
     CCExpressionEvaluatorRegister("+", CCMathExpressionAddition);
@@ -34,7 +38,8 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister("game", CCProjectExpressionGame);
     CCExpressionEvaluatorRegister("state!", CCStateExpressionCreateState);
     CCExpressionEvaluatorRegister("enum!", CCStateExpressionCreateEnum);
-    CCExpressionEvaluatorRegister("fun!", CCStateExpressionCreateFunction);
+    CCExpressionEvaluatorRegister("super", CCStateExpressionSuper);
+    CCExpressionEvaluatorRegister("strict-super", CCStateExpressionStrictSuper);
     CCExpressionEvaluatorRegister("window-percent-width", CCWindowExpressionPercentageWidth);
     CCExpressionEvaluatorRegister("window-percent-height", CCWindowExpressionPercentageHeight);
     CCExpressionEvaluatorRegister("window-width", CCWindowExpressionWidth);
