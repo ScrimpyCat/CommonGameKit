@@ -54,6 +54,8 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 
 **random** Returns a random value, either a random integer, a random value up to max, or a random value between min and max. e.g. `(random) ;609783379`, `(random 3) ;2`, `(random 2 4) ;4`, `(random 1.0) ;0.483411`
 
+**get** Get an element from a list. e.g. `(get 0 (1 2 3)) ;1`, `(get 2 (1 2 3)) ;3`
+
 **quote** Causes an expression not to be evaluated. e.g. `(quote (+ 2 2)) ;(+ 2 2)`
 
 **unquote** Evaluates an expression. e.g. `(unquote 14) ;14`, `(unquote (quote (+ 2 2))) ;4`

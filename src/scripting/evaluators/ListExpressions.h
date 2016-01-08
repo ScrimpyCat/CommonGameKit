@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,13 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_MacroExpressions_h
-#define Blob_Game_MacroExpressions_h
+#ifndef Blob_Game_ListExpressions_h
+#define Blob_Game_ListExpressions_h
 
 #include "ExpressionEvaluator.h"
 
 
-CC_EXPRESSION_EVALUATOR(quote) CCExpression CCMacroExpressionQuote(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(unquote) CCExpression CCMacroExpressionUnquote(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(get) CCExpression CCListExpressionGetter(CCExpression Expression);
 
 #endif

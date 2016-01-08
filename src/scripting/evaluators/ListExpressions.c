@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,13 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_MacroExpressions_h
-#define Blob_Game_MacroExpressions_h
+#include "ListExpressions.h"
 
-#include "ExpressionEvaluator.h"
-
-
-CC_EXPRESSION_EVALUATOR(quote) CCExpression CCMacroExpressionQuote(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(unquote) CCExpression CCMacroExpressionUnquote(CCExpression Expression);
-
-#endif
+CCExpression CCListExpressionGetter(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 2)
+    {
+        //TODO: Index could be a list of indices, which would return a new list
+        CCExpression Index = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(Index) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+        {
+            size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
+            if (CCExpressionGetInteger(Index) < Count)
+            {
+                return CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), CCExpressionGetInteger(Index))));
+            }
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("get", "index:integer list:list");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("get", "index:integer list:list");
+    
+    return Expression;
+}
