@@ -55,8 +55,17 @@ void GUIObjectDestroy(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    Object->interface->destroy(Object->internal);
-    CC_SAFE_Free(Object);
+    GUIObject Parent = GUIObjectGetParent(Object);
+    if (Parent)
+    {
+        GUIObjectRemoveChild(Parent, Object);
+    }
+    
+    else
+    {
+        Object->interface->destroy(Object->internal);
+        CC_SAFE_Free(Object);
+    }
 }
 
 void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer)
@@ -122,8 +131,8 @@ void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
     CCAssertLog(Object, "GUI object must not be null");
     CCAssertLog(Child, "Child GUI object must not be null");
     
-    Object->interface->child.remove(Object, Child);
     Child->parent = NULL;
+    Object->interface->child.remove(Object, Child);
 }
 
 _Bool GUIObjectHasChanged(GUIObject Object)
