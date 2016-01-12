@@ -41,5 +41,7 @@ extern const GUIObjectInterface * const GUIExpression;
 GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression);
 
 CC_EXPRESSION_EVALUATOR(gui) CCExpression GUIExpressionRegisterObject(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(percent-width) CCExpression GUIExpressionPercentWidth(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(percent-height) CCExpression GUIExpressionPercentHeight(CCExpression Expression);
 
 #endif

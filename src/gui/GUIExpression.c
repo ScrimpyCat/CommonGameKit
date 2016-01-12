@@ -331,3 +331,48 @@ CCExpression GUIExpressionRegisterObject(CCExpression Expression)
     
     return Expression;
 }
+
+static CCExpression GUIExpressionPercentage(CCExpression Expression, const char *Name, _Bool UseHeight)
+{
+    CCExpression Expr = Expression;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if (ArgCount == 1)
+    {
+        CCExpression Constraint = CCExpressionGetState(Expression, UseHeight ? "height" : "width");
+        
+        int32_t Size = 0;
+        if (Constraint)
+        {
+            if (CCExpressionGetType(Constraint) == CCExpressionValueTypeInteger) Size = CCExpressionGetInteger(Constraint);
+            else if (CCExpressionGetType(Constraint) == CCExpressionValueTypeFloat) Size = (int32_t)CCExpressionGetFloat(Constraint);
+        }
+        
+        CCExpression Percent = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Percent) == CCExpressionValueTypeInteger)
+        {
+            Expr = CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)((float)Size * ((float)CCExpressionGetInteger(Percent) / 100)));
+        }
+        
+        else if (CCExpressionGetType(Percent) == CCExpressionValueTypeFloat)
+        {
+            Expr = CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)Size * CCExpressionGetFloat(Percent));
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Name, "percent:number");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Name, "percent:number");
+    
+    return Expr;
+}
+
+CCExpression GUIExpressionPercentWidth(CCExpression Expression)
+{
+    return GUIExpressionPercentage(Expression, "percent-width", FALSE);
+}
+
+CCExpression GUIExpressionPercentHeight(CCExpression Expression)
+{
+    return GUIExpressionPercentage(Expression, "percent-height", TRUE);
+}
