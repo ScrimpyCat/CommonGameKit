@@ -151,7 +151,13 @@ static CCRect GUIExpressionGetRect(GUIObject Object)
 
 static void GUIExpressionSetRect(GUIObject Object, CCRect Rect)
 {
+    CCExpression Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.position.x) });
+    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.position.y) });
+    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.size.x) });
+    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.size.y) });
     
+    CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, "rect", Expr, FALSE);
 }
 
 static _Bool GUIExpressionGetEnabled(GUIObject Object)
