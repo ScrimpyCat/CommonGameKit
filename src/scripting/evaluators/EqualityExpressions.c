@@ -27,6 +27,14 @@
 
 CCExpression CCEqualityExpressionEqual(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0;
     float FirstF = 0.0f;
     
@@ -50,8 +58,12 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
+            Equal = FALSE;
+            
             Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
@@ -74,6 +86,14 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
 
 CCExpression CCEqualityExpressionNotEqual(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0;
     float FirstF = 0.0f;
     
@@ -97,8 +117,12 @@ CCExpression CCEqualityExpressionNotEqual(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
+            Equal = FALSE;
+            
             Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
@@ -121,6 +145,14 @@ CCExpression CCEqualityExpressionNotEqual(CCExpression Expression)
 
 CCExpression CCEqualityExpressionLessThanEqual(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0;
     float FirstF = 0.0f;
     
@@ -144,8 +176,12 @@ CCExpression CCEqualityExpressionLessThanEqual(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
+            Equal = FALSE;
+            
             Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
@@ -174,6 +210,14 @@ CCExpression CCEqualityExpressionLessThanEqual(CCExpression Expression)
 
 CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0;
     float FirstF = 0.0f;
     
@@ -197,8 +241,12 @@ CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
+            Equal = FALSE;
+            
             Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
@@ -227,6 +275,14 @@ CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression)
 
 CCExpression CCEqualityExpressionLessThan(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0;
     float FirstF = 0.0f;
     
@@ -250,8 +306,12 @@ CCExpression CCEqualityExpressionLessThan(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
+            Equal = FALSE;
+            
             Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
@@ -280,6 +340,14 @@ CCExpression CCEqualityExpressionLessThan(CCExpression Expression)
 
 CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0;
     float FirstF = 0.0f;
     
@@ -303,8 +371,12 @@ CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
+            Equal = FALSE;
+            
             Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {

@@ -38,7 +38,7 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 
 **=** Equality operator, tests if all the inputs are equal to each other. e.g. `(= 1 2 3) ;0`, `(= 1 1 1) ;1`
 
-**!=** In-equality operator, tests if all the inputs are not equal to each other. e.g. `(!= 1 2 3) ;1`, `(!= 1 1 1) ;0`
+**!=** In-equality operator, tests if all the inputs are not equal to the first. e.g. `(!= 1 2 3) ;1`, `(!= 1 1 1) ;0`
 
 **<=** Less than or equal operator, tests if all the inputs are equal or larger than the one before it (ascending or equal order). e.g. `(<= 1 2 3) ;1`, `(<= 1 1 1) ;1`
 

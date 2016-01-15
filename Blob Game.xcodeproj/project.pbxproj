@@ -11,6 +11,10 @@
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
 		F313F9AF1B80E24B006F5CF5 /* AnimationInterpolateComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */; };
+		F3150ED81C47C2A500E1FC82 /* ExpressionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3150ED71C47C2A500E1FC82 /* ExpressionTests.m */; };
+		F3150F231C48E43E00E1FC82 /* ExpressionMathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3150F221C48E43E00E1FC82 /* ExpressionMathTests.m */; };
+		F3150F251C48FECB00E1FC82 /* ExpressionEqualityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3150F241C48FECB00E1FC82 /* ExpressionEqualityTests.m */; };
+		F3150F271C48FF0500E1FC82 /* ExpressionEvaluatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3150F261C48FF0500E1FC82 /* ExpressionEvaluatorTests.m */; };
 		F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = F31619591C120F0C008E09A1 /* GLDebug.c */; };
 		F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F316195B1C12114B008E09A1 /* GLDebugTests.m */; };
 		F316198E1C1213A9008E09A1 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F316198C1C1213A9008E09A1 /* PixelData.c */; };
@@ -48,6 +52,7 @@
 		F3769A311C11F98200F24A44 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */; };
 		F3769A321C11F98700F24A44 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
 		F3769A331C11F99700F24A44 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F41A570099006D7F16 /* OpenGL.framework */; };
+		F389DC201C3A0797009480B8 /* GUIExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F389DC1E1C3A0797009480B8 /* GUIExpression.c */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -68,6 +73,7 @@
 		F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99421A725AC500212838 /* ComponentSystemTests.m */; };
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
+		F3B147D01C3FFED300ADC294 /* ListExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3B147CE1C3FFED300ADC294 /* ListExpressions.c */; };
 		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; };
 		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; };
 		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; };
@@ -384,6 +390,11 @@
 		F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationComponent.c; sourceTree = "<group>"; };
 		F313F9AD1B80E24B006F5CF5 /* AnimationInterpolateComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationInterpolateComponent.c; sourceTree = "<group>"; };
 		F313F9AE1B80E24B006F5CF5 /* AnimationInterpolateComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationInterpolateComponent.h; sourceTree = "<group>"; };
+		F3150ED71C47C2A500E1FC82 /* ExpressionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionTests.m; sourceTree = "<group>"; };
+		F3150F221C48E43E00E1FC82 /* ExpressionMathTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionMathTests.m; sourceTree = "<group>"; };
+		F3150F241C48FECB00E1FC82 /* ExpressionEqualityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionEqualityTests.m; sourceTree = "<group>"; };
+		F3150F261C48FF0500E1FC82 /* ExpressionEvaluatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionEvaluatorTests.m; sourceTree = "<group>"; };
+		F3150F281C48FF1600E1FC82 /* ExpressionEvaluatorTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionEvaluatorTests.h; sourceTree = "<group>"; };
 		F316192F1C120EA5008E09A1 /* GLExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLExtensions.h; sourceTree = "<group>"; };
 		F31619581C120F00008E09A1 /* GLDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLDebug.h; sourceTree = "<group>"; };
 		F31619591C120F0C008E09A1 /* GLDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLDebug.c; sourceTree = "<group>"; };
@@ -450,6 +461,8 @@
 		F3769A2A1C11F30500F24A44 /* GLPortability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLPortability.h; sourceTree = "<group>"; };
 		F3769A2B1C11F4B400F24A44 /* GLState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLState.c; sourceTree = "<group>"; };
 		F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLStateModernTests.m; sourceTree = "<group>"; };
+		F389DC1E1C3A0797009480B8 /* GUIExpression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIExpression.c; sourceTree = "<group>"; };
+		F389DC1F1C3A0797009480B8 /* GUIExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIExpression.h; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -490,6 +503,8 @@
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		F3AE99721A7402BB00212838 /* ComponentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentBase.h; sourceTree = "<group>"; };
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
+		F3B147CE1C3FFED300ADC294 /* ListExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ListExpressions.c; sourceTree = "<group>"; };
+		F3B147CF1C3FFED300ADC294 /* ListExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListExpressions.h; sourceTree = "<group>"; };
 		F3BD17721C00857800B3849E /* Expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Expression.c; sourceTree = "<group>"; };
 		F3BD17731C00857800B3849E /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
 		F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionEvaluator.c; sourceTree = "<group>"; };
@@ -585,6 +600,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F3150ED61C47C28400E1FC82 /* Scripting */ = {
+			isa = PBXGroup;
+			children = (
+				F3150ED71C47C2A500E1FC82 /* ExpressionTests.m */,
+				F3150F281C48FF1600E1FC82 /* ExpressionEvaluatorTests.h */,
+				F3150F261C48FF0500E1FC82 /* ExpressionEvaluatorTests.m */,
+				F3150F221C48E43E00E1FC82 /* ExpressionMathTests.m */,
+				F3150F241C48FECB00E1FC82 /* ExpressionEqualityTests.m */,
+			);
+			name = Scripting;
+			sourceTree = "<group>";
+		};
 		F31619631C12130A008E09A1 /* Pixel Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -792,6 +819,8 @@
 				F3A3A7591C30152200EC1F18 /* GUIObject.c */,
 				F3A3A75D1C303A0B00EC1F18 /* GUIContainer.h */,
 				F3A3A75C1C303A0B00EC1F18 /* GUIContainer.c */,
+				F389DC1F1C3A0797009480B8 /* GUIExpression.h */,
+				F389DC1E1C3A0797009480B8 /* GUIExpression.c */,
 			);
 			name = GUI;
 			path = gui;
@@ -813,6 +842,8 @@
 		F3BD17751C00B33800B3849E /* Evaluators */ = {
 			isa = PBXGroup;
 			children = (
+				F3B147CF1C3FFED300ADC294 /* ListExpressions.h */,
+				F3B147CE1C3FFED300ADC294 /* ListExpressions.c */,
 				F32555431C35F59200B1623C /* MacroExpressions.h */,
 				F32555421C35F59200B1623C /* MacroExpressions.c */,
 				F3A3A7281C2ED39100EC1F18 /* StateExpressions.h */,
@@ -934,6 +965,7 @@
 		F3C401EC1A56E52800095ECD /* Blob GameTests */ = {
 			isa = PBXGroup;
 			children = (
+				F3150ED61C47C28400E1FC82 /* Scripting */,
 				F3769A2F1C11F8E500F24A44 /* GL */,
 				F37699EF1C11DE2800F24A44 /* Colour */,
 				F3F696D31A5D041E00E486B5 /* Component System */,
@@ -1544,6 +1576,7 @@
 				F3769A261C11E29300F24A44 /* Colour.c in Sources */,
 				F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */,
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
+				F389DC201C3A0797009480B8 /* GUIExpression.c in Sources */,
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
@@ -1571,6 +1604,7 @@
 				F376997B1C1053C400F24A44 /* IOExpressions.c in Sources */,
 				F3A9D5921C1F70E30042BD2A /* GFXShaderLibrary.c in Sources */,
 				F3769A231C11E1DD00F24A44 /* ColourComponent.c in Sources */,
+				F3B147D01C3FFED300ADC294 /* ListExpressions.c in Sources */,
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
 				F36531281C16213300A3B009 /* GLGFX.c in Sources */,
@@ -1609,9 +1643,13 @@
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
 				F37699F11C11DE3300F24A44 /* ColourFormatTests.m in Sources */,
 				F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */,
+				F3150F231C48E43E00E1FC82 /* ExpressionMathTests.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
+				F3150ED81C47C2A500E1FC82 /* ExpressionTests.m in Sources */,
+				F3150F251C48FECB00E1FC82 /* ExpressionEqualityTests.m in Sources */,
 				F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */,
+				F3150F271C48FF0500E1FC82 /* ExpressionEvaluatorTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1723,6 +1761,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/chibi-scheme/build/include";
+				WARNING_CFLAGS = "-Wno-ambiguous-macro";
 			};
 			name = Debug;
 		};
@@ -1745,6 +1784,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/chibi-scheme/build/include";
+				WARNING_CFLAGS = "-Wno-ambiguous-macro";
 			};
 			name = Release;
 		};
@@ -1759,16 +1799,14 @@
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = "Blob GameTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blob Game.app/Contents/MacOS/Blob Game";
 				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/glfw/include;
+				WARNING_CFLAGS = "-Wno-ambiguous-macro";
 			};
 			name = Debug;
 		};
@@ -1783,12 +1821,14 @@
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = "Blob GameTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blob Game.app/Contents/MacOS/Blob Game";
 				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/glfw/include;
+				WARNING_CFLAGS = "-Wno-ambiguous-macro";
 			};
 			name = Release;
 		};

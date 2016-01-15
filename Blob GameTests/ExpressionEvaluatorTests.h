@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,43 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_ExpressionEvaluator_h
-#define Blob_Game_ExpressionEvaluator_h
+#import <XCTest/XCTest.h>
+#import "Expression.h"
 
-#include "Expression.h"
+typedef struct {
+    const char *source;
+    CCExpressionValueType type;
+    union {
+        int32_t integer;
+        float real;
+    };
+} ExpressionResult;
 
-/*!
- * @define CC_EXPRESSION_EVALUATOR
- * @abstract Marks a function as an expression evaluator.
- * @param va_arg The name of the evaluator.
- */
-#define CC_EXPRESSION_EVALUATOR(...)
+extern const int32_t i;
+extern const float f;
 
-#define CC_EXPRESSION_EVALUATOR_LOG(...) CC_LOG_CUSTOM("SCRIPT", __VA_ARGS__)
+@interface ExpressionEvaluatorTests : XCTestCase
 
-#define CC_EXPRESSION_EVALUATOR_LOG_ERROR(...) CC_LOG_CUSTOM("SCRIPT_ERROR", __VA_ARGS__)
+-(void) assert: (ExpressionResult*)test count: (size_t)count;
 
-#define CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(function, args) CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %s: (%s %s)", function, function, args)
-
-/*!
- * @brief An evaluator for an expression.
- * @param Expression The expression to be evaluated.
- * @return The resulting expression.
- */
-typedef CCExpression (*CCExpressionEvaluator)(CCExpression Expression);
-
-/*!
- * @brief Register an expression evaluator.
- * @param Name The atom name of the expression function.
- * @param Evaluator The evaluator function.
- */
-void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluator);
-
-/*!
- * @brief Get the expression evaluator for an atom.
- * @param Name The atom name of the expression function.
- * @return The evaluator function.
- */
-CCExpressionEvaluator CCExpressionEvaluatorForName(CCString Name);
-
-#endif
+@end

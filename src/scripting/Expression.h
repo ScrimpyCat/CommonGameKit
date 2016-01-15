@@ -74,10 +74,10 @@ typedef struct CCExpressionValue {
      */
     CCExpressionValueType type;
     union {
-        char *atom;
+        CCString atom;
         int32_t integer;
         float real;
-        char *string;
+        CCString string;
         CCOrderedCollection list;
         void *data;
     };
@@ -131,17 +131,17 @@ void CCExpressionPrint(CCExpression Expression);
  */
 CCExpression CCExpressionEvaluate(CCExpression Expression);
 
-void CCExpressionCreateState(CCExpression Expression, const char *Name, CCExpression Value, _Bool Copy);
-CCExpression CCExpressionGetState(CCExpression Expression, const char *Name);
-CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value, _Bool Copy);
+void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy);
+CCExpression CCExpressionGetState(CCExpression Expression, CCString Name);
+CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy);
 void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
 void CCExpressionPrintState(CCExpression Expression);
 
 //Convenience getters and initializers for when introducing tagged types.
-CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, const char *Atom, size_t Length); //copies
+CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom); //copies
 CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value);
 CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value);
-CCExpression CCExpressionCreateString(CCAllocatorType Allocator, const char *String, size_t Length); //copies
+CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString String); //copies
 CCExpression CCExpressionCreateList(CCAllocatorType Allocator);
 CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
@@ -149,10 +149,10 @@ void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy 
 static inline _Bool CCExpressionIsTagged(CCExpression Expression);
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression);
 static inline CCExpression CCExpressionGetResult(CCExpression Expression);
-static inline const char *CCExpressionGetAtom(CCExpression Expression);
+static inline CCString CCExpressionGetAtom(CCExpression Expression);
 static inline int32_t CCExpressionGetInteger(CCExpression Expression);
 static inline float CCExpressionGetFloat(CCExpression Expression);
-static inline const char *CCExpressionGetString(CCExpression Expression);
+static inline CCString CCExpressionGetString(CCExpression Expression);
 static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression);
 static inline void *CCExpressionGetData(CCExpression Expression);
 
@@ -172,7 +172,7 @@ static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
     return Expression->type;
 }
 
-static inline const char *CCExpressionGetAtom(CCExpression Expression)
+static inline CCString CCExpressionGetAtom(CCExpression Expression)
 {
     return Expression->atom;
 }
@@ -187,7 +187,7 @@ static inline float CCExpressionGetFloat(CCExpression Expression)
     return Expression->real;
 }
 
-static inline const char *CCExpressionGetString(CCExpression Expression)
+static inline CCString CCExpressionGetString(CCExpression Expression)
 {
     return Expression->string;
 }

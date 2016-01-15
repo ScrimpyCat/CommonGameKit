@@ -39,7 +39,7 @@ static void CCExpressionElementDestructor(CCCollection Collection, CCExpression 
 
 static CCExpression CCExpressionValueAtomOrStringCopy(CCExpression Value)
 {
-    return (CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionCreateAtom : CCExpressionCreateString)(Value->allocator, CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value), strlen(CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value)));
+    return (CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionCreateAtom : CCExpressionCreateString)(Value->allocator, CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value));
 }
 
 static CCExpression CCExpressionValueListCopy(CCExpression Value)
@@ -68,7 +68,7 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
     {
         case CCExpressionValueTypeAtom:
         case CCExpressionValueTypeString:
-            Expression->destructor = CCFree;
+            Expression->destructor = (CCExpressionValueDestructor)CCStringDestroy;
             Expression->copy = CCExpressionValueAtomOrStringCopy;
             break;
             
@@ -90,19 +90,10 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
     return Expression;
 }
 
-CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, const char *Atom, size_t Length)
+CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom)
 {
-    char *String;
-    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
-                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
-                   return NULL;
-                   );
-    
-    strncpy(String, Atom, Length);
-    String[Length] = 0;
-    
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeAtom);
-    Expression->atom = String;
+    Expression->atom = CCStringCopy(Atom);
     
     return Expression;
 }
@@ -123,19 +114,10 @@ CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
     return Expression;
 }
 
-CCExpression CCExpressionCreateString(CCAllocatorType Allocator, const char *Input, size_t Length)
+CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString Input)
 {
-    char *String;
-    CC_SAFE_Malloc(String, sizeof(char) * (Length + 1),
-                   CC_LOG_ERROR("Failed to create expression due to failure allocating string. Allocation size: %zu", sizeof(char) * (Length + 1));
-                   return NULL;
-                   );
-    
-    strncpy(String, Input, Length);
-    String[Length] = 0;
-    
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeString);
-    Expression->string = String;
+    Expression->string = CCStringCopy(Input);
     
     return Expression;
 }
@@ -219,7 +201,13 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     switch (Type)
     {
         case CCExpressionValueTypeAtom:
-            return CCExpressionCreateAtom(Allocator, Input, Length);
+        {
+            CCString String = CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length);
+            CCExpression Atom = CCExpressionCreateAtom(Allocator, String);
+            CCStringDestroy(String);
+            
+            return Atom;
+        }
             
         case CCExpressionValueTypeInteger:
             return CCExpressionCreateInteger(Allocator, (int32_t)strtol(Input, NULL, 10));
@@ -228,7 +216,13 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
             return CCExpressionCreateFloat(Allocator, (float)strtod(Input, NULL));
             
         case CCExpressionValueTypeString:
-            return CCExpressionCreateString(Allocator, Input, Length);
+        {
+            CCString String = CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length);
+            CCExpression Str = CCExpressionCreateString(Allocator, String);
+            CCStringDestroy(String);
+            
+            return Str;
+        }
             
         default:
             break;
@@ -336,8 +330,10 @@ static void CCExpressionPrintStatement(CCExpression Expression)
     switch (CCExpressionGetType(Expression))
     {
         case CCExpressionValueTypeAtom:
-            printf("%s", CCExpressionGetAtom(Expression));
+        {
+            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetAtom(Expression)) printf("%s", Buffer);
             break;
+        }
             
         case CCExpressionValueTypeInteger:
             printf("%" PRId32, CCExpressionGetInteger(Expression));
@@ -348,8 +344,10 @@ static void CCExpressionPrintStatement(CCExpression Expression)
             break;
             
         case CCExpressionValueTypeString:
-            printf("\"%s\"", CCExpressionGetString(Expression));
+        {
+            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetAtom(Expression)) printf("\"%s\"", Buffer);
             break;
+        }
             
         case CCExpressionValueTypeList:
         {
@@ -380,7 +378,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
     
     Expression->state.result = Expression;
-    if (CCExpressionGetType(Expression) == CCExpressionValueTypeExpression)
+    if ((CCExpressionGetType(Expression) == CCExpressionValueTypeExpression) && (CCCollectionGetCount(CCExpressionGetList(Expression))))
     {
         _Bool IsList = TRUE;
         CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
@@ -476,21 +474,21 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
 }
 
 typedef struct {
-    char *name;
+    CCString name;
     CCExpression value;
 } CCExpressionStateValue;
 
 static CCComparisonResult CCExpressionStateValueElementFind(const CCExpressionStateValue *left, const CCExpressionStateValue *right)
 {
-    return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression, const char *Name)
+static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression, CCString Name)
 {
     if (!Expression) return NULL;
     
     CCExpressionStateValue *Value = NULL;
-    if (Expression->state.values) Value = CCCollectionGetElement(Expression->state.values, CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = (char*)Name }, (CCComparator)CCExpressionStateValueElementFind));
+    if (Expression->state.values) Value = CCCollectionGetElement(Expression->state.values, CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind));
     
     if (Value)
     {
@@ -503,37 +501,29 @@ static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression
 
 static void CCExpressionStateValueElementDestructor(CCCollection Collection, CCExpressionStateValue *Element)
 {
-    CC_SAFE_Free(Element->name);
+    CCStringDestroy(Element->name);
     if (Element->value) CCExpressionDestroy(Element->value);
 }
 
-void CCExpressionCreateState(CCExpression Expression, const char *Name, CCExpression Value, _Bool Copy)
+void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy)
 {
-    if ((Expression->state.values) && (CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = (char*)Name }, (CCComparator)CCExpressionStateValueElementFind)))
+    if ((Expression->state.values) && (CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind)))
     {
-        CC_LOG_ERROR("Creating duplicate state (%s)", Name);
+        CC_LOG_ERROR_CUSTOM("Creating duplicate state (%S)", Name);
     }
     
     else
     {
         if (!Expression->state.values) Expression->state.values = CCCollectionCreate(Expression->allocator, CCCollectionHintHeavyFinding, sizeof(CCExpressionStateValue), (CCCollectionElementDestructor)CCExpressionStateValueElementDestructor);
         
-        char *ValueName;
-        CC_SAFE_Malloc(ValueName, sizeof(char) * (strlen(Name) + 1),
-                       CC_LOG_ERROR("Failed to add expression state (%s) due to allocation space for name failing. Allocation size: %zu", Name, sizeof(char) * (strlen(Name) + 1));
-                       return;
-                       );
-        
-        strcpy(ValueName, Name);
-        
         CCCollectionInsertElement(Expression->state.values, &(CCExpressionStateValue){
-            .name = ValueName,
+            .name = CCStringCopy(Name),
             .value = Copy ? (Value ? CCExpressionCopy(Value) : NULL) : Value
         });
     }
 }
 
-CCExpression CCExpressionGetState(CCExpression Expression, const char *Name)
+CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
@@ -542,7 +532,7 @@ CCExpression CCExpressionGetState(CCExpression Expression, const char *Name)
     return State ? CCExpressionEvaluate(State->value) : NULL;
 }
 
-CCExpression CCExpressionSetState(CCExpression Expression, const char *Name, CCExpression Value, _Bool Copy)
+CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
@@ -601,7 +591,8 @@ void CCExpressionPrintState(CCExpression Expression)
         printf("state:\n{\n");
         CC_COLLECTION_FOREACH(CCExpressionStateValue, State, Expression->state.values)
         {
-            printf("\t%s:%p: ", State.name, State.value);
+            CC_STRING_TEMP_BUFFER(Buffer, State.name) printf("\t%s:%p: ", Buffer, State.value);
+            
             if (State.value) CCExpressionPrint(State.value);
             else printf("\n");
         }

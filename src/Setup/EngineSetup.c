@@ -59,6 +59,11 @@ void CCEnginePreSetup(void)
     Path[sizeof(__FILE__) - sizeof("setup/EngineSetup.c")] = 0;
     CCFileFilterInputAddPath(Path);
     CCLogAddFilter(CCLogFilterInput, CCFileFilterInput);
+    CCLogAddFilter(CCLogFilterSpecifier, CCBinaryFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCArrayFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCDeletionFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCStringFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCCharFormatSpecifier);
     
     CCExpressionSetup();
 }

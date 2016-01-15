@@ -37,7 +37,7 @@ CCExpression CCIOExpressionPrint(CCExpression Expression)
         switch (CCExpressionGetType(Arg))
         {
             case CCExpressionValueTypeAtom:
-                CC_EXPRESSION_EVALUATOR_LOG("%s", CCExpressionGetAtom(Arg));
+                CC_EXPRESSION_EVALUATOR_LOG("%S", CCExpressionGetAtom(Arg));
                 break;
                 
             case CCExpressionValueTypeInteger:
@@ -49,7 +49,7 @@ CCExpression CCIOExpressionPrint(CCExpression Expression)
                 break;
                 
             case CCExpressionValueTypeString:
-                CC_EXPRESSION_EVALUATOR_LOG("\"%s\"", CCExpressionGetString(Arg));
+                CC_EXPRESSION_EVALUATOR_LOG("\"%S\"", CCExpressionGetString(Arg));
                 break;
                 
             case CCExpressionValueTypeList:

@@ -22,7 +22,7 @@ Dir["src/**/*.h"].each { |file|
         end
 
         atoms.each { |atom|
-            registers << "CCExpressionEvaluatorRegister(\"#{atom}\", #{func});"
+            registers << "CCExpressionEvaluatorRegister(CC_STRING(\"#{atom}\"), #{func});"
         }
     }
 

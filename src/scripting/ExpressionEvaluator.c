@@ -28,44 +28,32 @@
 
 
 typedef struct {
-    char *name; //TODO: Could be put into its own hashmap
+    CCString name; //TODO: Could be put into its own hashmap
     CCExpressionEvaluator evaluator;
 } CCExpressionEvaluatorInfo;
 
 static void CCExpressionEvaluatorListElementDestructor(CCCollection Collection, CCExpressionEvaluatorInfo *Element)
 {
-    CC_SAFE_Free(Element->name);
+    CCStringDestroy(Element->name);
 }
 
 static CCCollection EvaluatorList = NULL;
-void CCExpressionEvaluatorRegister(const char *Name, CCExpressionEvaluator Evaluator)
+void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluator)
 {
     if (!EvaluatorList) EvaluatorList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCExpressionEvaluatorInfo), (CCCollectionElementDestructor)CCExpressionEvaluatorListElementDestructor);
     
-    char *ComponentName = NULL;
-    if (Name)
-    {
-        CC_SAFE_Malloc(ComponentName, sizeof(char) * (strlen(Name) + 1),
-                       CC_LOG_ERROR("Failed to add new evaluator (%s) due to allocation space for name failing. Allocation size: %zu", Name, sizeof(char) * (strlen(Name) + 1));
-                       return;
-                       );
-        
-        strcpy(ComponentName, Name);
-    }
-    
-    
     CCCollectionInsertElement(EvaluatorList, &(CCExpressionEvaluatorInfo){
-        .name = ComponentName,
+        .name = CCStringCopy(Name),
         .evaluator = Evaluator
     });
 }
 
-static CCComparisonResult CCExpressionEvaluatorNameComparator(const CCExpressionEvaluatorInfo *Component, const char **Name)
+static CCComparisonResult CCExpressionEvaluatorNameComparator(const CCExpressionEvaluatorInfo *Component, CCString *Name)
 {
-    return (Component->name) && (!strcmp(*Name, Component->name)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return (Component->name) && (CCStringEqual(Component->name, *Name)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-CCExpressionEvaluator CCExpressionEvaluatorForName(const char *Name)
+CCExpressionEvaluator CCExpressionEvaluatorForName(CCString Name)
 {
     if (EvaluatorList)
     {

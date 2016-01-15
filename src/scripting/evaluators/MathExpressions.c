@@ -28,6 +28,14 @@
 
 CCExpression CCMathExpressionAddition(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t SumI = 0;
     float SumF = 0.0f;
     
@@ -52,7 +60,9 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            
             return Expression;
         }
     }
@@ -62,6 +72,14 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
 
 CCExpression CCMathExpressionSubtract(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0, SumI = 0;
     float FirstF = 0.0f, SumF = 0.0f;
     
@@ -87,7 +105,9 @@ CCExpression CCMathExpressionSubtract(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            
             return Expression;
         }
         
@@ -107,7 +127,9 @@ CCExpression CCMathExpressionSubtract(CCExpression Expression)
             
             else
             {
-                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+                CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+                
                 return Expression;
             }
         }
@@ -118,6 +140,14 @@ CCExpression CCMathExpressionSubtract(CCExpression Expression)
 
 CCExpression CCMathExpressionMultiply(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t MulI = 1;
     float MulF = 1.0f;
     
@@ -142,7 +172,9 @@ CCExpression CCMathExpressionMultiply(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            
             return Expression;
         }
     }
@@ -152,6 +184,14 @@ CCExpression CCMathExpressionMultiply(CCExpression Expression)
 
 CCExpression CCMathExpressionDivide(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t FirstI = 0, MulI = 1;
     float FirstF = 0.0f, MulF = 1.0f;
     
@@ -177,7 +217,9 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            
             return Expression;
         }
         
@@ -197,7 +239,9 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
             
             else
             {
-                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+                CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+                
                 return Expression;
             }
         }
@@ -208,6 +252,14 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
 
 CCExpression CCMathExpressionMinimum(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t MinI = INT32_MAX;
     float MinF = INFINITY;
     
@@ -232,7 +284,9 @@ CCExpression CCMathExpressionMinimum(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            
             return Expression;
         }
     }
@@ -242,6 +296,14 @@ CCExpression CCMathExpressionMinimum(CCExpression Expression)
 
 CCExpression CCMathExpressionMaximum(CCExpression Expression)
 {
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        
+        return Expression;
+    }
+    
     int32_t MaxI = INT32_MIN;
     float MaxF = -INFINITY;
     
@@ -266,7 +328,9 @@ CCExpression CCMathExpressionMaximum(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "_:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            
             return Expression;
         }
     }
@@ -275,7 +339,7 @@ CCExpression CCMathExpressionMaximum(CCExpression Expression)
 }
 
 CCExpression CCMathExpressionRandom(CCExpression Expression)
-{    
+{
     CCExpression Expr = Expression;
     const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     
@@ -305,7 +369,9 @@ CCExpression CCMathExpressionRandom(CCExpression Expression)
         
         else
         {
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), ArgCount == 2 ? "min:number max:number" : "max:number");
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, ArgCount == 2 ? "min:number max:number" : "max:number");
+            
             return Expression;
         }
         
@@ -332,7 +398,9 @@ CCExpression CCMathExpressionRandom(CCExpression Expression)
             
             else
             {
-                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0)), "min:number max:number");
+                CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "min:number max:number");
+                
                 return Expression;
             }
         }

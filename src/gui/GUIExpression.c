@@ -78,14 +78,16 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
     return Object;
 }
 
+//TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
+static CCString StrWidth = CC_STRING("width"), StrHeight = CC_STRING("height"), StrRect = CC_STRING("rect"), StrEnabled = CC_STRING("enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
     if (!Window)
     {
         Window = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, NULL, NULL, NULL);
-        CCExpressionCreateState(Window, "width", CCExpressionCreateFromSource("(window-width)"), FALSE);
-        CCExpressionCreateState(Window, "height", CCExpressionCreateFromSource("(window-height)"), FALSE);
+        CCExpressionCreateState(Window, StrWidth, CCExpressionCreateFromSource("(window-width)"), FALSE);
+        CCExpressionCreateState(Window, StrHeight, CCExpressionCreateFromSource("(window-height)"), FALSE);
     }
     
     return CCMalloc(Allocator, sizeof(GUIExpressionInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -112,7 +114,7 @@ static CCRect GUIExpressionGetRect(GUIObject Object)
     GUIObject Parent = GUIObjectGetParent(Object);
     ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
     
-    CCExpression Rect = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, "rect");
+    CCExpression Rect = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect);
     if (Rect)
     {
         if ((CCExpressionGetType(Rect) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Rect)) == 4))
@@ -157,7 +159,7 @@ static void GUIExpressionSetRect(GUIObject Object, CCRect Rect)
     CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.size.x) });
     CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.size.y) });
     
-    CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, "rect", Expr, FALSE);
+    CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRect, Expr, FALSE);
 }
 
 static _Bool GUIExpressionGetEnabled(GUIObject Object)
@@ -212,9 +214,9 @@ void GUIExpressionInitializerElementDestructor(CCCollection Collection, CCExpres
     CCExpressionDestroy(*Element);
 }
 
-static CCComparisonResult GUIExpressionInitializerElementFind(const CCExpression *Initializer, const char *Name)
+static CCComparisonResult GUIExpressionInitializerElementFind(const CCExpression *Initializer, CCString Name)
 {
-    return !strcmp(CCExpressionGetString(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Initializer), 1)), Name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return CCStringEqual(CCExpressionGetString(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Initializer), 1)), Name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 static CCCollection GUIExpressionInitializers = NULL;
@@ -224,14 +226,14 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
     
     CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
-    CCExpression *Initializer = CCCollectionGetElement(GUIExpressionInitializers, CCCollectionFindElement(GUIExpressionInitializers, CCExpressionGetAtom(*Expr), (CCComparator)GUIExpressionInitializerElementFind));
+    CCExpression *Initializer = CCCollectionGetElement(GUIExpressionInitializers, CCCollectionFindElement(GUIExpressionInitializers, (void*)CCExpressionGetAtom(*Expr), (CCComparator)GUIExpressionInitializerElementFind));
     
     if (Initializer)
     {
-        CCExpressionCreateState(Expression, "width", CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
-        CCExpressionCreateState(Expression, "height", CCExpressionCreateFromSource("(get 3 rect)"), FALSE);
-        CCExpressionCreateState(Expression, "rect", CCExpressionCreateFromSource("(super (0 0 width height))"), FALSE);
-        CCExpressionCreateState(Expression, "enabled", CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
+        CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (0 0 width height))"), FALSE);
+        CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
         {
@@ -239,19 +241,19 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
             
             if (CCExpressionGetType(InitExpr) == CCExpressionValueTypeList)
             {
-                const char *Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(InitExpr), 0));
+                CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(InitExpr), 0));
                 
-                if (!strcmp(Atom, "render"))
+                if (CCStringEqual(Atom, StrRender))
                 {
                     
                 }
                 
-                else if (!strcmp(Atom, "children"))
+                else if (CCStringEqual(Atom, StrChildren))
                 {
                     
                 }
                 
-                else if (!strcmp(Atom, "control"))
+                else if (CCStringEqual(Atom, StrControl))
                 {
                     
                 }
@@ -271,19 +273,19 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         {
             if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
             {
-                const char *Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0));
+                CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0));
                 
-                if (!strcmp(Atom, "render"))
+                if (CCStringEqual(Atom, StrRender))
                 {
                     
                 }
                 
-                else if (!strcmp(Atom, "children"))
+                else if (CCStringEqual(Atom, StrChildren))
                 {
                     
                 }
                 
-                else if (!strcmp(Atom, "control"))
+                else if (CCStringEqual(Atom, StrControl))
                 {
                     
                 }
@@ -345,7 +347,7 @@ static CCExpression GUIExpressionPercentage(CCExpression Expression, const char 
     
     if (ArgCount == 1)
     {
-        CCExpression Constraint = CCExpressionGetState(Expression, UseHeight ? "height" : "width");
+        CCExpression Constraint = CCExpressionGetState(Expression, UseHeight ? StrHeight : StrWidth);
         
         int32_t Size = 0;
         if (Constraint)
