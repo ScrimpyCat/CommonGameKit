@@ -75,12 +75,12 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 
     (state! "x" 5)
     x ;5
-    (x 10) ;10
+    (x! 10) ;10
     x ;10
     
     ;hooks
     (state! "y" (quote (* x 2)))
-    (x 2) ;2
+    (x! 2) ;2
     y ;4
 
     ;scope

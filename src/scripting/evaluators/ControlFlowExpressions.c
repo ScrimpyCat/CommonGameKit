@@ -36,7 +36,7 @@ CCExpression CCControlFlowExpressionBegin(CCExpression Expression)
         Result = CCExpressionEvaluate(*Expr);
     }
     
-    return CCExpressionCopy(Result);
+    return Result ? CCExpressionCopy(Result) : Expression;
 }
 
 CCExpression CCControlFlowExpressionBranch(CCExpression Expression)

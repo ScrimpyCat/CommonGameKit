@@ -400,21 +400,31 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                     IsList = FALSE;
                 }
                 
-                else //set state
+                else if (CCStringHasSuffix(CCExpressionGetAtom(Func), CC_STRING("!"))) //set state
                 {
+                    CCString Name = CCStringCopySubstring(CCExpressionGetAtom(Func), 0, CCStringGetLength(CCExpressionGetAtom(*Expr)) - 1);
                     CCExpression State = NULL;
                     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
                     {
-                        State = CCExpressionSetState(Expression, CCExpressionGetAtom(Func), CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1)), TRUE);
+                       State = CCExpressionSetState(Expression, Name, CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1)), TRUE);
                     }
                     
                     else
                     {
-                        CCExpression Value = CCExpressionCopy(Expression);
-                        CCOrderedCollectionRemoveElementAtIndex(CCExpressionGetList(Value), 0);
-                        State = CCExpressionSetState(Expression, CCExpressionGetAtom(Func), CCExpressionEvaluate(Value), TRUE);
-                        CCExpressionDestroy(Value);
+                        CCExpression Value = CCExpressionCreateList(Expression->allocator);
+                        
+                        CCEnumerator Enumerator;
+                        CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+                        
+                        for (CCExpression *Arg = CCCollectionEnumeratorNext(&Enumerator); Arg; Arg = CCCollectionEnumeratorNext(&Enumerator))
+                        {
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(*Arg)) });
+                        }
+                        
+                        State = CCExpressionSetState(Expression, Name, Value, FALSE);
                     }
+                    
+                    CCStringDestroy(Name);
                     
                     if (State)
                     {
@@ -492,7 +502,7 @@ static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression
     
     if (Value)
     {
-        Value->value->state.super = Expression;
+        if (Value->value) Value->value->state.super = Expression;
         return Value;
     }
     
@@ -529,7 +539,7 @@ CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
     
     CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
     
-    return State ? CCExpressionEvaluate(State->value) : NULL;
+    return State && State->value ? CCExpressionEvaluate(State->value) : NULL;
 }
 
 CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy)
