@@ -55,7 +55,16 @@ void CCConfigureOptions(int argc, const char *argv[])
     {
         if (argv[Loop][0] == '-')
         {
-            if (Loop + 1 < argc)
+            if (!strcmp(argv[Loop], "-test"))
+            {
+                CCEngineConfiguration.launch = CCLaunchOptionTest;
+                CCEngineConfiguration.title = "Test";
+                CCEngineConfiguration.window.width = 640;
+                CCEngineConfiguration.window.height = 480;
+                return;
+            }
+            
+            else if (Loop + 1 < argc)
             {
                 if (!strcmp(argv[Loop], "-game")) //-game [path]
                 {

@@ -30,7 +30,8 @@
 
 typedef enum {
     CCLaunchOptionGame,
-    CCLaunchOptionEditor
+    CCLaunchOptionEditor,
+    CCLaunchOptionTest
 } CCLaunchOption;
 
 typedef struct {
