@@ -27,6 +27,7 @@
 
 typedef struct {
     CCExpression data;
+    CCOrderedCollection children;
 } GUIExpressionInfo;
 
 static void *GUIExpressionConstructor(CCAllocatorType Allocator);
@@ -69,6 +70,11 @@ const GUIObjectInterface GUIExpressionInterface = {
 const GUIObjectInterface * const GUIExpression = &GUIExpressionInterface;
 
 
+static void GUIExpressionChildrenElementDestructor(CCCollection Collection, GUIObject *Element)
+{
+    GUIObjectDestroy(*Element);
+}
+
 GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression)
 {
     GUIObject Object = GUIObjectCreate(Allocator, GUIExpression);
@@ -90,12 +96,17 @@ static void *GUIExpressionConstructor(CCAllocatorType Allocator)
         CCExpressionCreateState(Window, StrHeight, CCExpressionCreateFromSource("(window-height)"), FALSE);
     }
     
-    return CCMalloc(Allocator, sizeof(GUIExpressionInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    GUIExpressionInfo *Internal = CCMalloc(Allocator, sizeof(GUIExpressionInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    Internal->data = NULL;
+    Internal->children = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating | CCCollectionHintSizeSmall, sizeof(GUIObject), (CCCollectionElementDestructor)GUIExpressionChildrenElementDestructor);
+    
+    return Internal;
 }
 
 static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
 {
     CCExpressionDestroy(Internal->data);
+    CCCollectionDestroy(Internal->children);
     CC_SAFE_Free(Internal);
 }
 
@@ -188,12 +199,17 @@ static void GUIExpressionSetEnabled(GUIObject Object, _Bool Enabled)
 
 static void GUIExpressionAddChild(GUIObject Object, GUIObject Child)
 {
-    
+    CCOrderedCollectionAppendElement(((GUIExpressionInfo*)Object->internal)->children, &Child);
+}
+
+static CCComparisonResult GUIExpressionFindChild(const GUIObject *left, const GUIObject *right)
+{
+    return *left == *right ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 static void GUIExpressionRemoveChild(GUIObject Object, GUIObject Child)
 {
-    
+    CCCollectionRemoveElement(((GUIExpressionInfo*)Object->internal)->children, CCCollectionFindElement(((GUIExpressionInfo*)Object->internal)->children, &Child, (CCComparator)GUIExpressionFindChild));
 }
 
 static _Bool GUIExpressionHasChanged(GUIObject Object)
@@ -244,6 +260,8 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
     
     if (Initializer)
     {
+        CCOrderedCollection Children = NULL;
+        
         CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
         CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 rect)"), FALSE);
         CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (0 0 width height))"), FALSE);
@@ -264,7 +282,17 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                 
                 else if (CCStringEqual(Atom, StrChildren))
                 {
+                    if (!Children) Children = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(GUIObject), NULL);
                     
+                    CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(InitExpr))
+                    {
+                        Child = CCExpressionEvaluate(Child);
+                        if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
+                        {
+                            CCExpressionChangeOwnership(Child, NULL, NULL);
+                            CCOrderedCollectionAppendElement(Children, &(GUIObject){ CCExpressionGetData(Child) });
+                        }
+                    }
                 }
                 
                 else if (CCStringEqual(Atom, StrControl))
@@ -296,7 +324,17 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                 
                 else if (CCStringEqual(Atom, StrChildren))
                 {
+                    if (!Children) Children = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(GUIObject), NULL);
                     
+                    CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(*Expr))
+                    {
+                        Child = CCExpressionEvaluate(Child);
+                        if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
+                        {
+                            CCExpressionChangeOwnership(Child, NULL, NULL);
+                            CCOrderedCollectionAppendElement(Children, &(GUIObject){ CCExpressionGetData(Child) });
+                        }
+                    }
                 }
                 
                 else if (CCStringEqual(Atom, StrControl))
@@ -313,6 +351,12 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         
         
         GUIObject Object = GUIExpressionCreate(CC_STD_ALLOCATOR, Expression);
+        
+        if (Children)
+        {
+            CC_COLLECTION_FOREACH(GUIObject, Child, Children) GUIObjectAddChild(Object, Child);
+            CCCollectionDestroy(Children);
+        }
         
         CCExpression GUI = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)GUIExpressionValueTypeGUIObject, Object, NULL, (CCExpressionValueDestructor)GUIObjectDestroy);
         
