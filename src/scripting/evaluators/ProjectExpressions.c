@@ -80,8 +80,14 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
         CCExpression Result = CCExpressionEvaluate(*Expr);
         if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
         {
-            Config.title = (char*)CCExpressionGetString(Result);
-            CCExpressionChangeOwnership(Result, NULL, NULL);
+            char *Title;
+            CC_SAFE_Malloc(Title, CCStringGetSize(CCExpressionGetString(Result)) + 1,
+                           CC_LOG_ERROR("Failed to get title for CCEngineConfig from expression due to allocation failure. Allocation size: %zu", CCStringGetSize(CCExpressionGetString(Result)) + 1);
+                           );
+            
+            *CCStringCopyCharacters(CCExpressionGetString(Result), 0, CCStringGetLength(CCExpressionGetString(Result)), Title) = 0;
+            
+            Config.title = Title;
         }
         
         for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )

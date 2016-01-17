@@ -90,6 +90,7 @@
 		F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3C020981B5375A200F546E7 /* InputMapControllerComponent.c */; };
 		F3C221E51C4A51E1004ADC76 /* ExpressionMacroTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C221E41C4A51E1004ADC76 /* ExpressionMacroTests.m */; };
 		F3C2220F1C4A5D33004ADC76 /* ExpressionStateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C2220E1C4A5D33004ADC76 /* ExpressionStateTests.m */; };
+		F3C222171C4AF6FD004ADC76 /* ExpressionProjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C222161C4AF6FD004ADC76 /* ExpressionProjectTests.m */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
@@ -538,6 +539,7 @@
 		F3C020991B5375A200F546E7 /* InputMapControllerComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapControllerComponent.h; sourceTree = "<group>"; };
 		F3C221E41C4A51E1004ADC76 /* ExpressionMacroTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionMacroTests.m; sourceTree = "<group>"; };
 		F3C2220E1C4A5D33004ADC76 /* ExpressionStateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionStateTests.m; sourceTree = "<group>"; };
+		F3C222161C4AF6FD004ADC76 /* ExpressionProjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionProjectTests.m; sourceTree = "<group>"; };
 		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -614,6 +616,7 @@
 				F3150F241C48FECB00E1FC82 /* ExpressionEqualityTests.m */,
 				F3C221E41C4A51E1004ADC76 /* ExpressionMacroTests.m */,
 				F3C2220E1C4A5D33004ADC76 /* ExpressionStateTests.m */,
+				F3C222161C4AF6FD004ADC76 /* ExpressionProjectTests.m */,
 			);
 			name = Scripting;
 			sourceTree = "<group>";
@@ -1657,6 +1660,7 @@
 				F3C221E51C4A51E1004ADC76 /* ExpressionMacroTests.m in Sources */,
 				F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */,
 				F3C2220F1C4A5D33004ADC76 /* ExpressionStateTests.m in Sources */,
+				F3C222171C4AF6FD004ADC76 /* ExpressionProjectTests.m in Sources */,
 				F3150F271C48FF0500E1FC82 /* ExpressionEvaluatorTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
 			);
