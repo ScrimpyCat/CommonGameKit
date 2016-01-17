@@ -164,12 +164,26 @@ static void GUIExpressionSetRect(GUIObject Object, CCRect Rect)
 
 static _Bool GUIExpressionGetEnabled(GUIObject Object)
 {
+    GUIObject Parent = GUIObjectGetParent(Object);
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
+    
+    CCExpression Enabled = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrEnabled);
+    if (Enabled)
+    {
+        if (CCExpressionGetType(Enabled) == CCExpressionValueTypeInteger)
+        {
+            return CCExpressionGetInteger(Enabled);
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Required enabled state is missing.");
+    
     return FALSE;
 }
 
 static void GUIExpressionSetEnabled(GUIObject Object, _Bool Enabled)
 {
-    
+    CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, Enabled), FALSE);
 }
 
 static void GUIExpressionAddChild(GUIObject Object, GUIObject Child)
