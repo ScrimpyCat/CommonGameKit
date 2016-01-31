@@ -52,7 +52,7 @@ CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
         if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger) Predicate = CCExpressionGetInteger(Result);
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:integer true:expr [false:expr]");
         
-        if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3));
+        if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:integer true:expr [false:expr]");

@@ -68,6 +68,7 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component);
 
 /*!
  * @brief Detach a component from an entity.
+ * @description Destroys the component.
  * @param Entity The entity to detach the component from.
  * @param Component The component to be detached.
  */

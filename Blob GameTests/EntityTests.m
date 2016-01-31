@@ -61,7 +61,7 @@
     CCEntityDetachComponent(Entity, Component);
     XCTAssertEqual(CCCollectionGetCount(CCEntityGetComponents(Entity)), 0, "Entity should have the correct number of components attached to it");
     
-    CCComponentDestroy(Component);
+//    CCComponentDestroy(Component);
     CCEntityDestroy(Entity);
 }
 
