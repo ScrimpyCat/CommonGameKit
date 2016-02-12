@@ -34,8 +34,15 @@ typedef enum {
     GFXShaderSourceTypeFragment
 } GFXShaderSourceType;
 
-
+/*!
+ * @brief The graphics shader library.
+ * @description Allows @b CCRetain.
+ */
 typedef struct GFXShaderLibrary *GFXShaderLibrary;
+
+/*!
+ * @brief The graphics shader source.
+ */
 typedef struct GFXShaderSource *GFXShaderSource;
 
 

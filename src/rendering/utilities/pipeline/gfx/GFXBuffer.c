@@ -33,41 +33,57 @@ GFXBuffer GFXBufferCreate(CCAllocatorType Allocator, GFXBufferHint Hint, size_t 
 
 void GFXBufferDestroy(GFXBuffer Buffer)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     GFXMain->buffer->destroy(Buffer);
 }
 
 GFXBufferHint GFXBufferGetHints(GFXBuffer Buffer)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     return GFXMain->buffer->hints(Buffer);
 }
 
 size_t GFXBufferGetSize(GFXBuffer Buffer)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     return GFXMain->buffer->size(Buffer);
 }
 
 _Bool GFXBufferSetSize(GFXBuffer Buffer, size_t Size)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     return GFXMain->buffer->resize(Buffer, Size);
 }
 
 void GFXBufferInvalidate(GFXBuffer Buffer)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     if (GFXMain->buffer->optional.invalidate) GFXMain->buffer->optional.invalidate(Buffer);
 }
 
 size_t GFXBufferReadBuffer(GFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     return GFXMain->buffer->read(Buffer, Offset, Size, Data);
 }
 
 size_t GFXBufferWriteBuffer(GFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     return GFXMain->buffer->write(Buffer, Offset, Size, Data);
 }
 
 size_t GFXBufferCopyBuffer(GFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size_t Size, GFXBuffer DstBuffer, ptrdiff_t DstOffset)
 {
+    CCAssertLog(SrcBuffer && DstBuffer, "Source and destination buffers must not be null");
+    
     if (GFXMain->buffer->optional.copy) return GFXMain->buffer->optional.copy(SrcBuffer, SrcOffset, Size, DstBuffer, DstOffset);
     
     uint8_t *CopiedData = NULL;
@@ -85,6 +101,8 @@ size_t GFXBufferCopyBuffer(GFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size_t Size
 
 size_t GFXBufferFillBuffer(GFXBuffer Buffer, ptrdiff_t Offset, size_t Size, uint8_t Fill)
 {
+    CCAssertLog(Buffer, "Buffer must not be null");
+    
     if (GFXMain->buffer->optional.fill) return GFXMain->buffer->optional.fill(Buffer, Offset, Size, Fill);
     
     uint8_t *FillData = NULL;

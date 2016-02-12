@@ -51,7 +51,10 @@ typedef enum {
     GFXTextureHintAddress_R = 8
 } GFXTextureHint;
 
-
+/*!
+ * @brief The graphics texture.
+ * @description Allows @b CCRetain.
+ */
 typedef struct GFXTexture *GFXTexture;
 
 

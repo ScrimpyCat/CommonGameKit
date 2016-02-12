@@ -84,7 +84,13 @@ typedef struct {
     GFXDrawDestination destination;
     GFXDrawIndexBuffer index;
     GFXBlend blending;
-} GFXDrawInfo, *GFXDraw;
+} GFXDrawInfo;
+
+/*!
+ * @brief The graphics draw operation.
+ * @description Allows @b CCRetain.
+ */
+typedef GFXDrawInfo *GFXDraw;
 
 /*!
  * @brief Create a draw operation.
@@ -125,14 +131,17 @@ void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offse
 /*!
  * @brief Set the shader to be used for the draw command.
  * @param Draw The draw operation.
- * @param Shader The shader to be used for the draw operation.
+ * @param Shader The shader to be used for the draw operation. Retains a reference to
+ *        the shader.
  */
 void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader);
 
 /*!
  * @brief Set the framebuffer to be used for the draw command.
  * @param Draw The draw operation.
- * @param Framebuffer The framebuffer to be used as the destination.
+ * @param Framebuffer The framebuffer to be used as the destination. Retains a reference
+ *        to the framebuffer.
+ *
  * @param Index The attachment of that framebuffer to be used as the destination.
  */
 void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Index);
@@ -140,7 +149,9 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
 /*!
  * @brief Set the index buffer of the draw command.
  * @param Draw The draw operation.
- * @param Indexes The index buffer of type @b GFXBufferHintDataIndex.
+ * @param Indexes The index buffer of type @b GFXBufferHintDataIndex. Retains a reference
+ *        to the index buffer.
+ *
  * @param Format The format of the data.
  */
 void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Format);
@@ -149,7 +160,9 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
  * @brief Set the vertex attributes of the draw command.
  * @param Draw The draw operation.
  * @param Input The input name from in the shader.
- * @param Buffer The vertex buffer of type @b GFXBufferHintDataVertex.
+ * @param Buffer The vertex buffer of type @b GFXBufferHintDataVertex. Retains a reference
+ *        to the vertex buffer.
+ *
  * @param Format The format of the data.
  * @param Stride The stride of the data.
  * @param Offset The offset of the data.
@@ -160,7 +173,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
  * @brief Set the uniform of the draw command.
  * @param Draw The draw operation.
  * @param Input The input name from in the shader.
- * @param Buffer The buffer.
+ * @param Buffer The buffer. Retains a reference to the buffer.
  */
 void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer);
 
@@ -168,7 +181,7 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer);
  * @brief Set the texture of the draw command.
  * @param Draw The draw operation.
  * @param Input The input name from in the shader.
- * @param Texture The texture.
+ * @param Texture The texture. Retains a reference to the shader.
  */
 void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture);
 

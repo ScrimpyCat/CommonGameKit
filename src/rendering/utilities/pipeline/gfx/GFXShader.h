@@ -29,9 +29,15 @@
 #include "GFXShaderLibrary.h"
 #include <CommonC/Common.h>
 
-
+/*!
+ * @brief The graphics shader input.
+ */
 typedef struct GFXShaderInput *GFXShaderInput;
 
+/*!
+ * @brief The graphics shader.
+ * @description Allows @b CCRetain.
+ */
 typedef struct GFXShader *GFXShader;
 
 /*!

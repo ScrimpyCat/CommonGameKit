@@ -52,8 +52,6 @@ static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator)
 
 static void GLShaderLibraryDestructor(GLShaderLibrary Library)
 {
-    CCAssertLog(Library, "Library must not be null");
-    
     CCCollectionDestroy(Library);
 }
 
@@ -87,8 +85,6 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
 
 static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source)
 {
-    CCAssertLog(Library, "Library must not be null");
-    
     CC_GL_PUSH_GROUP_MARKER("Compile Shader");
     
     GLuint Shader = glCreateShader(GLShaderType(Type)); CC_GL_CHECK();
@@ -146,7 +142,5 @@ static CCComparisonResult GLShaderLibraryElementFind(const GLShaderSource left, 
 
 static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, const char *Name)
 {
-    CCAssertLog(Library, "Library must not be null");
-    
     return CCCollectionGetElement(Library, CCCollectionFindElement(Library, &(GLShaderSourceInfo){ .name = (char*)Name }, (CCComparator)GLShaderLibraryElementFind));
 }

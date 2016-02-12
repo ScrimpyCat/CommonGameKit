@@ -133,6 +133,14 @@ static GFXFramebufferAttachment *GLFBOGetAttachment(GLFBO *Framebuffer, size_t I
     return &Framebuffer->attachments[Index];
 }
 
+static void GLFramebufferDestroy(GLFramebuffer Framebuffer)
+{
+    for (size_t Loop = 0; Loop < Framebuffer->fboCount; Loop++)
+    {
+        GLFBODestroy(Framebuffer->framebuffers[Loop]);
+    }
+}
+
 static GLFramebuffer GLFramebufferConstructor(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count)
 {
     CCAssertLog(Count, "Must have at least 1 attachment");
@@ -144,6 +152,8 @@ static GLFramebuffer GLFramebufferConstructor(CCAllocatorType Allocator, GFXFram
     GLFramebuffer Framebuffer = CCMalloc(Allocator, sizeof(GLFramebuffer) + (sizeof(GLFBO*) * FBOCount), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (Framebuffer)
     {
+        CCMemorySetDestructor(Framebuffer, (CCMemoryDestructorCallback)GLFramebufferDestroy);
+        
         GLuint FramebufferObjects[FBOCount];
         glGenFramebuffers((GLsizei)FBOCount, FramebufferObjects); CC_GL_CHECK();
         
@@ -164,13 +174,7 @@ static GLFramebuffer GLFramebufferConstructor(CCAllocatorType Allocator, GFXFram
 
 static void GLFramebufferDestructor(GLFramebuffer Framebuffer)
 {
-    CCAssertLog(Framebuffer, "Framebuffer must not be null");
     CCAssertLog(Framebuffer != GLFramebufferDefault(), "Cannot destroy default framebuffer");
-    
-    for (size_t Loop = 0; Loop < Framebuffer->fboCount; Loop++)
-    {
-        GLFBODestroy(Framebuffer->framebuffers[Loop]);
-    }
     
     CC_SAFE_Free(Framebuffer);
 }
@@ -191,18 +195,28 @@ static GLFramebuffer GLFramebufferDefault(void)
         }
     };
     
-    static GLFramebufferInfo DefaultFramebuffer = {
-        .fboCount = 1,
-        .framebuffers = { &DefaultFBO }
+    static struct {
+        int allocator;
+        union {
+            GLFramebufferInfo info;
+            struct {
+                size_t fboCount;
+                GLFBO *framebuffers[1];
+            } init;
+        };
+    } DefaultFramebuffer = {
+        .allocator = -1,
+        .init = {
+            .fboCount = 1,
+            .framebuffers = { &DefaultFBO }
+        }
     };
     
-    return &DefaultFramebuffer;
+    return &DefaultFramebuffer.info;
 }
 
 static GFXFramebufferAttachment *GLFramebufferGetAttachment(GLFramebuffer Framebuffer, size_t Index)
 {
-    CCAssertLog(Framebuffer, "Framebuffer must not be null");
-    
     size_t FBOIndex = Index / ((GLInternal*)GLGFX->internal)->limits.maxColourAttachments;
     
     CCAssertLog(FBOIndex < Framebuffer->fboCount, "Index must not exceed bounds");
@@ -212,7 +226,7 @@ static GFXFramebufferAttachment *GLFramebufferGetAttachment(GLFramebuffer Frameb
 
 GLuint GLFramebufferGetID(GLFramebuffer Framebuffer, size_t Index)
 {
-    if (!Framebuffer) return 0;
+    CCAssertLog(Framebuffer, "Framebuffer must not be null");
     
     size_t FBOIndex = Index / ((GLInternal*)GLGFX->internal)->limits.maxColourAttachments;
     

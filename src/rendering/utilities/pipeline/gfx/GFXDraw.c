@@ -26,9 +26,29 @@
 #include "GFXDraw.h"
 #include "GFXMain.h"
 
-static void GFXDrawInputElementDestructor(CCCollection Collection, GFXDrawInput *Element)
+static void GFXDrawInputBufferElementDestructor(CCCollection Collection, GFXDrawInputBuffer *Element)
 {
-    CC_SAFE_Free(Element->name);
+    GFXBufferDestroy(Element->buffer);
+    CC_SAFE_Free(Element->input.name);
+}
+
+static void GFXDrawInputTextureElementDestructor(CCCollection Collection, GFXDrawInputTexture *Element)
+{
+    GFXTextureDestroy(Element->texture);
+    CC_SAFE_Free(Element->input.name);
+}
+
+static void GFXDrawDestructor(GFXDraw Draw)
+{
+    if (GFXMain->draw->optional.destroy) GFXMain->draw->optional.destroy(Draw);
+    
+    CCCollectionDestroy(Draw->vertexBuffers);
+    CCCollectionDestroy(Draw->buffers);
+    CCCollectionDestroy(Draw->textures);
+    
+    CC_SAFE_Free(Draw->shader);
+    CC_SAFE_Free(Draw->destination.framebuffer);
+    CC_SAFE_Free(Draw->index.buffer);
 }
 
 GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
@@ -36,12 +56,14 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
     GFXDraw Draw = CCMalloc(Allocator, sizeof(GFXDrawInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (Draw)
     {
+        CCMemorySetDestructor(Draw, (CCMemoryDestructorCallback)GFXDrawDestructor);
+        
         *Draw = (GFXDrawInfo){
             .internal = NULL,
             .shader = NULL,
-            .vertexBuffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputVertexBuffer), (CCCollectionElementDestructor)GFXDrawInputElementDestructor),
-            .buffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputBuffer), (CCCollectionElementDestructor)GFXDrawInputElementDestructor),
-            .textures = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputTexture), (CCCollectionElementDestructor)GFXDrawInputElementDestructor),
+            .vertexBuffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputVertexBuffer), (CCCollectionElementDestructor)GFXDrawInputBufferElementDestructor),
+            .buffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputBuffer), (CCCollectionElementDestructor)GFXDrawInputBufferElementDestructor),
+            .textures = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputTexture), (CCCollectionElementDestructor)GFXDrawInputTextureElementDestructor),
             .destination = {
                 .framebuffer = NULL,
                 .index = 0
@@ -65,11 +87,6 @@ void GFXDrawDestroy(GFXDraw Draw)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    if (GFXMain->draw->optional.destroy) GFXMain->draw->optional.destroy(Draw);
-    
-    CCCollectionDestroy(Draw->vertexBuffers);
-    CCCollectionDestroy(Draw->buffers);
-    CCCollectionDestroy(Draw->textures);
     CC_SAFE_Free(Draw);
 }
 
@@ -102,7 +119,7 @@ void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    Draw->shader = Shader;
+    Draw->shader = CCRetain(Shader);
     
     if  (Shader)
     {
@@ -119,7 +136,7 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
     CCAssertLog(Draw, "Draw must not be null");
     
     Draw->destination = (GFXDrawDestination){
-        .framebuffer = Framebuffer,
+        .framebuffer = CCRetain(Framebuffer),
         .index = Index
     };
     
@@ -131,7 +148,7 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
     CCAssertLog(Draw, "Draw must not be null");
     
     Draw->index = (GFXDrawIndexBuffer){
-        .buffer = Indexes,
+        .buffer = CCRetain(Indexes),
         .format = Format
     };
     
@@ -150,7 +167,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
     GFXDrawInputVertexBuffer *VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionFindElement(Draw->vertexBuffers, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
     if (VertexBuffer)
     {
-        VertexBuffer->buffer = Buffer;
+        VertexBuffer->buffer = CCRetain(Buffer);
         VertexBuffer->offset = Offset;
         VertexBuffer->stride = Stride;
         VertexBuffer->format = Format;
@@ -171,7 +188,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
                 .name = Str,
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
-            .buffer = Buffer,
+            .buffer = CCRetain(Buffer),
             .offset = Offset,
             .stride = Stride,
             .format = Format
@@ -188,7 +205,7 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer)
     GFXDrawInputBuffer *UniformBuffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
     if (UniformBuffer)
     {
-        UniformBuffer->buffer = Buffer;
+        UniformBuffer->buffer = CCRetain(Buffer);
     }
     
     else
@@ -206,7 +223,7 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer)
                 .name = Str,
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
-            .buffer = Buffer
+            .buffer = CCRetain(Buffer)
         }));
     }
     
@@ -220,7 +237,7 @@ void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture)
     GFXDrawInputTexture *UniformTexture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
     if (UniformTexture)
     {
-        UniformTexture->texture = Texture;
+        UniformTexture->texture = CCRetain(Texture);
     }
     
     else
@@ -238,7 +255,7 @@ void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture)
                 .name = Str,
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
-            .texture = Texture
+            .texture = CCRetain(Texture)
         }));
     }
     

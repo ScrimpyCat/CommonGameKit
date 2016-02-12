@@ -72,7 +72,10 @@ typedef enum {
     GFXBufferHintDataUniform
 } GFXBufferHint;
 
-
+/*!
+ * @brief The graphics buffer.
+ * @description Allows @b CCRetain.
+ */
 typedef struct GFXBuffer *GFXBuffer;
 
 

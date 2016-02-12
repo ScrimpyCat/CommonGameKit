@@ -112,11 +112,19 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInternalFormat(CCColourFormat Format
     CCAssertLog(0, "Unsupported format");
 }
 
+static void GLTextureDestroy(GLTexture Texture)
+{
+    if (Texture->data) CCPixelDataDestroy(Texture->data);
+    glDeleteTextures(1, &Texture->texture); CC_GL_CHECK();
+}
+
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
 {
     GLTexture Texture = CCMalloc(Allocator, sizeof(GLTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (Texture)
     {
+        CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)GLTextureDestroy);
+        
         Texture->hint = Hint;
         Texture->data = Data;
         Texture->format = Format;
@@ -185,11 +193,6 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
 
 static void GLTextureDestructor(GLTexture Texture)
 {
-    CCAssertLog(Texture, "Texture must not be null");
-    
-    if (Texture->data) CCPixelDataDestroy(Texture->data);
-    glDeleteTextures(1, &Texture->texture); CC_GL_CHECK();
-    
     CC_SAFE_Free(Texture);
 }
 

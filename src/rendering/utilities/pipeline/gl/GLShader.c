@@ -221,6 +221,14 @@ static GFXBufferFormat GLShaderBufferFormatFromType(GLenum Type)
     CCAssertLog(0, "Unsupported type %d", Type);
 }
 
+static void GLShaderDestroy(GLShader Shader)
+{
+    glDeleteProgram(Shader->program); CC_GL_CHECK();
+    
+    CCCollectionDestroy(Shader->attributes);
+    CCCollectionDestroy(Shader->uniforms);
+}
+
 static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Vertex, GLShaderSource Fragment)
 {
     CC_GL_PUSH_GROUP_MARKER("Create Shader");
@@ -336,6 +344,8 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
     GLShader Shader = CCMalloc(Allocator, sizeof(GLShaderInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (Shader)
     {
+        CCMemorySetDestructor(Shader, (CCMemoryDestructorCallback)GLShaderDestroy);
+        
         *Shader = (GLShaderInfo){
             .program = Program,
             .attributes = Attributes,
@@ -348,12 +358,6 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
 
 static void GLShaderDestructor(GLShader Shader)
 {
-    CCAssertLog(Shader, "Shader must not be null");
-    
-    glDeleteProgram(Shader->program); CC_GL_CHECK();
-    
-    CCCollectionDestroy(Shader->attributes);
-    CCCollectionDestroy(Shader->uniforms);
     CC_SAFE_Free(Shader);
 }
 
@@ -369,8 +373,6 @@ static CCComparisonResult GLShaderFindUniform(const GLShaderUniformInfo *left, c
 
 static GLShaderInputInfo *GLShaderGetInput(GLShader Shader, const char *Name)
 {
-    CCAssertLog(Shader, "Shader must not be null");
-    
     GLShaderInputInfo *Input = CCCollectionGetElement(Shader->attributes, CCCollectionFindElement(Shader->attributes, &(GLShaderAttributeInfo){ .name = (char*)Name }, (CCComparator)GLShaderFindAttribute));
     
     if (!Input)

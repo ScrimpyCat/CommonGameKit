@@ -33,10 +33,14 @@ GFXShader GFXShaderCreate(CCAllocatorType Allocator, GFXShaderSource Vertex, GFX
 
 void GFXShaderDestroy(GFXShader Shader)
 {
+    CCAssertLog(Shader, "Shader must not be null");
+    
     GFXMain->shader->destroy(Shader);
 }
 
 GFXShaderInput GFXShaderGetInput(GFXShader Shader, const char *Name)
 {
+    CCAssertLog(Shader, "Shader must not be null");
+    
     return GFXMain->shader->input(Shader, Name);
 }

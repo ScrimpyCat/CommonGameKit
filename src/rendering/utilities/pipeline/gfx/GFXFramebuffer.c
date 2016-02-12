@@ -33,6 +33,8 @@ GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAtt
 
 void GFXFramebufferDestroy(GFXFramebuffer Framebuffer)
 {
+    CCAssertLog(Framebuffer, "Framebuffer must not be null");
+    
     GFXMain->framebuffer->destroy(Framebuffer);
 }
 
@@ -43,5 +45,7 @@ GFXFramebuffer GFXFramebufferDefault(void)
 
 GFXFramebufferAttachment *GFXFramebufferGetAttachment(GFXFramebuffer Framebuffer, size_t Index)
 {
+    CCAssertLog(Framebuffer, "Framebuffer must not be null");
+    
     return GFXMain->framebuffer->attachment(Framebuffer, Index);
 }

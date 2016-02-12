@@ -33,30 +33,42 @@ GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCCo
 
 void GFXTextureDestroy(GFXTexture Texture)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
     GFXMain->texture->destroy(Texture);
 }
 
 GFXTextureHint GFXTextureGetHints(GFXTexture Texture)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
     return GFXMain->texture->hints(Texture);
 }
 
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
     GFXMain->texture->size(Texture, Width, Height, Depth);
 }
 
 void GFXTextureSetFilterMode(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
     GFXMain->texture->setFilterMode(Texture, FilterType, FilterMode);
 }
 
 void GFXTextureSetAddressMode(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
     GFXMain->texture->setAddressMode(Texture, Coordinate, AddressMode);
 }
 
 void GFXTextureInvalidate(GFXTexture Texture)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
     GFXMain->texture->optional.invalidate(Texture);
 }

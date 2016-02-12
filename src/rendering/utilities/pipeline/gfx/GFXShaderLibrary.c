@@ -33,15 +33,21 @@ GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator)
 
 void GFXShaderLibraryDestroy(GFXShaderLibrary Library)
 {
+    CCAssertLog(Library, "Library must not be null");
+    
     GFXMain->library->destroy(Library);
 }
 
 const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source)
 {
+    CCAssertLog(Library, "Library must not be null");
+    
     return GFXMain->library->compile(Library, Type, Name, Source);
 }
 
 const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, const char *Name)
 {
+    CCAssertLog(Library, "Library must not be null");
+    
     return GFXMain->library->source(Library, Name);
 }

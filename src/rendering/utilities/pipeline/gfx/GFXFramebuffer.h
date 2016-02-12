@@ -54,7 +54,10 @@ typedef struct GFXFramebufferAttachment {
     };
 } GFXFramebufferAttachment;
 
-
+/*!
+ * @brief The graphics framebuffer.
+ * @description Allows @b CCRetain.
+ */
 typedef struct GFXFramebuffer *GFXFramebuffer;
 
 /*!

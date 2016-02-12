@@ -121,6 +121,22 @@ static inline CC_CONSTANT_FUNCTION GLenum GLBufferUsage(GFXBufferHint Hint)
     return Usage[Frequency > 2 ? 2 : Frequency][Nature];
 }
 
+static void GLBufferDestroy(GLBuffer Buffer)
+{
+    switch (Buffer->hint & GFXBufferHintDataMask)
+    {
+        case GFXBufferHintData: //cpu store
+            CCDataDestroy(Buffer->data);
+            break;
+            
+        case GFXBufferHintDataVertex:
+        case GFXBufferHintDataIndex:
+        case GFXBufferHintDataUniform:
+            glDeleteBuffers(1, &Buffer->gl.buffer); CC_GL_CHECK();
+            break;
+    }
+}
+
 static GLBuffer GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data)
 {
     GLBuffer Buffer = CCMalloc(Allocator, sizeof(GLBufferInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -145,6 +161,8 @@ static GLBuffer GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hin
                 break;
             }
         }
+        
+        CCMemorySetDestructor(Buffer, (CCMemoryDestructorCallback)GLBufferDestroy);
     }
     
     return Buffer;
@@ -152,21 +170,6 @@ static GLBuffer GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hin
 
 static void GLBufferDestructor(GLBuffer Buffer)
 {
-    CCAssertLog(Buffer, "Buffer must not be null");
-    
-    switch (Buffer->hint & GFXBufferHintDataMask)
-    {
-        case GFXBufferHintData: //cpu store
-            CCDataDestroy(Buffer->data);
-            break;
-            
-        case GFXBufferHintDataVertex:
-        case GFXBufferHintDataIndex:
-        case GFXBufferHintDataUniform:
-            glDeleteBuffers(1, &Buffer->gl.buffer); CC_GL_CHECK();
-            break;
-    }
-    
     CC_SAFE_Free(Buffer);
 }
 
