@@ -96,6 +96,7 @@ static _Bool CCRenderSystemHandlesComponent(CCComponentID id)
 
 #warning demo rendering behaviour (this will be changed later)
 #include "RenderComponent.h"
+#include "AssetManager.h"
 
 typedef struct {
     CCVector2D position;
@@ -183,7 +184,7 @@ static void CCRenderSystemLoadResources(void)
                                                          "void main()\n"
                                                          "{\n"
                                                          "	colour = vColour;\n"
-                                                         "	gl_Position = /*modelViewProjectionMatrix * */vPosition;\n"
+                                                         "	gl_Position = modelViewProjectionMatrix * vPosition;\n"
                                                          "}\n");
     
     const GFXShaderSource Frag = GFXShaderLibraryCompile(Lib, GFXShaderSourceTypeFragment, "frag",
@@ -197,6 +198,8 @@ static void CCRenderSystemLoadResources(void)
     
     DemoShader = GFXShaderCreate(CC_STD_ALLOCATOR, Vert, Frag);
     GFXShaderLibraryDestroy(Lib);
+    
+    CCAssetManagerRegisterShader(CC_STRING("vertex-colour"), DemoShader);
     
     
     unsigned short *Indices;
