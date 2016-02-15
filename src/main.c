@@ -36,6 +36,7 @@
 #include "EngineSetup.h"
 #include "ComponentSystem.h"
 #include "Configuration.h"
+#include "GUIManager.h"
 
 
 GLFWwindow *CCWindow = NULL;
@@ -46,9 +47,11 @@ static void ErrorCallback(int Error, const char *Description)
     CC_LOG_ERROR("GLFW Error [%d]: %s", Error, Description);
 }
 
+static int FramebufferWidth = 0, FramebufferHeight = 0;
 void FramebufferSizeCallback(GLFWwindow *Window, int Width, int Height)
 {
-    glViewport(0, 0, Width, Height);
+    FramebufferWidth = Width;
+    FramebufferHeight = Height;
 }
 
 static int RenderLoop(GLFWwindow *Window)
@@ -57,9 +60,16 @@ static int RenderLoop(GLFWwindow *Window)
     
     while (!glfwWindowShouldClose(Window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        CC_GL_VIEWPORT(0, 0, FramebufferWidth, FramebufferHeight);
+        
+        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
         
         CCComponentSystemRun(CCComponentSystemExecutionTypeRender);
+        
+        GUIManagerLock();
+        GUIManagerUpdate();
+        GUIManagerRender(GFXFramebufferDefault());
+        GUIManagerUnlock();
         
         glfwSwapBuffers(Window);
     }
@@ -109,6 +119,7 @@ int main(int argc, const char *argv[])
     }
     
     glfwSetFramebufferSizeCallback(CCWindow, FramebufferSizeCallback);
+    glfwGetFramebufferSize(CCWindow, &FramebufferWidth, &FramebufferHeight);
     
     glfwMakeContextCurrent(CCWindow);
     CCPlatformWindowSetup(CCWindow);
