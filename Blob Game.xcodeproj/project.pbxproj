@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F30437531C5F8DC400388C74 /* AssetManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F30437511C5F8DC400388C74 /* AssetManager.c */; };
 		F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */; };
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
@@ -30,6 +31,7 @@
 		F35CD6F11B3EB8130032E3A7 /* EngineSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6EF1B3EB8130032E3A7 /* EngineSetup.c */; };
 		F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */; };
 		F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */; };
+		F35FAFFE1C70FC5600B6A55C /* GUIManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F35FAFFC1C70FC5600B6A55C /* GUIManager.c */; };
 		F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F365311D1C15FDEE00A3B009 /* GFXBuffer.c */; };
 		F36531251C16163400A3B009 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531231C16163400A3B009 /* GFXMain.c */; };
 		F36531281C16213300A3B009 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531261C16213300A3B009 /* GLGFX.c */; };
@@ -387,6 +389,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F30437511C5F8DC400388C74 /* AssetManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AssetManager.c; sourceTree = "<group>"; };
+		F30437521C5F8DC400388C74 /* AssetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetManager.h; sourceTree = "<group>"; };
 		F313F9781B7DE7A9006F5CF5 /* AnimationComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationComponent.h; sourceTree = "<group>"; };
 		F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationSystem.c; sourceTree = "<group>"; };
 		F313F9A31B7FB888006F5CF5 /* AnimationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationSystem.h; sourceTree = "<group>"; };
@@ -425,6 +429,8 @@
 		F35CD6F41B3EC62E0032E3A7 /* RenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSystem.h; sourceTree = "<group>"; };
 		F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RenderComponent.c; sourceTree = "<group>"; };
 		F35CD6F91B3F034F0032E3A7 /* RenderComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderComponent.h; sourceTree = "<group>"; };
+		F35FAFFC1C70FC5600B6A55C /* GUIManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIManager.c; sourceTree = "<group>"; };
+		F35FAFFD1C70FC5600B6A55C /* GUIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIManager.h; sourceTree = "<group>"; };
 		F365311D1C15FDEE00A3B009 /* GFXBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXBuffer.c; sourceTree = "<group>"; };
 		F365311E1C15FDEE00A3B009 /* GFXBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXBuffer.h; sourceTree = "<group>"; };
 		F36531201C160C9100A3B009 /* GFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFX.h; sourceTree = "<group>"; };
@@ -610,6 +616,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F304374A1C5CFA8100388C74 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F30437521C5F8DC400388C74 /* AssetManager.h */,
+				F30437511C5F8DC400388C74 /* AssetManager.c */,
+			);
+			name = Utilities;
+			path = utilities;
+			sourceTree = "<group>";
+		};
 		F3150ED61C47C28400E1FC82 /* Scripting */ = {
 			isa = PBXGroup;
 			children = (
@@ -830,6 +846,8 @@
 		F3A3A7551C30146200EC1F18 /* GUI */ = {
 			isa = PBXGroup;
 			children = (
+				F35FAFFD1C70FC5600B6A55C /* GUIManager.h */,
+				F35FAFFC1C70FC5600B6A55C /* GUIManager.c */,
 				F3A3A75A1C30152200EC1F18 /* GUIObject.h */,
 				F3A3A7591C30152200EC1F18 /* GUIObject.c */,
 				F3A3A75D1C303A0B00EC1F18 /* GUIContainer.h */,
@@ -961,6 +979,7 @@
 				F39796DD1A5C7748007C3422 /* Component System */,
 				F3A3A7551C30146200EC1F18 /* GUI */,
 				F3BD17481C00845D00B3849E /* Scripting */,
+				F304374A1C5CFA8100388C74 /* Utilities */,
 				F3F6C4A31A599A3C00B9D6BA /* Setup */,
 				F3C401D91A56E52800095ECD /* Supporting Files */,
 			);
@@ -1581,6 +1600,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F316195A1C120F0C008E09A1 /* GLDebug.c in Sources */,
+				F35FAFFE1C70FC5600B6A55C /* GUIManager.c in Sources */,
 				F3A3A75E1C303A0B00EC1F18 /* GUIContainer.c in Sources */,
 				F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */,
 				F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */,
@@ -1644,6 +1664,7 @@
 				F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */,
 				F3A3A75B1C30152200EC1F18 /* GUIObject.c in Sources */,
 				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
+				F30437531C5F8DC400388C74 /* AssetManager.c in Sources */,
 				F316198E1C1213A9008E09A1 /* PixelData.c in Sources */,
 				F39797091A5C77A0007C3422 /* Component.c in Sources */,
 			);
