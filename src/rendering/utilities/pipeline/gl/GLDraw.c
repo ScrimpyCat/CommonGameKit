@@ -69,6 +69,9 @@ static void GLDrawDestructor(GFXDraw Draw)
     CCAssertLog(Draw->internal, "GL implementation must not be null"); //TODO: handle if it is?
     
     glDeleteVertexArrays(1, &((GLDrawState*)Draw->internal)->vao); CC_GL_CHECK();
+    
+    if (CC_GL_CURRENT_STATE->bindVertexArray.array == ((GLDrawState*)Draw->internal)->vao) CC_GL_CURRENT_STATE->bindVertexArray.array = 0;
+    
     CC_SAFE_Free(Draw->internal);
 }
 

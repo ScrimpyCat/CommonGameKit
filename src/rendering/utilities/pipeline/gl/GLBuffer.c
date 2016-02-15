@@ -132,8 +132,29 @@ static void GLBufferDestroy(GLBuffer Buffer)
         case GFXBufferHintDataVertex:
         case GFXBufferHintDataIndex:
         case GFXBufferHintDataUniform:
+        {
             glDeleteBuffers(1, &Buffer->gl.buffer); CC_GL_CHECK();
+            
+            GLuint *BoundBufferState = NULL;
+            
+            switch (GLBufferTarget(Buffer->hint))
+            {
+                case GL_ARRAY_BUFFER:
+                    BoundBufferState = &CC_GL_CURRENT_STATE->bindBuffer._GL_ARRAY_BUFFER;
+                    break;
+                    
+                case GL_ELEMENT_ARRAY_BUFFER:
+                    BoundBufferState = &CC_GL_CURRENT_STATE->bindBuffer._GL_ELEMENT_ARRAY_BUFFER;
+                    break;
+                    
+                case GL_UNIFORM_BUFFER:
+                    BoundBufferState = &CC_GL_CURRENT_STATE->bindBuffer._GL_UNIFORM_BUFFER;
+                    break;
+            }
+            
+            if (*BoundBufferState == Buffer->gl.buffer) *BoundBufferState = 0;
             break;
+        }
     }
 }
 
