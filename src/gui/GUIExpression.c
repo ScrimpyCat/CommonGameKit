@@ -28,6 +28,7 @@
 typedef struct {
     CCExpression data;
     CCOrderedCollection children;
+    CCExpression render;
 } GUIExpressionInfo;
 
 static void *GUIExpressionConstructor(CCAllocatorType Allocator);
@@ -85,7 +86,7 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
 }
 
 //TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
-static CCString StrWidth = CC_STRING("width"), StrHeight = CC_STRING("height"), StrRect = CC_STRING("rect"), StrEnabled = CC_STRING("enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control");
+static CCString StrWidth = CC_STRING("width"), StrHeight = CC_STRING("height"), StrRect = CC_STRING("rect"), StrEnabled = CC_STRING("enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control"), StrRenderRect = CC_STRING("render-rect");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
@@ -99,6 +100,7 @@ static void *GUIExpressionConstructor(CCAllocatorType Allocator)
     GUIExpressionInfo *Internal = CCMalloc(Allocator, sizeof(GUIExpressionInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
     Internal->data = NULL;
     Internal->children = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating | CCCollectionHintSizeSmall, sizeof(GUIObject), (CCCollectionElementDestructor)GUIExpressionChildrenElementDestructor);
+    Internal->render = NULL;
     
     return Internal;
 }
@@ -110,9 +112,157 @@ static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
     CC_SAFE_Free(Internal);
 }
 
+static CCRect CCExpressionGetRect(CCExpression Rect)
+{
+    if ((CCExpressionGetType(Rect) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Rect)) == 4))
+    {
+        float Values[4];
+        for (int Loop = 0; Loop < 4; Loop++)
+        {
+            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Rect), Loop);
+            
+            if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
+            {
+                Values[Loop] = (float)CCExpressionGetInteger(Value);
+            }
+            
+            else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
+            {
+                Values[Loop] = CCExpressionGetFloat(Value);
+            }
+            
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
+                
+                return (CCRect){ 0.0f, 0.0f, 0.0f, 0.0f };
+            }
+        }
+        
+        return (CCRect){ Values[0], Values[1], Values[2], Values[3] };
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
+    
+    return (CCRect){ 0.0f, 0.0f, 0.0f, 0.0f };
+}
+
+static CCColourRGBA CCExpressionGetColour(CCExpression Rect)
+{
+    size_t Count = 0;
+    if ((CCExpressionGetType(Rect) == CCExpressionValueTypeList) && ((Count = CCCollectionGetCount(CCExpressionGetList(Rect))) >= 3))
+    {
+        float Values[4] = { [3] = 1.0f };
+        for (int Loop = 0; Loop < Count; Loop++)
+        {
+            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Rect), Loop);
+            
+            if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
+            {
+                Values[Loop] = (float)CCExpressionGetInteger(Value) / 255.0f;
+            }
+            
+            else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
+            {
+                Values[Loop] = CCExpressionGetFloat(Value);
+            }
+            
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
+                
+                return (CCColourRGBA){ 0.0f, 0.0f, 0.0f, 0.0f };
+            }
+        }
+        
+        return (CCColourRGBA){ Values[0], Values[1], Values[2], Values[3] };
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
+    
+    return (CCColourRGBA){ 0.0f, 0.0f, 0.0f, 0.0f };
+}
+
+typedef struct {
+    CCVector2D position;
+    CCColourRGBA colour;
+} DemoVertData;
+
+#include "AssetManager.h"
+#include "Window.h"
+
 static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
 {
+    GUIObject Parent = GUIObjectGetParent(Object);
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
     
+    //TODO: This needs work as will be very slow and awkward to work with
+    if (((GUIExpressionInfo*)Object->internal)->render)
+    {
+        CC_COLLECTION_FOREACH(CCExpression, Render, CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->render))
+        {
+            Render->state.super = ((GUIExpressionInfo*)Object->internal)->render;
+            Render = CCExpressionEvaluate(Render);
+            if (CCExpressionGetType(Render) == CCExpressionValueTypeList)
+            {
+                CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Render), 0));
+                
+                if (CCStringEqual(Atom, StrRenderRect))
+                {
+                    if (CCCollectionGetCount(CCExpressionGetList(Render)) >= 3)
+                    {
+                        CCEnumerator Enumerator;
+                        CCCollectionGetEnumerator(CCExpressionGetList(Render), &Enumerator);
+                        
+                        CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
+                        CCExpression *ArgColour = CCCollectionEnumeratorNext(&Enumerator);
+//                        CCExpression *ArgOptional = CCCollectionEnumeratorNext(&Enumerator);
+                        
+                        CCRect Rect = CCExpressionGetRect(*ArgRect);
+                        CCColourRGBA Colour = CCExpressionGetColour(*ArgColour);
+                        
+                        /////////////////////////////////
+                        GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("vertex-colour"));
+                        
+                        GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(DemoVertData) * 4, (DemoVertData[4]){
+                            { .position = Rect.position, .colour = Colour },
+                            { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour },
+                            { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour },
+                            { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour }
+                        });
+                        
+                        int w, h;
+                        glfwGetFramebufferSize(CCWindow, &w, &h);
+                        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, w, 0.0f, h, 0.0f, 1.0f);
+                        GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+                        
+                        GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
+                        GFXDrawSetShader(Drawer, Shader);
+                        GFXDrawSetFramebuffer(Drawer, GFXFramebufferDefault(), 0);
+                        GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
+                        GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
+                        GFXDrawSetBuffer(Drawer, "modelViewProjectionMatrix", Proj);
+                        GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
+                        GFXDrawDestroy(Drawer);
+                        
+                        GFXBufferDestroy(VertBuffer);
+                        GFXBufferDestroy(Proj);
+                        GFXShaderDestroy(Shader);
+                    }
+                    
+                    else
+                    {
+                        //error
+                    }
+                }
+            }
+        }
+    }
+    
+    CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
+    {
+        GUIObjectRender(Child, Framebuffer);
+    }
 }
 
 static void GUIExpressionEvent(GUIObject Object, GUIEvent Event)
@@ -128,33 +278,7 @@ static CCRect GUIExpressionGetRect(GUIObject Object)
     CCExpression Rect = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect);
     if (Rect)
     {
-        if ((CCExpressionGetType(Rect) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Rect)) == 4))
-        {
-            float Values[4];
-            for (int Loop = 0; Loop < 4; Loop++)
-            {
-                CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Rect), Loop);
-                
-                if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
-                {
-                    Values[Loop] = (float)CCExpressionGetInteger(Value);
-                }
-                
-                else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
-                {
-                    Values[Loop] = CCExpressionGetFloat(Value);
-                }
-                
-                else
-                {
-                    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Required rect state should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
-                    
-                    return (CCRect){ 0.0f, 0.0f, 0.0f, 0.0f };
-                }
-            }
-            
-            return (CCRect){ Values[0], Values[1], Values[2], Values[3] };
-        }
+        return CCExpressionGetRect(Rect);
     }
     
     CC_EXPRESSION_EVALUATOR_LOG_ERROR("Required rect state is missing.");
@@ -260,6 +384,8 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
     
     if (Initializer)
     {
+        size_t RenderIndex = 0;
+        CCExpression BaseRender = NULL;
         CCOrderedCollection Children = NULL;
         
         CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
@@ -277,7 +403,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                 
                 if (CCStringEqual(Atom, StrRender))
                 {
-                    
+                    BaseRender = InitExpr;
                 }
                 
                 else if (CCStringEqual(Atom, StrChildren))
@@ -311,15 +437,17 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         Expression->state.remove = NULL;
         
         //override
+        size_t Index = 0;
         while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
         {
+            Index++;
             if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
             {
                 CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0));
                 
                 if (CCStringEqual(Atom, StrRender))
                 {
-                    
+                    RenderIndex = Index;
                 }
                 
                 else if (CCStringEqual(Atom, StrChildren))
@@ -349,13 +477,37 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
             }
         }
         
-        
+        CCExpressionPrint(Expression);
         GUIObject Object = GUIExpressionCreate(CC_STD_ALLOCATOR, Expression);
         
         if (Children)
         {
             CC_COLLECTION_FOREACH(GUIObject, Child, Children) GUIObjectAddChild(Object, Child);
             CCCollectionDestroy(Children);
+        }
+        
+        if (BaseRender)
+        {
+            if (RenderIndex)
+            {
+                CCExpression Render = (((GUIExpressionInfo*)Object->internal)->render = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->data), RenderIndex));
+                
+                CCEnumerator Enumerator;
+                CCCollectionGetEnumerator(CCExpressionGetList(BaseRender), &Enumerator);
+
+                size_t Index = 1;
+                for (CCExpression *RenderExpr = CCCollectionEnumeratorNext(&Enumerator); RenderExpr; RenderExpr = CCCollectionEnumeratorNext(&Enumerator))
+                {
+                    CCOrderedCollectionInsertElementAtIndex(CCExpressionGetList(Render), &(CCExpression){ CCExpressionCopy(*RenderExpr) }, Index++);
+                }
+            }
+            
+            else
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->data), &(CCExpression){ (((GUIExpressionInfo*)Object->internal)->render = CCExpressionCopy(BaseRender)) });
+            }
+            
+            ((GUIExpressionInfo*)Object->internal)->render->state.super = ((GUIExpressionInfo*)Object->internal)->data;
         }
         
         CCExpression GUI = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)GUIExpressionValueTypeGUIObject, Object, NULL, (CCExpressionValueDestructor)GUIObjectDestroy);
