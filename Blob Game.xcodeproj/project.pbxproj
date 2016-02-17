@@ -32,6 +32,7 @@
 		F35CD6F51B3EC62E0032E3A7 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F31B3EC62E0032E3A7 /* RenderSystem.c */; };
 		F35CD6FA1B3F034F0032E3A7 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F35CD6F81B3F034F0032E3A7 /* RenderComponent.c */; };
 		F35FAFFE1C70FC5600B6A55C /* GUIManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F35FAFFC1C70FC5600B6A55C /* GUIManager.c */; };
+		F35FBE341C75147000833474 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F35FBE331C75147000833474 /* Carbon.framework */; };
 		F365311F1C15FDEE00A3B009 /* GFXBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F365311D1C15FDEE00A3B009 /* GFXBuffer.c */; };
 		F36531251C16163400A3B009 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531231C16163400A3B009 /* GFXMain.c */; };
 		F36531281C16213300A3B009 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F36531261C16213300A3B009 /* GLGFX.c */; };
@@ -161,6 +162,69 @@
 			remoteGlobalIDString = D333C5F018639A0500BBC4FF;
 			remoteInfo = ObjectiveChipmunk;
 		};
+		F35FBE5A1C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 46C84B18AFF040DDA47FDB2D;
+			remoteInfo = boing;
+		};
+		F35FBE5C1C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B9E5F44821CD484B99E6692C;
+			remoteInfo = gears;
+		};
+		F35FBE5E1C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A6BFC39954584C14BDDF693F;
+			remoteInfo = heightmap;
+		};
+		F35FBE601C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 438868970FA44A94829CBBE2;
+			remoteInfo = particles;
+		};
+		F35FBE621C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 930301C7A1C548DFB620B650;
+			remoteInfo = simple;
+		};
+		F35FBE641C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1B82EEB390084885A719CCC2;
+			remoteInfo = splitview;
+		};
+		F35FBE661C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC2FC4F2B7814E069DB6D0DA;
+			remoteInfo = wave;
+		};
+		F35FBE681C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 67374FCDE69C41288520A197;
+			remoteInfo = monitors;
+		};
+		F35FBE6A1C75147100833474 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A8715DFE24F44D049FBE0525;
+			remoteInfo = msaa;
+		};
 		F3C401EA1A56E52800095ECD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3C401CE1A56E52800095ECD /* Project object */;
@@ -189,55 +253,6 @@
 			remoteGlobalIDString = 09146205B4F34575B5E08051;
 			remoteInfo = glfw;
 		};
-		F3F5D6BD1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C55D5F203C1D480097E0455A;
-			remoteInfo = Boing;
-		};
-		F3F5D6BF1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 91358848214A4C8890436DBD;
-			remoteInfo = Gears;
-		};
-		F3F5D6C11A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 54CFB2C3B28E48F18BA0A29A;
-			remoteInfo = Particles;
-		};
-		F3F5D6C31A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 19E0B7E256A04E4D9FFA601E;
-			remoteInfo = Simple;
-		};
-		F3F5D6C51A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 04908A72F43544EAA8B70870;
-			remoteInfo = SplitView;
-		};
-		F3F5D6C71A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D7FCB252B7834E52B257A45C;
-			remoteInfo = Wave;
-		};
-		F3F5D6C91A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC29000F7518491EAFF7EAF1;
-			remoteInfo = accuracy;
-		};
 		F3F5D6CB1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
@@ -252,20 +267,6 @@
 			remoteGlobalIDString = D7C8688816A34FCD912CC3AB;
 			remoteInfo = cursor;
 		};
-		F3F5D6CF1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4BD983FC0EA24EDA92DD2627;
-			remoteInfo = cursoranim;
-		};
-		F3F5D6D11A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5FDAB81C2BC941629ACC0DFB;
-			remoteInfo = defaults;
-		};
 		F3F5D6D31A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
@@ -279,13 +280,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 6DDCB2F5275C47B9AC326DCA;
 			remoteInfo = events;
-		};
-		F3F5D6D71A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 065C007FEF2A4E0781818B9B;
-			remoteInfo = fsaa;
 		};
 		F3F5D6D91A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -314,20 +308,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F0FBA2195E3A40CAA7EFF060;
 			remoteInfo = joysticks;
-		};
-		F3F5D6E11A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 66FBB42EFE4746DA87F31719;
-			remoteInfo = modes;
-		};
-		F3F5D6E31A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 37976D78370F46AC92254F5B;
-			remoteInfo = peter;
 		};
 		F3F5D6E51A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -431,6 +411,7 @@
 		F35CD6F91B3F034F0032E3A7 /* RenderComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderComponent.h; sourceTree = "<group>"; };
 		F35FAFFC1C70FC5600B6A55C /* GUIManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIManager.c; sourceTree = "<group>"; };
 		F35FAFFD1C70FC5600B6A55C /* GUIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIManager.h; sourceTree = "<group>"; };
+		F35FBE331C75147000833474 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		F365311D1C15FDEE00A3B009 /* GFXBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXBuffer.c; sourceTree = "<group>"; };
 		F365311E1C15FDEE00A3B009 /* GFXBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXBuffer.h; sourceTree = "<group>"; };
 		F36531201C160C9100A3B009 /* GFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFX.h; sourceTree = "<group>"; };
@@ -590,6 +571,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F35FBE341C75147000833474 /* Carbon.framework in Frameworks */,
 				F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */,
 				F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */,
 				F3F5D6FB1A5700F3006D7F16 /* IOKit.framework in Frameworks */,
@@ -1091,6 +1073,7 @@
 			children = (
 				F39E23C71BFF65D200DB0B71 /* chibi-scheme */,
 				F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */,
+				F35FBE331C75147000833474 /* Carbon.framework */,
 				F3F5D6F81A5700B3006D7F16 /* CoreVideo.framework */,
 				F3F5D6F61A5700AB006D7F16 /* IOKit.framework */,
 				F3F5D6F41A570099006D7F16 /* OpenGL.framework */,
@@ -1119,26 +1102,23 @@
 			isa = PBXGroup;
 			children = (
 				F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */,
-				F3F5D6BE1A56FBDC006D7F16 /* Boing.app */,
-				F3F5D6C01A56FBDC006D7F16 /* Gears.app */,
-				F3F5D6C21A56FBDC006D7F16 /* Particles.app */,
-				F3F5D6C41A56FBDC006D7F16 /* Simple.app */,
-				F3F5D6C61A56FBDC006D7F16 /* SplitView.app */,
-				F3F5D6C81A56FBDC006D7F16 /* Wave.app */,
-				F3F5D6CA1A56FBDC006D7F16 /* accuracy.app */,
+				F35FBE5B1C75147100833474 /* boing.app */,
+				F35FBE5D1C75147100833474 /* gears.app */,
+				F35FBE5F1C75147100833474 /* heightmap.app */,
+				F35FBE611C75147100833474 /* particles.app */,
+				F35FBE631C75147100833474 /* simple.app */,
+				F35FBE651C75147100833474 /* splitview.app */,
+				F35FBE671C75147100833474 /* wave.app */,
 				F3F5D6CC1A56FBDC006D7F16 /* clipboard */,
 				F3F5D6CE1A56FBDC006D7F16 /* cursor */,
-				F3F5D6D01A56FBDC006D7F16 /* cursoranim.app */,
-				F3F5D6D21A56FBDC006D7F16 /* defaults */,
 				F3F5D6D41A56FBDC006D7F16 /* empty.app */,
 				F3F5D6D61A56FBDC006D7F16 /* events */,
-				F3F5D6D81A56FBDC006D7F16 /* fsaa */,
 				F3F5D6DA1A56FBDC006D7F16 /* gamma */,
 				F3F5D6DC1A56FBDC006D7F16 /* glfwinfo */,
 				F3F5D6DE1A56FBDC006D7F16 /* iconify */,
 				F3F5D6E01A56FBDC006D7F16 /* joysticks */,
-				F3F5D6E21A56FBDC006D7F16 /* modes */,
-				F3F5D6E41A56FBDC006D7F16 /* peter */,
+				F35FBE691C75147100833474 /* monitors */,
+				F35FBE6B1C75147100833474 /* msaa */,
 				F3F5D6E61A56FBDC006D7F16 /* reopen */,
 				F3F5D6E81A56FBDC006D7F16 /* sharing.app */,
 				F3F5D6EA1A56FBDC006D7F16 /* tearing.app */,
@@ -1354,6 +1334,69 @@
 			remoteRef = F32393D41A572148007BD168 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F35FBE5B1C75147100833474 /* boing.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = boing.app;
+			remoteRef = F35FBE5A1C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE5D1C75147100833474 /* gears.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = gears.app;
+			remoteRef = F35FBE5C1C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE5F1C75147100833474 /* heightmap.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = heightmap.app;
+			remoteRef = F35FBE5E1C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE611C75147100833474 /* particles.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = particles.app;
+			remoteRef = F35FBE601C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE631C75147100833474 /* simple.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = simple.app;
+			remoteRef = F35FBE621C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE651C75147100833474 /* splitview.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = splitview.app;
+			remoteRef = F35FBE641C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE671C75147100833474 /* wave.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = wave.app;
+			remoteRef = F35FBE661C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE691C75147100833474 /* monitors */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = monitors;
+			remoteRef = F35FBE681C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F35FBE6B1C75147100833474 /* msaa */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = msaa;
+			remoteRef = F35FBE6A1C75147100833474 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3F5D68B1A56F562006D7F16 /* Common.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1375,55 +1418,6 @@
 			remoteRef = F3F5D6BB1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6BE1A56FBDC006D7F16 /* Boing.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Boing.app;
-			remoteRef = F3F5D6BD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6C01A56FBDC006D7F16 /* Gears.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Gears.app;
-			remoteRef = F3F5D6BF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6C21A56FBDC006D7F16 /* Particles.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Particles.app;
-			remoteRef = F3F5D6C11A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6C41A56FBDC006D7F16 /* Simple.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Simple.app;
-			remoteRef = F3F5D6C31A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6C61A56FBDC006D7F16 /* SplitView.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = SplitView.app;
-			remoteRef = F3F5D6C51A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6C81A56FBDC006D7F16 /* Wave.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Wave.app;
-			remoteRef = F3F5D6C71A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6CA1A56FBDC006D7F16 /* accuracy.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = accuracy.app;
-			remoteRef = F3F5D6C91A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F3F5D6CC1A56FBDC006D7F16 /* clipboard */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -1438,20 +1432,6 @@
 			remoteRef = F3F5D6CD1A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D6D01A56FBDC006D7F16 /* cursoranim.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = cursoranim.app;
-			remoteRef = F3F5D6CF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6D21A56FBDC006D7F16 /* defaults */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = defaults;
-			remoteRef = F3F5D6D11A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F3F5D6D41A56FBDC006D7F16 /* empty.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -1464,13 +1444,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = events;
 			remoteRef = F3F5D6D51A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6D81A56FBDC006D7F16 /* fsaa */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = fsaa;
-			remoteRef = F3F5D6D71A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3F5D6DA1A56FBDC006D7F16 /* gamma */ = {
@@ -1499,20 +1472,6 @@
 			fileType = "compiled.mach-o.executable";
 			path = joysticks;
 			remoteRef = F3F5D6DF1A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6E21A56FBDC006D7F16 /* modes */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = modes;
-			remoteRef = F3F5D6E11A56FBDC006D7F16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F5D6E41A56FBDC006D7F16 /* peter */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = peter;
-			remoteRef = F3F5D6E31A56FBDC006D7F16 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3F5D6E61A56FBDC006D7F16 /* reopen */ = {
