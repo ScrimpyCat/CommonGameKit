@@ -200,6 +200,7 @@ switch(target) \
 
 #else
 #define CC_GL_BIND_BUFFER(target, buffer) glBindBuffer((target), (buffer)); CC_GL_CHECK()
+#define CC_GL_BIND_BUFFER_TARGET(target, buffer) glBindBuffer((target), (buffer)); CC_GL_CHECK()
 #endif
 
 
@@ -782,6 +783,7 @@ switch(target) \
 #else
 #define CC_GL_ACTIVE_TEXTURE(texture) glActiveTexture(texture); CC_GL_CHECK()
 #define CC_GL_BIND_TEXTURE(target, texture) glBindTexture((target), (texture)); CC_GL_CHECK()
+#define CC_GL_BIND_TEXTURE_TARGET(target, texture) glBindTexture((target), (texture)); CC_GL_CHECK()
 #endif
 
 

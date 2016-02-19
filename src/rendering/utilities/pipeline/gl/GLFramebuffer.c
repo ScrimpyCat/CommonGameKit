@@ -125,8 +125,10 @@ static void GLFBODestroy(GLFBO *Framebuffer)
     
     glDeleteFramebuffers(1, &Framebuffer->fbo); CC_GL_CHECK();
     
+#if CC_GL_STATE_FRAMEBUFFER
     if (CC_GL_CURRENT_STATE->bindFramebuffer.read == Framebuffer->fbo) CC_GL_CURRENT_STATE->bindFramebuffer.read = 0;
     if (CC_GL_CURRENT_STATE->bindFramebuffer.write == Framebuffer->fbo) CC_GL_CURRENT_STATE->bindFramebuffer.write = 0;
+#endif
     
     CC_SAFE_Free(Framebuffer);
 }

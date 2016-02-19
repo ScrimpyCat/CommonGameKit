@@ -135,6 +135,7 @@ static void GLBufferDestroy(GLBuffer Buffer)
         {
             glDeleteBuffers(1, &Buffer->gl.buffer); CC_GL_CHECK();
             
+#if CC_GL_STATE_BUFFER
             GLuint *BoundBufferState = NULL;
             
             switch (GLBufferTarget(Buffer->hint))
@@ -153,6 +154,7 @@ static void GLBufferDestroy(GLBuffer Buffer)
             }
             
             if (*BoundBufferState == Buffer->gl.buffer) *BoundBufferState = 0;
+#endif
             break;
         }
     }

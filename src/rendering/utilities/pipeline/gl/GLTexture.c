@@ -117,21 +117,31 @@ static void GLTextureDestroy(GLTexture Texture)
     if (Texture->data) CCPixelDataDestroy(Texture->data);
     glDeleteTextures(1, &Texture->texture); CC_GL_CHECK();
     
+#if CC_GL_STATE_TEXTURE
     GLuint *BoundTextureState = NULL;
     
     switch (GLTextureTarget(Texture->hint))
     {
+#if CC_GL_STATE_TEXTURE_1D
         case GL_TEXTURE_1D:
             BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_1D;
             break;
+#endif
             
+#if CC_GL_STATE_TEXTURE_2D
         case GL_TEXTURE_2D:
             BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_2D;
             break;
+#endif
             
+#if CC_GL_STATE_TEXTURE_3D
         case GL_TEXTURE_3D:
             BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_3D;
             break;
+#endif
+            
+        default:
+            return;
     }
     
 #if CC_GL_STATE_TEXTURE_MAX
@@ -147,6 +157,7 @@ static void GLTextureDestroy(GLTexture Texture)
         GLuint *BoundTexture = (GLuint*)((typeof(*CC_GL_CURRENT_STATE->bindTexture)*)BoundTextureState + Loop);
         if (*BoundTexture == Texture->texture) *BoundTexture = 0;
     }
+#endif
 }
 
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
