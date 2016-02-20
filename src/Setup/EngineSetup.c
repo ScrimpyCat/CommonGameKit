@@ -29,6 +29,8 @@
 #include "ComponentSystem.h"
 #include "EntityManager.h"
 #include "ExpressionSetup.h"
+#include "AssetManager.h"
+#include "GUIManager.h"
 
 //TODO: Probably make this file generated (could add a define so it knows what functions to call from here)
 #include "RenderSystem.h"
@@ -71,6 +73,10 @@ void CCEnginePreSetup(void)
 void CCEngineSetup(void)
 {
     GLGFXSetup();
+    
+    CCAssetManagerCreate();
+    
+    GUIManagerCreate();
     
     CCEntityManagerCreate();
     
