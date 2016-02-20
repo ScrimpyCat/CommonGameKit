@@ -480,6 +480,8 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         if (State) Expression->state.result = CCExpressionCopy(State);
     }
     
+    if (Expression->state.result) Expression->state.result->state.super = Expression->state.super;
+    
     return Expression->state.result;
 }
 

@@ -37,7 +37,7 @@ static const char CCProjectGamepkg[] =
 "    (dir-levels \"logic/levels/\") ; level directories\n"
 "    (dir-rules \"logic/rules/\") ; rule directories\n"
 "    (dir-textures \"graphics/textures/\") ; texture directories\n"
-"    (dir-shaders \"graphics/shaders/\") ; shader directories\n"
+"    (dir-shaders \"graphics/shaders/\" (engine-path \"assets/shaders/\")) ; shader directories\n"
 "    (dir-sounds \"audio/\") ; sound directories\n"
 "    (dir-layouts \"ui/\") ; layout directories\n"
 "    (dir-entities \"logic/entities/\") ; entity directories\n"
@@ -156,6 +156,14 @@ void CCProjectLoad(FSPath ProjectPath)
         if (FSHandleRead(Handle, &Size, Source, FSBehaviourDefault) == FSOperationSuccess)
         {
             CCExpression Expression = CCExpressionCreateFromSource(Source);
+            
+            FSPath EnginePath = FSPathCreateFromSystemPath(__FILE__);
+            FSPathRemoveComponentLast(EnginePath); // src/engine/Project.c
+            FSPathRemoveComponentLast(EnginePath); // src/engine/Project
+            FSPathRemoveComponentLast(EnginePath); // src/engine/
+            FSPathRemoveComponentLast(EnginePath); // src/
+            CCExpressionCreateState(Expression, CC_STRING("engine-path"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(EnginePath))), FALSE);
+            
             CCExpression Result = CCExpressionEvaluate(Expression);
             
             if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeGameConfig)

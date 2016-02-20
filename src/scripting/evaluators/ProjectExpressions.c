@@ -47,6 +47,44 @@ static void CCProjectExpressionGameConfigDirectoryElementDestructor(CCCollection
     FSPathDestroy(*Element);
 }
 
+static FSPath CCProjectExpressionPathFromExpression(CCExpression Expression)
+{
+    FSPath Path = NULL;
+    if (CCExpressionGetType(Expression) == CCExpressionValueTypeString)
+    {
+        CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Expression)) Path = FSPathCreate(Buffer);
+    }
+    
+    else if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
+    {
+        Path = FSPathCreate("");
+        CC_COLLECTION_FOREACH(CCExpression, Part, CCExpressionGetList(Expression))
+        {
+            CCExpression Result = CCExpressionEvaluate(Part);
+            if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
+            {
+                CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result))
+                {
+                    CCOrderedCollection Components = FSPathConvertPathToComponents(Buffer, FALSE);
+                    CC_COLLECTION_FOREACH(FSPathComponent, Component, Components)
+                    {
+                        FSPathAppendComponent(Path, FSPathComponentCopy(Component));
+                    }
+                    CCCollectionDestroy(Components);
+                }
+            }
+            
+            else
+            {
+                FSPathDestroy(Path);
+                return NULL;
+            }
+        }
+    }
+    
+    return Path;
+}
+
 CCExpression CCProjectExpressionGame(CCExpression Expression)
 {
     CCEngineConfig Config = {
@@ -179,16 +217,12 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                     {
                                         if (ArgCount == 1)
                                         {
-                                            Result = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
-                                            if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
-                                            {
-                                                CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result)) *(FSPath*)(Commands[Loop].attribute) = FSPathCreate(Buffer);
-                                            }
+                                            *(FSPath*)(Commands[Loop].attribute) = CCProjectExpressionPathFromExpression(CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator)));
                                         }
                                         
                                         else
                                         {
-                                            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result)) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Buffer, "path:string");
+                                            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result)) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Buffer, "path:string|list");
                                         }
                                     }
                                     
@@ -199,11 +233,8 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                         //TODO: Make a directory expression
                                         for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
                                         {
-                                            Result = CCExpressionEvaluate(*Expr);
-                                            if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
-                                            {
-                                                CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result)) CCCollectionInsertElement(Directories, &(FSPath){ FSPathCreate(Buffer) });
-                                            }
+                                            FSPath Dir = CCProjectExpressionPathFromExpression(CCExpressionEvaluate(*Expr));
+                                            CCCollectionInsertElement(Directories, &Dir);
                                         }
                                         
                                         *(CCCollection*)(Commands[Loop].attribute) = Directories;
