@@ -71,6 +71,8 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 
 **if** A conditional branch statement. If the predicate is true (1 or some non-zero value) it will evaluate and return the result of the truth expression, or if the predicate is false (0) it will evaluate and return the result of the false expression. e.g. `(if 1 "true" "false") ;"true"`
 
+**loop** A loop statement. Iterates through the list, assigning the element to the given state variable, and evaluating the expression. e.g. `(loop "var" (1 2) var) ;(1 2)`, `(loop "val" (1 2) (+ val 1)) ;(2 3)`
+
 **state!** Adds the state to the encompassing expression. State can then be referenced and set elsewhere in that expression or nested expressions. State creates a link between the atom name and the value it holds. When referencing state, state in the inner scopes has greater preference to state in the outer scopes. 
 
     (state! "x" 5)
@@ -110,6 +112,20 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
     b ;21
 
 **print** Prints the expressions. e.g. `(print 1) ;CCIOExpressionPrint: 1`
+
+**search** Searches the specified path, for any contents that match the given expression.
+
+    ; Assume contents of "folder/":
+    ; folder/1.txt
+    ; folder/2.txt
+    ; folder/2.png
+    ; folder/subfolder/3.txt
+    ; folder/subfolder/3.png
+
+    (search "folder/") ;("folder/1.txt" "folder/2.txt" "folder/2.png" "folder/subfolder/" "folder/subfolder/3.txt" "folder/subfolder/3.png")
+    (search "folder/" ".txt") ;("folder/1.txt" "folder/2.txt" "folder/subfolder/3.txt")
+    (search "folder/" "2.*") ;("folder/2.txt" "folder/2.png")
+    (search "folder/" "subfolder/*.*") ;("folder/subfolder/3.txt" "folder/subfolder/3.png")
 
 **super** Evaluates the expression in the former in-use state.
 
