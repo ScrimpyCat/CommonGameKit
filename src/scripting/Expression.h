@@ -90,6 +90,19 @@ typedef struct CCExpressionValue {
 
 
 /*!
+ * @brief Create an expression from a source file.
+ * @description Sets some state associated with the file.
+ *
+ *              @b \@cd : Directory containing the file.
+ *
+ *              @b \@file : File name of the file.
+ *
+ * @param Path The path to the file containing the source.
+ * @return The created expression.
+ */
+CCExpression CCExpressionCreateFromSourceFile(FSPath Path);
+
+/*!
  * @brief Create an expression from source.
  * @param Source The string representation of the expression.
  * @return The created expression.

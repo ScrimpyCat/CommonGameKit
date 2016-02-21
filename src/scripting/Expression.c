@@ -175,6 +175,35 @@ CCExpression CCExpressionCopy(CCExpression Expression)
     return Copy;
 }
 
+CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
+{
+    CCExpression Expression = NULL;
+    
+    FSHandle Handle;
+    if (FSHandleOpen(Path, FSHandleTypeRead, &Handle) == FSOperationSuccess)
+    {
+        size_t Size = FSManagerGetSize(Path);
+        char *Source;
+        CC_SAFE_Malloc(Source, sizeof(char) * (Size + 1));
+        
+        FSHandleRead(Handle, &Size, Source, FSBehaviourDefault);
+        Source[Size] = 0;
+        
+        Expression = CCExpressionCreateFromSource(Source);
+        
+        FSHandleClose(Handle);
+        CC_SAFE_Free(Source);
+        
+        const char *Filename = FSPathGetFilenameString(Path);
+        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename)), TRUE);
+        
+        const char *Dir = FSPathGetPathString(Path);
+        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename))), TRUE);
+    }
+    
+    return Expression;
+}
+
 CCExpression CCExpressionCreateFromSource(const char *Source)
 {
     CCAssertLog(Source, "Source must not be NULL");

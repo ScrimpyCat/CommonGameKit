@@ -138,52 +138,31 @@ FSPath CCProjectCreate(const char *Directory)
 
 void CCProjectLoad(FSPath ProjectPath)
 {
-    FSHandle Handle;
-    if (FSHandleOpen(ProjectPath, FSHandleTypeRead, &Handle) != FSOperationSuccess)
+    CCExpression Expression = CCExpressionCreateFromSourceFile(ProjectPath);
+    if (Expression)
     {
-        CC_LOG_ERROR("Failed to open the project");
-        return;
-    }
-    
-    size_t Size = FSManagerGetSize(ProjectPath);
-    char *Source;
-    CC_SAFE_Malloc(Source, sizeof(char) * Size,
-                   CC_LOG_ERROR("Failed to allocate memory for the project source file. Allocation size: %zu", sizeof(char) * Size);
-                   );
-    
-    if (Source)
-    {
-        if (FSHandleRead(Handle, &Size, Source, FSBehaviourDefault) == FSOperationSuccess)
+        FSPath EnginePath = FSPathCreateFromSystemPath(__FILE__);
+        FSPathRemoveComponentLast(EnginePath); // src/engine/Project.c
+        FSPathRemoveComponentLast(EnginePath); // src/engine/Project
+        FSPathRemoveComponentLast(EnginePath); // src/engine/
+        FSPathRemoveComponentLast(EnginePath); // src/
+        CCExpressionCreateState(Expression, CC_STRING("engine-path"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(EnginePath))), FALSE);
+        
+        CCExpression Result = CCExpressionEvaluate(Expression);
+        
+        if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeGameConfig)
         {
-            CCExpression Expression = CCExpressionCreateFromSource(Source);
+            ((CCEngineConfig*)CCExpressionGetData(Result))->launch = CCEngineConfiguration.launch;
+            CCEngineConfiguration = *(CCEngineConfig*)CCExpressionGetData(Result);
+            CCEngineConfiguration.project = ProjectPath;
             
-            FSPath EnginePath = FSPathCreateFromSystemPath(__FILE__);
-            FSPathRemoveComponentLast(EnginePath); // src/engine/Project.c
-            FSPathRemoveComponentLast(EnginePath); // src/engine/Project
-            FSPathRemoveComponentLast(EnginePath); // src/engine/
-            FSPathRemoveComponentLast(EnginePath); // src/
-            CCExpressionCreateState(Expression, CC_STRING("engine-path"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(EnginePath))), FALSE);
-            
-            CCExpression Result = CCExpressionEvaluate(Expression);
-            
-            if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeGameConfig)
-            {
-                ((CCEngineConfig*)CCExpressionGetData(Result))->launch = CCEngineConfiguration.launch;
-                CCEngineConfiguration = *(CCEngineConfig*)CCExpressionGetData(Result);
-                CCEngineConfiguration.project = ProjectPath;
-                
-                CCExpressionChangeOwnership(Result, NULL, CCFree);
-            }
-            
-            else CC_LOG_ERROR("Failed to evaluate the project source file.");
-            
-            CCExpressionDestroy(Expression);
+            CCExpressionChangeOwnership(Result, NULL, CCFree);
         }
         
-        else CC_LOG_ERROR("Failed to read the project source file.");
+        else CC_LOG_ERROR("Failed to evaluate the project source file.");
         
-        CC_SAFE_Free(Source);
+        CCExpressionDestroy(Expression);
     }
     
-    FSHandleClose(Handle);
+    else CC_LOG_ERROR("Failed to read the project source file.");
 }
