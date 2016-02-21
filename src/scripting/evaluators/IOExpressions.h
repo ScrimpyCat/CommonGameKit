@@ -30,5 +30,6 @@
 
 
 CC_EXPRESSION_EVALUATOR(print) CCExpression CCIOExpressionPrint(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(search) CCExpression CCIOExpressionSearch(CCExpression Expression);
 
 #endif

@@ -65,3 +65,81 @@ CCExpression CCIOExpressionPrint(CCExpression Expression)
     
     return Expression;
 }
+
+static void CCIOExpressionPathElementDestructor(CCCollection Collection, FSPath *Element)
+{
+    FSPathDestroy(*Element);
+}
+
+CCExpression CCIOExpressionSearch(CCExpression Expression)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    CCExpression *Dir = CCCollectionEnumeratorNext(&Enumerator), CurrentDir;
+    if ((!Dir) || (CCExpressionGetType((CurrentDir = CCExpressionEvaluate(*Dir))) != CCExpressionValueTypeString))
+    {
+        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("search", "path:string [matches:string|list]");
+        return Expression;
+    }
+    
+    CCCollection Matches = NULL;
+    CCExpression *MatchArg = CCCollectionEnumeratorNext(&Enumerator);
+    if (MatchArg)
+    {
+        CCExpression Arg = CCExpressionEvaluate(*MatchArg);
+        Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCIOExpressionPathElementDestructor);
+        
+        if ((CCExpressionGetType(Arg) == CCExpressionValueTypeString))
+        {
+            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Arg)) CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(Buffer) });
+        }
+        
+        else if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList))
+        {
+            CC_COLLECTION_FOREACH(CCExpression, Match, CCExpressionGetList(Arg))
+            {
+                if ((CCExpressionGetType(Match) == CCExpressionValueTypeString))
+                {
+                    CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Match)) CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(Buffer) });
+                }
+                
+                else
+                {
+                    CCCollectionDestroy(Matches);
+                    
+                    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("search", "path:string [matches:string|list]");
+                    return Expression;
+                }
+            }
+        }
+        
+        else
+        {
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("search", "path:string [matches:string|list]");
+            return Expression;
+        }
+    }
+    
+    FSPath Path = NULL;
+    CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(CurrentDir)) Path = FSPathCreate(Buffer);
+    
+    CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSearchRecursively);
+    
+    FSPathDestroy(Path);
+    
+    if (Matches) CCCollectionDestroy(Matches);
+    
+    CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    if (Paths)
+    {
+        CC_COLLECTION_FOREACH(FSPath, Path, Paths)
+        {
+            CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(Path))) });
+        }
+        
+        CCCollectionDestroy(Paths);
+    }
+    
+    return List;
+}
