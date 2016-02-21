@@ -59,3 +59,38 @@ CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
     
     return Expr;
 }
+
+CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if (ArgCount == 3)
+    {
+        CCExpression Var = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Var) == CCExpressionValueTypeString)
+        {
+            CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+            CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3);
+            
+            if (CCExpressionGetType(List) == CCExpressionValueTypeList)
+            {
+                CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                CC_COLLECTION_FOREACH(CCExpression, Item, CCExpressionGetList(List))
+                {
+                    if (!CCExpressionSetState(Expression, CCExpressionGetString(Var), Item, TRUE))
+                    {
+                        CCExpressionCreateState(Expression, CCExpressionGetString(Var), Item, TRUE);
+                    }
+                    
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(Expr)) });
+                }
+                
+                return Result;
+            }
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("loop", "var:string list:list iteration:expr");
+    
+    return Expression;
+}

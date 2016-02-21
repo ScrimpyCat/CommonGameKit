@@ -31,5 +31,6 @@
 
 CC_EXPRESSION_EVALUATOR(begin) CCExpression CCControlFlowExpressionBegin(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(if) CCExpression CCControlFlowExpressionBranch(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(loop) CCExpression CCControlFlowExpressionLoop(CCExpression Expression);
 
 #endif

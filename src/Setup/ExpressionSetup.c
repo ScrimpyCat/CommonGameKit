@@ -20,6 +20,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("percent-height"), GUIExpressionPercentHeight);
     CCExpressionEvaluatorRegister(CC_STRING("begin"), CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister(CC_STRING("if"), CCControlFlowExpressionBranch);
+    CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);
     CCExpressionEvaluatorRegister(CC_STRING("="), CCEqualityExpressionEqual);
     CCExpressionEvaluatorRegister(CC_STRING("!="), CCEqualityExpressionNotEqual);
     CCExpressionEvaluatorRegister(CC_STRING("<="), CCEqualityExpressionLessThanEqual);
