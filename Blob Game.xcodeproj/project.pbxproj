@@ -56,6 +56,7 @@
 		F3769A321C11F98700F24A44 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F61A5700AB006D7F16 /* IOKit.framework */; };
 		F3769A331C11F99700F24A44 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D6F41A570099006D7F16 /* OpenGL.framework */; };
 		F389DC201C3A0797009480B8 /* GUIExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F389DC1E1C3A0797009480B8 /* GUIExpression.c */; };
+		F390E9CF1C79B94A0072D4E7 /* StringExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F390E9CD1C79B94A0072D4E7 /* StringExpressions.c */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -455,6 +456,8 @@
 		F3769A2D1C11F8E200F24A44 /* GLStateModernTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLStateModernTests.m; sourceTree = "<group>"; };
 		F389DC1E1C3A0797009480B8 /* GUIExpression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIExpression.c; sourceTree = "<group>"; };
 		F389DC1F1C3A0797009480B8 /* GUIExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIExpression.h; sourceTree = "<group>"; };
+		F390E9CD1C79B94A0072D4E7 /* StringExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StringExpressions.c; sourceTree = "<group>"; };
+		F390E9CE1C79B94A0072D4E7 /* StringExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExpressions.h; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -859,6 +862,8 @@
 			children = (
 				F3B147CF1C3FFED300ADC294 /* ListExpressions.h */,
 				F3B147CE1C3FFED300ADC294 /* ListExpressions.c */,
+				F390E9CE1C79B94A0072D4E7 /* StringExpressions.h */,
+				F390E9CD1C79B94A0072D4E7 /* StringExpressions.c */,
 				F32555431C35F59200B1623C /* MacroExpressions.h */,
 				F32555421C35F59200B1623C /* MacroExpressions.c */,
 				F3A3A7281C2ED39100EC1F18 /* StateExpressions.h */,
@@ -1564,6 +1569,7 @@
 				F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */,
 				F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */,
 				F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */,
+				F390E9CF1C79B94A0072D4E7 /* StringExpressions.c in Sources */,
 				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
 				F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */,
 				F3C020931B51D32600F546E7 /* Controller.c in Sources */,

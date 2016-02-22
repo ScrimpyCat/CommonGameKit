@@ -153,6 +153,14 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
         )
     )
 
+**prefix** Checks if the string has the prefix. e.g. `(prefix "My" "My Test") ;1`, `(prefix "My" "Test") ;0`
+
+**suffix** Checks if the string has the suffix. e.g. `(suffix "Test" "My Test") ;1`, `(suffix "Test" "My") ;0`
+
+**filename** Get the filename from a string path. e.g. `(filename "folder/folder/file.txt") ;"file.txt"`
+
+**replace** Replace occurrences of string in the string with another string. e.g. `(replace " " "-" "1 2 3 4 5") ;"1-2-3-4-5"`
+
 
 ###Engine Functions###
 
