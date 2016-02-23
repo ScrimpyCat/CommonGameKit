@@ -82,6 +82,25 @@ static FSPath CCProjectExpressionPathFromExpression(CCExpression Expression)
         }
     }
     
+    if (FSPathIsRelativePath(Path))
+    {
+        CCExpression CurrentDir = CCExpressionGetState(Expression, CC_STRING("@cd"));
+        if (CurrentDir)
+        {
+            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(CurrentDir))
+            {
+                FSPath Base = FSPathCreate(Buffer);
+                for (size_t Loop = 1, Count = FSPathGetComponentCount(Path); Loop < Count; Loop++)
+                {
+                    FSPathAppendComponent(Base, FSPathComponentCopy(FSPathGetComponentAtIndex(Path, Loop)));
+                }
+                
+                FSPathDestroy(Path);
+                Path = Base;
+            }
+        }
+    }
+    
     return Path;
 }
 
@@ -261,6 +280,175 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
     }
     
     else CCProjectExpressionValueGameConfigDestructor(&Config);
+    
+    return Expression;
+}
+
+#include "GLGFX.h"
+
+static CCExpression CCProjectExpressionValueShaderLibraryCopy(CCExpression Value)
+{
+    return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCProjectExpressionValueTypeShaderLibrary, CCRetain(CCExpressionGetData(Value)), CCProjectExpressionValueShaderLibraryCopy, (CCExpressionValueDestructor)CCFree);
+}
+
+static void CCProjectExpressionValueShaderLibraryDestructor(CCProjectExpressionValueShaderLibrary *Data)
+{
+    CCStringDestroy(Data->name);
+    GFXShaderLibraryDestroy(Data->library);
+}
+
+CCExpression CCProjectExpressionLibrary(CCExpression Expression)
+{
+    CCExpressionCreateState(Expression, CC_STRING("@source-list"), CCExpressionCreateList(CC_STD_ALLOCATOR), FALSE);
+    
+    if (GFXMain == GLGFX) CCExpressionCreateState(Expression, CC_STRING("@opengl"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
+    
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    CCExpression *LibName = CCCollectionEnumeratorNext(&Enumerator);
+    if ((LibName) && (CCExpressionGetType(*LibName) == CCExpressionValueTypeString))
+    {
+        for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator)) CCExpressionEvaluate(*Expr);
+        
+        CCExpression SourceList = CCExpressionGetState(Expression, CC_STRING("@source-list"));
+        if (CCExpressionGetType(SourceList) == CCExpressionValueTypeList)
+        {
+            GFXShaderLibrary Library = GFXShaderLibraryCreate(CC_STD_ALLOCATOR);
+            
+            CC_COLLECTION_FOREACH(CCExpression, Source, CCExpressionGetList(SourceList))
+            {
+                if (CCExpressionGetType(SourceList) == CCExpressionValueTypeList)
+                {
+                    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(SourceList)) - 1;
+                    if (ArgCount == 3)
+                    {
+                        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceList), 0);
+                        CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceList), 1);
+                        CCExpression Source = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceList), 2);
+                        
+                        if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(Type) == CCExpressionValueTypeAtom) && (CCExpressionGetType(Source) == CCExpressionValueTypeExpression))
+                        {
+                            GFXShaderSourceType ShaderType = GFXShaderSourceTypeVertex;
+                            if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("vertex"))) ShaderType = GFXShaderSourceTypeVertex;
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("fragment"))) ShaderType = GFXShaderSourceTypeFragment;
+                            else
+                            {
+                                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid shader type: %S", CCExpressionGetAtom(Type));
+                                break;
+                            }
+                            
+                            
+                            const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Source)) - 1;
+                            if (ArgCount == 2)
+                            {
+                                CCExpression SourceType = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Source), 0);
+                                CCExpression SourceArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Source), 1);
+                                
+                                if ((CCExpressionGetType(SourceType) == CCExpressionValueTypeAtom) && (CCExpressionGetType(SourceArg) == CCExpressionValueTypeString))
+                                {
+                                    if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("dir")))
+                                    {
+                                        CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(SourceArg))
+                                        {
+                                            FSPath Path = FSPathCreate(Buffer);
+                                            
+                                            FSHandle Handle;
+                                            if (FSHandleOpen(Path, FSHandleTypeRead, &Handle) == FSOperationSuccess)
+                                            {
+                                                size_t Size = FSManagerGetSize(Path);
+                                                char *Shader;
+                                                CC_SAFE_Malloc(Shader, sizeof(char) * (Size + 1));
+                                                
+                                                FSHandleRead(Handle, &Size, Shader, FSBehaviourDefault);
+                                                Shader[Size] = 0;
+                                                
+                                                FSHandleClose(Handle);
+                                                
+                                                
+                                                CC_STRING_TEMP_BUFFER(NameBuffer, CCExpressionGetString(Name)) GFXShaderLibraryCompile(Library, ShaderType, NameBuffer, Shader);
+                                                
+                                                CC_SAFE_Free(Source);
+                                            }
+                                        }
+                                    }
+                                    
+                                    else if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("glsl")))
+                                    {
+                                        CC_STRING_TEMP_BUFFER(Shader, CCExpressionGetString(SourceArg))
+                                        {
+                                            CC_STRING_TEMP_BUFFER(NameBuffer, CCExpressionGetString(Name)) GFXShaderLibraryCompile(Library, ShaderType, NameBuffer, Shader);
+                                        }
+                                    }
+                                    
+                                    else
+                                    {
+                                        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid source type: %S", CCExpressionGetAtom(SourceType));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+            CCProjectExpressionValueShaderLibrary *ShaderLibrary;
+            CC_SAFE_Malloc(ShaderLibrary, sizeof(CCProjectExpressionValueShaderLibrary),
+                           GFXShaderLibraryDestroy(Library);
+                           CC_LOG_ERROR("Failed to create CCProjectExpressionValueShaderLibrary due to allocation failure. Allocation size (%zu)", sizeof(CCProjectExpressionValueShaderLibrary));
+                           return Expression;
+                           );
+            
+            CCMemorySetDestructor(ShaderLibrary, (CCMemoryDestructorCallback)CCProjectExpressionValueShaderLibraryDestructor);
+            
+            *ShaderLibrary = (CCProjectExpressionValueShaderLibrary){
+                .name = CCStringCopy(CCExpressionGetString(*LibName)),
+                .library = Library
+            };
+            
+            return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCProjectExpressionValueTypeShaderLibrary, ShaderLibrary, CCProjectExpressionValueShaderLibraryCopy, (CCExpressionValueDestructor)CCFree);
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("@source-list state is not a list");
+    }
+    
+    return Expression;
+}
+
+CCExpression CCProjectExpressionLibrarySource(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 3)
+    {
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression Type = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        CCExpression Source = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+        
+        if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(Type) == CCExpressionValueTypeAtom) && (CCExpressionGetType(Source) == CCExpressionValueTypeExpression))
+        {
+            CCExpression List = CCExpressionCopy(CCExpressionGetState(Expression, CC_STRING("@source-list")));
+            
+            if ((List) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+            {
+                CCExpression Value = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(Name) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(Type) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(Source) });
+                
+                CCOrderedCollectionAppendElement(CCExpressionGetList(List), &Value);
+                
+                CCExpressionSetState(Expression, CC_STRING("@source-list"), List, FALSE);
+            }
+            
+            else CC_EXPRESSION_EVALUATOR_LOG_ERROR("@source-list state is not a list");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("source", "name:string type:atom source:expr");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("source", "name:string type:atom source:expr");
     
     return Expression;
 }

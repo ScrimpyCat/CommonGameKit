@@ -11,6 +11,7 @@
 #include "MathExpressions.h"
 #include "ProjectExpressions.h"
 #include "StateExpressions.h"
+#include "StringExpressions.h"
 #include "WindowExpressions.h"
 
 void CCExpressionSetup(void)
@@ -40,10 +41,16 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("max"), CCMathExpressionMaximum);
     CCExpressionEvaluatorRegister(CC_STRING("random"), CCMathExpressionRandom);
     CCExpressionEvaluatorRegister(CC_STRING("game"), CCProjectExpressionGame);
+    CCExpressionEvaluatorRegister(CC_STRING("library"), CCProjectExpressionLibrary);
+    CCExpressionEvaluatorRegister(CC_STRING("source"), CCProjectExpressionLibrarySource);
     CCExpressionEvaluatorRegister(CC_STRING("state!"), CCStateExpressionCreateState);
     CCExpressionEvaluatorRegister(CC_STRING("enum!"), CCStateExpressionCreateEnum);
     CCExpressionEvaluatorRegister(CC_STRING("super"), CCStateExpressionSuper);
     CCExpressionEvaluatorRegister(CC_STRING("strict-super"), CCStateExpressionStrictSuper);
+    CCExpressionEvaluatorRegister(CC_STRING("prefix"), CCStringExpressionPrefix);
+    CCExpressionEvaluatorRegister(CC_STRING("suffix"), CCStringExpressionSuffix);
+    CCExpressionEvaluatorRegister(CC_STRING("filename"), CCStringExpressionFilename);
+    CCExpressionEvaluatorRegister(CC_STRING("replace"), CCStringExpressionReplace);
     CCExpressionEvaluatorRegister(CC_STRING("window-percent-width"), CCWindowExpressionPercentageWidth);
     CCExpressionEvaluatorRegister(CC_STRING("window-percent-height"), CCWindowExpressionPercentageHeight);
     CCExpressionEvaluatorRegister(CC_STRING("window-width"), CCWindowExpressionWidth);

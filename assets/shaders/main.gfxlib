@@ -1,0 +1,12 @@
+(library "core"
+    (if @opengl (
+        (loop "file" (search @cd ("*.fs" "*.vs")) (source (replace "." "-" (filename file)) (if (suffix "fs" file) fragment vertex) (dir file)))
+    ))
+
+    ;(if @vulkan (
+    ;    (source "something-vs" vertex (dir "my.spirv"))
+    ;    (source "some-fs" fragment (spir-v (22 93 1 38 37 7 7 47 123 37 4 4 37 43 47 3)))
+    ;))
+
+    ;(if @metal (source "main" library "main.metallib"))
+)

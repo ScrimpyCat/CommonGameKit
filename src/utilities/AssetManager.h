@@ -39,6 +39,27 @@ void CCAssetManagerCreate(void);
 void CCAssetManagerDestroy(void);
 
 /*!
+ * @brief Registers the shader library with the asset manager.
+ * @param Name The lookup name for the shader library asset entry.
+ * @param Shader The shader library to be managed. Retains a reference to the 
+ *        shader library.
+ */
+void CCAssetManagerRegisterShaderLibrary(CCString Name, GFXShaderLibrary Library);
+
+/*!
+ * @brief Deregisters the shader library from the asset manager.
+ * @param Name The lookup name for the shader library asset entry.
+ */
+void CCAssetManagerDeregisterShaderLibrary(CCString Name);
+
+/*!
+ * @brief Creates the registered shader library.
+ * @param Name The lookup name for the shader library asset entry.
+ * @return The shader library. Must be destroyed.
+ */
+GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name);
+
+/*!
  * @brief Registers the shader with the asset manager.
  * @param Name The lookup name for the shader asset entry.
  * @param Shader The shader to be managed. Retains a reference to the shader.

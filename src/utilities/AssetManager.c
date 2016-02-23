@@ -26,7 +26,10 @@
 #include "AssetManager.h"
 
 typedef enum {
-    CCAssetTypeShader
+    CCAssetTypeUndefined,
+    CCAssetTypeShaderLibrary,
+    CCAssetTypeShader,
+    CCAssetTypeCount
 } CCAssetType;
 
 typedef struct {
@@ -36,7 +39,7 @@ typedef struct {
     //FSPath reference
 } CCAssetInfo;
 
-static CCCollection ShaderAssets = NULL;
+static CCCollection Assets[CCAssetTypeCount] = {NULL};
 
 static void CCAssetElementDestructor(CCCollection Collection, CCAssetInfo *Element)
 {
@@ -44,6 +47,10 @@ static void CCAssetElementDestructor(CCCollection Collection, CCAssetInfo *Eleme
     
     switch (Element->type)
     {
+        case CCAssetTypeShaderLibrary:
+            GFXShaderLibraryDestroy(Element->asset);
+            break;
+            
         case CCAssetTypeShader:
             GFXShaderDestroy(Element->asset);
             break;
@@ -60,17 +67,52 @@ static CCComparisonResult CCAssetElementNameComparator(const CCAssetInfo *left, 
 
 void CCAssetManagerCreate(void)
 {
-    ShaderAssets = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyFinding, sizeof(CCAssetInfo), (CCCollectionElementDestructor)CCAssetElementDestructor);
+    for (size_t Loop = 0; Loop < CCAssetTypeCount; Loop++)
+    {
+        Assets[Loop] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyFinding, sizeof(CCAssetInfo), (CCCollectionElementDestructor)CCAssetElementDestructor);
+    }
 }
 
 void CCAssetManagerDestroy(void)
 {
-    CCCollectionDestroy(ShaderAssets);
+    for (size_t Loop = 0; Loop < CCAssetTypeCount; Loop++)
+    {
+        CCCollectionDestroy(Assets[Loop]);
+    }
 }
 
+#pragma mark - Shader Library
+void CCAssetManagerRegisterShaderLibrary(CCString Name, GFXShaderLibrary Library)
+{
+    CCCollectionInsertElement(Assets[CCAssetTypeShaderLibrary], &(CCAssetInfo){
+        .type = CCAssetTypeShader,
+        .name = CCStringCopy(Name),
+        .asset = CCRetain(Library)
+    });
+}
+
+void CCAssetManagerDeregisterShaderLibrary(CCString Name)
+{
+    CCCollectionRemoveElement(Assets[CCAssetTypeShaderLibrary], CCCollectionFindElement(Assets[CCAssetTypeShaderLibrary], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+}
+
+GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
+{
+    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeShaderLibrary], CCCollectionFindElement(Assets[CCAssetTypeShaderLibrary], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    
+    if (!Asset)
+    {
+        CC_LOG_ERROR_CUSTOM("No shader library asset available with name: %S", Name);
+        return NULL;
+    }
+    
+    return CCRetain(Asset->asset);
+}
+
+#pragma mark - Shader
 void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader)
 {
-    CCCollectionInsertElement(ShaderAssets, &(CCAssetInfo){
+    CCCollectionInsertElement(Assets[CCAssetTypeShader], &(CCAssetInfo){
         .type = CCAssetTypeShader,
         .name = CCStringCopy(Name),
         .asset = CCRetain(Shader)
@@ -79,12 +121,12 @@ void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader)
 
 void CCAssetManagerDeregisterShader(CCString Name)
 {
-    CCCollectionRemoveElement(ShaderAssets, CCCollectionFindElement(ShaderAssets, &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCCollectionRemoveElement(Assets[CCAssetTypeShader], CCCollectionFindElement(Assets[CCAssetTypeShader], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
 }
 
 GFXShader CCAssetManagerCreateShader(CCString Name)
 {
-    CCAssetInfo *Asset = CCCollectionGetElement(ShaderAssets, CCCollectionFindElement(ShaderAssets, &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeShader], CCCollectionFindElement(Assets[CCAssetTypeShader], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
     
     if (!Asset)
     {

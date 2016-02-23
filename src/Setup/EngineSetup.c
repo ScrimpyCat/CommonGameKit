@@ -31,6 +31,8 @@
 #include "ExpressionSetup.h"
 #include "AssetManager.h"
 #include "GUIManager.h"
+#include "Configuration.h"
+#include "ProjectExpressions.h"
 
 //TODO: Probably make this file generated (could add a define so it knows what functions to call from here)
 #include "RenderSystem.h"
@@ -69,6 +71,12 @@ void CCEnginePreSetup(void)
     
     CCExpressionSetup();
 }
+#include "GUIExpression.h"
+
+static void CCEngineSetupPathElementDestructor(CCCollection Collection, FSPath *Element)
+{
+    FSPathDestroy(*Element);
+}
 
 void CCEngineSetup(void)
 {
@@ -98,6 +106,32 @@ void CCEngineSetup(void)
     CCAnimationComponentRegister();
     CCAnimationKeyframeComponentRegister();
     CCAnimationInterpolateComponentRegister();
+    
+    
+    //Load Global Assets
+    CCCollection Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCEngineSetupPathElementDestructor);
+    
+//    FSPath MatchAsset = FSPathCreate(".asset");
+    CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".gfxlib") });
+    
+    CC_COLLECTION_FOREACH(FSPath, Path, CCEngineConfiguration.directory.shaders)
+    {
+        CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
+        
+        CC_COLLECTION_FOREACH(FSPath, LibPath, Paths)
+        {
+            CCExpression LibExpr = CCExpressionCreateFromSourceFile(LibPath);
+            CCExpression Result = CCExpressionEvaluate(LibExpr);
+            
+            if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeShaderLibrary)
+            {
+                CCProjectExpressionValueShaderLibrary *Library = CCExpressionGetData(Result);
+                CCAssetManagerRegisterShaderLibrary(Library->name, Library->library);
+            }
+            
+            CCExpressionDestroy(LibExpr);
+        }
+    }
     
     
     //Initial Scene Setup
