@@ -192,3 +192,18 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
         (dir-logs "logs/") ; log directory
         (dir-tmp "tmp/") ; tmp directory
     )
+
+**shader library** Creates a shader library with name.
+
+    (library "mylib"
+        (if @opengl (
+            (source "vert" vertex (dir "myshader.vs"))
+            (source "frag" fragment (dir "myshader.fs"))
+        ))
+    )
+
+**asset** Register assets with the engine.
+
+    (asset
+        (shader "myshader" (mylib vert) (mylib frag))
+    )

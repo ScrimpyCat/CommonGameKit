@@ -174,33 +174,7 @@ static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components)
 
 static void CCRenderSystemLoadResources(void)
 {
-    GFXShaderLibrary Lib = GFXShaderLibraryCreate(CC_STD_ALLOCATOR);
-    const GFXShaderSource Vert = GFXShaderLibraryCompile(Lib, GFXShaderSourceTypeVertex, "vert",
-                                                         "#version 330 core\n"
-                                                         "layout (location = 0) in vec4 vPosition;\n"
-                                                         "layout (location = 1) in vec4 vColour;\n"
-                                                         "out vec4 colour;\n"
-                                                         "uniform mat4 modelViewProjectionMatrix;\n"
-                                                         "void main()\n"
-                                                         "{\n"
-                                                         "	colour = vColour;\n"
-                                                         "	gl_Position = modelViewProjectionMatrix * vPosition;\n"
-                                                         "}\n");
-    
-    const GFXShaderSource Frag = GFXShaderLibraryCompile(Lib, GFXShaderSourceTypeFragment, "frag",
-                                                         "#version 330 core\n"
-                                                         "in vec4 colour;\n"
-                                                         "out vec4 fragColour;\n"
-                                                         "void main()\n"
-                                                         "{\n"
-                                                         "	fragColour = colour;\n"
-                                                         "}\n");
-    
-    DemoShader = GFXShaderCreate(CC_STD_ALLOCATOR, Vert, Frag);
-    GFXShaderLibraryDestroy(Lib);
-    
-    CCAssetManagerRegisterShader(CC_STRING("vertex-colour"), DemoShader);
-    
+    DemoShader = CCAssetManagerCreateShader(CC_STRING("vertex-colour"));
     
     unsigned short *Indices;
     CC_SAFE_Malloc(Indices, sizeof(unsigned short) * DEMO_IBO_SIZE,

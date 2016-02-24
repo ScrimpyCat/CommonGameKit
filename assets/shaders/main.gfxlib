@@ -1,6 +1,6 @@
 (library "core"
     (if @opengl (
-    	(loop "file" (search @cd ("*.fs" "*.vs")) (source (replace "." "-" (filename file)) (if (suffix "fs" file) fragment vertex) (dir file)))
+        (loop "file" (search @cd ("*.fs" "*.vs")) (source (replace "." "-" (filename file)) (if (suffix "fs" file) fragment vertex) (dir file)))
     ))
 
     ;(if @vulkan (
