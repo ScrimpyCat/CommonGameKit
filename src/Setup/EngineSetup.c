@@ -113,6 +113,8 @@ void CCEngineSetup(void)
                 
                 CCExpressionDestroy(LibExpr);
             }
+            
+            CCCollectionDestroy(Paths);
         }
     }
     
@@ -137,9 +139,13 @@ void CCEngineSetup(void)
                     CCExpressionEvaluate(AssetExpr);
                     CCExpressionDestroy(AssetExpr);
                 }
+                
+                CCCollectionDestroy(Paths);
             }
         }
     }
+    
+    CCCollectionDestroy(Matches);
     
     
     //Register Systems
@@ -261,4 +267,62 @@ void CCEngineSetup(void)
     
     CCEntityAttachComponent(Player, Renderer);
     CCComponentSystemAddComponent(Renderer);
+    
+    
+    
+    FSPath p = FSPathCreateFromSystemPath("~/testfoldertest/gui.scm");
+    FSHandle h;
+    CCExpression e = NULL;
+    if (FSHandleOpen(p, FSHandleTypeRead, &h) == FSOperationSuccess)
+    {
+        size_t z = FSManagerGetSize(p);
+        char *s;
+        CC_SAFE_Malloc(s, sizeof(char) * z);
+
+        FSHandleRead(h, &z, s, FSBehaviourDefault);
+
+        e = CCExpressionCreateFromSource(s);
+        FSHandleClose(h);
+        CC_SAFE_Free(s);
+    }
+
+    FSPathDestroy(p);
+
+    CCExpressionEvaluate(e);
+    CCExpressionDestroy(e);
+
+
+    p = FSPathCreateFromSystemPath("~/testfoldertest/usegui.scm");
+    e = NULL;
+    if (FSHandleOpen(p, FSHandleTypeRead, &h) == FSOperationSuccess)
+    {
+        size_t z = FSManagerGetSize(p);
+        char *s;
+        CC_SAFE_Malloc(s, sizeof(char) * z);
+
+        FSHandleRead(h, &z, s, FSBehaviourDefault);
+
+        e = CCExpressionCreateFromSource(s);
+        FSHandleClose(h);
+        CC_SAFE_Free(s);
+    }
+
+    FSPathDestroy(p);
+
+    CCExpression r = CCExpressionEvaluate(e);
+    if (CCExpressionGetType(r) == GUIExpressionValueTypeGUIObject)
+    {
+        CCExpressionChangeOwnership(r, NULL, NULL);
+        GUIObject Object = CCExpressionGetData(r);
+        CCExpressionDestroy(e); e = NULL;
+        
+        GUIManagerAddObject(Object);
+        GUIObjectSetEnabled(Object, TRUE);
+    }
+
+    if (e) CCExpressionDestroy(e);
+
+    e = NULL;
+    p = NULL;
+    h = NULL;
 }

@@ -47,7 +47,7 @@ static void CCProjectExpressionGameConfigDirectoryElementDestructor(CCCollection
     FSPathDestroy(*Element);
 }
 
-static FSPath CCProjectExpressionPathFromExpression(CCExpression Expression)
+static FSPath CCProjectExpressionPathFromExpression(CCExpression Expression, CCExpression State)
 {
     FSPath Path = NULL;
     if (CCExpressionGetType(Expression) == CCExpressionValueTypeString)
@@ -84,7 +84,7 @@ static FSPath CCProjectExpressionPathFromExpression(CCExpression Expression)
     
     if (FSPathIsRelativePath(Path))
     {
-        CCExpression CurrentDir = CCExpressionGetState(Expression, CC_STRING("@cd"));
+        CCExpression CurrentDir = CCExpressionGetState(State, CC_STRING("@cd"));
         if (CurrentDir)
         {
             CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(CurrentDir))
@@ -236,7 +236,7 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                     {
                                         if (ArgCount == 1)
                                         {
-                                            *(FSPath*)(Commands[Loop].attribute) = CCProjectExpressionPathFromExpression(CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator)));
+                                            *(FSPath*)(Commands[Loop].attribute) = CCProjectExpressionPathFromExpression(CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator)), Result);
                                         }
                                         
                                         else
@@ -252,7 +252,7 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                         //TODO: Make a directory expression
                                         for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
                                         {
-                                            FSPath Dir = CCProjectExpressionPathFromExpression(CCExpressionEvaluate(*Expr));
+                                            FSPath Dir = CCProjectExpressionPathFromExpression(CCExpressionEvaluate(*Expr), Result);
                                             CCCollectionInsertElement(Directories, &Dir);
                                         }
                                         

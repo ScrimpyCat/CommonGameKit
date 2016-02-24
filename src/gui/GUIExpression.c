@@ -395,7 +395,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
         {
-            InitExpr->state.super = Expression;
+            CCExpressionStateSetSuper(InitExpr, Expression);
             
             if (CCExpressionGetType(InitExpr) == CCExpressionValueTypeList)
             {

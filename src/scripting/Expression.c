@@ -56,7 +56,7 @@ static CCExpression CCExpressionValueListCopy(CCExpression Value)
 
 CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
 {
-    CCExpression Expression = CCMalloc(Allocator, sizeof(*Expression), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    CCExpression Expression = CCMalloc(CC_ALIGNED_ALLOCATOR(8)/*Allocator*/, sizeof(*Expression), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (!Expression)
     {
         CC_LOG_ERROR("Failed to create expression due to allocation failing. Allocation size: %zu", sizeof(*Expression));
@@ -116,8 +116,11 @@ CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
 
 CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString Input)
 {
+    CCString String = CCStringCopy(Input);
+    if (String & 3) return (CCExpression)String;
+    
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeString);
-    Expression->string = CCStringCopy(Input);
+    Expression->string = String;
     
     return Expression;
 }
@@ -141,15 +144,43 @@ void CCExpressionDestroy(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
+    if (CCExpressionIsTagged(Expression)) return;
+    
     if (Expression->destructor) Expression->destructor(CCExpressionGetData(Expression));
     if (Expression->state.values) CCCollectionDestroy(Expression->state.values);
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
     CC_SAFE_Free(Expression);
 }
 
+CCExpressionValueType CCExpressionGetTaggedType(uintptr_t Expression)
+{
+    if ((Expression & CCExpressionTaggedMask) == CCExpressionTaggedExtended)
+    {
+        switch (Expression & CCExpressionTaggedExtendedMask)
+        {
+            case CCExpressionTaggedExtendedAtom:
+                return CCExpressionValueTypeAtom;
+                
+            case CCExpressionTaggedExtendedInteger:
+                return CCExpressionValueTypeInteger;
+                
+            case CCExpressionTaggedExtendedFloat:
+                return CCExpressionValueTypeFloat;
+                
+            default:
+                return CCExpressionValueTypeUnspecified;
+        }
+    }
+    
+    else return CCExpressionValueTypeString;
+}
+
+
 void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
+    
+    if (CCExpressionIsTagged(Expression)) return;
     
     Expression->copy = Copy;
     Expression->destructor = Destructor;
@@ -158,6 +189,8 @@ void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy 
 CCExpression CCExpressionCopy(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
+    
+    if (CCExpressionIsTagged(Expression)) return Expression;
     
     CCExpression Copy = NULL;
     if (Expression->copy) Copy = Expression->copy(Expression);
@@ -195,10 +228,14 @@ CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
         CC_SAFE_Free(Source);
         
         const char *Filename = FSPathGetFilenameString(Path);
-        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename)), TRUE);
+        CCString String = CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename);
+        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, String), FALSE);
+        CCStringDestroy(String);
         
         const char *Dir = FSPathGetPathString(Path);
-        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename))), TRUE);
+        String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename));
+        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, String), FALSE);
+        CCStringDestroy(String);
     }
     
     return Expression;
@@ -404,6 +441,8 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
+    if (CCExpressionIsTagged(Expression)) return Expression;
+    
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
     
     Expression->state.result = Expression;
@@ -412,7 +451,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         _Bool IsList = TRUE;
         CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
         {
-            Expr->state.super = Expression;
+            CCExpressionStateSetSuper(Expr, Expression);
         }
         
         CCExpression *Expr = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
@@ -509,7 +548,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         if (State) Expression->state.result = CCExpressionCopy(State);
     }
     
-    if (Expression->state.result) Expression->state.result->state.super = Expression->state.super;
+    if (Expression->state.result) CCExpressionStateSetSuper(Expression->state.result, Expression->state.super);
     
     return Expression->state.result;
 }

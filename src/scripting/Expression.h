@@ -40,6 +40,32 @@ typedef enum {
     CCExpressionValueTypeReservedCount = 20,
 } CCExpressionValueType;
 
+enum {
+    /*
+     000 -> not tagged
+     001 -> tagged CCString (string expression)
+     010 -> tagged CCString (string expression)
+     011 -> tagged CCString (string expression)
+     100 -> tagged CCExpression
+     
+     Non-tagged CCString's are wrapped in a CCExpression.
+     
+     Tagged CCExpression:
+     xx100 -> tagged CCExpression type
+     00 -> atom
+     01 -> integer
+     10 -> float
+     11 -> ??
+     */
+    CCExpressionTaggedMask = 7,
+    CCExpressionTaggedExtended = (1 << 2),
+    CCExpressionTaggedExtendedMask = (3 << 3),
+    CCExpressionTaggedExtendedAtom = (0 << 3),
+    CCExpressionTaggedExtendedInteger = (1 << 3),
+    CCExpressionTaggedExtendedFloat = (2 << 3),
+//    CCExpressionTaggedExtendedReserved = (3 << 3)
+};
+
 /*!
  * @brief An expression.
  */
@@ -160,6 +186,7 @@ CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressio
 void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 
 static inline _Bool CCExpressionIsTagged(CCExpression Expression);
+CCExpressionValueType CCExpressionGetTaggedType(uintptr_t Expression);
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression);
 static inline CCExpression CCExpressionGetResult(CCExpression Expression);
 static inline CCString CCExpressionGetAtom(CCExpression Expression);
@@ -169,20 +196,26 @@ static inline CCString CCExpressionGetString(CCExpression Expression);
 static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression);
 static inline void *CCExpressionGetData(CCExpression Expression);
 
+static inline CCExpression CCExpressionStateGetSuper(CCExpression Expression);
+static inline void CCExpressionStateSetSuper(CCExpression Expression, CCExpression Super);
+static inline CCExpression CCExpressionStateGetResult(CCExpression Expression);
+static inline void CCExpressionStateSetResult(CCExpression Expression, CCExpression Result);
+
+
 
 static inline _Bool CCExpressionIsTagged(CCExpression Expression)
 {
-    return FALSE;
+    return (uintptr_t)Expression & CCExpressionTaggedMask;
 }
 
 static inline CCExpression CCExpressionGetResult(CCExpression Expression)
 {
-    return Expression->state.result;
+    return CCExpressionIsTagged(Expression) ? Expression : Expression->state.result;
 }
 
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
 {
-    return Expression->type;
+    return CCExpressionIsTagged(Expression) ? CCExpressionGetTaggedType((uintptr_t)Expression) : Expression->type;
 }
 
 static inline CCString CCExpressionGetAtom(CCExpression Expression)
@@ -202,7 +235,7 @@ static inline float CCExpressionGetFloat(CCExpression Expression)
 
 static inline CCString CCExpressionGetString(CCExpression Expression)
 {
-    return Expression->string;
+    return CCExpressionIsTagged(Expression) ? (CCString)Expression : Expression->string;
 }
 
 static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression)
@@ -213,6 +246,16 @@ static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression)
 static inline void *CCExpressionGetData(CCExpression Expression)
 {
     return Expression->data;
+}
+
+static inline CCExpression CCExpressionStateGetSuper(CCExpression Expression)
+{
+    return CCExpressionIsTagged(Expression) ? NULL : Expression->state.super;
+}
+
+static inline void CCExpressionStateSetSuper(CCExpression Expression, CCExpression Super)
+{
+    if (!CCExpressionIsTagged(Expression)) Expression->state.super = Super;
 }
 
 #endif
