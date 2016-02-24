@@ -316,16 +316,16 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
         {
             GFXShaderLibrary Library = GFXShaderLibraryCreate(CC_STD_ALLOCATOR);
             
-            CC_COLLECTION_FOREACH(CCExpression, Source, CCExpressionGetList(SourceList))
+            CC_COLLECTION_FOREACH(CCExpression, SourceArg, CCExpressionGetList(SourceList))
             {
-                if (CCExpressionGetType(SourceList) == CCExpressionValueTypeList)
+                if (CCExpressionGetType(SourceArg) == CCExpressionValueTypeList)
                 {
-                    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(SourceList)) - 1;
+                    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(SourceArg));
                     if (ArgCount == 3)
                     {
-                        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceList), 0);
-                        CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceList), 1);
-                        CCExpression Source = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceList), 2);
+                        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceArg), 0);
+                        CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceArg), 1);
+                        CCExpression Source = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(SourceArg), 2);
                         
                         if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(Type) == CCExpressionValueTypeAtom) && (CCExpressionGetType(Source) == CCExpressionValueTypeExpression))
                         {
@@ -339,7 +339,7 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                             }
                             
                             
-                            const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Source)) - 1;
+                            const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Source));
                             if (ArgCount == 2)
                             {
                                 CCExpression SourceType = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Source), 0);
@@ -368,8 +368,10 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                                                 
                                                 CC_STRING_TEMP_BUFFER(NameBuffer, CCExpressionGetString(Name)) GFXShaderLibraryCompile(Library, ShaderType, NameBuffer, Shader);
                                                 
-                                                CC_SAFE_Free(Source);
+                                                CC_SAFE_Free(Shader);
                                             }
+                                            
+                                            FSPathDestroy(Path);
                                         }
                                     }
                                     
@@ -449,6 +451,93 @@ CCExpression CCProjectExpressionLibrarySource(CCExpression Expression)
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("source", "name:string type:atom source:expr");
+    
+    return Expression;
+}
+
+#include "AssetManager.h"
+
+CCExpression CCProjectExpressionAsset(CCExpression Expression)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+    {
+        CCExpression Asset = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Asset) == CCExpressionValueTypeList)
+        {
+            size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Asset));
+            if (ArgCount > 1)
+            {
+                ArgCount--;
+                
+                CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 0);
+                if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("shader")))
+                    {
+                        if (ArgCount == 3)
+                        {
+                            CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 1);
+                            CCExpression Vertex = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 2);
+                            CCExpression Fragment = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 3);
+                            
+                            if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(Vertex) == CCExpressionValueTypeList) && (CCExpressionGetType(Fragment) == CCExpressionValueTypeList))
+                            {
+                                if ((CCCollectionGetCount(CCExpressionGetList(Vertex)) == 2) && (CCCollectionGetCount(CCExpressionGetList(Fragment)) == 2))
+                                {
+                                    CCExpression VertLib = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vertex), 0);
+                                    CCExpression VertSrc = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vertex), 1);
+                                    
+                                    CCExpression FragLib = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Fragment), 0);
+                                    CCExpression FragSrc = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Fragment), 1);
+                                    
+                                    if ((CCExpressionGetType(VertLib) == CCExpressionValueTypeAtom) &&
+                                        (CCExpressionGetType(VertSrc) == CCExpressionValueTypeAtom) &&
+                                        (CCExpressionGetType(FragLib) == CCExpressionValueTypeAtom) &&
+                                        (CCExpressionGetType(FragSrc) == CCExpressionValueTypeAtom))
+                                    {
+                                        GFXShaderLibrary LibVert = CCAssetManagerCreateShaderLibrary(CCExpressionGetAtom(VertLib));
+                                        GFXShaderLibrary LibFrag = CCAssetManagerCreateShaderLibrary(CCExpressionGetAtom(FragLib));
+                                        
+                                        if ((LibVert) && (LibFrag))
+                                        {
+                                            GFXShaderSource Vert = NULL, Frag = NULL;
+                                            CC_STRING_TEMP_BUFFER(Buffer1, CCExpressionGetAtom(VertSrc)) Vert = GFXShaderLibraryGetSource(LibVert, Buffer1);
+                                            CC_STRING_TEMP_BUFFER(Buffer2, CCExpressionGetAtom(FragSrc)) Frag = GFXShaderLibraryGetSource(LibFrag, Buffer2);
+                                            
+                                            if ((Vert) && (Frag))
+                                            {
+                                                GFXShader Shader = GFXShaderCreate(CC_STD_ALLOCATOR, Vert, Frag);
+                                                CCAssetManagerRegisterShader(CCExpressionGetString(Name), Shader);
+                                                GFXShaderDestroy(Shader);
+                                            }
+                                            
+                                            else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader source (%S::%S) or (%S::%S)", CCExpressionGetAtom(VertLib), CCExpressionGetAtom(VertSrc), CCExpressionGetAtom(FragLib), CCExpressionGetAtom(FragSrc));
+                                        }
+                                        
+                                        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader library %S or %S", CCExpressionGetAtom(VertLib), CCExpressionGetAtom(FragLib));
+                                        
+                                        if (LibVert) GFXShaderLibraryDestroy(LibVert);
+                                        if (LibFrag) GFXShaderLibraryDestroy(LibFrag);
+                                    }
+                                    
+                                    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Shader source should be of type (lib:atom source:atom)");
+                                }
+                                
+                                else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Shader source should be of type (lib:atom source:atom)");
+                            }
+                            
+                            else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("shader", "name:string vertex-source:list fragment-source:list");
+                        }
+                        
+                        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("shader", "name:string vertex-source:list fragment-source:list");
+                    }
+                }
+            }
+        }
+    }
     
     return Expression;
 }

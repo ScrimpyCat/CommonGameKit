@@ -1,0 +1,3 @@
+(asset "core"
+    (shader "vertex-colour" (core vertex-colour-vs) (core vertex-colour-fs))
+)

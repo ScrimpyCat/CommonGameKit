@@ -88,6 +88,60 @@ void CCEngineSetup(void)
     
     CCEntityManagerCreate();
     
+    
+    //Load Global Assets
+    CCCollection Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCEngineSetupPathElementDestructor);
+    
+    CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".gfxlib") });
+    
+    CC_COLLECTION_FOREACH(FSPath, Path, CCEngineConfiguration.directory.shaders)
+    {
+        CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
+        
+        if (Paths)
+        {
+            CC_COLLECTION_FOREACH(FSPath, LibPath, Paths)
+            {
+                CCExpression LibExpr = CCExpressionCreateFromSourceFile(LibPath);
+                CCExpression Result = CCExpressionEvaluate(LibExpr);
+                
+                if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeShaderLibrary)
+                {
+                    CCProjectExpressionValueShaderLibrary *Library = CCExpressionGetData(Result);
+                    CCAssetManagerRegisterShaderLibrary(Library->name, Library->library);
+                }
+                
+                CCExpressionDestroy(LibExpr);
+            }
+        }
+    }
+    
+    CCCollectionRemoveAllElements(Matches);
+    CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".asset") });
+    
+    CCCollection AssetPaths[] = {
+        CCEngineConfiguration.directory.shaders
+    };
+    
+    for (size_t Loop = 0; Loop < sizeof(AssetPaths) / sizeof(typeof(*AssetPaths)); Loop++)
+    {
+        CC_COLLECTION_FOREACH(FSPath, Path, CCEngineConfiguration.directory.shaders)
+        {
+            CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
+            
+            if (Paths)
+            {
+                CC_COLLECTION_FOREACH(FSPath, LibPath, Paths)
+                {
+                    CCExpression AssetExpr = CCExpressionCreateFromSourceFile(LibPath);
+                    CCExpressionEvaluate(AssetExpr);
+                    CCExpressionDestroy(AssetExpr);
+                }
+            }
+        }
+    }
+    
+    
     //Register Systems
     CCRenderSystemRegister();
     CCInputSystemRegister();
@@ -106,32 +160,6 @@ void CCEngineSetup(void)
     CCAnimationComponentRegister();
     CCAnimationKeyframeComponentRegister();
     CCAnimationInterpolateComponentRegister();
-    
-    
-    //Load Global Assets
-    CCCollection Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCEngineSetupPathElementDestructor);
-    
-//    FSPath MatchAsset = FSPathCreate(".asset");
-    CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".gfxlib") });
-    
-    CC_COLLECTION_FOREACH(FSPath, Path, CCEngineConfiguration.directory.shaders)
-    {
-        CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
-        
-        CC_COLLECTION_FOREACH(FSPath, LibPath, Paths)
-        {
-            CCExpression LibExpr = CCExpressionCreateFromSourceFile(LibPath);
-            CCExpression Result = CCExpressionEvaluate(LibExpr);
-            
-            if (CCExpressionGetType(Result) == CCProjectExpressionValueTypeShaderLibrary)
-            {
-                CCProjectExpressionValueShaderLibrary *Library = CCExpressionGetData(Result);
-                CCAssetManagerRegisterShaderLibrary(Library->name, Library->library);
-            }
-            
-            CCExpressionDestroy(LibExpr);
-        }
-    }
     
     
     //Initial Scene Setup

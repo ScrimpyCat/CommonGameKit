@@ -43,6 +43,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("game"), CCProjectExpressionGame);
     CCExpressionEvaluatorRegister(CC_STRING("library"), CCProjectExpressionLibrary);
     CCExpressionEvaluatorRegister(CC_STRING("source"), CCProjectExpressionLibrarySource);
+    CCExpressionEvaluatorRegister(CC_STRING("asset"), CCProjectExpressionAsset);
     CCExpressionEvaluatorRegister(CC_STRING("state!"), CCStateExpressionCreateState);
     CCExpressionEvaluatorRegister(CC_STRING("enum!"), CCStateExpressionCreateEnum);
     CCExpressionEvaluatorRegister(CC_STRING("super"), CCStateExpressionSuper);
