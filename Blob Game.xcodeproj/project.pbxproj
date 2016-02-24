@@ -78,6 +78,7 @@
 		F3AE99711A73E2F000212838 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AE996F1A73E2F000212838 /* Entity.c */; };
 		F3AE99B61A750D6500212838 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3AE99B51A750D6500212838 /* EntityTests.m */; };
 		F3B147D01C3FFED300ADC294 /* ListExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3B147CE1C3FFED300ADC294 /* ListExpressions.c */; };
+		F3B54B051C7D707A00523E20 /* ExpressionStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3B54B041C7D707A00523E20 /* ExpressionStringTests.m */; };
 		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; };
 		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; };
 		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; };
@@ -500,6 +501,7 @@
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
 		F3B147CE1C3FFED300ADC294 /* ListExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ListExpressions.c; sourceTree = "<group>"; };
 		F3B147CF1C3FFED300ADC294 /* ListExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListExpressions.h; sourceTree = "<group>"; };
+		F3B54B041C7D707A00523E20 /* ExpressionStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionStringTests.m; sourceTree = "<group>"; };
 		F3BD17721C00857800B3849E /* Expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Expression.c; sourceTree = "<group>"; };
 		F3BD17731C00857800B3849E /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
 		F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionEvaluator.c; sourceTree = "<group>"; };
@@ -624,6 +626,7 @@
 				F3C222161C4AF6FD004ADC76 /* ExpressionProjectTests.m */,
 				F3C222181C4B1535004ADC76 /* ExpressionControlFlowTests.m */,
 				F3C2221A1C4B17BF004ADC76 /* ExpressionListTests.m */,
+				F3B54B041C7D707A00523E20 /* ExpressionStringTests.m */,
 			);
 			name = Scripting;
 			sourceTree = "<group>";
@@ -1649,6 +1652,7 @@
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
 				F3C222191C4B1535004ADC76 /* ExpressionControlFlowTests.m in Sources */,
+				F3B54B051C7D707A00523E20 /* ExpressionStringTests.m in Sources */,
 				F3150ED81C47C2A500E1FC82 /* ExpressionTests.m in Sources */,
 				F3150F251C48FECB00E1FC82 /* ExpressionEqualityTests.m in Sources */,
 				F3C221E51C4A51E1004ADC76 /* ExpressionMacroTests.m in Sources */,

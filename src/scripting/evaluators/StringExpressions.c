@@ -74,7 +74,9 @@ CCExpression CCStringExpressionFilename(CCExpression Expression)
             {
                 FSPath Path = FSPathCreate(Buffer);
                 
-                Result = CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetFilenameString(Path)));
+                const char *Filename = FSPathGetFilenameString(Path);
+                if (Filename) Result = CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename));
+                else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Path does not contain a filename: %s", Buffer);
                 
                 FSPathDestroy(Path);
             }
