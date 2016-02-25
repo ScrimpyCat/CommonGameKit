@@ -177,10 +177,10 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
 void CCExpressionPrintState(CCExpression Expression);
 
 //Convenience getters and initializers for when introducing tagged types.
-CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom); //copies
+CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy);
 CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value);
 CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value);
-CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString String); //copies
+CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString String, _Bool Copy);
 CCExpression CCExpressionCreateList(CCAllocatorType Allocator);
 CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);

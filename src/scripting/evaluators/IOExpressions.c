@@ -135,7 +135,7 @@ CCExpression CCIOExpressionSearch(CCExpression Expression)
     {
         CC_COLLECTION_FOREACH(FSPath, Path, Paths)
         {
-            CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(Path))) });
+            CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(Path)), FALSE) });
         }
         
         CCCollectionDestroy(Paths);

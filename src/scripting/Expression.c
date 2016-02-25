@@ -39,7 +39,7 @@ static void CCExpressionElementDestructor(CCCollection Collection, CCExpression 
 
 static CCExpression CCExpressionValueAtomOrStringCopy(CCExpression Value)
 {
-    return (CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionCreateAtom : CCExpressionCreateString)(Value->allocator, CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value));
+    return (CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionCreateAtom : CCExpressionCreateString)(Value->allocator, CCExpressionGetType(Value) == CCExpressionValueTypeAtom ? CCExpressionGetAtom(Value) : CCExpressionGetString(Value), TRUE);
 }
 
 static CCExpression CCExpressionValueListCopy(CCExpression Value)
@@ -90,10 +90,10 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
     return Expression;
 }
 
-CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom)
+CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy)
 {
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeAtom);
-    Expression->atom = CCStringCopy(Atom);
+    Expression->atom = Copy ? CCStringCopy(Atom) : Atom;
     
     return Expression;
 }
@@ -114,9 +114,9 @@ CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
     return Expression;
 }
 
-CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString Input)
+CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString Input, _Bool Copy)
 {
-    CCString String = CCStringCopy(Input);
+    CCString String = Copy ? CCStringCopy(Input) : Input;
     if (String & 3) return (CCExpression)String;
     
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeString);
@@ -228,14 +228,10 @@ CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
         CC_SAFE_Free(Source);
         
         const char *Filename = FSPathGetFilenameString(Path);
-        CCString String = CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename);
-        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, String), FALSE);
-        CCStringDestroy(String);
+        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename), FALSE), FALSE);
         
         const char *Dir = FSPathGetPathString(Path);
-        String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename));
-        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, String), FALSE);
-        CCStringDestroy(String);
+        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename)), FALSE), FALSE);
     }
     
     return Expression;
@@ -267,13 +263,7 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     switch (Type)
     {
         case CCExpressionValueTypeAtom:
-        {
-            CCString String = CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length);
-            CCExpression Atom = CCExpressionCreateAtom(Allocator, String);
-            CCStringDestroy(String);
-            
-            return Atom;
-        }
+            return CCExpressionCreateAtom(Allocator, CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length), FALSE);
             
         case CCExpressionValueTypeInteger:
             return CCExpressionCreateInteger(Allocator, (int32_t)strtol(Input, NULL, 10));
@@ -282,13 +272,7 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
             return CCExpressionCreateFloat(Allocator, (float)strtod(Input, NULL));
             
         case CCExpressionValueTypeString:
-        {
-            CCString String = CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length);
-            CCExpression Str = CCExpressionCreateString(Allocator, String);
-            CCStringDestroy(String);
-            
-            return Str;
-        }
+            return CCExpressionCreateString(Allocator, CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length), FALSE);
             
         default:
             break;

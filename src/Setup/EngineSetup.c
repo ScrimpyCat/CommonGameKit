@@ -127,7 +127,7 @@ void CCEngineSetup(void)
     
     for (size_t Loop = 0; Loop < sizeof(AssetPaths) / sizeof(typeof(*AssetPaths)); Loop++)
     {
-        CC_COLLECTION_FOREACH(FSPath, Path, CCEngineConfiguration.directory.shaders)
+        CC_COLLECTION_FOREACH(FSPath, Path, AssetPaths[Loop])
         {
             CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
             
