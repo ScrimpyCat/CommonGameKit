@@ -72,15 +72,13 @@ enum {
 //    CCExpressionTaggedExtendedReserved = (3 << 3)
     
     CCExpressionTaggedBits = 5,
-    
+    CCExpressionTaggedFloatTaggedBits = CCExpressionTaggedBits,
 #if CC_HARDWARE_PTR_64
     CCExpressionTaggedIntegerTaggedBits = CCExpressionTaggedBits,
-    CCExpressionTaggedFloatTaggedBits = CCExpressionTaggedBits
+    CCExpressionTaggedIntegerSignedFlag = 0,
 #else
     CCExpressionTaggedIntegerSignedFlag = (1 << CCExpressionTaggedBits),
-    CCExpressionTaggedIntegerTaggedBits = CCExpressionTaggedBits + 1,
-    
-    CCExpressionTaggedFloatTaggedBits = CCExpressionTaggedBits
+    CCExpressionTaggedIntegerTaggedBits = CCExpressionTaggedBits + 1
 #endif
 };
 
