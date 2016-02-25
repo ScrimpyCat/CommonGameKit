@@ -28,6 +28,12 @@
 
 #include <CommonC/Common.h>
 
+/*
+ Enables the tagged expression optimization. Generally leave it enabled, though disabling it can
+ be helpful when debugging.
+ */
+#define CC_EXPRESSION_ENABLE_TAGGED_TYPES 1
+
 typedef enum {
     CCExpressionValueTypeAtom,
     CCExpressionValueTypeInteger,
@@ -205,7 +211,11 @@ static inline void CCExpressionStateSetResult(CCExpression Expression, CCExpress
 
 static inline _Bool CCExpressionIsTagged(CCExpression Expression)
 {
+#if CC_EXPRESSION_ENABLE_TAGGED_TYPES
     return (uintptr_t)Expression & CCExpressionTaggedMask;
+#else
+    return FALSE;
+#endif
 }
 
 static inline CCExpression CCExpressionGetResult(CCExpression Expression)

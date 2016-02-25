@@ -117,7 +117,9 @@ CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
 CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString Input, _Bool Copy)
 {
     CCString String = Copy ? CCStringCopy(Input) : Input;
+#if CC_EXPRESSION_ENABLE_TAGGED_TYPES
     if (String & 3) return (CCExpression)String;
+#endif
     
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeString);
     Expression->string = String;
