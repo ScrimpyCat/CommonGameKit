@@ -98,13 +98,56 @@ CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _B
     return Expression;
 }
 
+#if CC_HARDWARE_PTR_64 && CC_EXPRESSION_ENABLE_TAGGED_TYPES
 CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
 {
+    return (CCExpression)(((uintptr_t)Value << CCExpressionTaggedIntegerTaggedBits) | CCExpressionTaggedExtendedInteger);
+}
+#else
+CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
+{
+#if CC_EXPRESSION_ENABLE_TAGGED_TYPES
+    _Static_assert((CCExpressionTaggedExtendedMask | CCExpressionTaggedMask) == 31, "If base tagged size changes this must be changed");
+    
+    /*
+     (vvvvvvvv vvvvvvvv vvvvvvvv vvvvvvvv) vvvvvvvv vvvvvvvv vvvvvvvv vvsxxxxx
+     x = tagged bits
+     s = signed bit
+     v = value bits
+     
+     5 bits = tagging
+     1 bit = signed flag
+     (sizeof(uintptr_t) * 8) - 6 = value bits
+     
+     If signed flag is set, then it counts down from -1 (high range).
+     So 32-bits the range of a tagged integer is: -67108864 to 67108863
+     64-bits can fit the entire range INT32_MIN to INT32_MAX
+     */
+    
+    const uintptr_t MaxValue = UINTPTR_MAX >> CCExpressionTaggedIntegerTaggedBits;
+    if ((Value <= MaxValue) || (Value >= (-MaxValue - 1)))
+    {
+        _Static_assert(sizeof(Value) == 4, "Need to change the signed bit");
+        
+        _Bool Signed = Value & 0x80000000;
+        if (Signed)
+        {
+            return (CCExpression)(((uintptr_t)~(-1 + (Value + 1)) << CCExpressionTaggedIntegerTaggedBits) | CCExpressionTaggedIntegerSignedFlag | CCExpressionTaggedExtendedInteger);
+        }
+        
+        else
+        {
+            return (CCExpression)(((uintptr_t)Value << CCExpressionTaggedIntegerTaggedBits) | CCExpressionTaggedExtendedInteger);
+        }
+    }
+#endif
+    
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeInteger);
     Expression->integer = Value;
     
     return Expression;
 }
+#endif
 
 CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
 {
@@ -558,7 +601,7 @@ static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression
     
     if (Value)
     {
-        if (Value->value) Value->value->state.super = Expression;
+        if (Value->value) CCExpressionStateSetSuper(Value->value, Expression);
         return Value;
     }
     

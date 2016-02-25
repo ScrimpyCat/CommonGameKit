@@ -65,11 +65,18 @@ enum {
      */
     CCExpressionTaggedMask = 7,
     CCExpressionTaggedExtended = (1 << 2),
-    CCExpressionTaggedExtendedMask = (3 << 3),
-    CCExpressionTaggedExtendedAtom = (0 << 3),
-    CCExpressionTaggedExtendedInteger = (1 << 3),
-    CCExpressionTaggedExtendedFloat = (2 << 3),
+    CCExpressionTaggedExtendedMask = (3 << 3) | CCExpressionTaggedExtended,
+    CCExpressionTaggedExtendedAtom = (0 << 3) | CCExpressionTaggedExtended,
+    CCExpressionTaggedExtendedInteger = (1 << 3) | CCExpressionTaggedExtended,
+    CCExpressionTaggedExtendedFloat = (2 << 3) | CCExpressionTaggedExtended,
 //    CCExpressionTaggedExtendedReserved = (3 << 3)
+    
+#ifdef CC_HARDWARE_PTR_64
+    CCExpressionTaggedIntegerTaggedBits = 5
+#else
+    CCExpressionTaggedIntegerSignedFlag = (1 << 5),
+    CCExpressionTaggedIntegerTaggedBits = 6
+#endif
 };
 
 /*!
@@ -235,7 +242,11 @@ static inline CCString CCExpressionGetAtom(CCExpression Expression)
 
 static inline int32_t CCExpressionGetInteger(CCExpression Expression)
 {
-    return Expression->integer;
+#if CC_HARDWARE_PTR_64 && CC_EXPRESSION_ENABLE_TAGGED_TYPES
+    return (int32_t)((uintptr_t)Expression >> CCExpressionTaggedIntegerTaggedBits);
+#else
+    return CCExpressionIsTagged(Expression) ? (((uintptr_t)Expression & CCExpressionTaggedIntegerSignedFlag) ? (int32_t)~((uintptr_t)Expression >> CCExpressionTaggedIntegerTaggedBits) : (int32_t)((uintptr_t)Expression >> CCExpressionTaggedIntegerTaggedBits)) : Expression->integer;
+#endif
 }
 
 static inline float CCExpressionGetFloat(CCExpression Expression)
