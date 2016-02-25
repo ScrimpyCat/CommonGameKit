@@ -98,14 +98,11 @@ CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _B
     return Expression;
 }
 
+CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
+{
 #if CC_HARDWARE_PTR_64 && CC_EXPRESSION_ENABLE_TAGGED_TYPES
-CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
-{
     return (CCExpression)(((uintptr_t)Value << CCExpressionTaggedIntegerTaggedBits) | CCExpressionTaggedExtendedInteger);
-}
 #else
-CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
-{
 #if CC_EXPRESSION_ENABLE_TAGGED_TYPES
     _Static_assert((CCExpressionTaggedExtendedMask | CCExpressionTaggedMask) == 31, "If base tagged size changes this must be changed");
     
@@ -127,9 +124,9 @@ CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
     const uintptr_t MaxValue = UINTPTR_MAX >> CCExpressionTaggedIntegerTaggedBits;
     if ((Value <= MaxValue) || (Value >= (-MaxValue - 1)))
     {
-        _Static_assert(sizeof(Value) == 4, "Need to change the signed bit");
+        _Static_assert(sizeof(Value) == 4, "Need to change the signed bit as is for int32_t");
         
-        _Bool Signed = Value & 0x80000000;
+        const _Bool Signed = Value & 0x80000000;
         if (Signed)
         {
             return (CCExpression)(((uintptr_t)~(-1 + (Value + 1)) << CCExpressionTaggedIntegerTaggedBits) | CCExpressionTaggedIntegerSignedFlag | CCExpressionTaggedExtendedInteger);
@@ -146,15 +143,47 @@ CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
     Expression->integer = Value;
     
     return Expression;
-}
 #endif
+}
 
 CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value)
 {
+#if CC_HARDWARE_PTR_64 && CC_EXPRESSION_ENABLE_TAGGED_TYPES
+    return (CCExpression)(((uintptr_t)*(uint32_t*)&Value << CCExpressionTaggedFloatTaggedBits) | CCExpressionTaggedExtendedFloat);
+#else
+#if CC_HARDWARE_PTR_32 && CC_EXPRESSION_ENABLE_TAGGED_TYPES
+    /*
+     eeeeeeee mmmmmmmm mmmmmmmm mmsxxxxx
+     x = tagged bits
+     s = signed bit
+     m = mantissa bits (only thing reduced from normal binary32)
+     e = exponent bits
+     
+     This isn't a perfect implementation, as unsure what ranges of values would really
+     care about. But it's fast to implement.
+     
+     If revisiting in the future:
+        - we can probably assume we care about 0.0 - 1.0,
+        - probably don't need denormals or NANs, or INFINITY
+        - probably don't care about very large floats either, so probably only wouldn't want
+        an exponent higher than 140 or somewhere around there.
+     */
+    
+    _Static_assert(sizeof(Value) == 4, "Need to change the format as is for float/binary32");
+    
+    const uint32_t v = *(uint32_t*)&Value;
+    const uint32_t Mantissa = v & 0x7fffff;
+    if ((Mantissa & 0x1ffff) == Mantissa)
+    {
+        return (CCExpression)((uintptr_t)((v & 0xff800000) | (Mantissa << CCExpressionTaggedFloatTaggedBits) | CCExpressionTaggedExtendedFloat));
+    }
+#endif
+    
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeFloat);
     Expression->real = Value;
     
     return Expression;
+#endif
 }
 
 CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString Input, _Bool Copy)

@@ -71,11 +71,16 @@ enum {
     CCExpressionTaggedExtendedFloat = (2 << 3) | CCExpressionTaggedExtended,
 //    CCExpressionTaggedExtendedReserved = (3 << 3)
     
-#ifdef CC_HARDWARE_PTR_64
-    CCExpressionTaggedIntegerTaggedBits = 5
+    CCExpressionTaggedBits = 5,
+    
+#if CC_HARDWARE_PTR_64
+    CCExpressionTaggedIntegerTaggedBits = CCExpressionTaggedBits,
+    CCExpressionTaggedFloatTaggedBits = CCExpressionTaggedBits
 #else
-    CCExpressionTaggedIntegerSignedFlag = (1 << 5),
-    CCExpressionTaggedIntegerTaggedBits = 6
+    CCExpressionTaggedIntegerSignedFlag = (1 << CCExpressionTaggedBits),
+    CCExpressionTaggedIntegerTaggedBits = CCExpressionTaggedBits + 1,
+    
+    CCExpressionTaggedFloatTaggedBits = CCExpressionTaggedBits
 #endif
 };
 
@@ -251,7 +256,11 @@ static inline int32_t CCExpressionGetInteger(CCExpression Expression)
 
 static inline float CCExpressionGetFloat(CCExpression Expression)
 {
-    return Expression->real;
+#if CC_HARDWARE_PTR_64 && CC_EXPRESSION_ENABLE_TAGGED_TYPES
+    return *(float*)&(uint32_t){ (uint32_t)((uintptr_t)Expression >> CCExpressionTaggedFloatTaggedBits) };
+#else
+    return CCExpressionIsTagged(Expression) ? *(float*)&(int32_t){ ((uintptr_t)Expression & 0xff800000) | (((uintptr_t)Expression & 0x1ffff) >> CCExpressionTaggedFloatTaggedBits) } : Expression->real;
+#endif
 }
 
 static inline CCString CCExpressionGetString(CCExpression Expression)
