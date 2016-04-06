@@ -469,7 +469,7 @@ static void CCExpressionPrintStatement(CCExpression Expression)
             
         case CCExpressionValueTypeString:
         {
-            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetAtom(Expression)) printf("\"%s\"", Buffer);
+            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Expression)) printf("\"%s\"", Buffer);
             break;
         }
             

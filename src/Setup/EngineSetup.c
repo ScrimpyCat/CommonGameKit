@@ -274,19 +274,7 @@ void CCEngineSetup(void)
     
     FSPath p = FSPathCreateFromSystemPath("~/testfoldertest/gui.scm");
     FSHandle h;
-    CCExpression e = NULL;
-    if (FSHandleOpen(p, FSHandleTypeRead, &h) == FSOperationSuccess)
-    {
-        size_t z = FSManagerGetSize(p);
-        char *s;
-        CC_SAFE_Malloc(s, sizeof(char) * z);
-
-        FSHandleRead(h, &z, s, FSBehaviourDefault);
-
-        e = CCExpressionCreateFromSource(s);
-        FSHandleClose(h);
-        CC_SAFE_Free(s);
-    }
+    CCExpression e = CCExpressionCreateFromSourceFile(p);
 
     FSPathDestroy(p);
 
@@ -295,19 +283,7 @@ void CCEngineSetup(void)
 
 
     p = FSPathCreateFromSystemPath("~/testfoldertest/usegui.scm");
-    e = NULL;
-    if (FSHandleOpen(p, FSHandleTypeRead, &h) == FSOperationSuccess)
-    {
-        size_t z = FSManagerGetSize(p);
-        char *s;
-        CC_SAFE_Malloc(s, sizeof(char) * z);
-
-        FSHandleRead(h, &z, s, FSBehaviourDefault);
-
-        e = CCExpressionCreateFromSource(s);
-        FSHandleClose(h);
-        CC_SAFE_Free(s);
-    }
+    e = CCExpressionCreateFromSourceFile(p);
 
     FSPathDestroy(p);
 
