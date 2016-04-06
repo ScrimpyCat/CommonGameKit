@@ -44,7 +44,7 @@ CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
     CCExpression Expr = Expression;
     const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     
-    if (ArgCount >= 2)
+    if ((ArgCount >= 2) && (ArgCount <= 3))
     {
         CCExpression Result = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         

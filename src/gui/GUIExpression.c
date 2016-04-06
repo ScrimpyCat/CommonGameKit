@@ -24,11 +24,13 @@
  */
 
 #include "GUIExpression.h"
+#include "ExpressionHelpers.h"
 
 typedef struct {
     CCExpression data;
     CCOrderedCollection children;
     CCExpression render;
+    CCExpression control;
 } GUIExpressionInfo;
 
 static void *GUIExpressionConstructor(CCAllocatorType Allocator);
@@ -101,6 +103,7 @@ static void *GUIExpressionConstructor(CCAllocatorType Allocator)
     Internal->data = NULL;
     Internal->children = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating | CCCollectionHintSizeSmall, sizeof(GUIObject), (CCCollectionElementDestructor)GUIExpressionChildrenElementDestructor);
     Internal->render = NULL;
+    Internal->control = NULL;
     
     return Internal;
 }
@@ -110,77 +113,6 @@ static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
     CCExpressionDestroy(Internal->data);
     CCCollectionDestroy(Internal->children);
     CC_SAFE_Free(Internal);
-}
-
-static CCRect CCExpressionGetRect(CCExpression Rect)
-{
-    if ((CCExpressionGetType(Rect) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Rect)) == 4))
-    {
-        float Values[4];
-        for (int Loop = 0; Loop < 4; Loop++)
-        {
-            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Rect), Loop);
-            
-            if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
-            {
-                Values[Loop] = (float)CCExpressionGetInteger(Value);
-            }
-            
-            else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
-            {
-                Values[Loop] = CCExpressionGetFloat(Value);
-            }
-            
-            else
-            {
-                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
-                
-                return (CCRect){ 0.0f, 0.0f, 0.0f, 0.0f };
-            }
-        }
-        
-        return (CCRect){ Values[0], Values[1], Values[2], Values[3] };
-    }
-    
-    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
-    
-    return (CCRect){ 0.0f, 0.0f, 0.0f, 0.0f };
-}
-
-static CCColourRGBA CCExpressionGetColour(CCExpression Rect)
-{
-    size_t Count = 0;
-    if ((CCExpressionGetType(Rect) == CCExpressionValueTypeList) && ((Count = CCCollectionGetCount(CCExpressionGetList(Rect))) >= 3))
-    {
-        float Values[4] = { [3] = 1.0f };
-        for (int Loop = 0; Loop < Count; Loop++)
-        {
-            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Rect), Loop);
-            
-            if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
-            {
-                Values[Loop] = (float)CCExpressionGetInteger(Value) / 255.0f;
-            }
-            
-            else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
-            {
-                Values[Loop] = CCExpressionGetFloat(Value);
-            }
-            
-            else
-            {
-                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
-                
-                return (CCColourRGBA){ 0.0f, 0.0f, 0.0f, 0.0f };
-            }
-        }
-        
-        return (CCColourRGBA){ Values[0], Values[1], Values[2], Values[3] };
-    }
-    
-    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
-    
-    return (CCColourRGBA){ 0.0f, 0.0f, 0.0f, 0.0f };
 }
 
 typedef struct {
@@ -278,22 +210,24 @@ static void GUIExpressionEvent(GUIObject Object, GUIEvent Event)
      might just use a spinlock table like Obj-C uses for atomic properties. Unless adding individual
      spinlocks to expressions won't increase the size by much.
      */
-    if (Event->type == GUIEventTypeMouse)
+    
+    GUIObject Parent = GUIObjectGetParent(Object);
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
+    
+    if (((GUIExpressionInfo*)Object->internal)->control)
     {
-        const CCRect Rect = GUIExpressionGetRect(Object);
-        if (((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
-             (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y)))
+        CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->control, CC_STRING("@gui-event"), CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, (void*)Event, NULL, NULL), FALSE);
+        
+        CC_COLLECTION_FOREACH(CCExpression, Control, CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->control))
         {
-            CC_LOG_DEBUG("[%p] %s: %.2f,%.2f",
-                         Object,
-                         Event->type == GUIEventTypeMouse ? "mouse" : "key",
-                         Event->mouse.state.position.x, Event->mouse.state.position.y);
-            
-            CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
-            {
-                GUIObjectEvent(Child, Event);
-            }
+            Control->state.super = ((GUIExpressionInfo*)Object->internal)->control;
+            Control = CCExpressionEvaluate(Control);
         }
+    }
+    
+    CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
+    {
+        GUIObjectEvent(Child, Event);
     }
 }
 
@@ -315,13 +249,7 @@ static CCRect GUIExpressionGetRect(GUIObject Object)
 
 static void GUIExpressionSetRect(GUIObject Object, CCRect Rect)
 {
-    CCExpression Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
-    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.position.x) });
-    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.position.y) });
-    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.size.x) });
-    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, Rect.size.y) });
-    
-    CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRect, Expr, FALSE);
+    CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRect, CCExpressionCreateRect(CC_STD_ALLOCATOR, Rect), FALSE);
 }
 
 static _Bool GUIExpressionGetEnabled(GUIObject Object)
@@ -411,8 +339,8 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
     
     if (Initializer)
     {
-        size_t RenderIndex = 0;
-        CCExpression BaseRender = NULL;
+        size_t RenderIndex = 0, ControlIndex = 0;
+        CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
         
         CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
@@ -450,7 +378,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                 
                 else if (CCStringEqual(Atom, StrControl))
                 {
-                    
+                    BaseControl = InitExpr;
                 }
                 
                 else
@@ -494,7 +422,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                 
                 else if (CCStringEqual(Atom, StrControl))
                 {
-                    
+                    ControlIndex = Index;
                 }
                 
                 else
@@ -536,6 +464,39 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
             
             ((GUIExpressionInfo*)Object->internal)->render->state.super = ((GUIExpressionInfo*)Object->internal)->data;
         }
+        
+        if (BaseControl)
+        {
+            if (ControlIndex)
+            {
+                CCExpression Control = (((GUIExpressionInfo*)Object->internal)->control = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->data), ControlIndex));
+                
+                CCEnumerator Enumerator;
+                CCCollectionGetEnumerator(CCExpressionGetList(BaseControl), &Enumerator);
+                
+                size_t Index = 1;
+                for (CCExpression *ControlExpr = CCCollectionEnumeratorNext(&Enumerator); ControlExpr; ControlExpr = CCCollectionEnumeratorNext(&Enumerator))
+                {
+                    CCOrderedCollectionInsertElementAtIndex(CCExpressionGetList(Control), &(CCExpression){ CCExpressionCopy(*ControlExpr) }, Index++);
+                }
+            }
+            
+            else
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->data), &(CCExpression){ (((GUIExpressionInfo*)Object->internal)->control = CCExpressionCopy(BaseControl)) });
+            }
+            
+            ((GUIExpressionInfo*)Object->internal)->control->state.super = ((GUIExpressionInfo*)Object->internal)->data;
+        }
+        
+        else if (ControlIndex)
+        {
+            ((GUIExpressionInfo*)Object->internal)->control = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->data), ControlIndex);
+            
+            ((GUIExpressionInfo*)Object->internal)->control->state.super = ((GUIExpressionInfo*)Object->internal)->data;
+        }
+        
+        if (((GUIExpressionInfo*)Object->internal)->control) CCExpressionCreateState(((GUIExpressionInfo*)Object->internal)->control, CC_STRING("@gui-event"), NULL, FALSE);
         
         CCExpression GUI = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)GUIExpressionValueTypeGUIObject, Object, NULL, (CCExpressionValueDestructor)GUIObjectDestroy);
         
@@ -620,4 +581,59 @@ CCExpression GUIExpressionPercentWidth(CCExpression Expression)
 CCExpression GUIExpressionPercentHeight(CCExpression Expression)
 {
     return GUIExpressionPercentage(Expression, "percent-height", TRUE);
+}
+
+CCExpression GUIExpressionOnEvent(CCExpression Expression)
+{
+    CCExpression Expr = Expression;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if ((ArgCount >= 2) && (ArgCount <= 3))
+    {
+        CCExpression Result = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        
+        _Bool Predicate = FALSE, IsEvent = FALSE;
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
+        {
+            CCOrderedCollection EventPredicate = CCExpressionGetList(Result);
+            const size_t EventPredicateArgCount = CCCollectionGetCount(EventPredicate);
+            
+            if (EventPredicateArgCount)
+            {
+                CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 0);
+                if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
+                {
+                    CCExpression EventState = CCExpressionGetState(Expression, CC_STRING("@gui-event"));
+                    if ((EventState) && (CCExpressionGetType(EventState) == CCExpressionValueTypeUnspecified))
+                    {
+                        GUIEvent Event = CCExpressionGetData(EventState);
+                        if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("cursor")))
+                        {
+                            if ((IsEvent = (Event->type == GUIEventTypeMouse)) && (EventPredicateArgCount == 2))
+                            {
+                                CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 1);
+                                if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+                                {
+                                    CCRect Rect = CCExpressionGetRect(RectArg);
+                                    Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                                                 (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (IsEvent)
+        {
+            if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("on", "event-predicate:expr true:expr [false:expr]");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("on", "event-predicate:expr true:expr [false:expr]");
+    
+    return Expr;
 }

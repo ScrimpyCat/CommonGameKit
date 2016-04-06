@@ -63,6 +63,7 @@
 		F39E23C61BFF63FB00DB0B71 /* CommonC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; };
 		F39E26711BFF6F6900DB0B71 /* libchibi-scheme.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		F3A21A261CB54B1600518ACA /* ExpressionHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A21A241CB54B1600518ACA /* ExpressionHelpers.c */; };
 		F3A3A7291C2ED39100EC1F18 /* StateExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */; };
 		F3A3A75B1C30152200EC1F18 /* GUIObject.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A7591C30152200EC1F18 /* GUIObject.c */; };
 		F3A3A75E1C303A0B00EC1F18 /* GUIContainer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A75C1C303A0B00EC1F18 /* GUIContainer.c */; };
@@ -471,6 +472,8 @@
 		F39E266D1BFF6F4E00DB0B71 /* install.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = install.h; path = "deps/chibi-scheme/build/include/chibi/install.h"; sourceTree = "<group>"; };
 		F39E266E1BFF6F4E00DB0B71 /* sexp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sexp.h; path = "deps/chibi-scheme/build/include/chibi/sexp.h"; sourceTree = "<group>"; };
 		F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libchibi-scheme.dylib"; path = "deps/chibi-scheme/build/lib/libchibi-scheme.dylib"; sourceTree = "<group>"; };
+		F3A21A241CB54B1600518ACA /* ExpressionHelpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionHelpers.c; sourceTree = "<group>"; };
+		F3A21A251CB54B1600518ACA /* ExpressionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionHelpers.h; sourceTree = "<group>"; };
 		F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StateExpressions.c; sourceTree = "<group>"; };
 		F3A3A7281C2ED39100EC1F18 /* StateExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateExpressions.h; sourceTree = "<group>"; };
 		F3A3A7591C30152200EC1F18 /* GUIObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIObject.c; sourceTree = "<group>"; };
@@ -854,6 +857,8 @@
 				F3BD17721C00857800B3849E /* Expression.c */,
 				F3BD17771C00B35E00B3849E /* ExpressionEvaluator.h */,
 				F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */,
+				F3A21A251CB54B1600518ACA /* ExpressionHelpers.h */,
+				F3A21A241CB54B1600518ACA /* ExpressionHelpers.c */,
 				F3BD17751C00B33800B3849E /* Evaluators */,
 			);
 			name = Scripting;
@@ -1611,6 +1616,7 @@
 				F3E84D551B45A3730082E510 /* InputSystem.c in Sources */,
 				F3F5D6971A56F73E006D7F16 /* tinycthread.c in Sources */,
 				F36531281C16213300A3B009 /* GLGFX.c in Sources */,
+				F3A21A261CB54B1600518ACA /* ExpressionHelpers.c in Sources */,
 				F3A9D5CC1C21DC220042BD2A /* GLShader.c in Sources */,
 				F36531311C19F50700A3B009 /* GLTexture.c in Sources */,
 				F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */,

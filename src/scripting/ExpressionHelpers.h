@@ -23,26 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GUIExpression_h
-#define Blob_Game_GUIExpression_h
+#ifndef Blob_Game_ExpressionHelpers_h
+#define Blob_Game_ExpressionHelpers_h
 
-#include "GUIObject.h"
-#include "ExpressionEvaluator.h"
-#include "ProjectExpressions.h"
+#include "Expression.h"
 
-typedef enum {
-    GUIExpressionValueTypeGUIObject = CCProjectExpressionValueTypeReservedCount + 1,
-    GUIExpressionValueTypeReservedCount
-} GUIExpressionValueType;
+CCExpression CCExpressionCreateVector2(CCAllocatorType Allocator, CCVector2D v);
+CCExpression CCExpressionCreateVector3(CCAllocatorType Allocator, CCVector3D v);
+CCExpression CCExpressionCreateVector4(CCAllocatorType Allocator, CCVector4D v);
+CCExpression CCExpressionCreateVector2i(CCAllocatorType Allocator, CCVector2Di v);
+CCExpression CCExpressionCreateVector3i(CCAllocatorType Allocator, CCVector3Di v);
+CCExpression CCExpressionCreateVector4i(CCAllocatorType Allocator, CCVector4Di v);
+CCExpression CCExpressionCreateRect(CCAllocatorType Allocator, CCRect r);
 
-
-extern const GUIObjectInterface * const GUIExpression;
-
-GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression);
-
-CC_EXPRESSION_EVALUATOR(gui) CCExpression GUIExpressionRegisterObject(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(percent-width) CCExpression GUIExpressionPercentWidth(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(percent-height) CCExpression GUIExpressionPercentHeight(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(on) CCExpression GUIExpressionOnEvent(CCExpression Expression);
+CCVector2D CCExpressionGetVector2(CCExpression Vec);
+CCVector3D CCExpressionGetVector3(CCExpression Vec);
+CCVector4D CCExpressionGetVector4(CCExpression Vec);
+CCVector2Di CCExpressionGetVector2i(CCExpression Vec);
+CCVector3Di CCExpressionGetVector3i(CCExpression Vec);
+CCVector4Di CCExpressionGetVector4i(CCExpression Vec);
+CCRect CCExpressionGetRect(CCExpression Rect);
+CCColourRGBA CCExpressionGetColour(CCExpression Colour);
 
 #endif

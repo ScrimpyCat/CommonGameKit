@@ -19,6 +19,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("gui"), GUIExpressionRegisterObject);
     CCExpressionEvaluatorRegister(CC_STRING("percent-width"), GUIExpressionPercentWidth);
     CCExpressionEvaluatorRegister(CC_STRING("percent-height"), GUIExpressionPercentHeight);
+    CCExpressionEvaluatorRegister(CC_STRING("on"), GUIExpressionOnEvent);
     CCExpressionEvaluatorRegister(CC_STRING("begin"), CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister(CC_STRING("if"), CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);
