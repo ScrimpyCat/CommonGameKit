@@ -286,4 +286,18 @@ static inline void CCExpressionStateSetSuper(CCExpression Expression, CCExpressi
     if (!CCExpressionIsTagged(Expression)) Expression->state.super = Super;
 }
 
+static inline CCExpression CCExpressionStateGetResult(CCExpression Expression)
+{
+    return CCExpressionIsTagged(Expression) ? NULL : Expression->state.result;
+}
+
+static inline void CCExpressionStateSetResult(CCExpression Expression, CCExpression Result)
+{
+    if (CCExpressionIsTagged(Expression))
+    {
+        if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
+        Expression->state.result = Result;
+    }
+}
+
 #endif

@@ -30,6 +30,7 @@
 #include "GFX.h"
 #include "InputSystem.h"
 #include "Expression.h"
+#include <tinycthread.h>
 
 typedef const struct {
     enum {
@@ -89,6 +90,7 @@ typedef struct GUIObjectInfo {
     const GUIObjectInterface *interface;
     CCAllocatorType allocator;
     GUIObject parent;
+    mtx_t lock; //Temporary until CCExpression becomes threadsafe and can handle it better/more efficiently
     void *internal;
 } GUIObjectInfo;
 

@@ -84,8 +84,6 @@ void CCEngineSetup(void)
     
     CCAssetManagerCreate();
     
-    GUIManagerCreate();
-    
     CCEntityManagerCreate();
     
     
@@ -166,6 +164,10 @@ void CCEngineSetup(void)
     CCAnimationComponentRegister();
     CCAnimationKeyframeComponentRegister();
     CCAnimationInterpolateComponentRegister();
+    
+    
+    //Create Managers Dependent on ECS :(
+    GUIManagerCreate();
     
     
     //Initial Scene Setup

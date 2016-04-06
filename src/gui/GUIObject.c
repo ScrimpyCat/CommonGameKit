@@ -44,6 +44,11 @@ GUIObject GUIObjectCreate(CCAllocatorType Allocator, const GUIObjectInterface *I
             CC_LOG_ERROR("Failed to create GUI object: Implementation failure (%p)", Interface);
             CC_SAFE_Free(Object);
         }
+        
+        else if (mtx_init(&Object->lock, mtx_plain | mtx_recursive) != thrd_success)
+        {
+            CC_LOG_ERROR("Failed to create lock for GUIObject (%p)", Object);
+        }
     }
     
     else CC_LOG_ERROR("Failed to create GUI object due to allocation failure. Allocation size (%zu)", sizeof(GUIObjectInfo));
@@ -63,6 +68,7 @@ void GUIObjectDestroy(GUIObject Object)
     
     else
     {
+        mtx_destroy(&Object->lock);
         Object->interface->destroy(Object->internal);
         CC_SAFE_Free(Object);
     }
@@ -72,42 +78,58 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
+    mtx_lock(&Object->lock);
     Object->interface->render(Object, Framebuffer);
+    mtx_unlock(&Object->lock);
 }
 
 void GUIObjectEvent(GUIObject Object, GUIEvent Event)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
+    mtx_lock(&Object->lock);
     Object->interface->event(Object, Event);
+    mtx_unlock(&Object->lock);
 }
 
 CCRect GUIObjectGetRect(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    return Object->interface->rect.get(Object);
+    mtx_lock(&Object->lock);
+    const CCRect Rect = Object->interface->rect.get(Object);
+    mtx_unlock(&Object->lock);
+    
+    return Rect;
 }
 
 void GUIObjectSetRect(GUIObject Object, CCRect Rect)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
+    mtx_lock(&Object->lock);
     Object->interface->rect.set(Object, Rect);
+    mtx_unlock(&Object->lock);
 }
 
 _Bool GUIObjectGetEnabled(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    return Object->interface->enabled.get(Object);
+    mtx_lock(&Object->lock);
+    const _Bool Enabled = Object->interface->enabled.get(Object);
+    mtx_unlock(&Object->lock);
+    
+    return Enabled;
 }
 
 void GUIObjectSetEnabled(GUIObject Object, _Bool Enabled)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
+    mtx_lock(&Object->lock);
     Object->interface->enabled.set(Object, Enabled);
+    mtx_unlock(&Object->lock);
 }
 
 GUIObject GUIObjectGetParent(GUIObject Object)
@@ -122,8 +144,10 @@ void GUIObjectAddChild(GUIObject Object, GUIObject Child)
     CCAssertLog(Object, "GUI object must not be null");
     CCAssertLog(Child, "Child GUI object must not be null");
     
+    mtx_lock(&Object->lock);
     Child->parent = Object;
     Object->interface->child.add(Object, Child);
+    mtx_unlock(&Object->lock);
 }
 
 void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
@@ -131,27 +155,42 @@ void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
     CCAssertLog(Object, "GUI object must not be null");
     CCAssertLog(Child, "Child GUI object must not be null");
     
+    mtx_lock(&Object->lock);
     Child->parent = NULL;
     Object->interface->child.remove(Object, Child);
+    mtx_unlock(&Object->lock);
 }
 
 _Bool GUIObjectHasChanged(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    return Object->interface->changed(Object);
+    mtx_lock(&Object->lock);
+    const _Bool HasChanged = Object->interface->changed(Object);
+    mtx_unlock(&Object->lock);
+    
+    return HasChanged;
 }
 
 CCExpression GUIObjectEvaluateExpression(GUIObject Object, CCExpression Expression)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    return Object->interface->evaluate(Object, Expression);
+    mtx_lock(&Object->lock);
+    CCExpression Expr = CCExpressionCopy(Object->interface->evaluate(Object, Expression));
+    mtx_unlock(&Object->lock);
+    
+    CCExpressionStateSetResult(Expression, Expr);
+    return Expr;
 }
 
 CCExpression GUIObjectGetExpressionState(GUIObject Object)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
-    return Object->interface->state(Object);
+    mtx_lock(&Object->lock);
+    CCExpression Expr = Object->interface->state(Object); //TODO: should we copy? can't recall what use I thought this function would be might remove
+    mtx_unlock(&Object->lock);
+    
+    return Expr;
 }

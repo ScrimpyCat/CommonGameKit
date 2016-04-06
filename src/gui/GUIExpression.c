@@ -267,7 +267,34 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
 
 static void GUIExpressionEvent(GUIObject Object, GUIEvent Event)
 {
-    
+    /*
+     TODO: make CCExpression threadsafe
+     
+     Easiest way to achieve that is to separate the return state, and instead have environment passed in
+     that will keep local state (return values and temporary values, super's, etc.).
+     
+     Then just need to make expression state that's left such as CCExpressionState->values thread safe.
+     This can probably be done by setting atomic locks in the Set/Get state functions, for simplicity
+     might just use a spinlock table like Obj-C uses for atomic properties. Unless adding individual
+     spinlocks to expressions won't increase the size by much.
+     */
+    if (Event->type == GUIEventTypeMouse)
+    {
+        const CCRect Rect = GUIExpressionGetRect(Object);
+        if (((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+             (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y)))
+        {
+            CC_LOG_DEBUG("[%p] %s: %.2f,%.2f",
+                         Object,
+                         Event->type == GUIEventTypeMouse ? "mouse" : "key",
+                         Event->mouse.state.position.x, Event->mouse.state.position.y);
+            
+            CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
+            {
+                GUIObjectEvent(Child, Event);
+            }
+        }
+    }
 }
 
 static CCRect GUIExpressionGetRect(GUIObject Object)

@@ -24,12 +24,24 @@
  */
 
 #include "GUIManager.h"
+#include "Entity.h"
+#include "EntityManager.h"
+
+#include "InputSystem.h"
+#include "InputMapKeyboardComponent.h"
+#include "InputMapMousePositionComponent.h"
+#include "InputMapMouseButtonComponent.h"
+#include "InputMapMouseScrollComponent.h"
+#include "InputMapMouseDropComponent.h"
 
 #include <tinycthread.h>
 #include <stdatomic.h>
 
 
+#define GUI_MANAGER_ENTITY_ID (CCEntityID)'gui'
+
 typedef struct {
+    CCEntity entity;
     CCCollection active, added, removed;
     atomic_flag addedLock, removedLock;
 } GUIManager;
@@ -38,6 +50,14 @@ static GUIManager ObjectManager = {
     .addedLock = ATOMIC_FLAG_INIT,
     .removedLock = ATOMIC_FLAG_INIT
 };
+
+static void GUIManagerEventMouseCallback(CCComponent Component, CCMouseEvent Event, CCMouseMap State)
+{
+    GUIManagerHandleEvent(&(GUIEventInfo){
+        .type = GUIEventTypeMouse,
+        .mouse = { .event = Event, .state = State }
+    });
+}
 
 static void GUIObjectDestructor(CCCollection Collection, GUIObject *Object)
 {
@@ -55,12 +75,23 @@ void GUIManagerCreate(void)
     }
     
     ObjectManager = (GUIManager){
+        .entity = CCEntityCreate(GUI_MANAGER_ENTITY_ID, CC_STD_ALLOCATOR),
         .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating, sizeof(GUIObject), NULL),
         .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), NULL),
         .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), (CCCollectionElementDestructor)GUIObjectDestructor),
         .addedLock = ATOMIC_FLAG_INIT,
         .removedLock = ATOMIC_FLAG_INIT
     };
+    
+    
+    //TODO: This will get quite awkward, need to separate input from the ECS.
+    CCComponent MousePos = CCComponentCreate(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID);
+    CCInputMapComponentSetCallback(MousePos, GUIManagerEventMouseCallback);
+    
+    CCEntityAttachComponent(ObjectManager.entity, MousePos);
+    CCComponentSystemAddComponent(MousePos);
+    
+    CCEntityManagerAddEntity(ObjectManager.entity);
 }
 
 void GUIManagerDestroy(void)
@@ -70,6 +101,8 @@ void GUIManagerDestroy(void)
     if (ObjectManager.active) CCCollectionDestroy(ObjectManager.active);
     if (ObjectManager.added) CCCollectionDestroy(ObjectManager.added);
     if (ObjectManager.removed) CCCollectionDestroy(ObjectManager.removed);
+    
+    CCEntityDestroy(ObjectManager.entity);
 }
 
 void GUIManagerUpdate(void)
@@ -98,6 +131,14 @@ void GUIManagerRender(GFXFramebuffer Framebuffer)
     CC_COLLECTION_FOREACH(GUIObject, Object, ObjectManager.active)
     {
         GUIObjectRender(Object, Framebuffer);
+    }
+}
+
+void GUIManagerHandleEvent(GUIEvent Event)
+{
+    CC_COLLECTION_FOREACH(GUIObject, Object, ObjectManager.active)
+    {
+        GUIObjectEvent(Object, Event);
     }
 }
 
