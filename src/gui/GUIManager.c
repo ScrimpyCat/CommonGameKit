@@ -87,9 +87,29 @@ void GUIManagerCreate(void)
     //TODO: This will get quite awkward, need to separate input from the ECS.
     CCComponent MousePos = CCComponentCreate(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID);
     CCInputMapComponentSetCallback(MousePos, GUIManagerEventMouseCallback);
-    
     CCEntityAttachComponent(ObjectManager.entity, MousePos);
     CCComponentSystemAddComponent(MousePos);
+    
+    CCComponent MouseBtn = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+    CCInputMapComponentSetCallback(MouseBtn, GUIManagerEventMouseCallback);
+    CCInputMapMouseButtonComponentSetButton(MouseBtn, GLFW_MOUSE_BUTTON_LEFT);
+    CCInputMapMouseButtonComponentSetIgnoreModifier(MouseBtn, TRUE);
+    CCEntityAttachComponent(ObjectManager.entity, MouseBtn);
+    CCComponentSystemAddComponent(MouseBtn);
+    
+    MouseBtn = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+    CCInputMapComponentSetCallback(MouseBtn, GUIManagerEventMouseCallback);
+    CCInputMapMouseButtonComponentSetButton(MouseBtn, GLFW_MOUSE_BUTTON_RIGHT);
+    CCInputMapMouseButtonComponentSetIgnoreModifier(MouseBtn, TRUE);
+    CCEntityAttachComponent(ObjectManager.entity, MouseBtn);
+    CCComponentSystemAddComponent(MouseBtn);
+    
+    MouseBtn = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+    CCInputMapComponentSetCallback(MouseBtn, GUIManagerEventMouseCallback);
+    CCInputMapMouseButtonComponentSetButton(MouseBtn, GLFW_MOUSE_BUTTON_MIDDLE);
+    CCInputMapMouseButtonComponentSetIgnoreModifier(MouseBtn, TRUE);
+    CCEntityAttachComponent(ObjectManager.entity, MouseBtn);
+    CCComponentSystemAddComponent(MouseBtn);
     
     CCEntityManagerAddEntity(ObjectManager.entity);
 }

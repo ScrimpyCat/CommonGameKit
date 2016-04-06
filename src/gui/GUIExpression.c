@@ -620,6 +620,38 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                                 }
                             }
                         }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("click")))
+                        {
+                            if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventButton)) && (EventPredicateArgCount == 3) && (Event->mouse.state.button.state.down))
+                            {
+                                CCExpression Button = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 1);
+                                if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
+                                {
+                                    uint32_t Mods = 0;
+                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("shift")) != SIZE_MAX) Mods |= GLFW_MOD_SHIFT;
+                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= GLFW_MOD_CONTROL;
+                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("alt")) != SIZE_MAX) Mods |= GLFW_MOD_ALT;
+                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= GLFW_MOD_SUPER;
+                                    
+                                    uint32_t Key = UINT32_MAX;
+                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("left")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_LEFT;
+                                    else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("right")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_RIGHT;
+                                    else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("middle")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_MIDDLE;
+                                    
+                                    if ((Event->mouse.state.button.button == Key) && (Event->mouse.state.button.flags == Mods))
+                                    {
+                                        CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 2);
+                                        if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+                                        {
+                                            CCRect Rect = CCExpressionGetRect(RectArg);
+                                            Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                                                         (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -629,8 +661,6 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
         {
             if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
         }
-        
-        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("on", "event-predicate:expr true:expr [false:expr]");
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("on", "event-predicate:expr true:expr [false:expr]");
