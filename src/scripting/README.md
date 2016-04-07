@@ -21,6 +21,7 @@ It uses a bracket (Scheme/Lisp) style syntax, where everything separated by a sp
 
 * `1` is an integer value (int32_t)
 * `1.0` is a floating point value (float)
+* `#f` and `#t` are boolean literals (expressed as integers)
 * `atom` is an atom, this is a unique type that will either evaluate to something else or to itself
 * `"string"` is a string
 * `()` is a list
@@ -47,6 +48,8 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 **<** Less than operator, tests if all the inputs are larger than the one before it (ascending order). e.g. `(< 1 2 3) ;1`, `(< 1 1 1) ;0`
 
 **>** Larger than operator, tests if all the inputs are smaller than the one before it (descending order). e.g. `(> 1 2 3) ;0`, `(> 1 1 1) ;0`
+
+**not** Performs a logical not on the given value. e.g. `(not 1) ;0`
 
 **min** Returns the lowest input. e.g. `(min 3 2 4) ;2`
 
@@ -126,6 +129,8 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
     (search "folder/" ".txt") ;("folder/1.txt" "folder/2.txt" "folder/subfolder/3.txt")
     (search "folder/" "2.*") ;("folder/2.txt" "folder/2.png")
     (search "folder/" "subfolder/*.*") ;("folder/subfolder/3.txt" "folder/subfolder/3.png")
+
+**eval** Evaluate the script. e.g. `(eval "~/script.scm") ;1`
 
 **super** Evaluates the expression in the former in-use state.
 
@@ -207,3 +212,61 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
     (asset
         (shader "myshader" (mylib vert) (mylib frag))
     )
+
+
+###GUI Functions###
+
+**percent-width** Get a value relative to the width of the current view. Float's map 0% - 100% with 0.0 - 1.0, while integers use 0 - 100. e.g. `(percent-width 100) ;500`, `(percent-width 50) ;250`
+
+**percent-height** Get a value relative to the height of the current view. Float's map 0% - 100% with 0.0 - 1.0, while integers use 0 - 100. e.g. `(percent-height 100) ;500`, `(percent-height 50) ;250`
+
+**on** Match an event predicate. If the predicate is true (1 or some non-zero value) it will evaluate and return the result of the truth expression, or if the predicate is false (0) it will evaluate and return the result of the false expression. If the predicate is of a different event then the one being tested, neither expression will be evaluated. e.g. `(on (cursor rect) 10 20) ;20`
+
+* **cursor** - Predicate to match when the cursor is position inside the given rect. The `@pos` (`@pos-x` and `@pos-y`) variable is set to the current cursor's position. e.g. `(cursor (0 0 10 10)) ;1`, `(on (cursor (0 0 10 10)) @pos) ; (2 5)`
+* **click** - Predicate to match when a click event occurs inside the given rect. Clicks can be specified using combination of `left`, `right`, `middle`, `shift`, `ctrl`, `alt`, `cmd`. The `@press` variable will be set to indicate whether the button is down (0) or released (1). e.g. `(click alt-left (0 0 10 10)) ;1`, `(on (click alt-left (0 0 10 10)) @press) ;1`
+* **scroll** - Predicate to match when a scroll event occurs inside the given rect. The `@scroll-delta` (`@scroll-delta-x` and `@scroll-delta-y`) variable is set to the current scroll delta. e.g. `(scroll (0 0 10 10)) ;1`, `(on (scroll (0 0 10 10)) @scroll-delta) ;0.1`
+* **drop** - Predicate to match when a file drop event occurs inside the given rect. The `@drop-files` variable is set to the list of files being dropped. e.g. `(drop (0 0 10 10)) ;1`, `(on (drop (0 0 10 10)) @drop-files) ;("~/blah.txt")`
+
+**gui** Create a reusable GUI element. It will create a GUI constructor function for the name specified, with the default settings.
+
+    (gui "gui-button"
+        (enum!
+            "normal"
+            "highlighted"
+            "pushed"
+        )
+
+        (state! "status" normal)
+        (state! "label" (
+            (quote (render-rect rect (253 212 73)))  ; normal
+            (quote (render-rect rect (255 221 108))) ; highlighted
+            (quote (render-rect rect (238 190 30)))  ; pushed
+        ))
+        (state! "on-click" (quote (print "Clicked!")))
+        (state! "inside" #f)
+        (state! "dragged" #f)
+
+        (render
+            (get status label)
+        )
+
+        (control
+            (on (click left rect)
+                (if @press
+                    ((status! pushed) (inside! #t) (dragged! #t))
+                    ((status! highlighted) (if inside on-click) (inside! #f) (dragged! #f))
+                )
+                ((status! normal) (inside! #f) (dragged! @press))
+            )
+            (if dragged
+                (if inside (on (cursor rect) (status! pushed) (status! highlighted)))
+                (on (cursor rect) (status! highlighted) (status! normal))
+            )
+        )
+    )
+
+    ; Usage:
+    (gui-button
+        (rect! 0 0 (quote (super (percent-width 50))) (quote (super (percent-height 50))))
+    )
+
