@@ -603,7 +603,7 @@ static _Bool GUIExpressionOnEventCursorPredicate(GUIEvent Event, CCExpression Ar
 static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
 {
     _Bool IsEvent = FALSE;
-    if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventButton)) && (ArgCount == 2) && (Event->mouse.state.button.state.down))
+    if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventButton)) && (ArgCount == 2))
     {
         CCExpression Button = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
         if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
@@ -627,6 +627,16 @@ static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Arg
                     CCRect Rect = CCExpressionGetRect(RectArg);
                     *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
                                   (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+                    
+                    if (CCExpressionGetState(CCExpressionStateGetSuper(Args), CC_STRING("@press")))
+                    {
+                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE);
+                    }
+                    
+                    else
+                    {
+                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE);
+                    }
                 }
             }
         }
