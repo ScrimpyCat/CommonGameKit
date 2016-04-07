@@ -432,7 +432,6 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
             }
         }
         
-        CCExpressionPrint(Expression);
         GUIObject Object = GUIExpressionCreate(CC_STD_ALLOCATOR, Expression);
         
         if (Children)

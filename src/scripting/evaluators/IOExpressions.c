@@ -143,3 +143,34 @@ CCExpression CCIOExpressionSearch(CCExpression Expression)
     
     return List;
 }
+
+CCExpression CCIOExpressionEval(CCExpression Expression)
+{
+    CCExpression Expr = Expression;
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression Path = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Path) == CCExpressionValueTypeString)
+        {
+            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Path))
+            {
+                FSPath Path = FSPathCreate(Buffer);
+                
+                CCExpression Src = CCExpressionCreateFromSourceFile(Path);
+                if (Src)
+                {
+                    Expr = CCExpressionCopy(CCExpressionEvaluate(Src));
+                    CCExpressionDestroy(Src);
+                }
+                
+                FSPathDestroy(Path);
+            }
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("eval", "path:string");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("eval", "path:string");
+    
+    return Expr;
+}

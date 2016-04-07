@@ -39,7 +39,7 @@ static const char CCProjectGamepkg[] =
 "    (dir-textures \"graphics/textures/\") ; texture directories\n"
 "    (dir-shaders \"graphics/shaders/\" (engine-path \"assets/shaders/\")) ; shader directories\n"
 "    (dir-sounds \"audio/\") ; sound directories\n"
-"    (dir-layouts \"ui/\") ; layout directories\n"
+"    (dir-layouts \"ui/\" (engine-path \"assets/ui/\")) ; layout directories\n"
 "    (dir-entities \"logic/entities/\") ; entity directories\n"
 "    (dir-logs \"logs/\") ; log directory\n"
 "    (dir-tmp \"tmp/\") ; tmp directory\n"

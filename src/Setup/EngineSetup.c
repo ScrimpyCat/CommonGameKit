@@ -119,13 +119,13 @@ void CCEngineSetup(void)
     CCCollectionRemoveAllElements(Matches);
     CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".asset") });
     
-    CCCollection AssetPaths[] = {
+    CCCollection GlobalAssetPaths[] = {
         CCEngineConfiguration.directory.shaders
     };
     
-    for (size_t Loop = 0; Loop < sizeof(AssetPaths) / sizeof(typeof(*AssetPaths)); Loop++)
+    for (size_t Loop = 0; Loop < sizeof(GlobalAssetPaths) / sizeof(typeof(*GlobalAssetPaths)); Loop++)
     {
-        CC_COLLECTION_FOREACH(FSPath, Path, AssetPaths[Loop])
+        CC_COLLECTION_FOREACH(FSPath, Path, GlobalAssetPaths[Loop])
         {
             CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
             
@@ -142,8 +142,6 @@ void CCEngineSetup(void)
             }
         }
     }
-    
-    CCCollectionDestroy(Matches);
     
     
     //Register Systems
@@ -168,6 +166,34 @@ void CCEngineSetup(void)
     
     //Create Managers Dependent on ECS :(
     GUIManagerCreate();
+    
+    
+    //Load Dependent Assets
+    CCCollection AssetPaths[] = {
+        CCEngineConfiguration.directory.layouts
+    };
+    
+    for (size_t Loop = 0; Loop < sizeof(AssetPaths) / sizeof(typeof(*AssetPaths)); Loop++)
+    {
+        CC_COLLECTION_FOREACH(FSPath, Path, AssetPaths[Loop])
+        {
+            CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
+            
+            if (Paths)
+            {
+                CC_COLLECTION_FOREACH(FSPath, LibPath, Paths)
+                {
+                    CCExpression AssetExpr = CCExpressionCreateFromSourceFile(LibPath);
+                    CCExpressionEvaluate(AssetExpr);
+                    CCExpressionDestroy(AssetExpr);
+                }
+                
+                CCCollectionDestroy(Paths);
+            }
+        }
+    }
+    
+    CCCollectionDestroy(Matches);
     
     
     //Initial Scene Setup
