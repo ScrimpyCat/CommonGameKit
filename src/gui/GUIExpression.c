@@ -652,6 +652,20 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                                 }
                             }
                         }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("scroll")))
+                        {
+                            if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventScroll)) && (EventPredicateArgCount == 2))
+                            {
+                                CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 1);
+                                if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+                                {
+                                    CCRect Rect = CCExpressionGetRect(RectArg);
+                                    Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                                                 (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+                                }
+                            }
+                        }
                     }
                 }
             }
