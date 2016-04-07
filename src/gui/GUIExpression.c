@@ -583,6 +583,75 @@ CCExpression GUIExpressionPercentHeight(CCExpression Expression)
     return GUIExpressionPercentage(Expression, "percent-height", TRUE);
 }
 
+static _Bool GUIExpressionOnEventCursorPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+{
+    _Bool IsEvent = FALSE;
+    if ((IsEvent = (Event->type == GUIEventTypeMouse)) && (ArgCount == 1))
+    {
+        CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
+        if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+        {
+            CCRect Rect = CCExpressionGetRect(RectArg);
+            *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                          (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+        }
+    }
+    
+    return IsEvent;
+}
+
+static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+{
+    _Bool IsEvent = FALSE;
+    if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventButton)) && (ArgCount == 2) && (Event->mouse.state.button.state.down))
+    {
+        CCExpression Button = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
+        if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
+        {
+            uint32_t Mods = 0;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("shift")) != SIZE_MAX) Mods |= GLFW_MOD_SHIFT;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= GLFW_MOD_CONTROL;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("alt")) != SIZE_MAX) Mods |= GLFW_MOD_ALT;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= GLFW_MOD_SUPER;
+            
+            uint32_t Key = UINT32_MAX;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("left")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_LEFT;
+            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("right")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_RIGHT;
+            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("middle")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_MIDDLE;
+            
+            if ((Event->mouse.state.button.button == Key) && (Event->mouse.state.button.flags == Mods))
+            {
+                CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 2);
+                if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+                {
+                    CCRect Rect = CCExpressionGetRect(RectArg);
+                    *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                                  (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+                }
+            }
+        }
+    }
+    
+    return IsEvent;
+}
+
+static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+{
+    _Bool IsEvent = FALSE;
+    if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventScroll)) && (ArgCount == 1))
+    {
+        CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
+        if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+        {
+            CCRect Rect = CCExpressionGetRect(RectArg);
+            *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                          (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+        }
+    }
+    
+    return IsEvent;
+}
+
 CCExpression GUIExpressionOnEvent(CCExpression Expression)
 {
     CCExpression Expr = Expression;
@@ -606,64 +675,22 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                     CCExpression EventState = CCExpressionGetState(Expression, CC_STRING("@gui-event"));
                     if ((EventState) && (CCExpressionGetType(EventState) == CCExpressionValueTypeUnspecified))
                     {
+                        struct {
+                            CCString name;
+                            _Bool (*predicate)(GUIEvent, CCExpression, size_t, _Bool *);
+                        } EventPredicates[] = {
+                            { CC_STRING("cursor"), GUIExpressionOnEventCursorPredicate },
+                            { CC_STRING("click"), GUIExpressionOnEventClickPredicate },
+                            { CC_STRING("scroll"), GUIExpressionOnEventScrollPredicate }
+                        };
+                        
                         GUIEvent Event = CCExpressionGetData(EventState);
-                        if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("cursor")))
+                        for (size_t Loop = 0; Loop < sizeof(EventPredicates) / sizeof(typeof(*EventPredicates)); Loop++)
                         {
-                            if ((IsEvent = (Event->type == GUIEventTypeMouse)) && (EventPredicateArgCount == 2))
+                            if (CCStringEqual(CCExpressionGetAtom(Type), EventPredicates[Loop].name))
                             {
-                                CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 1);
-                                if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
-                                {
-                                    CCRect Rect = CCExpressionGetRect(RectArg);
-                                    Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
-                                                 (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
-                                }
-                            }
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("click")))
-                        {
-                            if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventButton)) && (EventPredicateArgCount == 3) && (Event->mouse.state.button.state.down))
-                            {
-                                CCExpression Button = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 1);
-                                if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
-                                {
-                                    uint32_t Mods = 0;
-                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("shift")) != SIZE_MAX) Mods |= GLFW_MOD_SHIFT;
-                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= GLFW_MOD_CONTROL;
-                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("alt")) != SIZE_MAX) Mods |= GLFW_MOD_ALT;
-                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= GLFW_MOD_SUPER;
-                                    
-                                    uint32_t Key = UINT32_MAX;
-                                    if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("left")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_LEFT;
-                                    else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("right")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_RIGHT;
-                                    else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("middle")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_MIDDLE;
-                                    
-                                    if ((Event->mouse.state.button.button == Key) && (Event->mouse.state.button.flags == Mods))
-                                    {
-                                        CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 2);
-                                        if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
-                                        {
-                                            CCRect Rect = CCExpressionGetRect(RectArg);
-                                            Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
-                                                         (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("scroll")))
-                        {
-                            if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventScroll)) && (EventPredicateArgCount == 2))
-                            {
-                                CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(EventPredicate, 1);
-                                if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
-                                {
-                                    CCRect Rect = CCExpressionGetRect(RectArg);
-                                    Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
-                                                 (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
-                                }
+                                IsEvent = EventPredicates[Loop].predicate(Event, Result, EventPredicateArgCount - 1, &Predicate);
+                                break;
                             }
                         }
                     }
