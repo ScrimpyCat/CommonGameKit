@@ -98,7 +98,7 @@ CCExpression CCExpressionCreateRect(CCAllocatorType Allocator, CCRect r)
     return Expr;
 }
 
-static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
+static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float Factor, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
 {
     if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = CCCollectionGetCount(CCExpressionGetList(Vec))) >= Min) && (*Count <= Max))
     {
@@ -108,7 +108,7 @@ static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, size_
             
             if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
             {
-                Values[Loop] = (float)CCExpressionGetInteger(Value);
+                Values[Loop] = Factor * (float)CCExpressionGetInteger(Value);
             }
             
             else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
@@ -136,7 +136,7 @@ static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, size_
     return FALSE;
 }
 
-static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
+static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, float Factor, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
 {
     if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = CCCollectionGetCount(CCExpressionGetList(Vec))) >= Min) && (*Count <= Max))
     {
@@ -151,7 +151,7 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, s
             
             else if (CCExpressionGetType(Value) == CCExpressionValueTypeFloat)
             {
-                Values[Loop] = (int32_t)CCExpressionGetFloat(Value);
+                Values[Loop] = (int32_t)(Factor * CCExpressionGetFloat(Value));
             }
             
             else
@@ -176,12 +176,12 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, s
 
 static _Bool CCExpressionGetFloatArray(CCExpression Vec, float *Values, size_t Count, const char *ErrMsg)
 {
-    return CCExpressionGetFloatMinArray(Vec, Values, Count, Count, &Count, ErrMsg);
+    return CCExpressionGetFloatMinArray(Vec, Values, 1.0f, Count, Count, &Count, ErrMsg);
 }
 
 static _Bool CCExpressionGetIntegerArray(CCExpression Vec, int32_t *Values, size_t Count, const char *ErrMsg)
 {
-    return CCExpressionGetIntegerMinArray(Vec, Values, Count, Count, &Count, ErrMsg);
+    return CCExpressionGetIntegerMinArray(Vec, Values, 1.0f, Count, Count, &Count, ErrMsg);
 }
 
 CCVector2D CCExpressionGetVector2(CCExpression Vec)
@@ -244,7 +244,7 @@ CCColourRGBA CCExpressionGetColour(CCExpression Colour)
 {
     size_t Count;
     CCVector4D Result;
-    CCExpressionGetFloatMinArray(Colour, Result.v, 3, 4, &Count, "Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
+    CCExpressionGetFloatMinArray(Colour, Result.v, 0.003921568627f, 3, 4, &Count, "Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
     
     return (CCColourRGBA){ Result.v[0], Result.v[1], Result.v[2], Count == 4 ? Result.v[3] : 1.0f };
 }
