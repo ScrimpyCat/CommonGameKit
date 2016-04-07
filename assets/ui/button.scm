@@ -12,20 +12,20 @@
         (quote (render-rect rect (238 190 30)))  ; pushed
     ))
     (state! "on-click" (quote (print "Clicked!")))
-    (state! "inside" 0)
-    (state! "dragged" 0)
+    (state! "inside" #f)
+    (state! "dragged" #f)
 
     (render
         (get status label)
     )
 
     (control
-        (on (click left rect) 
+        (on (click left rect)
             (if @press
-                ((status! pushed) (inside! 1) (dragged! 1))
-                ((status! highlighted) (if inside on-click) (inside! 0) (dragged! 0))
+                ((status! pushed) (inside! #t) (dragged! #t))
+                ((status! highlighted) (if inside on-click) (inside! #f) (dragged! #f))
             )
-            ((status! normal) (inside! 0) (dragged! @press))
+            ((status! normal) (inside! #f) (dragged! @press))
         )
         (if dragged
             (if inside (on (cursor rect) (status! pushed) (status! highlighted)))

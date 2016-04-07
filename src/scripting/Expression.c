@@ -337,7 +337,11 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     switch (Type)
     {
         case CCExpressionValueTypeAtom:
-            return CCExpressionCreateAtom(Allocator, CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length), FALSE);
+        {
+            if (!strncmp(Input, "#f", Length)) return CCExpressionCreateInteger(Allocator, 0);
+            else if (!strncmp(Input, "#t", Length)) return CCExpressionCreateInteger(Allocator, 1);
+            else return CCExpressionCreateAtom(Allocator, CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length), FALSE);
+        }
             
         case CCExpressionValueTypeInteger:
             return CCExpressionCreateInteger(Allocator, (int32_t)strtol(Input, NULL, 10));
