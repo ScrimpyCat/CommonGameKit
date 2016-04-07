@@ -116,6 +116,11 @@ void GUIManagerCreate(void)
     CCEntityAttachComponent(ObjectManager.entity, Input);
     CCComponentSystemAddComponent(Input);
     
+    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID);
+    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+    CCEntityAttachComponent(ObjectManager.entity, Input);
+    CCComponentSystemAddComponent(Input);
+    
     CCEntityManagerAddEntity(ObjectManager.entity);
 }
 

@@ -666,6 +666,39 @@ static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Ar
     return IsEvent;
 }
 
+static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+{
+    _Bool IsEvent = FALSE;
+    if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventDrop)) && (ArgCount == 1))
+    {
+        CCExpression RectArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
+        if (CCExpressionGetType(RectArg) == CCExpressionValueTypeList)
+        {
+            CCRect Rect = CCExpressionGetRect(RectArg);
+            *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
+                          (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+            
+            CCExpression Files = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            CC_COLLECTION_FOREACH(CCString, Path, Event->mouse.state.drop.files)
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Files), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, Path, TRUE) });
+            }
+            
+            if (CCExpressionGetState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files")))
+            {
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE);
+            }
+            
+            else
+            {
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE);
+            }
+        }
+    }
+    
+    return IsEvent;
+}
+
 CCExpression GUIExpressionOnEvent(CCExpression Expression)
 {
     CCExpression Expr = Expression;
@@ -695,7 +728,8 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                         } EventPredicates[] = {
                             { CC_STRING("cursor"), GUIExpressionOnEventCursorPredicate },
                             { CC_STRING("click"), GUIExpressionOnEventClickPredicate },
-                            { CC_STRING("scroll"), GUIExpressionOnEventScrollPredicate }
+                            { CC_STRING("scroll"), GUIExpressionOnEventScrollPredicate },
+                            { CC_STRING("drop"), GUIExpressionOnEventDropPredicate }
                         };
                         
                         GUIEvent Event = CCExpressionGetData(EventState);
