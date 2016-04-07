@@ -646,6 +646,20 @@ static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Ar
             CCRect Rect = CCExpressionGetRect(RectArg);
             *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
                           (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
+            
+            if (CCExpressionGetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta")))
+            {
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta), FALSE);
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE);
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE);
+            }
+            
+            else
+            {
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta), FALSE);
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE);
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE);
+            }
         }
     }
     
