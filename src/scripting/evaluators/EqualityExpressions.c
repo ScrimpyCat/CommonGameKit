@@ -402,3 +402,22 @@ CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression)
     
     return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Equal);
 }
+
+CCExpression CCEqualityExpressionNot(CCExpression Expression)
+{
+    CCExpression Expr = Expression;
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression Result = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
+        {
+            return CCExpressionCreateInteger(CC_STD_ALLOCATOR, !CCExpressionGetInteger(Result));
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("not", "value:integer");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("not", "value:integer");
+    
+    return Expr;
+}

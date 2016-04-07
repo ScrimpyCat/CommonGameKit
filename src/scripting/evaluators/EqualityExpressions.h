@@ -35,5 +35,6 @@ CC_EXPRESSION_EVALUATOR(<=) CCExpression CCEqualityExpressionLessThanEqual(CCExp
 CC_EXPRESSION_EVALUATOR(>=) CCExpression CCEqualityExpressionGreaterThanEqual(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(<) CCExpression CCEqualityExpressionLessThan(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(>) CCExpression CCEqualityExpressionGreaterThan(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(not) CCExpression CCEqualityExpressionNot(CCExpression Expression);
 
 #endif

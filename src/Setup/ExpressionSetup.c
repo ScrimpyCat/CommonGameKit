@@ -29,6 +29,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING(">="), CCEqualityExpressionGreaterThanEqual);
     CCExpressionEvaluatorRegister(CC_STRING("<"), CCEqualityExpressionLessThan);
     CCExpressionEvaluatorRegister(CC_STRING(">"), CCEqualityExpressionGreaterThan);
+    CCExpressionEvaluatorRegister(CC_STRING("not"), CCEqualityExpressionNot);
     CCExpressionEvaluatorRegister(CC_STRING("print"), CCIOExpressionPrint);
     CCExpressionEvaluatorRegister(CC_STRING("search"), CCIOExpressionSearch);
     CCExpressionEvaluatorRegister(CC_STRING("get"), CCListExpressionGetter);
