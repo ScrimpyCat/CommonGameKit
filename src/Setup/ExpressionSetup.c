@@ -3,6 +3,7 @@
 #include "ExpressionEvaluator.h"
 
 #include "GUIExpression.h"
+#include "ColourExpressions.h"
 #include "ControlFlowExpressions.h"
 #include "EqualityExpressions.h"
 #include "IOExpressions.h"
@@ -20,6 +21,8 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("percent-width"), GUIExpressionPercentWidth);
     CCExpressionEvaluatorRegister(CC_STRING("percent-height"), GUIExpressionPercentHeight);
     CCExpressionEvaluatorRegister(CC_STRING("on"), GUIExpressionOnEvent);
+    CCExpressionEvaluatorRegister(CC_STRING("lighten"), CCColourExpressionLighten);
+    CCExpressionEvaluatorRegister(CC_STRING("darken"), CCColourExpressionDarken);
     CCExpressionEvaluatorRegister(CC_STRING("begin"), CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister(CC_STRING("if"), CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);

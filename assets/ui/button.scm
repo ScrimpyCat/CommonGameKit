@@ -5,11 +5,12 @@
         "pushed"
     )
 
+    (state! "colour" (253 212 73))
     (state! "status" normal)
     (state! "label" (
-        (quote (render-rect rect (253 212 73)))  ; normal
-        (quote (render-rect rect (255 221 108))) ; highlighted
-        (quote (render-rect rect (238 190 30)))  ; pushed
+        (quote (render-rect rect colour))  ; normal
+        (quote (render-rect rect (lighten colour 5))) ; highlighted
+        (quote (render-rect rect (darken colour 5)))  ; pushed
     ))
     (state! "on-click" (quote (print "Clicked!")))
     (state! "inside" #f)
