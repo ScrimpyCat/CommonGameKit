@@ -1,3 +1,4 @@
 (asset
     (shader "vertex-colour" (core vertex-colour-vs) (core vertex-colour-fs))
+    (shader "rounded-rect" (core rounded-rect-vs) (core rounded-rect-fs))
 )

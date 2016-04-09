@@ -118,6 +118,7 @@ static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
 typedef struct {
     CCVector2D position;
     CCColourRGBA colour;
+    CCVector2D coord;
 } DemoVertData;
 
 #include "AssetManager.h"
@@ -154,13 +155,16 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
                         CCColourRGBA Colour = CCExpressionGetColour(*ArgColour);
                         
                         /////////////////////////////////
-                        GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("vertex-colour"));
+                        GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
+                        
+                        GFXBuffer Scale = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
+                        GFXBuffer Radius = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &(float){ 0.214f });
                         
                         GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(DemoVertData) * 4, (DemoVertData[4]){
-                            { .position = Rect.position, .colour = Colour },
-                            { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour },
-                            { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour },
-                            { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour }
+                            { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
+                            { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
+                            { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
+                            { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
                         });
                         
                         int w, h;
@@ -173,11 +177,17 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
                         GFXDrawSetFramebuffer(Drawer, GFXFramebufferDefault(), 0);
                         GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
                         GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
+                        GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, coord));
                         GFXDrawSetBuffer(Drawer, "modelViewProjectionMatrix", Proj);
+                        GFXDrawSetBuffer(Drawer, "scale", Scale);
+                        GFXDrawSetBuffer(Drawer, "radius", Radius);
+                        GFXDrawSetBlending(Drawer, GFXBlendTransparent);
                         GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
                         GFXDrawDestroy(Drawer);
                         
                         GFXBufferDestroy(VertBuffer);
+                        GFXBufferDestroy(Radius);
+                        GFXBufferDestroy(Scale);
                         GFXBufferDestroy(Proj);
                         GFXShaderDestroy(Shader);
                     }
