@@ -178,7 +178,6 @@ void CCEngineSetup(void)
         CC_COLLECTION_FOREACH(FSPath, Path, AssetPaths[Loop])
         {
             CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSkipDirectory);
-            
             if (Paths)
             {
                 CC_COLLECTION_FOREACH(FSPath, LibPath, Paths)
@@ -298,18 +297,8 @@ void CCEngineSetup(void)
     
     
     
-    FSPath p = FSPathCreateFromSystemPath("~/testfoldertest/gui.scm");
-    FSHandle h;
+    FSPath p = FSPathCreateFromSystemPath("~/testfoldertest/usegui.scm");
     CCExpression e = CCExpressionCreateFromSourceFile(p);
-
-    FSPathDestroy(p);
-
-    CCExpressionEvaluate(e);
-    CCExpressionDestroy(e);
-
-
-    p = FSPathCreateFromSystemPath("~/testfoldertest/usegui.scm");
-    e = CCExpressionCreateFromSourceFile(p);
 
     FSPathDestroy(p);
 
@@ -328,5 +317,4 @@ void CCEngineSetup(void)
 
     e = NULL;
     p = NULL;
-    h = NULL;
 }

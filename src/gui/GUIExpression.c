@@ -149,7 +149,7 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
                         
                         CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
                         CCExpression *ArgColour = CCCollectionEnumeratorNext(&Enumerator);
-//                        CCExpression *ArgOptional = CCCollectionEnumeratorNext(&Enumerator);
+                        CCExpression *ArgRadius = CCCollectionEnumeratorNext(&Enumerator);
                         
                         CCRect Rect = CCExpressionGetRect(*ArgRect);
                         CCColourRGBA Colour = CCExpressionGetColour(*ArgColour);
@@ -158,7 +158,7 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
                         GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
                         
                         GFXBuffer Scale = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
-                        GFXBuffer Radius = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &(float){ 0.214f });
+                        GFXBuffer Radius = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &(float){ ArgRadius ? CCExpressionGetFloat(*ArgRadius) : 0.0f });
                         
                         GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(DemoVertData) * 4, (DemoVertData[4]){
                             { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },

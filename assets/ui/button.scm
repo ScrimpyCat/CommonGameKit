@@ -6,11 +6,12 @@
     )
 
     (state! "colour" (253 212 73))
+    (state! "radius" (quote (/ 18.0 (+ width height))))
     (state! "status" normal)
     (state! "label" (
-        (quote (render-rect rect colour))  ; normal
-        (quote (render-rect rect (lighten colour 5))) ; highlighted
-        (quote (render-rect rect (darken colour 5)))  ; pushed
+        (quote (render-rect rect colour radius))  ; normal
+        (quote (render-rect rect (lighten colour 5) radius)) ; highlighted
+        (quote (render-rect rect (darken colour 5) radius))  ; pushed
     ))
     (state! "on-click" (quote (print "Clicked!")))
     (state! "inside" #f)
