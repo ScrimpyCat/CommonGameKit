@@ -64,6 +64,7 @@
 		F39E26701BFF6F5900DB0B71 /* libchibi-scheme.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; };
 		F39E26711BFF6F6900DB0B71 /* libchibi-scheme.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F3A21A261CB54B1600518ACA /* ExpressionHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A21A241CB54B1600518ACA /* ExpressionHelpers.c */; };
+		F3A21A4E1CB956B500518ACA /* ColourExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A21A4C1CB956B500518ACA /* ColourExpressions.c */; };
 		F3A3A7291C2ED39100EC1F18 /* StateExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */; };
 		F3A3A75B1C30152200EC1F18 /* GUIObject.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A7591C30152200EC1F18 /* GUIObject.c */; };
 		F3A3A75E1C303A0B00EC1F18 /* GUIContainer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A3A75C1C303A0B00EC1F18 /* GUIContainer.c */; };
@@ -474,6 +475,9 @@
 		F39E266F1BFF6F5900DB0B71 /* libchibi-scheme.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libchibi-scheme.dylib"; path = "deps/chibi-scheme/build/lib/libchibi-scheme.dylib"; sourceTree = "<group>"; };
 		F3A21A241CB54B1600518ACA /* ExpressionHelpers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionHelpers.c; sourceTree = "<group>"; };
 		F3A21A251CB54B1600518ACA /* ExpressionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionHelpers.h; sourceTree = "<group>"; };
+		F3A21A4C1CB956B500518ACA /* ColourExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColourExpressions.c; sourceTree = "<group>"; };
+		F3A21A4D1CB956B500518ACA /* ColourExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColourExpressions.h; sourceTree = "<group>"; };
+		F3A21A4F1CB966DD00518ACA /* ColourFormatHSV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColourFormatHSV.h; sourceTree = "<group>"; };
 		F3A3A7271C2ED39100EC1F18 /* StateExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StateExpressions.c; sourceTree = "<group>"; };
 		F3A3A7281C2ED39100EC1F18 /* StateExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateExpressions.h; sourceTree = "<group>"; };
 		F3A3A7591C30152200EC1F18 /* GUIObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIObject.c; sourceTree = "<group>"; };
@@ -776,6 +780,7 @@
 				F37699BD1C118B8500F24A44 /* ColourFormat.h */,
 				F37699BE1C118B9000F24A44 /* ColourFormat.c */,
 				F37699C61C11DCEA00F24A44 /* ColourFormatRGB.h */,
+				F3A21A4F1CB966DD00518ACA /* ColourFormatHSV.h */,
 				F3769A211C11E1D400F24A44 /* ColourComponent.h */,
 				F3769A221C11E1DD00F24A44 /* ColourComponent.c */,
 				F3769A241C11E28B00F24A44 /* Colour.h */,
@@ -888,6 +893,8 @@
 				F37699771C10262400F24A44 /* ProjectExpressions.c */,
 				F37699831C11113D00F24A44 /* WindowExpressions.h */,
 				F37699821C11113D00F24A44 /* WindowExpressions.c */,
+				F3A21A4D1CB956B500518ACA /* ColourExpressions.h */,
+				F3A21A4C1CB956B500518ACA /* ColourExpressions.c */,
 			);
 			name = Evaluators;
 			path = evaluators;
@@ -1587,6 +1594,7 @@
 				F389DC201C3A0797009480B8 /* GUIExpression.c in Sources */,
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
+				F3A21A4E1CB956B500518ACA /* ColourExpressions.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
 				F3A9D5D01C2767D30042BD2A /* GFXDraw.c in Sources */,
 				F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */,
