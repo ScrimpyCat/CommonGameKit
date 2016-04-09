@@ -166,6 +166,10 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 
 **replace** Replace occurrences of string in the string with another string. e.g. `(replace " " "-" "1 2 3 4 5") ;"1-2-3-4-5"`
 
+**lighten** Lighten the colour by a given amount. Float's are a literal adjustment, while integers are a percentage adjustment. e.g. `(lighten (253 212 73) 5) ;(1.041765 0.872941 0.300588)`
+
+**darken** Darken the colour by a given amount. Float's are a literal adjustment, while integers are a percentage adjustment. e.g. `(darken (253 212 73) 5) ;(0.942549 0.789804 0.271961)`
+
 
 ###Engine Functions###
 

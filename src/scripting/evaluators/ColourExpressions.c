@@ -41,8 +41,6 @@ CCExpression CCColourExpressionLighten(CCExpression Expression)
             if (CCExpressionGetType(Change) == CCExpressionValueTypeInteger) ColourHSV.channel[2].f32 += ColourHSV.channel[2].f32 * ((float)CCExpressionGetInteger(Change) / 100.0f);
             else ColourHSV.channel[2].f32 += CCExpressionGetFloat(Change);
             
-            ColourHSV.channel[2].f32 = fmaxf(ColourHSV.channel[2].f32, 1.0f);
-            
             CCColour ColourRGB = CCColourConversion(ColourHSV, CCColourFormatRGBA32Float);
             if (CCCollectionGetCount(CCExpressionGetList(Colour)) == 4) Expr = CCExpressionCreateVector4(CC_STD_ALLOCATOR, CCVector4DMake(ColourRGB.channel[0].f32, ColourRGB.channel[1].f32, ColourRGB.channel[2].f32, ColourRGB.channel[3].f32));
             else Expr = CCExpressionCreateVector3(CC_STD_ALLOCATOR, CCVector3DMake(ColourRGB.channel[0].f32, ColourRGB.channel[1].f32, ColourRGB.channel[2].f32));
