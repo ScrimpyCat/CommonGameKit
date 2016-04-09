@@ -202,7 +202,8 @@ enum {
 //TODO: YUV formats
 
 #pragma mark - HSL/HSV Colour Formats
-//TODO: HSL/HSV formats
+//TODO: HSL
+#include "ColourFormatHSV.h"
 
 #pragma mark - CMYK Colour Formats
 //TODO: CMYK formats

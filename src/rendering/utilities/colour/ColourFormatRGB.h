@@ -683,6 +683,37 @@ typedef enum {
                                     | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   16, CCColourFormatChannelOffset3),
 
 
+    //96-bit
+    //RGB32
+    CCColourFormatRGB32Uint     = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  32, CCColourFormatChannelOffset2),
+    CCColourFormatRGB32Sint     = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeSignedInteger
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  32, CCColourFormatChannelOffset2),
+    CCColourFormatRGB32Float    = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeFloat
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  32, CCColourFormatChannelOffset2),
+
+
+    //BGR32
+    CCColourFormatBGR32Uint     = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  32, CCColourFormatChannelOffset0)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset2),
+    CCColourFormatBGR32Sint     = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeSignedInteger
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  32, CCColourFormatChannelOffset0)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset2),
+    CCColourFormatBGR32Float    = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeFloat
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  32, CCColourFormatChannelOffset0)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1)
+                                    | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset2),
+
+
     //128-bit
     //RGBA32
     CCColourFormatRGBA32Uint    = CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger

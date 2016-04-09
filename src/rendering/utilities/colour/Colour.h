@@ -28,6 +28,7 @@
 
 #include "ColourFormat.h"
 #include "ColourComponent.h"
+#include <CommonC/Common.h>
 
 typedef struct {
     CCColourFormat type;
@@ -135,5 +136,37 @@ CCColourComponent CCColourGetComponentWithPrecision(CCColour Colour, CCColourFor
  */
 CCColour CCColourConversion(CCColour Colour, CCColourFormat NewFormat);
 
+static CC_FORCE_INLINE CCColour CCColourCreateFromRGB(CCColourRGB Colour);
+static CC_FORCE_INLINE CCColour CCColourCreateFromRGBA(CCColourRGBA Colour);
+static CC_FORCE_INLINE CCColourRGB CCColourToRGB(CCColour Colour);
+static CC_FORCE_INLINE CCColourRGBA CCColourToRGBA(CCColour Colour);
+
+
+#pragma mark -
+
+static CC_FORCE_INLINE CCColour CCColourCreateFromRGB(CCColourRGB Colour)
+{
+    return (CCColour){
+        .type = CCColourFormatRGB32Float,
+        .channel = {
+            [0] = { .type = CCColourFormatChannelRed    | (32 << CCColourFormatChannelBitSize), .f32 = Colour.r },
+            [1] = { .type = CCColourFormatChannelGreen  | (32 << CCColourFormatChannelBitSize), .f32 = Colour.g },
+            [2] = { .type = CCColourFormatChannelBlue   | (32 << CCColourFormatChannelBitSize), .f32 = Colour.b }
+        }
+    };
+}
+
+static CC_FORCE_INLINE CCColour CCColourCreateFromRGBA(CCColourRGBA Colour)
+{
+    return (CCColour){
+        .type = CCColourFormatRGBA32Float,
+        .channel = {
+            [0] = { .type = CCColourFormatChannelRed    | (32 << CCColourFormatChannelBitSize), .f32 = Colour.r },
+            [1] = { .type = CCColourFormatChannelGreen  | (32 << CCColourFormatChannelBitSize), .f32 = Colour.g },
+            [2] = { .type = CCColourFormatChannelBlue   | (32 << CCColourFormatChannelBitSize), .f32 = Colour.b },
+            [3] = { .type = CCColourFormatChannelAlpha  | (32 << CCColourFormatChannelBitSize), .f32 = Colour.a }
+        }
+    };
+}
 
 #endif
