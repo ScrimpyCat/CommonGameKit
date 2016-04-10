@@ -47,21 +47,32 @@ static void ErrorCallback(int Error, const char *Description)
     CC_LOG_ERROR("GLFW Error [%d]: %s", Error, Description);
 }
 
+static mtx_t RenderLock;
 static int FramebufferWidth = 0, FramebufferHeight = 0;
 void FramebufferSizeCallback(GLFWwindow *Window, int Width, int Height)
 {
+    mtx_lock(&RenderLock);
     FramebufferWidth = Width;
     FramebufferHeight = Height;
+    mtx_unlock(&RenderLock);
 }
 
 static int RenderLoop(GLFWwindow *Window)
 {
+    int err;
+    if ((err = mtx_init(&RenderLock, mtx_plain)) != thrd_success)
+    {
+        CC_LOG_ERROR("Failed to create render thread lock (%d)", err);
+    }
+    
     glfwMakeContextCurrent(Window);
     
     while (!glfwWindowShouldClose(Window))
     {
+        mtx_lock(&RenderLock);
         CC_GL_VIEWPORT(0, 0, FramebufferWidth, FramebufferHeight);
         
+        CC_GL_CLEAR_COLOR(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
         
         CCComponentSystemRun(CCComponentSystemExecutionTypeRender);
@@ -72,6 +83,7 @@ static int RenderLoop(GLFWwindow *Window)
         GUIManagerUnlock();
         
         glfwSwapBuffers(Window);
+        mtx_unlock(&RenderLock);
     }
     
     return EXIT_SUCCESS;
@@ -137,6 +149,8 @@ int main(int argc, const char *argv[])
     }
     
     CCEngineSetup();
+    
+    glfwMakeContextCurrent(NULL);
     
     int err;
     thrd_t RenderThread;
