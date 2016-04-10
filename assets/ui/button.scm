@@ -5,7 +5,7 @@
         "pushed"
     )
 
-    (state! "colour" (253 212 73))
+    (state! "colour" (255 211 73))
     (state! "radius" (quote (/ 18.0 (+ width height))))
     (state! "status" normal)
     (state! "label" (
