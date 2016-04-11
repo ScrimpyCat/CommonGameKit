@@ -79,7 +79,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer)
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    Object->interface->render(Object, Framebuffer);
+    if (GUIObjectGetEnabled(Object)) Object->interface->render(Object, Framebuffer);
     mtx_unlock(&Object->lock);
 }
 
@@ -88,7 +88,7 @@ void GUIObjectEvent(GUIObject Object, GUIEvent Event)
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    Object->interface->event(Object, Event);
+    if (GUIObjectGetEnabled(Object)) Object->interface->event(Object, Event);
     mtx_unlock(&Object->lock);
 }
 
