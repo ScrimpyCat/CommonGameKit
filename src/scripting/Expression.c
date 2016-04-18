@@ -432,7 +432,7 @@ static CCExpression CCExpressionParse(const char **Source)
             IsStr = !IsStr;
         }
         
-        else if (c == ';')
+        else if ((!IsStr) && (c == ';'))
         {
             IsComment = TRUE;
         }
