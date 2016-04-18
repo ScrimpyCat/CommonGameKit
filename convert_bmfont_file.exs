@@ -158,7 +158,11 @@ defmodule Font do
         """)
     end
     defp convert_bmfont([%BMFont.Char{ id: id, x: x, y: y, width: w, height: h, xoffset: xoffset, yoffset: yoffset, xadvance: xadvance }|args], script) do
-        letter = [id]
+        letter = case [id] do
+            '\\' -> '\\\\'
+            '"' -> '\\"'
+            c -> c
+        end
         convert_bmfont(args, script <> "    (letter \"#{letter}\" (glyph #{x} #{y} #{w} #{h}) (offset #{xoffset} #{yoffset}) (advance #{xadvance}))\n")
     end
     defp convert_bmfont([_|args], script), do: convert_bmfont(args, script)
