@@ -318,6 +318,21 @@ CCExpression CCExpressionCreateFromSource(const char *Source)
     return CCExpressionParse(&Source);
 }
 
+static CCString CCExpressionStringConvertEscapes(CCAllocatorType Allocator, const char *Input, size_t Length)
+{
+    CCString s1 = CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length);
+    
+    CCString s2 = CCStringCreateByReplacingOccurrencesOfGroupedStrings(s1, (CCString[4]){
+        CC_STRING("\\\""), CC_STRING("\\\n"), CC_STRING("\\\t"), CC_STRING("\\\\")
+    }, (CCString[4]){
+        CC_STRING("\""), CC_STRING("\n"), CC_STRING("\t"), CC_STRING("\\")
+    }, 4);
+    
+    CCStringDestroy(s1);
+    
+    return s2;
+}
+
 static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length)
 {
     CCExpressionValueType Type = CCExpressionValueTypeAtom;
@@ -350,7 +365,7 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
             return CCExpressionCreateFloat(Allocator, (float)strtod(Input, NULL));
             
         case CCExpressionValueTypeString:
-            return CCExpressionCreateString(Allocator, CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length), FALSE);
+            return CCExpressionCreateString(Allocator, CCExpressionStringConvertEscapes(Allocator, Input, Length), FALSE);
             
         default:
             break;
@@ -363,7 +378,7 @@ static CCExpression CCExpressionParse(const char **Source)
 {
     CCExpression Expr = NULL;
     const char *Value = NULL;
-    _Bool IsStr = FALSE, IsComment = FALSE;
+    _Bool IsStr = FALSE, IsComment = FALSE, IsEscape = FALSE;
     for (char c = 0; (c = **Source); (*Source)++)
     {
         if ((!IsComment) && (!IsStr) && (c == '('))
@@ -396,7 +411,7 @@ static CCExpression CCExpressionParse(const char **Source)
             break;
         }
         
-        else if ((Expr) && (!IsComment) && (c == '"'))
+        else if ((Expr) && (!IsComment) && (!IsEscape) && (c == '"'))
         {
             if (IsStr)
             {
@@ -447,6 +462,16 @@ static CCExpression CCExpressionParse(const char **Source)
         else if (c == '\n')
         {
             IsComment = FALSE;
+        }
+        
+        else if (IsEscape)
+        {
+            IsEscape = FALSE;
+        }
+        
+        else if (c == '\\')
+        {
+            IsEscape = TRUE;
         }
     }
     

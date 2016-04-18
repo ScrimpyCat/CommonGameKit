@@ -205,6 +205,17 @@
     CCExpressionDestroy(Expression);
     
     
+    Expression = CCExpressionCreateFromSource("(\"string\\\"-\\\"some\\\\thing\")");CCExpressionPrint(Expression);
+    XCTAssertEqual(CCExpressionGetType(Expression), CCExpressionValueTypeList, @"Should return a list");
+    XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Expression)), 1, @"Should return a list with one expression");
+    
+    Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
+    XCTAssertEqual(CCExpressionGetType(Expr), CCExpressionValueTypeString, @"Should be an string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Expr), CC_STRING("string\"-\"some\\thing")), @"Should be \"string\"-\"some\\thing\"");
+    
+    CCExpressionDestroy(Expression);
+    
+    
     Expression = CCExpressionCreateFromSource("(\"string-1\" \"string-2\" \"string-3\")");
     XCTAssertEqual(CCExpressionGetType(Expression), CCExpressionValueTypeList, @"Should return a list");
     XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Expression)), 3, @"Should return a list with three expressions");
