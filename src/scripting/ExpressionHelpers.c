@@ -98,11 +98,11 @@ CCExpression CCExpressionCreateRect(CCAllocatorType Allocator, CCRect r)
     return Expr;
 }
 
-static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float Factor, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
+static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float Factor, size_t Start, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
 {
-    if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = CCCollectionGetCount(CCExpressionGetList(Vec))) >= Min) && (*Count <= Max))
+    if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = (CCCollectionGetCount(CCExpressionGetList(Vec)) - Start)) >= Min) && (*Count <= Max))
     {
-        for (int Loop = 0; Loop < *Count; Loop++)
+        for (size_t Loop = Start; Loop < *Count; Loop++)
         {
             CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Loop);
             
@@ -136,11 +136,11 @@ static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float
     return FALSE;
 }
 
-static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, float Factor, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
+static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, float Factor, size_t Start, size_t Min, size_t Max, size_t *Count, const char *ErrMsg)
 {
-    if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = CCCollectionGetCount(CCExpressionGetList(Vec))) >= Min) && (*Count <= Max))
+    if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = (CCCollectionGetCount(CCExpressionGetList(Vec)) - Start)) >= Min) && (*Count <= Max))
     {
-        for (int Loop = 0; Loop < *Count; Loop++)
+        for (size_t Loop = Start; Loop < *Count; Loop++)
         {
             CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Loop);
             
@@ -174,20 +174,20 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, f
     return FALSE;
 }
 
-static _Bool CCExpressionGetFloatArray(CCExpression Vec, float *Values, size_t Count, const char *ErrMsg)
+static _Bool CCExpressionGetFloatArray(CCExpression Vec, float *Values, size_t Start, size_t Count, const char *ErrMsg)
 {
-    return CCExpressionGetFloatMinArray(Vec, Values, 1.0f, Count, Count, &Count, ErrMsg);
+    return CCExpressionGetFloatMinArray(Vec, Values, 1.0f, Start, Count, Count, &Count, ErrMsg);
 }
 
-static _Bool CCExpressionGetIntegerArray(CCExpression Vec, int32_t *Values, size_t Count, const char *ErrMsg)
+static _Bool CCExpressionGetIntegerArray(CCExpression Vec, int32_t *Values, size_t Start, size_t Count, const char *ErrMsg)
 {
-    return CCExpressionGetIntegerMinArray(Vec, Values, 1.0f, Count, Count, &Count, ErrMsg);
+    return CCExpressionGetIntegerMinArray(Vec, Values, 1.0f, Start, Count, Count, &Count, ErrMsg);
 }
 
 CCVector2D CCExpressionGetVector2(CCExpression Vec)
 {
     CCVector2D Result;
-    CCExpressionGetFloatArray(Vec, Result.v, 2, "Vector2D should evaluate to a list of 2 numbers. (x:number y:number)");
+    CCExpressionGetFloatArray(Vec, Result.v, 0, 2, "Vector2D should evaluate to a list of 2 numbers. (x:number y:number)");
     
     return Result;
 }
@@ -195,7 +195,7 @@ CCVector2D CCExpressionGetVector2(CCExpression Vec)
 CCVector3D CCExpressionGetVector3(CCExpression Vec)
 {
     CCVector3D Result;
-    CCExpressionGetFloatArray(Vec, Result.v, 3, "Vector3D should evaluate to a list of 3 numbers. (x:number y:number z:number)");
+    CCExpressionGetFloatArray(Vec, Result.v, 0, 3, "Vector3D should evaluate to a list of 3 numbers. (x:number y:number z:number)");
     
     return Result;
 }
@@ -203,7 +203,7 @@ CCVector3D CCExpressionGetVector3(CCExpression Vec)
 CCVector4D CCExpressionGetVector4(CCExpression Vec)
 {
     CCVector4D Result;
-    CCExpressionGetFloatArray(Vec, Result.v, 4, "Vector4D should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
+    CCExpressionGetFloatArray(Vec, Result.v, 0, 4, "Vector4D should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
     
     return Result;
 }
@@ -211,7 +211,7 @@ CCVector4D CCExpressionGetVector4(CCExpression Vec)
 CCVector2Di CCExpressionGetVector2i(CCExpression Vec)
 {
     CCVector2Di Result;
-    CCExpressionGetIntegerArray(Vec, Result.v, 2, "Vector2Di should evaluate to a list of 2 numbers. (x:number y:number)");
+    CCExpressionGetIntegerArray(Vec, Result.v, 0, 2, "Vector2Di should evaluate to a list of 2 numbers. (x:number y:number)");
     
     return Result;
 }
@@ -219,7 +219,7 @@ CCVector2Di CCExpressionGetVector2i(CCExpression Vec)
 CCVector3Di CCExpressionGetVector3i(CCExpression Vec)
 {
     CCVector3Di Result;
-    CCExpressionGetIntegerArray(Vec, Result.v, 3, "Vector3Di should evaluate to a list of 3 numbers. (x:number y:number z:number)");
+    CCExpressionGetIntegerArray(Vec, Result.v, 0, 3, "Vector3Di should evaluate to a list of 3 numbers. (x:number y:number z:number)");
     
     return Result;
 }
@@ -227,7 +227,7 @@ CCVector3Di CCExpressionGetVector3i(CCExpression Vec)
 CCVector4Di CCExpressionGetVector4i(CCExpression Vec)
 {
     CCVector4Di Result;
-    CCExpressionGetIntegerArray(Vec, Result.v, 4, "Vector4Di should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
+    CCExpressionGetIntegerArray(Vec, Result.v, 0, 4, "Vector4Di should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
     
     return Result;
 }
@@ -235,7 +235,7 @@ CCVector4Di CCExpressionGetVector4i(CCExpression Vec)
 CCRect CCExpressionGetRect(CCExpression Rect)
 {
     CCVector4D Result;
-    CCExpressionGetFloatArray(Rect, Result.v, 4, "Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
+    CCExpressionGetFloatArray(Rect, Result.v, 0, 4, "Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
     
     return (CCRect){ Result.v[0], Result.v[1], Result.v[2], Result.v[3] };
 }
@@ -244,7 +244,105 @@ CCColourRGBA CCExpressionGetColour(CCExpression Colour)
 {
     size_t Count;
     CCVector4D Result;
-    CCExpressionGetFloatMinArray(Colour, Result.v, 0.003921568627f, 3, 4, &Count, "Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
+    CCExpressionGetFloatMinArray(Colour, Result.v, 0.003921568627f, 0, 3, 4, &Count, "Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
+    
+    return (CCColourRGBA){ Result.v[0], Result.v[1], Result.v[2], Count == 4 ? Result.v[3] : 1.0f };
+}
+
+CCString CCExpressionGetNamedString(CCExpression String)
+{
+    if ((CCExpressionGetType(String) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(String)) == 2))
+    {
+        CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(String), 1);
+        
+        if (CCExpressionGetType(Value) == CCExpressionValueTypeString)
+        {
+            return CCExpressionGetString(Value);
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_ERROR("String should evaluate to a string.");
+    
+    return (CCString)NULL;
+}
+
+int32_t CCExpressionGetNamedInteger(CCExpression Value)
+{
+    int32_t Result;
+    CCExpressionGetIntegerArray(Value, &Result, 1, 1, "Integer should evaluate to a number.");
+    
+    return Result;
+}
+
+float CCExpressionGetNamedFloat(CCExpression Value)
+{
+    float Result;
+    CCExpressionGetFloatArray(Value, &Result, 1, 1, "Float should evaluate to a number.");
+    
+    return Result;
+}
+
+CCVector2D CCExpressionGetNamedVector2(CCExpression Vec)
+{
+    CCVector2D Result;
+    CCExpressionGetFloatArray(Vec, Result.v, 1, 2, "Vector2D should evaluate to a list of 2 numbers. (x:number y:number)");
+    
+    return Result;
+}
+
+CCVector3D CCExpressionGetNamedVector3(CCExpression Vec)
+{
+    CCVector3D Result;
+    CCExpressionGetFloatArray(Vec, Result.v, 1, 3, "Vector3D should evaluate to a list of 3 numbers. (x:number y:number z:number)");
+    
+    return Result;
+}
+
+CCVector4D CCExpressionGetNamedVector4(CCExpression Vec)
+{
+    CCVector4D Result;
+    CCExpressionGetFloatArray(Vec, Result.v, 1, 4, "Vector4D should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
+    
+    return Result;
+}
+
+CCVector2Di CCExpressionGetNamedVector2i(CCExpression Vec)
+{
+    CCVector2Di Result;
+    CCExpressionGetIntegerArray(Vec, Result.v, 1, 2, "Vector2Di should evaluate to a list of 2 numbers. (x:number y:number)");
+    
+    return Result;
+}
+
+CCVector3Di CCExpressionGetNamedVector3i(CCExpression Vec)
+{
+    CCVector3Di Result;
+    CCExpressionGetIntegerArray(Vec, Result.v, 1, 3, "Vector3Di should evaluate to a list of 3 numbers. (x:number y:number z:number)");
+    
+    return Result;
+}
+
+CCVector4Di CCExpressionGetNamedVector4i(CCExpression Vec)
+{
+    CCVector4Di Result;
+    CCExpressionGetIntegerArray(Vec, Result.v, 1, 4, "Vector4Di should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
+    
+    return Result;
+}
+
+CCRect CCExpressionGetNamedRect(CCExpression Rect)
+{
+    CCVector4D Result;
+    CCExpressionGetFloatArray(Rect, Result.v, 1, 4, "Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
+    
+    return (CCRect){ Result.v[0], Result.v[1], Result.v[2], Result.v[3] };
+}
+
+CCColourRGBA CCExpressionGetNamedColour(CCExpression Colour)
+{
+    size_t Count;
+    CCVector4D Result;
+    CCExpressionGetFloatMinArray(Colour, Result.v, 0.003921568627f, 1, 3, 4, &Count, "Colour should evaluate to a list of 3 or 4 numbers. (r:number g:number b:number [alpha:number])");
     
     return (CCColourRGBA){ Result.v[0], Result.v[1], Result.v[2], Count == 4 ? Result.v[3] : 1.0f };
 }

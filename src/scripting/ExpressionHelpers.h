@@ -45,4 +45,16 @@ CCVector4Di CCExpressionGetVector4i(CCExpression Vec);
 CCRect CCExpressionGetRect(CCExpression Rect);
 CCColourRGBA CCExpressionGetColour(CCExpression Colour);
 
+CCString CCExpressionGetNamedString(CCExpression String);
+int32_t CCExpressionGetNamedInteger(CCExpression Value);
+float CCExpressionGetNamedFloat(CCExpression Value);
+CCVector2D CCExpressionGetNamedVector2(CCExpression Vec);
+CCVector3D CCExpressionGetNamedVector3(CCExpression Vec);
+CCVector4D CCExpressionGetNamedVector4(CCExpression Vec);
+CCVector2Di CCExpressionGetNamedVector2i(CCExpression Vec);
+CCVector3Di CCExpressionGetNamedVector3i(CCExpression Vec);
+CCVector4Di CCExpressionGetNamedVector4i(CCExpression Vec);
+CCRect CCExpressionGetNamedRect(CCExpression Rect);
+CCColourRGBA CCExpressionGetNamedColour(CCExpression Colour);
+
 #endif
