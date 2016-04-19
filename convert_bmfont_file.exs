@@ -142,7 +142,7 @@ defmodule Font do
         convert_bmfont(args, script <> """
         (font \"#{face}\" #{size}#{style}
             #{unicode}
-            (padding #{padding.up} #{padding.right} #{padding.down} #{padding.left})
+            (padding #{padding.left} #{padding.down} #{padding.right} #{padding.up})
             (spacing #{spacing.horizontal} #{spacing.vertical})
         """)
     end
