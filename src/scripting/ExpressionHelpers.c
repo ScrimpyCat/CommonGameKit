@@ -102,9 +102,9 @@ static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float
 {
     if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = (CCCollectionGetCount(CCExpressionGetList(Vec)) - Start)) >= Min) && (*Count <= Max))
     {
-        for (size_t Loop = Start; Loop < *Count; Loop++)
+        for (size_t Loop = 0; Loop < *Count; Loop++)
         {
-            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Loop);
+            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Loop + Start);
             
             if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
             {
@@ -140,9 +140,9 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, f
 {
     if ((CCExpressionGetType(Vec) == CCExpressionValueTypeList) && ((*Count = (CCCollectionGetCount(CCExpressionGetList(Vec)) - Start)) >= Min) && (*Count <= Max))
     {
-        for (size_t Loop = Start; Loop < *Count; Loop++)
+        for (size_t Loop = 0; Loop < *Count; Loop++)
         {
-            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Loop);
+            CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Loop + Start);
             
             if (CCExpressionGetType(Value) == CCExpressionValueTypeInteger)
             {
