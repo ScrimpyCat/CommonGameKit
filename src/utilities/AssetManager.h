@@ -44,7 +44,7 @@ void CCAssetManagerDestroy(void);
  * @param Shader The shader library to be managed. Retains a reference to the 
  *        shader library.
  */
-void CCAssetManagerRegisterShaderLibrary(CCString Name, GFXShaderLibrary Library);
+void CCAssetManagerRegisterShaderLibrary(CCString CC_COPY(Name), GFXShaderLibrary CC_RETAIN(Library));
 
 /*!
  * @brief Deregisters the shader library from the asset manager.
@@ -57,14 +57,14 @@ void CCAssetManagerDeregisterShaderLibrary(CCString Name);
  * @param Name The lookup name for the shader library asset entry.
  * @return The shader library. Must be destroyed.
  */
-GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name);
+CC_NEW GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name);
 
 /*!
  * @brief Registers the shader with the asset manager.
  * @param Name The lookup name for the shader asset entry.
  * @param Shader The shader to be managed. Retains a reference to the shader.
  */
-void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader);
+void CCAssetManagerRegisterShader(CCString CC_COPY(Name), GFXShader CC_RETAIN(Shader));
 
 /*!
  * @brief Deregisters the shader from the asset manager.
@@ -77,6 +77,26 @@ void CCAssetManagerDeregisterShader(CCString Name);
  * @param Name The lookup name for the shader asset entry.
  * @return The shader. Must be destroyed.
  */
-GFXShader CCAssetManagerCreateShader(CCString Name);
+CC_NEW GFXShader CCAssetManagerCreateShader(CCString Name);
+
+/*!
+ * @brief Registers the texture with the asset manager.
+ * @param Name The lookup name for the texture asset entry.
+ * @param Texture The texture to be managed. Retains a reference to the texture.
+ */
+void CCAssetManagerRegisterTexture(CCString CC_COPY(Name), GFXTexture CC_RETAIN(Texture));
+
+/*!
+ * @brief Deregisters the texture from the asset manager.
+ * @param Name The lookup name for the texture asset entry.
+ */
+void CCAssetManagerDeregisterTexture(CCString Name);
+
+/*!
+ * @brief Creates the registered texture.
+ * @param Name The lookup name for the texture asset entry.
+ * @return The texture. Must be destroyed.
+ */
+CC_NEW GFXTexture CCAssetManagerCreateTexture(CCString Name);
 
 #endif

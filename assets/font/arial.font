@@ -4,7 +4,7 @@
     (spacing 0 0)
     (line-height 82)
     (base 53)
-    (texture "arial.png")
+    (texture "arial-57-font")
     (letter " " (glyph 0 0 0 0) (offset 0 53) (advance 32))
     (letter "!" (glyph 112 133 23 59) (offset -2 3) (advance 33))
     (letter "\"" (glyph 397 417 33 33) (offset -6 3) (advance 36))

@@ -626,8 +626,7 @@ CCExpression CCProjectExpressionFont(CCExpression Expression)
                             
                             else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("texture")))
                             {
-                                CCString TextureName = CCExpressionGetNamedString(Option);
-                                Texture = NULL; //TODO: load texture
+                                Texture = CCAssetManagerCreateTexture(CCExpressionGetNamedString(Option));
                             }
                             
                             else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("letter")))

@@ -29,6 +29,7 @@ typedef enum {
     CCAssetTypeUndefined,
     CCAssetTypeShaderLibrary,
     CCAssetTypeShader,
+    CCAssetTypeTexture,
     CCAssetTypeCount
 } CCAssetType;
 
@@ -53,6 +54,10 @@ static void CCAssetElementDestructor(CCCollection Collection, CCAssetInfo *Eleme
             
         case CCAssetTypeShader:
             GFXShaderDestroy(Element->asset);
+            break;
+            
+        case CCAssetTypeTexture:
+            GFXTextureDestroy(Element->asset);
             break;
             
         default:
@@ -131,6 +136,34 @@ GFXShader CCAssetManagerCreateShader(CCString Name)
     if (!Asset)
     {
         CC_LOG_ERROR_CUSTOM("No shader asset available with name: %S", Name);
+        return NULL;
+    }
+    
+    return CCRetain(Asset->asset);
+}
+
+#pragma mark - Texture
+void CCAssetManagerRegisterTexture(CCString Name, GFXTexture Texture)
+{
+    CCCollectionInsertElement(Assets[CCAssetTypeTexture], &(CCAssetInfo){
+        .type = CCAssetTypeTexture,
+        .name = CCStringCopy(Name),
+        .asset = CCRetain(Texture)
+    });
+}
+
+void CCAssetManagerDeregisterTexture(CCString Name)
+{
+    CCCollectionRemoveElement(Assets[CCAssetTypeTexture], CCCollectionFindElement(Assets[CCAssetTypeTexture], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+}
+
+GFXTexture CCAssetManagerCreateTexture(CCString Name)
+{
+    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeTexture], CCCollectionFindElement(Assets[CCAssetTypeTexture], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    
+    if (!Asset)
+    {
+        CC_LOG_ERROR_CUSTOM("No texture asset available with name: %S", Name);
         return NULL;
     }
     
