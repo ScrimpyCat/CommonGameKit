@@ -33,7 +33,7 @@ static const char CCProjectGamepkg[] =
 "    (default-resolution 640 480) ; resolution or window size\n"
 "    (default-fullscreen false) ; fullscreen mode\n"
 "\n"
-"    (dir-fonts \"font/\") ; font directories\n"
+"    (dir-fonts \"font/\" (engine-path \"assets/font/\")) ; font directories\n"
 "    (dir-levels \"logic/levels/\") ; level directories\n"
 "    (dir-rules \"logic/rules/\") ; rule directories\n"
 "    (dir-textures \"graphics/textures/\") ; texture directories\n"

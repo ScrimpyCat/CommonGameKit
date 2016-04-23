@@ -26,6 +26,7 @@
 #include "ProjectExpressions.h"
 #include "Configuration.h"
 #include "ExpressionHelpers.h"
+#include "Font.h"
 
 #warning Need to add a copy function
 static void CCProjectExpressionValueGameConfigDestructor(CCEngineConfig *Data)
@@ -553,109 +554,155 @@ CCExpression CCProjectExpressionFont(CCExpression Expression)
         CCExpression Name = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
         CCExpression Size = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
         
-        for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+        _Bool IsUnicode = FALSE, IsSequential = TRUE;
+        CCRect Padding = (CCRect){ .position = CCVector2DFill(0.0f), .size = CCVector2DFill(0.0f) };
+        CCVector2D Spacing = CCVector2DFill(0.0f);
+        int32_t LineHeight = 0, Base = 0;
+        GFXTexture Texture = NULL;
+        CCFontStyle FontStyle = 0;
+        CCArray Glyphs = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCFontGlyph), 1), Letters = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCChar), 1);
+        size_t Offset = 0;
+        CCChar PrevChr = 0;
+        
+        if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(Size) == CCExpressionValueTypeInteger))
         {
-            CCExpression Option = CCExpressionEvaluate(*Expr);
-            if (CCExpressionGetType(Option) == CCExpressionValueTypeList)
+            for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
             {
-                size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Option));
-                if (ArgCount > 1)
+                CCExpression Option = CCExpressionEvaluate(*Expr);
+                if (CCExpressionGetType(Option) == CCExpressionValueTypeList)
                 {
-                    CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Option), 0);
-                    if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
+                    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Option));
+                    if (ArgCount > 1)
                     {
-                        if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("style")))
+                        CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Option), 0);
+                        if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
                         {
-                            CCEnumerator StyleEnumerator;
-                            CCCollectionGetEnumerator(CCExpressionGetList(Option), &StyleEnumerator);
-                            
-                            for (CCExpression *Style = CCCollectionEnumeratorNext(&StyleEnumerator); Style; Style = CCCollectionEnumeratorNext(&StyleEnumerator))
+                            if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("style")))
                             {
-                                if (CCExpressionGetType(*Style) == CCExpressionValueTypeAtom)
-                                {
-                                    if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING("bold")))
-                                    {
-                                    }
-                                    
-                                    else if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING("italic")))
-                                    {
-                                    }
-                                }
-                            }
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("unicode")))
-                        {
-                            const _Bool IsUnicode = CCExpressionGetNamedInteger(Option);
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("padding")))
-                        {
-                            const CCRect Padding = CCExpressionGetNamedRect(Option);
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("spacing")))
-                        {
-                            const CCVector2D Spacing = CCExpressionGetNamedVector2(Option);
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("line-height")))
-                        {
-                            const int32_t LineHeight = CCExpressionGetNamedInteger(Option);
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("base")))
-                        {
-                            const int32_t Base = CCExpressionGetNamedInteger(Option);
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("texture")))
-                        {
-                            CCString Texture = CCExpressionGetNamedString(Option);
-                        }
-                        
-                        else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("letter")))
-                        {
-                            CCEnumerator LetterEnumerator;
-                            CCCollectionGetEnumerator(CCExpressionGetList(Option), &LetterEnumerator);
-                            
-                            CCExpression *Letter = CCCollectionEnumeratorNext(&LetterEnumerator);
-                            if ((Letter) && (CCExpressionGetType(*Letter) == CCExpressionValueTypeString))
-                            {
-                                CCChar Chr = CCStringGetCharacterAtIndex(CCExpressionGetString(*Letter), 0);
+                                CCEnumerator StyleEnumerator;
+                                CCCollectionGetEnumerator(CCExpressionGetList(Option), &StyleEnumerator);
                                 
-                                for (CCExpression *LetterOption = CCCollectionEnumeratorNext(&LetterEnumerator); LetterOption; LetterOption = CCCollectionEnumeratorNext(&LetterEnumerator))
+                                for (CCExpression *Style = CCCollectionEnumeratorNext(&StyleEnumerator); Style; Style = CCCollectionEnumeratorNext(&StyleEnumerator))
                                 {
-                                    if ((CCExpressionGetType(*LetterOption) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(*LetterOption)) >= 1))
+                                    if (CCExpressionGetType(*Style) == CCExpressionValueTypeAtom)
                                     {
-                                        CCExpression Option = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*LetterOption), 0);
-                                        
-                                        if (CCExpressionGetType(Option) == CCExpressionValueTypeAtom)
+                                        if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING("bold")))
                                         {
-                                            if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("glyph")))
-                                            {
-                                                const CCRect Glyph = CCExpressionGetNamedRect(*LetterOption);
-                                            }
-                                            
-                                            else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("offset")))
-                                            {
-                                                const CCVector2Di Offset = CCExpressionGetNamedVector2i(*LetterOption);
-                                            }
-                                            
-                                            else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("advance")))
-                                            {
-                                                const int32_t Advance = CCExpressionGetNamedInteger(*LetterOption);
-                                            }
+                                            FontStyle |= CCFontStyleBold;
+                                        }
+                                        
+                                        else if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING("italic")))
+                                        {
+                                            FontStyle |= CCFontStyleItalic;
                                         }
                                     }
                                 }
                             }
                             
-                            else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("letter", "string [(glyph number number number number) (offset number number) (advance number)]");
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("unicode")))
+                            {
+                                IsUnicode = CCExpressionGetNamedInteger(Option);
+                            }
+                            
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("padding")))
+                            {
+                                Padding = CCExpressionGetNamedRect(Option);
+                            }
+                            
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("spacing")))
+                            {
+                                Spacing = CCExpressionGetNamedVector2(Option);
+                            }
+                            
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("line-height")))
+                            {
+                                LineHeight = CCExpressionGetNamedInteger(Option);
+                            }
+                            
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("base")))
+                            {
+                                Base = CCExpressionGetNamedInteger(Option);
+                            }
+                            
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("texture")))
+                            {
+                                CCString TextureName = CCExpressionGetNamedString(Option);
+                                Texture = NULL; //TODO: load texture
+                            }
+                            
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("letter")))
+                            {
+                                CCEnumerator LetterEnumerator;
+                                CCCollectionGetEnumerator(CCExpressionGetList(Option), &LetterEnumerator);
+                                
+                                CCExpression *Letter = CCCollectionEnumeratorNext(&LetterEnumerator);
+                                if ((Letter) && (CCExpressionGetType(*Letter) == CCExpressionValueTypeString))
+                                {
+                                    CCChar Chr = CCStringGetCharacterAtIndex(CCExpressionGetString(*Letter), 0);
+                                    CCArrayAppendElement(Letters, &Chr);
+                                    
+                                    if (IsSequential)
+                                    {
+                                        if (!PrevChr) Offset = PrevChr = Chr;
+                                        else if ((Chr - PrevChr) == 1) PrevChr = Chr;
+                                        else IsSequential = FALSE;
+                                    }
+                                    
+                                    CCFontGlyph Glyph = {
+                                        .coord = { .position = CCVector2DFill(0.0f), .size = CCVector2DFill(0.0f) },
+                                        .offset = CCVector2DFill(0.0f),
+                                        .advance = 0.0f
+                                    };
+                                    
+                                    for (CCExpression *LetterOption = CCCollectionEnumeratorNext(&LetterEnumerator); LetterOption; LetterOption = CCCollectionEnumeratorNext(&LetterEnumerator))
+                                    {
+                                        if ((CCExpressionGetType(*LetterOption) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(*LetterOption)) >= 1))
+                                        {
+                                            CCExpression Option = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*LetterOption), 0);
+                                            
+                                            if (CCExpressionGetType(Option) == CCExpressionValueTypeAtom)
+                                            {
+                                                if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("glyph")))
+                                                {
+                                                    Glyph.coord = CCExpressionGetNamedRect(*LetterOption);
+                                                }
+                                                
+                                                else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("offset")))
+                                                {
+                                                    Glyph.offset = CCExpressionGetNamedVector2(*LetterOption);
+                                                }
+                                                
+                                                else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("advance")))
+                                                {
+                                                    Glyph.advance = CCExpressionGetNamedFloat(*LetterOption);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    CCArrayAppendElement(Glyphs, &Glyph);
+                                }
+                                
+                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("letter", "string [(glyph number number number number) (offset number number) (advance number)]");
+                            }
                         }
                     }
                 }
             }
+            
+            CCFontCharMap Map = { .letters = Letters };
+            if (IsSequential)
+            {
+                Map.offset = Offset;
+                CCArrayDestroy(Letters);
+            }
+            
+            CCFont Font = CCFontCreate(CCExpressionGetString(Name), FontStyle, CCExpressionGetInteger(Size), Padding, Spacing, LineHeight, Base, IsUnicode, IsSequential, Map, Glyphs, Texture);
+            //TODO: Register with asset manager or return it?
+            
+            if (Texture) GFXTextureDestroy(Texture);
+            if (!IsSequential) CCArrayDestroy(Letters);
+            CCArrayDestroy(Glyphs);
         }
     }
     
