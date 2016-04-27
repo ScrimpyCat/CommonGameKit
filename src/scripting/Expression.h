@@ -142,14 +142,14 @@ typedef struct CCExpressionValue {
  * @param Path The path to the file containing the source.
  * @return The created expression.
  */
-CCExpression CCExpressionCreateFromSourceFile(FSPath Path);
+CC_NEW CCExpression CCExpressionCreateFromSourceFile(FSPath CC_COPY(Path));
 
 /*!
  * @brief Create an expression from source.
  * @param Source The string representation of the expression.
  * @return The created expression.
  */
-CCExpression CCExpressionCreateFromSource(const char *Source);
+CC_NEW CCExpression CCExpressionCreateFromSource(const char *Source);
 
 /*!
  * @brief Create an expression of type.
@@ -157,20 +157,20 @@ CCExpression CCExpressionCreateFromSource(const char *Source);
  * @param Type The type of the expression.
  * @return The created expression.
  */
-CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type);
+CC_NEW CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type);
 
 /*!
  * @brief Create a new copy of the expression.
  * @param Expression The expression to be copied.
  * @return The created expression.
  */
-CCExpression CCExpressionCopy(CCExpression Expression);
+CC_NEW CCExpression CCExpressionCopy(CCExpression Expression);
 
 /*!
  * @brief Destroy an expression.
  * @param Expression The expression to be destroyed.
  */
-void CCExpressionDestroy(CCExpression Expression);
+void CCExpressionDestroy(CCExpression CC_DESTROY(Expression));
 
 /*!
  * @brief Print the expression in a readable format.
@@ -193,12 +193,12 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
 void CCExpressionPrintState(CCExpression Expression);
 
 //Convenience getters and initializers for when introducing tagged types.
-CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy);
-CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value);
-CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value);
-CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString String, _Bool Copy);
-CCExpression CCExpressionCreateList(CCAllocatorType Allocator);
-CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
+CC_NEW CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy);
+CC_NEW CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value);
+CC_NEW CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value);
+CC_NEW CCExpression CCExpressionCreateString(CCAllocatorType Allocator, CCString String, _Bool Copy);
+CC_NEW CCExpression CCExpressionCreateList(CCAllocatorType Allocator);
+CC_NEW CCExpression CCExpressionCreateCustomType(CCAllocatorType Allocator, CCExpressionValueType Type, void *Data, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy Copy, CCExpressionValueDestructor Destructor);
 
 static inline _Bool CCExpressionIsTagged(CCExpression Expression);

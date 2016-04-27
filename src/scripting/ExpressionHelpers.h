@@ -28,13 +28,13 @@
 
 #include "Expression.h"
 
-CCExpression CCExpressionCreateVector2(CCAllocatorType Allocator, CCVector2D v);
-CCExpression CCExpressionCreateVector3(CCAllocatorType Allocator, CCVector3D v);
-CCExpression CCExpressionCreateVector4(CCAllocatorType Allocator, CCVector4D v);
-CCExpression CCExpressionCreateVector2i(CCAllocatorType Allocator, CCVector2Di v);
-CCExpression CCExpressionCreateVector3i(CCAllocatorType Allocator, CCVector3Di v);
-CCExpression CCExpressionCreateVector4i(CCAllocatorType Allocator, CCVector4Di v);
-CCExpression CCExpressionCreateRect(CCAllocatorType Allocator, CCRect r);
+CC_NEW CCExpression CCExpressionCreateVector2(CCAllocatorType Allocator, CCVector2D v);
+CC_NEW CCExpression CCExpressionCreateVector3(CCAllocatorType Allocator, CCVector3D v);
+CC_NEW CCExpression CCExpressionCreateVector4(CCAllocatorType Allocator, CCVector4D v);
+CC_NEW CCExpression CCExpressionCreateVector2i(CCAllocatorType Allocator, CCVector2Di v);
+CC_NEW CCExpression CCExpressionCreateVector3i(CCAllocatorType Allocator, CCVector3Di v);
+CC_NEW CCExpression CCExpressionCreateVector4i(CCAllocatorType Allocator, CCVector4Di v);
+CC_NEW CCExpression CCExpressionCreateRect(CCAllocatorType Allocator, CCRect r);
 
 CCVector2D CCExpressionGetVector2(CCExpression Vec);
 CCVector3D CCExpressionGetVector3(CCExpression Vec);
