@@ -31,7 +31,7 @@
 /*!
  * @brief Create a new project.
  * @description Creates the default gamepkg file and folders.
- * @result The path to the project's gamepkg file.
+ * @return The path to the project's gamepkg file.
  */
 CC_NEW FSPath CCProjectCreate(const char *Directory);
 

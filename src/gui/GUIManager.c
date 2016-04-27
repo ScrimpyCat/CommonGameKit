@@ -156,11 +156,11 @@ void GUIManagerUpdate(void)
     atomic_flag_clear(&ObjectManager.removedLock);
 }
 
-void GUIManagerRender(GFXFramebuffer Framebuffer)
+void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index)
 {
     CC_COLLECTION_FOREACH(GUIObject, Object, ObjectManager.active)
     {
-        GUIObjectRender(Object, Framebuffer);
+        GUIObjectRender(Object, Framebuffer, Index);
     }
 }
 

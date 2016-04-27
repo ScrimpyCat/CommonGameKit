@@ -27,7 +27,7 @@
 
 static void *GUIContainerConstructor(CCAllocatorType Allocator);
 static void GUIContainerDestructor(void *Internal);
-static void GUIContainerRender(GUIObject Object, GFXFramebuffer Framebuffer);
+static void GUIContainerRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
 static void GUIContainerEvent(GUIObject Object, GUIEvent Event);
 static CCRect GUIContainerGetRect(GUIObject Object);
 static void GUIContainerSetRect(GUIObject Object, CCRect Rect);
@@ -73,7 +73,7 @@ static void GUIContainerDestructor(void *Internal)
     
 }
 
-static void GUIContainerRender(GUIObject Object, GFXFramebuffer Framebuffer)
+static void GUIContainerRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
 {
     
 }

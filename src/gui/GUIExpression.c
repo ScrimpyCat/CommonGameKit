@@ -35,7 +35,7 @@ typedef struct {
 
 static void *GUIExpressionConstructor(CCAllocatorType Allocator);
 static void GUIExpressionDestructor(GUIExpressionInfo *Internal);
-static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer);
+static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
 static void GUIExpressionEvent(GUIObject Object, GUIEvent Event);
 static CCRect GUIExpressionGetRect(GUIObject Object);
 static void GUIExpressionSetRect(GUIObject Object, CCRect Rect);
@@ -124,7 +124,7 @@ typedef struct {
 #include "AssetManager.h"
 #include "Window.h"
 
-static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
+static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
 {
     GUIObject Parent = GUIObjectGetParent(Object);
     ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
@@ -174,7 +174,7 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
                         
                         GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
                         GFXDrawSetShader(Drawer, Shader);
-                        GFXDrawSetFramebuffer(Drawer, GFXFramebufferDefault(), 0);
+                        GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
                         GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
                         GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
                         GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, coord));
@@ -203,7 +203,7 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer)
     
     CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
     {
-        GUIObjectRender(Child, Framebuffer);
+        GUIObjectRender(Child, Framebuffer, Index);
     }
 }
 

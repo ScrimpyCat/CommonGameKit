@@ -48,11 +48,14 @@ typedef const struct {
     };
 } GUIEventInfo, *GUIEvent;
 
+/*!
+ * @brief A GUI object.
+ */
 typedef struct GUIObjectInfo *GUIObject;
 
 typedef void *(*GUIObjectConstructorCallback)(CCAllocatorType Allocator);
 typedef void (*GUIObjectDestructorCallback)(void *Internal);
-typedef void (*GUIObjectRenderCallback)(GUIObject Object, GFXFramebuffer Framebuffer);
+typedef void (*GUIObjectRenderCallback)(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
 typedef void (*GUIObjectEventCallback)(GUIObject Object, GUIEvent Event);
 typedef CCRect (*GUIObjectGetRectCallback)(GUIObject Object);
 typedef void (*GUIObjectSetRectCallback)(GUIObject Object, CCRect Rect);
@@ -95,19 +98,117 @@ typedef struct GUIObjectInfo {
 } GUIObjectInfo;
 
 
-GUIObject GUIObjectCreate(CCAllocatorType Allocator, const GUIObjectInterface *Interface);
-void GUIObjectDestroy(GUIObject Object);
-void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer);
+/*!
+ * @brief Create a GUI object.
+ * @description Typically do not use this function directly, but instead a creator provided
+ *              by an impementation.
+ *
+ * @param Allocator The allocator to be used.
+ * @param Interface The interface to the GUI element's implementation.
+ * @return The GUI object. Must be destroyed.
+ */
+CC_NEW GUIObject GUIObjectCreate(CCAllocatorType Allocator, const GUIObjectInterface *Interface);
+
+/*!
+ * @brief Destroy a GUI object.
+ * @description Destroys all of the child elements. And removes it from the parent element
+ *              if applicable.
+ *
+ * @param Object The GUI object to be destroyed.
+ */
+void GUIObjectDestroy(GUIObject CC_DESTROY(Object));
+
+/*!
+ * @brief Render a GUI object.
+ * @description Renders all of the child elements.
+ * @param Object The GUI object to be rendered.
+ * @param Framebuffer The framebuffer to be used as the rendering destination.
+ * @param Index The framebuffer attachment to be used as the target.
+ */
+void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
+
+/*!
+ * @brief Handle an event.
+ * @description Passes an event to the element and all child elements.
+ * @param Object The GUI object to handle the event.
+ * @param Event The event to be handled.
+ */
 void GUIObjectEvent(GUIObject Object, GUIEvent Event);
+
+/*!
+ * @brief Get the rect bounds of a GUI object.
+ * @param Object The GUI object to get the bounds of.
+ * @return The rect bounds of the object.
+ */
 CCRect GUIObjectGetRect(GUIObject Object);
+
+/*!
+ * @brief Set the rect bounds of a GUI object.
+ * @param Object The GUI object to set the bounds of.
+ * @param Rect The new rect.
+ */
 void GUIObjectSetRect(GUIObject Object, CCRect Rect);
+
+/*!
+ * @brief Check if a GUI object is enabled.
+ * @param Object The GUI object to check if it's enabled.
+ * @return TRUE if it is enabled, FALSE if it is not enabled.
+ */
 _Bool GUIObjectGetEnabled(GUIObject Object);
+
+/*!
+ * @brief Set whether the GUI object is enabled.
+ * @param Object The GUI object to set whether its enabled.
+ * @param Enabled The enabled flag.
+ */
 void GUIObjectSetEnabled(GUIObject Object, _Bool Enabled);
+
+/*!
+ * @brief Get the parent of the GUI object.
+ * @param Object The GUI object to get the parent of.
+ * @return The parent element, or NULL if there is none.
+ */
 GUIObject GUIObjectGetParent(GUIObject Object);
+
+/*!
+ * @brief Add a child element to the GUI object.
+ * @param Object The GUI object to be the parent.
+ * @param Child The GUI object to be the child.
+ */
 void GUIObjectAddChild(GUIObject Object, GUIObject Child);
+
+/*!
+ * @brief Remove a child element from a GUI object.
+ * @param Object The GUI object that is the parent.
+ * @param Child The GUI object to be removed.
+ */
 void GUIObjectRemoveChild(GUIObject Object, GUIObject Child);
+
+/*!
+ * @brief Check if a GUI object has changed.
+ * @description Changed means something has visually changed in the GUI. So requires to be
+ *              rendered again. Rendering the GUI will reset this state.
+ *
+ * @param Object The GUI object to check whether it has changed.
+ * @return TRUE if the object has changed/is visually different, FALSE if it has not changed/has
+ *         the same appearance as the last time it was rendered.
+ */
 _Bool GUIObjectHasChanged(GUIObject Object);
+
+/*!
+ * @brief Evaluate an expression inside a GUI object.
+ * @description The expression is evaluated in the context of the object.
+ * @param Object The GUI object to evaluate the expression.
+ * @param Expression The expression to be evaluated.
+ * @return The resulting expression.
+ */
 CCExpression GUIObjectEvaluateExpression(GUIObject Object, CCExpression Expression);
+
+/*!
+ * @brief Get the expression state of a GUI object.
+ * @param Object The GUI object to get the state from.
+ * @return The resulting expression state.
+ */
 CCExpression GUIObjectGetExpressionState(GUIObject Object);
 
 #endif

@@ -74,12 +74,12 @@ void GUIObjectDestroy(GUIObject Object)
     }
 }
 
-void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer)
+void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    if (GUIObjectGetEnabled(Object)) Object->interface->render(Object, Framebuffer);
+    if (GUIObjectGetEnabled(Object)) Object->interface->render(Object, Framebuffer, Index);
     mtx_unlock(&Object->lock);
 }
 
@@ -154,6 +154,7 @@ void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
 {
     CCAssertLog(Object, "GUI object must not be null");
     CCAssertLog(Child, "Child GUI object must not be null");
+    CCAssertLog(Object == Child->parent, "The GUI object must be the parent of the child GUI object");
     
     mtx_lock(&Object->lock);
     Child->parent = NULL;

@@ -48,8 +48,9 @@ void GUIManagerUpdate(void);
  * @brief Render the global GUI manager.
  * @warning This call must be made within a GUI manager lock.
  * @param Framebuffer The framebuffer to render to.
+ * @param Index The index of the framebuffer attachment to render to. 
  */
-void GUIManagerRender(GFXFramebuffer Framebuffer);
+void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index);
 
 //void GUIManagerResize(); //could be just an atomic swap?
 /*!
@@ -62,14 +63,14 @@ void GUIManagerHandleEvent(GUIEvent Event);
  * @brief Adds a GUI object to be managed by the global GUI manager.
  * @param Object The GUI object being managed.
  */
-void GUIManagerAddObject(GUIObject Object);
+void GUIManagerAddObject(GUIObject CC_OWN(Object));
 
 /*!
  * @brief Removes a GUI object from being managed by the global GUI manager.
  * @warning After this call it is no longer safe to reference the GUI.
  * @param Object The GUI object being managed.
  */
-void GUIManagerRemoveObject(GUIObject Object);
+void GUIManagerRemoveObject(GUIObject CC_DESTROY(Object));
 
 /*!
  * @brief Get the current GUI objects from the manager.
