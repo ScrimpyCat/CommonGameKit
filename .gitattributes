@@ -1,0 +1,3 @@
+*.asset linguist-language=Scheme
+*.gfxlib linguist-language=Scheme
+*.font linguist-language=Scheme
