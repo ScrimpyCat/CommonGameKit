@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F30437531C5F8DC400388C74 /* AssetManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F30437511C5F8DC400388C74 /* AssetManager.c */; };
+		F308C9A91CCFD04F0006360B /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F308C99C1CCFD0460006360B /* libpng16.a */; };
+		F308C9AF1CD0AEEE0006360B /* PixelDataFile.c in Sources */ = {isa = PBXBuildFile; fileRef = F308C9AD1CD0AEEE0006360B /* PixelDataFile.c */; };
 		F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */; };
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
@@ -118,6 +120,69 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F308C9971CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B1F25EA7632E43E28DD13E7F;
+			remoteInfo = png;
+		};
+		F308C9991CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0AAA1F0A9F4C4B1CACB4670F;
+			remoteInfo = "png-fix-itxt";
+		};
+		F308C99B1CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7103BBB260504D77A55E4196;
+			remoteInfo = png_static;
+		};
+		F308C99D1CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 99A3E27AF7F748CAAC0590B6;
+			remoteInfo = pngfix;
+		};
+		F308C99F1CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5438BCE964ED491E999D811F;
+			remoteInfo = pngimage;
+		};
+		F308C9A11CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E606B5F8386D480F8350C94E;
+			remoteInfo = pngstest;
+		};
+		F308C9A31CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 658465EE5F5143338781B297;
+			remoteInfo = pngtest;
+		};
+		F308C9A51CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 004F719C64A1490E91E916E6;
+			remoteInfo = pngunknown;
+		};
+		F308C9A71CCFD0460006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 83C1C632DF4F4ED3A033612B;
+			remoteInfo = pngvalid;
+		};
 		F32393C81A572148007BD168 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
@@ -376,6 +441,9 @@
 /* Begin PBXFileReference section */
 		F30437511C5F8DC400388C74 /* AssetManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AssetManager.c; sourceTree = "<group>"; };
 		F30437521C5F8DC400388C74 /* AssetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetManager.h; sourceTree = "<group>"; };
+		F308C95D1CCFD0460006360B /* libpng.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpng.xcodeproj; path = deps/libpng/build/libpng.xcodeproj; sourceTree = "<group>"; };
+		F308C9AD1CD0AEEE0006360B /* PixelDataFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PixelDataFile.c; sourceTree = "<group>"; };
+		F308C9AE1CD0AEEE0006360B /* PixelDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelDataFile.h; sourceTree = "<group>"; };
 		F313F9781B7DE7A9006F5CF5 /* AnimationComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationComponent.h; sourceTree = "<group>"; };
 		F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationSystem.c; sourceTree = "<group>"; };
 		F313F9A31B7FB888006F5CF5 /* AnimationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationSystem.h; sourceTree = "<group>"; };
@@ -586,6 +654,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F308C9A91CCFD04F0006360B /* libpng16.a in Frameworks */,
 				F35FBE341C75147000833474 /* Carbon.framework in Frameworks */,
 				F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */,
 				F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */,
@@ -625,6 +694,22 @@
 			path = utilities;
 			sourceTree = "<group>";
 		};
+		F308C95E1CCFD0460006360B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F308C9981CCFD0460006360B /* libpng16.dylib */,
+				F308C99A1CCFD0460006360B /* png-fix-itxt */,
+				F308C99C1CCFD0460006360B /* libpng16.a */,
+				F308C99E1CCFD0460006360B /* pngfix */,
+				F308C9A01CCFD0460006360B /* pngimage */,
+				F308C9A21CCFD0460006360B /* pngstest */,
+				F308C9A41CCFD0460006360B /* pngtest */,
+				F308C9A61CCFD0460006360B /* pngunknown */,
+				F308C9A81CCFD0460006360B /* pngvalid */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3150ED61C47C28400E1FC82 /* Scripting */ = {
 			isa = PBXGroup;
 			children = (
@@ -652,6 +737,8 @@
 				F359CFE51C128F810028B86B /* PixelDataStatic.c */,
 				F359D0101C1297980028B86B /* PixelDataGenerator.h */,
 				F359D0111C1297A10028B86B /* PixelDataGenerator.c */,
+				F308C9AE1CD0AEEE0006360B /* PixelDataFile.h */,
+				F308C9AD1CD0AEEE0006360B /* PixelDataFile.c */,
 			);
 			name = "Pixel Data";
 			path = "pixel data";
@@ -1103,6 +1190,7 @@
 				F3F5D6F61A5700AB006D7F16 /* IOKit.framework */,
 				F3F5D6F41A570099006D7F16 /* OpenGL.framework */,
 				F3F5D6F21A570093006D7F16 /* Cocoa.framework */,
+				F308C95D1CCFD0460006360B /* libpng.xcodeproj */,
 				F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */,
 				F3F5D6981A56FA05006D7F16 /* stdatomic */,
 				F3F5D6901A56F714006D7F16 /* tinycthread */,
@@ -1300,6 +1388,10 @@
 					ProductGroup = F3F5D69A1A56FBDB006D7F16 /* Products */;
 					ProjectRef = F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */;
 				},
+				{
+					ProductGroup = F308C95E1CCFD0460006360B /* Products */;
+					ProjectRef = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1310,6 +1402,71 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F308C9981CCFD0460006360B /* libpng16.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			name = libpng16.dylib;
+			path = libpng16d.16.22.0.dylib;
+			remoteRef = F308C9971CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C99A1CCFD0460006360B /* png-fix-itxt */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "png-fix-itxt";
+			remoteRef = F308C9991CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C99C1CCFD0460006360B /* libpng16.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			name = libpng16.a;
+			path = libpng16d.a;
+			remoteRef = F308C99B1CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C99E1CCFD0460006360B /* pngfix */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = pngfix;
+			remoteRef = F308C99D1CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9A01CCFD0460006360B /* pngimage */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = pngimage;
+			remoteRef = F308C99F1CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9A21CCFD0460006360B /* pngstest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = pngstest;
+			remoteRef = F308C9A11CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9A41CCFD0460006360B /* pngtest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = pngtest;
+			remoteRef = F308C9A31CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9A61CCFD0460006360B /* pngunknown */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = pngunknown;
+			remoteRef = F308C9A51CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9A81CCFD0460006360B /* pngvalid */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = pngvalid;
+			remoteRef = F308C9A71CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F32393C91A572148007BD168 /* ChipmunkDemo.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
@@ -1587,6 +1744,7 @@
 				F35FAFFE1C70FC5600B6A55C /* GUIManager.c in Sources */,
 				F3A3A75E1C303A0B00EC1F18 /* GUIContainer.c in Sources */,
 				F376994E1C1023C200F24A44 /* MathExpressions.c in Sources */,
+				F308C9AF1CD0AEEE0006360B /* PixelDataFile.c in Sources */,
 				F365312B1C171F0300A3B009 /* GLBuffer.c in Sources */,
 				F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */,
 				F390E9CF1C79B94A0072D4E7 /* StringExpressions.c in Sources */,
@@ -1790,7 +1948,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/chibi-scheme/build/include";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/libpng";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
 			};
 			name = Debug;
@@ -1813,7 +1971,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/chibi-scheme/build/include";
+				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/libpng";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
 			};
 			name = Release;
