@@ -291,7 +291,10 @@ CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
     {
         size_t Size = FSManagerGetSize(Path);
         char *Source;
-        CC_SAFE_Malloc(Source, sizeof(char) * (Size + 1));
+        CC_SAFE_Malloc(Source, sizeof(char) * (Size + 1),
+                       CC_LOG_ERROR("Failed to create expression from source due to allocation failure. Allocation size (%zu)", sizeof(char) * (Size + 1));
+                       return NULL;
+                       );
         
         FSHandleRead(Handle, &Size, Source, FSBehaviourDefault);
         Source[Size] = 0;
@@ -307,6 +310,8 @@ CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
         const char *Dir = FSPathGetPathString(Path);
         CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename)), FALSE), FALSE);
     }
+    
+    else CC_LOG_ERROR("Failed to create expression from source due to error opening source: %s", FSPathGetFullPathString(Path));
     
     return Expression;
 }
