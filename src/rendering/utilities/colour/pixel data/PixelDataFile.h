@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015 Stefan Johnson
+ *  Copyright (c) 2016 Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,22 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_PixelDataGenerator_h
-#define Blob_Game_PixelDataGenerator_h
+#ifndef Blob_Game_PixelDataFile_h
+#define Blob_Game_PixelDataFile_h
 
 #include "PixelData.h"
 
-typedef CCColour (*CCPixelDataGeneratorFunction)(size_t x, size_t y, size_t z);
-
-extern const CCPixelDataInterface * const CCPixelDataGenerator;
+extern const CCPixelDataInterface * const CCPixelDataFile;
 
 /*!
- * @brief Create a pixel data container for a generator function.
+ * @brief Create a pixel data container for a image file.
+ * @description Supports PNG files.
  * @param Allocator The allocator to be used.
- * @param Func The generator function.
- * @param Format The colour format of the data.
+ * @param Path The path to the image file.
  * @return The pixel data container.
  */
-CC_NEW CCPixelData CCPixelDataGeneratorCreate(CCAllocatorType Allocator, CCPixelDataGeneratorFunction Func, CCColourFormat Format);
+CC_NEW CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath CC_COPY(Path));
 
 #endif

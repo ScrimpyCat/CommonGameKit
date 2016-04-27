@@ -27,13 +27,13 @@
 #define Blob_Game_PixelData_h
 
 #include "Colour.h"
-#include <CommonC/Allocator.h>
+#include <CommonC/Common.h>
 
 
 typedef struct CCPixelDataInfo *CCPixelData;
 
-typedef void *(*CCPixelDataConstructorCallback)(CCAllocatorType Allocator);
-typedef void (*CCPixelDataDestructorCallback)(void *Internal);
+typedef CC_NEW void *(*CCPixelDataConstructorCallback)(CCAllocatorType Allocator);
+typedef void (*CCPixelDataDestructorCallback)(void *CC_DESTROY(Internal));
 typedef CCColour (*CCPixelDataGetColourCallback)(CCPixelData Pixels, size_t x, size_t y, size_t z);
 typedef void (*CCPixelDataGetSizeCallback)(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
 typedef _Bool (*CCPixelDataGetPackedDataCallback)(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
@@ -67,13 +67,13 @@ typedef struct CCPixelDataInfo {
  * @param Interface The interface to the pixel data container implementation.
  * @return The pixel data container.
  */
-CCPixelData CCPixelDataCreate(CCAllocatorType Allocator, CCColourFormat Format, const CCPixelDataInterface *Interface);
+CC_NEW CCPixelData CCPixelDataCreate(CCAllocatorType Allocator, CCColourFormat Format, const CCPixelDataInterface *Interface);
 
 /*!
  * @brief Destroy a pixel data container.
  * @param Pixels The pixel data container to be destroyed.
  */
-void CCPixelDataDestroy(CCPixelData Pixels);
+void CCPixelDataDestroy(CCPixelData CC_DESTROY(Pixels));
 
 /*!
  * @brief Get the colour at a point in the pixel data.

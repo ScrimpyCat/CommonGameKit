@@ -41,7 +41,7 @@ extern const CCPixelDataInterface * const CCPixelDataStatic;
  * @param Depth The depth of the data.
  * @return The pixel data container.
  */
-CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+CC_NEW CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData CC_OWN(Data), CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
 
 /*!
  * @brief Create a pixel data container for multi-planar static data.
@@ -55,6 +55,6 @@ CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCCo
  * @param Depth The depth of the data.
  * @return The pixel data container.
  */
-CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, CCData Data[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+CC_NEW CCPixelData CCPixelDataStaticCreateWithMultiPlanar(CCAllocatorType Allocator, CCData CC_OWN(Data)[4], CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
 
 #endif
