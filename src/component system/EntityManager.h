@@ -48,14 +48,14 @@ void CCEntityManagerUpdate(void);
  * @brief Adds an entity to be managed by the global entity manager.
  * @param Entity The entity to be managed.
  */
-void CCEntityManagerAddEntity(CCEntity Entity);
+void CCEntityManagerAddEntity(CCEntity CC_OWN(Entity));
 
 /*!
  * @brief Removes an entity from being managed by the global entity manager.
  * @warning After this call it is no longer safe to reference the entity.
  * @param Entity The entity being managed.
  */
-void CCEntityManagerRemoveEntity(CCEntity Entity);
+void CCEntityManagerRemoveEntity(CCEntity CC_DESTROY(Entity));
 
 /*!
  * @brief Get the current entities from the manager.

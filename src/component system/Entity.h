@@ -51,20 +51,20 @@ typedef struct CCEntityInfo *CCEntity;
  * @param Allocator The allocator to be used to allocate the entity with.
  * @return The created entity.
  */
-CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator);
+CC_NEW CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator);
 
 /*!
  * @brief Destroy an entity.
  * @param Entity The entity to be destroyed.
  */
-void CCEntityDestroy(CCEntity Entity);
+void CCEntityDestroy(CCEntity CC_DESTROY(Entity));
 
 /*!
  * @brief Attach a component to an entity.
  * @param Entity The entity to attach the component to.
  * @param Component The component to be attached.
  */
-void CCEntityAttachComponent(CCEntity Entity, CCComponent Component);
+void CCEntityAttachComponent(CCEntity Entity, CCComponent CC_OWN(Component));
 
 /*!
  * @brief Detach a component from an entity.
@@ -72,7 +72,7 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component);
  * @param Entity The entity to detach the component from.
  * @param Component The component to be detached.
  */
-void CCEntityDetachComponent(CCEntity Entity, CCComponent Component);
+void CCEntityDetachComponent(CCEntity Entity, CCComponent CC_DESTROY(Component));
 
 /*!
 * @brief Get the current components for the entity.

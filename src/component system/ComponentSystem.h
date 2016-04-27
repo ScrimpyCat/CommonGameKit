@@ -191,7 +191,7 @@ CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
  * @param id The unique ID of the system.
  * @return The list of the added components. Note: This collection must be destroyed.
  */
-CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id);
+CC_NEW CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Get the current removed components for the system.
@@ -203,7 +203,7 @@ CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id
  * @param id The unique ID of the system.
  * @return The component list of the removed components. Note: This collection must be destroyed.
  */
-CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id);
+CC_NEW CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Attempt to lock the system.

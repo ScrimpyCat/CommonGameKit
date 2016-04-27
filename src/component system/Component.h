@@ -85,7 +85,7 @@ void CCComponentDeregister(CCComponentID id);
  * @param id The unique ID of the component type.
  * @return The created component.
  */
-CCComponent CCComponentCreate(CCComponentID id);
+CC_NEW CCComponent CCComponentCreate(CCComponentID id);
 
 /*!
  * @brief Create a component of type for name.
@@ -93,12 +93,12 @@ CCComponent CCComponentCreate(CCComponentID id);
  * @param Name The unique name of the component type.
  * @return The created component.
  */
-CCComponent CCComponentCreateForName(const char *Name);
+CC_NEW CCComponent CCComponentCreateForName(const char *Name);
 
 /*!
  * @brief Destroy a component.
  * @param Component The component to be destroyed.
  */
-void CCComponentDestroy(CCComponent Component);
+void CCComponentDestroy(CCComponent CC_DESTROY(Component));
 
 #endif
