@@ -714,7 +714,7 @@ CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpr
         if (State->value) CCExpressionDestroy(State->value);
         State->value = Copy ? CCExpressionCopy(Value) : Value;
         
-        return CCExpressionEvaluate(State->value);
+        return State->value;
     }
     
     return NULL;

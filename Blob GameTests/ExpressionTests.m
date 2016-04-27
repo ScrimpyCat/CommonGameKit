@@ -292,6 +292,13 @@
     CCExpressionDestroy(Expression);
 }
 
+static int Check = 0;
+static CCExpression CCExpressionTestCheck(CCExpression Expression)
+{
+    Check++;
+    return Expression;
+}
+
 -(void) testState
 {
     CCExpression Expression = CCExpressionCreateFromSource("(+ value 4 10)");
@@ -344,6 +351,17 @@
     XCTAssertEqual(CCExpressionGetFloat(Result), 34.0f, @"Should be 34.0");
     
     CCExpressionDestroy(CopiedExpression);
+    CCExpressionDestroy(Expression);
+    
+    
+    CCExpressionEvaluatorRegister(CC_STRING("test-check"), CCExpressionTestCheck);
+    Expression = CCExpressionCreateFromSource("(begin (state! \"test\") (test! (quote (test-check))))");
+    CCExpressionEvaluate(Expression);
+    
+    XCTAssertEqual(Check, 0, @"Should not unquote expression on set");
+    CCExpressionGetState(CopiedExpression, CC_STRING("test"));
+    XCTAssertEqual(Check, 1, @"Should evaluate the expression");
+    
     CCExpressionDestroy(Expression);
 }
 
