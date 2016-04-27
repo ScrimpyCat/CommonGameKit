@@ -102,13 +102,13 @@ typedef GFXDrawInfo *GFXDraw;
  * @param Allocator The allocator to be used for the allocations.
  * @return The created draw operation.
  */
-GFXDraw GFXDrawCreate(CCAllocatorType Allocator);
+CC_NEW GFXDraw GFXDrawCreate(CCAllocatorType Allocator);
 
 /*!
  * @brief Destroy a draw operation.
  * @param Draw The draw operation to be destroyed.
  */
-void GFXDrawDestroy(GFXDraw Draw);
+void GFXDrawDestroy(GFXDraw CC_DESTROY(Draw));
 
 /*!
  * @brief Submit the draw command.
@@ -134,7 +134,7 @@ void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offse
  * @param Shader The shader to be used for the draw operation. Retains a reference to
  *        the shader.
  */
-void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader);
+void GFXDrawSetShader(GFXDraw Draw, GFXShader CC_RETAIN(Shader));
 
 /*!
  * @brief Set the framebuffer to be used for the draw command.
@@ -144,7 +144,7 @@ void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader);
  *
  * @param Index The attachment of that framebuffer to be used as the destination.
  */
-void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Index);
+void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer CC_RETAIN(Framebuffer), size_t Index);
 
 /*!
  * @brief Set the index buffer of the draw command.
@@ -154,7 +154,7 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
  *
  * @param Format The format of the data.
  */
-void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Format);
+void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer CC_RETAIN(Indexes), GFXBufferFormat Format);
 
 /*!
  * @brief Set the vertex attributes of the draw command.
@@ -167,7 +167,7 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
  * @param Stride The stride of the data.
  * @param Offset The offset of the data.
  */
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset);
+void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer CC_RETAIN(Buffer), GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset);
 
 /*!
  * @brief Set the uniform of the draw command.
@@ -175,7 +175,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
  * @param Input The input name from in the shader.
  * @param Buffer The buffer. Retains a reference to the buffer.
  */
-void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer);
+void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer CC_RETAIN(Buffer));
 
 /*!
  * @brief Set the texture of the draw command.
@@ -183,7 +183,7 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer);
  * @param Input The input name from in the shader.
  * @param Texture The texture. Retains a reference to the shader.
  */
-void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture);
+void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture CC_RETAIN(Texture));
 
 /*!
  * @brief Set the blending for the draw command.

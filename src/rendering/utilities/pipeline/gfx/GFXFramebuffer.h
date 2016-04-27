@@ -62,13 +62,15 @@ typedef struct GFXFramebuffer *GFXFramebuffer;
 
 /*!
  * @brief Create a framebuffer colour attachment.
- * @param Texture The texture to be use for the attachment.
+ * @param Texture The texture to be use for the attachment. Ownership only applies if the
+ *        attachment is passed to a framebuffer.
+ *
  * @param Load The load action.
  * @param Store The store action.
  * @param ClearColour The clear colour to be used for clear actions.
  * @return The framebuffer attachment.
  */
-static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour);
+static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture CC_OWN(Texture), GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour);
 
 /*!
  * @brief Return the default framebuffer.
@@ -79,19 +81,19 @@ GFXFramebuffer GFXFramebufferDefault(void);
 /*!
  * @brief Create a framebuffer.
  * @param Allocator The allocator to be used for the allocations.
- * @param Attachments The attachments to be used for the framebuffer (their order is the same
+ * @param Attachments The attachments to be used for the framebuffer. Their order is the same
  *        order they are indexed in. The framebuffer takes over any textures in the attachments.
  *
  * @param Count The number of attachments.
  * @return The created framebuffer.
  */
-GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
+CC_NEW GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
 
 /*!
  * @brief Destroy a framebuffer.
  * @param Framebuffer The framebuffer to be destroyed.
  */
-void GFXFramebufferDestroy(GFXFramebuffer Framebuffer);
+void GFXFramebufferDestroy(GFXFramebuffer CC_DESTROY(Framebuffer));
 
 /*!
  * @brief Get a framebuffer attachment for a framebuffer.

@@ -26,6 +26,12 @@
 #include "PixelData.h"
 #include <CommonC/Common.h>
 
+static void CCPixelDataDestructor(CCPixelData Pixels)
+{
+    Pixels->interface->destroy(Pixels->internal);
+    Pixels->internal = NULL;
+}
+
 CCPixelData CCPixelDataCreate(CCAllocatorType Allocator, CCColourFormat Format, const CCPixelDataInterface *Interface)
 {
     CCAssertLog(Interface, "Interface must not be null");
@@ -46,6 +52,8 @@ CCPixelData CCPixelDataCreate(CCAllocatorType Allocator, CCColourFormat Format, 
             CCFree(Pixels);
             Pixels = NULL;
         }
+        
+        else CCMemorySetDestructor(Pixels, (CCMemoryDestructorCallback)CCPixelDataDestructor);
     }
     
     else
@@ -60,7 +68,6 @@ void CCPixelDataDestroy(CCPixelData Pixels)
 {
     CCAssertLog(Pixels, "Pixel data must not be null");
     
-    Pixels->interface->destroy(Pixels->internal); Pixels->internal = NULL;
     CCFree(Pixels);
 }
 

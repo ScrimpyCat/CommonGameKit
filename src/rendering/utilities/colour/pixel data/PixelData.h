@@ -30,6 +30,10 @@
 #include <CommonC/Common.h>
 
 
+/*!
+ * @brief The pixel data container.
+ * @description Allows @b CCRetain.
+ */
 typedef struct CCPixelDataInfo *CCPixelData;
 
 typedef CC_NEW void *(*CCPixelDataConstructorCallback)(CCAllocatorType Allocator);

@@ -52,14 +52,14 @@ typedef struct GFXShaderSource *GFXShaderSource;
  * @param Allocator The allocator to be used for the allocations.
  * @return The created shader library.
  */
-GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator);
+CC_NEW GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator);
 //GFXShaderLibrary GFXShaderLibraryCreateFromProject(CCAllocatorType Allocator, FSPath Path);
 
 /*!
  * @brief Destroy a shader library.
  * @param Library The shader library to be destroyed.
  */
-void GFXShaderLibraryDestroy(GFXShaderLibrary Library);
+void GFXShaderLibraryDestroy(GFXShaderLibrary CC_DESTROY(Library));
 
 /*!
  * @brief Compile a shader.

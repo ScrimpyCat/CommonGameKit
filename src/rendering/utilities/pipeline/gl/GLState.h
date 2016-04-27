@@ -384,8 +384,8 @@ typedef struct {
 
 extern CCGLState *CCGLCurrentState;
 
-CCGLState *CCGLStateCreate(void);
-void CCGLStateDestroy(CCGLState *State);
+CC_NEW CCGLState *CCGLStateCreate(void);
+void CCGLStateDestroy(CCGLState *CC_DESTROY(State));
 void CCGLStateInitializeWithDefault(CCGLState *State);
 void CCGLStateInitializeWithCurrent(CCGLState *State);
 

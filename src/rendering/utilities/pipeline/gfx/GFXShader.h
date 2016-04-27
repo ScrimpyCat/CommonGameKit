@@ -47,13 +47,13 @@ typedef struct GFXShader *GFXShader;
  * @param Fragment The fragment source.
  * @return The created shader.
  */
-GFXShader GFXShaderCreate(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
+CC_NEW GFXShader GFXShaderCreate(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
 
 /*!
  * @brief Destroy a shader.
  * @param Shader The shader to be destroyed.
  */
-void GFXShaderDestroy(GFXShader Shader);
+void GFXShaderDestroy(GFXShader CC_DESTROY(Shader));
 
 /*!
  * @brief Get the input handle for name.

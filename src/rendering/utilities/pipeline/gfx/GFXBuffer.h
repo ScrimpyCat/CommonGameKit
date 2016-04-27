@@ -87,13 +87,13 @@ typedef struct GFXBuffer *GFXBuffer;
  * @param Data The data to be copied into the buffer.
  * @return The created buffer.
  */
-GFXBuffer GFXBufferCreate(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
+CC_NEW GFXBuffer GFXBufferCreate(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
 
 /*!
  * @brief Destroy the buffer.
  * @param Buffer The buffer to be destroyed.
  */
-void GFXBufferDestroy(GFXBuffer Buffer);
+void GFXBufferDestroy(GFXBuffer CC_DESTROY(Buffer));
 
 /*!
  * @brief Get the usage hints for the buffer.

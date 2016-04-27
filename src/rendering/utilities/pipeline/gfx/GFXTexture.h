@@ -66,16 +66,16 @@ typedef struct GFXTexture *GFXTexture;
  * @param Width The width of the texture.
  * @param Height The height of the texture.
  * @param Depth The depth of the texture.
- * @param Data The pixel data to be used for the texture.
+ * @param Data The pixel data to be used for the texture. Note: Takes ownership of the pixel data.
  * @return The created texture.
  */
-GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+CC_NEW GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
 
 /*!
  * @brief Destroy a texture.
  * @param Texture The texture to be destroyed.
  */
-void GFXTextureDestroy(GFXTexture Texture);
+void GFXTextureDestroy(GFXTexture CC_DESTROY(Texture));
 
 /*!
  * @brief Get the hints for the texture.
