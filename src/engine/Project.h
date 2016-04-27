@@ -28,7 +28,17 @@
 
 #include <CommonC/Common.h>
 
-FSPath CCProjectCreate(const char *Directory);
+/*!
+ * @brief Create a new project.
+ * @description Creates the default gamepkg file and folders.
+ * @result The path to the project's gamepkg file.
+ */
+CC_NEW FSPath CCProjectCreate(const char *Directory);
+
+/*!
+ * @brief Load a project.
+ * @param ProjectPath The path to the gamepkg file.
+ */
 void CCProjectLoad(FSPath ProjectPath);
 
 #endif
