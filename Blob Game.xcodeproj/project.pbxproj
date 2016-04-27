@@ -10,6 +10,7 @@
 		F30437531C5F8DC400388C74 /* AssetManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F30437511C5F8DC400388C74 /* AssetManager.c */; };
 		F308C9A91CCFD04F0006360B /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F308C99C1CCFD0460006360B /* libpng16.a */; };
 		F308C9AF1CD0AEEE0006360B /* PixelDataFile.c in Sources */ = {isa = PBXBuildFile; fileRef = F308C9AD1CD0AEEE0006360B /* PixelDataFile.c */; };
+		F308CA011CD0D5D10006360B /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F308CA001CD0D5A50006360B /* libz.a */; };
 		F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */; };
 		F313F9A71B804EEC006F5CF5 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A51B804EEC006F5CF5 /* AnimationKeyframeComponent.c */; };
 		F313F9AC1B80B95A006F5CF5 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9AB1B80B95A006F5CF5 /* AnimationComponent.c */; };
@@ -182,6 +183,34 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83C1C632DF4F4ED3A033612B;
 			remoteInfo = pngvalid;
+		};
+		F308C9F91CD0D5A50006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C9B71CD0D5A40006360B /* zlib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 66589AFC8F50463AA1FBE959;
+			remoteInfo = example;
+		};
+		F308C9FB1CD0D5A50006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C9B71CD0D5A40006360B /* zlib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5C72AA3267304E94B97DA734;
+			remoteInfo = minigzip;
+		};
+		F308C9FD1CD0D5A50006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C9B71CD0D5A40006360B /* zlib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8991C553857E4FCFBCC44A9B;
+			remoteInfo = zlib;
+		};
+		F308C9FF1CD0D5A50006360B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F308C9B71CD0D5A40006360B /* zlib.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E826073C33AE4E5FB254ABFD;
+			remoteInfo = zlibstatic;
 		};
 		F32393C81A572148007BD168 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -444,6 +473,7 @@
 		F308C95D1CCFD0460006360B /* libpng.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libpng.xcodeproj; path = deps/libpng/build/libpng.xcodeproj; sourceTree = "<group>"; };
 		F308C9AD1CD0AEEE0006360B /* PixelDataFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PixelDataFile.c; sourceTree = "<group>"; };
 		F308C9AE1CD0AEEE0006360B /* PixelDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelDataFile.h; sourceTree = "<group>"; };
+		F308C9B71CD0D5A40006360B /* zlib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = zlib.xcodeproj; path = deps/zlib/build/zlib.xcodeproj; sourceTree = "<group>"; };
 		F313F9781B7DE7A9006F5CF5 /* AnimationComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationComponent.h; sourceTree = "<group>"; };
 		F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AnimationSystem.c; sourceTree = "<group>"; };
 		F313F9A31B7FB888006F5CF5 /* AnimationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationSystem.h; sourceTree = "<group>"; };
@@ -654,6 +684,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F308CA011CD0D5D10006360B /* libz.a in Frameworks */,
 				F308C9A91CCFD04F0006360B /* libpng16.a in Frameworks */,
 				F35FBE341C75147000833474 /* Carbon.framework in Frameworks */,
 				F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */,
@@ -706,6 +737,17 @@
 				F308C9A41CCFD0460006360B /* pngtest */,
 				F308C9A61CCFD0460006360B /* pngunknown */,
 				F308C9A81CCFD0460006360B /* pngvalid */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F308C9B81CD0D5A40006360B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F308C9FA1CD0D5A50006360B /* example */,
+				F308C9FC1CD0D5A50006360B /* minigzip */,
+				F308C9FE1CD0D5A50006360B /* libz.dylib */,
+				F308CA001CD0D5A50006360B /* libz.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1190,6 +1232,7 @@
 				F3F5D6F61A5700AB006D7F16 /* IOKit.framework */,
 				F3F5D6F41A570099006D7F16 /* OpenGL.framework */,
 				F3F5D6F21A570093006D7F16 /* Cocoa.framework */,
+				F308C9B71CD0D5A40006360B /* zlib.xcodeproj */,
 				F308C95D1CCFD0460006360B /* libpng.xcodeproj */,
 				F3F5D6991A56FBDB006D7F16 /* GLFW.xcodeproj */,
 				F3F5D6981A56FA05006D7F16 /* stdatomic */,
@@ -1392,6 +1435,10 @@
 					ProductGroup = F308C95E1CCFD0460006360B /* Products */;
 					ProjectRef = F308C95D1CCFD0460006360B /* libpng.xcodeproj */;
 				},
+				{
+					ProductGroup = F308C9B81CD0D5A40006360B /* Products */;
+					ProjectRef = F308C9B71CD0D5A40006360B /* zlib.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1465,6 +1512,35 @@
 			fileType = "compiled.mach-o.executable";
 			path = pngvalid;
 			remoteRef = F308C9A71CCFD0460006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9FA1CD0D5A50006360B /* example */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = example;
+			remoteRef = F308C9F91CD0D5A50006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9FC1CD0D5A50006360B /* minigzip */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = minigzip;
+			remoteRef = F308C9FB1CD0D5A50006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308C9FE1CD0D5A50006360B /* libz.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			name = libz.dylib;
+			path = libz.1.2.8.dylib;
+			remoteRef = F308C9FD1CD0D5A50006360B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F308CA001CD0D5A50006360B /* libz.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libz.a;
+			remoteRef = F308C9FF1CD0D5A50006360B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F32393C91A572148007BD168 /* ChipmunkDemo.app */ = {
@@ -1946,6 +2022,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/deps/chibi-scheme/build/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/libpng";
@@ -1969,6 +2046,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/deps/chibi-scheme/build/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = "me.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$PROJECT_DIR/deps/stdatomic $PROJECT_DIR/deps/tinycthread/source $PROJECT_DIR/deps/glfw/include $PROJECT_DIR/deps/Chipmunk2D/include $PROJECT_DIR/deps/libpng";
