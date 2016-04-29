@@ -24,6 +24,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("on"), GUIExpressionOnEvent);
     CCExpressionEvaluatorRegister(CC_STRING("shader"), CCAssetExpressionShader);
     CCExpressionEvaluatorRegister(CC_STRING("texture"), CCAssetExpressionTexture);
+    CCExpressionEvaluatorRegister(CC_STRING("font"), CCAssetExpressionFont);
     CCExpressionEvaluatorRegister(CC_STRING("lighten"), CCColourExpressionLighten);
     CCExpressionEvaluatorRegister(CC_STRING("darken"), CCColourExpressionDarken);
     CCExpressionEvaluatorRegister(CC_STRING("begin"), CCControlFlowExpressionBegin);
@@ -53,7 +54,6 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("library"), CCProjectExpressionLibrary);
     CCExpressionEvaluatorRegister(CC_STRING("source"), CCProjectExpressionLibrarySource);
     CCExpressionEvaluatorRegister(CC_STRING("asset"), CCProjectExpressionAsset);
-    CCExpressionEvaluatorRegister(CC_STRING("font"), CCProjectExpressionFont);
     CCExpressionEvaluatorRegister(CC_STRING("state!"), CCStateExpressionCreateState);
     CCExpressionEvaluatorRegister(CC_STRING("enum!"), CCStateExpressionCreateEnum);
     CCExpressionEvaluatorRegister(CC_STRING("super"), CCStateExpressionSuper);

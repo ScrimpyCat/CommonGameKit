@@ -30,6 +30,7 @@ typedef enum {
     CCAssetTypeShaderLibrary,
     CCAssetTypeShader,
     CCAssetTypeTexture,
+    CCAssetTypeFont,
     CCAssetTypeCount
 } CCAssetType;
 
@@ -58,6 +59,10 @@ static void CCAssetElementDestructor(CCCollection Collection, CCAssetInfo *Eleme
             
         case CCAssetTypeTexture:
             GFXTextureDestroy(Element->asset);
+            break;
+            
+        case CCAssetTypeFont:
+            CCFontDestroy(Element->asset);
             break;
             
         default:
@@ -164,6 +169,35 @@ GFXTexture CCAssetManagerCreateTexture(CCString Name)
     if (!Asset)
     {
         CC_LOG_ERROR_CUSTOM("No texture asset available with name: %S", Name);
+        return NULL;
+    }
+    
+    return CCRetain(Asset->asset);
+}
+
+#pragma mark - Font
+//TODO: Fix so it groups them into families (so we can have two arial fonts but they may differ by style or size)
+void CCAssetManagerRegisterFont(CCString Name, CCFont Font)
+{
+    CCCollectionInsertElement(Assets[CCAssetTypeFont], &(CCAssetInfo){
+        .type = CCAssetTypeFont,
+        .name = CCStringCopy(Name),
+        .asset = CCRetain(Font)
+    });
+}
+
+void CCAssetManagerDeregisterFont(CCString Name)
+{
+    CCCollectionRemoveElement(Assets[CCAssetTypeFont], CCCollectionFindElement(Assets[CCAssetTypeFont], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+}
+
+CCFont CCAssetManagerCreateFont(CCString Name)
+{
+    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeFont], CCCollectionFindElement(Assets[CCAssetTypeFont], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    
+    if (!Asset)
+    {
+        CC_LOG_ERROR_CUSTOM("No font asset available with name: %S", Name);
         return NULL;
     }
     

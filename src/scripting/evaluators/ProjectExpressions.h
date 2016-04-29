@@ -64,6 +64,5 @@ CC_EXPRESSION_EVALUATOR(game) CCExpression CCProjectExpressionGame(CCExpression 
 CC_EXPRESSION_EVALUATOR(library) CCExpression CCProjectExpressionLibrary(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(source) CCExpression CCProjectExpressionLibrarySource(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(asset) CCExpression CCProjectExpressionAsset(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(font) CCExpression CCProjectExpressionFont(CCExpression Expression);
 
 #endif

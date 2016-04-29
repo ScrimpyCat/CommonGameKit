@@ -37,5 +37,6 @@ typedef enum {
 
 CC_EXPRESSION_EVALUATOR(shader) CCExpression CCAssetExpressionShader(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(texture) CCExpression CCAssetExpressionTexture(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(font) CCExpression CCAssetExpressionFont(CCExpression Expression);
 
 #endif

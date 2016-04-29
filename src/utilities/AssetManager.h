@@ -27,6 +27,7 @@
 #define Blob_Game_AssetManager_h
 
 #include "GFX.h"
+#include "Font.h"
 
 /*!
  * @brief Creates the global asset manager.
@@ -98,5 +99,25 @@ void CCAssetManagerDeregisterTexture(CCString Name);
  * @return The texture. Must be destroyed.
  */
 CC_NEW GFXTexture CCAssetManagerCreateTexture(CCString Name);
+
+/*!
+ * @brief Registers the font with the asset manager.
+ * @param Name The lookup name for the font asset entry.
+ * @param Font The font to be managed. Retains a reference to the font.
+ */
+void CCAssetManagerRegisterFont(CCString CC_COPY(Name), CCFont CC_RETAIN(Font));
+
+/*!
+ * @brief Deregisters the font from the asset manager.
+ * @param Name The lookup name for the font asset entry.
+ */
+void CCAssetManagerDeregisterFont(CCString Name);
+
+/*!
+ * @brief Creates the registered font.
+ * @param Name The lookup name for the font asset entry.
+ * @return The font. Must be destroyed.
+ */
+CC_NEW CCFont CCAssetManagerCreateFont(CCString Name);
 
 #endif
