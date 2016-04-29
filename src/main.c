@@ -79,7 +79,7 @@ static int RenderLoop(GLFWwindow *Window)
         
         GUIManagerLock();
         GUIManagerUpdate();
-        GUIManagerRender(GFXFramebufferDefault());
+        GUIManagerRender(GFXFramebufferDefault(), 0);
         GUIManagerUnlock();
         
         glfwSwapBuffers(Window);
@@ -92,6 +92,7 @@ static int RenderLoop(GLFWwindow *Window)
 #include "RenderComponent.h"
 #include "InputSystem.h"
 #include "EntityManager.h"
+
 int main(int argc, const char *argv[])
 {
     CCEnginePreSetup();
