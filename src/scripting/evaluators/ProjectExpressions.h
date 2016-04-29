@@ -27,6 +27,7 @@
 #define Blob_Game_ProjectExpressions_h
 
 #include "ExpressionEvaluator.h"
+#include "AssetExpressions.h"
 #include "GFX.h"
 
 /*
@@ -48,7 +49,7 @@
  */
 
 typedef enum {
-    CCProjectExpressionValueTypeGameConfig = CCExpressionValueTypeReservedCount + 1,
+    CCProjectExpressionValueTypeGameConfig = CCAssetExpressionValueTypeReservedCount + 1,
     CCProjectExpressionValueTypeShaderLibrary,
     CCProjectExpressionValueTypeReservedCount
 } CCProjectExpressionValueType;

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F30437531C5F8DC400388C74 /* AssetManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F30437511C5F8DC400388C74 /* AssetManager.c */; };
-		F308C9A91CCFD04F0006360B /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F308C99C1CCFD0460006360B /* libpng16.a */; };
+		F308C9A91CCFD04F0006360B /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F308C99C1CCFD0460006360B /* libpng16d.a */; };
 		F308C9AF1CD0AEEE0006360B /* PixelDataFile.c in Sources */ = {isa = PBXBuildFile; fileRef = F308C9AD1CD0AEEE0006360B /* PixelDataFile.c */; };
 		F308CA011CD0D5D10006360B /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F308CA001CD0D5A50006360B /* libz.a */; };
 		F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F313F9A21B7FB888006F5CF5 /* AnimationSystem.c */; };
@@ -104,6 +104,7 @@
 		F3C222171C4AF6FD004ADC76 /* ExpressionProjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C222161C4AF6FD004ADC76 /* ExpressionProjectTests.m */; };
 		F3C222191C4B1535004ADC76 /* ExpressionControlFlowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C222181C4B1535004ADC76 /* ExpressionControlFlowTests.m */; };
 		F3C2221B1C4B17BF004ADC76 /* ExpressionListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C2221A1C4B17BF004ADC76 /* ExpressionListTests.m */; };
+		F3DC2A841CD3E8DC00F343B2 /* AssetExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
@@ -647,6 +648,8 @@
 		F3C401D61A56E52800095ECD /* Blob Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blob Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401E91A56E52800095ECD /* Blob GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blob GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AssetExpressions.c; sourceTree = "<group>"; };
+		F3DC2A831CD3E8DC00F343B2 /* AssetExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetExpressions.h; sourceTree = "<group>"; };
 		F3E814A71B4801DF00AD5D10 /* Keyboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Keyboard.c; sourceTree = "<group>"; };
 		F3E814A81B4801DF00AD5D10 /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapKeyboardComponent.c; sourceTree = "<group>"; };
@@ -685,7 +688,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F308CA011CD0D5D10006360B /* libz.a in Frameworks */,
-				F308C9A91CCFD04F0006360B /* libpng16.a in Frameworks */,
+				F308C9A91CCFD04F0006360B /* libpng16d.a in Frameworks */,
 				F35FBE341C75147000833474 /* Carbon.framework in Frameworks */,
 				F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */,
 				F3F5D6FA1A5700F3006D7F16 /* CoreVideo.framework in Frameworks */,
@@ -728,9 +731,9 @@
 		F308C95E1CCFD0460006360B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F308C9981CCFD0460006360B /* libpng16.dylib */,
+				F308C9981CCFD0460006360B /* libpng16d.16.22.0.dylib */,
 				F308C99A1CCFD0460006360B /* png-fix-itxt */,
-				F308C99C1CCFD0460006360B /* libpng16.a */,
+				F308C99C1CCFD0460006360B /* libpng16d.a */,
 				F308C99E1CCFD0460006360B /* pngfix */,
 				F308C9A01CCFD0460006360B /* pngimage */,
 				F308C9A21CCFD0460006360B /* pngstest */,
@@ -746,7 +749,7 @@
 			children = (
 				F308C9FA1CD0D5A50006360B /* example */,
 				F308C9FC1CD0D5A50006360B /* minigzip */,
-				F308C9FE1CD0D5A50006360B /* libz.dylib */,
+				F308C9FE1CD0D5A50006360B /* libz.1.2.8.dylib */,
 				F308CA001CD0D5A50006360B /* libz.a */,
 			);
 			name = Products;
@@ -1025,6 +1028,8 @@
 				F37699791C1053C400F24A44 /* IOExpressions.c */,
 				F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */,
 				F37699771C10262400F24A44 /* ProjectExpressions.c */,
+				F3DC2A831CD3E8DC00F343B2 /* AssetExpressions.h */,
+				F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */,
 				F37699831C11113D00F24A44 /* WindowExpressions.h */,
 				F37699821C11113D00F24A44 /* WindowExpressions.c */,
 				F3A21A4D1CB956B500518ACA /* ColourExpressions.h */,
@@ -1449,10 +1454,9 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		F308C9981CCFD0460006360B /* libpng16.dylib */ = {
+		F308C9981CCFD0460006360B /* libpng16d.16.22.0.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			name = libpng16.dylib;
 			path = libpng16d.16.22.0.dylib;
 			remoteRef = F308C9971CCFD0460006360B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1464,10 +1468,9 @@
 			remoteRef = F308C9991CCFD0460006360B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F308C99C1CCFD0460006360B /* libpng16.a */ = {
+		F308C99C1CCFD0460006360B /* libpng16d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = libpng16.a;
 			path = libpng16d.a;
 			remoteRef = F308C99B1CCFD0460006360B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1528,10 +1531,9 @@
 			remoteRef = F308C9FB1CD0D5A50006360B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F308C9FE1CD0D5A50006360B /* libz.dylib */ = {
+		F308C9FE1CD0D5A50006360B /* libz.1.2.8.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			name = libz.dylib;
 			path = libz.1.2.8.dylib;
 			remoteRef = F308C9FD1CD0D5A50006360B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1866,6 +1868,7 @@
 				F3A21A261CB54B1600518ACA /* ExpressionHelpers.c in Sources */,
 				F3A9D5CC1C21DC220042BD2A /* GLShader.c in Sources */,
 				F36531311C19F50700A3B009 /* GLTexture.c in Sources */,
+				F3DC2A841CD3E8DC00F343B2 /* AssetExpressions.c in Sources */,
 				F376997E1C105C7800F24A44 /* EqualityExpressions.c in Sources */,
 				F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */,
 				F3C020591B50DD1E00F546E7 /* InputMapMouseButtonComponent.c in Sources */,
