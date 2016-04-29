@@ -77,9 +77,11 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInputFormat(CCColourFormat Format)
     switch (Format)
     {
         case CCColourFormatRGB8Uint:
+        case CCColourFormatRGB8Unorm_sRGB:
             return GL_RGB;
             
         case CCColourFormatRGBA8Uint:
+        case CCColourFormatRGBA8Unorm_sRGB:
             return GL_RGBA;
     }
     
@@ -92,6 +94,8 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInputFormatType(CCColourFormat Forma
     {
         case CCColourFormatRGB8Uint:
         case CCColourFormatRGBA8Uint:
+        case CCColourFormatRGB8Unorm_sRGB:
+        case CCColourFormatRGBA8Unorm_sRGB:
             return GL_UNSIGNED_BYTE;
     }
     
@@ -107,6 +111,12 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInternalFormat(CCColourFormat Format
             
         case CCColourFormatRGBA8Unorm:
             return GL_RGBA8;
+            
+        case CCColourFormatRGB8Unorm_sRGB:
+            return GL_SRGB8;
+            
+        case CCColourFormatRGBA8Unorm_sRGB:
+            return GL_SRGB8_ALPHA8;
     }
     
     CCAssertLog(0, "Unsupported format");

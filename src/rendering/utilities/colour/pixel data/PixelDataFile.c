@@ -90,7 +90,8 @@ static void CCPixelDataFileGetSize(CCPixelData Pixels, size_t *Width, size_t *He
 
 static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data)
 {
-    return CCPixelDataFileGetPackedData(((CCPixelDataFileInternal*)Pixels->internal)->data, Type, Width, Height, Depth, Data);
+    CCPixelDataGetPackedDataWithFormat(((CCPixelDataFileInternal*)Pixels->internal)->data, Type, Width, Height, Depth, Data);
+    return TRUE;
 }
 
 CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
@@ -145,11 +146,14 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
     else CC_LOG_ERROR("Failed to load image due to error opening file: %s", FSPathGetFullPathString(Path));
     
     
-    CCColourFormat Format = 0;
-    CCPixelData Pixels = CCPixelDataCreate(Allocator, Format, CCPixelDataFile);
-    
-    ((CCPixelDataFileInternal*)Pixels->internal)->data = Data;
-    ((CCPixelDataFileInternal*)Pixels->internal)->path = FSPathCopy(Path);
+    CCPixelData Pixels = NULL;
+    if (Data)
+    {
+        Pixels = CCPixelDataCreate(Allocator, Data->format, CCPixelDataFile);
+        
+        ((CCPixelDataFileInternal*)Pixels->internal)->data = Data;
+        ((CCPixelDataFileInternal*)Pixels->internal)->path = FSPathCopy(Path);
+    }
     
     return Pixels;
 }
