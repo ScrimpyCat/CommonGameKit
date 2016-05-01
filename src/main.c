@@ -71,6 +71,7 @@ static int RenderLoop(GLFWwindow *Window)
     {
         mtx_lock(&RenderLock);
         CC_GL_VIEWPORT(0, 0, FramebufferWidth, FramebufferHeight);
+        CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
         
         CC_GL_CLEAR_COLOR(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
