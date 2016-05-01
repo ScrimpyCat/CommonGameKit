@@ -133,11 +133,12 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                 }
             }
             
-            else if (ArgCount == 2)
+            else if (ArgCount == 3)
             {
-                CCExpression File = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 2));
+                CCExpression Filter = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 2));
+                CCExpression File = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 3));
                 
-                if (CCExpressionGetType(File) == CCExpressionValueTypeList)
+                if ((CCExpressionGetType(Filter) == CCExpressionValueTypeAtom) && (CCExpressionGetType(File) == CCExpressionValueTypeList))
                 {
                     const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(File));
                     if (ArgCount == 2)
@@ -162,10 +163,14 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                                     
                                     if (Data)
                                     {
+                                        GFXTextureHint Filtering = GFXTextureHintFilterModeLinear;
+                                        if (CCStringEqual(CCExpressionGetAtom(Filter), CC_STRING("nearest"))) Filtering = GFXTextureHintFilterModeNearest;
+                                        else if (!CCStringEqual(CCExpressionGetAtom(Filter), CC_STRING("linear"))) CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid filtering mode: %S", CCExpressionGetAtom(Filter));
+                                        
                                         size_t Width, Height, Depth;
                                         CCPixelDataGetSize(Data, &Width, &Height, &Depth);
                                         
-                                        GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeLinear << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeLinear << GFXTextureHintFilterMag), Data->format, Width, Height, Depth, Data);
+                                        GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (Filtering << GFXTextureHintFilterMin) | (Filtering << GFXTextureHintFilterMag), Data->format, Width, Height, Depth, Data);
                                         
                                         CCAssetManagerRegisterTexture(CCExpressionGetString(Name), Texture);
                                         
@@ -184,7 +189,7 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
         }
     }
     
-    if (Ret == Asset) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [path:string]");
+    if (Ret == Asset) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [filter:atom] [path:string]");
     
     return Ret;
 }
@@ -196,8 +201,8 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
         CCEnumerator Enumerator;
         CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
         
-        CCExpression Name = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
-        CCExpression Size = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
+        CCExpression Size = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
         
         _Bool IsUnicode = FALSE, IsSequential = TRUE;
         CCRect Padding = (CCRect){ .position = CCVector2DFill(0.0f), .size = CCVector2DFill(0.0f) };
@@ -269,11 +274,6 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                                 Base = CCExpressionGetNamedInteger(Option);
                             }
                             
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("texture")))
-                            {
-                                Texture = CCAssetManagerCreateTexture(CCExpressionGetNamedString(Option));
-                            }
-                            
                             else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("letter")))
                             {
                                 CCEnumerator LetterEnumerator;
@@ -331,6 +331,11 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                             }
                         }
                     }
+                }
+                
+                else if (CCExpressionGetType(Option) == CCAssetExpressionValueTypeTexture)
+                {
+                    Texture = CCExpressionGetData(Option);
                 }
             }
             
