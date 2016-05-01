@@ -115,7 +115,7 @@ end
 
 defmodule Font do
     def convert_bmfont(args) do
-        convert_bmfont(Enum.sort(args, fn
+        args = Enum.sort(args, fn
             %BMFont.Info{}, _ -> true
             _, %BMFont.Info{} -> false
             %BMFont.Common{}, _ -> true
@@ -126,6 +126,16 @@ defmodule Font do
             %BMFont.Char{}, _ -> true
             _, %BMFont.Char{} -> false
             a, b -> a > b
+        end)
+
+        %BMFont.Common{ height: tex_height } = Enum.find(args, fn
+            %BMFont.Common{} -> true
+            _ -> false
+        end)
+
+        convert_bmfont(args |> Enum.map(fn
+            chr = %BMFont.Char{ y: y, height: h } -> %BMFont.Char{ chr | y: tex_height - y - h }
+            arg -> arg
         end), "")
     end
 
