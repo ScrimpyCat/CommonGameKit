@@ -51,14 +51,16 @@ typedef struct CCFontInfo {
 static void CCFontDestructor(CCFont Font)
 {
     CCStringDestroy(Font->name);
-    GFXTextureDestroy(Font->charset.texture);
-    CCArrayDestroy(Font->charset.glyphs);
+    if (Font->charset.texture) GFXTextureDestroy(Font->charset.texture);
+    if (Font->charset.glyphs) CCArrayDestroy(Font->charset.glyphs);
     
-    if (Font->charset.type & CCFontCharsetTypeOffsetMap) CCArrayDestroy(Font->charset.map.letters);
+    if ((!(Font->charset.type & CCFontCharsetTypeOffsetMap)) && (Font->charset.map.letters)) CCArrayDestroy(Font->charset.map.letters);
 }
 
 CCFont CCFontCreate(CCString Name, CCFontStyle Style, uint32_t Size, CCRect Padding, CCVector2D Spacing, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray Glyphs, GFXTexture Texture)
 {
+    CCAssertLog(Name, "Must have a name");
+    
     CCFont Font;
     CC_SAFE_Malloc(Font, sizeof(CCFontInfo),
                    CC_LOG_ERROR("Failed to create font, due to allocation failure. Allocation size (%zu)", sizeof(CCFontInfo));
@@ -90,4 +92,76 @@ void CCFontDestroy(CCFont Font)
 {
     CCAssertLog(Font, "Font must not be null");
     CC_SAFE_Free(Font);
+}
+
+CCFontGlyph *CCFontGetGlyph(CCFont Font, CCChar Letter)
+{
+    CCAssertLog(Font, "Font must not be null");
+    
+    if (Font->charset.type & CCFontCharsetTypeOffsetMap)
+    {
+        const size_t Index = Letter - Font->charset.map.offset;
+        if (Index < CCArrayGetCount(Font->charset.glyphs)) return CCArrayGetElementAtIndex(Font->charset.glyphs, Letter - Font->charset.map.offset);
+    }
+    
+    else
+    {
+        for (size_t Loop = 0, Count = CCArrayGetCount(Font->charset.map.letters); Loop < Count; Loop++)
+        {
+            if (*(CCChar*)CCArrayGetElementAtIndex(Font->charset.map.letters, Loop) == Letter)
+            {
+                return CCArrayGetElementAtIndex(Font->charset.glyphs, Loop);
+            }
+        }
+    }
+    
+    CC_LOG_WARNING_CUSTOM("Unable to find glyph for '%C' in font map: %S:%p", Letter, Font->name, Font);
+    
+    return NULL;
+}
+
+GFXTexture CCFontGetTexture(CCFont Font)
+{
+    return Font->charset.texture;
+}
+
+CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord)
+{
+    CCAssertLog(Font, "Font must not be null");
+    CCAssertLog(Glyph, "Glyph must not be null");
+    
+    if (Position)
+    {
+        *Position = (CCRect){
+            .position = CCVector2Add(Cursor, CCVector2DMake(Glyph->offset.x, Font->charset.base - (Glyph->coord.size.y + Glyph->offset.y))),
+            .size = Glyph->coord.size
+        };
+    }
+    
+    if (TexCoord)
+    {
+        if (Font->charset.texture)
+        {
+            size_t Width, Height;
+            GFXTextureGetSize(Font->charset.texture, &Width, &Height, NULL);
+            
+            *TexCoord = (CCRect){
+                .position = {
+                    Glyph->coord.position.x / Width,
+                    Glyph->coord.position.y / Height
+                },
+                .size = {
+                    Glyph->coord.size.x / Width,
+                    Glyph->coord.size.y / Height
+                }
+            };
+        }
+        
+        else
+        {
+            *TexCoord = (CCRect){ 0.0f, 0.0f, 0.0f, 0.0f };
+        }
+    }
+    
+    return CCVector2Add(Cursor, CCVector2DMake(Glyph->advance, 0.0f));
 }

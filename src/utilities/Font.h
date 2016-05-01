@@ -75,4 +75,30 @@ CC_NEW CCFont CCFontCreate(CCString CC_COPY(Name), CCFontStyle Style, uint32_t S
  */
 void CCFontDestroy(CCFont CC_DESTROY(Font));
 
+/*!
+ * @brief Get the glyph for the given letter.
+ * @param Font The font.
+ * @param Letter The character.
+ * @return The glyph or NULL if it cannot find the glyph for the given character.
+ */
+CCFontGlyph *CCFontGetGlyph(CCFont Font, CCChar Letter);
+
+/*!
+ * @brief Get the texture for the glyph atlas.
+ * @param Font The font.
+ * @return The texture.
+ */
+GFXTexture CCFontGetTexture(CCFont Font);
+
+/*!
+ * @brief Position the glyph at the current cursor position.
+ * @param Font The font.
+ * @param Glyph The glyph.
+ * @param Cursor The current cursor position.
+ * @param Position The position rect for the glyph. May be NULL if no position rect is needed.
+ * @param TexCoord The texture coord rect for the glyph. May be NULL if no texture coord rect is needed.
+ * @return The next cursor position.
+ */
+CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord);
+
 #endif

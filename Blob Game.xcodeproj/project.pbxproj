@@ -105,6 +105,7 @@
 		F3C222191C4B1535004ADC76 /* ExpressionControlFlowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C222181C4B1535004ADC76 /* ExpressionControlFlowTests.m */; };
 		F3C2221B1C4B17BF004ADC76 /* ExpressionListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C2221A1C4B17BF004ADC76 /* ExpressionListTests.m */; };
 		F3DC2A841CD3E8DC00F343B2 /* AssetExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */; };
+		F3DC2AC61CD5370A00F343B2 /* Font.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DC2AC51CD5370A00F343B2 /* Font.m */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
@@ -650,6 +651,7 @@
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AssetExpressions.c; sourceTree = "<group>"; };
 		F3DC2A831CD3E8DC00F343B2 /* AssetExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetExpressions.h; sourceTree = "<group>"; };
+		F3DC2AC51CD5370A00F343B2 /* Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Font.m; sourceTree = "<group>"; };
 		F3E814A71B4801DF00AD5D10 /* Keyboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Keyboard.c; sourceTree = "<group>"; };
 		F3E814A81B4801DF00AD5D10 /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapKeyboardComponent.c; sourceTree = "<group>"; };
@@ -1140,6 +1142,7 @@
 		F3C401EC1A56E52800095ECD /* Blob GameTests */ = {
 			isa = PBXGroup;
 			children = (
+				F3DC2AC41CD536E900F343B2 /* Utilities */,
 				F3150ED61C47C28400E1FC82 /* Scripting */,
 				F3769A2F1C11F8E500F24A44 /* GL */,
 				F37699EF1C11DE2800F24A44 /* Colour */,
@@ -1155,6 +1158,14 @@
 				F3C401EE1A56E52800095ECD /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F3DC2AC41CD536E900F343B2 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F3DC2AC51CD5370A00F343B2 /* Font.m */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 		F3E84D7E1B45A37E0082E510 /* Rendering */ = {
@@ -1899,6 +1910,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3DC2AC61CD5370A00F343B2 /* Font.m in Sources */,
 				F359D0151C1299600028B86B /* PixelDataStaticTests.m in Sources */,
 				F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */,
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
