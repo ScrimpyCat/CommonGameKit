@@ -76,11 +76,11 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInputFormat(CCColourFormat Format)
 {
     switch (Format)
     {
-        case CCColourFormatRGB8Uint:
+        case CCColourFormatRGB8Unorm:
         case CCColourFormatRGB8Unorm_sRGB:
             return GL_RGB;
             
-        case CCColourFormatRGBA8Uint:
+        case CCColourFormatRGBA8Unorm:
         case CCColourFormatRGBA8Unorm_sRGB:
             return GL_RGBA;
     }
@@ -92,8 +92,8 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInputFormatType(CCColourFormat Forma
 {
     switch (Format)
     {
-        case CCColourFormatRGB8Uint:
-        case CCColourFormatRGBA8Uint:
+        case CCColourFormatRGB8Unorm:
+        case CCColourFormatRGBA8Unorm:
         case CCColourFormatRGB8Unorm_sRGB:
         case CCColourFormatRGBA8Unorm_sRGB:
             return GL_UNSIGNED_BYTE;
@@ -203,7 +203,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
                 break;
         }
         
-        const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Uint;
+        const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Unorm;
         const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat), InternalFormat = GLTextureInternalFormat(Format);
         
         _Bool FreePixels = FALSE;

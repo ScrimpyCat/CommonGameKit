@@ -119,17 +119,18 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
             {
                 Image.format = PNG_FORMAT_RGBA;
                 
+                const size_t BufferSize = PNG_IMAGE_SIZE(Image);
                 uint8_t *Buffer;
-                CC_SAFE_Malloc(Buffer, PNG_IMAGE_SIZE(Image),
-                               CC_LOG_ERROR("Failed to create buffer due to allocation failure. Allocation size (%zu)", (size_t)PNG_IMAGE_SIZE(Image));
+                CC_SAFE_Malloc(Buffer, BufferSize,
+                               CC_LOG_ERROR("Failed to create buffer due to allocation failure. Allocation size (%zu)", BufferSize);
                                png_image_free(&Image);
                                CC_SAFE_Free(ImageData);
                                return NULL;
                                );
                 
-                if (png_image_finish_read(&Image, NULL, Buffer, 0, NULL))
+                if (png_image_finish_read(&Image, NULL, Buffer, -PNG_IMAGE_ROW_STRIDE(Image), NULL))
                 {
-                    Data = CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintRead, PNG_IMAGE_SIZE(Image), Buffer, NULL, NULL), CCColourFormatRGBA8Unorm_sRGB, Image.width, Image.height, 1);
+                    Data = CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintRead, BufferSize, Buffer, NULL, NULL), CCColourFormatRGBA8Unorm_sRGB, Image.width, Image.height, 1);
                 }
                 
                 png_image_free(&Image);

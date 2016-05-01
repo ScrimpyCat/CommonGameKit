@@ -111,13 +111,13 @@ static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat T
         (((CCPixelDataStaticInternal*)Pixels->internal)->height == Height) &&
         (((CCPixelDataStaticInternal*)Pixels->internal)->depth == Depth))
     {
-        CCData Buffer = NULL;
-        if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[0]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[0];
-        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[1]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[1];
-        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[2]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[2];
-        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[3]) Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[3];
+        size_t Plane = SIZE_MAX;
+        if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[0]) Plane = 0;
+        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[1]) Plane = 1;
+        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[2]) Plane = 2;
+        else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[3]) Plane = 3;
         
-        if (Buffer) CCDataReadBuffer(Buffer, 0, Width * Height * Depth, Data);
+        if (Plane != SIZE_MAX) CCDataReadBuffer(((CCPixelDataStaticInternal*)Pixels->internal)->buffer[Plane], 0, CCColourFormatSampleSizeForPlanar(Type, CCColourFormatLiteralIndexToChannelPlanar(Plane)) * Width * Height * Depth, Data);
         
         return TRUE;
     }

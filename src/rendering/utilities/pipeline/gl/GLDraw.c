@@ -127,7 +127,7 @@ static void GLDrawSetUniformTextureState(GLShader Shader, CCCollection Textures)
     GLint TextureUnit = 0; //TODO: later loop through state to see if we can reuse without causing rebinding
     for (GFXDrawInputTexture *Uniform = CCCollectionEnumeratorGetCurrent(&Enumerator); Uniform; Uniform = CCCollectionEnumeratorNext(&Enumerator))
     {
-        CC_GL_ACTIVE_TEXTURE(TextureUnit);
+        CC_GL_ACTIVE_TEXTURE(GL_TEXTURE0 + TextureUnit);
         CC_GL_BIND_TEXTURE_TARGET(GLTextureTarget(GFXTextureGetHints(Uniform->texture)), GLTextureGetID((GLTexture)Uniform->texture));
         
         GLShaderSetUniform(Shader, (GLShaderUniformInfo*)Uniform->input.shaderInput, 1, &TextureUnit);
