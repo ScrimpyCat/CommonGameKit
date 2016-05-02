@@ -79,7 +79,7 @@ static int RenderLoop(GLFWwindow *Window)
         CC_GL_VIEWPORT(0, 0, FramebufferWidth, FramebufferHeight);
         CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
         
-        if (FinalTarget)
+        if (FinalTexture)
         {
             size_t Width, Height;
             GFXTextureGetSize(FinalTexture, &Width, &Height, NULL);
