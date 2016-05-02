@@ -125,7 +125,7 @@ GFXTexture CCFontGetTexture(CCFont Font)
     return Font->charset.texture;
 }
 
-CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord)
+CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCFontAttribute Attribute, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord)
 {
     CCAssertLog(Font, "Font must not be null");
     CCAssertLog(Glyph, "Glyph must not be null");
@@ -133,8 +133,8 @@ CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCVector2D
     if (Position)
     {
         *Position = (CCRect){
-            .position = CCVector2Add(Cursor, CCVector2DMake(Glyph->offset.x, Font->charset.base - (Glyph->coord.size.y + Glyph->offset.y))),
-            .size = Glyph->coord.size
+            .position = CCVector2Add(Cursor, CCVector2Mul(Attribute.scale, CCVector2DMake(Glyph->offset.x * Attribute.space, Font->charset.base - (Glyph->coord.size.y + Glyph->offset.y)))),
+            .size = CCVector2Mul(Attribute.scale, Glyph->coord.size)
         };
     }
     
@@ -163,5 +163,5 @@ CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCVector2D
         }
     }
     
-    return CCVector2Add(Cursor, CCVector2DMake(Glyph->advance, 0.0f));
+    return CCVector2Add(Cursor, CCVector2Mul(Attribute.scale, CCVector2DMake(Glyph->advance * Attribute.space, 0.0f)));
 }

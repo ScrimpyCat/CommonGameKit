@@ -99,30 +99,52 @@
     CCFont Font = CCFontCreate(CC_STRING("test"), 0, 30, (CCRect){ CCVector2DFill(8.0f), CCVector2DFill(8.0f) }, CCVector2DFill(0.0f), 82, Base, FALSE, TRUE, (CCFontCharMap){ .offset = 'a' }, Glyphs, NULL);
     CCArrayDestroy(Glyphs);
     
-
+    
     CCRect Pos;
     CCVector2D Cursor = CCVector2DFill(0.0f);
     
-    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'a'), Cursor, &Pos, NULL);
+    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'a'), CCFontAttributeDefault(), Cursor, &Pos, NULL);
     XCTAssertEqual(Cursor.x, 48.0f, @"Should position cursor after glyph");
     XCTAssertEqual(Pos.position.x, -6.0f, @"Should correctly position glyph");
     XCTAssertEqual(Pos.position.y, Base - (13.0f + 8.0f), @"Should correctly position glyph");
     XCTAssertEqual(Pos.size.x, 8.0f, @"Should correctly position glyph");
     XCTAssertEqual(Pos.size.y, 8.0f, @"Should correctly position glyph");
     
-    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'b'), Cursor, &Pos, NULL);
+    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'b'), CCFontAttributeDefault(), Cursor, &Pos, NULL);
     XCTAssertEqual(Cursor.x, 96.0f, @"Should position cursor after glyph");
     XCTAssertEqual(Pos.position.x, 44.0f, @"Should correctly position glyph");
     XCTAssertEqual(Pos.position.y, Base - (3.0f + 8.0f), @"Should correctly position glyph");
     XCTAssertEqual(Pos.size.x, 8.0f, @"Should correctly position glyph");
     XCTAssertEqual(Pos.size.y, 8.0f, @"Should correctly position glyph");
     
-    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'c'), Cursor, &Pos, NULL);
+    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'c'), CCFontAttributeDefault(), Cursor, &Pos, NULL);
     XCTAssertEqual(Cursor.x, 141.0f, @"Should position cursor after glyph");
     XCTAssertEqual(Pos.position.x, 90.0f, @"Should correctly position glyph");
     XCTAssertEqual(Pos.position.y, Base - (13.0f + 8.0f), @"Should correctly position glyph");
     XCTAssertEqual(Pos.size.x, 8.0f, @"Should correctly position glyph");
     XCTAssertEqual(Pos.size.y, 8.0f, @"Should correctly position glyph");
+    
+    Cursor = CCVector2DFill(0.0f);
+    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'a'), CCFontAttributeCreate(CCVector2DFill(0.5f), 1.0f), Cursor, &Pos, NULL);
+    XCTAssertEqual(Cursor.x, 24.0f, @"Should position cursor after glyph");
+    XCTAssertEqual(Pos.position.x, -3.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.position.y, (Base - (13.0f + 8.0f)) / 2.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.size.x, 4.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.size.y, 4.0f, @"Should correctly position glyph");
+    
+    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'b'), CCFontAttributeCreate(CCVector2DFill(0.5f), 1.0f), Cursor, &Pos, NULL);
+    XCTAssertEqual(Cursor.x, 48.0f, @"Should position cursor after glyph");
+    XCTAssertEqual(Pos.position.x, 22.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.position.y, (Base - (3.0f + 8.0f)) / 2.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.size.x, 4.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.size.y, 4.0f, @"Should correctly position glyph");
+    
+    Cursor = CCFontPositionGlyph(Font, CCFontGetGlyph(Font, 'c'), CCFontAttributeCreate(CCVector2DFill(0.5f), 1.0f), Cursor, &Pos, NULL);
+    XCTAssertEqual(Cursor.x, 70.5f, @"Should position cursor after glyph");
+    XCTAssertEqual(Pos.position.x, 45.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.position.y, (Base - (13.0f + 8.0f)) / 2.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.size.x, 4.0f, @"Should correctly position glyph");
+    XCTAssertEqual(Pos.size.y, 4.0f, @"Should correctly position glyph");
     
     
     CCFontDestroy(Font);

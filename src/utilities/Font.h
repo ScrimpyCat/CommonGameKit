@@ -45,6 +45,11 @@ typedef struct {
     float advance;
 } CCFontGlyph;
 
+typedef struct {
+    CCVector2D scale;
+    float space;
+} CCFontAttribute;
+
 /*!
  * @brief The font.
  * @description Allows @b CCRetain.
@@ -94,11 +99,74 @@ GFXTexture CCFontGetTexture(CCFont Font);
  * @brief Position the glyph at the current cursor position.
  * @param Font The font.
  * @param Glyph The glyph.
+ * @param Attribute Custom attributes to affect the default font behaviour.
  * @param Cursor The current cursor position.
  * @param Position The position rect for the glyph. May be NULL if no position rect is needed.
  * @param TexCoord The texture coord rect for the glyph. May be NULL if no texture coord rect is needed.
  * @return The next cursor position.
  */
-CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord);
+CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCFontAttribute Attribute, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord);
+
+#pragma mark - Font Attributes
+
+/*!
+ * @brief Create the default attribute configuration.
+ * @return The default font attributes.
+ */
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeDefault(void);
+
+/*!
+ * @brief Create a custom attribute configuration.
+ * @param Scale The scale to affect the sizing of the glyph. 1.0 is default.
+ * @param Spacing The spacing to affect the space of the glyph. 1.0 is default.
+ * @return The custom font attributes.
+ */
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeCreate(CCVector2D Scale, float Spacing);
+
+/*!
+ * @brief Adjust the scale of an attribute.
+ * @param Attribute The font attribute.
+ * @param Scale The scale difference to apply to the attributes current scale.
+ * @return The new font attribute.
+ */
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeAdjustScaling(CCFontAttribute Attribute, CCVector2D Scale);
+
+/*!
+ * @brief Adjust the spacing of an attribute.
+ * @param Attribute The font attribute.
+ * @param Spacing The spacing difference to apply to the attributes current spacing.
+ * @return The new font attribute.
+ */
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeAdjustSpacing(CCFontAttribute Attribute, float Spacing);
+
+#pragma mark -
+
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeDefault(void)
+{
+    return (CCFontAttribute){
+        .scale = CCVector2DFill(1.0f),
+        .space = 1.0f
+    };
+}
+
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeCreate(CCVector2D Scale, float Spacing)
+{
+    return (CCFontAttribute){
+        .scale = Scale,
+        .space = Spacing
+    };
+}
+
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeAdjustScaling(CCFontAttribute Attribute, CCVector2D Scale)
+{
+    Attribute.scale = CCVector2Add(Attribute.scale, Scale);
+    return Attribute;
+}
+
+static CC_FORCE_INLINE CCFontAttribute CCFontAttributeAdjustSpacing(CCFontAttribute Attribute, float Spacing)
+{
+    Attribute.space += Spacing;
+    return Attribute;
+}
 
 #endif
