@@ -33,7 +33,9 @@ typedef enum {
     GFXFramebufferAttachmentActionDontCare,
     GFXFramebufferAttachmentActionClear,
     GFXFramebufferAttachmentActionLoad,
-    GFXFramebufferAttachmentActionStore
+    GFXFramebufferAttachmentActionStore,
+    
+    GFXFramebufferAttachmentActionFlagClearOnce = (1 << 8)
 } GFXFramebufferAttachmentAction;
 
 typedef enum {
