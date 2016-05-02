@@ -96,7 +96,7 @@ void GFXBlitSetDestination(GFXBlit Blit, GFXFramebuffer Framebuffer, size_t Inde
 {
     CCAssertLog(Blit, "Blit must not be null");
     
-    CC_SAFE_Free(Blit->source.framebuffer);
+    CC_SAFE_Free(Blit->destination.framebuffer);
     Blit->destination = (GFXBlitFramebuffer){
         .framebuffer = CCRetain(Framebuffer),
         .index = Index,

@@ -62,6 +62,7 @@
 		F389DC201C3A0797009480B8 /* GUIExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F389DC1E1C3A0797009480B8 /* GUIExpression.c */; };
 		F390E9CF1C79B94A0072D4E7 /* StringExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F390E9CD1C79B94A0072D4E7 /* StringExpressions.c */; };
 		F39709B61CD687650061B497 /* GFXBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709B41CD687650061B497 /* GFXBlit.c */; };
+		F39709F81CD6DC2B0061B497 /* GLBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709F61CD6DC2B0061B497 /* GLBlit.c */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -567,6 +568,8 @@
 		F390E9CE1C79B94A0072D4E7 /* StringExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExpressions.h; sourceTree = "<group>"; };
 		F39709B41CD687650061B497 /* GFXBlit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GFXBlit.c; sourceTree = "<group>"; };
 		F39709B51CD687650061B497 /* GFXBlit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXBlit.h; sourceTree = "<group>"; };
+		F39709F61CD6DC2B0061B497 /* GLBlit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GLBlit.c; sourceTree = "<group>"; };
+		F39709F71CD6DC2B0061B497 /* GLBlit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBlit.h; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -913,6 +916,8 @@
 				F3A9D5CA1C21DC220042BD2A /* GLShader.c */,
 				F3A9D5D21C28987D0042BD2A /* GLDraw.h */,
 				F3A9D5D11C28987D0042BD2A /* GLDraw.c */,
+				F39709F71CD6DC2B0061B497 /* GLBlit.h */,
+				F39709F61CD6DC2B0061B497 /* GLBlit.c */,
 			);
 			name = GL;
 			path = gl;
@@ -1905,6 +1910,7 @@
 				F359D0121C1297A10028B86B /* PixelDataGenerator.c in Sources */,
 				F365312E1C173C5900A3B009 /* GFXTexture.c in Sources */,
 				F3A3A75B1C30152200EC1F18 /* GUIObject.c in Sources */,
+				F39709F81CD6DC2B0061B497 /* GLBlit.c in Sources */,
 				F3BD17851C00FDC200B3849E /* Configuration.c in Sources */,
 				F30437531C5F8DC400388C74 /* AssetManager.c in Sources */,
 				F316198E1C1213A9008E09A1 /* PixelData.c in Sources */,

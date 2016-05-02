@@ -30,6 +30,7 @@
 #include "GLShaderLibrary.h"
 #include "GLShader.h"
 #include "GLDraw.h"
+#include "GLBlit.h"
 
 
 static const GLenum ColourAttachments[] = {
@@ -94,7 +95,8 @@ static GFXMainInfo GLGFXInfo = {
     .framebuffer = &GLFramebufferInterface,
     .library = &GLShaderLibraryInterface,
     .shader = &GLShaderInterface,
-    .draw = &GLDrawInterface
+    .draw = &GLDrawInterface,
+    .blit = &GLBlitInterface
 };
 
 GFXMainInfo * const GLGFX = &GLGFXInfo;

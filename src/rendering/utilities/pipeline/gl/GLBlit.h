@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,18 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFX_h
-#define Blob_Game_GFX_h
+#ifndef Blob_Game_GLBlit_h
+#define Blob_Game_GLBlit_h
 
-#include "GFXInterface.h"
-#include "GFXMain.h"
-#include "GFXBuffer.h"
-#include "GFXTexture.h"
-#include "GFXFramebuffer.h"
-#include "GFXShaderLibrary.h"
-#include "GFXShader.h"
-#include "GFXBlend.h"
-#include "GFXDraw.h"
-#include "GFXBlit.h"
+#include "GLGFX.h"
+#include "GLSetup.h"
+
+
+extern const GFXBlitInterface GLBlitInterface;
 
 #endif
