@@ -87,7 +87,7 @@ GFXFramebuffer GFXFramebufferDefault(void);
  * @param Count The number of attachments.
  * @return The created framebuffer.
  */
-CC_NEW GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
+CC_NEW GFXFramebuffer GFXFramebufferCreate(CCAllocatorType Allocator, GFXFramebufferAttachment *CC_OWN(Attachments), size_t Count);
 
 /*!
  * @brief Destroy a framebuffer.

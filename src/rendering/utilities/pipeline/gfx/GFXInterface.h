@@ -33,6 +33,7 @@
 #include "GFXShaderLibrary.h"
 #include "GFXShader.h"
 #include "GFXDraw.h"
+#include "GFXBlit.h"
 
 #pragma mark - Required Buffer Callbacks
 typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
@@ -72,6 +73,9 @@ typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, const char
 typedef void (*GFXDrawSubmitCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 typedef void (*GFXDrawSubmitIndexedCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 
+#pragma mark Required Blit Callbacks
+typedef void (*GFXBlitSubmitCallback)(GFXBlit Blit);
+
 
 
 #pragma mark - Optional Buffer Callbacks
@@ -86,12 +90,19 @@ typedef void (*GFXTextureInvalidateCallback)(GFXTexture Texture);
 typedef void (*GFXDrawConstructorCallback)(CCAllocatorType Allocator, GFXDraw Draw);
 typedef void (*GFXDrawDestructorCallback)(GFXDraw Draw);
 typedef void (*GFXDrawSetShaderCallback)(GFXDraw Draw, GFXShader Shader);
-typedef void (*GFXDrawSetFramebufferCallback)(GFXDraw, GFXDrawDestination *Destination);
+typedef void (*GFXDrawSetFramebufferCallback)(GFXDraw Draw, GFXDrawDestination *Destination);
 typedef void (*GFXDrawSetIndexBufferCallback)(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
 typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
 typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
 typedef void (*GFXDrawSetTextureCallback)(GFXDraw Draw, GFXDrawInputTexture *Texture);
 typedef void (*GFXDrawSetBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask);
+
+#pragma mark Optional Blit Callbacks
+typedef void (*GFXBlitConstructorCallback)(CCAllocatorType Allocator, GFXBlit Blit);
+typedef void (*GFXBlitDestructorCallback)(GFXBlit Blit);
+typedef void (*GFXBlitSetSourceCallback)(GFXBlit Blit, GFXBlitFramebuffer *Source);
+typedef void (*GFXBlitSetDestinationCallback)(GFXBlit Blit, GFXBlitFramebuffer *Destination);
+typedef void (*GFXBlitSetFilterModeCallback)(GFXBlit Draw, GFXTextureHint FilterMode);
 
 
 #pragma mark -
@@ -158,5 +169,16 @@ typedef struct {
         GFXDrawSetBlendingCallback setBlend;
     } optional;
 } GFXDrawInterface;
+
+typedef struct {
+    GFXBlitSubmitCallback submit;
+    struct {
+        GFXBlitConstructorCallback create;
+        GFXBlitDestructorCallback destroy;
+        GFXBlitSetSourceCallback setSource;
+        GFXBlitSetDestinationCallback setDestination;
+        GFXBlitSetFilterModeCallback setFilterMode;
+    } optional;
+} GFXBlitInterface;
 
 #endif
