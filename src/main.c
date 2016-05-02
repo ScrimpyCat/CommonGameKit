@@ -67,25 +67,65 @@ static int RenderLoop(GLFWwindow *Window)
     
     glfwMakeContextCurrent(Window);
     
+    GFXBlit Blit = GFXBlitCreate(CC_STD_ALLOCATOR);
+    GFXBlitSetFilterMode(Blit, GFXTextureHintFilterModeNearest);
+    
+    GFXTexture FinalTexture = NULL;
+    GFXFramebufferAttachment *FinalTarget = NULL;
+    GFXFramebuffer Final = NULL;
     while (!glfwWindowShouldClose(Window))
     {
         mtx_lock(&RenderLock);
         CC_GL_VIEWPORT(0, 0, FramebufferWidth, FramebufferHeight);
         CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
         
-        CC_GL_CLEAR_COLOR(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+        if (FinalTarget)
+        {
+            size_t Width, Height;
+            GFXTextureGetSize(FinalTexture, &Width, &Height, NULL);
+            
+            if ((Width != FramebufferWidth) || (Height != FramebufferHeight))
+            {
+                if (Final) GFXFramebufferDestroy(Final);
+                GFXTextureDestroy(FinalTexture);
+                
+                Final = NULL;
+                FinalTexture = NULL;
+            }
+        }
         
-        CCComponentSystemRun(CCComponentSystemExecutionTypeRender);
+        if (!Final)
+        {
+            FinalTexture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, FramebufferWidth, FramebufferHeight, 1, NULL);
+            GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(CCRetain(FinalTexture), GFXFramebufferAttachmentActionFlagClearOnce | GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
+            Final = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
+            
+            FinalTarget = GFXFramebufferGetAttachment(Final, 0);
+            
+            const CCRect Region = { .position = CCVector2DFill(0.0f), .size = CCVector2DMake(FramebufferWidth, FramebufferHeight) };
+            GFXBlitSetSource(Blit, Final, 0, Region);
+            GFXBlitSetDestination(Blit, GFXFramebufferDefault(), 0, Region);
+        }
+        
+        FinalTarget->load = GFXFramebufferAttachmentActionFlagClearOnce | GFXFramebufferAttachmentActionLoad;
+        
+        CCComponentSystemRun(CCComponentSystemExecutionTypeRender); //TODO: pass in render target
         
         GUIManagerLock();
         GUIManagerUpdate();
-        GUIManagerRender(GFXFramebufferDefault(), 0);
+        GUIManagerRender(Final, 0);
         GUIManagerUnlock();
+        
+        GFXBlitSubmit(Blit);
         
         glfwSwapBuffers(Window);
         mtx_unlock(&RenderLock);
     }
+    
+    GFXBlitDestroy(Blit);
+    
+    if (Final) GFXFramebufferDestroy(Final);
+    if (FinalTexture) GFXTextureDestroy(FinalTexture);
     
     return EXIT_SUCCESS;
 }
