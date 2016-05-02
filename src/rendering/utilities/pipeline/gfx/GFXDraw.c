@@ -119,6 +119,7 @@ void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
+    CC_SAFE_Free(Draw->shader);
     Draw->shader = CCRetain(Shader);
     
     if  (Shader)
@@ -135,6 +136,7 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
 {
     CCAssertLog(Draw, "Draw must not be null");
     
+    CC_SAFE_Free(Draw->destination.framebuffer);
     Draw->destination = (GFXDrawDestination){
         .framebuffer = CCRetain(Framebuffer),
         .index = Index
@@ -147,6 +149,7 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
 {
     CCAssertLog(Draw, "Draw must not be null");
     
+    CC_SAFE_Free(Draw->index.buffer);
     Draw->index = (GFXDrawIndexBuffer){
         .buffer = CCRetain(Indexes),
         .format = Format
