@@ -1,7 +1,5 @@
 (font "Arial" 57
     (unicode #f)
-    (padding 8 8 8 8)
-    (spacing 0 0)
     (line-height 82)
     (base 53)
     (texture "arial-57-font")

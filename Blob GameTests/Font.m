@@ -52,7 +52,7 @@
         .advance = 45.0f
     });
     
-    CCFont Font = CCFontCreate(CC_STRING("test"), 0, 30, (CCRect){ CCVector2DFill(8.0f), CCVector2DFill(8.0f) }, CCVector2DFill(0.0f), 82, 53, FALSE, TRUE, (CCFontCharMap){ .offset = 'a' }, Glyphs, NULL);
+    CCFont Font = CCFontCreate(CC_STRING("test"), 0, 30, 82, 53, FALSE, TRUE, (CCFontCharMap){ .offset = 'a' }, Glyphs, NULL);
     CCArrayDestroy(Glyphs);
     
     
@@ -96,7 +96,7 @@
     });
     
     int32_t Base = 50;
-    CCFont Font = CCFontCreate(CC_STRING("test"), 0, 30, (CCRect){ CCVector2DFill(8.0f), CCVector2DFill(8.0f) }, CCVector2DFill(0.0f), 82, Base, FALSE, TRUE, (CCFontCharMap){ .offset = 'a' }, Glyphs, NULL);
+    CCFont Font = CCFontCreate(CC_STRING("test"), 0, 30, 82, Base, FALSE, TRUE, (CCFontCharMap){ .offset = 'a' }, Glyphs, NULL);
     CCArrayDestroy(Glyphs);
     
     

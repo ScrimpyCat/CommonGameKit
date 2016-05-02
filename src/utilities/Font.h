@@ -62,8 +62,6 @@ typedef struct CCFontInfo *CCFont;
  * @param Name The name of the font.
  * @param Style The style of the font.
  * @param Size The size of the font.
- * @param Padding The padding of the font.
- * @param Spacing The spacing of the font.
  * @param LineHeight The line height of the font.
  * @param Base The base of the font.
  * @param IsUnicode Whether or not the charset includes unicode characters.
@@ -72,7 +70,7 @@ typedef struct CCFontInfo *CCFont;
  * @param Texture The texture.
  * @return The font. Must be destroyed.
  */
-CC_NEW CCFont CCFontCreate(CCString CC_COPY(Name), CCFontStyle Style, uint32_t Size, CCRect Padding, CCVector2D Spacing, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap CC_RETAIN(Map), CCArray CC_RETAIN(Glyphs), GFXTexture CC_RETAIN(Texture));
+CC_NEW CCFont CCFontCreate(CCString CC_COPY(Name), CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap CC_RETAIN(Map), CCArray CC_RETAIN(Glyphs), GFXTexture CC_RETAIN(Texture));
 
 /*!
  * @brief Destroy the font.

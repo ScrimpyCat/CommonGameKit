@@ -32,8 +32,6 @@ typedef enum {
 
 typedef struct {
     CCFontCharsetType type;
-    CCRect padding;
-    CCVector2D spacing;
     int32_t lineHeight;
     int32_t base;
     GFXTexture texture;
@@ -57,7 +55,7 @@ static void CCFontDestructor(CCFont Font)
     if ((!(Font->charset.type & CCFontCharsetTypeOffsetMap)) && (Font->charset.map.letters)) CCArrayDestroy(Font->charset.map.letters);
 }
 
-CCFont CCFontCreate(CCString Name, CCFontStyle Style, uint32_t Size, CCRect Padding, CCVector2D Spacing, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray Glyphs, GFXTexture Texture)
+CCFont CCFontCreate(CCString Name, CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray Glyphs, GFXTexture Texture)
 {
     CCAssertLog(Name, "Must have a name");
     
@@ -73,8 +71,6 @@ CCFont CCFontCreate(CCString Name, CCFontStyle Style, uint32_t Size, CCRect Padd
         .size = Size,
         .charset = {
             .type = (IsUnicode ? CCFontCharsetTypeUnicode : 0) | (SequentialMap ? CCFontCharsetTypeOffsetMap : 0),
-            .padding = Padding,
-            .spacing = Spacing,
             .lineHeight = LineHeight,
             .base = Base,
             .texture = CCRetain(Texture),

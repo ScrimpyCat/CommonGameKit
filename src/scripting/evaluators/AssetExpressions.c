@@ -205,8 +205,6 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
         CCExpression Size = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
         
         _Bool IsUnicode = FALSE, IsSequential = TRUE;
-        CCRect Padding = (CCRect){ .position = CCVector2DFill(0.0f), .size = CCVector2DFill(0.0f) };
-        CCVector2D Spacing = CCVector2DFill(0.0f);
         int32_t LineHeight = 0, Base = 0;
         GFXTexture Texture = NULL;
         CCFontStyle FontStyle = 0;
@@ -252,16 +250,6 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                             else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("unicode")))
                             {
                                 IsUnicode = CCExpressionGetNamedInteger(Option);
-                            }
-                            
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("padding")))
-                            {
-                                Padding = CCExpressionGetNamedRect(Option);
-                            }
-                            
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("spacing")))
-                            {
-                                Spacing = CCExpressionGetNamedVector2(Option);
                             }
                             
                             else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("line-height")))
@@ -346,7 +334,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                 CCArrayDestroy(Letters);
             }
             
-            CCFont Font = CCFontCreate(CCExpressionGetString(Name), FontStyle, CCExpressionGetInteger(Size), Padding, Spacing, LineHeight, Base, IsUnicode, IsSequential, Map, Glyphs, Texture);
+            CCFont Font = CCFontCreate(CCExpressionGetString(Name), FontStyle, CCExpressionGetInteger(Size), LineHeight, Base, IsUnicode, IsSequential, Map, Glyphs, Texture);
             
             CCAssetManagerRegisterFont(CCExpressionGetString(Name), Font);
             

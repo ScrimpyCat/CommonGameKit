@@ -140,7 +140,7 @@ defmodule Font do
     end
 
     defp convert_bmfont([], script), do: script <> ")"
-    defp convert_bmfont([%BMFont.Info{ face: face, size: size, bold: bold, italic: italic, unicode: unicode, padding: padding, spacing: spacing }|args], script) do
+    defp convert_bmfont([%BMFont.Info{ face: face, size: size, bold: bold, italic: italic, unicode: unicode }|args], script) do
         style = cond do
             bold and italic -> " (style bold italic)"
             bold -> " (style bold)"
@@ -152,8 +152,6 @@ defmodule Font do
         convert_bmfont(args, script <> """
         (font \"#{face}\" #{size}#{style}
             #{unicode}
-            (padding #{padding.left} #{padding.down} #{padding.right} #{padding.up})
-            (spacing #{spacing.horizontal} #{spacing.vertical})
         """)
     end
     defp convert_bmfont([%BMFont.Common{ line_height: line_height, base: base, pages: 1 }|args], script) do
