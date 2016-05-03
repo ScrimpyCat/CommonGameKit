@@ -55,31 +55,31 @@ static void CCFontDestructor(CCFont Font)
     if ((!(Font->charset.type & CCFontCharsetTypeOffsetMap)) && (Font->charset.map.letters)) CCArrayDestroy(Font->charset.map.letters);
 }
 
-CCFont CCFontCreate(CCString Name, CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray Glyphs, GFXTexture Texture)
+CCFont CCFontCreate(CCAllocatorType Allocator, CCString Name, CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray Glyphs, GFXTexture Texture)
 {
     CCAssertLog(Name, "Must have a name");
     
-    CCFont Font;
-    CC_SAFE_Malloc(Font, sizeof(CCFontInfo),
-                   CC_LOG_ERROR("Failed to create font, due to allocation failure. Allocation size (%zu)", sizeof(CCFontInfo));
-                   return NULL;
-                   );
+    CCFont Font = CCMalloc(Allocator, sizeof(CCFontInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Font)
+    {
+        *Font = (CCFontInfo){
+            .name = CCStringCopy(Name),
+            .style = Style,
+            .size = Size,
+            .charset = {
+                .type = (IsUnicode ? CCFontCharsetTypeUnicode : 0) | (SequentialMap ? CCFontCharsetTypeOffsetMap : 0),
+                .lineHeight = LineHeight,
+                .base = Base,
+                .texture = CCRetain(Texture),
+                .map = SequentialMap ? Map : (CCFontCharMap){ .letters = CCRetain(Map.letters) },
+                .glyphs = CCRetain(Glyphs)
+            }
+        };
+        
+        CCMemorySetDestructor(Font, (CCMemoryDestructorCallback)CCFontDestructor);
+    }
     
-    *Font = (CCFontInfo){
-        .name = CCStringCopy(Name),
-        .style = Style,
-        .size = Size,
-        .charset = {
-            .type = (IsUnicode ? CCFontCharsetTypeUnicode : 0) | (SequentialMap ? CCFontCharsetTypeOffsetMap : 0),
-            .lineHeight = LineHeight,
-            .base = Base,
-            .texture = CCRetain(Texture),
-            .map = SequentialMap ? Map : (CCFontCharMap){ .letters = CCRetain(Map.letters) },
-            .glyphs = CCRetain(Glyphs)
-        }
-    };
-    
-    CCMemorySetDestructor(Font, (CCMemoryDestructorCallback)CCFontDestructor);
+    else CC_LOG_ERROR("Failed to create font, due to allocation failure. Allocation size (%zu)", sizeof(CCFontInfo));
     
     return Font;
 }

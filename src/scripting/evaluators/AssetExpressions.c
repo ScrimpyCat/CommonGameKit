@@ -334,7 +334,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                 CCArrayDestroy(Letters);
             }
             
-            CCFont Font = CCFontCreate(CCExpressionGetString(Name), FontStyle, CCExpressionGetInteger(Size), LineHeight, Base, IsUnicode, IsSequential, Map, Glyphs, Texture);
+            CCFont Font = CCFontCreate(CC_STD_ALLOCATOR, CCExpressionGetString(Name), FontStyle, CCExpressionGetInteger(Size), LineHeight, Base, IsUnicode, IsSequential, Map, Glyphs, Texture);
             
             CCAssetManagerRegisterFont(CCExpressionGetString(Name), Font);
             

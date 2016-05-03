@@ -59,6 +59,7 @@ typedef struct CCFontInfo *CCFont;
 
 /*!
  * @brief Create the font.
+ * @param Allocator The allocator.
  * @param Name The name of the font.
  * @param Style The style of the font.
  * @param Size The size of the font.
@@ -70,7 +71,7 @@ typedef struct CCFontInfo *CCFont;
  * @param Texture The texture.
  * @return The font. Must be destroyed.
  */
-CC_NEW CCFont CCFontCreate(CCString CC_COPY(Name), CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap CC_RETAIN(Map), CCArray CC_RETAIN(Glyphs), GFXTexture CC_RETAIN(Texture));
+CC_NEW CCFont CCFontCreate(CCAllocatorType Allocator, CCString CC_COPY(Name), CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap CC_RETAIN(Map), CCArray CC_RETAIN(Glyphs), GFXTexture CC_RETAIN(Texture));
 
 /*!
  * @brief Destroy the font.
