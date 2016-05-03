@@ -79,13 +79,13 @@ typedef struct CCTextInfo *CCText;
  * @param Allocator The allocator to be used for allocations.
  * @return The text. Must be destroyed.
  */
-CCText CCTextCreate(CCAllocatorType Allocator);
+CC_NEW CCText CCTextCreate(CCAllocatorType Allocator);
 
 /*!
  * @brief Destroy the text.
  * @param Text The text.
  */
-void CCTextDestroy(CCText Text);
+void CCTextDestroy(CCText CC_DESTROY(Text));
 
 /*!
  * @brief Set the string to be rendered.
