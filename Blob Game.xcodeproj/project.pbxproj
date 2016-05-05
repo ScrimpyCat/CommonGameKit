@@ -64,6 +64,7 @@
 		F39709B61CD687650061B497 /* GFXBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709B41CD687650061B497 /* GFXBlit.c */; };
 		F39709F81CD6DC2B0061B497 /* GLBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709F61CD6DC2B0061B497 /* GLBlit.c */; };
 		F39709FB1CD7FB450061B497 /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709F91CD7FB450061B497 /* Text.c */; };
+		F3970A031CD9AE2B0061B497 /* Text.m in Sources */ = {isa = PBXBuildFile; fileRef = F3970A021CD9AE2B0061B497 /* Text.m */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -573,6 +574,7 @@
 		F39709F71CD6DC2B0061B497 /* GLBlit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBlit.h; sourceTree = "<group>"; };
 		F39709F91CD7FB450061B497 /* Text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Text.c; sourceTree = "<group>"; };
 		F39709FA1CD7FB450061B497 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
+		F3970A021CD9AE2B0061B497 /* Text.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Text.m; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -1178,6 +1180,7 @@
 		F3DC2AC41CD536E900F343B2 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F3970A021CD9AE2B0061B497 /* Text.m */,
 				F3DC2AC51CD5370A00F343B2 /* Font.m */,
 			);
 			name = Utilities;
@@ -1936,6 +1939,7 @@
 				F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */,
 				F3C2221B1C4B17BF004ADC76 /* ExpressionListTests.m in Sources */,
 				F3150F231C48E43E00E1FC82 /* ExpressionMathTests.m in Sources */,
+				F3970A031CD9AE2B0061B497 /* Text.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
 				F3C222191C4B1535004ADC76 /* ExpressionControlFlowTests.m in Sources */,

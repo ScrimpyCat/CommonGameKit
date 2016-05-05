@@ -24,3 +24,347 @@
  */
 
 #include "Text.h"
+
+typedef struct CCTextInfo {
+    CCAllocatorType allocator;
+    CCOrderedCollection drawers;
+    CCOrderedCollection strings;
+    CCTextAlignment alignment;
+    CCRect frame;
+    struct {
+        struct {
+            CCTextVisibility options;
+            size_t offset;
+            size_t length;
+        } controls;
+        size_t length; //cached visible length
+    } visible;
+    size_t length; //cached length
+} CCTextInfo;
+
+static void CCTextDestructor(CCText Text)
+{
+    if (Text->drawers) CCCollectionDestroy(Text->drawers);
+    if (Text->strings) CCCollectionDestroy(Text->strings);
+}
+
+CCText CCTextCreate(CCAllocatorType Allocator)
+{
+    CCText Text = CCMalloc(Allocator, sizeof(CCTextInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Text)
+    {
+        *Text = (CCTextInfo){
+            .allocator = Allocator,
+            .drawers = NULL,
+            .strings = NULL,
+            .alignment = 0,
+            .frame = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(0.0f) },
+            .visible = {
+                .controls = {
+                    .options = CCTextVisibilityMultiLine | CCTextVisibilityWord,
+                    .offset = 0,
+                    .length = SIZE_MAX
+                },
+                .length = 0
+            },
+            .length = 0
+        };
+        
+        CCMemorySetDestructor(Text, (CCMemoryDestructorCallback)CCTextDestructor);
+    }
+    
+    else CC_LOG_ERROR("Failed to create text, due to allocation failure. Allocation size (%zu)", sizeof(CCTextInfo));
+    
+    return Text;
+}
+
+void CCTextDestroy(CCText Text)
+{
+    CCAssertLog(Text, "Text must not be null");
+    CC_SAFE_Free(Text);
+}
+
+CCOrderedCollection CCTextGetDrawables(CCText Text)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    /*
+     Return a collection of GFXDraw's, best case it'll just contain one draw
+     
+     workout what words or characters will be visible
+     
+     sort those characters into groups of renderables (ones that can be rendered together)
+     
+     create buffer and draw
+     */
+    if (Text->strings)
+    {
+        CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
+        
+    }
+    
+    return NULL;
+}
+
+static void CCTextElementDestructor(CCCollection Collection, CCTextAttribute *Element)
+{
+    if (Element->string) CCStringDestroy(Element->string);
+    if (Element->font) CCFontDestroy(Element->font);
+}
+
+static _Bool CCTextAttributeMergeable(const CCTextAttribute *Attr1, const CCTextAttribute *Attr2)
+{
+    return !memcmp(&Attr1->font, &Attr2->font, sizeof(CCTextAttribute) - offsetof(CCTextAttribute, font));
+}
+
+void CCTextSetString(CCText Text, CCOrderedCollection AttributedStrings)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    size_t Length = 0;
+    CCOrderedCollection Strings = NULL;
+    CCTextAttribute Attribute = { .string = 0 };
+    if (AttributedStrings)
+    {
+        Strings = CCCollectionCreate(Text->allocator, CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), (CCCollectionElementDestructor)CCTextElementDestructor);
+        CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attr, AttributedStrings)
+        {
+            if (Attr->string)
+            {
+                if (Attribute.string)
+                {
+                    if (CCTextAttributeMergeable(&Attribute, Attr))
+                    {
+                        CCString Temp = Attribute.string;
+                        Attribute.string = CCStringCreateByInsertingString(Temp, CCStringGetLength(Attribute.string), Attr->string);
+                        CCStringDestroy(Temp);
+                    }
+                    
+                    else
+                    {
+                        Length += CCStringGetLength(Attribute.string);
+                        CCOrderedCollectionAppendElement(Strings, &Attribute);
+                        
+                        Attribute = *Attr;
+                        Attribute.string = CCStringCopy(Attribute.string);
+                        CCRetain(Attribute.font);
+                    }
+                }
+                
+                else
+                {
+                    Attribute = *Attr;
+                    Attribute.string = CCStringCopy(Attribute.string);
+                    CCRetain(Attribute.font);
+                }
+            }
+        }
+    }
+    
+    if (Attribute.string)
+    {
+        Length += CCStringGetLength(Attribute.string);
+        CCOrderedCollectionAppendElement(Strings, &Attribute);
+    }
+    
+    //TODO: compare difference between new Strings and old Text->strings
+    if (Text->strings) CCCollectionDestroy(Text->strings);
+    Text->strings = Strings;
+    Text->length = Length;
+}
+
+void CCTextSetAlignment(CCText Text, CCTextAlignment Alignment)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    if (Text->alignment != Alignment)
+    {
+        //TODO: set change in alignment
+        Text->alignment = Alignment;
+    }
+}
+
+void CCTextSetVisibility(CCText Text, CCTextVisibility Visibility)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    if (Text->visible.controls.options != Visibility)
+    {
+        //TODO: set change visibility
+        Text->visible.controls.options = Visibility;
+    }
+}
+
+void CCTextSetFrame(CCText Text, CCRect Frame)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    if ((Text->frame.position.x != Frame.position.x) &&
+        (Text->frame.position.y != Frame.position.y) &&
+        (Text->frame.size.x != Frame.size.x) &&
+        (Text->frame.size.y != Frame.size.y))
+    {
+        //TODO: set change frame
+        Text->frame = Frame;
+    }
+}
+
+size_t CCTextGetLength(CCText Text)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    return Text->length;
+}
+
+size_t CCTextGetVisibleLength(CCText Text)
+{
+    CCAssertLog(Text, "Text must not be null");
+    //TODO: setup drawables and get visible length
+    return Text->visible.length;
+}
+
+void CCTextSetVisibleLength(CCText Text, size_t Length)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    if (Text->visible.controls.length != Length)
+    {
+        //TODO: set change visible length
+        Text->visible.controls.length = Length;
+    }
+}
+
+size_t CCTextGetOffset(CCText Text)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    return Text->visible.controls.offset;
+}
+
+void CCTextSetOffset(CCText Text, size_t Offset)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    if (Text->visible.controls.offset != Offset)
+    {
+        //TODO: set change visible length
+        Text->visible.controls.offset = Offset;
+    }
+}
+
+CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, size_t ChrOffset, size_t ChrLength)
+{
+    CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
+    
+    CCOrderedCollection Attributes = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), (CCCollectionElementDestructor)CCTextElementDestructor);
+    
+    if (ChrLength)
+    {
+        size_t Offset = 0;
+        CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, AttributedStrings)
+        {
+            const size_t Length = CCStringGetLength(Attribute->string);
+            
+            CCString String = 0;
+            if (ChrOffset < (Offset + Length))
+            {
+                size_t AdjustedOffset;
+                if (ChrOffset >= Offset)
+                {
+                    const size_t Index = ChrOffset - Offset;
+                    String = CCStringCreateWithoutRange(Attribute->string, 0, Index);
+                    
+                    if (ChrLength < Length)
+                    {
+                        CCString Temp = String;
+                        String = CCStringCreateWithoutRange(String, ChrLength, Length - (Index + ChrLength));
+                        CCStringDestroy(Temp);
+                    }
+                }
+                
+                else if (ChrLength > (AdjustedOffset = (Offset - ChrOffset)))
+                {
+                    if (ChrLength < (AdjustedOffset + Length)) String = CCStringCreateWithoutRange(Attribute->string, ChrLength - AdjustedOffset, (AdjustedOffset + Length) - ChrLength);
+                    else String = CCStringCopy(Attribute->string);
+                }
+                
+                else break;
+                
+                CCTextAttribute Attr = *Attribute;
+                Attr.string = String;
+                CCRetain(Attr.font);
+                CCOrderedCollectionAppendElement(Attributes, &Attr);
+            }
+            
+            Offset += Length;
+        }
+    }
+    
+    return Attributes;
+}
+
+static void CCTextCollectionElementDestructor(CCCollection Collection, CCCollection *Element)
+{
+    CCCollectionDestroy(*Element);
+}
+
+static CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute)
+{
+    return CCFontAttributeAdjustSpacing(CCFontAttributeAdjustScaling(CCFontAttributeDefault(), Attribute->scale), Attribute->space);
+}
+
+CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, CCTextVisibility Visibility, float LineWidth)
+{
+    CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
+    
+    CCOrderedCollection Lines = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCOrderedCollection), (CCCollectionElementDestructor)CCTextCollectionElementDestructor);
+    
+    size_t Offset = 0, Length = 0;
+    CCVector2D Cursor = CCVector2DFill(0.0f);
+    CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, AttributedStrings)
+    {
+        _Bool Prev = FALSE;
+        CC_STRING_FOREACH(Letter, Attribute->string)
+        {
+            if (CC_UNLIKELY(Prev))
+            {
+                Prev = FALSE;
+                Letter = CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
+            }
+            
+            Length++;
+            
+            const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
+            if (Glyph)
+            {
+                CCRect Rect;
+                Cursor = CCFontPositionGlyph(Attribute->font, Glyph, CCTextAttributeGetFontAttribute(Attribute), Cursor, &Rect, NULL);
+                
+                if ((Cursor.x >= LineWidth) || ((Rect.position.x + Rect.size.x) > LineWidth))
+                {
+                    if ((Rect.position.x + Rect.size.x) > LineWidth)
+                    {
+                        if (Length == 1) return Lines;
+                        
+                        if (CCStringEnumeratorGetIndex(&CC_STRING_CURRENT_ENUMERATOR)) CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
+                        else Prev = TRUE;
+                        
+                        Length--;
+                    }
+                    
+                    CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length) });
+                    
+                    Offset += Length;
+                    Length = 0;
+                    Cursor = CCVector2DFill(0.0f);
+                    
+                    if (Visibility & CCTextVisibilitySingleLine) return Lines;
+                }
+            }
+        }
+    }
+    
+    if (Length) CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length) });
+    
+    return Lines;
+}

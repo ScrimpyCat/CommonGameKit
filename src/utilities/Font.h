@@ -35,6 +35,7 @@ typedef enum {
 } CCFontStyle;
 
 typedef union {
+    ///Array of @b CCChar
     CCArray letters;
     size_t offset;
 } CCFontCharMap;
