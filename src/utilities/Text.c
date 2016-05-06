@@ -274,7 +274,7 @@ CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrd
                     const size_t Index = ChrOffset - Offset;
                     String = CCStringCreateWithoutRange(Attribute->string, 0, Index);
                     
-                    if (ChrLength < Length)
+                    if (ChrLength < (Length - Index))
                     {
                         CCString Temp = String;
                         String = CCStringCreateWithoutRange(String, ChrLength, Length - (Index + ChrLength));
@@ -319,10 +319,20 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
     
     CCOrderedCollection Lines = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCOrderedCollection), (CCCollectionElementDestructor)CCTextCollectionElementDestructor);
     
-    size_t Offset = 0, Length = 0;
+    size_t Offset = 0, Length = 0, WordStart = 0, WordAttributeCount = 0, Skip = 0;
     CCVector2D Cursor = CCVector2DFill(0.0f);
+    _Bool PrevAttr = FALSE;
     CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, AttributedStrings)
     {
+        if (CC_UNLIKELY(PrevAttr))
+        {
+            PrevAttr = FALSE;
+            Attribute = CCCollectionEnumeratorPrevious(&CC_COLLECTION_CURRENT_ENUMERATOR);
+        }
+        
+        WordAttributeCount++;
+        
+        size_t AttrLength = 0;
         _Bool Prev = FALSE;
         CC_STRING_FOREACH(Letter, Attribute->string)
         {
@@ -332,7 +342,21 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                 Letter = CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
             }
             
+            if (Skip)
+            {
+                Skip--;
+                continue;
+            }
+            
+            AttrLength++;
             Length++;
+            
+            if (isspace(Letter))
+            {
+                WordStart = Length;
+                WordAttributeCount = 1;
+                //TODO: on newline move to next line
+            }
             
             const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
             if (Glyph)
@@ -342,14 +366,87 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                 
                 if ((Cursor.x >= LineWidth) || ((Rect.position.x + Rect.size.x) > LineWidth))
                 {
-                    if ((Rect.position.x + Rect.size.x) > LineWidth)
+                    _Bool StartAgain = FALSE;
+                    if (Visibility & CCTextVisibilityCharacter)
                     {
-                        if (Length == 1) return Lines;
+                        if ((Rect.position.x + Rect.size.x) > LineWidth)
+                        {
+                            if (Length == 1) return Lines;
+                            
+                            if (CCStringEnumeratorGetIndex(&CC_STRING_CURRENT_ENUMERATOR)) CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
+                            else Prev = TRUE;
+                            
+                            Length--;
+                        }
+                    }
+                    
+                    else
+                    {
+                        if (!WordStart)
+                        {
+                            if ((Rect.position.x + Rect.size.x) > LineWidth) return Lines;
+                            
+                            CCChar Next = CCStringEnumeratorNext(&CC_STRING_CURRENT_ENUMERATOR);
+                            if (!Next)
+                            {
+                                size_t Loop = 1;
+                                for (CCTextAttribute *Attr; (Attr = CCCollectionEnumeratorNext(&CC_COLLECTION_CURRENT_ENUMERATOR)); Loop++)
+                                {
+                                    if (CCStringGetLength(Attr->string))
+                                    {
+                                        Next = CCStringGetCharacterAtIndex(Attr->string, 0);
+                                        break;
+                                    }
+                                }
+                                
+                                while (Loop--) CCCollectionEnumeratorPrevious(&CC_COLLECTION_CURRENT_ENUMERATOR);
+                            }
+                            
+                            CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
+                            
+                            if (!isspace(Next)) return Lines;
+                        }
                         
-                        if (CCStringEnumeratorGetIndex(&CC_STRING_CURRENT_ENUMERATOR)) CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
-                        else Prev = TRUE;
+                        else if (WordStart != Length)
+                        {
+                            const size_t WordLength = Length - WordStart;
+                            Length -= WordLength;
+                            
+                            if ((WordAttributeCount > 1) && (WordLength >= AttrLength))
+                            {
+                                size_t Chrs = AttrLength;
+                                for (CCTextAttribute *Attr; (Attr = CCCollectionEnumeratorPrevious(&CC_COLLECTION_CURRENT_ENUMERATOR)); )
+                                {
+                                    const size_t Len = CCStringGetLength(Attr->string);
+                                    if (Len > (WordLength - Chrs))
+                                    {
+                                        Skip = (Len + Chrs) - WordLength;
+                                        break;
+                                    }
+                                    
+                                    Chrs += Len;
+                                }
+                                
+                                if (!CCOrderedCollectionGetIndex(AttributedStrings, CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR))) PrevAttr = TRUE;
+                                else CCCollectionEnumeratorPrevious(&CC_COLLECTION_CURRENT_ENUMERATOR);
+                                
+                                WordAttributeCount = 0;
+                                StartAgain = TRUE;
+                            }
+                            
+                            else
+                            {
+                                for (size_t Loop = 0, Count = CCStringEnumeratorGetIndex(&CC_STRING_CURRENT_ENUMERATOR); Loop < WordLength; Loop++, Count--)
+                                {
+                                    if (Count) CCStringEnumeratorPrevious(&CC_STRING_CURRENT_ENUMERATOR);
+                                    else Prev = TRUE;
+                                }
+                            }
+                            
+                            WordStart = 0;
+                        }
                         
-                        Length--;
+                        else if ((Rect.position.x + Rect.size.x) > LineWidth) return Lines;
                     }
                     
                     CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length) });
@@ -359,6 +456,7 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                     Cursor = CCVector2DFill(0.0f);
                     
                     if (Visibility & CCTextVisibilitySingleLine) return Lines;
+                    if (StartAgain) break;
                 }
             }
         }
