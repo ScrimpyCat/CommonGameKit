@@ -353,6 +353,9 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
             
             if (isspace(Letter))
             {
+                WordStart = Length;
+                WordAttributeCount = 1;
+                
                 if (Letter == '\n')
                 {
                     WordStart = 0;
@@ -362,12 +365,8 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                     Offset += Length;
                     Length = 0;
                     Cursor = CCVector2DFill(0.0f);
-                    
                     continue;
                 }
-                
-                WordStart = Length;
-                WordAttributeCount = 1;
             }
             
             const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
