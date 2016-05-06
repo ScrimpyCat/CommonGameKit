@@ -32,6 +32,29 @@
 
 @implementation TextAttributeTests
 
+-(void) testLength
+{
+    CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("aa bb cc"),
+        .font = NULL
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING(" abc "),
+        .font = NULL
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("cba"),
+        .font = NULL
+    });
+    
+    
+    XCTAssertEqual(CCTextAttributeGetLength(Strings), 16, @"Should have 16 characters");
+    
+    
+    CCCollectionDestroy(Strings);
+}
+
 -(void) testMerging
 {
     CCFont Font = CCFontCreate(CC_STD_ALLOCATOR, CC_STRING("test"), 0, 30, 82, 53, FALSE, FALSE, (CCFontCharMap){ .offset = 0 }, NULL, NULL);
