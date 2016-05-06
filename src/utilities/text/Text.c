@@ -100,7 +100,7 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
     if (Text->strings)
     {
         CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
-        
+        CCOrderedCollection Lines = CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x);
     }
     
     return NULL;
