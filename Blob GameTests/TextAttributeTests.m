@@ -32,6 +32,51 @@
 
 @implementation TextAttributeTests
 
+-(void) testMerging
+{
+    CCFont Font = CCFontCreate(CC_STD_ALLOCATOR, CC_STRING("test"), 0, 30, 82, 53, FALSE, FALSE, (CCFontCharMap){ .offset = 0 }, NULL, NULL);
+    
+    CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("aa bb cc"),
+        .font = NULL
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING(" abc "),
+        .font = NULL
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("cba"),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("bac"),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("aaa"),
+        .font = NULL,
+        .space = 0.5f
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("bbb"),
+        .font = NULL
+    });
+    
+    
+    CCOrderedCollection Merged = CCTextAttributeMerge(CC_STD_ALLOCATOR, Strings);
+    XCTAssertEqual(CCCollectionGetCount(Merged), 4, @"Should select 4 attributes");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(Merged, 0))->string, CC_STRING("aa bb cc abc ")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(Merged, 1))->string, CC_STRING("cbabac")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(Merged, 2))->string, CC_STRING("aaa")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(Merged, 3))->string, CC_STRING("bbb")), @"Should be the correct string");
+    CCCollectionDestroy(Merged);
+    
+    
+    CCCollectionDestroy(Strings);
+    CCFontDestroy(Font);
+}
+
 -(void) testSelection
 {
     CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
