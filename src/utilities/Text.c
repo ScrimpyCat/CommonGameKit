@@ -353,9 +353,21 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
             
             if (isspace(Letter))
             {
+                if (Letter == '\n')
+                {
+                    WordStart = 0;
+                    
+                    CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length) });
+                    
+                    Offset += Length;
+                    Length = 0;
+                    Cursor = CCVector2DFill(0.0f);
+                    
+                    continue;
+                }
+                
                 WordStart = Length;
                 WordAttributeCount = 1;
-                //TODO: on newline move to next line
             }
             
             const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);

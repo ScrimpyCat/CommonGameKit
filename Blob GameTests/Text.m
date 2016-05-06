@@ -383,6 +383,78 @@
     
     
     CCCollectionDestroy(Strings);
+    Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("a "),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("aa"),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("ab"),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("b "),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("cb"),
+        .font = Font
+    });
+    
+    Lines = CCTextAttributeGetLines(CC_STD_ALLOCATOR, Strings, CCTextVisibilityMultiLine | CCTextVisibilityWord, 40.0f);
+    XCTAssertEqual(CCCollectionGetCount(Lines), 3, @"Should produce 3 lines");
+    XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0)), 1, @"Should contain one attribute");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 0))->string, CC_STRING("a ")), @"Should be the correct string");
+    XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1)), 3, @"Should contain 3 attributes");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 0))->string, CC_STRING("aa")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 1))->string, CC_STRING("ab")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 2))->string, CC_STRING("b ")), @"Should be the correct string");
+    XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 2)), 1, @"Should contain one attribute");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 2), 0))->string, CC_STRING("cb")), @"Should be the correct string");
+    CCCollectionDestroy(Lines);
+    
+    
+    CCCollectionDestroy(Strings);
+    Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("a "),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("a\n"),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("ab"),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("b "),
+        .font = Font
+    });
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("cb"),
+        .font = Font
+    });
+    
+    Lines = CCTextAttributeGetLines(CC_STD_ALLOCATOR, Strings, CCTextVisibilityMultiLine | CCTextVisibilityWord, 40.0f);
+    XCTAssertEqual(CCCollectionGetCount(Lines), 3, @"Should produce 3 lines");
+    XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0)), 2, @"Should contain 2 attributes");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 0))->string, CC_STRING("a ")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 1))->string, CC_STRING("a\n")), @"Should be the correct string");
+    XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1)), 2, @"Should contain 2 attributes");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 0))->string, CC_STRING("ab")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 1))->string, CC_STRING("b ")), @"Should be the correct string");
+    XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 2)), 1, @"Should contain one attribute");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 2), 0))->string, CC_STRING("cb")), @"Should be the correct string");
+    CCCollectionDestroy(Lines);
+    
+    
+    CCCollectionDestroy(Strings);
     CCFontDestroy(Font);
 }
 
