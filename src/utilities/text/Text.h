@@ -26,42 +26,13 @@
 #ifndef Blob_Game_Text_h
 #define Blob_Game_Text_h
 
-#include "Font.h"
+#include "TextAttribute.h"
 
 typedef enum {
     CCTextAlignmentLeft,
     CCTextAlignmentCenter,
     CCTextAlignmentRight
 } CCTextAlignment;
-
-typedef enum {
-    CCTextVisibilityMultiLine = (0 << 0),
-    CCTextVisibilitySingleLine = (1 << 0),
-    
-    CCTextVisibilityWord = (0 << 1),
-    CCTextVisibilityCharacter = (1 << 1)
-} CCTextVisibility;
-
-typedef struct {
-    /// The string the attribute applies to
-    CCString string;
-    /// The font to be used for the attribute
-    CCFont font;
-    /// The colour of the text
-    CCColourRGBA colour;
-    /// The size of the text
-    CCVector2D scale;
-    /// The positioning of the text relative to its current position
-    CCVector2D offset;
-    /// The positioning applied around the anchor points. Positive values shift the top/right, negative values shit the bottom/left.
-    CCVector2D anchoredOffset;
-    /// The character distancing in the text
-    float space;
-    /// The character softness of the text (0.0 = hard, 1.0 = very soft)
-    float softness;
-    /// The thickness of the text (0.0 = very thin, 1.0 = very thick)
-    float thickness;
-} CCTextAttribute;
 
 /*!
  * @brief The renderable text.
@@ -167,29 +138,5 @@ size_t CCTextGetOffset(CCText Text);
  * @param Offset The offset.
  */
 void CCTextSetOffset(CCText Text, size_t Offset);
-
-/*!
- * @brief Get the attributed strings in selection.
- * @description Modifies the strings of the attributes if necessary.
- * @param Allocator The allocator to be used.
- * @param AttributedStrings The attributed strings to select from.
- * @param Offset The offset of the first character.
- * @param Length The length of characters to select.
- * @return The selected attributed strings. Note: Must destroy the list.
- */
-CC_NEW CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, size_t Offset, size_t Length);
-
-/*!
- * @brief Get the lines of attributed strings that fit within the line width.
- * @description Depending on visibility options, either characters or words that just won't fit within
- *              the given line width will cause lines to be incomplete and return only up to them.
- *
- * @param Allocator The allocator to be used.
- * @param AttributedStrings The attributed strings to separate into lines.
- * @param Visibility The visibility options to define how lines should be structured.
- * @param LineWidth The maximum width of a line.
- * @return The lines of attributed strings. Note: Must destroy the list.
- */
-CC_NEW CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, CCTextVisibility Visibility, float LineWidth);
 
 #endif
