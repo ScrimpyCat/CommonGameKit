@@ -24,13 +24,13 @@
  */
 
 #import <XCTest/XCTest.h>
-#import "Text.h"
+#import "TextAttribute.h"
 
-@interface Text : XCTestCase
+@interface TextAttributeTests : XCTestCase
 
 @end
 
-@implementation Text
+@implementation TextAttributeTests
 
 -(void) testSelection
 {
@@ -96,7 +96,7 @@
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(Selection, 2))->string, CC_STRING("cba")), @"Should be the correct string");
     CCCollectionDestroy(Selection);
     
-
+    
     CCCollectionDestroy(Strings);
 }
 

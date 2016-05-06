@@ -64,7 +64,7 @@
 		F39709B61CD687650061B497 /* GFXBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709B41CD687650061B497 /* GFXBlit.c */; };
 		F39709F81CD6DC2B0061B497 /* GLBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709F61CD6DC2B0061B497 /* GLBlit.c */; };
 		F39709FB1CD7FB450061B497 /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = F39709F91CD7FB450061B497 /* Text.c */; };
-		F3970A031CD9AE2B0061B497 /* Text.m in Sources */ = {isa = PBXBuildFile; fileRef = F3970A021CD9AE2B0061B497 /* Text.m */; };
+		F3970A031CD9AE2B0061B497 /* TextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3970A021CD9AE2B0061B497 /* TextTests.m */; };
 		F39797091A5C77A0007C3422 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F39797081A5C77A0007C3422 /* Component.c */; };
 		F397970C1A5C7CF7007C3422 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F397970B1A5C7CF7007C3422 /* ComponentSystem.c */; };
 		F3996F9E1B5B38040065F7DB /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3996F9C1B5B38040065F7DB /* InputMapControllerButtonComponent.c */; };
@@ -90,6 +90,7 @@
 		F3B147D01C3FFED300ADC294 /* ListExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3B147CE1C3FFED300ADC294 /* ListExpressions.c */; };
 		F3B54B051C7D707A00523E20 /* ExpressionStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3B54B041C7D707A00523E20 /* ExpressionStringTests.m */; };
 		F3B657931CDD5A9800B3C2FC /* TextAttribute.c in Sources */ = {isa = PBXBuildFile; fileRef = F3B657911CDD5A9800B3C2FC /* TextAttribute.c */; };
+		F3B657951CDD648C00B3C2FC /* TextAttributeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3B657941CDD648C00B3C2FC /* TextAttributeTests.m */; };
 		F3BD17741C00857800B3849E /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17721C00857800B3849E /* Expression.c */; };
 		F3BD17781C00B35E00B3849E /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */; };
 		F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BD177A1C00DB5600B3849E /* ExpressionSetup.c */; };
@@ -110,7 +111,7 @@
 		F3C222191C4B1535004ADC76 /* ExpressionControlFlowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C222181C4B1535004ADC76 /* ExpressionControlFlowTests.m */; };
 		F3C2221B1C4B17BF004ADC76 /* ExpressionListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3C2221A1C4B17BF004ADC76 /* ExpressionListTests.m */; };
 		F3DC2A841CD3E8DC00F343B2 /* AssetExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */; };
-		F3DC2AC61CD5370A00F343B2 /* Font.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DC2AC51CD5370A00F343B2 /* Font.m */; };
+		F3DC2AC61CD5370A00F343B2 /* FontTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DC2AC51CD5370A00F343B2 /* FontTests.m */; };
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
@@ -575,7 +576,7 @@
 		F39709F71CD6DC2B0061B497 /* GLBlit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLBlit.h; sourceTree = "<group>"; };
 		F39709F91CD7FB450061B497 /* Text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Text.c; sourceTree = "<group>"; };
 		F39709FA1CD7FB450061B497 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
-		F3970A021CD9AE2B0061B497 /* Text.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Text.m; sourceTree = "<group>"; };
+		F3970A021CD9AE2B0061B497 /* TextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextTests.m; sourceTree = "<group>"; };
 		F39797071A5C7791007C3422 /* Component.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
 		F39797081A5C77A0007C3422 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Component.c; sourceTree = "<group>"; };
 		F397970A1A5C7CDC007C3422 /* ComponentSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentSystem.h; sourceTree = "<group>"; };
@@ -626,6 +627,7 @@
 		F3B54B041C7D707A00523E20 /* ExpressionStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionStringTests.m; sourceTree = "<group>"; };
 		F3B657911CDD5A9800B3C2FC /* TextAttribute.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TextAttribute.c; sourceTree = "<group>"; };
 		F3B657921CDD5A9800B3C2FC /* TextAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAttribute.h; sourceTree = "<group>"; };
+		F3B657941CDD648C00B3C2FC /* TextAttributeTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextAttributeTests.m; sourceTree = "<group>"; };
 		F3BD17721C00857800B3849E /* Expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Expression.c; sourceTree = "<group>"; };
 		F3BD17731C00857800B3849E /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expression.h; sourceTree = "<group>"; };
 		F3BD17761C00B35E00B3849E /* ExpressionEvaluator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExpressionEvaluator.c; sourceTree = "<group>"; };
@@ -665,7 +667,7 @@
 		F3C401EE1A56E52800095ECD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F3DC2A821CD3E8DC00F343B2 /* AssetExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AssetExpressions.c; sourceTree = "<group>"; };
 		F3DC2A831CD3E8DC00F343B2 /* AssetExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssetExpressions.h; sourceTree = "<group>"; };
-		F3DC2AC51CD5370A00F343B2 /* Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Font.m; sourceTree = "<group>"; };
+		F3DC2AC51CD5370A00F343B2 /* FontTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontTests.m; sourceTree = "<group>"; };
 		F3E814A71B4801DF00AD5D10 /* Keyboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Keyboard.c; sourceTree = "<group>"; };
 		F3E814A81B4801DF00AD5D10 /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapKeyboardComponent.c; sourceTree = "<group>"; };
@@ -1194,8 +1196,9 @@
 		F3DC2AC41CD536E900F343B2 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				F3970A021CD9AE2B0061B497 /* Text.m */,
-				F3DC2AC51CD5370A00F343B2 /* Font.m */,
+				F3970A021CD9AE2B0061B497 /* TextTests.m */,
+				F3B657941CDD648C00B3C2FC /* TextAttributeTests.m */,
+				F3DC2AC51CD5370A00F343B2 /* FontTests.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -1946,7 +1949,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3DC2AC61CD5370A00F343B2 /* Font.m in Sources */,
+				F3DC2AC61CD5370A00F343B2 /* FontTests.m in Sources */,
 				F359D0151C1299600028B86B /* PixelDataStaticTests.m in Sources */,
 				F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */,
 				F3AE99431A725AC500212838 /* ComponentSystemTests.m in Sources */,
@@ -1954,7 +1957,7 @@
 				F3769A2E1C11F8E200F24A44 /* GLStateModernTests.m in Sources */,
 				F3C2221B1C4B17BF004ADC76 /* ExpressionListTests.m in Sources */,
 				F3150F231C48E43E00E1FC82 /* ExpressionMathTests.m in Sources */,
-				F3970A031CD9AE2B0061B497 /* Text.m in Sources */,
+				F3970A031CD9AE2B0061B497 /* TextTests.m in Sources */,
 				F3AE99B61A750D6500212838 /* EntityTests.m in Sources */,
 				F35CD6C61B3DDBFD0032E3A7 /* EntityManagerTests.m in Sources */,
 				F3C222191C4B1535004ADC76 /* ExpressionControlFlowTests.m in Sources */,
@@ -1965,6 +1968,7 @@
 				F359D0171C1299670028B86B /* PixelDataGeneratorTests.m in Sources */,
 				F3C2220F1C4A5D33004ADC76 /* ExpressionStateTests.m in Sources */,
 				F3C222171C4AF6FD004ADC76 /* ExpressionProjectTests.m in Sources */,
+				F3B657951CDD648C00B3C2FC /* TextAttributeTests.m in Sources */,
 				F3150F271C48FF0500E1FC82 /* ExpressionEvaluatorTests.m in Sources */,
 				F3F696D51A5D047400E486B5 /* ComponentTests.m in Sources */,
 			);

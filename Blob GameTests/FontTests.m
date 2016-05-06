@@ -26,11 +26,11 @@
 #import <XCTest/XCTest.h>
 #import "Font.h"
 
-@interface Font : XCTestCase
+@interface FontTests : XCTestCase
 
 @end
 
-@implementation Font
+@implementation FontTests
 
 -(void) testGettingGlyphs
 {
