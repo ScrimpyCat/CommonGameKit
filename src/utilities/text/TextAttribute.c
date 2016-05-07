@@ -49,12 +49,12 @@ size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings)
     return Length;
 }
 
-float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, _Bool Strip)
+float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, float *LeadingWidth, float *TrailingWidth)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
     _Bool Leading = TRUE;
-    float LeadingWidth = 0.0f, TrailingWidth = 0.0f;
+    float LeadingW = 0.0f, TrailingW = 0.0f;
     CCVector2D Cursor = CCVector2DFill(0.0f);
     CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attr, AttributedStrings)
     {
@@ -66,20 +66,17 @@ float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, _Bool S
             {
                 CCVector2D Next = CCFontPositionGlyph(Attr->font, Glyph, Options, Cursor, NULL, NULL);
                 
-                if (Strip)
+                if (isspace(Letter))
                 {
-                    if (isspace(Letter))
-                    {
-                        const float Width = Next.x - Cursor.x;
-                        if (Leading) LeadingWidth += Width;
-                        else TrailingWidth += Width;
-                    }
-                    
-                    else
-                    {
-                        Leading = FALSE;
-                        TrailingWidth = 0.0f;
-                    }
+                    const float Width = Next.x - Cursor.x;
+                    if (Leading) LeadingW += Width;
+                    else TrailingW += Width;
+                }
+                
+                else
+                {
+                    Leading = FALSE;
+                    TrailingW = 0.0f;
                 }
                 
                 Cursor = Next;
@@ -89,7 +86,10 @@ float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, _Bool S
         Cursor = CCVector2Add(Cursor, Attr->offset);
     }
     
-    return Cursor.x - (LeadingWidth + TrailingWidth);
+    if (LeadingWidth) *LeadingWidth = LeadingW;
+    if (TrailingWidth) *TrailingWidth = TrailingW;
+    
+    return Cursor.x;
 }
 
 float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool IgnoreWhitespace)

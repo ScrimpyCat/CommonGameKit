@@ -71,12 +71,11 @@ size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings);
 /*!
  * @brief Get the width of the line of attributed strings.
  * @param AttributedStrings The attributed strings to get the length of.
- * @param Strip Whether leading and trailing whitespace should be stripped
- *        from the calculations or not.
- *
+ * @param LeadingWidth Store the width of leading whitespace.
+ * @param TrailingWidth Store the width of trailing whitespace.
  * @return The line width of the attributed strings.
  */
-float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, _Bool Strip);
+float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, float *LeadingWidth, float *TrailingWidth);
 
 /*!
  * @brief Get the height of the line of attributed strings.

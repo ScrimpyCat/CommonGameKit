@@ -86,8 +86,10 @@
     });
     
     
-    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, FALSE), 26.0f, @"Should have the correct line height");
-    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, TRUE), 6.0f, @"Should have the correct line height");
+    float Leading, Trailing;
+    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, &Leading, &Trailing), 26.0f, @"Should have the correct line width");
+    XCTAssertEqual(Leading, 10.0f, @"Should have the correct leading width");
+    XCTAssertEqual(Trailing, 10.0f, @"Should have the correct trailing width");
     
     
     CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
@@ -96,8 +98,9 @@
         .scale = CCVector2DFill(-0.5f)
     });
     
-    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, FALSE), 39.0f, @"Should have the correct line height");
-    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, TRUE), 24.0f, @"Should have the correct line height");
+    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, &Leading, &Trailing), 39.0f, @"Should have the correct line width");
+    XCTAssertEqual(Leading, 10.0f, @"Should have the correct leading width");
+    XCTAssertEqual(Trailing, 5.0f, @"Should have the correct trailing width");
     
     
     CCCollectionDestroy(Strings);
