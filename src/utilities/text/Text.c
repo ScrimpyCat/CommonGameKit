@@ -125,10 +125,14 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
             
             Text->visible.length += CCTextAttributeGetLength(Line);
             
-            float LeadingWhitespace, TrailingWhitespace;
-            const float Width = CCTextAttributeGetLineWidth(Line, &LeadingWhitespace, &TrailingWhitespace);
+            CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height));
+            if (Text->alignment != CCTextAlignmentLeft)
+            {
+                float LeadingWhitespace, TrailingWhitespace;
+                const float Width = CCTextAttributeGetLineWidth(Line, &LeadingWhitespace, &TrailingWhitespace);
+                Cursor.x += (Text->frame.size.x - Width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
+            }
             
-            CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height)); //TODO: set alignment
             CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
             {
                 size_t GlyphCount = 0;
