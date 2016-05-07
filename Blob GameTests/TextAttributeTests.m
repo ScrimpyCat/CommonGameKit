@@ -55,6 +55,55 @@
     CCCollectionDestroy(Strings);
 }
 
+-(void) testLineWidth
+{
+    CCArray Glyphs = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCFontGlyph), 3);
+    
+    CCArrayAppendElement(Glyphs, &(CCFontGlyph){
+        .coord = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(100.0f) },
+        .offset = CCVector2DFill(0.0f),
+        .advance = 5.0f
+    });
+    CCArrayAppendElement(Glyphs, &(CCFontGlyph){
+        .coord = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(5.0f) },
+        .offset = CCVector2DMake(-1.0f, 10.0f),
+        .advance = 6.0f
+    });
+    
+    CCArray Letters = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCChar), 4);
+    
+    CCArrayAppendElement(Letters, &(CCChar){ ' ' });
+    CCArrayAppendElement(Letters, &(CCChar){ 'a' });
+    
+    CCFont Font = CCFontCreate(CC_STD_ALLOCATOR, CC_STRING("test"), 0, 30, 50, 0, FALSE, FALSE, (CCFontCharMap){ .letters = Letters }, Glyphs, NULL);
+    CCArrayDestroy(Glyphs);
+    CCArrayDestroy(Letters);
+    
+    CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("  a  "),
+        .font = Font
+    });
+    
+    
+    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, FALSE), 26.0f, @"Should have the correct line height");
+    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, TRUE), 6.0f, @"Should have the correct line height");
+    
+    
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("  a  "),
+        .font = Font,
+        .scale = CCVector2DFill(-0.5f)
+    });
+    
+    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, FALSE), 39.0f, @"Should have the correct line height");
+    XCTAssertEqual(CCTextAttributeGetLineWidth(Strings, TRUE), 24.0f, @"Should have the correct line height");
+    
+    
+    CCCollectionDestroy(Strings);
+    CCFontDestroy(Font);
+}
+
 -(void) testLineHeight
 {
     CCArray Glyphs = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCFontGlyph), 3);

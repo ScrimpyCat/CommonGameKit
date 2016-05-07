@@ -49,14 +49,57 @@ size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings)
     return Length;
 }
 
+float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, _Bool Strip)
+{
+    CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
+    
+    _Bool Leading = TRUE;
+    float LeadingWidth = 0.0f, TrailingWidth = 0.0f;
+    CCVector2D Cursor = CCVector2DFill(0.0f);
+    CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attr, AttributedStrings)
+    {
+        const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attr);
+        CC_STRING_FOREACH(Letter, Attr->string)
+        {
+            const CCFontGlyph *Glyph = CCFontGetGlyph(Attr->font, Letter);
+            if (Glyph)
+            {
+                CCVector2D Next = CCFontPositionGlyph(Attr->font, Glyph, Options, Cursor, NULL, NULL);
+                
+                if (Strip)
+                {
+                    if (isspace(Letter))
+                    {
+                        const float Width = Next.x - Cursor.x;
+                        if (Leading) LeadingWidth += Width;
+                        else TrailingWidth += Width;
+                    }
+                    
+                    else
+                    {
+                        Leading = FALSE;
+                        TrailingWidth = 0.0f;
+                    }
+                }
+                
+                Cursor = Next;
+            }
+        }
+        
+        Cursor = CCVector2Add(Cursor, Attr->offset);
+    }
+    
+    return Cursor.x - (LeadingWidth + TrailingWidth);
+}
+
 float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool IgnoreWhitespace)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
-    float LineHeight = 0;
+    float LineHeight = 0.0f;
     CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attr, AttributedStrings)
     {
-        CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attr);
+        const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attr);
         float Height = CCFontGetLineHeight(Attr->font, Options);
         CC_STRING_FOREACH(Letter, Attr->string)
         {
@@ -211,8 +254,11 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
         
         WordAttributeCount++;
         
+//        Cursor = CCVector2Add(Cursor, Attr->offset);
+        
         size_t AttrLength = 0;
         _Bool Prev = FALSE;
+        const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
         CC_STRING_FOREACH(Letter, Attribute->string)
         {
             if (CC_UNLIKELY(Prev))
@@ -252,7 +298,7 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
             if (Glyph)
             {
                 CCRect Rect;
-                Cursor = CCFontPositionGlyph(Attribute->font, Glyph, CCTextAttributeGetFontAttribute(Attribute), Cursor, &Rect, NULL);
+                Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, &Rect, NULL);
                 
                 if ((Cursor.x >= LineWidth) || ((Rect.position.x + Rect.size.x) > LineWidth))
                 {

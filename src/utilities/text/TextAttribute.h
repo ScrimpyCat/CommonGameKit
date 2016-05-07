@@ -69,7 +69,17 @@ extern const CCCollectionElementDestructor CCTextAttributeDestructorForCollectio
 size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings);
 
 /*!
- * @brief Get height of the line of attributed strings.
+ * @brief Get the width of the line of attributed strings.
+ * @param AttributedStrings The attributed strings to get the length of.
+ * @param Strip Whether leading and trailing whitespace should be stripped
+ *        from the calculations or not.
+ *
+ * @return The line width of the attributed strings.
+ */
+float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, _Bool Strip);
+
+/*!
+ * @brief Get the height of the line of attributed strings.
  * @param AttributedStrings The attributed strings to get the length of.
  * @param IgnoreWhitespace Whether whitespace should be ignored or included in
  *        calculations.
