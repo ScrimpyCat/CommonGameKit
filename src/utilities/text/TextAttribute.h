@@ -47,8 +47,8 @@ typedef struct {
     CCVector2D scale;
     /// The positioning of the text relative to its current position
     CCVector2D offset;
-    /// The positioning applied around the anchor points. Positive values shift the top/right, negative values shit the bottom/left.
-    CCVector2D anchoredOffset;
+    /// The tilt applied to the glyph. Positive values shift the top/right, negative values shit the bottom/left.
+    CCVector2D tilt;
     /// The character distancing in the text
     float space;
     /// The character softness of the text (0.0 = hard, 1.0 = very soft)
@@ -59,6 +59,13 @@ typedef struct {
 
 ///Convenient collection element destructor for @b CCTextAttribute's
 extern const CCCollectionElementDestructor CCTextAttributeDestructorForCollection;
+
+/*!
+ * @brief Get font attribute settings.
+ * @param Attribute The text attribute to get the font attribute settings of.
+ * @return The font attribute.
+ */
+CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute);
 
 /*!
  * @brief Get the length of the attributed strings.

@@ -24,6 +24,7 @@
  */
 
 #include "Text.h"
+#include "AssetManager.h"
 
 typedef struct CCTextInfo {
     CCAllocatorType allocator;
@@ -84,26 +85,174 @@ void CCTextDestroy(CCText Text)
     CC_SAFE_Free(Text);
 }
 
+typedef struct {
+    CCVector2D position;
+    CCColourRGBA colour;
+    CCVector2D texCoord;
+    //edge
+    //width
+} CCTextVertexData;
+
+static void CCTextDrawableElementDestructor(CCCollection Collection, CCTextDrawable *Drawable)
+{
+    GFXDrawDestroy(Drawable->drawer);
+}
+
 CCOrderedCollection CCTextGetDrawables(CCText Text)
 {
     CCAssertLog(Text, "Text must not be null");
     
     /*
-     Return a collection of GFXDraw's, best case it'll just contain one draw
+     TODO: Optimize!
      
-     workout what words or characters will be visible
-     
-     sort those characters into groups of renderables (ones that can be rendered together)
-     
-     create buffer and draw
+     - The CCTextAttribute functions are not designed for optimal usage, later combine their operations.
+     - The drawables should be ordered into groups that can be drawn together in a single call.
+     - Drawables should be cached and only recreated when necessary.
      */
+    CCOrderedCollection Drawables = CCCollectionCreate(Text->allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextDrawable), (CCCollectionElementDestructor)CCTextDrawableElementDestructor);
+    
+    Text->visible.length = 0;
     if (Text->strings)
     {
         CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
         CCOrderedCollection Lines = CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x);
+        
+        float Height = 0.0f;
+        CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
+        {
+            Height += CCTextAttributeGetLineHeight(Line, TRUE);
+            if (Height > Text->frame.size.y) break;
+            
+            Text->visible.length += CCTextAttributeGetLength(Line);
+            
+            float LeadingWhitespace, TrailingWhitespace;
+            const float Width = CCTextAttributeGetLineWidth(Line, &LeadingWhitespace, &TrailingWhitespace);
+            
+            CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height)); //TODO: set alignment
+            CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
+            {
+                size_t GlyphCount = 0;
+                CC_STRING_FOREACH(Letter, Attribute->string)
+                {
+                    const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
+                    if (Glyph) GlyphCount++;
+                }
+                
+                if (GlyphCount)
+                {
+                    CCTextVertexData *Data = CCMalloc(Text->allocator, sizeof(CCTextVertexData) * GlyphCount * 4, NULL, CC_DEFAULT_ERROR_CALLBACK);
+                    if (Data)
+                    {
+                        //TODO: This IBO should be an asset
+#define IBO_SIZE 20002
+#define QUAD_BATCH_SIZE ((DEMO_IBO_SIZE + 2) / 6)
+#define DEGENERATE_STRIPS(quads) (((quads) - 1) * 2)
+                        
+                        static GFXBuffer IBO = NULL;
+                        if (!IBO)
+                        {
+                            unsigned short *Indices;
+                            CC_SAFE_Malloc(Indices, sizeof(unsigned short) * IBO_SIZE,
+                                           CC_LOG_ERROR("Failed to allocate IBO");
+                                           return NULL;
+                                           );
+                            
+                            
+                            for (unsigned short Loop = 0, Loop2 = 0; Loop < IBO_SIZE; )
+                            {
+                                Indices[Loop++] = Loop2++;
+                                Indices[Loop++] = Loop2++;
+                                Indices[Loop++] = Loop2++;
+                                Indices[Loop++] = Loop2;
+                                
+                                if (Loop < IBO_SIZE - 4)
+                                {
+                                    Indices[Loop++] = Loop2++;
+                                    Indices[Loop++] = Loop2;
+                                }
+                            }
+                            
+                            IBO = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataIndex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(unsigned short) * IBO_SIZE, Indices);
+                            CC_SAFE_Free(Indices);
+                        }
+                        
+                        
+                        const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
+                        size_t Index = 0;
+                        CC_STRING_FOREACH(Letter, Attribute->string)
+                        {
+                            const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
+                            if (Glyph)
+                            {
+                                CCRect Rect, TexCoord;
+                                Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, &Rect, &TexCoord);
+                                
+                                Rect.position = CCVector2Add(Rect.position, Attribute->offset);
+                                
+                                const CCVector2D PosTilt = Attribute->tilt;
+                                const CCVector2D NegTilt = CCVector2Neg(Attribute->tilt);
+                                
+                                Data[Index++] = (CCTextVertexData){
+                                    .position = CCVector2Add(Rect.position, NegTilt),
+                                    .colour = Attribute->colour,
+                                    .texCoord = TexCoord.position
+                                };
+                                Data[Index++] = (CCTextVertexData){
+                                    .position = CCVector2Add(CCVector2DMake(Rect.position.x + Rect.size.x, Rect.position.y), CCVector2DMake(NegTilt.x, PosTilt.y)),
+                                    .colour = Attribute->colour,
+                                    .texCoord = CCVector2DMake(TexCoord.position.x + TexCoord.size.x, TexCoord.position.y)
+                                };
+                                Data[Index++] = (CCTextVertexData){
+                                    .position = CCVector2Add(CCVector2DMake(Rect.position.x, Rect.position.y + Rect.size.y), CCVector2DMake(PosTilt.x, NegTilt.y)),
+                                    .colour = Attribute->colour,
+                                    .texCoord = CCVector2DMake(TexCoord.position.x, TexCoord.position.y + TexCoord.size.y)
+                                };
+                                Data[Index++] = (CCTextVertexData){
+                                    .position = CCVector2Add(CCVector2Add(Rect.position, Rect.size), PosTilt),
+                                    .colour = Attribute->colour,
+                                    .texCoord = CCVector2Add(TexCoord.position, TexCoord.size)
+                                };
+                            }
+                        }
+                        
+                        
+                        GFXBuffer VertBuffer = GFXBufferCreate(Text->allocator, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(CCTextVertexData) * GlyphCount * 4, Data);
+                        CC_SAFE_Free(Data);
+                        
+                        GFXBuffer EdgeBuffer = GFXBufferCreate(Text->allocator, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(float), &(float){ Attribute->softness });
+                        GFXBuffer WidthBuffer = GFXBufferCreate(Text->allocator, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(float), &(float){ Attribute->thickness });
+                        
+                        GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("signed-distance-field"));
+                        
+                        GFXDraw Drawer = GFXDrawCreate(Text->allocator);
+                        GFXDrawSetShader(Drawer, Shader);
+                        GFXDrawSetTexture(Drawer, "tex", CCFontGetTexture(Attribute->font));
+                        GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, position));
+                        GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCTextVertexData), offsetof(CCTextVertexData, colour));
+                        GFXDrawSetVertexBuffer(Drawer, "vTexCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, texCoord));
+                        GFXDrawSetBuffer(Drawer, "edge", EdgeBuffer);
+                        GFXDrawSetBuffer(Drawer, "width", WidthBuffer);
+                        GFXDrawSetBlending(Drawer, GFXBlendTransparent);
+                        GFXDrawSetIndexBuffer(Drawer, IBO, GFXBufferFormatUInt16);
+                        
+                        GFXBufferDestroy(EdgeBuffer);
+                        GFXBufferDestroy(WidthBuffer);
+                        GFXBufferDestroy(VertBuffer);
+                        GFXShaderDestroy(Shader);
+                        
+                        CCOrderedCollectionAppendElement(Drawables, &(CCTextDrawable){
+                            .drawer = Drawer,
+                            .vertices = (GlyphCount * 4) + DEGENERATE_STRIPS(GlyphCount)
+                        });
+                    }
+                }
+            }
+        }
     }
     
-    return NULL;
+    if (Text->drawers) CCCollectionDestroy(Text->drawers);
+    
+    return CCRetain((Text->drawers = Drawables));
 }
 
 void CCTextSetString(CCText Text, CCOrderedCollection AttributedStrings)

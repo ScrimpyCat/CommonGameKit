@@ -34,6 +34,11 @@ typedef enum {
     CCTextAlignmentRight
 } CCTextAlignment;
 
+typedef struct {
+    GFXDraw drawer;
+    size_t vertices;
+} CCTextDrawable;
+
 /*!
  * @brief The renderable text.
  * @description Allows @b CCRetain.

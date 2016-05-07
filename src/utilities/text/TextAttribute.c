@@ -25,7 +25,6 @@
 
 #include "TextAttribute.h"
 
-static CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute);
 static void CCTextAttributeElementDestructor(CCCollection Collection, CCTextAttribute *Element);
 
 const CCCollectionElementDestructor CCTextAttributeDestructorForCollection = (CCCollectionElementDestructor)CCTextAttributeElementDestructor;
@@ -34,6 +33,11 @@ static void CCTextAttributeElementDestructor(CCCollection Collection, CCTextAttr
 {
     if (Element->string) CCStringDestroy(Element->string);
     if (Element->font) CCFontDestroy(Element->font);
+}
+
+CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute)
+{
+    return CCFontAttributeAdjustSpacing(CCFontAttributeAdjustScaling(CCFontAttributeDefault(), Attribute->scale), Attribute->space);
 }
 
 size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings)
@@ -228,11 +232,6 @@ CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrd
 static void CCTextAttributeCollectionElementDestructor(CCCollection Collection, CCCollection *Element)
 {
     CCCollectionDestroy(*Element);
-}
-
-static CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute)
-{
-    return CCFontAttributeAdjustSpacing(CCFontAttributeAdjustScaling(CCFontAttributeDefault(), Attribute->scale), Attribute->space);
 }
 
 CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, CCTextVisibility Visibility, float LineWidth)
