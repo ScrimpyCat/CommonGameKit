@@ -25,6 +25,7 @@
 
 #include "TextAttribute.h"
 
+static CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute);
 static void CCTextAttributeElementDestructor(CCCollection Collection, CCTextAttribute *Element);
 
 const CCCollectionElementDestructor CCTextAttributeDestructorForCollection = (CCCollectionElementDestructor)CCTextAttributeElementDestructor;
@@ -46,6 +47,36 @@ size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings)
     }
     
     return Length;
+}
+
+float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool IgnoreWhitespace)
+{
+    CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
+    
+    float LineHeight = 0;
+    CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attr, AttributedStrings)
+    {
+        CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attr);
+        float Height = CCFontGetLineHeight(Attr->font, Options);
+        CC_STRING_FOREACH(Letter, Attr->string)
+        {
+            if ((IgnoreWhitespace) && (isspace(Letter))) continue;
+            
+            const CCFontGlyph *Glyph = CCFontGetGlyph(Attr->font, Letter);
+            if (Glyph)
+            {
+                CCRect Rect;
+                CCFontPositionGlyph(Attr->font, Glyph, Options, CCVector2DFill(0.0f), &Rect, NULL);
+                
+                float GlyphHeight = fabsf(CCVector2Add(Rect.position, Attr->offset).y) + Rect.size.y;
+                if (Height < GlyphHeight) Height = GlyphHeight;
+            }
+        }
+        
+        if (LineHeight < Height) LineHeight = Height;
+    }
+    
+    return LineHeight;
 }
 
 static _Bool CCTextAttributeMergeable(const CCTextAttribute *Attr1, const CCTextAttribute *Attr2)

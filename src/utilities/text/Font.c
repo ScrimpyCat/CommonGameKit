@@ -121,6 +121,11 @@ GFXTexture CCFontGetTexture(CCFont Font)
     return Font->charset.texture;
 }
 
+float CCFontGetLineHeight(CCFont Font, CCFontAttribute Attribute)
+{
+    return (float)Font->charset.lineHeight * Attribute.scale.y;
+}
+
 CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCFontAttribute Attribute, CCVector2D Cursor, CCRect *Position, CCRect *TexCoord)
 {
     CCAssertLog(Font, "Font must not be null");

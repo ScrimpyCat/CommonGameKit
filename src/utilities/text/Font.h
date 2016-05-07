@@ -96,6 +96,14 @@ CCFontGlyph *CCFontGetGlyph(CCFont Font, CCChar Letter);
 GFXTexture CCFontGetTexture(CCFont Font);
 
 /*!
+ * @brief Get the line height for the font.
+ * @param Font The font.
+ * @param Attribute Custom attributes to affect the default font behaviour.
+ * @return The line height.
+ */
+float CCFontGetLineHeight(CCFont Font, CCFontAttribute Attribute);
+
+/*!
  * @brief Position the glyph at the current cursor position.
  * @param Font The font.
  * @param Glyph The glyph.

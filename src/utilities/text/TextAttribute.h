@@ -69,6 +69,16 @@ extern const CCCollectionElementDestructor CCTextAttributeDestructorForCollectio
 size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings);
 
 /*!
+ * @brief Get height of the line of attributed strings.
+ * @param AttributedStrings The attributed strings to get the length of.
+ * @param IgnoreWhitespace Whether whitespace should be ignored or included in
+ *        calculations.
+ *
+ * @return The line height of the attributed strings.
+ */
+float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool IgnoreWhitespace);
+
+/*!
  * @brief Merge any attributed strings that are mergeable.
  * @param Allocator The allocator to be used.
  * @param AttributedStrings The attributed strings to merge.

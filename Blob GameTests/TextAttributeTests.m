@@ -55,6 +55,70 @@
     CCCollectionDestroy(Strings);
 }
 
+-(void) testLineHeight
+{
+    CCArray Glyphs = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCFontGlyph), 3);
+    
+    CCArrayAppendElement(Glyphs, &(CCFontGlyph){
+        .coord = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(100.0f) },
+        .offset = CCVector2DFill(0.0f),
+        .advance = 5.0f
+    });
+    CCArrayAppendElement(Glyphs, &(CCFontGlyph){
+        .coord = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(5.0f) },
+        .offset = CCVector2DMake(-1.0f, 10.0f),
+        .advance = 6.0f
+    });
+    CCArrayAppendElement(Glyphs, &(CCFontGlyph){
+        .coord = (CCRect){ CCVector2DMake(8.0f, 0.0f), CCVector2DFill(5.0f) },
+        .offset = CCVector2DMake(0.0f, -55.0f),
+        .advance = 6.0f
+    });
+    
+    CCArray Letters = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCChar), 4);
+    
+    CCArrayAppendElement(Letters, &(CCChar){ ' ' });
+    CCArrayAppendElement(Letters, &(CCChar){ 'a' });
+    CCArrayAppendElement(Letters, &(CCChar){ 'b' });
+    
+    CCFont Font = CCFontCreate(CC_STD_ALLOCATOR, CC_STRING("test"), 0, 30, 50, 0, FALSE, FALSE, (CCFontCharMap){ .letters = Letters }, Glyphs, NULL);
+    CCArrayDestroy(Glyphs);
+    CCArrayDestroy(Letters);
+    
+    CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCTextAttribute), NULL);
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("a a"),
+        .font = Font
+    });
+    
+    
+    XCTAssertEqual(CCTextAttributeGetLineHeight(Strings, FALSE), 200.0f, @"Should have the correct line height");
+    XCTAssertEqual(CCTextAttributeGetLineHeight(Strings, TRUE), 50.0f, @"Should have the correct line height");
+    
+    
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("b"),
+        .font = Font
+    });
+    
+    XCTAssertEqual(CCTextAttributeGetLineHeight(Strings, FALSE), 200.0f, @"Should have the correct line height");
+    XCTAssertEqual(CCTextAttributeGetLineHeight(Strings, TRUE), 55.0f, @"Should have the correct line height");
+    
+    
+    CCOrderedCollectionAppendElement(Strings, &(CCTextAttribute){
+        .string = CC_STRING("a a"),
+        .font = Font,
+        .scale = CCVector2DFill(1.0f)
+    });
+    
+    XCTAssertEqual(CCTextAttributeGetLineHeight(Strings, FALSE), 400.0f, @"Should have the correct line height");
+    XCTAssertEqual(CCTextAttributeGetLineHeight(Strings, TRUE), 100.0f, @"Should have the correct line height");
+    
+    
+    CCCollectionDestroy(Strings);
+    CCFontDestroy(Font);
+}
+
 -(void) testMerging
 {
     CCFont Font = CCFontCreate(CC_STD_ALLOCATOR, CC_STRING("test"), 0, 30, 82, 53, FALSE, FALSE, (CCFontCharMap){ .offset = 0 }, NULL, NULL);
