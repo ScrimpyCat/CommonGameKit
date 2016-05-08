@@ -7,9 +7,11 @@ This is the scripting and data format language used by the engine. Originally in
 Todo
 ----
 
-Need to add support for tagged types. So allocations can be avoided for integers and atoms. And atom lookups can be much faster.
+Need to add support for tagged atoms.
 
 Need to add functionality to create functions within the language itself.
+
+Need to design proper naming conventions. e.g. Something like external variable/inputs are prefixed with '@', named function arguments are prefixed or suffixed with ':', etc.
 
 
 Docs
