@@ -88,7 +88,7 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
 }
 
 //TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
-static CCString StrWidth = CC_STRING("width"), StrHeight = CC_STRING("height"), StrRect = CC_STRING("rect"), StrEnabled = CC_STRING("enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control"), StrRenderRect = CC_STRING("render-rect");
+static CCString StrX = CC_STRING("x"), StrY = CC_STRING("y"), StrWidth = CC_STRING("width"), StrHeight = CC_STRING("height"), StrRect = CC_STRING("rect"), StrEnabled = CC_STRING("enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control"), StrRenderRect = CC_STRING("render-rect"), StrRenderText = CC_STRING("render-text");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
@@ -123,6 +123,53 @@ typedef struct {
 
 #include "AssetManager.h"
 #include "Window.h"
+#include "Text.h"
+#include "AssetExpressions.h"
+
+static CCTextAttribute GUIExpressionLoadAttributedString(CCExpression String, CCEnumerator *Enumerator)
+{
+    CCTextAttribute Attribute = {
+        .string = CCStringCopy(CCExpressionGetString(String)),
+        .font = NULL,
+        .colour = CCVector4DMake(0.309f, 0.247f, 0.239f, 1.0f),
+        .scale = CCVector2DFill(-0.77f),
+        .space = -0.25f,
+        .softness = 0.3f,
+        .thickness = 0.45f
+    };
+    
+    for (CCExpression *Arg = CCCollectionEnumeratorNext(Enumerator); Arg; Arg = CCCollectionEnumeratorNext(Enumerator))
+    {
+        if (CCExpressionGetType(*Arg) == CCExpressionValueTypeList)
+        {
+            size_t Count = CCCollectionGetCount(CCExpressionGetList(*Arg));
+            if (Count > 1)
+            {
+                CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Arg), 0);
+                if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
+                {
+                    //TODO: workout naming conventions to stop collisions
+                    if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("colour"))) Attribute.colour = CCExpressionGetNamedColour(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("scale"))) Attribute.scale = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("offset"))) Attribute.offset = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("tilt"))) Attribute.tilt = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("space"))) Attribute.space = CCExpressionGetNamedFloat(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("softness"))) Attribute.softness = CCExpressionGetNamedFloat(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("thickness"))) Attribute.thickness = CCExpressionGetNamedFloat(*Arg);
+                }
+            }
+        }
+        
+        else if (CCExpressionGetType(*Arg) == CCAssetExpressionValueTypeFont)
+        {
+            Attribute.font = CCRetain(CCExpressionGetData(*Arg));
+        }
+    }
+    
+    if (!Attribute.font) Attribute.font = CCAssetManagerCreateFont(CC_STRING("Arial"));
+    
+    return Attribute;
+}
 
 static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
 {
@@ -197,10 +244,92 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
                         //error
                     }
                 }
+                
+                else if (CCStringEqual(Atom, StrRenderText))
+                {
+                    if (CCCollectionGetCount(CCExpressionGetList(Render)) >= 3)
+                    {
+                        CCEnumerator Enumerator;
+                        CCCollectionGetEnumerator(CCExpressionGetList(Render), &Enumerator);
+                        
+                        CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
+                        CCExpression *ArgText = CCCollectionEnumeratorNext(&Enumerator);
+                        //TODO: Get alignment, wrapping, offset and visible length
+                        if (CCExpressionGetType(*ArgText) == CCExpressionValueTypeList)
+                        {
+                            if (CCCollectionGetCount(CCExpressionGetList(*ArgText)) >= 1)
+                            {
+                                CCOrderedCollection AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+                                
+                                CCEnumerator Enumerator;
+                                CCCollectionGetEnumerator(CCExpressionGetList(*ArgText), &Enumerator);
+                                
+                                CCExpression *ArgString = CCCollectionEnumeratorGetCurrent(&Enumerator);
+                                if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeList)
+                                {
+                                    for (CCExpression *Text = ArgString; Text; Text = CCCollectionEnumeratorNext(&Enumerator))
+                                    {
+                                        if (CCExpressionGetType(*Text) == CCExpressionValueTypeList)
+                                        {
+                                            CCEnumerator StringEnumerator;
+                                            CCCollectionGetEnumerator(CCExpressionGetList(*Text), &StringEnumerator);
+                                            
+                                            CCExpression *String = CCCollectionEnumeratorGetCurrent(&StringEnumerator);
+                                            CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*String, &StringEnumerator);
+                                            CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                        }
+                                    }
+                                }
+                                
+                                else if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeString)
+                                {
+                                    CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*ArgString, &Enumerator);
+                                    CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                }
+                                
+                                //TODO: store text so it can be reused
+                                CCText Text = CCTextCreate(CC_STD_ALLOCATOR);
+                                CCTextSetOffset(Text, 0);
+                                CCTextSetVisibleLength(Text, SIZE_MAX);
+                                CCTextSetFrame(Text, CCExpressionGetRect(*ArgRect));
+                                CCTextSetAlignment(Text, CCTextAlignmentLeft);
+                                CCTextSetVisibility(Text, CCTextVisibilityMultiLine | CCTextVisibilityWord);//Character);
+                                CCTextSetString(Text, AttributedStrings);
+                                CCCollectionDestroy(AttributedStrings);
+                                
+                                int w, h;
+                                glfwGetFramebufferSize(CCWindow, &w, &h);
+                                CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, w, 0.0f, h, 0.0f, 1.0f);
+                                GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+                                
+                                CCOrderedCollection Drawables = CCTextGetDrawables(Text);
+                                CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
+                                {
+                                    GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
+                                    GFXDrawSetBuffer(Drawable->drawer, "modelViewProjectionMatrix", Proj);
+                                    GFXDrawSubmitIndexed(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
+                                }
+                                CCCollectionDestroy(Drawables);
+                                
+                                CCTextDestroy(Text);
+                            }
+                        }
+                        
+                        else
+                        {
+                            //error
+                        }
+                    }
+                    
+                    else
+                    {
+                        //error
+                    }
+                }
             }
         }
     }
-    
+
     CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
     {
         GUIObjectRender(Child, Framebuffer, Index);
@@ -353,9 +482,11 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
         
+        CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 rect)"), FALSE);
         CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
         CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 rect)"), FALSE);
-        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (0 0 width height))"), FALSE);
+        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (x y width height))"), FALSE);
         CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
