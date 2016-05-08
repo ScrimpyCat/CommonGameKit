@@ -196,7 +196,21 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
 
 CCExpression CCAssetExpressionFont(CCExpression Expression)
 {
-    if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 3)
+    CCExpression Ret = Expression;
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeString)
+        {
+            CCFont Font = CCAssetManagerCreateFont(CCExpressionGetString(Name));
+            if (Font)
+            {
+                Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeFont, Font, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)CCFontDestroy);
+            }
+        }
+    }
+    
+    else if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 3)
     {
         CCEnumerator Enumerator;
         CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
@@ -341,9 +355,12 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
             if (Texture) GFXTextureDestroy(Texture);
             if (!IsSequential) CCArrayDestroy(Letters);
             CCArrayDestroy(Glyphs);
+            
+            Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeFont, Font, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)CCFontDestroy);
         }
     }
     
-    return Expression;
+    if (Ret == Expression) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("font", "name:string [size:number [...]]");
+    
+    return Ret;
 }
-

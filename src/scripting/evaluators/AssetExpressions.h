@@ -32,6 +32,7 @@
 typedef enum {
     CCAssetExpressionValueTypeShader = CCExpressionValueTypeReservedCount + 1,
     CCAssetExpressionValueTypeTexture,
+    CCAssetExpressionValueTypeFont,
     CCAssetExpressionValueTypeReservedCount
 } CCAssetExpressionValueType;
 
