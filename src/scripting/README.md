@@ -7,11 +7,23 @@ This is the scripting and data format language used by the engine. Originally in
 Todo
 ----
 
-Need to add support for tagged atoms.
+* Need to add support for tagged atoms.
+* Need to add functionality to create functions within the language itself.
+* Convert code over to use new naming rules.
+* Write custom highlight and possibly autocorrect for either atom or sublime.
+* Make new character lookup to include important symbols.
+* Write up a JSON file (or some other format) to describe the functions, their inputs, options, atoms, etc.
 
-Need to add functionality to create functions within the language itself.
 
-Need to design proper naming conventions. e.g. Something like external variable/inputs are prefixed with '@', named function arguments are prefixed or suffixed with ':', etc.
+Naming Rules
+------------
+
+* Function: `example` - Use no prefix/suffix and are any name/symbol. e.g. `(+ 2 3)`, `(add 2 3)`
+* Atoms: `:example` - Use the prefix ':'. e.g. `(do :stuff)`, `(do :this)`
+* Options: `example:` - Use the suffix ':'. e.g. `(do (option: 1))`, `(test: 2)`
+* State: `.example` - Use the prefix '.'. e.g. `(state! ".test" 3)`, `(.test! 3)`
+* Input: `@example` - Use the prefix '@'. e.g. `(+ @test 2)`
+* Enum: `&example` - Use the prefix '&'. e.g. `(enum! "&test")`, `(+ &test 2)`
 
 
 Docs
