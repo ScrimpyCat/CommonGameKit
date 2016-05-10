@@ -15,6 +15,107 @@ Todo
 * Write up a JSON file (or some other format) to describe the functions, their inputs, options, atoms, etc.
 
 
+JSON Descriptive Format
+-----------------------
+
+File to be used to generate docs from, use for auto-completion, and possibly even type analysis. It represents the attributes (functions, inputs, arguments, states, enums) for the given scope.
+
+An attribute (aside from arguments) defines the object with these elements: name, description, type, args, functions, states, enums, inputs.
+
+An attribute is of form
+
+    {
+        "name": string,
+        "description": string,
+        "return": type,
+        "args": array of (array or set/repeat block) of types,
+        "functions": array of attributes,
+        "states": array of attributes,
+        "enums": array of attributes,
+        "inputs": array of attributes
+    }
+
+In args the first array defines the different versions, the second array or block defines the types specific to that version.
+
+Arg block has the form
+
+    {
+        "set": type or array of types,
+        "repeat": type or array of types
+    }
+
+
+While a type takes the form
+
+    {
+        "type": string, //atom, string, number, integer, float, list, expression, custom
+        "value": value, //default value
+        "optional": boolean
+    }
+
+Type values take the form of
+
+    { "type": "atom", "value": string }
+    { "type": "string", "value": string }
+    { "type": "number", "value": integer or float }
+    { "type": "integer", "value": integer }
+    { "type": "float", "value": float }
+    { "type": "list", "value": array of types }
+    { "type": "expression", "value": nil }
+    { "type": "custom", "value": nil }
+
+Examples
+
+    {//base level
+        "functions": [
+            {
+                "name": "+",
+                "args": [
+                    { "repeat": [{ "type": "number" }] }
+                ]
+            },
+            {
+                "name": "gui-button",
+                "states": [
+                    {
+                        "name": "colour",
+                        "args": [[
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ]],
+                        "description": "The colour to be used for the button."
+                    }
+                ]
+            },
+            {
+                "name": "library",
+                "args": [{
+                    "set": { "type": "string" },
+                    "repeat": { "type": "list", "value": [{ "type": "atom", "value": "source" }, { "type": "string" }, [{ "type": "atom", "value": "vertex" }, { "type": "atom", "value": "fragment" }], { "type": "list", "value": [{ "type": "atom", "value": "dir" }, { "type": "string" }] }] }
+                }]
+            },
+            {
+                "name": "loop",
+                "args": [[
+                    { "type": "string" },
+                    { "type": "list" },
+                    { "type": "expression" }
+                ]]
+            },
+            {
+                "name": "texture",
+                "description": "Loads a texture.",
+                "args": [
+                    [{ "type": "string" }],
+                    [{ "type": "string" }, [{ "type": "atom", "value": "linear" }, { "type": "atom", "value": "nearest" }], { "type": "list", "value": [{ "type": "atom", "value": "dir" }, { "type": "string" }] }]
+                ]
+            }
+        ]
+    }
+
+
 Naming Rules
 ------------
 
