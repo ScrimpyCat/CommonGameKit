@@ -27,13 +27,15 @@ An attribute is of form
     {
         "name": string,
         "description": string,
-        "return": type,
+        "return": type or array of type,
         "args": array of (array or set/repeat block) of types,
         "functions": array of attributes,
         "states": array of attributes,
         "enums": array of attributes,
         "inputs": array of attributes
     }
+
+In return the array defines the different versions.
 
 In args the first array defines the different versions, the second array or block defines the types specific to that version.
 
@@ -43,7 +45,6 @@ Arg block has the form
         "set": type or array of types,
         "repeat": type or array of types
     }
-
 
 While a type takes the form
 
