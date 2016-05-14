@@ -20,7 +20,7 @@ JSON Descriptive Format
 
 File to be used to generate docs from, use for auto-completion, and possibly even type analysis. It represents the attributes (functions, inputs, arguments, states, enums) for the given scope.
 
-An attribute (aside from arguments) defines the object with these elements: name, description, type, args, functions, states, enums, inputs.
+An attribute (aside from arguments) defines the object with these elements: name, description, type, args, functions, options, states, enums, inputs.
 
 An attribute is of form
 
@@ -30,6 +30,7 @@ An attribute is of form
         "return": type or array of type,
         "args": array of (array or set/repeat block) of types,
         "functions": array of attributes,
+        "options": array of attributes,
         "states": array of attributes,
         "enums": array of attributes,
         "inputs": array of attributes
@@ -57,6 +58,7 @@ While a type takes the form
 Type values take the form of
 
     { "type": "atom", "value": string }
+    { "type": "option", "value": string }
     { "type": "string", "value": string }
     { "type": "number", "value": integer or float }
     { "type": "integer", "value": integer }
@@ -65,12 +67,15 @@ Type values take the form of
     { "type": "expression", "value": nil }
     { "type": "custom", "value": nil }
 
+For custom type names, to provide a relevant name the type can be suffixed with that name. e.g. `custom:name`, `{ "type": "custom:texture" }`. For all the standard types that use string values, the values are formatted to follow the naming conventions. e.g. `{ "type": "atom", "value": "test" } //=> :test`, `{ "type": "atom", "value": ":test" } //=> ::test`.
+
 Examples
 
     {//base level
         "functions": [
             {
                 "name": "+",
+                "return": { "type": "number" },
                 "args": [
                     { "repeat": [{ "type": "number" }] }
                 ]
@@ -80,6 +85,7 @@ Examples
                 "states": [
                     {
                         "name": "colour",
+                        "return": { "type": "list" },
                         "args": [[
                             { "type": "number" },
                             { "type": "number" },
@@ -92,15 +98,21 @@ Examples
             },
             {
                 "name": "library",
-                "args": [{
-                    "set": { "type": "string" },
-                    "repeat": { "type": "list", "value": [{ "type": "atom", "value": "source" }, { "type": "string" }, [{ "type": "atom", "value": "vertex" }, { "type": "atom", "value": "fragment" }], { "type": "list", "value": [{ "type": "atom", "value": "dir" }, { "type": "string" }] }] }
-                }]
+                "args": [[{ "type": "string" }]],
+                "options": [
+                    {
+                        "name": "source",
+                        "args": [
+                            [{ "type": "string" }, { "type": "atom", "value": "vertex" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string" }] }],
+                            [{ "type": "string" }, { "type": "atom", "value": "fragment" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string" }] }]
+                        ]
+                    }
+                ]
             },
             {
                 "name": "loop",
                 "args": [[
-                    { "type": "string" },
+                    { "type": "string", "name": "@item" },
                     { "type": "list" },
                     { "type": "expression" }
                 ]]
@@ -108,9 +120,11 @@ Examples
             {
                 "name": "texture",
                 "description": "Loads a texture.",
+                "return": { "type": "custom:texture" },
                 "args": [
-                    [{ "type": "string" }],
-                    [{ "type": "string" }, [{ "type": "atom", "value": "linear" }, { "type": "atom", "value": "nearest" }], { "type": "list", "value": [{ "type": "atom", "value": "dir" }, { "type": "string" }] }]
+                    [{ "type": "string", "name": "name" }],
+                    [{ "type": "string", "name": "name" }, { "type": "atom", "value": "linear" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }],
+                    [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }]
                 ]
             }
         ]
