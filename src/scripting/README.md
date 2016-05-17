@@ -1,7 +1,7 @@
 Expression Language
 ===================
 
-This is the scripting and data format language used by the engine. Originally intended on using Scheme, but due to difficulties with getting the implementation I wanted to use and just wanting to quickly move onto the handling the config file, I decided to just roll a basic limited language. As I kept changing bits of it here and there, I've ended up keeping it for the time being.
+This is the scripting and data format language used by the engine. Originally intended on using Scheme, but due to difficulties with getting the implementation I wanted to use to work and just wanting to quickly move onto the handling the config file, I decided to just roll a basic limited language. As I kept changing bits of it here and there, I ended up keeping it.
 
 
 Todo
@@ -10,8 +10,6 @@ Todo
 * Need to add support for tagged atoms.
 * Need to add functionality to create functions within the language itself.
 * Convert code over to use new naming rules.
-* Write custom highlight and possibly autocorrect for either atom or sublime.
-* Make new character lookup to include important symbols.
 * Write up a JSON file (or some other format) to describe the functions, their inputs, options, atoms, etc.
 
 
@@ -27,14 +25,18 @@ An attribute is of form
     {
         "name": string,
         "description": string,
+        "example": string,
         "return": type or array of type,
         "args": array of (array or set/repeat block) of types,
         "functions": array of attributes,
         "options": array of attributes,
         "states": array of attributes,
         "enums": array of attributes,
-        "inputs": array of attributes
+        "inputs": array of attributes,
+        "includes": array of strings
     }
+
+In includes the strings are paths to other JSON files relative to the current one. These are loaded and inserted into the attribute.
 
 In return the array defines the different versions.
 
