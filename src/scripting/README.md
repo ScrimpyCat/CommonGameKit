@@ -25,7 +25,7 @@ An attribute is of form
     {
         "name": string,
         "description": string,
-        "example": string,
+        "examples": array of strings,
         "return": type or array of type,
         "args": array of (array or set/repeat block) of types,
         "functions": array of attributes,
