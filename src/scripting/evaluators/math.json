@@ -1,0 +1,89 @@
+{
+    "functions": [
+        {
+            "name": "+",
+            "description": "Adds all the inputs together, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "examples": [
+                "(+ 1 2 3) ;6",
+                "(+ 1 1.2) ;2.2"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "-",
+            "description": "Subtracts all the inputs from the first input, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "examples": [
+                "(- 3 2 2) ;-1",
+                "(- 1 0.5) ;0.5"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "*",
+            "description": "Multiplies all inputs together, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "examples": [
+                "(* 2 2 2) ;8",
+                "(* 2 0.5) ;1"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "/",
+            "description": "Divides all the inputs from the first input, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "examples": [
+                "(/ 2 2 2) ;0",
+                "(/ 2 2 2.0) ;0.5"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "min",
+            "description": "Returns the lowest input.",
+            "examples": ["(min 3 2 4) ;2"],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "max",
+            "description": "Returns the largest input.",
+            "examples": ["(min 3 2 4) ;4"],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "random",
+            "description": "Returns a random value. Either a random integer, a random value up to max, or a random value between min and max.",
+            "examples": [
+                "(random) ;609783379",
+                "(random 3) ;2",
+                "(random 2 4) ;4",
+                "(random 1.0) ;0.483411"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                [],
+                [{ "type": "number", "name": "max" }],
+                [
+                    { "type": "number", "name": "min" },
+                    { "type": "number", "name": "max" }
+                ]
+            ]
+        }
+    ]
+}
