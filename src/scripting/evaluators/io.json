@@ -1,0 +1,36 @@
+{
+    "functions": [
+        {
+            "name": "print",
+            "description": "Prints the expressions.",
+            "examples": ["(print 1) ;CCIOExpressionPrint: 1"],
+            "return": { "type": "expression" },
+            "args": [
+                { "repeat": [{ "type": "expression", "optional": true }] }
+            ]
+        },
+        {
+            "name": "search",
+            "description": "Searches the specified path, for any contents that match the given expression.",
+            "examples": ["; Assume contents of \"folder/\":\n; folder/1.txt\n; folder/2.txt\n; folder/2.png\n; folder/subfolder/3.txt\n; folder/subfolder/3.png\n\n(search \"folder/\") ;(\"folder/1.txt\" \"folder/2.txt\" \"folder/2.png\" \"folder/subfolder/\" \"folder/subfolder/3.txt\" \"folder/subfolder/3.png\")\n(search \"folder/\" \".txt\") ;(\"folder/1.txt\" \"folder/2.txt\" \"folder/subfolder/3.txt\")\n(search \"folder/\" \"2.*\") ;(\"folder/2.txt\" \"folder/2.png\")\n(search \"folder/\" \"subfolder/*.*\") ;(\"folder/subfolder/3.txt\" \"folder/subfolder/3.png\")"],
+            "return": { "type": "list", "value": [{ "type": "string" }] },
+            "args": [
+                [{ "type": "string", "name": "path" }],
+                [
+                    { "type": "string", "name": "path" },
+                    { "type": "string", "name": "match" }
+                ],
+                [
+                    { "type": "string", "name": "path" },
+                    { "type": "list", "name": "matches", "value": [{ "type": "string", "name": "match" }] }
+                ]
+            ]
+        },
+        {
+            "name": "eval",
+            "description": "Evaluate the script.",
+            "examples": ["(eval \"~/script.scm\") ;1"],
+            "args": [[{ "type": "string", "name": "path" }]]
+        }
+    ]
+}
