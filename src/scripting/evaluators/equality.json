@@ -1,0 +1,85 @@
+{
+    "functions": [
+        {
+            "name": "=",
+            "description": "Equality operator, tests if all the inputs are equal to each other.",
+            "examples": [
+                "(= 1 2 3) ;0",
+                "(= 1 1 1) ;1"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "!=",
+            "description": "In-equality operator, tests if all the inputs are not equal to the first.",
+            "examples": [
+                "(!= 1 2 3) ;1",
+                "(!= 1 1 1) ;0"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "<=",
+            "description": "Less than or equal operator, tests if all the inputs are equal or larger than the one before it (ascending or equal order).",
+            "examples": [
+                "(<= 1 2 3) ;1",
+                "(<= 1 1 1) ;1"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": ">=",
+            "description": "Larger than or equal operator, tests if all the inputs are equal or smaller than the one before it (descending or equal order).",
+            "examples": [
+                "(>= 1 2 3) ;0",
+                "(>= 1 1 1) ;1"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "<",
+            "description": "Less than operator, tests if all the inputs are larger than the one before it (ascending order).",
+            "examples": [
+                "(< 1 2 3) ;1",
+                "(< 1 1 1) ;0"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": ">",
+            "description": "Larger than operator, tests if all the inputs are smaller than the one before it (descending order).",
+            "examples": [
+                "(> 1 2 3) ;0",
+                "(> 1 1 1) ;0"
+            ],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        },
+        {
+            "name": "not",
+            "description": "Performs a logical not on the given value.",
+            "examples": ["(not 1) ;0"],
+            "return": { "type": "number" },
+            "args": [
+                { "repeat": [{ "type": "number" }] }
+            ]
+        }
+    ]
+}
