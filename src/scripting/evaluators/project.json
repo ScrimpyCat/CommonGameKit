@@ -1,0 +1,170 @@
+{
+    "functions": [
+        {
+            "name": "game",
+            "description": "Creates a CCEngineConfig structure.",
+            "examples": ["(game \"My Game\" ; title\n\t(default-resolution: 640 480) ; resolution or window size\n\t(default-fullscreen: #f) ; fullscreen mode\n\n\t(dir-fonts: \"font/\" (engine-path: \"assets/font/\")) ; font directories\n\t(dir-levels: \"logic/levels/\") ; level directories\n\t(dir-rules: \"logic/rules/\") ; rule directories\n\t(dir-textures: \"graphics/textures/\") ; texture directories\n\t(dir-shaders: \"graphics/shaders/\" (engine-path: \"assets/shaders/\")) ; shader directories\n\t(dir-sounds: \"audio/\") ; sound directories\n\t(dir-layouts: \"ui/\" (engine-path: \"assets/ui/\")) ; layout directories\n\t(dir-entities: \"logic/entities/\") ; entity directories\n\t(dir-logs: \"logs/\") ; log directory\n\t(dir-tmp: \"tmp/\") ; tmp directory\n)"],
+            "return": { "type": "custom:CCEngineConfig" },
+            "args": [[{ "type": "string", "name": "title" }]],
+            "options": [
+                {
+                    "name": "default-resolution",
+                    "args": [[{ "type": "integer", "name": "width" }, { "type": "integer", "name": "height" }]]
+                },
+                {
+                    "name": "default-fullscreen",
+                    "args": [[{ "type": "boolean", "name": "fullscreen-mode" }]]
+                },
+                {
+                    "name": "dir-fonts",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-levels",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-rules",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-textures",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-shaders",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-sounds",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-layouts",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-entities",
+                    "args": [
+                        { "repeat": [{ "type": "string", "name": "path" }] }
+                    ],
+                    "options": [
+                        {
+                            "name": "engine-path",
+                            "args": [[{ "type": "string", "name": "path" }]]
+                        }
+                    ]
+                },
+                {
+                    "name": "dir-logs",
+                    "args": [[{ "type": "string", "name": "path" }]]
+                },
+                {
+                    "name": "dir-tmp",
+                    "args": [[{ "type": "string", "name": "path" }]]
+                }
+            ]
+        },
+        {
+            "name": "library",
+            "description": "Creates a shader library with name.",
+            "examples": ["(library \"mylib\"\n\t(if @opengl (\n\t\t(source: \"vert\" :vertex (dir: \"myshader.vs\"))\n\t\t(source: \"frag\" :fragment (dir: \"myshader.fs\"))\n\t))\n)"],
+            "return": { "type": "list", "value": [{ "type": "string" }] },
+            "args": [[{ "type": "string", "name": "name" }]],
+            "functions": [
+                {
+                    "name": "source",
+                    "description": "Register a shader source with a library.",
+                    "examples": ["(source \"vert\" :vertex (dir: \"myshader.vs\")"],
+                    "args": [
+                        [{ "type": "string", "name": "name" }, { "type": "atom", "value": "vertex" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string" }] }],
+                        [{ "type": "string", "name": "name" }, { "type": "atom", "value": "fragment" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string" }] }]
+                    ]
+                }
+            ],
+            "inputs": [
+                {
+                    "name": "source-list",
+                    "return": { "type": "list" },
+                    "description": "Holds the list of shader sources to be registered."
+                },
+                {
+                    "name": "opengl",
+                    "return": { "type": "boolean" },
+                    "description": "Indicates whether an OpenGL context is being used."
+                },
+                {
+                    "name": "metal",
+                    "return": { "type": "boolean" },
+                    "description": "Indicates whether a Metal context is being used."
+                },
+                {
+                    "name": "vulkan",
+                    "return": { "type": "boolean" },
+                    "description": "Indicates whether a Vulkan context is being used."
+                }
+            ]
+        },
+        {
+            "name": "asset",
+            "description": "Register assets with the engine. While asset registration can happen outside of this function, this is the standard mechanism to indicate asset registration.",
+            "examples": ["(asset\n\t(shader \"myshader\" (mylib vert) (mylib frag))\n)"]
+        }
+    ]
+}
