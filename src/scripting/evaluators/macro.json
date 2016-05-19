@@ -1,0 +1,18 @@
+{
+    "functions": [
+        {
+            "name": "quote",
+            "description": "Causes an expression to not be evaluated.",
+            "examples": ["(quote (+ 2 2)) ;(+ 2 2)"],
+            "return": { "type": "expression" },
+            "args": [[{ "type": "expression" }]]
+        },
+        {
+            "name": "unquote",
+            "description": "Evaluates an expression.",
+            "examples": ["(unquote 14) ;14", "(unquote (quote (+ 2 2))) ;4"],
+            "return": { "type": "expression" },
+            "args": [[{ "type": "expression" }]]
+        }
+    ]
+}
