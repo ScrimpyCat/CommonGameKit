@@ -1,0 +1,18 @@
+{
+    "functions": [
+        {
+            "name": "lighten",
+            "description": "Lighten the colour by a given amount. Float's are a literal adjustment, while integers are a percentage adjustment.",
+            "examples": ["(lighten (253 212 73) 5) ;(1.041765 0.872941 0.300588)"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "list", "name": "colour", "value": [{ "type": "number", "name": "red" }, { "type": "number", "name": "green" }, { "type": "number", "name": "blue" }, { "type": "number", "name": "alpha", "optional": true }] }, { "type": "number", "name": "adjustment"}]]
+        },
+        {
+            "name": "darken",
+            "description": "Darken the colour by a given amount. Float's are a literal adjustment, while integers are a percentage adjustment.",
+            "examples": ["(darken (253 212 73) 5) ;(0.942549 0.789804 0.271961)"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "list", "name": "colour", "value": [{ "type": "number", "name": "red" }, { "type": "number", "name": "green" }, { "type": "number", "name": "blue" }, { "type": "number", "name": "alpha", "optional": true }] }, { "type": "number", "name": "adjustment"}]]
+        }
+    ]
+}
