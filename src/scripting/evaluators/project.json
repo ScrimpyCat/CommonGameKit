@@ -9,114 +9,134 @@
             "options": [
                 {
                     "name": "default-resolution",
+                    "description": "The default resolution/window size.",
                     "args": [[{ "type": "integer", "name": "width" }, { "type": "integer", "name": "height" }]]
                 },
                 {
                     "name": "default-fullscreen",
+                    "description": "Whether it should be run in fullscreen mode.",
                     "args": [[{ "type": "boolean", "name": "fullscreen-mode" }]]
                 },
                 {
                     "name": "dir-fonts",
+                    "description": "The directories containing fonts.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-levels",
+                    "description": "The directories containing levels.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-rules",
+                    "description": "The directories containing rules.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-textures",
+                    "description": "The directories containing textures.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-shaders",
+                    "description": "The directories containing shaders.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-sounds",
+                    "description": "The directories containing sounds.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-layouts",
+                    "description": "The directories containing layouts.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-entities",
+                    "description": "The directories containing entities.",
                     "args": [
                         { "repeat": [{ "type": "string", "name": "path" }] }
                     ],
                     "options": [
                         {
                             "name": "engine-path",
+                            "description": "Create a path relative to the engine's directory.",
                             "args": [[{ "type": "string", "name": "path" }]]
                         }
                     ]
                 },
                 {
                     "name": "dir-logs",
+                    "description": "The directory to store the logs.",
                     "args": [[{ "type": "string", "name": "path" }]]
                 },
                 {
                     "name": "dir-tmp",
+                    "description": "The directory to use for temporary storage.",
                     "args": [[{ "type": "string", "name": "path" }]]
                 }
             ]
