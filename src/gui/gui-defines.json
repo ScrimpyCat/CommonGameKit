@@ -1,0 +1,205 @@
+{
+    "options": [
+        {
+            "name": "render",
+            "description": "Define how the element should be drawn.",
+            "functions": [
+                {
+                    "name": "render-rect",
+                    "description": "Draw a filled rounded rectangle.",
+                    "args": [[
+                        { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] },
+                        { "type": "list", "name": "colour", "value": [{ "type": "number", "name": "red" }, { "type": "number", "name": "green" }, { "type": "number", "name": "blue" }, { "type": "number", "name": "alpha", "optional": true }] },
+                        { "type": "float", "name": "radius" }
+                    ]]
+                },
+                {
+                    "name": "render-text",
+                    "description": "Draw text.",
+                    "args": [
+                        {
+                            "set": [{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                            "repeat": [{ "type": "option", "name": "text" }]
+                        }
+                    ],
+                    "options": [
+                        {
+                            "name": "text",
+                            "description": "Styled text.",
+                            "args": [[{ "type": "string", "name": "text" }]],
+                            "options": [
+                                {
+                                    "name": "colour",
+                                    "description": "The colour of the text.",
+                                    "args": [[{ "type": "number", "name": "red" }, { "type": "number", "name": "green" }, { "type": "number", "name": "blue" }, { "type": "number", "name": "alpha", "optional": true }]]
+                                },
+                                {
+                                    "name": "scale",
+                                    "description": "The scale of the text.",
+                                    "args": [[{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }]]
+                                },
+                                {
+                                    "name": "offset",
+                                    "description": "The offset of the text.",
+                                    "args": [[{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }]]
+                                },
+                                {
+                                    "name": "tilt",
+                                    "description": "The tilt of the text.",
+                                    "args": [[{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }]]
+                                },
+                                {
+                                    "name": "space",
+                                    "description": "The character spacing of the text.",
+                                    "args": [[{ "type": "number", "name": "spacing" }]]
+                                },
+                                {
+                                    "name": "softness",
+                                    "description": "The softness of the text.",
+                                    "args": [[{ "type": "number", "name": "softness" }]]
+                                },
+                                {
+                                    "name": "thickness",
+                                    "description": "The thickness of the text.",
+                                    "args": [[{ "type": "number", "name": "thickness" }]]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "control",
+            "description": "Define how the element should be interacted with.",
+            "functions": [
+                {
+                    "name": "on",
+                    "description": "Match an event predicate. If the predicate is true (1 or some non-zero value) it will evaluate and return the result of the truth expression, or if the predicate is false (0) it will evaluate and return the result of the false expression. If the predicate is of a different event then the one being tested, neither expression will be evaluated.",
+                    "examples": ["(on (cursor: .rect) :inside :outside) ;:outside"],
+                    "args": [[{"type": "expression", "name": "event-predicate" }, { "type": "expression", "name": "true" }, { "type": "expression", "name": "false", "optional": true }]],
+                    "options": [
+                        {
+                            "name": "cursor",
+                            "description": "Predicate to match when the cursor is position inside the given rect. The `@pos` (`@pos-x` and `@pos-y`) variable is set to the current cursor's position.",
+                            "examples": ["(cursor: (0 0 10 10)) ;1", "(on (cursor: (0 0 10 10)) @pos) ;(2 5)"],
+                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]],
+                            "inputs": [
+                                {
+                                    "name": "pos",
+                                    "description": "Holds the cursor position.",
+                                    "return": { "type": "list", "value": [{ "type": "float", "name": "x" }, { "type": "float", "name": "x" }] }
+                                },
+                                {
+                                    "name": "pos-x",
+                                    "description": "Holds the cursor x position.",
+                                    "return": { "type": "float" }
+                                },
+                                {
+                                    "name": "pos-y",
+                                    "description": "Holds the cursor y position.",
+                                    "return": { "type": "float" }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "click",
+                            "description": "Predicate to match when a click event occurs inside the given rect. Clicks can be specified using combination of `left`, `right`, `middle`, `shift`, `ctrl`, `alt`, `cmd`. The `@press` variable will be set to indicate whether the button is down (0) or released (1).",
+                            "examples": ["(click: :alt-left (0 0 10 10)) ;1", "(on (click: :alt-left (0 0 10 10)) @press) ;1"],
+                            "args": [
+                                [{ "type": "atom", "name": "button" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "left" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "alt-left" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "ctrl-left" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "cmd-left" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "shift-left" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "alt-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "ctrl-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "cmd-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
+                                [{ "type": "atom", "value": "shift-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]
+                            ],
+                            "inputs": [
+                                {
+                                    "name": "press",
+                                    "description": "Holds state of a button press. Button is down (0) or released (1).",
+                                    "return": { "type": "boolean" }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "scroll",
+                            "description": "Predicate to match when a scroll event occurs inside the given rect. The `@scroll-delta` (`@scroll-delta-x` and `@scroll-delta-y`) variable is set to the current scroll delta.",
+                            "examples": ["(scroll: (0 0 10 10)) ;1", "(on (scroll: (0 0 10 10)) @scroll-delta) ;0.1"],
+                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]],
+                            "inputs": [
+                                {
+                                    "name": "scroll-delta",
+                                    "description": "Holds the scroll delta.",
+                                    "return": { "type": "list", "value": [{ "type": "float", "name": "x" }, { "type": "float", "name": "x" }] }
+                                },
+                                {
+                                    "name": "scroll-delta-x",
+                                    "description": "Holds the scroll x delta.",
+                                    "return": { "type": "float" }
+                                },
+                                {
+                                    "name": "scroll-delta-y",
+                                    "description": "Holds the scroll y delta.",
+                                    "return": { "type": "float" }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "drop",
+                            "description": "Predicate to match when a file drop event occurs inside the given rect. The `@drop-files` variable is set to the list of files being dropped.",
+                            "examples": ["(drop: (0 0 10 10)) ;1", "(on (drop: (0 0 10 10)) @drop-files) ;(\"~/blah.txt\")"],
+                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]],
+                            "inputs": [
+                                {
+                                    "name": "drop-files",
+                                    "description": "Holds the list of files being dropped.",
+                                    "return": { "type": "list" }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "states": [
+        {
+            "name": "rect",
+            "description": "The rect the element.",
+            "return": { "type": "list" },
+            "args": [[{ "type": "list", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]]
+        },
+        {
+            "name": "x",
+            "description": "The x-axis position of the lower left corner of the element. Do not set this, instead set the rect.",
+            "return": { "type": "number" }
+        },
+        {
+            "name": "y",
+            "description": "The y-axis position of the lower left corner of the element. Do not set this, instead set the rect.",
+            "return": { "type": "number" }
+        },
+        {
+            "name": "width",
+            "description": "The width the element. Do not set this, instead set the rect.",
+            "return": { "type": "number" }
+        },
+        {
+            "name": "height",
+            "description": "The height the element. Do not set this, instead set the rect.",
+            "return": { "type": "number" }
+        },
+        {
+            "name": "enabled",
+            "description": "Whether the element is enabled or not.",
+            "return": { "type": "boolean" },
+            "args": [[{ "type": "boolean" }]]
+        }
+    ]
+}
