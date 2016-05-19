@@ -1,4 +1,20 @@
 {
+    "functions": [
+        {
+            "name": "percent-width",
+            "description": "Get a value relative to the width of the current view. Float's map 0% - 100% with 0.0 - 1.0, while integers use 0 - 100.",
+            "examples": ["(percent-width 100) ;500", "(percent-width 50) ;250"],
+            "return": { "type": "number" },
+            "args": [[{ "type": "number", "name": "percent" }]]
+        },
+        {
+            "name": "percent-height",
+            "description": "Get a value relative to the height of the current view. Float's map 0% - 100% with 0.0 - 1.0, while integers use 0 - 100.",
+            "examples": ["(percent-height 100) ;500", "(percent-height 50) ;250"],
+            "return": { "type": "number" },
+            "args": [[{ "type": "number", "name": "percent" }]]
+        }
+    ],
     "options": [
         {
             "name": "render",
