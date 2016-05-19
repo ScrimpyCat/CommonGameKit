@@ -1,0 +1,30 @@
+{
+    "functions": [
+        {
+            "name": "window-width",
+            "description": "Get the size of the window's width.",
+            "examples": ["(window-width) ;640"],
+            "return": { "type": "integer" }
+        },
+        {
+            "name": "window-height",
+            "description": "Get the size of the window's height.",
+            "examples": ["(window-height) ;640"],
+            "return": { "type": "integer" }
+        },
+        {
+            "name": "window-percent-width",
+            "description": "Get a value relative to the size of the window's width. Float's map 0% - 100% with 0.0 - 1.0, while integer's use 0 - 100.",
+            "examples": ["(window-percent-width 50) ;320"],
+            "return": { "type": "number" },
+            "args": [[{ "type": "number", "name": "percent" }]]
+        },
+        {
+            "name": "window-percent-height",
+            "description": "Get a value relative to the size of the window's height. Float's map 0% - 100% with 0.0 - 1.0, while integer's use 0 - 100.",
+            "examples": ["(window-percent-height 50) ;320"],
+            "return": { "type": "number" },
+            "args": [[{ "type": "number", "name": "percent" }]]
+        }
+    ]
+}
