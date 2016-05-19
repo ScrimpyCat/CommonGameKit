@@ -1,0 +1,36 @@
+{
+    "functions": [
+        {
+            "name": "prefix",
+            "description": "Checks if the string has the prefix.",
+            "examples": ["(prefix \"My\" \"My Test\") ;1", "(prefix \"My\" \"Test\") ;0"],
+            "return": { "type": "boolean" },
+            "args": [
+                [{ "type": "string", "name": "prefix" }, { "type": "string" }]
+            ]
+        },
+        {
+            "name": "suffix",
+            "description": "Checks if the string has the suffix.",
+            "examples": ["(suffix \"Test\" \"My Test\") ;1", "(suffix \"Test\" \"My\") ;0"],
+            "return": { "type": "boolean" },
+            "args": [
+                [{ "type": "string", "name": "suffix" }, { "type": "string" }]
+            ]
+        },
+        {
+            "name": "filename",
+            "description": "Get the filename from a string path.",
+            "examples": ["(filename \"folder/folder/file.txt\") ;\"file.txt\""],
+            "return": { "type": "string" },
+            "args": [[{ "type": "string", "name": "path" }]]
+        },
+        {
+            "name": "replace",
+            "description": "Replace occurrences of string in the string with another string.",
+            "examples": ["(replace \" \" \"-\" \"1 2 3 4 5\") ;\"1-2-3-4-5\""],
+            "return": { "type": "string" },
+            "args": [[{ "type": "string", "name": "occurrence" }, { "type": "string", "name": "replacement" }, { "type": "string" }]]
+        }
+    ]
+}
