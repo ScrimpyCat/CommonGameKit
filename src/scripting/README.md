@@ -3,6 +3,8 @@ Expression Language
 
 This is the scripting and data format language used by the engine. Originally intended on using Scheme, but due to difficulties with getting the implementation I wanted to use to work and just wanting to quickly move onto the handling the config file, I decided to just roll a basic limited language. As I kept changing bits of it here and there, I ended up keeping it.
 
+The simplest way to create or edit these files is to use the Atom editor with the [language-blob package](https://github.com/ScrimpyCat/language-blob). When installed, go to the package's settings panel and set the API specs field to include the path to the `lang-spec.json` file. This will include auto-completion for all of the standard APIs defined by the engine. Optionally you may also create your own specs for your own APIs and include those as well.
+
 
 Todo
 ----
@@ -10,7 +12,6 @@ Todo
 * Need to add support for tagged atoms.
 * Need to add functionality to create functions within the language itself.
 * Convert code over to use new naming rules.
-* Write up a JSON file (or some other format) to describe the functions, their inputs, options, atoms, etc.
 
 
 JSON Descriptive Format
