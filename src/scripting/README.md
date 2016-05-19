@@ -63,6 +63,7 @@ Type values take the form of
     { "type": "option", "value": string }
     { "type": "string", "value": string }
     { "type": "number", "value": integer or float }
+    { "type": "boolean", "value": boolean }
     { "type": "integer", "value": integer }
     { "type": "float", "value": float }
     { "type": "list", "value": array of types }
