@@ -1,0 +1,66 @@
+{
+    "functions": [
+        {
+            "name": "shader",
+            "description": "Load a shader.",
+            "examples": ["(shader \"texture2d\" (:core :texture2d-vs) (:core :texture2d-fs))"],
+            "return": { "type": "custom:shader" },
+            "args": [
+                [{ "type": "string", "name": "name" }],
+                [{ "type": "string", "name": "name" }, { "type": "list", "name": "vertex-source", "value": [{ "type": "atom", "name": "library" }, { "type": "atom", "name": "source-vertex" }] }, { "type": "list", "name": "fragment-source", "value": [{ "type": "atom", "name": "library" }, { "type": "atom", "name": "source-fragment" }] }]
+            ]
+        },
+        {
+            "name": "texture",
+            "description": "Load a texture.",
+            "examples": ["(texture \"blob\" :linear (dir: \"blob.png\"))"],
+            "return": { "type": "custom:texture" },
+            "args": [
+                [{ "type": "string", "name": "name" }],
+                [{ "type": "string", "name": "name" }, { "type": "atom", "value": "linear" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }],
+                [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }]
+            ]
+        },
+        {
+            "name": "font",
+            "description": "Load a fontset.",
+            "examples": ["(font \"Arial\" 57\n\t(unicode #f)\n\t(line-height 82)\n\t(base 53)\n\t(texture \"arial-57-font\")\n\t(letter \" \" (glyph 0 512 0 0) (offset 0 53) (advance 32))\n\t(letter \"!\" (glyph 112 320 23 59) (offset -2 3) (advance 33))\n)"],
+            "return": { "type": "custom:font" },
+            "args": [
+                [{ "type": "string", "name": "name" }],
+                [{ "type": "string", "name": "name" }, { "type": "integer", "name": "size" }, { "type": "custom:texture", "name": "glyphs", "optional": true }]
+            ],
+            "options": [
+                {
+                    "name": "style",
+                    "description": "The style of the font.",
+                    "args": [
+                        [{ "type" : "atom", "value": "bold" }],
+                        [{ "type" : "atom", "value": "italic" }],
+                        [{ "type" : "atom", "value": "bold" }, { "type" : "atom", "value": "italic" }]
+                    ]
+                },
+                {
+                    "name": "unicode",
+                    "description": "Whether the fontset contains unicode characters.",
+                    "args": [[{ "type" : "boolean", "name": "contains-unicode" }]]
+                },
+                {
+                    "name": "line-height",
+                    "description": "The distance between each line.",
+                    "args": [[{ "type" : "integer", "name": "height" }]]
+                },
+                {
+                    "name": "base",
+                    "description": "The distance from the top to the baseline of the characters.",
+                    "args": [[{ "type" : "integer", "name": "baseline" }]]
+                },
+                {
+                    "name": "letter",
+                    "description": "The individual character.",
+                    "args": [[{ "type" : "string", "name": "char" }, { "type": "list", "name": "glyph-coord", "value": [{ "type": "option", "value": "glyph" }, { "type": "integer", "name": "x"}, { "type": "integer", "name": "y"}, { "type": "integer", "name": "width"}, { "type": "integer", "name": "height"}] }, { "type": "list", "name": "offset", "value": [{ "type": "option", "value": "offset" }, { "type": "integer", "name": "x"}, { "type": "integer", "name": "y"}] }, { "type": "list", "name": "advance", "value": [{ "type": "option", "value": "advance" }, { "type": "integer", "name": "x"}] }]]
+                }
+            ]
+        }
+    ]
+}
