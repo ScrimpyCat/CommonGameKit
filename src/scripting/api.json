@@ -1,0 +1,28 @@
+{
+    "inputs": [
+        {
+            "name": "cd",
+            "return": { "type": "string" },
+            "description": "Holds the current directory the script was loaded from."
+        },
+        {
+            "name": "file",
+            "return": { "type": "string" },
+            "description": "Holds the filename of the script."
+        }
+    ],
+    "includes": [
+        "evaluators/asset.json",
+        "evaluators/colour.json",
+        "evaluators/control_flow.json",
+        "evaluators/equality.json",
+        "evaluators/io.json",
+        "evaluators/list.json",
+        "evaluators/macro.json",
+        "evaluators/math.json",
+        "evaluators/project.json",
+        "evaluators/state.json",
+        "evaluators/string.json",
+        "evaluators/window.json"
+    ]
+}
