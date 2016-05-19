@@ -78,29 +78,54 @@
                     "description": "Match an event predicate. If the predicate is true (1 or some non-zero value) it will evaluate and return the result of the truth expression, or if the predicate is false (0) it will evaluate and return the result of the false expression. If the predicate is of a different event then the one being tested, neither expression will be evaluated.",
                     "examples": ["(on (cursor: .rect) :inside :outside) ;:outside"],
                     "args": [[{"type": "expression", "name": "event-predicate" }, { "type": "expression", "name": "true" }, { "type": "expression", "name": "false", "optional": true }]],
+                    "inputs": [
+                        {
+                            "name": "pos",
+                            "description": "Holds the cursor position. Created on cursor events.",
+                            "return": { "type": "list", "value": [{ "type": "float", "name": "x" }, { "type": "float", "name": "x" }] }
+                        },
+                        {
+                            "name": "pos-x",
+                            "description": "Holds the cursor x position. Created on cursor events.",
+                            "return": { "type": "float" }
+                        },
+                        {
+                            "name": "pos-y",
+                            "description": "Holds the cursor y position. Created on cursor events.",
+                            "return": { "type": "float" }
+                        },
+                        {
+                            "name": "press",
+                            "description": "Holds state of a button press. Button is down (0) or released (1). Created on click events.",
+                            "return": { "type": "boolean" }
+                        },
+                        {
+                            "name": "scroll-delta",
+                            "description": "Holds the scroll delta. Created on scroll events.",
+                            "return": { "type": "list", "value": [{ "type": "float", "name": "x" }, { "type": "float", "name": "x" }] }
+                        },
+                        {
+                            "name": "scroll-delta-x",
+                            "description": "Holds the scroll x delta. Created on scroll events.",
+                            "return": { "type": "float" }
+                        },
+                        {
+                            "name": "scroll-delta-y",
+                            "description": "Holds the scroll y delta. Created on scroll events.",
+                            "return": { "type": "float" }
+                        },
+                        {
+                            "name": "drop-files",
+                            "description": "Holds the list of files being dropped. Created on drop events.",
+                            "return": { "type": "list" }
+                        }
+                    ],
                     "options": [
                         {
                             "name": "cursor",
                             "description": "Predicate to match when the cursor is position inside the given rect. The `@pos` (`@pos-x` and `@pos-y`) variable is set to the current cursor's position.",
                             "examples": ["(cursor: (0 0 10 10)) ;1", "(on (cursor: (0 0 10 10)) @pos) ;(2 5)"],
-                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]],
-                            "inputs": [
-                                {
-                                    "name": "pos",
-                                    "description": "Holds the cursor position.",
-                                    "return": { "type": "list", "value": [{ "type": "float", "name": "x" }, { "type": "float", "name": "x" }] }
-                                },
-                                {
-                                    "name": "pos-x",
-                                    "description": "Holds the cursor x position.",
-                                    "return": { "type": "float" }
-                                },
-                                {
-                                    "name": "pos-y",
-                                    "description": "Holds the cursor y position.",
-                                    "return": { "type": "float" }
-                                }
-                            ]
+                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]]
                         },
                         {
                             "name": "click",
@@ -118,50 +143,19 @@
                                 [{ "type": "atom", "value": "ctrl-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
                                 [{ "type": "atom", "value": "cmd-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }],
                                 [{ "type": "atom", "value": "shift-right" }, { "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]
-                            ],
-                            "inputs": [
-                                {
-                                    "name": "press",
-                                    "description": "Holds state of a button press. Button is down (0) or released (1).",
-                                    "return": { "type": "boolean" }
-                                }
                             ]
                         },
                         {
                             "name": "scroll",
                             "description": "Predicate to match when a scroll event occurs inside the given rect. The `@scroll-delta` (`@scroll-delta-x` and `@scroll-delta-y`) variable is set to the current scroll delta.",
                             "examples": ["(scroll: (0 0 10 10)) ;1", "(on (scroll: (0 0 10 10)) @scroll-delta) ;0.1"],
-                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]],
-                            "inputs": [
-                                {
-                                    "name": "scroll-delta",
-                                    "description": "Holds the scroll delta.",
-                                    "return": { "type": "list", "value": [{ "type": "float", "name": "x" }, { "type": "float", "name": "x" }] }
-                                },
-                                {
-                                    "name": "scroll-delta-x",
-                                    "description": "Holds the scroll x delta.",
-                                    "return": { "type": "float" }
-                                },
-                                {
-                                    "name": "scroll-delta-y",
-                                    "description": "Holds the scroll y delta.",
-                                    "return": { "type": "float" }
-                                }
-                            ]
+                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]]
                         },
                         {
                             "name": "drop",
                             "description": "Predicate to match when a file drop event occurs inside the given rect. The `@drop-files` variable is set to the list of files being dropped.",
                             "examples": ["(drop: (0 0 10 10)) ;1", "(on (drop: (0 0 10 10)) @drop-files) ;(\"~/blah.txt\")"],
-                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]],
-                            "inputs": [
-                                {
-                                    "name": "drop-files",
-                                    "description": "Holds the list of files being dropped.",
-                                    "return": { "type": "list" }
-                                }
-                            ]
+                            "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]]
                         }
                     ]
                 }
