@@ -1,0 +1,11 @@
+{
+    "functions": [
+        {
+            "name": "gui",
+            "description": "Create a reusable GUI element. It will create a GUI constructor function for the name specified, with the default settings.",
+            "examples": [],
+            "args": [[{ "type": "string", "name": "name" }]],
+            "includes": ["gui-defines.json"]
+        }
+    ]
+}
