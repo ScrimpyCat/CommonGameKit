@@ -1,0 +1,40 @@
+{
+    "functions": [
+        {
+            "name": "state!",
+            "description": "Adds the state to the encompassing expression. State can then be referenced and set elsewhere in that expression or nested expressions. State creates a link between the atom name and the value it holds. When referencing state, state in the inner scopes has greater preference to state in the outer scopes.",
+            "examples": [
+                "(state! \"x\" 5)\nx ;5\n(x! 10) ;10\nx ;10",
+                ";hooks\n(state! \"y\" (quote (* x 2)))\n(x! 2) ;2\ny ;4",
+                ";scope\n(begin\n\t(state! \"x\" 10)\n\tx ;10\n\ty ;4\n\t(begin\n\t\tx ;10\n\t\t(state! \"x\" 20)\n\t\tx ;20\n\t)\n\tx ;10\n)"
+            ],
+            "return": { "type": "expression" },
+            "args": [
+                [{ "type": "string", "name": ".name" }, { "type": "expression", "optional": true, "name": "init" }]
+            ]
+        },
+        {
+            "name": "enum!",
+            "description": "Much the same as state except it makes it more convenient have enum like behaviour when declaring the states. Follows the same behaviour as C enums (with the exception that they may be set) where uninitialized enums count up in increments from previous (or 0), or are initialized with a specific integer.",
+            "examples": ["(enum!\n\t\"x\" ;0\n\t\"y\" ;1\n\t\"z\" ;2\n\t(\"a\" 20) ;20\n\t\"b\" ;21\n)\n\ny ;1\nb ;21"],
+            "return": { "type": "expression" },
+            "args": [{
+                "repeat": [{ "type": "string", "optional": true, "name": "&name" }, { "type": "list", "optional": true, "value": [{ "type": "string", "name": "&name" }, { "type": "integer" }] }]
+            }]
+        },
+        {
+            "name": "super",
+            "description": "Evaluates the expression in the former in-use state.",
+            "examples": ["(begin\n\t(state! \"x\" 10)\n\t(begin\n\t\t(state! \"x\" 20)\n\t\t(begin\n\t\t\t(super x) ;10\n\t\t\t(super (super x)) ;x\n\t\t)\n\t)\n)"],
+            "return": { "type": "expression" },
+            "args": [[{ "type": "expression" }]]
+        },
+        {
+            "name": "super-strict",
+            "description": "Evaluates the expression in next level up state.",
+            "examples": ["(begin\n\t(state! \"x\" 10)\n\t(begin\n\t\t(state! \"x\" 20)\n\t\t(begin\n\t\t\t(strict-super x) ;20\n\t\t\t(strict-super (strict-super x)) ;10\n\t\t)\n\t)\n)"],
+            "return": { "type": "expression" },
+            "args": [[{ "type": "expression" }]]
+        }
+    ]
+}
