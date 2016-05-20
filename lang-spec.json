@@ -1,6 +1,7 @@
 {
     "includes": [
         "src/scripting/api.json",
-        "src/gui/gui.json"
+        "src/gui/gui.json",
+        "assets/ui/ui.json"
     ]
 }
