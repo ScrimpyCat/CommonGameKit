@@ -1,0 +1,291 @@
+{
+    "functions": [
+        {
+            "name": "gui-rect",
+            "description": "Create a rectangle. Appearance can be changed through setting the different states or completely customized through overriding the render option.",
+            "includes": [
+                "../../src/gui/gui-defines.json"
+            ],
+            "states": [
+                {
+                    "name": "colour",
+                    "description": "The colour to be used for the rectangle.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "radius",
+                    "description": "The corner radius of the button.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                }
+            ],
+            "enums": [
+                {
+                    "name": "normal",
+                    "return": { "type": "integer", "value": 0 },
+                    "description": "The button's state is normal."
+                },
+                {
+                    "name": "highlighted",
+                    "return": { "type": "integer", "value": 1 },
+                    "description": "The button's state is highlighted."
+                },
+                {
+                    "name": "pushed",
+                    "return": { "type": "integer", "value": 2 },
+                    "description": "The button's state is pushed."
+                }
+            ]
+        },
+        {
+            "name": "gui-button",
+            "description": "Create a button. Appearance can be changed through setting the different states or completely customized through overriding the render option.",
+            "includes": [
+                "../../src/gui/gui-defines.json"
+            ],
+            "states": [
+                {
+                    "name": "colour",
+                    "description": "The colour to be used for the button.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "radius",
+                    "description": "The corner radius of the button.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "status",
+                    "description": "The current event state of the button. Either &normal, &highlighted, or &pushed. Typically do not set this.",
+                    "return": { "type": "integer" }
+                },
+                {
+                    "name": "label",
+                    "description": "The different labels (renderables) for the different states of the button.",
+                    "return": { "type": "list" },
+                    "args": [[{ "type": "list", "value": [{ "type": "expression", "name": "normal" }, { "type": "expression", "name": "highlighted" }, { "type": "expression", "name": "pushed" }] }]]
+                },
+                {
+                    "name": "on-click",
+                    "description": "The event evaluated when the button is clicked.",
+                    "return": { "type": "expression" },
+                    "args": [[{ "type": "expression", "name": "event" }]]
+                },
+                {
+                    "name": "inside",
+                    "description": "Whether the cursor is currently inside the button. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                },
+                {
+                    "name": "dragged",
+                    "description": "Whether the cursor is currently dragging the button. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                }
+            ],
+            "enums": [
+                {
+                    "name": "normal",
+                    "return": { "type": "integer", "value": 0 },
+                    "description": "The button's state is normal."
+                },
+                {
+                    "name": "highlighted",
+                    "return": { "type": "integer", "value": 1 },
+                    "description": "The button's state is highlighted."
+                },
+                {
+                    "name": "pushed",
+                    "return": { "type": "integer", "value": 2 },
+                    "description": "The button's state is pushed."
+                }
+            ]
+        },
+        {
+            "name": "gui-toggle",
+            "description": "Create a toggle button. Appearance can be changed through setting the different states or completely customized through overriding the render option.",
+            "includes": [
+                "../../src/gui/gui-defines.json"
+            ],
+            "states": [
+                {
+                    "name": "off-colour",
+                    "description": "The colour to be used for the button when it is inactive.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                                {
+                    "name": "on-colour",
+                    "description": "The colour to be used for the button when it is active.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "colour",
+                    "description": "The colour to be used for the button. Typically do not set this.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "radius",
+                    "description": "The corner radius of the button.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "status",
+                    "description": "The current event state of the button. Either &normal, &highlighted, or &pushed. Typically do not set this.",
+                    "return": { "type": "integer" }
+                },
+                {
+                    "name": "active",
+                    "description": "Whether the button is active or inactive.",
+                    "return": { "type": "boolean" },
+                    "args": [[{ "type": "boolean" }]]
+                },
+                {
+                    "name": "label",
+                    "description": "The different labels (renderables) for the different states of the button.",
+                    "return": { "type": "list" },
+                    "args": [[{ "type": "list", "value": [{ "type": "expression", "name": "off" }, { "type": "expression", "name": "on" }, { "type": "expression", "name": "highlighted" }, { "type": "expression", "name": "pushed" }] }]]
+                },
+                {
+                    "name": "off-click",
+                    "description": "The event evaluated when the button is made inactive.",
+                    "return": { "type": "expression" },
+                    "args": [[{ "type": "expression", "name": "event" }]]
+                },
+                {
+                    "name": "on-click",
+                    "description": "The event evaluated when the button is made active.",
+                    "return": { "type": "expression" },
+                    "args": [[{ "type": "expression", "name": "event" }]]
+                },
+                {
+                    "name": "inside",
+                    "description": "Whether the cursor is currently inside the button. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                },
+                {
+                    "name": "dragged",
+                    "description": "Whether the cursor is currently dragging the button. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                }
+            ],
+            "enums": [
+                {
+                    "name": "off",
+                    "return": { "type": "integer", "value": 0 },
+                    "description": "The button's state is inactive."
+                },
+                {
+                    "name": "on",
+                    "return": { "type": "integer", "value": 1 },
+                    "description": "The button's state is active."
+                },
+                {
+                    "name": "highlighted",
+                    "return": { "type": "integer", "value": 2 },
+                    "description": "The button's state is highlighted."
+                },
+                {
+                    "name": "pushed",
+                    "return": { "type": "integer", "value": 3 },
+                    "description": "The button's state is pushed."
+                }
+            ]
+        }
+    ]
+}
