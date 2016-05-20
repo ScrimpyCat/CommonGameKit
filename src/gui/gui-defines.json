@@ -183,7 +183,25 @@
             "name": "rect",
             "description": "The rect the element.",
             "return": { "type": "list" },
-            "args": [[{ "type": "list", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]]
+            "args": [
+                [
+                    { "type": "number", "name": "x" },
+                    { "type": "number", "name": "y" },
+                    { "type": "number", "name": "width" },
+                    { "type": "number", "name": "height" }
+                ],
+                [
+                    {
+                        "type": "list",
+                        "value": [
+                            { "type": "number", "name": "x" },
+                            { "type": "number", "name": "y" },
+                            { "type": "number", "name": "width" },
+                            { "type": "number", "name": "height" }
+                        ]
+                    }
+                ]
+            ]
         },
         {
             "name": "x",
