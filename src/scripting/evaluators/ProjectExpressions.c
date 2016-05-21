@@ -330,8 +330,8 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                         if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(Type) == CCExpressionValueTypeAtom) && (CCExpressionGetType(Source) == CCExpressionValueTypeExpression))
                         {
                             GFXShaderSourceType ShaderType = GFXShaderSourceTypeVertex;
-                            if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("vertex"))) ShaderType = GFXShaderSourceTypeVertex;
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("fragment"))) ShaderType = GFXShaderSourceTypeFragment;
+                            if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING(":vertex"))) ShaderType = GFXShaderSourceTypeVertex;
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING(":fragment"))) ShaderType = GFXShaderSourceTypeFragment;
                             else
                             {
                                 CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid shader type: %S", CCExpressionGetAtom(Type));
@@ -347,7 +347,7 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                                 
                                 if ((CCExpressionGetType(SourceType) == CCExpressionValueTypeAtom) && (CCExpressionGetType(SourceArg) == CCExpressionValueTypeString))
                                 {
-                                    if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("dir")))
+                                    if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("dir:")))
                                     {
                                         CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(SourceArg))
                                         {
@@ -375,7 +375,7 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                                         }
                                     }
                                     
-                                    else if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("glsl")))
+                                    else if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("glsl:")))
                                     {
                                         CC_STRING_TEMP_BUFFER(Shader, CCExpressionGetString(SourceArg))
                                         {
