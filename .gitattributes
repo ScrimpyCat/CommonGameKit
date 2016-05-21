@@ -1,6 +1,7 @@
 *.h linguist-language=C
 *.fs linguist-language=GLSL
 *.vs linguist-language=GLSL
+*.gamepkg linguist-language=Scheme
 *.asset linguist-language=Scheme
 *.gfxlib linguist-language=Scheme
 *.font linguist-language=Scheme
