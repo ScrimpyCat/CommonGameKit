@@ -41,6 +41,8 @@
 
 #define CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(function, args) CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %s: (%s %s)", function, function, args)
 
+#define CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR(option, args) CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %s: (%s: %s)", option, option, args)
+
 /*!
  * @brief An evaluator for an expression.
  * @param Expression The expression to be evaluated.

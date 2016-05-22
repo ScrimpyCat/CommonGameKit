@@ -6,6 +6,13 @@
             "examples": ["(game \"My Game\" ; title\n\t(default-resolution: 640 480) ; resolution or window size\n\t(default-fullscreen: #f) ; fullscreen mode\n\n\t(dir-fonts: \"font/\" (engine-path: \"assets/font/\")) ; font directories\n\t(dir-levels: \"logic/levels/\") ; level directories\n\t(dir-rules: \"logic/rules/\") ; rule directories\n\t(dir-textures: \"graphics/textures/\") ; texture directories\n\t(dir-shaders: \"graphics/shaders/\" (engine-path: \"assets/shaders/\")) ; shader directories\n\t(dir-sounds: \"audio/\") ; sound directories\n\t(dir-layouts: \"ui/\" (engine-path: \"assets/ui/\")) ; layout directories\n\t(dir-entities: \"logic/entities/\") ; entity directories\n\t(dir-logs: \"logs/\") ; log directory\n\t(dir-tmp: \"tmp/\") ; tmp directory\n)"],
             "return": { "type": "custom:CCEngineConfig" },
             "args": [[{ "type": "string", "name": "title" }]],
+            "inputs": [
+                {
+                    "name": "engine-path",
+                    "description": "The engine's directory.",
+                    "return": { "type": "string" }
+                }
+            ],
             "options": [
                 {
                     "name": "default-resolution",
@@ -19,125 +26,75 @@
                 },
                 {
                     "name": "dir-fonts",
-                    "description": "The directories containing fonts.",
+                    "description": "The directories containing fonts. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-levels",
-                    "description": "The directories containing levels.",
+                    "description": "The directories containing levels. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-rules",
-                    "description": "The directories containing rules.",
+                    "description": "The directories containing rules. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-textures",
-                    "description": "The directories containing textures.",
+                    "description": "The directories containing textures. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-shaders",
-                    "description": "The directories containing shaders.",
+                    "description": "The directories containing shaders. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-sounds",
-                    "description": "The directories containing sounds.",
+                    "description": "The directories containing sounds. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-layouts",
-                    "description": "The directories containing layouts.",
+                    "description": "The directories containing layouts. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-entities",
-                    "description": "The directories containing entities.",
+                    "description": "The directories containing entities. Use either paths or list of path components.",
                     "args": [
-                        { "repeat": [{ "type": "string", "name": "path" }] }
-                    ],
-                    "options": [
-                        {
-                            "name": "engine-path",
-                            "description": "Create a path relative to the engine's directory.",
-                            "args": [[{ "type": "string", "name": "path" }]]
-                        }
+                        { "repeat": [{ "type": "string", "name": "path" }, { "type": "list" }] }
                     ]
                 },
                 {
                     "name": "dir-logs",
-                    "description": "The directory to store the logs.",
-                    "args": [[{ "type": "string", "name": "path" }]]
+                    "description": "The directory to store the logs. Use either paths or list of path components.",
+                    "args": [
+                        [{ "type": "string", "name": "path" }],
+                        [{ "type": "list", "name": "path-components" }]
+                    ]
                 },
                 {
                     "name": "dir-tmp",
-                    "description": "The directory to use for temporary storage.",
-                    "args": [[{ "type": "string", "name": "path" }]]
+                    "description": "The directory to use for temporary storage. Use either paths or list of path components.",
+                    "args": [
+                        [{ "type": "string", "name": "path" }],
+                        [{ "type": "list", "name": "path-components" }]
+                    ]
                 }
             ]
         },

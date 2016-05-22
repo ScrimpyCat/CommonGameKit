@@ -146,7 +146,7 @@ void CCProjectLoad(FSPath ProjectPath)
         FSPathRemoveComponentLast(EnginePath); // src/engine/Project
         FSPathRemoveComponentLast(EnginePath); // src/engine/
         FSPathRemoveComponentLast(EnginePath); // src/
-        CCExpressionCreateState(Expression, CC_STRING("engine-path"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(EnginePath)), FALSE), FALSE);
+        CCExpressionCreateState(Expression, CC_STRING("@engine-path"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, FSPathGetPathString(EnginePath)), FALSE), FALSE);
         FSPathDestroy(EnginePath);
         
         

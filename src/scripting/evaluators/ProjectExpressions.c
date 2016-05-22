@@ -164,7 +164,7 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                     Result = CCExpressionEvaluate(*Expr);
                     if (CCExpressionGetType(Result) == CCExpressionValueTypeAtom)
                     {
-                        if (CCStringEqual(CCExpressionGetAtom(Result), CC_STRING("default-resolution")))
+                        if (CCStringEqual(CCExpressionGetAtom(Result), CC_STRING("default-resolution:")))
                         {
                             if (ArgCount == 2)
                             {
@@ -176,35 +176,27 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                     Config.window.height = CCExpressionGetInteger(Height);
                                 }
                                 
-                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-resolution", "width:integer height:integer");
+                                else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("default-resolution", "width:integer height:integer");
                             }
                             
-                            else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-resolution", "width:integer height:integer");
+                            else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("default-resolution", "width:integer height:integer");
                         }
                         
-                        else if (CCStringEqual(CCExpressionGetAtom(Result), CC_STRING("default-fullscreen")))
+                        else if (CCStringEqual(CCExpressionGetAtom(Result), CC_STRING("default-fullscreen:")))
                         {
                             if (ArgCount == 1)
                             {
                                 CCExpression Fullscreen = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
                                 
-                                if (CCExpressionGetType(Fullscreen) == CCExpressionValueTypeAtom) //TODO: Later add atom evaluators, so this can instead be changed to an integer
+                                if (CCExpressionGetType(Fullscreen) == CCExpressionValueTypeInteger)
                                 {
-                                    if (CCStringEqual(CCExpressionGetAtom(Fullscreen), CC_STRING("true")))
-                                    {
-                                        Config.window.fullscreen = TRUE;
-                                    }
-                                    
-                                    else if (CCStringEqual(CCExpressionGetAtom(Fullscreen), CC_STRING("false")))
-                                    {
-                                        Config.window.fullscreen = FALSE;
-                                    }
+                                    Config.window.fullscreen = CCExpressionGetInteger(Fullscreen);
                                 }
                                 
-                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-fullscreen", "fullscreen:atom");
+                                else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("default-fullscreen", "fullscreen:boolean");
                             }
                             
-                            else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("default-fullscreen", "fullscreen:atom");
+                            else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("default-fullscreen", "fullscreen:boolean");
                         }
                         
                         else if (CCStringHasPrefix(CCExpressionGetAtom(Result), CC_STRING("dir-")))
@@ -216,16 +208,16 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                 void *attribute;
                                 _Bool path;
                             } Commands[] = {
-                                { CC_STRING("fonts"), &Config.directory.fonts, FALSE },
-                                { CC_STRING("levels"), &Config.directory.levels, FALSE },
-                                { CC_STRING("rules"), &Config.directory.rules, FALSE },
-                                { CC_STRING("textures"), &Config.directory.textures, FALSE },
-                                { CC_STRING("shaders"), &Config.directory.shaders, FALSE },
-                                { CC_STRING("sounds"), &Config.directory.sounds, FALSE },
-                                { CC_STRING("layouts"), &Config.directory.layouts, FALSE },
-                                { CC_STRING("entities"), &Config.directory.entities, FALSE },
-                                { CC_STRING("logs"), &Config.directory.logs, TRUE },
-                                { CC_STRING("tmp"), &Config.directory.tmp, TRUE }
+                                { CC_STRING("fonts:"), &Config.directory.fonts, FALSE },
+                                { CC_STRING("levels:"), &Config.directory.levels, FALSE },
+                                { CC_STRING("rules:"), &Config.directory.rules, FALSE },
+                                { CC_STRING("textures:"), &Config.directory.textures, FALSE },
+                                { CC_STRING("shaders:"), &Config.directory.shaders, FALSE },
+                                { CC_STRING("sounds:"), &Config.directory.sounds, FALSE },
+                                { CC_STRING("layouts:"), &Config.directory.layouts, FALSE },
+                                { CC_STRING("entities:"), &Config.directory.entities, FALSE },
+                                { CC_STRING("logs:"), &Config.directory.logs, TRUE },
+                                { CC_STRING("tmp:"), &Config.directory.tmp, TRUE }
                             };
                             
                             for (size_t Loop = 0; Loop < sizeof(Commands) / sizeof(typeof(*Commands)); Loop++)
@@ -241,7 +233,7 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                         
                                         else
                                         {
-                                            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result)) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Buffer, "path:string|list");
+                                            CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Result)) CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR(Buffer, "path:string|list");
                                         }
                                     }
                                     
