@@ -74,14 +74,17 @@ CCExpression CCAssetExpressionShader(CCExpression Asset)
                             (CCExpressionGetType(FragLib) == CCExpressionValueTypeAtom) &&
                             (CCExpressionGetType(FragSrc) == CCExpressionValueTypeAtom))
                         {
-                            GFXShaderLibrary LibVert = CCAssetManagerCreateShaderLibrary(CCExpressionGetAtom(VertLib));
-                            GFXShaderLibrary LibFrag = CCAssetManagerCreateShaderLibrary(CCExpressionGetAtom(FragLib));
+                            CCString LibV = CCStringCreateWithoutRange(CCExpressionGetAtom(VertLib), 0, 1);
+                            CCString LibF = CCStringCreateWithoutRange(CCExpressionGetAtom(FragLib), 0, 1);
+                            
+                            GFXShaderLibrary LibVert = CCAssetManagerCreateShaderLibrary(LibV);
+                            GFXShaderLibrary LibFrag = CCAssetManagerCreateShaderLibrary(LibF);
                             
                             if ((LibVert) && (LibFrag))
                             {
                                 GFXShaderSource Vert = NULL, Frag = NULL;
-                                CC_STRING_TEMP_BUFFER(Buffer1, CCExpressionGetAtom(VertSrc)) Vert = GFXShaderLibraryGetSource(LibVert, Buffer1);
-                                CC_STRING_TEMP_BUFFER(Buffer2, CCExpressionGetAtom(FragSrc)) Frag = GFXShaderLibraryGetSource(LibFrag, Buffer2);
+                                CC_STRING_TEMP_BUFFER(Buffer1, CCExpressionGetAtom(VertSrc)) Vert = GFXShaderLibraryGetSource(LibVert, Buffer1 + 1);
+                                CC_STRING_TEMP_BUFFER(Buffer2, CCExpressionGetAtom(FragSrc)) Frag = GFXShaderLibraryGetSource(LibFrag, Buffer2 + 1);
                                 
                                 if ((Vert) && (Frag))
                                 {
@@ -91,13 +94,16 @@ CCExpression CCAssetExpressionShader(CCExpression Asset)
                                     Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeShader, Shader, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)GFXShaderDestroy);
                                 }
                                 
-                                else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader source (%S::%S) or (%S::%S)", CCExpressionGetAtom(VertLib), CCExpressionGetAtom(VertSrc), CCExpressionGetAtom(FragLib), CCExpressionGetAtom(FragSrc));
+                                else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader source (%S:%S) or (%S:%S)", LibV, CCExpressionGetAtom(VertSrc), LibF, CCExpressionGetAtom(FragSrc));
                             }
                             
-                            else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader library %S or %S", CCExpressionGetAtom(VertLib), CCExpressionGetAtom(FragLib));
+                            else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader library %S or %S", LibV, LibF);
                             
                             if (LibVert) GFXShaderLibraryDestroy(LibVert);
                             if (LibFrag) GFXShaderLibraryDestroy(LibFrag);
+                            
+                            CCStringDestroy(LibV);
+                            CCStringDestroy(LibF);
                         }
                         
                         else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Shader source should be of type (lib:atom source:atom)");
