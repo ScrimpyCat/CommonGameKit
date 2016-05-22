@@ -154,7 +154,7 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                         
                         if ((CCExpressionGetType(SourceType) == CCExpressionValueTypeAtom) && (CCExpressionGetType(SourceArg) == CCExpressionValueTypeString))
                         {
-                            if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("dir")))
+                            if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("dir:")))
                             {
                                 CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(SourceArg))
                                 {
@@ -170,8 +170,8 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                                     if (Data)
                                     {
                                         GFXTextureHint Filtering = GFXTextureHintFilterModeLinear;
-                                        if (CCStringEqual(CCExpressionGetAtom(Filter), CC_STRING("nearest"))) Filtering = GFXTextureHintFilterModeNearest;
-                                        else if (!CCStringEqual(CCExpressionGetAtom(Filter), CC_STRING("linear"))) CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid filtering mode: %S", CCExpressionGetAtom(Filter));
+                                        if (CCStringEqual(CCExpressionGetAtom(Filter), CC_STRING(":nearest"))) Filtering = GFXTextureHintFilterModeNearest;
+                                        else if (!CCStringEqual(CCExpressionGetAtom(Filter), CC_STRING(":linear"))) CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid filtering mode: %S", CCExpressionGetAtom(Filter));
                                         
                                         size_t Width, Height, Depth;
                                         CCPixelDataGetSize(Data, &Width, &Height, &Depth);

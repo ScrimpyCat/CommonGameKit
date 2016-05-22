@@ -1,8 +1,8 @@
 (asset
-    (loop "file" (search @cd "*.png")
-        (texture (replace ".png" "" (filename file)) linear (dir file)) ;TODO: need to add a remove range function/a drop function
+    (loop "@item" (search @cd "*.png")
+        (texture (replace ".png" "" (filename @item)) :linear (dir: @item)) ;TODO: need to add a remove range function/a drop function
     )
-    (loop "file" (search @cd "*.font")
-        (eval file) ; TODO: later load it with the asset manager so we can handle live reloading
+    (loop "@item" (search @cd "*.font")
+        (eval @item) ; TODO: later load it with the asset manager so we can handle live reloading
     )
 )
