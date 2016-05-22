@@ -30,19 +30,19 @@
 
 static const char CCProjectGamepkg[] =
 "(game \"Game\" ; title\n"
-"    (default-resolution 640 480) ; resolution or window size\n"
-"    (default-fullscreen false) ; fullscreen mode\n"
+"    (default-resolution: 640 480) ; resolution or window size\n"
+"    (default-fullscreen: #f) ; fullscreen mode\n"
 "\n"
-"    (dir-fonts \"font/\" (engine-path \"assets/font/\")) ; font directories\n"
-"    (dir-levels \"logic/levels/\") ; level directories\n"
-"    (dir-rules \"logic/rules/\") ; rule directories\n"
-"    (dir-textures \"graphics/textures/\") ; texture directories\n"
-"    (dir-shaders \"graphics/shaders/\" (engine-path \"assets/shaders/\")) ; shader directories\n"
-"    (dir-sounds \"audio/\") ; sound directories\n"
-"    (dir-layouts \"ui/\" (engine-path \"assets/ui/\")) ; layout directories\n"
-"    (dir-entities \"logic/entities/\") ; entity directories\n"
-"    (dir-logs \"logs/\") ; log directory\n"
-"    (dir-tmp \"tmp/\") ; tmp directory\n"
+"    (dir-fonts: \"font/\" (@engine-path \"assets/font/\")) ; font directories\n"
+"    (dir-levels: \"logic/levels/\") ; level directories\n"
+"    (dir-rules: \"logic/rules/\") ; rule directories\n"
+"    (dir-textures: \"graphics/textures/\") ; texture directories\n"
+"    (dir-shaders: \"graphics/shaders/\" (@engine-path \"assets/shaders/\")) ; shader directories\n"
+"    (dir-sounds: \"audio/\") ; sound directories\n"
+"    (dir-layouts: \"ui/\" (@engine-path \"assets/ui/\")) ; layout directories\n"
+"    (dir-entities: \"logic/entities/\") ; entity directories\n"
+"    (dir-logs: \"logs/\") ; log directory\n"
+"    (dir-tmp: \"tmp/\") ; tmp directory\n"
 ")\n";
 
 FSPath CCProjectCreate(const char *Directory)
