@@ -142,12 +142,12 @@ defmodule Font do
     defp convert_bmfont([], script), do: script <> ")"
     defp convert_bmfont([%BMFont.Info{ face: face, size: size, bold: bold, italic: italic, unicode: unicode }|args], script) do
         style = cond do
-            bold and italic -> " (style bold italic)"
-            bold -> " (style bold)"
-            italic -> " (style italic)"
+            bold and italic -> " (style: :bold :italic)"
+            bold -> " (style: :bold)"
+            italic -> " (style: :italic)"
             true -> ""
         end
-        unicode = if unicode, do: "(unicode #t)", else: "(unicode #f)"
+        unicode = if unicode, do: "(unicode: #t)", else: "(unicode: #f)"
 
         convert_bmfont(args, script <> """
         (font \"#{face}\" #{size}#{style}
@@ -156,8 +156,8 @@ defmodule Font do
     end
     defp convert_bmfont([%BMFont.Common{ line_height: line_height, base: base, pages: 1 }|args], script) do
         convert_bmfont(args, script <> """
-            (line-height #{line_height})
-            (base #{base})
+            (line-height: #{line_height})
+            (base: #{base})
         """)
     end
     defp convert_bmfont([%BMFont.Page{ file: file }|args], script) do
@@ -171,7 +171,7 @@ defmodule Font do
             '"' -> '\\"'
             c -> c
         end
-        convert_bmfont(args, script <> "    (letter \"#{letter}\" (glyph #{x} #{y} #{w} #{h}) (offset #{xoffset} #{yoffset}) (advance #{xadvance}))\n")
+        convert_bmfont(args, script <> "    (letter: \"#{letter}\" (glyph: #{x} #{y} #{w} #{h}) (offset: #{xoffset} #{yoffset}) (advance: #{xadvance}))\n")
     end
     defp convert_bmfont([_|args], script), do: convert_bmfont(args, script)
 end

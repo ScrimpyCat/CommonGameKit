@@ -195,7 +195,7 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
         }
     }
     
-    if (Ret == Asset) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [filter:atom] [path:string]");
+    if (Ret == Asset) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [filter:atom] (dir: [path:string])");
     
     return Ret;
 }
@@ -245,7 +245,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                         CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Option), 0);
                         if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
                         {
-                            if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("style")))
+                            if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("style:")))
                             {
                                 CCEnumerator StyleEnumerator;
                                 CCCollectionGetEnumerator(CCExpressionGetList(Option), &StyleEnumerator);
@@ -254,12 +254,12 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                                 {
                                     if (CCExpressionGetType(*Style) == CCExpressionValueTypeAtom)
                                     {
-                                        if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING("bold")))
+                                        if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING(":bold")))
                                         {
                                             FontStyle |= CCFontStyleBold;
                                         }
                                         
-                                        else if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING("italic")))
+                                        else if (CCStringEqual(CCExpressionGetAtom(*Style), CC_STRING(":italic")))
                                         {
                                             FontStyle |= CCFontStyleItalic;
                                         }
@@ -267,22 +267,22 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                                 }
                             }
                             
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("unicode")))
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("unicode:")))
                             {
                                 IsUnicode = CCExpressionGetNamedInteger(Option);
                             }
                             
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("line-height")))
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("line-height:")))
                             {
                                 LineHeight = CCExpressionGetNamedInteger(Option);
                             }
                             
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("base")))
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("base:")))
                             {
                                 Base = CCExpressionGetNamedInteger(Option);
                             }
                             
-                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("letter")))
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING("letter:")))
                             {
                                 CCEnumerator LetterEnumerator;
                                 CCCollectionGetEnumerator(CCExpressionGetList(Option), &LetterEnumerator);
@@ -314,17 +314,17 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                                             
                                             if (CCExpressionGetType(Option) == CCExpressionValueTypeAtom)
                                             {
-                                                if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("glyph")))
+                                                if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("glyph:")))
                                                 {
                                                     Glyph.coord = CCExpressionGetNamedRect(*LetterOption);
                                                 }
                                                 
-                                                else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("offset")))
+                                                else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("offset:")))
                                                 {
                                                     Glyph.offset = CCExpressionGetNamedVector2(*LetterOption);
                                                 }
                                                 
-                                                else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("advance")))
+                                                else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("advance:")))
                                                 {
                                                     Glyph.advance = CCExpressionGetNamedFloat(*LetterOption);
                                                 }
@@ -335,7 +335,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
                                     CCArrayAppendElement(Glyphs, &Glyph);
                                 }
                                 
-                                else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("letter", "string [(glyph number number number number) (offset number number) (advance number)]");
+                                else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("letter", "string [(glyph: number number number number) (offset: number number) (advance: number)]");
                             }
                         }
                     }
