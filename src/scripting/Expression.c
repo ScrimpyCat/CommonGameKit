@@ -325,7 +325,7 @@ CCExpression CCExpressionCreateFromSource(const char *Source)
 
 static CCString CCExpressionStringConvertEscapes(CCAllocatorType Allocator, const char *Input, size_t Length)
 {
-    CCString s1 = CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length);
+    CCString s1 = CCStringCreateWithSize(Allocator, CCStringEncodingASCII | CCStringHintCopy, Input, Length);
     
     CCString s2 = CCStringCreateByReplacingOccurrencesOfGroupedStrings(s1, (CCString[4]){
         CC_STRING("\\\""), CC_STRING("\\\n"), CC_STRING("\\\t"), CC_STRING("\\\\")
@@ -360,7 +360,7 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
         {
             if (!strncmp(Input, "#f", Length)) return CCExpressionCreateInteger(Allocator, 0);
             else if (!strncmp(Input, "#t", Length)) return CCExpressionCreateInteger(Allocator, 1);
-            else return CCExpressionCreateAtom(Allocator, CCStringCreateWithSize(Allocator, (CCStringHint)CCStringEncodingASCII, Input, Length), FALSE);
+            else return CCExpressionCreateAtom(Allocator, CCStringCreateWithSize(Allocator, CCStringEncodingASCII | CCStringHintCopy, Input, Length), FALSE);
         }
             
         case CCExpressionValueTypeInteger:
