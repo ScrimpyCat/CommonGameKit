@@ -88,7 +88,7 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
 }
 
 //TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
-static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control"), StrRenderRect = CC_STRING("render-rect"), StrRenderText = CC_STRING("render-text");
+static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render:"), StrChildren = CC_STRING("children:"), StrControl = CC_STRING("control:"), StrRenderRect = CC_STRING("render-rect"), StrRenderText = CC_STRING("render-text");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
