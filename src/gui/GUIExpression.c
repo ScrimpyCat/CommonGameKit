@@ -88,7 +88,7 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
 }
 
 //TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
-static CCString StrX = CC_STRING("x"), StrY = CC_STRING("y"), StrWidth = CC_STRING("width"), StrHeight = CC_STRING("height"), StrRect = CC_STRING("rect"), StrEnabled = CC_STRING("enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control"), StrRenderRect = CC_STRING("render-rect"), StrRenderText = CC_STRING("render-text");
+static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render"), StrChildren = CC_STRING("children"), StrControl = CC_STRING("control"), StrRenderRect = CC_STRING("render-rect"), StrRenderText = CC_STRING("render-text");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
@@ -482,11 +482,11 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
         
-        CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 rect)"), FALSE);
-        CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 rect)"), FALSE);
-        CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 rect)"), FALSE);
-        CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 rect)"), FALSE);
-        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (x y width height))"), FALSE);
+        CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 .rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 .rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 .rect)"), FALSE);
+        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (.x .y .width .height))"), FALSE);
         CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
