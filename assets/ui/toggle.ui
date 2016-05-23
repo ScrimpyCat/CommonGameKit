@@ -28,7 +28,7 @@
     )
 
     (control:
-        (on (click left .rect)
+        (on (click: :left .rect)
             (if @press
                 ((.status! &pushed) (.inside! #t) (.dragged! #t))
                 ((.status! &highlighted) (if .inside ((get (.active! (not .active)) ((quote .off-click) (quote .on-click))))) (.inside! #f) (.dragged! #f))
@@ -36,8 +36,8 @@
             ((.status! .active) (.inside! #f) (.dragged! @press))
         )
         (if .dragged
-            (if .inside (on (cursor .rect) (.status! &pushed) (.status! &highlighted)))
-            (on (cursor .rect) (.status! &highlighted) (.status! .active))
+            (if .inside (on (cursor: .rect) (.status! &pushed) (.status! &highlighted)))
+            (on (cursor: .rect) (.status! &highlighted) (.status! .active))
         )
     )
 )

@@ -890,10 +890,10 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                             CCString name;
                             _Bool (*predicate)(GUIEvent, CCExpression, size_t, _Bool *);
                         } EventPredicates[] = {
-                            { CC_STRING("cursor"), GUIExpressionOnEventCursorPredicate },
-                            { CC_STRING("click"), GUIExpressionOnEventClickPredicate },
-                            { CC_STRING("scroll"), GUIExpressionOnEventScrollPredicate },
-                            { CC_STRING("drop"), GUIExpressionOnEventDropPredicate }
+                            { CC_STRING("cursor:"), GUIExpressionOnEventCursorPredicate },
+                            { CC_STRING("click:"), GUIExpressionOnEventClickPredicate },
+                            { CC_STRING("scroll:"), GUIExpressionOnEventScrollPredicate },
+                            { CC_STRING("drop:"), GUIExpressionOnEventDropPredicate }
                         };
                         
                         GUIEvent Event = CCExpressionGetData(EventState);
