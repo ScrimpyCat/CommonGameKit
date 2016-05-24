@@ -149,13 +149,13 @@ static CCTextAttribute GUIExpressionLoadAttributedString(CCExpression String, CC
                 if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
                 {
                     //TODO: workout naming conventions to stop collisions
-                    if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("colour"))) Attribute.colour = CCExpressionGetNamedColour(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("scale"))) Attribute.scale = CCExpressionGetNamedVector2(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("offset"))) Attribute.offset = CCExpressionGetNamedVector2(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("tilt"))) Attribute.tilt = CCExpressionGetNamedVector2(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("space"))) Attribute.space = CCExpressionGetNamedFloat(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("softness"))) Attribute.softness = CCExpressionGetNamedFloat(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("thickness"))) Attribute.thickness = CCExpressionGetNamedFloat(*Arg);
+                    if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("colour:"))) Attribute.colour = CCExpressionGetNamedColour(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("scale:"))) Attribute.scale = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("offset:"))) Attribute.offset = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("tilt:"))) Attribute.tilt = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("space:"))) Attribute.space = CCExpressionGetNamedFloat(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("softness:"))) Attribute.softness = CCExpressionGetNamedFloat(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("thickness:"))) Attribute.thickness = CCExpressionGetNamedFloat(*Arg);
                 }
             }
         }
@@ -274,17 +274,29 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
                                             CCEnumerator StringEnumerator;
                                             CCCollectionGetEnumerator(CCExpressionGetList(*Text), &StringEnumerator);
                                             
-                                            CCExpression *String = CCCollectionEnumeratorGetCurrent(&StringEnumerator);
-                                            CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*String, &StringEnumerator);
-                                            CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                            CCExpression *Option = CCCollectionEnumeratorGetCurrent(&StringEnumerator);
+                                            if ((Option) && (CCExpressionGetType(*Option) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(*Option), CC_STRING("text:"))))
+                                            {
+                                                CCExpression *String = CCCollectionEnumeratorNext(&StringEnumerator);
+                                                if (CCExpressionGetType(*String) == CCExpressionValueTypeString)
+                                                {
+                                                    CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*String, &StringEnumerator);
+                                                    CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                                }
+                                            }
                                         }
                                     }
                                 }
                                 
-                                else if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeString)
+                                else if ((CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("text:"))))
                                 {
-                                    CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*ArgString, &Enumerator);
-                                    CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                    ArgString = CCCollectionEnumeratorNext(&Enumerator);
+                                    
+                                    if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeString)
+                                    {
+                                        CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*ArgString, &Enumerator);
+                                        CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                    }
                                 }
                                 
                                 //TODO: store text so it can be reused
