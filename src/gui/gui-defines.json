@@ -80,6 +80,38 @@
                                     "args": [[{ "type": "number", "name": "thickness" }]]
                                 }
                             ]
+                        },
+                        {
+                            "name": "wrap",
+                            "description": "Set the visibility wrapping of the text.",
+                            "args": [
+                                [{ "type": "atom", "value": "word" }, { "type": "atom", "value": "single" }],
+                                [{ "type": "atom", "value": "char" }, { "type": "atom", "value": "single" }],
+                                [{ "type": "atom", "value": "word" }, { "type": "atom", "value": "multi" }],
+                                [{ "type": "atom", "value": "char" }, { "type": "atom", "value": "multi" }]
+                            ]
+                        },
+                        {
+                            "name": "align",
+                            "description": "Set the alignment of the text.",
+                            "args": [
+                                [{ "type": "atom", "value": "center" }],
+                                [{ "type": "atom", "value": "left" }],
+                                [{ "type": "atom", "value": "right" }]
+                            ]
+                        },
+                        {
+                            "name": "offset",
+                            "description": "Set the starting offset of the text.",
+                            "args": [[{ "type": "integer" }]]
+                        },
+                        {
+                            "name": "length",
+                            "description": "Set the maximum visible length of the text.",
+                            "args": [
+                                [{ "type": "integer" }],
+                                [{ "type": "atom", "value": "max" }]
+                            ]
                         }
                     ]
                 }
