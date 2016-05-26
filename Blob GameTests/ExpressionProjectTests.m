@@ -36,19 +36,19 @@
 -(void) testProject
 {
     CCExpression Expression = CCExpressionCreateFromSource("(game \"Test Game\""
-                                                           "    (default-resolution 640 480)\n"
-                                                           "    (default-fullscreen false)\n"
+                                                           "    (default-resolution: 640 480)\n"
+                                                           "    (default-fullscreen: #f)\n"
                                                            "\n"
-                                                           "    (dir-fonts \"font/\")\n"
-                                                           "    (dir-levels \"logic/levels/\")\n"
-                                                           "    (dir-rules \"logic/rules/\")\n"
-                                                           "    (dir-textures \"graphics/textures/\")\n"
-                                                           "    (dir-shaders \"graphics/shaders/\")\n"
-                                                           "    (dir-sounds \"audio/\")\n"
-                                                           "    (dir-layouts \"ui/\")\n"
-                                                           "    (dir-entities \"logic/entities/\")\n"
-                                                           "    (dir-logs \"logs/\")\n"
-                                                           "    (dir-tmp \"tmp/\")\n"
+                                                           "    (dir-fonts: \"font/\")\n"
+                                                           "    (dir-levels: \"logic/levels/\")\n"
+                                                           "    (dir-rules: \"logic/rules/\")\n"
+                                                           "    (dir-textures: \"graphics/textures/\")\n"
+                                                           "    (dir-shaders: \"graphics/shaders/\")\n"
+                                                           "    (dir-sounds: \"audio/\")\n"
+                                                           "    (dir-layouts: \"ui/\")\n"
+                                                           "    (dir-entities: \"logic/entities/\")\n"
+                                                           "    (dir-logs: \"logs/\")\n"
+                                                           "    (dir-tmp: \"tmp/\")\n"
                                                            ")\n");
     
     CCExpression Result = CCExpressionEvaluate(Expression);
