@@ -52,7 +52,7 @@
     CCExpressionDestroy(Expression);
     
     
-    Expression = CCExpressionCreateFromSource("(begin (state! \"x\" 0) (if x (x! (+ x 10)) (x! (+ x 20))))");
+    Expression = CCExpressionCreateFromSource("(begin (state! \".x\" 0) (if .x (.x! (+ .x 10)) (.x! (+ .x 20))))");
     
     Result = CCExpressionEvaluate(Expression);
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
@@ -61,7 +61,7 @@
     CCExpressionDestroy(Expression);
     
     
-    Expression = CCExpressionCreateFromSource("(begin (state! \"x\" 1) (if x (x! (+ x 10)) (x! (+ x 20))))");
+    Expression = CCExpressionCreateFromSource("(begin (state! \".x\" 1) (if .x (.x! (+ .x 10)) (.x! (+ .x 20))))");
     
     Result = CCExpressionEvaluate(Expression);
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
@@ -72,7 +72,7 @@
 
 -(void) testLoop
 {
-    CCExpression Expression = CCExpressionCreateFromSource("(loop \"var\" (1 2 3) var)");
+    CCExpression Expression = CCExpressionCreateFromSource("(loop \"@var\" (1 2 3) @var)");
     
     CCExpression Result = CCExpressionEvaluate(Expression);
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeList, @"Should be a list");
@@ -89,7 +89,7 @@
     CCExpressionDestroy(Expression);
     
     
-    Expression = CCExpressionCreateFromSource("(loop \"var\" (1 2 3) (+ var var))");
+    Expression = CCExpressionCreateFromSource("(loop \"@var\" (1 2 3) (+ @var @var))");
     
     Result = CCExpressionEvaluate(Expression);
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeList, @"Should be a list");
@@ -106,7 +106,7 @@
     CCExpressionDestroy(Expression);
     
     
-    Expression = CCExpressionCreateFromSource("(loop \"var\" (1 2 3) 0)");
+    Expression = CCExpressionCreateFromSource("(loop \"@var\" (1 2 3) 0)");
     
     Result = CCExpressionEvaluate(Expression);
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeList, @"Should be a list");

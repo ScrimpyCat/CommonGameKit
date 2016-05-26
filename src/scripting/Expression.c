@@ -93,7 +93,24 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
 CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy)
 {
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeAtom);
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+    const CCChar Prefix = CCStringGetCharacterAtIndex(Atom, 0), Suffix = CCStringGetCharacterAtIndex(Atom, CCStringGetLength(Atom) - 1);
+    if ((Prefix == '.') || (Prefix == '@') || (Prefix == '&'))
+    {
+        Expression->atom.kind = CCExpressionAtomTypeState | (Suffix == '!' ? CCExpressionAtomTypeOperationSet : CCExpressionAtomTypeOperationGet);
+    }
+    
+    else if ((Prefix == ':') || (Suffix == ':'))
+    {
+        Expression->atom.kind = CCExpressionAtomTypeSymbol;
+    }
+    
+    else Expression->atom.kind = CCExpressionAtomTypeFunction;
+    
+    Expression->atom.name = Copy ? CCStringCopy(Atom) : Atom;
+#else
     Expression->atom = Copy ? CCStringCopy(Atom) : Atom;
+#endif
     
     return Expression;
 }
@@ -553,14 +570,22 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             
             if ((Func) && (CCExpressionGetType(Func) == CCExpressionValueTypeAtom))
             {
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+                CCExpressionEvaluator Eval = CCExpressionGetAtomType(Func) == CCExpressionAtomTypeFunction ? CCExpressionEvaluatorForName(CCExpressionGetAtom(Func)) : NULL;
+#else
                 CCExpressionEvaluator Eval = CCExpressionEvaluatorForName(CCExpressionGetAtom(Func));
+#endif
                 if (Eval)
                 {
                     Expression->state.result = Eval(Expression);
                     IsList = FALSE;
                 }
                 
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+                else if (CCExpressionGetAtomType(Func) == (CCExpressionAtomTypeState | CCExpressionAtomTypeOperationSet)) //set state
+#else
                 else if (CCStringHasSuffix(CCExpressionGetAtom(Func), CC_STRING("!"))) //set state
+#endif
                 {
                     CCString Name = CCStringCopySubstring(CCExpressionGetAtom(Func), 0, CCStringGetLength(CCExpressionGetAtom(*Expr)) - 1);
                     CCExpression State = NULL;
@@ -634,7 +659,11 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         }
     }
     
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+    else if ((Expression->state.super) && (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom) && (CCExpressionGetAtomType(Expression) == (CCExpressionAtomTypeState | CCExpressionAtomTypeOperationGet))) //get state
+#else
     else if ((Expression->state.super) && (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)) //get state
+#endif
     {
         CCExpression State = CCExpressionGetState(Expression->state.super, CCExpressionGetAtom(Expression));
         if (State) Expression->state.result = CCExpressionCopy(State);

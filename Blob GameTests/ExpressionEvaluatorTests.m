@@ -35,8 +35,8 @@ const float f = -2.5f;
     for (size_t Loop = 0; Loop < count; Loop++)
     {
         CCExpression Expression = CCExpressionCreateFromSource(test[Loop].source);
-        CCExpressionCreateState(Expression, CC_STRING("i"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, i), FALSE);
-        CCExpressionCreateState(Expression, CC_STRING("f"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, f), FALSE);
+        CCExpressionCreateState(Expression, CC_STRING(".i"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, i), FALSE);
+        CCExpressionCreateState(Expression, CC_STRING(".f"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, f), FALSE);
         
         CCExpression Result = CCExpressionEvaluate(Expression);
         XCTAssertEqual(CCExpressionGetType(Result), test[Loop].type, @"Should be the correct type: %s", test[Loop].source);

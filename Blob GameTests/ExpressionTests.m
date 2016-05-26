@@ -301,8 +301,8 @@ static CCExpression CCExpressionTestCheck(CCExpression Expression)
 
 -(void) testState
 {
-    CCExpression Expression = CCExpressionCreateFromSource("(+ value 4 10)");
-    CCExpressionCreateState(Expression, CC_STRING("value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
+    CCExpression Expression = CCExpressionCreateFromSource("(+ .value 4 10)");
+    CCExpressionCreateState(Expression, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
     
     XCTAssertEqual(CCExpressionGetType(Expression), CCExpressionValueTypeList, @"Should return a list");
     XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Expression)), 4, @"Should return a list with 4 expressions");
@@ -312,32 +312,32 @@ static CCExpression CCExpressionTestCheck(CCExpression Expression)
     XCTAssertEqual(CCExpressionGetInteger(Result), 16, @"Should be 16");
     
     
-    CCExpressionSetState(Expression, CC_STRING("value"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, 20.0f), FALSE);
+    CCExpressionSetState(Expression, CC_STRING(".value"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, 20.0f), FALSE);
     
     Result = CCExpressionEvaluate(Expression);
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeFloat, @"Should be an float");
     XCTAssertEqual(CCExpressionGetFloat(Result), 34.0f, @"Should be 34.0");
     
     
-    Result = CCExpressionGetState(Expression, CC_STRING("value"));
+    Result = CCExpressionGetState(Expression, CC_STRING(".value"));
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeFloat, @"Should be an float");
     XCTAssertEqual(CCExpressionGetFloat(Result), 20.0f, @"Should be 20.0");
     
     
     CCExpression CopiedExpression = CCExpressionCopy(Expression);
     
-    Result = CCExpressionGetState(CopiedExpression, CC_STRING("value"));
+    Result = CCExpressionGetState(CopiedExpression, CC_STRING(".value"));
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeFloat, @"Should be an float");
     XCTAssertEqual(CCExpressionGetFloat(Result), 20.0f, @"Should be 20.0");
     
     
-    CCExpressionSetState(Expression, CC_STRING("value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 5), FALSE);
+    CCExpressionSetState(Expression, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 5), FALSE);
     
-    Result = CCExpressionGetState(Expression, CC_STRING("value"));
+    Result = CCExpressionGetState(Expression, CC_STRING(".value"));
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
     XCTAssertEqual(CCExpressionGetInteger(Result), 5, @"Should be 5");
     
-    Result = CCExpressionGetState(CopiedExpression, CC_STRING("value"));
+    Result = CCExpressionGetState(CopiedExpression, CC_STRING(".value"));
     XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeFloat, @"Should be an float");
     XCTAssertEqual(CCExpressionGetFloat(Result), 20.0f, @"Should be 20.0");
     
@@ -355,11 +355,11 @@ static CCExpression CCExpressionTestCheck(CCExpression Expression)
     
     
     CCExpressionEvaluatorRegister(CC_STRING("test-check"), CCExpressionTestCheck);
-    Expression = CCExpressionCreateFromSource("(begin (state! \"test\") (test! (quote (test-check))))");
+    Expression = CCExpressionCreateFromSource("(begin (state! \".test\") (.test! (quote (test-check))))");
     CCExpressionEvaluate(Expression);
     
     XCTAssertEqual(Check, 0, @"Should not unquote expression on set");
-    CCExpressionGetState(CopiedExpression, CC_STRING("test"));
+    CCExpressionGetState(CopiedExpression, CC_STRING(".test"));
     XCTAssertEqual(Check, 1, @"Should evaluate the expression");
     
     CCExpressionDestroy(Expression);

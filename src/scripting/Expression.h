@@ -34,6 +34,12 @@
  */
 #define CC_EXPRESSION_ENABLE_TAGGED_TYPES 1
 
+/*
+ Enables the strict naming rules. This allows for some added optimizations to be applied, but will
+ cause code that does not abide them to work differently.
+ */
+#define CC_EXPRESSION_STRICT_NAMING_RULES 1
+
 typedef enum {
     CCExpressionValueTypeAtom,
     CCExpressionValueTypeInteger,
@@ -82,6 +88,24 @@ enum {
 #endif
 };
 
+typedef enum {
+    CCExpressionAtomTypeKindMask = 1,
+    CCExpressionAtomTypeKindSymbol = (0 << 0),
+    CCExpressionAtomTypeKindLookup = (1 << 0),
+    
+    CCExpressionAtomTypeLookupMask = (1 << 1),
+    CCExpressionAtomTypeLookupState = (0 << 1),
+    CCExpressionAtomTypeLookupFunction = (1 << 1),
+    
+    CCExpressionAtomTypeSymbol = CCExpressionAtomTypeKindSymbol,
+    CCExpressionAtomTypeState = CCExpressionAtomTypeKindLookup | CCExpressionAtomTypeLookupState,
+    CCExpressionAtomTypeFunction = CCExpressionAtomTypeKindLookup | CCExpressionAtomTypeLookupFunction,
+    
+    CCExpressionAtomTypeOperationMask = (1 << 2),
+    CCExpressionAtomTypeOperationGet = (0 << 2),
+    CCExpressionAtomTypeOperationSet = (1 << 2)
+} CCExpressionAtomType;
+
 /*!
  * @brief An expression.
  */
@@ -116,7 +140,14 @@ typedef struct CCExpressionValue {
      */
     CCExpressionValueType type;
     union {
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+        struct {
+            CCString name;
+            CCExpressionAtomType kind;
+        } atom;
+#else
         CCString atom;
+#endif
         int32_t integer;
         float real;
         CCString string;
@@ -206,6 +237,9 @@ CCExpressionValueType CCExpressionGetTaggedType(uintptr_t Expression);
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression);
 static inline CCExpression CCExpressionGetResult(CCExpression Expression);
 static inline CCString CCExpressionGetAtom(CCExpression Expression);
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+static inline CCExpressionAtomType CCExpressionGetAtomType(CCExpression Expression);
+#endif
 static inline int32_t CCExpressionGetInteger(CCExpression Expression);
 static inline float CCExpressionGetFloat(CCExpression Expression);
 static inline CCString CCExpressionGetString(CCExpression Expression);
@@ -240,8 +274,19 @@ static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
 
 static inline CCString CCExpressionGetAtom(CCExpression Expression)
 {
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+    return Expression->atom.name;
+#else
     return Expression->atom;
+#endif
 }
+
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+static inline CCExpressionAtomType CCExpressionGetAtomType(CCExpression Expression)
+{
+    return Expression->atom.kind;
+}
+#endif
 
 static inline int32_t CCExpressionGetInteger(CCExpression Expression)
 {
