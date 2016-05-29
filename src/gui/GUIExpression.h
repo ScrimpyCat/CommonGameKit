@@ -28,11 +28,9 @@
 
 #include "GUIObject.h"
 #include "ExpressionEvaluator.h"
-#include "ProjectExpressions.h"
 
 typedef enum {
-    GUIExpressionValueTypeGUIObject = CCProjectExpressionValueTypeReservedCount + 1,
-    GUIExpressionValueTypeReservedCount
+    GUIExpressionValueTypeGUIObject = 'gui\0'
 } GUIExpressionValueType;
 
 

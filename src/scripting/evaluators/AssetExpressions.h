@@ -30,10 +30,9 @@
 
 
 typedef enum {
-    CCAssetExpressionValueTypeShader = CCExpressionValueTypeReservedCount + 1,
-    CCAssetExpressionValueTypeTexture,
-    CCAssetExpressionValueTypeFont,
-    CCAssetExpressionValueTypeReservedCount
+    CCAssetExpressionValueTypeShader = 'shd\0',
+    CCAssetExpressionValueTypeTexture = 'tex\0',
+    CCAssetExpressionValueTypeFont = 'fnt\0'
 } CCAssetExpressionValueType;
 
 CC_EXPRESSION_EVALUATOR(shader) CCExpression CCAssetExpressionShader(CCExpression Expression);
