@@ -303,9 +303,9 @@ void CCTextSetFrame(CCText Text, CCRect Frame)
 {
     CCAssertLog(Text, "Text must not be null");
     
-    if ((Text->frame.position.x != Frame.position.x) &&
-        (Text->frame.position.y != Frame.position.y) &&
-        (Text->frame.size.x != Frame.size.x) &&
+    if ((Text->frame.position.x != Frame.position.x) ||
+        (Text->frame.position.y != Frame.position.y) ||
+        (Text->frame.size.x != Frame.size.x) ||
         (Text->frame.size.y != Frame.size.y))
     {
         //TODO: set change frame
