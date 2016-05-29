@@ -353,7 +353,22 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
             }
         }
         
-        CCText Text = CCTextCreate(CC_STD_ALLOCATOR);
+        CCText Text;
+        CCExpression PreservedDraw = CCExpressionGetStateStrict(Expression, StrDrawer);
+        if (PreservedDraw)
+        {
+            Text = CCExpressionGetData(PreservedDraw);
+            Result = CCExpressionCopy(PreservedDraw);
+        }
+        
+        else
+        {
+            Text = CCTextCreate(CC_STD_ALLOCATOR);
+            Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
+            
+            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE);
+        }
+        
         CCTextSetOffset(Text, Offset);
         CCTextSetVisibleLength(Text, Length);
         CCTextSetFrame(Text, CCExpressionGetRect(CCExpressionEvaluate(*ArgRect)));
@@ -361,8 +376,6 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
         CCTextSetVisibility(Text, Visibility);
         CCTextSetString(Text, AttributedStrings);
         CCCollectionDestroy(AttributedStrings);
-        
-        Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-text", "rect:list [...]");
