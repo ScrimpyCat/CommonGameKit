@@ -26,6 +26,7 @@
 #include "GraphicsExpressions.h"
 #include "ExpressionHelpers.h"
 #include "AssetManager.h"
+#include "AssetExpressions.h"
 
 typedef struct {
     CCVector2D position;
@@ -75,8 +76,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
         GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, coord));
         GFXDrawSetBuffer(Drawer, "scale", ScaleBuffer);
         GFXDrawSetBuffer(Drawer, "radius", RadiusBuffer);
-        GFXDrawSetBlending(Drawer, GFXBlendTransparent);
-//        GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
+        GFXDrawSetBlending(Drawer, Radius != 0.0f ? GFXBlendTransparent : GFXBlendOpaque);
         
         GFXBufferDestroy(VertBuffer);
         GFXBufferDestroy(RadiusBuffer);
@@ -100,6 +100,188 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-rect", "rect:list colour:list [radius:float]");
+    
+    return Expr;
+}
+
+static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression String, CCEnumerator *Enumerator)
+{
+    CCTextAttribute Attribute = {
+        .string = CCStringCopy(CCExpressionGetString(String)),
+        .font = NULL,
+        .colour = CCVector4DMake(0.309f, 0.247f, 0.239f, 1.0f),
+        .scale = CCVector2DFill(-0.77f),
+        .space = -0.25f,
+        .softness = 0.3f,
+        .thickness = 0.45f
+    };
+    
+    for (CCExpression *Arg = CCCollectionEnumeratorNext(Enumerator); Arg; Arg = CCCollectionEnumeratorNext(Enumerator))
+    {
+        if (CCExpressionGetType(*Arg) == CCExpressionValueTypeList)
+        {
+            size_t Count = CCCollectionGetCount(CCExpressionGetList(*Arg));
+            if (Count > 1)
+            {
+                CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Arg), 0);
+                if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
+                {
+                    //TODO: workout naming conventions to stop collisions
+                    if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("colour:"))) Attribute.colour = CCExpressionGetNamedColour(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("scale:"))) Attribute.scale = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("offset:"))) Attribute.offset = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("tilt:"))) Attribute.tilt = CCExpressionGetNamedVector2(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("space:"))) Attribute.space = CCExpressionGetNamedFloat(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("softness:"))) Attribute.softness = CCExpressionGetNamedFloat(*Arg);
+                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("thickness:"))) Attribute.thickness = CCExpressionGetNamedFloat(*Arg);
+                }
+            }
+        }
+        
+        else if (CCExpressionGetType(*Arg) == CCAssetExpressionValueTypeFont)
+        {
+            Attribute.font = CCRetain(CCExpressionGetData(*Arg));
+        }
+    }
+    
+    if (!Attribute.font) Attribute.font = CCAssetManagerCreateFont(CC_STRING("Arial"));
+    
+    return Attribute;
+}
+
+CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
+{
+    CCExpression Expr = Expression;
+    
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 2)
+    {
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+        
+        CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
+        
+        size_t Offset = 0, Length = SIZE_MAX;
+        CCTextAlignment Alignment = CCTextAlignmentLeft;
+        CCTextVisibility Visibility = CCTextVisibilityMultiLine | CCTextVisibilityWord;
+        CCOrderedCollection AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+        
+        for (CCExpression *Arg = CCCollectionEnumeratorNext(&Enumerator); Arg; Arg = CCCollectionEnumeratorNext(&Enumerator))
+        {
+            CCExpression ArgText = CCExpressionEvaluate(*Arg);
+            if (CCExpressionGetType(ArgText) == CCExpressionValueTypeList)
+            {
+                if (CCCollectionGetCount(CCExpressionGetList(ArgText)) >= 1)
+                {
+                    CCEnumerator Enumerator;
+                    CCCollectionGetEnumerator(CCExpressionGetList(ArgText), &Enumerator);
+                    
+                    CCExpression *ArgString = CCCollectionEnumeratorGetCurrent(&Enumerator);
+                    if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeList)
+                    {
+                        for (CCExpression *Text = ArgString; Text; Text = CCCollectionEnumeratorNext(&Enumerator))
+                        {
+                            if (CCExpressionGetType(*Text) == CCExpressionValueTypeList)
+                            {
+                                CCEnumerator StringEnumerator;
+                                CCCollectionGetEnumerator(CCExpressionGetList(*Text), &StringEnumerator);
+                                
+                                CCExpression *Option = CCCollectionEnumeratorGetCurrent(&StringEnumerator);
+                                if ((Option) && (CCExpressionGetType(*Option) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(*Option), CC_STRING("text:"))))
+                                {
+                                    CCExpression *String = CCCollectionEnumeratorNext(&StringEnumerator);
+                                    if (CCExpressionGetType(*String) == CCExpressionValueTypeString)
+                                    {
+                                        CCTextAttribute Attribute = CCGraphicsExpressionLoadAttributedString(*String, &StringEnumerator);
+                                        CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    else if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom)
+                    {
+                        if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("text:")))
+                        {
+                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
+                            
+                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeString)
+                            {
+                                CCTextAttribute Attribute = CCGraphicsExpressionLoadAttributedString(*ArgString, &Enumerator);
+                                CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
+                            }
+                        }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("wrap:")))
+                        {
+                            Visibility = 0;
+                            
+                            while ((ArgString = CCCollectionEnumeratorNext(&Enumerator)))
+                            {
+                                if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom)
+                                {
+                                    if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":char"))) Visibility |= CCTextVisibilityCharacter;
+                                    else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":word"))) Visibility |= CCTextVisibilityWord;
+                                    else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":single"))) Visibility |= CCTextVisibilitySingleLine;
+                                    else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":multi"))) Visibility |= CCTextVisibilityMultiLine;
+                                }
+                            }
+                        }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("align:")))
+                        {
+                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
+                            
+                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom)
+                            {
+                                if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":left"))) Alignment = CCTextAlignmentLeft;
+                                else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":center"))) Alignment = CCTextAlignmentCenter;
+                                else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":right"))) Alignment = CCTextAlignmentRight;
+                            }
+                        }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("offset:")))
+                        {
+                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
+                            
+                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeInteger)
+                            {
+                                Offset = CCExpressionGetInteger(*ArgString);
+                            }
+                        }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("length:")))
+                        {
+                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
+                            
+                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeInteger)
+                            {
+                                Length = CCExpressionGetInteger(*ArgString);
+                            }
+                            
+                            else if ((CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":max"))))
+                            {
+                                Length = SIZE_MAX;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        CCText Text = CCTextCreate(CC_STD_ALLOCATOR);
+        CCTextSetOffset(Text, Offset);
+        CCTextSetVisibleLength(Text, Length);
+        CCTextSetFrame(Text, CCExpressionGetRect(CCExpressionEvaluate(*ArgRect)));
+        CCTextSetAlignment(Text, Alignment);
+        CCTextSetVisibility(Text, Visibility);
+        CCTextSetString(Text, AttributedStrings);
+        CCCollectionDestroy(AttributedStrings);
+        
+        Expr = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-text", "rect:list [...]");
     
     return Expr;
 }

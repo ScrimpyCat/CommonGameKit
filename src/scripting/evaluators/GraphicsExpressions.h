@@ -28,10 +28,12 @@
 
 #include "ExpressionEvaluator.h"
 #include "GFX.h"
+#include "Text.h"
 
 
 typedef enum {
-    CCGraphicsExpressionValueTypeDraw = 'drw\0'
+    CCGraphicsExpressionValueTypeDraw = 'drw\0',
+    CCGraphicsExpressionValueTypeText = 'txt\0'
 } CCGraphicsExpressionValueType;
 
 typedef struct {
@@ -41,5 +43,6 @@ typedef struct {
 
 
 CC_EXPRESSION_EVALUATOR(render-rect) CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(render-text) CCExpression CCGraphicsExpressionRenderText(CCExpression Expression);
 
 #endif

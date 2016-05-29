@@ -39,6 +39,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING(">"), CCEqualityExpressionGreaterThan);
     CCExpressionEvaluatorRegister(CC_STRING("not"), CCEqualityExpressionNot);
     CCExpressionEvaluatorRegister(CC_STRING("render-rect"), CCGraphicsExpressionRenderRect);
+    CCExpressionEvaluatorRegister(CC_STRING("render-text"), CCGraphicsExpressionRenderText);
     CCExpressionEvaluatorRegister(CC_STRING("print"), CCIOExpressionPrint);
     CCExpressionEvaluatorRegister(CC_STRING("search"), CCIOExpressionSearch);
     CCExpressionEvaluatorRegister(CC_STRING("eval"), CCIOExpressionEval);

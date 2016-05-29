@@ -88,7 +88,7 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
 }
 
 //TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
-static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render:"), StrChildren = CC_STRING("children:"), StrControl = CC_STRING("control:"), StrRenderRect = CC_STRING("render-rect"), StrRenderText = CC_STRING("render-text");
+static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render:"), StrChildren = CC_STRING("children:"), StrControl = CC_STRING("control:");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
@@ -115,287 +115,50 @@ static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
     CC_SAFE_Free(Internal);
 }
 
-typedef struct {
-    CCVector2D position;
-    CCColourRGBA colour;
-    CCVector2D coord;
-} DemoVertData;
-
 #include "AssetManager.h"
 #include "Window.h"
-#include "Text.h"
 #include "AssetExpressions.h"
-
-static CCTextAttribute GUIExpressionLoadAttributedString(CCExpression String, CCEnumerator *Enumerator)
-{
-    CCTextAttribute Attribute = {
-        .string = CCStringCopy(CCExpressionGetString(String)),
-        .font = NULL,
-        .colour = CCVector4DMake(0.309f, 0.247f, 0.239f, 1.0f),
-        .scale = CCVector2DFill(-0.77f),
-        .space = -0.25f,
-        .softness = 0.3f,
-        .thickness = 0.45f
-    };
-    
-    for (CCExpression *Arg = CCCollectionEnumeratorNext(Enumerator); Arg; Arg = CCCollectionEnumeratorNext(Enumerator))
-    {
-        if (CCExpressionGetType(*Arg) == CCExpressionValueTypeList)
-        {
-            size_t Count = CCCollectionGetCount(CCExpressionGetList(*Arg));
-            if (Count > 1)
-            {
-                CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Arg), 0);
-                if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
-                {
-                    //TODO: workout naming conventions to stop collisions
-                    if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("colour:"))) Attribute.colour = CCExpressionGetNamedColour(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("scale:"))) Attribute.scale = CCExpressionGetNamedVector2(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("offset:"))) Attribute.offset = CCExpressionGetNamedVector2(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("tilt:"))) Attribute.tilt = CCExpressionGetNamedVector2(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("space:"))) Attribute.space = CCExpressionGetNamedFloat(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("softness:"))) Attribute.softness = CCExpressionGetNamedFloat(*Arg);
-                    else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("thickness:"))) Attribute.thickness = CCExpressionGetNamedFloat(*Arg);
-                }
-            }
-        }
-        
-        else if (CCExpressionGetType(*Arg) == CCAssetExpressionValueTypeFont)
-        {
-            Attribute.font = CCRetain(CCExpressionGetData(*Arg));
-        }
-    }
-    
-    if (!Attribute.font) Attribute.font = CCAssetManagerCreateFont(CC_STRING("Arial"));
-    
-    return Attribute;
-}
+#include "GraphicsExpressions.h"
 
 static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
 {
     GUIObject Parent = GUIObjectGetParent(Object);
     ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
     
-    //TODO: This needs work as will be very slow and awkward to work with
     if (((GUIExpressionInfo*)Object->internal)->render)
     {
+        int w, h;
+        glfwGetFramebufferSize(CCWindow, &w, &h);
+        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, w, 0.0f, h, 0.0f, 1.0f);
+        GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+        
         CC_COLLECTION_FOREACH(CCExpression, Render, CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->render))
         {
             Render->state.super = ((GUIExpressionInfo*)Object->internal)->render;
             Render = CCExpressionEvaluate(Render);
-            if (CCExpressionGetType(Render) == CCExpressionValueTypeList)
+            
+            if (CCExpressionGetType(Render) == CCGraphicsExpressionValueTypeDraw)
             {
-                CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Render), 0));
-                
-                if (CCStringEqual(Atom, StrRenderRect))
+                const CCGraphicsExpressionValueDraw *Drawable = CCExpressionGetData(Render);
+                GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
+                GFXDrawSetBuffer(Drawable->drawer, "modelViewProjectionMatrix", Proj);
+                GFXDrawSubmit(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
+            }
+            
+            else if (CCExpressionGetType(Render) == CCGraphicsExpressionValueTypeText)
+            {
+                CCOrderedCollection Drawables = CCTextGetDrawables(CCExpressionGetData(Render));
+                CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
                 {
-                    if (CCCollectionGetCount(CCExpressionGetList(Render)) >= 3)
-                    {
-                        CCEnumerator Enumerator;
-                        CCCollectionGetEnumerator(CCExpressionGetList(Render), &Enumerator);
-                        
-                        CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
-                        CCExpression *ArgColour = CCCollectionEnumeratorNext(&Enumerator);
-                        CCExpression *ArgRadius = CCCollectionEnumeratorNext(&Enumerator);
-                        
-                        CCRect Rect = CCExpressionGetRect(*ArgRect);
-                        CCColourRGBA Colour = CCExpressionGetColour(*ArgColour);
-                        
-                        /////////////////////////////////
-                        GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
-                        
-                        GFXBuffer Scale = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
-                        GFXBuffer Radius = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &(float){ ArgRadius ? CCExpressionGetFloat(*ArgRadius) : 0.0f });
-                        
-                        GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(DemoVertData) * 4, (DemoVertData[4]){
-                            { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
-                            { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
-                            { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
-                            { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
-                        });
-                        
-                        int w, h;
-                        glfwGetFramebufferSize(CCWindow, &w, &h);
-                        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, w, 0.0f, h, 0.0f, 1.0f);
-                        GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
-                        
-                        GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
-                        GFXDrawSetShader(Drawer, Shader);
-                        GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
-                        GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
-                        GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
-                        GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, coord));
-                        GFXDrawSetBuffer(Drawer, "modelViewProjectionMatrix", Proj);
-                        GFXDrawSetBuffer(Drawer, "scale", Scale);
-                        GFXDrawSetBuffer(Drawer, "radius", Radius);
-                        GFXDrawSetBlending(Drawer, GFXBlendTransparent);
-                        GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
-                        GFXDrawDestroy(Drawer);
-                        
-                        GFXBufferDestroy(VertBuffer);
-                        GFXBufferDestroy(Radius);
-                        GFXBufferDestroy(Scale);
-                        GFXBufferDestroy(Proj);
-                        GFXShaderDestroy(Shader);
-                    }
-                    
-                    else
-                    {
-                        //error
-                    }
+                    GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
+                    GFXDrawSetBuffer(Drawable->drawer, "modelViewProjectionMatrix", Proj);
+                    GFXDrawSubmitIndexed(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
                 }
-                
-                else if (CCStringEqual(Atom, StrRenderText))
-                {
-                    if (CCCollectionGetCount(CCExpressionGetList(Render)) >= 3)
-                    {
-                        CCEnumerator Enumerator;
-                        CCCollectionGetEnumerator(CCExpressionGetList(Render), &Enumerator);
-                        
-                        CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
-                        
-                        size_t Offset = 0, Length = SIZE_MAX;
-                        CCTextAlignment Alignment = CCTextAlignmentLeft;
-                        CCTextVisibility Visibility = CCTextVisibilityMultiLine | CCTextVisibilityWord;
-                        CCOrderedCollection AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
-                        
-                        for (CCExpression *ArgText = CCCollectionEnumeratorNext(&Enumerator); ArgText; ArgText = CCCollectionEnumeratorNext(&Enumerator))
-                        {
-                            if (CCExpressionGetType(*ArgText) == CCExpressionValueTypeList)
-                            {
-                                if (CCCollectionGetCount(CCExpressionGetList(*ArgText)) >= 1)
-                                {
-                                    CCEnumerator Enumerator;
-                                    CCCollectionGetEnumerator(CCExpressionGetList(*ArgText), &Enumerator);
-                                    
-                                    CCExpression *ArgString = CCCollectionEnumeratorGetCurrent(&Enumerator);
-                                    if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeList)
-                                    {
-                                        for (CCExpression *Text = ArgString; Text; Text = CCCollectionEnumeratorNext(&Enumerator))
-                                        {
-                                            if (CCExpressionGetType(*Text) == CCExpressionValueTypeList)
-                                            {
-                                                CCEnumerator StringEnumerator;
-                                                CCCollectionGetEnumerator(CCExpressionGetList(*Text), &StringEnumerator);
-                                                
-                                                CCExpression *Option = CCCollectionEnumeratorGetCurrent(&StringEnumerator);
-                                                if ((Option) && (CCExpressionGetType(*Option) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(*Option), CC_STRING("text:"))))
-                                                {
-                                                    CCExpression *String = CCCollectionEnumeratorNext(&StringEnumerator);
-                                                    if (CCExpressionGetType(*String) == CCExpressionValueTypeString)
-                                                    {
-                                                        CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*String, &StringEnumerator);
-                                                        CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    else if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom)
-                                    {
-                                        if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("text:")))
-                                        {
-                                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
-                                            
-                                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeString)
-                                            {
-                                                CCTextAttribute Attribute = GUIExpressionLoadAttributedString(*ArgString, &Enumerator);
-                                                CCOrderedCollectionAppendElement(AttributedStrings, &Attribute);
-                                            }
-                                        }
-                                        
-                                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("wrap:")))
-                                        {
-                                            Visibility = 0;
-                                            
-                                            while ((ArgString = CCCollectionEnumeratorNext(&Enumerator)))
-                                            {
-                                                if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom)
-                                                {
-                                                    if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":char"))) Visibility |= CCTextVisibilityCharacter;
-                                                    else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":word"))) Visibility |= CCTextVisibilityWord;
-                                                    else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":single"))) Visibility |= CCTextVisibilitySingleLine;
-                                                    else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":multi"))) Visibility |= CCTextVisibilityMultiLine;
-                                                }
-                                            }
-                                        }
-                                        
-                                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("align:")))
-                                        {
-                                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
-                                            
-                                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom)
-                                            {
-                                                if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":left"))) Alignment = CCTextAlignmentLeft;
-                                                else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":center"))) Alignment = CCTextAlignmentCenter;
-                                                else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":right"))) Alignment = CCTextAlignmentRight;
-                                            }
-                                        }
-                                        
-                                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("offset:")))
-                                        {
-                                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
-                                            
-                                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeInteger)
-                                            {
-                                                Offset = CCExpressionGetInteger(*ArgString);
-                                            }
-                                        }
-                                        
-                                        else if (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING("length:")))
-                                        {
-                                            ArgString = CCCollectionEnumeratorNext(&Enumerator);
-                                            
-                                            if (CCExpressionGetType(*ArgString) == CCExpressionValueTypeInteger)
-                                            {
-                                                Length = CCExpressionGetInteger(*ArgString);
-                                            }
-                                            
-                                            else if ((CCExpressionGetType(*ArgString) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(*ArgString), CC_STRING(":max"))))
-                                            {
-                                                Length = SIZE_MAX;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        //TODO: store text so it can be reused
-                        CCText Text = CCTextCreate(CC_STD_ALLOCATOR);
-                        CCTextSetOffset(Text, Offset);
-                        CCTextSetVisibleLength(Text, Length);
-                        CCTextSetFrame(Text, CCExpressionGetRect(*ArgRect));
-                        CCTextSetAlignment(Text, Alignment);
-                        CCTextSetVisibility(Text, Visibility);
-                        CCTextSetString(Text, AttributedStrings);
-                        CCCollectionDestroy(AttributedStrings);
-                        
-                        int w, h;
-                        glfwGetFramebufferSize(CCWindow, &w, &h);
-                        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, w, 0.0f, h, 0.0f, 1.0f);
-                        GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
-                        
-                        CCOrderedCollection Drawables = CCTextGetDrawables(Text);
-                        CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
-                        {
-                            GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
-                            GFXDrawSetBuffer(Drawable->drawer, "modelViewProjectionMatrix", Proj);
-                            GFXDrawSubmitIndexed(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
-                        }
-                        CCCollectionDestroy(Drawables);
-                        
-                        CCTextDestroy(Text);
-                    }
-                    
-                    else
-                    {
-                        //error
-                    }
-                }
+                CCCollectionDestroy(Drawables);
             }
         }
+        
+        GFXBufferDestroy(Proj);
     }
 
     CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
