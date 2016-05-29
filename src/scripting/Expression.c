@@ -30,6 +30,9 @@
 
 static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length);
 static CCExpression CCExpressionParse(const char **Source);
+static CCExpression CCExpressionRetainValueCopy(CCExpression Value);
+
+const CCExpressionValueCopy CCExpressionRetainedValueCopy = CCExpressionRetainValueCopy;
 
 
 static void CCExpressionElementDestructor(CCCollection Collection, CCExpression *Element)
@@ -52,6 +55,11 @@ static CCExpression CCExpressionValueListCopy(CCExpression Value)
     }
     
     return Copy;
+}
+
+static CCExpression CCExpressionRetainValueCopy(CCExpression Value)
+{
+    return CCExpressionCreateCustomType(Value->allocator, CCExpressionGetType(Value), CCRetain(CCExpressionGetData(Value)), Value->copy, Value->destructor);
 }
 
 CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)

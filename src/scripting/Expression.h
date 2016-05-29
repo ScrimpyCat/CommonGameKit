@@ -40,7 +40,7 @@
  */
 #define CC_EXPRESSION_STRICT_NAMING_RULES 1
 
-typedef enum {
+enum {
     CCExpressionValueTypeAtom,
     CCExpressionValueTypeInteger,
     CCExpressionValueTypeFloat,
@@ -49,8 +49,10 @@ typedef enum {
     CCExpressionValueTypeExpression = CCExpressionValueTypeList,
     CCExpressionValueTypeUnspecified,
     
-    CCExpressionValueTypeReservedCount = 20,
-} CCExpressionValueType;
+    CCExpressionValueTypeReservedCount = 255
+};
+
+typedef int32_t CCExpressionValueType;
 
 enum {
     /*
@@ -160,6 +162,8 @@ typedef struct CCExpressionValue {
     CCExpressionValueDestructor destructor;
     CCAllocatorType allocator;
 } CCExpressionValue;
+
+extern const CCExpressionValueCopy CCExpressionRetainedValueCopy;
 
 
 /*!

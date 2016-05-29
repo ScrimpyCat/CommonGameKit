@@ -24,6 +24,7 @@
 		F316198E1C1213A9008E09A1 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F316198C1C1213A9008E09A1 /* PixelData.c */; };
 		F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk-Mac.a */; };
 		F32555441C35F59200B1623C /* MacroExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F32555421C35F59200B1623C /* MacroExpressions.c */; };
+		F3406B3C1CFA09A9008BF1D7 /* GraphicsExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3406B3A1CFA09A9008BF1D7 /* GraphicsExpressions.c */; };
 		F3511D381A9B31CE006893F9 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
 		F3511D631A9B372A006893F9 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3511D621A9B372A006893F9 /* EntityManager.c */; };
 		F359CFE71C128F810028B86B /* PixelDataStatic.c in Sources */ = {isa = PBXBuildFile; fileRef = F359CFE51C128F810028B86B /* PixelDataStatic.c */; };
@@ -504,6 +505,8 @@
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F32555421C35F59200B1623C /* MacroExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MacroExpressions.c; sourceTree = "<group>"; };
 		F32555431C35F59200B1623C /* MacroExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroExpressions.h; sourceTree = "<group>"; };
+		F3406B3A1CFA09A9008BF1D7 /* GraphicsExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GraphicsExpressions.c; sourceTree = "<group>"; };
+		F3406B3B1CFA09A9008BF1D7 /* GraphicsExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsExpressions.h; sourceTree = "<group>"; };
 		F3511D611A9B371C006893F9 /* EntityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
 		F3511D621A9B372A006893F9 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
 		F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectExpressions.h; sourceTree = "<group>"; };
@@ -1069,6 +1072,8 @@
 				F37699821C11113D00F24A44 /* WindowExpressions.c */,
 				F3A21A4D1CB956B500518ACA /* ColourExpressions.h */,
 				F3A21A4C1CB956B500518ACA /* ColourExpressions.c */,
+				F3406B3B1CFA09A9008BF1D7 /* GraphicsExpressions.h */,
+				F3406B3A1CFA09A9008BF1D7 /* GraphicsExpressions.c */,
 			);
 			name = Evaluators;
 			path = evaluators;
@@ -1873,6 +1878,7 @@
 				F37699811C105DA700F24A44 /* ControlFlowExpressions.c in Sources */,
 				F3B657931CDD5A9800B3C2FC /* TextAttribute.c in Sources */,
 				F390E9CF1C79B94A0072D4E7 /* StringExpressions.c in Sources */,
+				F3406B3C1CFA09A9008BF1D7 /* GraphicsExpressions.c in Sources */,
 				F3C0205C1B50DD3400F546E7 /* InputMapMouseScrollComponent.c in Sources */,
 				F3C0209A1B5375A200F546E7 /* InputMapControllerComponent.c in Sources */,
 				F3C020931B51D32600F546E7 /* Controller.c in Sources */,

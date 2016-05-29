@@ -30,11 +30,6 @@
 #include "GFX.h"
 #include "Font.h"
 
-static CCExpression CCAssetExpressionRetainableValueCopy(CCExpression Value)
-{
-    return CCExpressionCreateCustomType(Value->allocator, Value->type, CCRetain(Value->data), Value->copy, Value->destructor);
-}
-
 CCExpression CCAssetExpressionShader(CCExpression Asset)
 {
     CCExpression Ret = Asset;
@@ -50,7 +45,7 @@ CCExpression CCAssetExpressionShader(CCExpression Asset)
                 GFXShader Shader = CCAssetManagerCreateShader(CCExpressionGetString(Name));
                 if (Shader)
                 {
-                    Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeShader, Shader, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)GFXShaderDestroy);
+                    Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeShader, Shader, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)GFXShaderDestroy);
                 }
             }
             
@@ -91,7 +86,7 @@ CCExpression CCAssetExpressionShader(CCExpression Asset)
                                     GFXShader Shader = GFXShaderCreate(CC_STD_ALLOCATOR, Vert, Frag);
                                     CCAssetManagerRegisterShader(CCExpressionGetString(Name), Shader);
                                     
-                                    Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeShader, Shader, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)GFXShaderDestroy);
+                                    Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeShader, Shader, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)GFXShaderDestroy);
                                 }
                                 
                                 else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the shader source (%S:%S) or (%S:%S)", LibV, CCExpressionGetAtom(VertSrc), LibF, CCExpressionGetAtom(FragSrc));
@@ -135,7 +130,7 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                 GFXTexture Texture = CCAssetManagerCreateTexture(CCExpressionGetString(Name));
                 if (Texture)
                 {
-                    Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeTexture, Texture, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)GFXTextureDestroy);
+                    Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeTexture, Texture, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)GFXTextureDestroy);
                 }
             }
             
@@ -180,7 +175,7 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                                         
                                         CCAssetManagerRegisterTexture(CCExpressionGetString(Name), Texture);
                                         
-                                        Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeTexture, Texture, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)GFXTextureDestroy);
+                                        Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeTexture, Texture, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)GFXTextureDestroy);
                                     }
                                     
                                     else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid pixel source: %s", Buffer);
@@ -211,7 +206,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
             CCFont Font = CCAssetManagerCreateFont(CCExpressionGetString(Name));
             if (Font)
             {
-                Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeFont, Font, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)CCFontDestroy);
+                Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeFont, Font, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCFontDestroy);
             }
         }
     }
@@ -362,7 +357,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
             if (!IsSequential) CCArrayDestroy(Letters);
             CCArrayDestroy(Glyphs);
             
-            Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeFont, Font, CCAssetExpressionRetainableValueCopy, (CCExpressionValueDestructor)CCFontDestroy);
+            Ret = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCAssetExpressionValueTypeFont, Font, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCFontDestroy);
         }
     }
     
