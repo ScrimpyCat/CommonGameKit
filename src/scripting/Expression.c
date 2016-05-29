@@ -732,6 +732,16 @@ void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpressio
     }
 }
 
+CCExpression CCExpressionGetStateStrict(CCExpression Expression, CCString Name)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    CCExpressionStateValue *State = NULL;
+    if (Expression->state.values) State = CCCollectionGetElement(Expression->state.values, CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind));
+    
+    return State && State->value ? CCExpressionEvaluate(State->value) : NULL;
+}
+
 CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
 {
     CCAssertLog(Expression, "Expression must not be NULL");

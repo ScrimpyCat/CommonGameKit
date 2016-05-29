@@ -215,17 +215,64 @@ void CCExpressionPrint(CCExpression Expression);
 
 /*!
  * @brief Evaluate an expression.
- * @description Evaluating an expression will cause it to mutate.
  * @param Expression The expression to be evaluated.
  * @return The resulting expression.
  */
 CCExpression CCExpressionEvaluate(CCExpression Expression);
 
+#pragma mark - State functions
+
+/*!
+ * @brief Create state to be associated with the expression.
+ * @param Expression The expression store the state.
+ * @param Name The name of the state.
+ * @param Value The value of the state. May be NULL.
+ * @param Copy Whether the @b value should be copied or stored directly.
+ */
 void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy);
+
+/*!
+ * @brief Get the state of an expression.
+ * @description Checks for the existence of state in the expression and but does not check any supers.
+ * @param Expression The expression to search.
+ * @param Name The name of the state.
+ * @return The state value or NULL if it does not exist (or currently holds NULL).
+ */
+CCExpression CCExpressionGetStateStrict(CCExpression Expression, CCString Name);
+
+/*!
+ * @brief Get the state of an expression.
+ * @description Checks for the existence of state in the expression and supers.
+ * @param Expression The expression to begin the search from.
+ * @param Name The name of the state.
+ * @return The state value or NULL if it does not exist (or currently holds NULL).
+ */
 CCExpression CCExpressionGetState(CCExpression Expression, CCString Name);
+
+/*!
+ * @brief Set the state of an expression.
+ * @param Expression The expression store the state.
+ * @param Name The name of the state.
+ * @param Value The value of the state. May be NULL.
+ * @param Copy Whether the @b value should be copied or stored directly.
+ * @return The state value or NULL if it does not exist (or currently holds NULL).
+ */
 CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy);
+
+/*!
+ * @brief Copy the the state of one expression to another.
+ * @param Source The expression to copy the state from.
+ * @param Destination The expression to copy the state into.
+ */
 void CCExpressionCopyState(CCExpression Source, CCExpression Destination);
+
+/*!
+ * @brief Print the state of an expression.
+ * @param Expression The expression to print the state of.
+ */
 void CCExpressionPrintState(CCExpression Expression);
+
+#pragma mark -
 
 //Convenience getters and initializers for when introducing tagged types.
 CC_NEW CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy);

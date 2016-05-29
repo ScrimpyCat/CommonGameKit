@@ -34,15 +34,33 @@ typedef struct {
     CCVector2D coord;
 } CCGraphicsExpressionRectVertData;
 
+typedef struct {
+    GFXBuffer vertBuffer;
+    GFXBuffer scaleBuffer;
+    GFXBuffer radiusBuffer;
+    CCRect rect;
+    CCColourRGBA colour;
+    float radius;
+} CCGraphicsExpressionRenderRectArgumentState;
+
 
 static void CCGraphicsExpressionDrawValueDestructor(CCGraphicsExpressionValueDraw *Ptr)
 {
     GFXDrawDestroy(Ptr->drawer);
 }
 
+static void CCGraphicsExpressionRenderRectArgumentStateValueDestructor(CCGraphicsExpressionRenderRectArgumentState *Ptr)
+{
+    GFXBufferDestroy(Ptr->vertBuffer);
+    GFXBufferDestroy(Ptr->radiusBuffer);
+    GFXBufferDestroy(Ptr->scaleBuffer);
+}
+
+static CCString StrDrawer = CC_STRING(".drawer"), StrArgs = CC_STRING(".args");
+
 CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
 {
-    CCExpression Expr = Expression;
+    CCExpression Result = Expression;
     
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 3)
     {
@@ -57,51 +75,117 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
         const CCColourRGBA Colour = CCExpressionGetColour(CCExpressionEvaluate(*ArgColour));
         const float Radius = ArgRadius ? CCExpressionGetFloat(CCExpressionEvaluate(*ArgRadius)) : 0.0f;
         
-        GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
         
-        GFXBuffer ScaleBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
-        GFXBuffer RadiusBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &Radius);
+        CCExpression PreservedDraw = CCExpressionGetStateStrict(Expression, StrDrawer);
+        if (PreservedDraw)
+        {
+            Result = CCExpressionCopy(PreservedDraw);
+            
+            _Bool UpdateScale = TRUE;
+            CCGraphicsExpressionRenderRectArgumentState *Args = CCExpressionGetData(CCExpressionGetStateStrict(Expression, StrArgs));
+            if ((Args->rect.position.x != Rect.position.x) ||
+                (Args->rect.position.y != Rect.position.y) ||
+                (Args->rect.size.x != Rect.size.x) ||
+                (Args->rect.size.y != Rect.size.y) ||
+                ((UpdateScale = FALSE)) ||
+                (Args->colour.r != Colour.r) ||
+                (Args->colour.g != Colour.g) ||
+                (Args->colour.b != Colour.b) ||
+                (Args->colour.a != Colour.a))
+            {
+                Args->rect = Rect;
+                Args->colour = Colour;
+                
+                GFXBufferWriteBuffer(Args->vertBuffer, 0, sizeof(CCGraphicsExpressionRectVertData) * 4, (CCGraphicsExpressionRectVertData[4]){
+                    { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
+                    { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
+                    { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
+                    { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
+                });
+                
+                if (UpdateScale) GFXBufferWriteBuffer(Args->scaleBuffer, 0, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
+            }
+            
+            if (Args->radius != Radius)
+            {
+                Args->radius = Radius;
+                
+                GFXBufferWriteBuffer(Args->radiusBuffer, 0, sizeof(float), &Radius);
+                
+                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(PreservedDraw))->drawer, Radius != 0.0f ? GFXBlendTransparent : GFXBlendOpaque);
+            }
+        }
         
-        GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCGraphicsExpressionRectVertData) * 4, (CCGraphicsExpressionRectVertData[4]){
-            { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
-            { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
-            { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
-            { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
-        });
-        
-        GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
-        GFXDrawSetShader(Drawer, Shader);
-        GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, position));
-        GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, colour));
-        GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, coord));
-        GFXDrawSetBuffer(Drawer, "scale", ScaleBuffer);
-        GFXDrawSetBuffer(Drawer, "radius", RadiusBuffer);
-        GFXDrawSetBlending(Drawer, Radius != 0.0f ? GFXBlendTransparent : GFXBlendOpaque);
-        
-        GFXBufferDestroy(VertBuffer);
-        GFXBufferDestroy(RadiusBuffer);
-        GFXBufferDestroy(ScaleBuffer);
-        GFXShaderDestroy(Shader);
-        
-        
-        CCGraphicsExpressionValueDraw *Drawable;
-        CC_SAFE_Malloc(Drawable, sizeof(CCGraphicsExpressionValueDraw),
-                       CC_LOG_ERROR("Failed to create CCGraphicsExpressionValueDraw due to allocation failure. Allocation size (%zu)", sizeof(CCGraphicsExpressionValueDraw));
-                       GFXDrawDestroy(Drawer);
-                       return Expr;
-                       );
-        
-        CCMemorySetDestructor(Drawable, (CCMemoryDestructorCallback)CCGraphicsExpressionDrawValueDestructor);
-        
-        Drawable->drawer = Drawer;
-        Drawable->vertices = 4;
-        
-        Expr = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeDraw, Drawable, CCExpressionRetainedValueCopy, CCFree);
+        else
+        {
+            GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
+            
+            GFXBuffer ScaleBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
+            GFXBuffer RadiusBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &Radius);
+            
+            GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCGraphicsExpressionRectVertData) * 4, (CCGraphicsExpressionRectVertData[4]){
+                { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
+                { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
+                { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
+                { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
+            });
+            
+            GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
+            GFXDrawSetShader(Drawer, Shader);
+            GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, position));
+            GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, colour));
+            GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, coord));
+            GFXDrawSetBuffer(Drawer, "scale", ScaleBuffer);
+            GFXDrawSetBuffer(Drawer, "radius", RadiusBuffer);
+            GFXDrawSetBlending(Drawer, Radius != 0.0f ? GFXBlendTransparent : GFXBlendOpaque);
+            
+            GFXShaderDestroy(Shader);
+            
+            
+            CCGraphicsExpressionValueDraw *Drawable;
+            CC_SAFE_Malloc(Drawable, sizeof(CCGraphicsExpressionValueDraw),
+                           CC_LOG_ERROR("Failed to create CCGraphicsExpressionValueDraw due to allocation failure. Allocation size (%zu)", sizeof(CCGraphicsExpressionValueDraw));
+                           GFXDrawDestroy(Drawer);
+                           return Result;
+                           );
+            
+            CCMemorySetDestructor(Drawable, (CCMemoryDestructorCallback)CCGraphicsExpressionDrawValueDestructor);
+            
+            Drawable->drawer = Drawer;
+            Drawable->vertices = 4;
+            
+            Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeDraw, Drawable, CCExpressionRetainedValueCopy, CCFree);
+            
+            
+            CCGraphicsExpressionRenderRectArgumentState *Args;
+            CC_SAFE_Malloc(Args, sizeof(CCGraphicsExpressionRenderRectArgumentState),
+                           CC_LOG_ERROR("Failed to create CCGraphicsExpressionRenderRectArgumentState due to allocation failure. Allocation size (%zu)", sizeof(CCGraphicsExpressionRenderRectArgumentState));
+                           GFXBufferDestroy(VertBuffer);
+                           GFXBufferDestroy(RadiusBuffer);
+                           GFXBufferDestroy(ScaleBuffer);
+                           return Result;
+                           );
+            
+            CCMemorySetDestructor(Args, (CCMemoryDestructorCallback)CCGraphicsExpressionRenderRectArgumentStateValueDestructor);
+            
+            *Args = (CCGraphicsExpressionRenderRectArgumentState){
+                .vertBuffer = VertBuffer,
+                .scaleBuffer = ScaleBuffer,
+                .radiusBuffer = RadiusBuffer,
+                .rect = Rect,
+                .colour = Colour,
+                .radius = Radius
+            };
+            
+            
+            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE);
+            CCExpressionCreateState(Expression, StrArgs, CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Args, CCExpressionRetainedValueCopy, CCFree), TRUE);
+        }
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-rect", "rect:list colour:list [radius:float]");
     
-    return Expr;
+    return Result;
 }
 
 static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression String, CCEnumerator *Enumerator)
@@ -151,7 +235,7 @@ static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression Str
 
 CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
 {
-    CCExpression Expr = Expression;
+    CCExpression Result = Expression;
     
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 2)
     {
@@ -278,10 +362,10 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
         CCTextSetString(Text, AttributedStrings);
         CCCollectionDestroy(AttributedStrings);
         
-        Expr = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
+        Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-text", "rect:list [...]");
     
-    return Expr;
+    return Result;
 }
