@@ -286,6 +286,78 @@
                     "description": "The button's state is pushed."
                 }
             ]
+        },
+        {
+            "name": "gui-text",
+            "description": "Create text. Appearance can be changed through setting the different states or completely customized through overriding the render option.",
+            "includes": [
+                "../../src/gui/gui-defines.json"
+            ],
+            "states": [
+                {
+                    "name": "string",
+                    "description": "The attributed string to be drawn. Follows the same format as the text option passed to render-text.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [{ "type": "list", "value": [{ "type": "option", "name": "text" }, { "type": "string" }] }],
+                        [{ "type": "list" }]
+                    ]
+                },
+                {
+                    "name": "align",
+                    "description": "The alignment of the text.",
+                    "return": { "type": "atom" },
+                    "args": [
+                        [{ "type": "atom", "name": "left" }],
+                        [{ "type": "atom", "name": "right" }],
+                        [{ "type": "atom", "name": "center" }]
+                    ]
+                },
+                {
+                    "name": "wrap",
+                    "description": "The wrapping mode of the text.",
+                    "return": { "type": "atom" },
+                    "args": [
+                        [{ "type": "atom", "name": "char" }],
+                        [{ "type": "atom", "name": "word" }]
+                    ]
+                },
+                {
+                    "name": "lines",
+                    "description": "Whether the text should use multiple lines or a single line.",
+                    "return": { "type": "atom" },
+                    "args": [
+                        [{ "type": "atom", "name": "single" }],
+                        [{ "type": "atom", "name": "multi" }]
+                    ]
+                },
+                {
+                    "name": "cursor",
+                    "description": "The character position to begin displaying.",
+                    "return": { "type": "integer" },
+                    "args": [[{ "type": "integer" }]]
+                },
+                {
+                    "name": "length",
+                    "description": "The maximum number of characters to display.",
+                    "return": { "type": "expression" },
+                    "args": [
+                        [{ "type": "integer" }],
+                        [{ "type": "atom", "name": "max" }]
+                    ]
+                },
+                {
+                    "name": "visible-length",
+                    "description": "The number of characters currently displayed.",
+                    "return": { "type": "integer" },
+                    "args": [[{ "type": "integer" }]]
+                },
+                {
+                    "name": "text",
+                    "description": "The renderable text.",
+                    "return": { "type": "custom:text" }
+                }
+            ]
         }
     ]
 }
