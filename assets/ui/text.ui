@@ -1,0 +1,12 @@
+(gui "gui-text"
+    (state! ".string" (text: "text"))
+    (state! ".align" :center)
+    (state! ".wrap" :word)
+    (state! ".lines" :multi)
+    (state! ".cursor" 0)
+    (state! ".length" :max)
+    (state! ".visible-length" (quote (text-visible-length .text)))
+    (state! ".text" (quote (render-text .rect .string (align: .align) (wrap: .wrap .lines) (offset: .cursor) (length: .length))))
+
+    (render: .text)
+)
