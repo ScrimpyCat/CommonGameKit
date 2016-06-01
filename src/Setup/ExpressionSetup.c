@@ -16,6 +16,7 @@
 #include "StateExpressions.h"
 #include "StringExpressions.h"
 #include "TextExpressions.h"
+#include "TypeCastExpressions.h"
 #include "WindowExpressions.h"
 
 void CCExpressionSetup(void)
@@ -67,6 +68,8 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("filename"), CCStringExpressionFilename);
     CCExpressionEvaluatorRegister(CC_STRING("replace"), CCStringExpressionReplace);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
+    CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeCastExpressionIntegerToFloat);
+    CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeCastExpressionFloatToInteger);
     CCExpressionEvaluatorRegister(CC_STRING("window-percent-width"), CCWindowExpressionPercentageWidth);
     CCExpressionEvaluatorRegister(CC_STRING("window-percent-height"), CCWindowExpressionPercentageHeight);
     CCExpressionEvaluatorRegister(CC_STRING("window-width"), CCWindowExpressionWidth);

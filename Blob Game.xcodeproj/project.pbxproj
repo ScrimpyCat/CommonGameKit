@@ -23,6 +23,7 @@
 		F316195C1C12114B008E09A1 /* GLDebugTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F316195B1C12114B008E09A1 /* GLDebugTests.m */; };
 		F316198E1C1213A9008E09A1 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F316198C1C1213A9008E09A1 /* PixelData.c */; };
 		F31BFAAC1CFE3EAD00E9BF47 /* TextExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F31BFAAA1CFE3EAD00E9BF47 /* TextExpressions.c */; };
+		F31BFAF61CFF596F00E9BF47 /* TypeCastExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F31BFAF41CFF596F00E9BF47 /* TypeCastExpressions.c */; };
 		F32393F71A572155007BD168 /* libChipmunk-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F32393CB1A572148007BD168 /* libChipmunk-Mac.a */; };
 		F32555441C35F59200B1623C /* MacroExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F32555421C35F59200B1623C /* MacroExpressions.c */; };
 		F3406B3C1CFA09A9008BF1D7 /* GraphicsExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3406B3A1CFA09A9008BF1D7 /* GraphicsExpressions.c */; };
@@ -505,6 +506,8 @@
 		F316198D1C1213A9008E09A1 /* PixelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelData.h; sourceTree = "<group>"; };
 		F31BFAAA1CFE3EAD00E9BF47 /* TextExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TextExpressions.c; sourceTree = "<group>"; };
 		F31BFAAB1CFE3EAD00E9BF47 /* TextExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextExpressions.h; sourceTree = "<group>"; };
+		F31BFAF41CFF596F00E9BF47 /* TypeCastExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TypeCastExpressions.c; sourceTree = "<group>"; };
+		F31BFAF51CFF596F00E9BF47 /* TypeCastExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastExpressions.h; sourceTree = "<group>"; };
 		F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Chipmunk7.xcodeproj; path = deps/Chipmunk2D/xcode/Chipmunk7.xcodeproj; sourceTree = "<group>"; };
 		F32555421C35F59200B1623C /* MacroExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MacroExpressions.c; sourceTree = "<group>"; };
 		F32555431C35F59200B1623C /* MacroExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroExpressions.h; sourceTree = "<group>"; };
@@ -1051,6 +1054,8 @@
 		F3BD17751C00B33800B3849E /* Evaluators */ = {
 			isa = PBXGroup;
 			children = (
+				F31BFAF51CFF596F00E9BF47 /* TypeCastExpressions.h */,
+				F31BFAF41CFF596F00E9BF47 /* TypeCastExpressions.c */,
 				F3B147CF1C3FFED300ADC294 /* ListExpressions.h */,
 				F3B147CE1C3FFED300ADC294 /* ListExpressions.c */,
 				F390E9CE1C79B94A0072D4E7 /* StringExpressions.h */,
@@ -1890,6 +1895,7 @@
 				F3769A261C11E29300F24A44 /* Colour.c in Sources */,
 				F3BD177C1C00DB5600B3849E /* ExpressionSetup.c in Sources */,
 				F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */,
+				F31BFAF61CFF596F00E9BF47 /* TypeCastExpressions.c in Sources */,
 				F389DC201C3A0797009480B8 /* GUIExpression.c in Sources */,
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
