@@ -24,7 +24,7 @@
     (state! ".dragged" #f)
 
     (render:
-        (get .status .label)
+        (unquote (get .status .label))
     )
 
     (control:

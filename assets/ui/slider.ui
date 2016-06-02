@@ -39,8 +39,7 @@
     (state! ".dragged" #f)
 
     (render:
-        (get 0 (get .status .bar)) ;todo: change render to accept lists too
-        (get 1 (get .status .bar))
+        (unquote (get .status .bar))
         ;todo: thumb
     )
 
