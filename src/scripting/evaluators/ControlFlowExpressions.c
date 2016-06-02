@@ -74,14 +74,15 @@ CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
             
             if (CCExpressionGetType(List) == CCExpressionValueTypeList)
             {
+                if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
+                {
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), NULL, FALSE);
+                }
+                
                 CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 CC_COLLECTION_FOREACH(CCExpression, Item, CCExpressionGetList(List))
                 {
-                    //FIXME: bug, should be strict set
-                    if (!CCExpressionSetState(Expression, CCExpressionGetString(Var), Item, TRUE))
-                    {
-                        CCExpressionCreateState(Expression, CCExpressionGetString(Var), Item, TRUE);
-                    }
+                    CCExpressionSetState(Expression, CCExpressionGetString(Var), Item, TRUE);
                     
                     CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(Expr)) });
                 }
