@@ -170,6 +170,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
     GFXDrawInputVertexBuffer *VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionFindElement(Draw->vertexBuffers, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
     if (VertexBuffer)
     {
+        CC_SAFE_Free(VertexBuffer->buffer);
         VertexBuffer->buffer = CCRetain(Buffer);
         VertexBuffer->offset = Offset;
         VertexBuffer->stride = Stride;
@@ -208,6 +209,7 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer)
     GFXDrawInputBuffer *UniformBuffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
     if (UniformBuffer)
     {
+        CC_SAFE_Free(UniformBuffer->buffer);
         UniformBuffer->buffer = CCRetain(Buffer);
     }
     
@@ -240,6 +242,7 @@ void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture)
     GFXDrawInputTexture *UniformTexture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
     if (UniformTexture)
     {
+        CC_SAFE_Free(UniformTexture->texture);
         UniformTexture->texture = CCRetain(Texture);
     }
     
