@@ -116,6 +116,7 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
     {
         CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
         CCOrderedCollection Lines = CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x);
+        CCCollectionDestroy(Selection);
         
         float Height = 0.0f;
         CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
@@ -252,6 +253,8 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
                 }
             }
         }
+        
+        CCCollectionDestroy(Lines);
     }
     
     if (Text->drawers) CCCollectionDestroy(Text->drawers);
