@@ -2,7 +2,7 @@
     "functions": [
         {
             "name": "quote",
-            "description": "Causes an expression to not be evaluated.",
+            "description": "Causes an expression to not be evaluated. Can be used to achieve some form of lazy evaluation.",
             "examples": ["(quote (+ 2 2)) ;(+ 2 2)"],
             "return": { "type": "expression" },
             "args": [[{ "type": "expression" }]]

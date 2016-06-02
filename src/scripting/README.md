@@ -193,7 +193,7 @@ __*__ Multiplies all inputs together, same float/integer behaviour as additions.
 
 **get** Get an element from a list. e.g. `(get 0 (1 2 3)) ;1`, `(get 2 (1 2 3)) ;3`
 
-**quote** Causes an expression not to be evaluated. e.g. `(quote (+ 2 2)) ;(+ 2 2)`
+**quote** Causes an expression not to be evaluated. Can be used to achieve some form of lazy evaluation. e.g. `(quote (+ 2 2)) ;(+ 2 2)`
 
 **unquote** Evaluates an expression. e.g. `(unquote 14) ;14`, `(unquote (quote (+ 2 2))) ;4`
 
