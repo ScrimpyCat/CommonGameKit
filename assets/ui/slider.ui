@@ -1,0 +1,63 @@
+(gui "gui-slider"
+    (enum!
+        "&normal"
+        "&highlighted"
+        "&pushed"
+    )
+
+    (state! ".value" 0.5)
+    (state! ".min-value" 0.0)
+    (state! ".max-value" 10.0)
+    (state! ".colour" (1 2 3))
+    (state! ".min-colour" (255 0 0)) ;todo: (quote .colour)
+    (state! ".max-colour" (0 0 255)) ;todo: (quote (hue-invert .colour))
+    (state! ".thumb-center" (quote (/ (+ .value (- 0.0 .min-value)) (+ .max-value (- 0.0 .min-value)))))
+    (state! ".min-rect" (quote (.x .y (* .width .thumb-center) .height)))
+    (state! ".max-rect" (quote ((+ .x (* .width .thumb-center)) .y (- .width (* .width .thumb-center)) .height)))
+    (state! ".radius" (quote (* 0.55 (/ (integer->float (min .width .height)) (integer->float (max .width .height))))))
+    (state! ".status" &normal)
+    (state! ".outline" 4)
+    (state! ".bar" (quote ( ;todo: proper bar
+        (quote (
+            (quote (render-rect .min-rect .min-colour .radius))
+            (quote (render-rect .max-rect .max-colour .radius))
+        )) ; &normal
+        (quote (
+            (quote (render-rect .min-rect (lighten .min-colour 5) .radius))
+            (quote (render-rect .max-rect (lighten .max-colour 5) .radius))
+        )) ; &highlighted
+        (quote (
+            (quote (render-rect .min-rect (darken .min-colour 5) .radius))
+            (quote (render-rect .max-rect (darken .max-colour 5) .radius))
+        )) ; &pushed
+    )))
+    (state! ".on-click" (quote (print "Clicked!")))
+    (state! ".on-change")
+    (state! ".step" #f)
+    (state! ".interval" (quote (.value! (round .value))))
+    (state! ".inside" #f)
+    (state! ".dragged" #f)
+
+    (render:
+        (get 0 (get .status .bar)) ;todo: change render to accept lists too
+        (get 1 (get .status .bar))
+        ;todo: thumb
+    )
+
+    (control:
+        (on (click: :left .rect)
+            (if @press
+                ((.status! &pushed) (.inside! #t) (.dragged! #t))
+                ((.status! &highlighted) (if .inside .on-click) (.inside! #f) (.dragged! #f))
+            )
+            ((.status! &normal) (if .inside .on-click) (.inside! #f) (.dragged! @press))
+        )
+        (if .dragged
+            (if .inside (on (cursor: .rect)
+                ((.status! &pushed) (.value! (- (* (min (max (/ (+ @pos-x (- 0.0 .x)) (+ .width (- 0.0 .x))) 0.0) 1.0) (+ (- 0.0 .min-value) .max-value)) (- 0.0 .min-value))) (if .step .interval) .on-change)
+                ((.status! &highlighted) (.value! (- (* (min (max (/ (+ @pos-x (- 0.0 .x)) (+ .width (- 0.0 .x))) 0.0) 1.0) (+ (- 0.0 .min-value) .max-value)) (- 0.0 .min-value))) (if .step .interval) .on-change)
+            ))
+            (on (cursor: .rect) (.status! &highlighted) (.status! &normal))
+        )
+    )
+)
