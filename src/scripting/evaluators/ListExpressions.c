@@ -38,7 +38,7 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
             size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
             if (CCExpressionGetInteger(Index) < Count)
             {
-                return CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), CCExpressionGetInteger(Index))));
+                return CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), CCExpressionGetInteger(Index))));
             }
         }
         

@@ -29,7 +29,7 @@ CCExpression CCMacroExpressionQuote(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
     {
-        return CCExpressionCopy(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        return CCExpressionRetain(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("quote", "expression:expr");
@@ -41,7 +41,7 @@ CCExpression CCMacroExpressionUnquote(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
     {
-        return CCExpressionCopy(CCExpressionEvaluate(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1))));
+        return CCExpressionRetain(CCExpressionEvaluate(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1))));
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("unquote", "expression:expr");

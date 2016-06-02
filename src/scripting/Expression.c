@@ -62,6 +62,13 @@ static CCExpression CCExpressionRetainValueCopy(CCExpression Value)
     return CCExpressionCreateCustomType(Value->allocator, CCExpressionGetType(Value), CCRetain(CCExpressionGetData(Value)), Value->copy, Value->destructor);
 }
 
+static void CCExpressionDestructor(CCExpression Expression)
+{
+    if (Expression->destructor) Expression->destructor(CCExpressionGetData(Expression));
+    if (Expression->state.values) CCCollectionDestroy(Expression->state.values);
+    if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
+}
+
 CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
 {
     CCExpression Expression = CCMalloc(CC_ALIGNED_ALLOCATOR(8)/*Allocator*/, sizeof(*Expression), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -70,6 +77,8 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
         CC_LOG_ERROR("Failed to create expression due to allocation failing. Allocation size: %zu", sizeof(*Expression));
         return NULL;
     }
+    
+    CCMemorySetDestructor(Expression, (CCMemoryDestructorCallback)CCExpressionDestructor);
     
     Expression->type = Type;
     switch (Type)
@@ -245,9 +254,6 @@ void CCExpressionDestroy(CCExpression Expression)
     
     if (CCExpressionIsTagged(Expression)) return;
     
-    if (Expression->destructor) Expression->destructor(CCExpressionGetData(Expression));
-    if (Expression->state.values) CCCollectionDestroy(Expression->state.values);
-    if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
     CC_SAFE_Free(Expression);
 }
 
@@ -305,6 +311,13 @@ CCExpression CCExpressionCopy(CCExpression Expression)
     }
     
     return Copy;
+}
+
+CCExpression CCExpressionRetain(CCExpression Expression)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    return CCExpressionIsTagged(Expression) ? Expression : CCRetain(Expression);
 }
 
 CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
@@ -611,7 +624,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                         
                         for (CCExpression *Arg = CCCollectionEnumeratorNext(&Enumerator); Arg; Arg = CCCollectionEnumeratorNext(&Enumerator))
                         {
-                            CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(*Arg)) });
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(*Arg)) });
                         }
                         
                         State = CCExpressionSetState(Expression, Name, Value, FALSE);
@@ -621,7 +634,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                     
                     if (State)
                     {
-                        Expression->state.result = CCExpressionCopy(State);
+                        Expression->state.result = CCExpressionRetain(State);
                         IsList = FALSE;
                     }
                 }
@@ -657,11 +670,11 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
             if (Expr)
             {
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy(CCExpressionGetResult(*Expr) ? CCExpressionGetResult(*Expr) : CCExpressionEvaluate(*Expr)) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionRetain(CCExpressionGetResult(*Expr) ? CCExpressionGetResult(*Expr) : CCExpressionEvaluate(*Expr)) });
                 
                 while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
                 {
-                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(*Expr)) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(*Expr)) });
                 }
             }
         }
@@ -674,7 +687,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
 #endif
     {
         CCExpression State = CCExpressionGetState(Expression->state.super, CCExpressionGetAtom(Expression));
-        if (State) Expression->state.result = CCExpressionCopy(State);
+        if (State) Expression->state.result = CCExpressionRetain(State);
     }
     
     if (Expression->state.result) CCExpressionStateSetSuper(Expression->state.result, Expression->state.super);
@@ -714,7 +727,7 @@ static void CCExpressionStateValueElementDestructor(CCCollection Collection, CCE
     if (Element->value) CCExpressionDestroy(Element->value);
 }
 
-void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy)
+void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain)
 {
     if ((Expression->state.values) && (CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind)))
     {
@@ -727,7 +740,7 @@ void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpressio
         
         CCCollectionInsertElement(Expression->state.values, &(CCExpressionStateValue){
             .name = CCStringCopy(Name),
-            .value = Copy ? (Value ? CCExpressionCopy(Value) : NULL) : Value
+            .value = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value
         });
     }
 }
@@ -751,7 +764,7 @@ CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
     return State && State->value ? CCExpressionEvaluate(State->value) : NULL;
 }
 
-CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy)
+CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
@@ -759,7 +772,7 @@ CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpr
     if (State)
     {
         if (State->value) CCExpressionDestroy(State->value);
-        State->value = Copy ? CCExpressionCopy(Value) : Value;
+        State->value = Retain ? CCExpressionRetain(Value) : Value;
         
         return State->value;
     }

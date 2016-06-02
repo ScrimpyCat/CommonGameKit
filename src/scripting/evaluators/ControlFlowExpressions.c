@@ -36,7 +36,7 @@ CCExpression CCControlFlowExpressionBegin(CCExpression Expression)
         Result = CCExpressionEvaluate(*Expr);
     }
     
-    return Result ? CCExpressionCopy(Result) : Expression;
+    return Result ? CCExpressionRetain(Result) : Expression;
 }
 
 CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
@@ -52,7 +52,7 @@ CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
         if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger) Predicate = CCExpressionGetInteger(Result);
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:integer true:expr [false:expr]");
         
-        if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
+        if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("if", "predicate:integer true:expr [false:expr]");
@@ -77,12 +77,13 @@ CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
                 CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 CC_COLLECTION_FOREACH(CCExpression, Item, CCExpressionGetList(List))
                 {
+                    //FIXME: bug, should be strict set
                     if (!CCExpressionSetState(Expression, CCExpressionGetString(Var), Item, TRUE))
                     {
                         CCExpressionCreateState(Expression, CCExpressionGetString(Var), Item, TRUE);
                     }
                     
-                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionCopy(CCExpressionEvaluate(Expr)) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(Expr)) });
                 }
                 
                 return Result;

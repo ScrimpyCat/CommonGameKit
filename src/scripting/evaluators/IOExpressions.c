@@ -159,7 +159,7 @@ CCExpression CCIOExpressionEval(CCExpression Expression)
                 CCExpression Src = CCExpressionCreateFromSourceFile(Path);
                 if (Src)
                 {
-                    Expr = CCExpressionCopy(CCExpressionEvaluate(Src));
+                    Expr = CCExpressionRetain(CCExpressionEvaluate(Src));
                     CCExpressionDestroy(Src);
                 }
                 

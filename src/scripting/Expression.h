@@ -202,6 +202,13 @@ CC_NEW CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionVa
 CC_NEW CCExpression CCExpressionCopy(CCExpression Expression);
 
 /*!
+ * @brief Retain the expression.
+ * @param Expression The expression to be retained.
+ * @return The retained expression.
+ */
+CC_NEW CCExpression CCExpressionRetain(CCExpression Expression);
+
+/*!
  * @brief Destroy an expression.
  * @param Expression The expression to be destroyed.
  */
@@ -227,9 +234,9 @@ CCExpression CCExpressionEvaluate(CCExpression Expression);
  * @param Expression The expression store the state.
  * @param Name The name of the state.
  * @param Value The value of the state. May be NULL.
- * @param Copy Whether the @b value should be copied or stored directly.
+ * @param Retain Whether the @b value should be retained or stored directly.
  */
-void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy);
+void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain);
 
 /*!
  * @brief Get the state of an expression.
@@ -254,10 +261,10 @@ CCExpression CCExpressionGetState(CCExpression Expression, CCString Name);
  * @param Expression The expression store the state.
  * @param Name The name of the state.
  * @param Value The value of the state. May be NULL.
- * @param Copy Whether the @b value should be copied or stored directly.
+ * @param Retain Whether the @b value should be retained or stored directly.
  * @return The state value or NULL if it does not exist (or currently holds NULL).
  */
-CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Copy);
+CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain);
 
 /*!
  * @brief Copy the the state of one expression to another.

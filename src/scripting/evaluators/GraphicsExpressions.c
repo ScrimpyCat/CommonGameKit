@@ -79,7 +79,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
         CCExpression PreservedDraw = CCExpressionGetStateStrict(Expression, StrDrawer);
         if (PreservedDraw)
         {
-            Result = CCExpressionCopy(PreservedDraw);
+            Result = CCExpressionRetain(PreservedDraw);
             
             _Bool UpdateScale = TRUE;
             CCGraphicsExpressionRenderRectArgumentState *Args = CCExpressionGetData(CCExpressionGetStateStrict(Expression, StrArgs));
@@ -358,7 +358,7 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
         if (PreservedDraw)
         {
             Text = CCExpressionGetData(PreservedDraw);
-            Result = CCExpressionCopy(PreservedDraw);
+            Result = CCExpressionRetain(PreservedDraw);
         }
         
         else

@@ -178,7 +178,7 @@ CCExpression GUIObjectEvaluateExpression(GUIObject Object, CCExpression Expressi
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    CCExpression Expr = CCExpressionCopy(Object->interface->evaluate(Object, Expression));
+    CCExpression Expr = CCExpressionRetain(Object->interface->evaluate(Object, Expression));
     mtx_unlock(&Object->lock);
     
     CCExpressionStateSetResult(Expression, Expr);

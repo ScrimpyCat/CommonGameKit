@@ -743,7 +743,7 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
         
         if (IsEvent)
         {
-            if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionCopy(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
+            if ((Predicate) || (ArgCount == 3)) Expr = CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), Predicate ? 2 : 3)));
         }
     }
     

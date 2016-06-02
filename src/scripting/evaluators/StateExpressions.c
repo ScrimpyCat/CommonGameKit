@@ -98,7 +98,7 @@ CCExpression CCStateExpressionSuper(CCExpression Expression)
             {
                 Expr->state.super = Super;
                 
-                return CCExpressionCopy(CCExpressionEvaluate(Expr));
+                return CCExpressionRetain(CCExpressionEvaluate(Expr));
             }
         }
     }
@@ -116,7 +116,7 @@ CCExpression CCStateExpressionStrictSuper(CCExpression Expression)
         CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
         Expr->state.super = Expression->state.super->state.super;
         
-        return CCExpressionCopy(CCExpressionEvaluate(Expr));
+        return CCExpressionRetain(CCExpressionEvaluate(Expr));
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("strict-super", "expression:expr");

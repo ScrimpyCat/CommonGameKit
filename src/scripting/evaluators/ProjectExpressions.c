@@ -427,9 +427,9 @@ CCExpression CCProjectExpressionLibrarySource(CCExpression Expression)
             if ((List) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
             {
                 CCExpression Value = CCExpressionCreateList(CC_STD_ALLOCATOR);
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(Name) });
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(Type) });
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionCopy(Source) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionRetain(Name) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionRetain(Type) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Value), &(CCExpression){ CCExpressionRetain(Source) });
                 
                 CCOrderedCollectionAppendElement(CCExpressionGetList(List), &Value);
                 
