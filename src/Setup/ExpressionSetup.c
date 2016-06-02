@@ -55,6 +55,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("min"), CCMathExpressionMinimum);
     CCExpressionEvaluatorRegister(CC_STRING("max"), CCMathExpressionMaximum);
     CCExpressionEvaluatorRegister(CC_STRING("random"), CCMathExpressionRandom);
+    CCExpressionEvaluatorRegister(CC_STRING("round"), CCMathExpressionRound);
     CCExpressionEvaluatorRegister(CC_STRING("game"), CCProjectExpressionGame);
     CCExpressionEvaluatorRegister(CC_STRING("library"), CCProjectExpressionLibrary);
     CCExpressionEvaluatorRegister(CC_STRING("source"), CCProjectExpressionLibrarySource);

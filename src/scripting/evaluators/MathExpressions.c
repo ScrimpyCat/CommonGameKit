@@ -413,3 +413,24 @@ CCExpression CCMathExpressionRandom(CCExpression Expression)
     
     return Expr;
 }
+
+CCExpression CCMathExpressionRound(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression Arg = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Arg) == CCExpressionValueTypeInteger)
+        {
+            return Arg;
+        }
+        
+        else if (CCExpressionGetType(Arg) == CCExpressionValueTypeFloat)
+        {
+            return CCExpressionCreateFloat(CC_STD_ALLOCATOR, roundf(CCExpressionGetFloat(Arg)));
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("round", "value:number");
+    
+    return Expression;
+}

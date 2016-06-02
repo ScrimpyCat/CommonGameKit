@@ -36,5 +36,6 @@ CC_EXPRESSION_EVALUATOR(/) CCExpression CCMathExpressionDivide(CCExpression Expr
 CC_EXPRESSION_EVALUATOR(min) CCExpression CCMathExpressionMinimum(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(max) CCExpression CCMathExpressionMaximum(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(random) CCExpression CCMathExpressionRandom(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(round) CCExpression CCMathExpressionRound(CCExpression Expression);
 
 #endif
