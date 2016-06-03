@@ -31,16 +31,41 @@
 typedef struct {
     CCVector2D position;
     CCColourRGBA colour;
+    CCColourRGBA outlineColour;
     CCVector2D coord;
 } CCGraphicsExpressionRectVertData;
+
+typedef enum {
+    CCGraphicsExpressionRenderRectEdgeTypeCurve,
+    CCGraphicsExpressionRenderRectEdgeTypeFlat,
+    
+    CCGraphicsExpressionRenderRectEdgeMask = 1,
+    CCGraphicsExpressionRenderRectEdgeLeft = 0,
+    CCGraphicsExpressionRenderRectEdgeRight = 1,
+    CCGraphicsExpressionRenderRectEdgeBottom = 2,
+    CCGraphicsExpressionRenderRectEdgeTop = 3,
+    
+    CCGraphicsExpressionRenderRectEdgeAllCurved = (CCGraphicsExpressionRenderRectEdgeTypeCurve << CCGraphicsExpressionRenderRectEdgeLeft)
+        | (CCGraphicsExpressionRenderRectEdgeTypeCurve << CCGraphicsExpressionRenderRectEdgeRight)
+        | (CCGraphicsExpressionRenderRectEdgeTypeCurve << CCGraphicsExpressionRenderRectEdgeBottom)
+        | (CCGraphicsExpressionRenderRectEdgeTypeCurve << CCGraphicsExpressionRenderRectEdgeTop),
+    CCGraphicsExpressionRenderRectEdgeAllFlat = (CCGraphicsExpressionRenderRectEdgeTypeFlat << CCGraphicsExpressionRenderRectEdgeLeft)
+        | (CCGraphicsExpressionRenderRectEdgeTypeFlat << CCGraphicsExpressionRenderRectEdgeRight)
+        | (CCGraphicsExpressionRenderRectEdgeTypeFlat << CCGraphicsExpressionRenderRectEdgeBottom)
+        | (CCGraphicsExpressionRenderRectEdgeTypeFlat << CCGraphicsExpressionRenderRectEdgeTop),
+} CCGraphicsExpressionRenderRectEdge;
 
 typedef struct {
     GFXBuffer vertBuffer;
     GFXBuffer scaleBuffer;
     GFXBuffer radiusBuffer;
+    GFXBuffer outlineBuffer;
     CCRect rect;
     CCColourRGBA colour;
+    CCColourRGBA outlineColour;
     float radius;
+    float outline;
+    CCGraphicsExpressionRenderRectEdge edge;
 } CCGraphicsExpressionRenderRectArgumentState;
 
 
@@ -52,11 +77,25 @@ static void CCGraphicsExpressionDrawValueDestructor(CCGraphicsExpressionValueDra
 static void CCGraphicsExpressionRenderRectArgumentStateValueDestructor(CCGraphicsExpressionRenderRectArgumentState *Ptr)
 {
     GFXBufferDestroy(Ptr->vertBuffer);
+    GFXBufferDestroy(Ptr->outlineBuffer);
     GFXBufferDestroy(Ptr->radiusBuffer);
     GFXBufferDestroy(Ptr->scaleBuffer);
 }
 
 static CCString StrDrawer = CC_STRING(".drawer"), StrArgs = CC_STRING(".args");
+
+static CCGraphicsExpressionRenderRectEdge CCGraphicsExpressionRenderRectGetEdge(CCExpression Edge)
+{
+    if (CCExpressionGetType(Edge) == CCExpressionValueTypeAtom)
+    {
+        if (CCStringEqual(CCExpressionGetString(Edge), CC_STRING(":flat"))) return CCGraphicsExpressionRenderRectEdgeTypeFlat;
+        else if (CCStringEqual(CCExpressionGetString(Edge), CC_STRING(":round"))) return CCGraphicsExpressionRenderRectEdgeTypeCurve;
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Should be a valid atom: :flat | :round.");
+    
+    return 0;
+}
 
 CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
 {
@@ -67,13 +106,45 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
         CCEnumerator Enumerator;
         CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
         
-        CCExpression *ArgRect = CCCollectionEnumeratorNext(&Enumerator);
-        CCExpression *ArgColour = CCCollectionEnumeratorNext(&Enumerator);
-        CCExpression *ArgRadius = CCCollectionEnumeratorNext(&Enumerator);
+        const CCRect Rect = CCExpressionGetRect(CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator)));
+        const CCColourRGBA Colour = CCExpressionGetColour(CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator)));
+        CCColourRGBA OutlineColour = CCVector4DFill(1.0f);
+        float Radius = 0.0f, Outline = 1.0f;
+        CCGraphicsExpressionRenderRectEdge Edge = CCGraphicsExpressionRenderRectEdgeAllCurved;
         
-        const CCRect Rect = CCExpressionGetRect(CCExpressionEvaluate(*ArgRect));
-        const CCColourRGBA Colour = CCExpressionGetColour(CCExpressionEvaluate(*ArgColour));
-        const float Radius = ArgRadius ? CCExpressionGetFloat(CCExpressionEvaluate(*ArgRadius)) : 0.0f;
+        for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+        {
+            CCExpression Arg = CCExpressionEvaluate(*Expr);
+            if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
+            {
+                size_t Count = CCCollectionGetCount(CCExpressionGetList(Arg));
+                if (Count > 1)
+                {
+                    CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+                    if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
+                    {
+                        if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("radius:"))) Radius = CCExpressionGetNamedFloat(Arg);
+                        else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("outline:")))
+                        {
+                            if (Count == 3)
+                            {
+                                CCExpression OutlineSize = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
+                                if (CCExpressionGetType(OutlineSize) == CCExpressionValueTypeFloat) Outline = 1.0f - CCExpressionGetFloat(OutlineSize);
+                                
+                                OutlineColour = CCExpressionGetColour(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 2));
+                            }
+                            
+                            else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("outline", "size:float colour:list");
+                        }
+                        
+                        else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("left:"))) Edge |= CCGraphicsExpressionRenderRectGetEdge(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1)) << CCGraphicsExpressionRenderRectEdgeLeft;
+                        else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("right:"))) Edge |= CCGraphicsExpressionRenderRectGetEdge(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1)) << CCGraphicsExpressionRenderRectEdgeRight;
+                        else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("bottom:"))) Edge |= CCGraphicsExpressionRenderRectGetEdge(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1)) << CCGraphicsExpressionRenderRectEdgeBottom;
+                        else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("Top:"))) Edge |= CCGraphicsExpressionRenderRectGetEdge(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1)) << CCGraphicsExpressionRenderRectEdgeTop;
+                    }
+                }
+            }
+        }
         
         
         CCExpression PreservedDraw = CCExpressionGetStateStrict(Expression, StrDrawer);
@@ -91,16 +162,28 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
                 (Args->colour.r != Colour.r) ||
                 (Args->colour.g != Colour.g) ||
                 (Args->colour.b != Colour.b) ||
-                (Args->colour.a != Colour.a))
+                (Args->colour.a != Colour.a) ||
+                (Args->outlineColour.r != OutlineColour.r) ||
+                (Args->outlineColour.g != OutlineColour.g) ||
+                (Args->outlineColour.b != OutlineColour.b) ||
+                (Args->outlineColour.a != OutlineColour.a) ||
+                (Args->edge != Edge))
             {
                 Args->rect = Rect;
                 Args->colour = Colour;
+                Args->outlineColour = OutlineColour;
+                Args->edge = Edge;
+                
+                const float LeftEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeLeft) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 0.0f : 0.5f;
+                const float RightEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeRight) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 1.0f : 0.5f;
+                const float BottomEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeBottom) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 0.0f : 0.5f;
+                const float TopEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeTop) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 1.0f : 0.5f;
                 
                 GFXBufferWriteBuffer(Args->vertBuffer, 0, sizeof(CCGraphicsExpressionRectVertData) * 4, (CCGraphicsExpressionRectVertData[4]){
-                    { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
-                    { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
-                    { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
-                    { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
+                    { .position = Rect.position, .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(LeftEdge, BottomEdge) },
+                    { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(RightEdge, BottomEdge) },
+                    { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(LeftEdge, TopEdge) },
+                    { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(RightEdge, TopEdge) }
                 });
                 
                 if (UpdateScale) GFXBufferWriteBuffer(Args->scaleBuffer, 0, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
@@ -112,32 +195,52 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
                 
                 GFXBufferWriteBuffer(Args->radiusBuffer, 0, sizeof(float), &Radius);
                 
-                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(PreservedDraw))->drawer, Radius != 0.0f ? GFXBlendTransparent : GFXBlendOpaque);
+                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(PreservedDraw))->drawer, (Radius != 0.0f) || (Args->colour.a < 1.0f) | (Args->outlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
+            }
+            
+            if (Args->outline != Outline)
+            {
+                Args->outline = Outline;
+                
+                GFXBufferWriteBuffer(Args->outlineBuffer, 0, sizeof(float), &Outline);
             }
         }
         
         else
         {
-            GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
+            /*
+             TODO: Use rounded-rect shader when no outline is used.
+             
+             Can keep the same buffers, just change the drawer.
+             */
+            GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("outline-rounded-rect"));
             
             GFXBuffer ScaleBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), (Rect.size.x < Rect.size.y ? &CCVector2DMake(Rect.size.x / Rect.size.y, 1.0f) : &CCVector2DMake(1.0f, Rect.size.y / Rect.size.x)));
             GFXBuffer RadiusBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &Radius);
+            GFXBuffer OutlineBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &Outline);
+            
+            const float LeftEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeLeft) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 0.0f : 0.5f;
+            const float RightEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeRight) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 1.0f : 0.5f;
+            const float BottomEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeBottom) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 0.0f : 0.5f;
+            const float TopEdge = ((Edge >> CCGraphicsExpressionRenderRectEdgeTop) & CCGraphicsExpressionRenderRectEdgeMask) == CCGraphicsExpressionRenderRectEdgeTypeCurve ? 1.0f : 0.5f;
             
             GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCGraphicsExpressionRectVertData) * 4, (CCGraphicsExpressionRectVertData[4]){
-                { .position = Rect.position, .colour = Colour, .coord = CCVector2DMake(0.0f, 0.0f) },
-                { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .coord = CCVector2DMake(1.0f, 0.0f) },
-                { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .coord = CCVector2DMake(0.0f, 1.0f) },
-                { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .coord = CCVector2DMake(1.0f, 1.0f) }
+                { .position = Rect.position, .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(LeftEdge, BottomEdge) },
+                { .position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f)), .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(RightEdge, BottomEdge) },
+                { .position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y)), .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(LeftEdge, TopEdge) },
+                { .position = CCVector2Add(Rect.position, Rect.size), .colour = Colour, .outlineColour = OutlineColour, .coord = CCVector2DMake(RightEdge, TopEdge) }
             });
             
             GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
             GFXDrawSetShader(Drawer, Shader);
             GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, position));
-            GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, colour));
+            GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, colour));
+            GFXDrawSetVertexBuffer(Drawer, "vColourOutline", VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, outlineColour));
             GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, coord));
             GFXDrawSetBuffer(Drawer, "scale", ScaleBuffer);
             GFXDrawSetBuffer(Drawer, "radius", RadiusBuffer);
-            GFXDrawSetBlending(Drawer, Radius != 0.0f ? GFXBlendTransparent : GFXBlendOpaque);
+            GFXDrawSetBuffer(Drawer, "outline", OutlineBuffer);
+            GFXDrawSetBlending(Drawer, (Radius != 0.0f) || (Colour.a < 1.0f) || (OutlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
             
             GFXShaderDestroy(Shader);
             
@@ -172,9 +275,13 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
                 .vertBuffer = VertBuffer,
                 .scaleBuffer = ScaleBuffer,
                 .radiusBuffer = RadiusBuffer,
+                .outlineBuffer = OutlineBuffer,
                 .rect = Rect,
                 .colour = Colour,
-                .radius = Radius
+                .outlineColour = OutlineColour,
+                .radius = Radius,
+                .outline = Outline,
+                .edge = Edge
             };
             
             
@@ -183,7 +290,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
         }
     }
     
-    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-rect", "rect:list colour:list [radius:float]");
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("render-rect", "rect:list colour:list [...]");
     
     return Result;
 }
@@ -210,7 +317,6 @@ static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression Str
                 CCExpression Type = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Arg), 0);
                 if (CCExpressionGetType(Type) == CCExpressionValueTypeAtom)
                 {
-                    //TODO: workout naming conventions to stop collisions
                     if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("colour:"))) Attribute.colour = CCExpressionGetNamedColour(*Arg);
                     else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("scale:"))) Attribute.scale = CCExpressionGetNamedVector2(*Arg);
                     else if (CCStringEqual(CCExpressionGetString(Type), CC_STRING("offset:"))) Attribute.offset = CCExpressionGetNamedVector2(*Arg);

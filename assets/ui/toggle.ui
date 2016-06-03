@@ -13,10 +13,10 @@
     (state! ".status" &off)
     (state! ".active" .status)
     (state! ".label" (quote (
-        (quote (render-rect .rect .colour .radius))  ; &off
-        (quote (render-rect .rect .colour .radius))  ; &on
-        (quote (render-rect .rect (lighten .colour 5) .radius)) ; &highlighted
-        (quote (render-rect .rect (darken .colour 5) .radius))  ; &pushed
+        (quote (render-rect .rect .colour (radius: .radius)))  ; &off
+        (quote (render-rect .rect .colour (radius: .radius)))  ; &on
+        (quote (render-rect .rect (lighten .colour 5) (radius: .radius))) ; &highlighted
+        (quote (render-rect .rect (darken .colour 5) (radius: .radius)))  ; &pushed
     )))
     (state! ".off-click" (quote (print "Clicked Off!")))
     (state! ".on-click" (quote (print "Clicked On!")))
