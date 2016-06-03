@@ -15,7 +15,7 @@ out vec4 fragColour;
 void main()
 {
     vec2 test = vec2(lessThan(coord, vec2(outline))) * vec2(greaterThan(coord, vec2(1.0 - outline)));
-	float inside = test.x * test.y;
+    float inside = test.x * test.y;
 
     vec2 shift = (1.0 - scale) * radius;
 
