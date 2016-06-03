@@ -25,6 +25,6 @@ void main()
 
     edgeDistance2 = smoothstep(1.0, 1.0, edgeDistance2 + 1.0);
 
-    fragColour.rgb = colour.rgb;
-    fragColour.a = colour.a * min(edgeDistance2 + edgeDistance, 1.0);
+    float edge = min(edgeDistance2 + edgeDistance, 1.0);
+    fragColour = vec4(colour.rgb, colour.a * edge);
 }

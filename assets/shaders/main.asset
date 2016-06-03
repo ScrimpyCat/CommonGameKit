@@ -2,6 +2,7 @@
     (shader "vertex-colour" (:core :vertex-colour-vs) (:core :vertex-colour-fs))
     (shader "fragment-colour" (:core :fragment-colour-vs) (:core :fragment-colour-fs))
     (shader "rounded-rect" (:core :rounded-rect-vs) (:core :rounded-rect-fs))
+    (shader "outline-rounded-rect" (:core :outline-rounded-rect-vs) (:core :outline-rounded-rect-fs))
     (shader "texture2d" (:core :texture2d-vs) (:core :texture2d-fs))
     (shader "signed-distance-field" (:core :texture2d-colour-vs) (:core :signed-distance-field-fs))
 )
