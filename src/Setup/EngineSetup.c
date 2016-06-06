@@ -57,8 +57,25 @@ void AnimationInterpolator(int *Previous, int *Next, double Time, int *Result)
     *Result = (int)(((1.0 - Time) * (double)*Previous) + (Time * (double)*Next)); //basic lerp
 }
 
+static CCStringMap Map63[63] = { //ASCII set 0, [-+:&() !@<>.], [a-z], [A-G], I, [N-P], [R-T]
+    0,
+    '-', '+', ':', '&', '(', ')', ' ', '!', '@', '<', '>', '.',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'N', 'O', 'P', 'R', 'S', 'T'
+};
+
+static CCStringMap Map31[31] = { //ASCII set 0, -, !, @, :, ., [a-y]
+    0,
+    '-', '!', '@', ':', '.',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y'
+};
+
 void CCEnginePreSetup(void)
 {
+    CCStringRegisterMap(CCStringEncodingASCII, Map63, CCStringMapSet63);
+    CCStringRegisterMap(CCStringEncodingASCII, Map31, CCStringMapSet31);
+    
     char Path[] = __FILE__;
     Path[sizeof(__FILE__) - sizeof("setup/EngineSetup.c")] = 0;
     CCFileFilterInputAddPath(Path);
@@ -120,7 +137,8 @@ void CCEngineSetup(void)
     CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".asset") });
     
     CCCollection GlobalAssetPaths[] = {
-        CCEngineConfiguration.directory.shaders
+        CCEngineConfiguration.directory.shaders,
+        CCEngineConfiguration.directory.fonts,
     };
     
     for (size_t Loop = 0; Loop < sizeof(GlobalAssetPaths) / sizeof(typeof(*GlobalAssetPaths)); Loop++)
