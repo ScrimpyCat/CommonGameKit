@@ -6,7 +6,7 @@
     )
 
     (state! ".colour" (255 211 73))
-    (state! ".radius" (quote (/ 18.0 (+ .width .height))))
+    (state! ".radius" (quote (/ 8.0 (max .width .height)))) ;(quote (/ 18.0 (+ .width .height))))
     (state! ".status" &normal)
     (state! ".label" (quote (
         (quote (render-rect .rect .colour (radius: .radius)))  ; &normal

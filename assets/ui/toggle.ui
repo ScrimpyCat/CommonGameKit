@@ -9,7 +9,7 @@
     (state! ".off-colour" (234 67 106))
     (state! ".on-colour" (138 227 65))
     (state! ".colour" (quote (get .active (.off-colour .on-colour))))
-    (state! ".radius" (quote (/ 18.0 (+ .width .height))))
+    (state! ".radius" (quote (/ 8.0 (max .width .height))))
     (state! ".status" &off)
     (state! ".active" .status)
     (state! ".label" (quote (

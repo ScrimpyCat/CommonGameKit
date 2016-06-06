@@ -7,28 +7,32 @@
 
     (state! ".value" 0.5)
     (state! ".min-value" 0.0)
-    (state! ".max-value" 10.0)
-    (state! ".colour" (1 2 3))
-    (state! ".min-colour" (255 0 0)) ;todo: (quote .colour)
-    (state! ".max-colour" (0 0 255)) ;todo: (quote (hue-invert .colour))
+    (state! ".max-value" 1.0)
+    (state! ".colour" (195 205 209))
+    (state! ".thumb-colour" (quote (lighten .colour 9)))
+    (state! ".min-colour" (quote .colour))
+    (state! ".max-colour" (quote (hue-invert .colour))) ;todo: implement
     (state! ".thumb-center" (quote (/ (+ .value (- 0.0 .min-value)) (+ .max-value (- 0.0 .min-value)))))
     (state! ".min-rect" (quote (.x .y (* .width .thumb-center) .height)))
     (state! ".max-rect" (quote ((+ .x (* .width .thumb-center)) .y (- .width (* .width .thumb-center)) .height)))
-    (state! ".radius" (quote (* 0.55 (/ (integer->float (min .width .height)) (integer->float (max .width .height))))))
+    (state! ".thumb-size" (quote (15 (- .height 4))))
+    (state! ".thumb-rect" (quote ((+ .x (- (* .width .thumb-center) (/ (get 0 .thumb-size) 2))) (+ .y (/ (- .height (get 1 .thumb-size)) 2)) (get 0 .thumb-size) (get 1 .thumb-size))))
+    (state! ".radius" (quote (/ 8.0 (max .width .height))))
+    (state! ".thumb-radius" (quote (/ 6.0 (max (get 0 .thumb-size) (get 1 .thumb-size)))))
     (state! ".status" &normal)
-    (state! ".outline" 4)
+    (state! ".outline" 5)
     (state! ".bar" (quote ( ;todo: proper bar
         (quote (
-            (quote (render-rect .min-rect .min-colour .radius))
-            (quote (render-rect .max-rect .max-colour .radius))
+            (quote (render-rect .rect .min-colour (radius: .radius)))
+            (quote (render-rect .thumb-rect .thumb-colour (radius: .thumb-radius)))
         )) ; &normal
         (quote (
-            (quote (render-rect .min-rect (lighten .min-colour 5) .radius))
-            (quote (render-rect .max-rect (lighten .max-colour 5) .radius))
+            (quote (render-rect .rect .min-colour (radius: .radius)))
+            (quote (render-rect .thumb-rect .thumb-colour (radius: .thumb-radius)))
         )) ; &highlighted
         (quote (
-            (quote (render-rect .min-rect (darken .min-colour 5) .radius))
-            (quote (render-rect .max-rect (darken .max-colour 5) .radius))
+            (quote (render-rect .rect .min-colour (radius: .radius)))
+            (quote (render-rect .thumb-rect .thumb-colour (radius: .thumb-radius)))
         )) ; &pushed
     )))
     (state! ".on-click" (quote (print "Clicked!")))
@@ -40,7 +44,6 @@
 
     (render:
         (unquote (get .status .bar))
-        ;todo: thumb
     )
 
     (control:
