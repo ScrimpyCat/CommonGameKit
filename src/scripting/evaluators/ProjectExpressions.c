@@ -42,11 +42,6 @@ static void CCProjectExpressionValueGameConfigDestructor(CCEngineConfig *Data)
     CC_SAFE_Free(Data);
 }
 
-static void CCProjectExpressionGameConfigDirectoryElementDestructor(CCCollection Collection, FSPath *Element)
-{
-    FSPathDestroy(*Element);
-}
-
 static FSPath CCProjectExpressionPathFromExpression(CCExpression Expression, CCExpression State)
 {
     FSPath Path = NULL;
@@ -239,7 +234,7 @@ CCExpression CCProjectExpressionGame(CCExpression Expression)
                                     
                                     else
                                     {
-                                        CCCollection Directories = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCProjectExpressionGameConfigDirectoryElementDestructor);
+                                        CCCollection Directories = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyEnumerating, sizeof(FSPath), FSPathDestructorForCollection);
                                         
                                         //TODO: Make a directory expression
                                         for (Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )

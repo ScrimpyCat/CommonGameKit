@@ -66,11 +66,6 @@ CCExpression CCIOExpressionPrint(CCExpression Expression)
     return Expression;
 }
 
-static void CCIOExpressionPathElementDestructor(CCCollection Collection, FSPath *Element)
-{
-    FSPathDestroy(*Element);
-}
-
 CCExpression CCIOExpressionSearch(CCExpression Expression)
 {
     CCEnumerator Enumerator;
@@ -88,7 +83,7 @@ CCExpression CCIOExpressionSearch(CCExpression Expression)
     if (MatchArg)
     {
         CCExpression Arg = CCExpressionEvaluate(*MatchArg);
-        Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCIOExpressionPathElementDestructor);
+        Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), FSPathDestructorForCollection);
         
         if ((CCExpressionGetType(Arg) == CCExpressionValueTypeString))
         {

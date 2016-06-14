@@ -90,11 +90,6 @@ void CCEnginePreSetup(void)
 }
 #include "GUIExpression.h"
 
-static void CCEngineSetupPathElementDestructor(CCCollection Collection, FSPath *Element)
-{
-    FSPathDestroy(*Element);
-}
-
 void CCEngineSetup(void)
 {
     GLGFXSetup();
@@ -105,7 +100,7 @@ void CCEngineSetup(void)
     
     
     //Load Global Assets
-    CCCollection Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), (CCCollectionElementDestructor)CCEngineSetupPathElementDestructor);
+    CCCollection Matches = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(FSPath), FSPathDestructorForCollection);
     
     CCCollectionInsertElement(Matches, &(FSPath){ FSPathCreate(".gfxlib") });
     

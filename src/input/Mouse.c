@@ -37,14 +37,9 @@ static struct {
     _Atomic(CCMouseButtonMap) buttons[GLFW_MOUSE_BUTTON_LAST + 1];
 } Mouse;
 
-static void CCMouseDropElementDestructor(CCCollection Collection, CCString *Element)
-{
-    CCStringDestroy(*Element);
-}
-
 void CCMouseDropInput(GLFWwindow *Window, int Count, const char **Files)
 {
-    CCOrderedCollection FileList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating | CCCollectionHintConstantLength | CCCollectionHintConstantElements | CCCollectionHintSizeSmall, sizeof(CCString), (CCCollectionElementDestructor)CCMouseDropElementDestructor);
+    CCOrderedCollection FileList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating | CCCollectionHintConstantLength | CCCollectionHintConstantElements | CCCollectionHintSizeSmall, sizeof(CCString), CCStringDestructorForCollection);
     
     for (int Loop = 0; Loop < Count; Loop++) CCOrderedCollectionAppendElement(FileList, &(CCString){ CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, Files[Loop]) });
     
