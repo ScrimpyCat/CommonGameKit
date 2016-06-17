@@ -27,39 +27,25 @@
 #include <inttypes.h>
 
 
-typedef struct {
-    CCString name; //TODO: Could be put into its own hashmap
-    CCExpressionEvaluator evaluator;
-} CCExpressionEvaluatorInfo;
-
-static void CCExpressionEvaluatorListElementDestructor(CCCollection Collection, CCExpressionEvaluatorInfo *Element)
-{
-    CCStringDestroy(Element->name);
-}
-
-static CCCollection EvaluatorList = NULL;
+static CCDictionary EvaluatorList = NULL;
 void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluator)
 {
-    if (!EvaluatorList) EvaluatorList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCExpressionEvaluatorInfo), (CCCollectionElementDestructor)CCExpressionEvaluatorListElementDestructor);
-    
-    CCCollectionInsertElement(EvaluatorList, &(CCExpressionEvaluatorInfo){
-        .name = CCStringCopy(Name),
-        .evaluator = Evaluator
+    if (!EvaluatorList) EvaluatorList = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintSizeMedium | CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCExpressionEvaluator), &(CCDictionaryCallbacks){
+        .getHash = CCStringHasherForDictionary,
+        .compareKeys = CCStringComparatorForDictionary,
+        .keyDestructor = CCStringDestructorForDictionary
     });
-}
-
-static CCComparisonResult CCExpressionEvaluatorNameComparator(const CCExpressionEvaluatorInfo *Component, CCString *Name)
-{
-    return (Component->name) && (CCStringEqual(Component->name, *Name)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    
+    CCDictionarySetValue(EvaluatorList, &(CCString){ CCStringCopy(Name) }, &Evaluator);
 }
 
 CCExpressionEvaluator CCExpressionEvaluatorForName(CCString Name)
 {
     if (EvaluatorList)
     {
-        CCExpressionEvaluatorInfo *Info = CCCollectionGetElement(EvaluatorList, CCCollectionFindElement(EvaluatorList, &Name, (CCComparator)CCExpressionEvaluatorNameComparator));
+        CCExpressionEvaluator *Info = CCDictionaryGetValue(EvaluatorList, &Name);
         
-        return Info ? Info->evaluator : NULL;
+        return Info ? *Info : NULL;
     }
     
     return NULL;
