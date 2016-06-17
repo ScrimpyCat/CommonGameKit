@@ -65,7 +65,7 @@ static CCExpression CCExpressionRetainValueCopy(CCExpression Value)
 static void CCExpressionDestructor(CCExpression Expression)
 {
     if (Expression->destructor) Expression->destructor(CCExpressionGetData(Expression));
-    if (Expression->state.values) CCCollectionDestroy(Expression->state.values);
+    if (Expression->state.values) CCDictionaryDestroy(Expression->state.values);
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
 }
 
@@ -695,53 +695,44 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
     return Expression->state.result;
 }
 
-typedef struct {
-    CCString name;
-    CCExpression value;
-} CCExpressionStateValue;
-
-static CCComparisonResult CCExpressionStateValueElementFind(const CCExpressionStateValue *left, const CCExpressionStateValue *right)
-{
-    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
-}
-
-static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression, CCString Name)
+static CCExpression *CCExpressionGetStateValue(CCExpression Expression, CCString Name)
 {
     if (!Expression) return NULL;
     
-    CCExpressionStateValue *Value = NULL;
-    if (Expression->state.values) Value = CCCollectionGetElement(Expression->state.values, CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind));
+    CCExpression *Value = NULL;
+    if (Expression->state.values) Value = CCDictionaryGetValue(Expression->state.values, &Name);
     
     if (Value)
     {
-        if (Value->value) CCExpressionStateSetSuper(Value->value, Expression);
+        if (*Value) CCExpressionStateSetSuper(*Value, Expression);
         return Value;
     }
     
     return CCExpressionGetStateValue(Expression->state.super, Name);
 }
 
-static void CCExpressionStateValueElementDestructor(CCCollection Collection, CCExpressionStateValue *Element)
+static void CCExpressionStateValueElementDestructor(CCDictionary Dictionary, CCExpression *Element)
 {
-    CCStringDestroy(Element->name);
-    if (Element->value) CCExpressionDestroy(Element->value);
+    if (*Element) CCExpressionDestroy(*Element);
 }
 
 void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain)
 {
-    if ((Expression->state.values) && (CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind)))
+    if ((Expression->state.values) && (CCDictionaryFindKey(Expression->state.values, &Name)))
     {
         CC_LOG_ERROR_CUSTOM("Creating duplicate state (%S)", Name);
     }
     
     else
     {
-        if (!Expression->state.values) Expression->state.values = CCCollectionCreate(Expression->allocator, CCCollectionHintHeavyFinding, sizeof(CCExpressionStateValue), (CCCollectionElementDestructor)CCExpressionStateValueElementDestructor);
-        
-        CCCollectionInsertElement(Expression->state.values, &(CCExpressionStateValue){
-            .name = CCStringCopy(Name),
-            .value = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value
+        if (!Expression->state.values) Expression->state.values = CCDictionaryCreate(Expression->allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCExpression), &(CCDictionaryCallbacks){
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary,
+            .keyDestructor = CCStringDestructorForDictionary,
+            .valueDestructor = (CCDictionaryElementDestructor)CCExpressionStateValueElementDestructor
         });
+        
+        CCDictionarySetValue(Expression->state.values, &(CCString){ CCStringCopy(Name) }, &(CCExpression){ Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value });
     }
 }
 
@@ -749,32 +740,31 @@ CCExpression CCExpressionGetStateStrict(CCExpression Expression, CCString Name)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    CCExpressionStateValue *State = NULL;
-    if (Expression->state.values) State = CCCollectionGetElement(Expression->state.values, CCCollectionFindElement(Expression->state.values, &(CCExpressionStateValue){ .name = Name }, (CCComparator)CCExpressionStateValueElementFind));
+    CCExpression *State = NULL;
+    if (Expression->state.values) State = CCDictionaryGetValue(Expression->state.values, &Name);
     
-    return State && State->value ? CCExpressionEvaluate(State->value) : NULL;
+    return State && *State ? CCExpressionEvaluate(*State) : NULL;
 }
 
 CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
+    CCExpression *State = CCExpressionGetStateValue(Expression, Name);
     
-    return State && State->value ? CCExpressionEvaluate(State->value) : NULL;
+    return State && *State ? CCExpressionEvaluate(*State) : NULL;
 }
 
 CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
+    CCExpression *State = CCExpressionGetStateValue(Expression, Name);
     if (State)
     {
-        if (State->value) CCExpressionDestroy(State->value);
-        State->value = Retain ? CCExpressionRetain(Value) : Value;
-        
-        return State->value;
+        if (*State) CCExpressionDestroy(*State);
+        *State = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value;
+        return Value;
     }
     
     return NULL;
@@ -786,18 +776,15 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
     
     if (Source->state.values)
     {
-        CCEnumerator Enumerator;
-        CCCollectionGetEnumerator(Source->state.values, &Enumerator);
-        
-        for (CCExpressionStateValue *State = CCCollectionEnumeratorGetCurrent(&Enumerator); State; State = CCCollectionEnumeratorNext(&Enumerator))
+        CC_DICTIONARY_FOREACH_KEY(CCString, Key, Source->state.values)
         {
-            CCExpressionCreateState(Destination, State->name, State->value, TRUE);
+            CCExpressionCreateState(Destination, Key, *(CCExpression*)CCDictionaryGetEntry(Source->state.values, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_KEY_ENUMERATOR)), TRUE);
         }
     }
     
     else if (Destination->state.values)
     {
-        CCCollectionDestroy(Destination->state.values);
+        CCDictionaryDestroy(Destination->state.values);
         Destination->state.values = NULL;
     }
     
@@ -821,11 +808,13 @@ void CCExpressionPrintState(CCExpression Expression)
     if (Expression->state.values)
     {
         printf("state:\n{\n");
-        CC_COLLECTION_FOREACH(CCExpressionStateValue, State, Expression->state.values)
+        CC_DICTIONARY_FOREACH_KEY(CCString, Key, Expression->state.values)
         {
-            CC_STRING_TEMP_BUFFER(Buffer, State.name) printf("\t%s:%p: ", Buffer, State.value);
+            CCExpression Value = *(CCExpression*)CCDictionaryGetEntry(Expression->state.values, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_KEY_ENUMERATOR));
             
-            if (State.value) CCExpressionPrint(State.value);
+            CC_STRING_TEMP_BUFFER(Buffer, Key) printf("\t%s:%p: ", Buffer, Value);
+            
+            if (Value) CCExpressionPrint(Value);
             else printf("\n");
         }
         printf("}\n");

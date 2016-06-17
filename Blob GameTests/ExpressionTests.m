@@ -359,7 +359,7 @@ static CCExpression CCExpressionTestCheck(CCExpression Expression)
     CCExpressionEvaluate(Expression);
     
     XCTAssertEqual(Check, 0, @"Should not unquote expression on set");
-    CCExpressionGetState(CopiedExpression, CC_STRING(".test"));
+    CCExpressionGetState(Expression, CC_STRING(".test"));
     XCTAssertEqual(Check, 1, @"Should evaluate the expression");
     
     CCExpressionDestroy(Expression);

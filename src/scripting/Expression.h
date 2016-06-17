@@ -128,7 +128,7 @@ typedef CCExpression (*CCExpressionValueCopy)(CCExpression Value);
 typedef void (*CCExpressionValueDestructor)(void *Data);
 
 typedef struct CCExpressionState {
-    CCCollection values;
+    CCDictionary values;
     CCExpression super;
     CCExpression result;
     CCCollection remove;
