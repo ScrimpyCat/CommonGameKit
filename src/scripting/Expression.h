@@ -40,6 +40,12 @@
  */
 #define CC_EXPRESSION_STRICT_NAMING_RULES 1
 
+/*
+ Enables the constant lists optimization. Generally leave it enabled, unless under certain use cases
+ where it may break things.
+ */
+#define CC_EXPRESSION_ENABLE_CONSTANT_LISTS 1
+
 enum {
     CCExpressionValueTypeAtom,
     CCExpressionValueTypeInteger,
@@ -141,11 +147,6 @@ typedef struct CCExpressionState {
 } CCExpressionState;
 
 typedef struct CCExpressionValue {
-    //TODO: Include tagged expression types.
-    /*
-     Where integers (that can fit) and atoms can be tagged. Tagged atoms could be a way to avoid
-     more expensive lookups.
-     */
     CCExpressionValueType type;
     union {
 #if CC_EXPRESSION_STRICT_NAMING_RULES
@@ -159,7 +160,14 @@ typedef struct CCExpressionValue {
         int32_t integer;
         float real;
         CCString string;
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+        struct {
+            CCOrderedCollection items;
+            _Bool constant;
+        } list;
+#else
         CCOrderedCollection list;
+#endif
         void *data;
     };
     
@@ -383,7 +391,11 @@ static inline CCString CCExpressionGetString(CCExpression Expression)
 
 static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression)
 {
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+    return Expression->list.items;
+#else
     return Expression->list;
+#endif
 }
 
 static inline void *CCExpressionGetData(CCExpression Expression)

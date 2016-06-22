@@ -90,7 +90,12 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
             break;
             
         case CCExpressionValueTypeList:
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+            Expression->list.items = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
+            Expression->list.constant = FALSE;
+#else
             Expression->list = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
+#endif
             Expression->destructor = (CCExpressionValueDestructor)CCCollectionDestroy;
             Expression->copy = CCExpressionValueListCopy;
             break;
@@ -463,6 +468,27 @@ static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allo
     return NULL;
 }
 
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS && CC_EXPRESSION_STRICT_NAMING_RULES
+static _Bool CCExpressionIsConstant(CCExpression Expression)
+{
+    switch (CCExpressionGetType(Expression))
+    {
+        case CCExpressionValueTypeInteger:
+        case CCExpressionValueTypeFloat:
+        case CCExpressionValueTypeString:
+            return TRUE;
+            
+        case CCExpressionValueTypeList:
+            return Expression->list.constant;
+            
+        case CCExpressionValueTypeAtom:
+            return (CCExpressionGetAtomType(Expression) & CCExpressionAtomTypeKindMask) == CCExpressionAtomTypeKindSymbol;
+    }
+    
+    return FALSE;
+}
+#endif
+
 static CCExpression CCExpressionParse(const char **Source)
 {
     CCExpression Expr = NULL;
@@ -476,9 +502,18 @@ static CCExpression CCExpressionParse(const char **Source)
             {
                 CCExpression Val = CCExpressionParse(Source);
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS && CC_EXPRESSION_STRICT_NAMING_RULES
+                if (Expr->list.constant) Expr->list.constant = CCExpressionIsConstant(Val);
+#endif
             }
             
-            else Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeExpression);
+            else
+            {
+                Expr = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeExpression);
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS && CC_EXPRESSION_STRICT_NAMING_RULES
+                Expr->list.constant = TRUE;
+#endif
+            }
         }
         
         else if ((Expr) && (!IsComment) && (!IsStr) && (c == ')'))
@@ -493,6 +528,9 @@ static CCExpression CCExpressionParse(const char **Source)
                 }
                 
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS && CC_EXPRESSION_STRICT_NAMING_RULES
+                if (Expr->list.constant) Expr->list.constant = CCExpressionIsConstant(Val);
+#endif
                 
                 Value = NULL;
             }
@@ -512,6 +550,9 @@ static CCExpression CCExpressionParse(const char **Source)
                 }
                 
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS && CC_EXPRESSION_STRICT_NAMING_RULES
+                if (Expr->list.constant) Expr->list.constant = CCExpressionIsConstant(Val);
+#endif
                 
                 Value = NULL;
             }
@@ -543,6 +584,9 @@ static CCExpression CCExpressionParse(const char **Source)
                 }
                 
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Val);
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS && CC_EXPRESSION_STRICT_NAMING_RULES
+                if (Expr->list.constant) Expr->list.constant = CCExpressionIsConstant(Val);
+#endif
                 
                 Value = NULL;
             }
@@ -705,6 +749,10 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         
         if (IsList) //evaluate list
         {
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+            if (Expression->list.constant) return Expression->state.result;
+#endif
+            
             Expression->state.result = CCExpressionCreateList(Expression->allocator);
             
             CCEnumerator Enumerator;
