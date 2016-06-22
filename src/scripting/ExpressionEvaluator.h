@@ -64,4 +64,25 @@ void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluato
  */
 CCExpressionEvaluator CCExpressionEvaluatorForName(CCString Name);
 
+/*!
+ * @brief Get the expression evaluator at a given index.
+ * @param Index The index of the expression function.
+ * @return The evaluator function.
+ */
+CCExpressionEvaluator CCExpressionEvaluatorForIndex(size_t Index);
+
+/*!
+ * @brief Get the index of the expression evaluator for an atom.
+ * @param Name The atom name of the expression function.
+ * @return The evaluator function index.
+ */
+size_t CCExpressionEvaluatorIndexForName(CCString Name);
+
+/*!
+ * @brief Get the atom name of the expression evaluator for an index.
+ * @param Index The index of the expression function to get the atom name of.
+ * @return The atom name.
+ */
+CCString CCExpressionEvaluatorNameForIndex(size_t Index);
+
 #endif

@@ -88,6 +88,12 @@ enum {
     CCExpressionTaggedIntegerSignedFlag = (1 << CCExpressionTaggedBits),
     CCExpressionTaggedIntegerTaggedBits = CCExpressionTaggedBits + 1
 #endif
+    
+    CCExpressionTaggedAtomTaggedBits = CCExpressionTaggedBits,
+    CCExpressionTaggedAtomTypeMask = 7, //CCExpressionAtomType
+    
+    CCExpressionTaggedFunctionIndexBits = 8,
+    CCExpressionTaggedFunctionIndexMask = ~((CCExpressionTaggedAtomTypeMask << CCExpressionTaggedAtomTaggedBits) | CCExpressionTaggedMask) >> CCExpressionTaggedFunctionIndexBits
 };
 
 typedef enum {
@@ -296,6 +302,7 @@ static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
 static inline CCExpression CCExpressionGetResult(CCExpression Expression);
 static inline CCString CCExpressionGetAtom(CCExpression Expression);
 #if CC_EXPRESSION_STRICT_NAMING_RULES
+CCString CCExpressionGetAtomFunctionName(size_t Index);
 static inline CCExpressionAtomType CCExpressionGetAtomType(CCExpression Expression);
 #endif
 static inline int32_t CCExpressionGetInteger(CCExpression Expression);
@@ -333,6 +340,11 @@ static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
 static inline CCString CCExpressionGetAtom(CCExpression Expression)
 {
 #if CC_EXPRESSION_STRICT_NAMING_RULES
+    if (CCExpressionIsTagged(Expression))
+    {
+        return CCExpressionGetAtomFunctionName((((uintptr_t)Expression >> CCExpressionTaggedFunctionIndexBits) & CCExpressionTaggedFunctionIndexMask));
+    }
+    
     return Expression->atom.name;
 #else
     return Expression->atom;
@@ -342,7 +354,7 @@ static inline CCString CCExpressionGetAtom(CCExpression Expression)
 #if CC_EXPRESSION_STRICT_NAMING_RULES
 static inline CCExpressionAtomType CCExpressionGetAtomType(CCExpression Expression)
 {
-    return Expression->atom.kind;
+    return CCExpressionIsTagged(Expression) ? (CCExpressionAtomType)(((uintptr_t)Expression >> CCExpressionTaggedAtomTaggedBits) & CCExpressionTaggedAtomTypeMask) : Expression->atom.kind;
 }
 #endif
 

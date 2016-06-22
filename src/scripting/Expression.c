@@ -109,9 +109,30 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
 
 CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy)
 {
+    const CCChar Prefix = CCStringGetCharacterAtIndex(Atom, 0), Suffix = CCStringGetCharacterAtIndex(Atom, CCStringGetLength(Atom) - 1);
+#if CC_EXPRESSION_ENABLE_TAGGED_TYPES && CC_EXPRESSION_STRICT_NAMING_RULES
+    if ((Prefix == '.') || (Prefix == '@') || (Prefix == '&'))
+    {
+        
+    }
+    
+    else if ((Prefix == ':') || (Suffix == ':'))
+    {
+        
+    }
+    
+    else
+    {
+        uintptr_t EvalIndex = CCExpressionEvaluatorIndexForName(Atom);
+        if ((EvalIndex != SIZE_MAX) && ((EvalIndex & CCExpressionTaggedFunctionIndexMask) == EvalIndex))
+        {
+            return (CCExpression)((EvalIndex << CCExpressionTaggedFunctionIndexBits) | (CCExpressionAtomTypeFunction << CCExpressionTaggedAtomTaggedBits) | CCExpressionTaggedExtendedAtom);
+        }
+    }
+#endif
+    
     CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeAtom);
 #if CC_EXPRESSION_STRICT_NAMING_RULES
-    const CCChar Prefix = CCStringGetCharacterAtIndex(Atom, 0), Suffix = CCStringGetCharacterAtIndex(Atom, CCStringGetLength(Atom) - 1);
     if ((Prefix == '.') || (Prefix == '@') || (Prefix == '&'))
     {
         Expression->atom.kind = CCExpressionAtomTypeState | (Suffix == '!' ? CCExpressionAtomTypeOperationSet : CCExpressionAtomTypeOperationGet);
@@ -130,6 +151,31 @@ CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _B
 #endif
     
     return Expression;
+}
+
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+CCString CCExpressionGetAtomFunctionName(size_t Index)
+{
+    return CCExpressionEvaluatorNameForIndex(Index);
+}
+#endif
+
+CCExpressionEvaluator CCExpressionGetFunctionEvaluator(CCExpression Expression)
+{
+    CCExpressionEvaluator Eval = NULL;
+    if ((Expression) && (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom))
+    {
+#if CC_EXPRESSION_STRICT_NAMING_RULES
+        if (CCExpressionGetAtomType(Expression) == CCExpressionAtomTypeFunction)
+        {
+            Eval = CCExpressionIsTagged(Expression) ? CCExpressionEvaluatorForIndex((uintptr_t)Expression >> CCExpressionTaggedFunctionIndexBits) : CCExpressionEvaluatorForName(CCExpressionGetAtom(Expression));
+        }
+#else
+        Eval = CCExpressionEvaluatorForName(CCExpressionGetAtom(Expression));
+#endif
+    }
+    
+    return Eval;
 }
 
 CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value)
@@ -591,11 +637,8 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             
             if ((Func) && (CCExpressionGetType(Func) == CCExpressionValueTypeAtom))
             {
-#if CC_EXPRESSION_STRICT_NAMING_RULES
-                CCExpressionEvaluator Eval = CCExpressionGetAtomType(Func) == CCExpressionAtomTypeFunction ? CCExpressionEvaluatorForName(CCExpressionGetAtom(Func)) : NULL;
-#else
-                CCExpressionEvaluator Eval = CCExpressionEvaluatorForName(CCExpressionGetAtom(Func));
-#endif
+                CCExpressionEvaluator Eval = CCExpressionGetFunctionEvaluator(Func);
+                
                 if (Eval)
                 {
                     Expression->state.result = Eval(Expression);
@@ -612,7 +655,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                     CCExpression State = NULL;
                     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
                     {
-                       State = CCExpressionSetState(Expression, Name, CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1)), TRUE);
+                        State = CCExpressionSetState(Expression, Name, CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1)), TRUE);
                     }
                     
                     else
@@ -655,7 +698,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             {
                 CCCollectionRemoveElement(CCExpressionGetList(Expression), Entry);
             }
-
+            
             CCCollectionDestroy(Expression->state.remove);
             Expression->state.remove = NULL;
         }

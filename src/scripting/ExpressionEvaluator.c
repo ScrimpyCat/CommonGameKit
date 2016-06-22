@@ -27,26 +27,67 @@
 #include <inttypes.h>
 
 
+static CCArray Evaluators = NULL;
 static CCDictionary EvaluatorList = NULL;
 void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluator)
 {
-    if (!EvaluatorList) EvaluatorList = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintSizeMedium | CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCExpressionEvaluator), &(CCDictionaryCallbacks){
-        .getHash = CCStringHasherForDictionary,
-        .compareKeys = CCStringComparatorForDictionary,
-        .keyDestructor = CCStringDestructorForDictionary
-    });
+    if (!EvaluatorList)
+    {
+        EvaluatorList = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintSizeMedium | CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(size_t), &(CCDictionaryCallbacks){
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary,
+            .keyDestructor = CCStringDestructorForDictionary
+        });
+        
+        Evaluators = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCExpressionEvaluator), 1);
+    }
     
-    CCDictionarySetValue(EvaluatorList, &(CCString){ CCStringCopy(Name) }, &Evaluator);
+    CCDictionarySetValue(EvaluatorList, &(CCString){ CCStringCopy(Name) }, &(size_t){ CCArrayAppendElement(Evaluators, &Evaluator) });
 }
 
 CCExpressionEvaluator CCExpressionEvaluatorForName(CCString Name)
 {
     if (EvaluatorList)
     {
-        CCExpressionEvaluator *Info = CCDictionaryGetValue(EvaluatorList, &Name);
+        size_t *Info = CCDictionaryGetValue(EvaluatorList, &Name);
         
-        return Info ? *Info : NULL;
+        return Info ? *(CCExpressionEvaluator*)CCArrayGetElementAtIndex(Evaluators, *Info) : NULL;
     }
     
     return NULL;
+}
+
+CCExpressionEvaluator CCExpressionEvaluatorForIndex(size_t Index)
+{
+    return Evaluators ? *(CCExpressionEvaluator*)CCArrayGetElementAtIndex(Evaluators, Index) : NULL;
+    
+}
+
+size_t CCExpressionEvaluatorIndexForName(CCString Name)
+{
+    if (EvaluatorList)
+    {
+        size_t *Info = CCDictionaryGetValue(EvaluatorList, &Name);
+        
+        return Info ? *Info : SIZE_MAX;
+    }
+    
+    return SIZE_MAX;
+}
+
+CCString CCExpressionEvaluatorNameForIndex(size_t Index)
+{
+    //TODO: If this is a common function then do a reverse EvaluatorList (where index is key, and string is value)
+    if (EvaluatorList)
+    {
+        CC_DICTIONARY_FOREACH_VALUE(size_t, Value, EvaluatorList)
+        {
+            if (Index == Value)
+            {
+                return *(CCString*)CCDictionaryGetKey(EvaluatorList, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_VALUE_ENUMERATOR));
+            }
+        }
+    }
+    
+    return 0;
 }
