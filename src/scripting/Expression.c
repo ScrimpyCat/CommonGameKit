@@ -751,6 +751,8 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         {
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
             if (Expression->list.constant) return Expression->state.result;
+            
+            Expression->list.constant = TRUE;
 #endif
             
             Expression->state.result = CCExpressionCreateList(Expression->allocator);
@@ -761,11 +763,21 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
             if (Expr)
             {
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionRetain(CCExpressionGetResult(*Expr) ? CCExpressionGetResult(*Expr) : CCExpressionEvaluate(*Expr)) });
+                CCExpression Item = CCExpressionRetain(CCExpressionGetResult(*Expr) ? CCExpressionGetResult(*Expr) : CCExpressionEvaluate(*Expr));
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &Item);
+                
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+                if (Item != *Expr) Expression->list.constant = FALSE;
+#endif
                 
                 while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
                 {
-                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(*Expr)) });
+                    Item = CCExpressionRetain(CCExpressionEvaluate(*Expr));
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &Item);
+                    
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+                    if (Item != *Expr) Expression->list.constant = FALSE;
+#endif
                 }
             }
         }
