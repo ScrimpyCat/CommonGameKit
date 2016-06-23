@@ -84,6 +84,16 @@
                     { "type": "number", "name": "max" }
                 ]
             ]
+        },
+        {
+            "name": "round",
+            "description": "Round the number to the nearest whole number.",
+            "examples": [
+                "(round 2) ;2",
+                "(round 2.2) ;2"
+            ],
+            "return": { "type": "number" },
+            "args": [[{ "type": "number" }]]
         }
     ]
 }

@@ -25,6 +25,12 @@
             "examples": ["(window-percent-height 50) ;320"],
             "return": { "type": "number" },
             "args": [[{ "type": "number", "name": "percent" }]]
+        },
+        {
+            "name": "frame-changed?",
+            "description": "Check whether the frame has changed. Typically used as an invalidator for state invalidations.",
+            "examples": ["(frame-changed?) ;1"],
+            "return": { "type": "number" }
         }
     ]
 }

@@ -1,0 +1,11 @@
+{
+    "functions": [
+        {
+            "name": "text-visible-length",
+            "description": "Get the visible of a text object.",
+            "examples": ["(text-visible-length .text) ;14"],
+            "return": { "type": "integer" },
+            "args": [[{ "type": "custom:text" }]]
+        }
+    ]
+}

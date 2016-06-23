@@ -5,12 +5,20 @@
             "description": "Adds the state to the encompassing expression. State can then be referenced and set elsewhere in that expression or nested expressions. State creates a link between the atom name and the value it holds. When referencing state, state in the inner scopes has greater preference to state in the outer scopes.",
             "examples": [
                 "(state! \"x\" 5)\nx ;5\n(x! 10) ;10\nx ;10",
+                "(state! \"x\" (quote (+ y 2)) (invalidate: #t))",
                 ";hooks\n(state! \"y\" (quote (* x 2)))\n(x! 2) ;2\ny ;4",
                 ";scope\n(begin\n\t(state! \"x\" 10)\n\tx ;10\n\ty ;4\n\t(begin\n\t\tx ;10\n\t\t(state! \"x\" 20)\n\t\tx ;20\n\t)\n\tx ;10\n)"
             ],
             "return": { "type": "expression" },
             "args": [
                 [{ "type": "string", "name": ".name" }, { "type": "expression", "optional": true, "name": "init" }]
+            ],
+            "options": [
+                {
+                    "name": "invalidate",
+                    "description": "Specify the evaluation behaviour of the state. State are evaluated when their content has been invalidated, by default this is all the time. This option allows for that behaviour to be customized. e.g. Invalidate the state only once per frame, or invalidate the state only when other state it depends on changes, etc.",
+                    "args": [[{ "type": "boolean" }]]
+                }
             ]
         },
         {

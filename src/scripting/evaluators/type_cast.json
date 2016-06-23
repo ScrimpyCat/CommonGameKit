@@ -1,0 +1,18 @@
+{
+    "functions": [
+        {
+            "name": "integer->float",
+            "description": "Convert an integer to a float.",
+            "examples": ["(integer->float 50) ;50.0"],
+            "return": { "type": "float" },
+            "args": [[{ "type": "integer" }]]
+        },
+        {
+            "name": "float->integer",
+            "description": "Convert a float to an integer.",
+            "examples": ["(float->integer 50.5) ;50"],
+            "return": { "type": "integer" },
+            "args": [[{ "type": "float" }]]
+        }
+    ]
+}
