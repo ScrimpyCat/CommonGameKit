@@ -286,9 +286,9 @@ static void CCProjectExpressionValueShaderLibraryDestructor(CCProjectExpressionV
 
 CCExpression CCProjectExpressionLibrary(CCExpression Expression)
 {
-    CCExpressionCreateState(Expression, CC_STRING("@source-list"), CCExpressionCreateList(CC_STD_ALLOCATOR), FALSE);
+    CCExpressionCreateState(Expression, CC_STRING("@source-list"), CCExpressionCreateList(CC_STD_ALLOCATOR), FALSE, NULL, FALSE);
     
-    if (GFXMain == GLGFX) CCExpressionCreateState(Expression, CC_STRING("@opengl"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
+    if (GFXMain == GLGFX) CCExpressionCreateState(Expression, CC_STRING("@opengl"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE, NULL, FALSE);
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);

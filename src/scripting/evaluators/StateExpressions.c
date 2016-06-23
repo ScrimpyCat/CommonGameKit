@@ -31,7 +31,7 @@ CCExpression CCStateExpressionCreateState(CCExpression Expression)
     if ((ArgCount == 1) || (ArgCount == 2))
     {
         CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
-        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL, TRUE);
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL, TRUE, NULL, FALSE);
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
     }
     
@@ -51,7 +51,7 @@ CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
         CCExpression Result = CCExpressionEvaluate(*Expr);
         if (CCExpressionGetType(Result) == CCExpressionValueTypeString)
         {
-            CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Result), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index), FALSE);
+            CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Result), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index), FALSE, NULL, FALSE);
         }
         
         else if ((CCExpressionGetType(Result) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Result)) == 2))
@@ -61,7 +61,7 @@ CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
             if ((CCExpressionGetType(Name) == CCExpressionValueTypeString) && (CCExpressionGetType(NewIndex) == CCExpressionValueTypeInteger))
             {
                 Index = CCExpressionGetInteger(NewIndex);
-                CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index), FALSE);
+                CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Index), FALSE, NULL, FALSE);
             }
             
             else

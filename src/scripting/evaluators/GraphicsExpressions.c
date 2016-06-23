@@ -285,8 +285,8 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
             };
             
             
-            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE);
-            CCExpressionCreateState(Expression, StrArgs, CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Args, CCExpressionRetainedValueCopy, CCFree), TRUE);
+            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE, NULL, FALSE);
+            CCExpressionCreateState(Expression, StrArgs, CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Args, CCExpressionRetainedValueCopy, CCFree), TRUE, NULL, FALSE);
         }
     }
     
@@ -472,7 +472,7 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
             Text = CCTextCreate(CC_STD_ALLOCATOR);
             Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
             
-            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE);
+            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE, NULL, FALSE);
         }
         
         CCTextSetOffset(Text, Offset);

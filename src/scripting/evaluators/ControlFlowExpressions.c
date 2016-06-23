@@ -76,7 +76,7 @@ CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
             {
                 if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
                 {
-                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), NULL, FALSE);
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), NULL, FALSE, NULL, FALSE);
                 }
                 
                 CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);

@@ -394,10 +394,10 @@ CCExpression CCExpressionCreateFromSourceFile(FSPath Path)
         CC_SAFE_Free(Source);
         
         const char *Filename = FSPathGetFilenameString(Path);
-        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename), FALSE), FALSE);
+        CCExpressionCreateState(Expression, CC_STRING("@file"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Filename), FALSE), FALSE, NULL, FALSE);
         
         const char *Dir = FSPathGetPathString(Path);
-        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename)), FALSE), FALSE);
+        CCExpressionCreateState(Expression, CC_STRING("@cd"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingUTF8 | CCStringHintCopy, Dir, strlen(Dir) - strlen(Filename)), FALSE), FALSE, NULL, FALSE);
     }
     
     else CC_LOG_ERROR("Failed to create expression from source due to error opening source: %s", FSPathGetFullPathString(Path));
@@ -798,28 +798,34 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
     return Expression->state.result;
 }
 
-static CCExpression *CCExpressionGetStateValue(CCExpression Expression, CCString Name)
+typedef struct {
+    CCExpression value;
+    CCExpression invalidate;
+} CCExpressionStateValue;
+
+static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression, CCString Name)
 {
     if (!Expression) return NULL;
     
-    CCExpression *Value = NULL;
+    CCExpressionStateValue *Value = NULL;
     if (Expression->state.values) Value = CCDictionaryGetValue(Expression->state.values, &Name);
     
     if (Value)
     {
-        if (*Value) CCExpressionStateSetSuper(*Value, Expression);
+        if (Value->value) CCExpressionStateSetSuper(Value->value, Expression);
         return Value;
     }
     
     return CCExpressionGetStateValue(Expression->state.super, Name);
 }
 
-static void CCExpressionStateValueElementDestructor(CCDictionary Dictionary, CCExpression *Element)
+static void CCExpressionStateValueElementDestructor(CCDictionary Dictionary, CCExpressionStateValue *Element)
 {
-    if (*Element) CCExpressionDestroy(*Element);
+    if (Element->value) CCExpressionDestroy(Element->value);
+    if (Element->invalidate) CCExpressionDestroy(Element->invalidate);
 }
 
-void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain)
+void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain, CCExpression Invalidator, _Bool InvalidatorRetain)
 {
     if ((Expression->state.values) && (CCDictionaryFindKey(Expression->state.values, &Name)))
     {
@@ -828,14 +834,17 @@ void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpressio
     
     else
     {
-        if (!Expression->state.values) Expression->state.values = CCDictionaryCreate(Expression->allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCExpression), &(CCDictionaryCallbacks){
+        if (!Expression->state.values) Expression->state.values = CCDictionaryCreate(Expression->allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCExpressionStateValue), &(CCDictionaryCallbacks){
             .getHash = CCStringHasherForDictionary,
             .compareKeys = CCStringComparatorForDictionary,
             .keyDestructor = CCStringDestructorForDictionary,
             .valueDestructor = (CCDictionaryElementDestructor)CCExpressionStateValueElementDestructor
         });
         
-        CCDictionarySetValue(Expression->state.values, &(CCString){ CCStringCopy(Name) }, &(CCExpression){ Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value });
+        CCDictionarySetValue(Expression->state.values, &(CCString){ CCStringCopy(Name) }, &(CCExpressionStateValue){
+            .value = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value,
+            .invalidate = InvalidatorRetain ? (Invalidator ? CCExpressionRetain(Invalidator) : NULL) : Invalidator
+        });
     }
 }
 
@@ -843,30 +852,64 @@ CCExpression CCExpressionGetStateStrict(CCExpression Expression, CCString Name)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    CCExpression *State = NULL;
+    CCExpressionStateValue *State = NULL;
     if (Expression->state.values) State = CCDictionaryGetValue(Expression->state.values, &Name);
     
-    return State && *State ? CCExpressionEvaluate(*State) : NULL;
+    if ((State) && (State->value))
+    {
+        CCExpression Result = CCExpressionGetResult(State->value);
+        if ((Result) && (State->invalidate))
+        {
+            CCExpression Invalidate = CCExpressionEvaluate(State->invalidate);
+            if (CCExpressionGetType(Invalidate) == CCExpressionValueTypeInteger)
+            {
+                if (CCExpressionGetInteger(Invalidate)) return Result;
+            }
+            
+            else CC_LOG_ERROR_CUSTOM("State (%S) invalidator is not valid, should return a boolean", Name);
+        }
+        
+        return CCExpressionEvaluate(State->value);
+    }
+    
+    return NULL;
 }
 
 CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    CCExpression *State = CCExpressionGetStateValue(Expression, Name);
+    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
     
-    return State && *State ? CCExpressionEvaluate(*State) : NULL;
+    if ((State) && (State->value))
+    {
+        CCExpression Result = CCExpressionGetResult(State->value);
+        if ((Result) && (State->invalidate))
+        {
+            CCExpression Invalidate = CCExpressionEvaluate(State->invalidate);
+            if (CCExpressionGetType(Invalidate) == CCExpressionValueTypeInteger)
+            {
+                if (CCExpressionGetInteger(Invalidate)) return Result;
+            }
+            
+            else CC_LOG_ERROR_CUSTOM("State (%S) invalidator is not valid, should return a boolean", Name);
+        }
+        
+        return CCExpressionEvaluate(State->value);
+    }
+    
+    return NULL;
 }
 
 CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
     
-    CCExpression *State = CCExpressionGetStateValue(Expression, Name);
+    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
     if (State)
     {
-        if (*State) CCExpressionDestroy(*State);
-        *State = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value;
+        if (State->value) CCExpressionDestroy(State->value);
+        State->value = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value;
         return Value;
     }
     
@@ -881,7 +924,8 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
     {
         CC_DICTIONARY_FOREACH_KEY(CCString, Key, Source->state.values)
         {
-            CCExpressionCreateState(Destination, Key, *(CCExpression*)CCDictionaryGetEntry(Source->state.values, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_KEY_ENUMERATOR)), TRUE);
+            CCExpressionStateValue *State = CCDictionaryGetEntry(Source->state.values, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_KEY_ENUMERATOR));
+            CCExpressionCreateState(Destination, Key, State->value, TRUE, State->invalidate, TRUE);
         }
     }
     
@@ -913,11 +957,11 @@ void CCExpressionPrintState(CCExpression Expression)
         printf("state:\n{\n");
         CC_DICTIONARY_FOREACH_KEY(CCString, Key, Expression->state.values)
         {
-            CCExpression Value = *(CCExpression*)CCDictionaryGetEntry(Expression->state.values, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_KEY_ENUMERATOR));
+            CCExpressionStateValue *Value = CCDictionaryGetEntry(Expression->state.values, CCDictionaryEnumeratorGetEntry(&CC_DICTIONARY_CURRENT_KEY_ENUMERATOR));
             
-            CC_STRING_TEMP_BUFFER(Buffer, Key) printf("\t%s:%p: ", Buffer, Value);
+            CC_STRING_TEMP_BUFFER(Buffer, Key) printf("\t%s:%p: ", Buffer, Value->value);
             
-            if (Value) CCExpressionPrint(Value);
+            if (Value->value) CCExpressionPrint(Value->value);
             else printf("\n");
         }
         printf("}\n");

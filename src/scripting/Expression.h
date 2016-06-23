@@ -249,8 +249,13 @@ CCExpression CCExpressionEvaluate(CCExpression Expression);
  * @param Name The name of the state.
  * @param Value The value of the state. May be NULL.
  * @param Retain Whether the @b value should be retained or stored directly.
+ * @param Invalidator The invalidator of the state. May be NULL. Invalidators are used to determine
+ *        if retrieving the state should cause it to be evaluated or not (reuse its current return
+ *        value).
+ *
+ * @param InvalidatorRetain Whether the @b invalidator should be retained or stored directly.
  */
-void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain);
+void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain, CCExpression Invalidator, _Bool InvalidatorRetain);
 
 /*!
  * @brief Get the state of an expression.

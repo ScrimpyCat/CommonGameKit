@@ -302,7 +302,7 @@ static CCExpression CCExpressionTestCheck(CCExpression Expression)
 -(void) testState
 {
     CCExpression Expression = CCExpressionCreateFromSource("(+ .value 4 10)");
-    CCExpressionCreateState(Expression, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
+    CCExpressionCreateState(Expression, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE, NULL, FALSE);
     
     XCTAssertEqual(CCExpressionGetType(Expression), CCExpressionValueTypeList, @"Should return a list");
     XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Expression)), 4, @"Should return a list with 4 expressions");
