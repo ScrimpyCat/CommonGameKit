@@ -100,6 +100,31 @@
     XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".x"))), 3, @"Should be initialized");
     
     CCExpressionDestroy(Expression);
+    
+    
+    
+    Expression = CCExpressionCreateFromSource("(begin (state! \".x\" (quote (+ .y 1)) (invalidate: #f)) (state! \".y\" 10) .x)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 11, @"Should be 11");
+    
+    CCExpressionSetState(Expression, CC_STRING(".y"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 11, @"Should be 11. Should not re-evaluate.");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateFromSource("(+ .y 2)"), FALSE);
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 3, @"Should be 3");
+    
+    CCExpressionSetState(Expression, CC_STRING(".y"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 10), FALSE);
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 3, @"Should be 3. Should not re-evaluate.");
+    
+    CCExpressionDestroy(Expression);
 }
 
 -(void) testEnum
