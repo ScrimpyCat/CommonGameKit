@@ -6,10 +6,10 @@
         "&pushed"
     )
 
-    (state! ".off-colour" (234 67 106))
-    (state! ".on-colour" (138 227 65))
-    (state! ".colour" (quote (get .active (.off-colour .on-colour))))
-    (state! ".radius" (quote (/ 8.0 (max .width .height))))
+    (state! ".off-colour" (234 67 106) (invalidate: (quote (frame-changed?))))
+    (state! ".on-colour" (138 227 65) (invalidate: (quote (frame-changed?))))
+    (state! ".colour" (quote (get .active (.off-colour .on-colour))) (invalidate: (quote (frame-changed?))))
+    (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?))))
     (state! ".status" &off)
     (state! ".active" .status)
     (state! ".label" (quote (
@@ -17,7 +17,7 @@
         (quote (render-rect .rect .colour (radius: .radius)))  ; &on
         (quote (render-rect .rect (lighten .colour 5) (radius: .radius))) ; &highlighted
         (quote (render-rect .rect (darken .colour 5) (radius: .radius)))  ; &pushed
-    )))
+    )) (invalidate: (quote (frame-changed?))))
     (state! ".off-click" (quote (print "Clicked Off!")))
     (state! ".on-click" (quote (print "Clicked On!")))
     (state! ".inside" #f)

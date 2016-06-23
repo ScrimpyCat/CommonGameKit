@@ -95,8 +95,8 @@ static void *GUIExpressionConstructor(CCAllocatorType Allocator)
     if (!Window)
     {
         Window = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, NULL, NULL, NULL);
-        CCExpressionCreateState(Window, StrWidth, CCExpressionCreateFromSource("(window-width)"), FALSE, NULL, FALSE);
-        CCExpressionCreateState(Window, StrHeight, CCExpressionCreateFromSource("(window-height)"), FALSE, NULL, FALSE);
+        CCExpressionCreateState(Window, StrWidth, CCExpressionCreateFromSource("(window-width)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        CCExpressionCreateState(Window, StrHeight, CCExpressionCreateFromSource("(window-height)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
     }
     
     GUIExpressionInfo *Internal = CCMalloc(Allocator, sizeof(GUIExpressionInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -329,11 +329,11 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
         
-        CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE, NULL, FALSE);
-        CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 .rect)"), FALSE, NULL, FALSE);
-        CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 .rect)"), FALSE, NULL, FALSE);
-        CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 .rect)"), FALSE, NULL, FALSE);
-        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (.x .y .width .height))"), FALSE, NULL, FALSE);
+        CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (.x .y .width .height))"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE, NULL, FALSE);
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
