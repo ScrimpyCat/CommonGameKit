@@ -916,6 +916,18 @@ CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpr
     return NULL;
 }
 
+void CCExpressionSetStateInvalidator(CCExpression Expression, CCString Name, CCExpression Invalidator, _Bool Retain)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    CCExpressionStateValue *State = CCExpressionGetStateValue(Expression, Name);
+    if (State)
+    {
+        if (State->invalidate) CCExpressionDestroy(State->invalidate);
+        State->invalidate = Retain ? (Invalidator ? CCExpressionRetain(Invalidator) : NULL) : Invalidator;
+    }
+}
+
 void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
 {
     CCAssertLog(Source && Destination, "Source and destination expressions must not be NULL");

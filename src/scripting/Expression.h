@@ -277,13 +277,25 @@ CCExpression CCExpressionGetState(CCExpression Expression, CCString Name);
 
 /*!
  * @brief Set the state of an expression.
- * @param Expression The expression store the state.
+ * @param Expression The expression to store the state.
  * @param Name The name of the state.
  * @param Value The value of the state. May be NULL.
  * @param Retain Whether the @b value should be retained or stored directly.
  * @return The state value or NULL if it does not exist (or currently holds NULL).
  */
 CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain);
+
+/*!
+ * @brief Set the invalidator of an expression's state.
+ * @param Expression The expression containing the state.
+ * @param Name The name of the state.
+ * @param Invalidator The invalidator of the state. May be NULL. Invalidators are used to determine
+ *        if retrieving the state should cause it to be evaluated or not (reuse its current return
+ *        value).
+ *
+ * @param Retain Whether the @b invalidator should be retained or stored directly.
+ */
+void CCExpressionSetStateInvalidator(CCExpression Expression, CCString Name, CCExpression Invalidator, _Bool Retain);
 
 /*!
  * @brief Copy the the state of one expression to another.
