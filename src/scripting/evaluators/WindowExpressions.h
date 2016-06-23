@@ -33,5 +33,6 @@ CC_EXPRESSION_EVALUATOR(window-percent-width) CCExpression CCWindowExpressionPer
 CC_EXPRESSION_EVALUATOR(window-percent-height) CCExpression CCWindowExpressionPercentageHeight(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(window-width) CCExpression CCWindowExpressionWidth(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(window-height) CCExpression CCWindowExpressionHeight(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(frame-changed?) CCExpression CCWindowExpressionFrameChanged(CCExpression Expression);
 
 #endif

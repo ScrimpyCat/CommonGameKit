@@ -40,6 +40,7 @@
 
 
 GLFWwindow *CCWindow = NULL;
+_Atomic(uint32_t) CCWindowFrameID = 0;
 
 
 static void ErrorCallback(int Error, const char *Description)
@@ -76,6 +77,7 @@ static int RenderLoop(GLFWwindow *Window)
     while (!glfwWindowShouldClose(Window))
     {
         mtx_lock(&RenderLock);
+        atomic_fetch_add_explicit(&CCWindowFrameID, 1, memory_order_relaxed);
         CC_GL_VIEWPORT(0, 0, FramebufferWidth, FramebufferHeight);
         CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
         

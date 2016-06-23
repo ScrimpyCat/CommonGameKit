@@ -82,3 +82,23 @@ CCExpression CCWindowExpressionHeight(CCExpression Expression)
 {
     return CCWindowExpressionSize(TRUE);
 }
+
+CCString StringFrameID = CC_STRING("@frame-id");
+CCExpression CCWindowExpressionFrameChanged(CCExpression Expression)
+{
+    _Bool Changed = TRUE;
+    uint32_t FrameID = atomic_load_explicit(&CCWindowFrameID, memory_order_relaxed);
+    
+    CCExpression Frame = CCExpressionGetStateStrict(Expression, StringFrameID);
+    if (Frame)
+    {
+        if ((Changed = (CCExpressionGetInteger(Frame) != FrameID)))
+        {
+            CCExpressionSetState(Expression, StringFrameID, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID), FALSE);
+        }
+    }
+    
+    else CCExpressionCreateState(Expression, StringFrameID, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID), FALSE, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
+    
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Changed);
+}

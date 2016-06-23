@@ -2090,6 +2090,7 @@
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug",
 				);
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2114,6 +2115,7 @@
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug",
 				);
+				GCC_OPTIMIZATION_LEVEL = fast;
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (

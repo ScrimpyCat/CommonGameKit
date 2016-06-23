@@ -27,7 +27,9 @@
 #define Blob_Game_Window_h
 
 #include "GLSetup.h"
+#include <stdatomic.h>
 
 extern GLFWwindow * const CCWindow;
+extern _Atomic(uint32_t) CCWindowFrameID;
 
 #endif
