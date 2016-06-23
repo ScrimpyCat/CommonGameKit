@@ -28,14 +28,40 @@
 CCExpression CCStateExpressionCreateState(CCExpression Expression)
 {
     size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
-    if ((ArgCount == 1) || (ArgCount == 2))
+    if ((ArgCount >= 1) && (ArgCount <= 3))
     {
         CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
-        if (CCExpressionGetType(Name) == CCExpressionValueTypeString) CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), ArgCount == 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL, TRUE, NULL, FALSE);
-        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeString)
+        {
+            CCExpression Value = ArgCount >= 2 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2)) : NULL;
+            CCExpression Invalidator = NULL;
+            
+            if (ArgCount == 3)
+            {
+                CCExpression InvalidatorOption = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+                
+                if (CCExpressionGetType(InvalidatorOption) == CCExpressionValueTypeList)
+                {
+                    CCExpression Option = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(InvalidatorOption), 0);
+                    
+                    if ((CCExpressionGetType(Option) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("invalidate:"))))
+                    {
+                        Invalidator = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(InvalidatorOption), 1);
+                    }
+                    
+                    else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("invalidate", "invalidator:expr");
+                }
+                
+                else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("invalidate", "invalidator:expr");
+            }
+            
+            CCExpressionCreateState(Expression->state.super, CCExpressionGetString(Name), Value, TRUE, Invalidator, TRUE);
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value] [invalidator]");
     }
     
-    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value]");
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("state!", "name:string [value] [invalidator]");
     
     return NULL;
 }

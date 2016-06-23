@@ -863,7 +863,7 @@ CCExpression CCExpressionGetStateStrict(CCExpression Expression, CCString Name)
             CCExpression Invalidate = CCExpressionEvaluate(State->invalidate);
             if (CCExpressionGetType(Invalidate) == CCExpressionValueTypeInteger)
             {
-                if (CCExpressionGetInteger(Invalidate)) return Result;
+                if (!CCExpressionGetInteger(Invalidate)) return Result;
             }
             
             else CC_LOG_ERROR_CUSTOM("State (%S) invalidator is not valid, should return a boolean", Name);
@@ -889,7 +889,7 @@ CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
             CCExpression Invalidate = CCExpressionEvaluate(State->invalidate);
             if (CCExpressionGetType(Invalidate) == CCExpressionValueTypeInteger)
             {
-                if (CCExpressionGetInteger(Invalidate)) return Result;
+                if (!CCExpressionGetInteger(Invalidate)) return Result;
             }
             
             else CC_LOG_ERROR_CUSTOM("State (%S) invalidator is not valid, should return a boolean", Name);
