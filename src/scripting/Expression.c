@@ -91,10 +91,10 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
             
         case CCExpressionValueTypeList:
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
-            Expression->list.items = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
+            Expression->list.items = CCCollectionCreateWithImplementation(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor, CCCollectionFastArray);
             Expression->list.constant = FALSE;
 #else
-            Expression->list = CCCollectionCreate(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor);
+            Expression->list = CCCollectionCreateWithImplementation(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor, CCCollectionFastArray);
 #endif
             Expression->destructor = (CCExpressionValueDestructor)CCCollectionDestroy;
             Expression->copy = CCExpressionValueListCopy;
