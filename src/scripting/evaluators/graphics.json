@@ -15,9 +15,9 @@
                 },
                 {
                     "name": "outline",
-                    "description": "The outline of the rect.",
+                    "description": "The outline of the rect. Float size ranges from (0.0 - 1.0) where it is relative to the size of the rect, while integer sizes are explicit pixel widths.",
                     "args": [[
-                        { "type": "float", "name": "size" },
+                        { "type": "number", "name": "size" },
                         { "type": "list", "name": "colour", "value": [{ "type": "number", "name": "red" }, { "type": "number", "name": "green" }, { "type": "number", "name": "blue" }, { "type": "number", "name": "alpha", "optional": true }] }
                     ]]
                 },
