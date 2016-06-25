@@ -7,11 +7,13 @@
 
     (state! ".colour" (255 211 73) (invalidate: (quote (frame-changed?))))
     (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?))))
+    (state! ".outline" 0 (invalidate: (quote (frame-changed?))))
+    (state! ".outline-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
     (state! ".status" &normal)
     (state! ".label" (quote (
-        (quote (render-rect .rect .colour (radius: .radius)))  ; &normal
-        (quote (render-rect .rect (lighten .colour 5) (radius: .radius))) ; &highlighted
-        (quote (render-rect .rect (darken .colour 5) (radius: .radius)))  ; &pushed
+        (quote (render-rect .rect .colour (radius: .radius) (outline: .outline .outline-colour)))  ; &normal
+        (quote (render-rect .rect (lighten .colour 5) (radius: .radius) (outline: .outline (lighten .outline-colour 5)))) ; &highlighted
+        (quote (render-rect .rect (darken .colour 5) (radius: .radius) (outline: .outline (darken .outline-colour 5))))  ; &pushed
     )) (invalidate: (quote (frame-changed?))))
     (state! ".on-click" (quote (print "Clicked!")))
     (state! ".inside" #f)

@@ -10,13 +10,15 @@
     (state! ".on-colour" (138 227 65) (invalidate: (quote (frame-changed?))))
     (state! ".colour" (quote (get .active (.off-colour .on-colour))) (invalidate: (quote (frame-changed?))))
     (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?))))
+    (state! ".outline" 0 (invalidate: (quote (frame-changed?))))
+    (state! ".outline-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
     (state! ".status" &off)
     (state! ".active" .status)
     (state! ".label" (quote (
-        (quote (render-rect .rect .colour (radius: .radius)))  ; &off
-        (quote (render-rect .rect .colour (radius: .radius)))  ; &on
-        (quote (render-rect .rect (lighten .colour 5) (radius: .radius))) ; &highlighted
-        (quote (render-rect .rect (darken .colour 5) (radius: .radius)))  ; &pushed
+        (quote (render-rect .rect .colour (radius: .radius) (outline: .outline .outline-colour)))  ; &off
+        (quote (render-rect .rect .colour (radius: .radius) (outline: .outline .outline-colour)))  ; &on
+        (quote (render-rect .rect (lighten .colour 5) (radius: .radius) (outline: .outline (lighten .outline-colour 5)))) ; &highlighted
+        (quote (render-rect .rect (darken .colour 5) (radius: .radius) (outline: .outline (darken .outline-colour 5))))  ; &pushed
     )) (invalidate: (quote (frame-changed?))))
     (state! ".off-click" (quote (print "Clicked Off!")))
     (state! ".on-click" (quote (print "Clicked On!")))
