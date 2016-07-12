@@ -165,7 +165,7 @@ void CCComponentSystemAddComponent(CCComponent Component)
         
         else
         {
-            while (!atomic_flag_test_and_set(&System->components.addedLock));
+            while (!atomic_flag_test_and_set(&System->components.addedLock)) CC_SPIN_WAIT();
             CCCollectionInsertElement(System->components.added, &Component);
             atomic_flag_clear(&System->components.addedLock);
         }
@@ -189,7 +189,7 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
         
         else
         {
-            while (!atomic_flag_test_and_set(&System->components.removedLock));
+            while (!atomic_flag_test_and_set(&System->components.removedLock)) CC_SPIN_WAIT();
             CCCollectionInsertElement(System->components.removed, &Component);
             atomic_flag_clear(&System->components.removedLock);
         }
@@ -223,7 +223,7 @@ CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id
     CCCollection Added = NULL;
     if (System)
     {
-        while (!atomic_flag_test_and_set(&System->components.addedLock));
+        while (!atomic_flag_test_and_set(&System->components.addedLock)) CC_SPIN_WAIT();
         CCCollectionInsertCollection(System->components.active, System->components.added, NULL); //TODO: make a consumed insert or a retained list?
         
         Added = System->components.added;
@@ -244,7 +244,7 @@ CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID 
     {
         CCCollectionDestroy(System->components.destroy);
         
-        while (!atomic_flag_test_and_set(&System->components.removedLock));
+        while (!atomic_flag_test_and_set(&System->components.removedLock)) CC_SPIN_WAIT();
         
         System->components.destroy = System->components.removed;
         System->components.removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL);

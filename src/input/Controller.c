@@ -52,7 +52,7 @@ void CCControllerUpdateState(void)
 {
     for (int Loop = 0; Loop < sizeof(Controller) / sizeof(typeof(*Controller)); Loop++)
     {
-        while (!atomic_flag_test_and_set(&Controller[Loop].lock));
+        while (!atomic_flag_test_and_set(&Controller[Loop].lock)) CC_SPIN_WAIT();
         if ((Controller[Loop].connected = glfwJoystickPresent(Loop)))
         {
             Controller[Loop].name = glfwGetJoystickName(Loop);
@@ -114,7 +114,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             
             CCVector3D Position = CCVector3DZero;
             
-            while (!atomic_flag_test_and_set(&Controller[Connection].lock));
+            while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
                 if ((!Device) || (!strcmp(Device, Controller[Connection].name)))
@@ -163,7 +163,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             _Bool Active = FALSE;
             double Timestamp = -INFINITY;
             
-            while (!atomic_flag_test_and_set(&Controller[Connection].lock));
+            while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
                 if ((!Device) || (!strcmp(Device, Controller[Connection].name)))

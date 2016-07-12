@@ -80,7 +80,7 @@ void CCEntityManagerDestroy(void)
 void CCEntityManagerUpdate(void)
 {
     //Add to active
-    while (!atomic_flag_test_and_set(&EntityManager.addedLock));
+    while (!atomic_flag_test_and_set(&EntityManager.addedLock)) CC_SPIN_WAIT();
     CCCollectionInsertCollection(EntityManager.active, EntityManager.added, NULL); //TODO: make a consumed insert or a retained list?
     
     CCCollectionRemoveAllElements(EntityManager.added);
@@ -89,7 +89,7 @@ void CCEntityManagerUpdate(void)
     
     
     //Remove from active
-    while (!atomic_flag_test_and_set(&EntityManager.removedLock));
+    while (!atomic_flag_test_and_set(&EntityManager.removedLock)) CC_SPIN_WAIT();
     CCCollection Entries = CCCollectionFindCollection(EntityManager.active, EntityManager.removed, NULL);
     CCCollectionRemoveCollection(EntityManager.active, Entries);
     CCCollectionDestroy(Entries);
@@ -128,14 +128,14 @@ void CCEntityManagerUpdate(void)
 
 void CCEntityManagerAddEntity(CCEntity Entity)
 {
-    while (!atomic_flag_test_and_set(&EntityManager.addedLock));
+    while (!atomic_flag_test_and_set(&EntityManager.addedLock)) CC_SPIN_WAIT();
     CCCollectionInsertElement(EntityManager.added, &Entity);
     atomic_flag_clear(&EntityManager.addedLock);
 }
 
 void CCEntityManagerRemoveEntity(CCEntity Entity)
 {
-    while (!atomic_flag_test_and_set(&EntityManager.removedLock));
+    while (!atomic_flag_test_and_set(&EntityManager.removedLock)) CC_SPIN_WAIT();
     CCCollectionInsertElement(EntityManager.removed, &Entity);
     atomic_flag_clear(&EntityManager.removedLock);
 }

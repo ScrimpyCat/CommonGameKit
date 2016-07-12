@@ -138,7 +138,7 @@ void GUIManagerDestroy(void)
 void GUIManagerUpdate(void)
 {
     //Add to active
-    while (!atomic_flag_test_and_set(&ObjectManager.addedLock));
+    while (!atomic_flag_test_and_set(&ObjectManager.addedLock)) CC_SPIN_WAIT();
     CCCollectionInsertCollection(ObjectManager.active, ObjectManager.added, NULL); //TODO: make a consumed insert or a retained list?
     
     CCCollectionRemoveAllElements(ObjectManager.added);
@@ -147,7 +147,7 @@ void GUIManagerUpdate(void)
     
     
     //Remove from active
-    while (!atomic_flag_test_and_set(&ObjectManager.removedLock));
+    while (!atomic_flag_test_and_set(&ObjectManager.removedLock)) CC_SPIN_WAIT();
     CCCollection Entries = CCCollectionFindCollection(ObjectManager.active, ObjectManager.removed, NULL);
     CCCollectionRemoveCollection(ObjectManager.active, Entries);
     CCCollectionDestroy(Entries);
@@ -174,14 +174,14 @@ void GUIManagerHandleEvent(GUIEvent Event)
 
 void GUIManagerAddObject(GUIObject Object)
 {
-    while (!atomic_flag_test_and_set(&ObjectManager.addedLock));
+    while (!atomic_flag_test_and_set(&ObjectManager.addedLock)) CC_SPIN_WAIT();
     CCCollectionInsertElement(ObjectManager.added, &Object);
     atomic_flag_clear(&ObjectManager.addedLock);
 }
 
 void GUIManagerRemoveObject(GUIObject Object)
 {
-    while (!atomic_flag_test_and_set(&ObjectManager.removedLock));
+    while (!atomic_flag_test_and_set(&ObjectManager.removedLock)) CC_SPIN_WAIT();
     CCCollectionInsertElement(ObjectManager.removed, &Object);
     atomic_flag_clear(&ObjectManager.removedLock);
 }
