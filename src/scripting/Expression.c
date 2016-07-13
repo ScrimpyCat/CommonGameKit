@@ -738,11 +738,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         
         if (Expression->state.remove) //remove expression
         {
-            CC_COLLECTION_FOREACH(CCCollectionEntry, Entry, Expression->state.remove)
-            {
-                CCCollectionRemoveElement(CCExpressionGetList(Expression), Entry);
-            }
-            
+            CCCollectionRemoveCollection(CCExpressionGetList(Expression), Expression->state.remove);
             CCCollectionDestroy(Expression->state.remove);
             Expression->state.remove = NULL;
         }
