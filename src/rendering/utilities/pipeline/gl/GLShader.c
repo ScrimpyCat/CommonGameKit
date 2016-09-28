@@ -283,6 +283,9 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 
                 glDeleteProgram(Program); CC_GL_CHECK();
                 CCCollectionDestroy(Attributes);
+                
+                CC_GL_POP_GROUP_MARKER();
+                
                 return NULL;
             }
             
@@ -313,6 +316,9 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 glDeleteProgram(Program); CC_GL_CHECK();
                 CCCollectionDestroy(Attributes);
                 CCCollectionDestroy(Uniforms);
+                
+                CC_GL_POP_GROUP_MARKER();
+                
                 return NULL;
             }
             
