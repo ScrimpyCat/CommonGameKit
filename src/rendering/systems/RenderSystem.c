@@ -206,8 +206,8 @@ static void CCRenderSystemLoadResources(void)
     GFXDrawSetShader(Drawer, DemoShader);
     GFXDrawSetFramebuffer(Drawer, GFXFramebufferDefault(), 0);
     GFXDrawSetIndexBuffer(Drawer, IBO, GFXBufferFormatUInt16);
-    GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
-    GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
+    GFXDrawSetVertexBuffer(Drawer, CC_STRING("vPosition"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(DemoVertData), offsetof(DemoVertData, position));
+    GFXDrawSetVertexBuffer(Drawer, CC_STRING("vColour"), VertBuffer, GFXBufferFormatFloat32x3, sizeof(DemoVertData), offsetof(DemoVertData, colour));
 }
 
 static void CCRenderSystemUnloadResources(void)

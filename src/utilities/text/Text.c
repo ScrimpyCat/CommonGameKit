@@ -231,12 +231,12 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
                         
                         GFXDraw Drawer = GFXDrawCreate(Text->allocator);
                         GFXDrawSetShader(Drawer, Shader);
-                        GFXDrawSetTexture(Drawer, "tex", CCFontGetTexture(Attribute->font));
-                        GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, position));
-                        GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCTextVertexData), offsetof(CCTextVertexData, colour));
-                        GFXDrawSetVertexBuffer(Drawer, "vTexCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, texCoord));
-                        GFXDrawSetBuffer(Drawer, "edge", EdgeBuffer);
-                        GFXDrawSetBuffer(Drawer, "width", WidthBuffer);
+                        GFXDrawSetTexture(Drawer, CC_STRING("tex"), CCFontGetTexture(Attribute->font));
+                        GFXDrawSetVertexBuffer(Drawer, CC_STRING("vPosition"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, position));
+                        GFXDrawSetVertexBuffer(Drawer, CC_STRING("vColour"), VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCTextVertexData), offsetof(CCTextVertexData, colour));
+                        GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, texCoord));
+                        GFXDrawSetBuffer(Drawer, CC_STRING("edge"), EdgeBuffer);
+                        GFXDrawSetBuffer(Drawer, CC_STRING("width"), WidthBuffer);
                         GFXDrawSetBlending(Drawer, GFXBlendTransparent);
                         GFXDrawSetIndexBuffer(Drawer, IBO, GFXBufferFormatUInt16);
                         

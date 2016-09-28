@@ -77,9 +77,12 @@ CCExpression CCAssetExpressionShader(CCExpression Asset)
                             
                             if ((LibVert) && (LibFrag))
                             {
-                                GFXShaderSource Vert = NULL, Frag = NULL;
-                                CC_STRING_TEMP_BUFFER(Buffer1, CCExpressionGetAtom(VertSrc)) Vert = GFXShaderLibraryGetSource(LibVert, Buffer1 + 1);
-                                CC_STRING_TEMP_BUFFER(Buffer2, CCExpressionGetAtom(FragSrc)) Frag = GFXShaderLibraryGetSource(LibFrag, Buffer2 + 1);
+                                CCString VertName = CCStringCopySubstring(CCExpressionGetAtom(VertSrc), 1, CCStringGetLength(CCExpressionGetAtom(VertSrc)) - 1);
+                                CCString FragName = CCStringCopySubstring(CCExpressionGetAtom(FragSrc), 1, CCStringGetLength(CCExpressionGetAtom(FragSrc)) - 1);
+                                
+                                GFXShaderSource Vert = GFXShaderLibraryGetSource(LibVert, VertName), Frag = GFXShaderLibraryGetSource(LibFrag, FragName);
+                                CCStringDestroy(VertName);
+                                CCStringDestroy(FragName);
                                 
                                 if ((Vert) && (Frag))
                                 {

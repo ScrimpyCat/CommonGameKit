@@ -27,8 +27,8 @@
 
 static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator);
 static void GLShaderLibraryDestructor(GLShaderLibrary Library);
-static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
-static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, const char *Name);
+static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source);
+static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, CCString Name);
 
 
 const GFXShaderLibraryInterface GLShaderLibraryInterface = {
@@ -41,7 +41,7 @@ const GFXShaderLibraryInterface GLShaderLibraryInterface = {
 
 static void GLShaderLibraryElementDestructor(CCCollection Collection, GLShaderSource Element)
 {
-    CC_SAFE_Free(Element->name);
+    CCStringDestroy(Element->name);
     glDeleteShader(Element->shader); CC_GL_CHECK();
 }
 
@@ -83,7 +83,7 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
     return NULL;
 }
 
-static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source)
+static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)
 {
     CC_GL_PUSH_GROUP_MARKER("Compile Shader");
     
@@ -101,13 +101,13 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         
         char *ErrorLog = NULL;
         CC_TEMP_Malloc(ErrorLog, Length,
-                       CC_LOG_ERROR("Failed to compile %s shader (%s). Unable to get reason.", GLShaderTypeString(Type), Name);
+                       CC_LOG_ERROR_CUSTOM("Failed to compile %s shader (%S). Unable to get reason.", GLShaderTypeString(Type), Name);
                        CC_GL_POP_GROUP_MARKER();
                        return NULL;
                        );
         
         glGetShaderInfoLog(Shader, Length, NULL, ErrorLog); CC_GL_CHECK();
-        CC_LOG_ERROR("Failed to compile %s shader (%s). Reason:\n%s", GLShaderTypeString(Type), Name, ErrorLog);
+        CC_LOG_ERROR_CUSTOM("Failed to compile %s shader (%S). Reason:\n%s", GLShaderTypeString(Type), Name, ErrorLog);
         
         glDeleteShader(Shader); CC_GL_CHECK();
         
@@ -117,18 +117,8 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         return NULL;
     }
     
-    char *Str;
-    CC_SAFE_Malloc(Str, sizeof(char) * (strlen(Name) + 1),
-                   CC_LOG_ERROR("Failed to create shader source due to allocation failure. Allocation size: %zu", sizeof(char) * (strlen(Name) + 1));
-                   glDeleteShader(Shader); CC_GL_CHECK();
-                   CC_GL_POP_GROUP_MARKER();
-                   return NULL;
-                   );
     
-    strcpy(Str, Name);
-    
-    
-    CCCollectionEntry Entry = CCCollectionInsertElement(Library, &(GLShaderSourceInfo){ .name = Str, .shader = Shader });
+    CCCollectionEntry Entry = CCCollectionInsertElement(Library, &(GLShaderSourceInfo){ .name = CCStringCopy(Name), .shader = Shader });
     
     CC_GL_POP_GROUP_MARKER();
     
@@ -137,10 +127,10 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
 
 static CCComparisonResult GLShaderLibraryElementFind(const GLShaderSource left, const GLShaderSource right)
 {
-    return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, const char *Name)
+static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, CCString Name)
 {
-    return CCCollectionGetElement(Library, CCCollectionFindElement(Library, &(GLShaderSourceInfo){ .name = (char*)Name }, (CCComparator)GLShaderLibraryElementFind));
+    return CCCollectionGetElement(Library, CCCollectionFindElement(Library, &(GLShaderSourceInfo){ .name = Name }, (CCComparator)GLShaderLibraryElementFind));
 }

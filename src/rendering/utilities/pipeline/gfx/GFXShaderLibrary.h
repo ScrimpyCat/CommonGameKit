@@ -69,7 +69,7 @@ void GFXShaderLibraryDestroy(GFXShaderLibrary CC_DESTROY(Library));
  * @param Source The sourcecode for the shader.
  * @return The compiled shader source.
  */
-const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
+const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, CCString CC_COPY(Name), const char *Source);
 
 /*!
  * @brief Lookup a compiled shader.
@@ -77,6 +77,6 @@ const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShade
  * @param Name The name of the compiled shader source.
  * @return The compiled shader source.
  */
-const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, const char *Name);
+const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, CCString Name);
 
 #endif

@@ -61,13 +61,13 @@ typedef GFXFramebufferAttachment *(*GFXFramebufferGetAttachmentCallback)(GFXFram
 #pragma mark Required Shader Library Callbacks
 typedef GFXShaderLibrary (*GFXShaderLibraryConstructorCallback)(CCAllocatorType Allocator);
 typedef void (*GFXShaderLibraryDestructorCallback)(GFXShaderLibrary Library);
-typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source);
-typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibrary Library, const char *Name);
+typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source);
+typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibrary Library, CCString Name);
 
 #pragma mark Required Shader Callbacks
 typedef GFXShader (*GFXShaderConstructorCallback)(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
 typedef void (*GFXShaderDestructorCallback)(GFXShader Shader);
-typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, const char *Name);
+typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, CCString Name);
 
 #pragma mark Required Draw Callbacks
 typedef void (*GFXDrawSubmitCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);

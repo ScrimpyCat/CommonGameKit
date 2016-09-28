@@ -238,13 +238,13 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
             
             GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
             GFXDrawSetShader(Drawer, Shader);
-            GFXDrawSetVertexBuffer(Drawer, "vPosition", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, position));
-            GFXDrawSetVertexBuffer(Drawer, "vColour", VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, colour));
-            GFXDrawSetVertexBuffer(Drawer, "vColourOutline", VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, outlineColour));
-            GFXDrawSetVertexBuffer(Drawer, "vCoord", VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, coord));
-            GFXDrawSetBuffer(Drawer, "scale", ScaleBuffer);
-            GFXDrawSetBuffer(Drawer, "radius", RadiusBuffer);
-            GFXDrawSetBuffer(Drawer, "outline", OutlineBuffer);
+            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vPosition"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, position));
+            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vColour"), VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, colour));
+            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vColourOutline"), VertBuffer, GFXBufferFormatFloat32x4, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, outlineColour));
+            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCGraphicsExpressionRectVertData), offsetof(CCGraphicsExpressionRectVertData, coord));
+            GFXDrawSetBuffer(Drawer, CC_STRING("scale"), ScaleBuffer);
+            GFXDrawSetBuffer(Drawer, CC_STRING("radius"), RadiusBuffer);
+            GFXDrawSetBuffer(Drawer, CC_STRING("outline"), OutlineBuffer);
             GFXDrawSetBlending(Drawer, (Radius != 0.0f) || (Colour.a < 1.0f) || (OutlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
             
             GFXShaderDestroy(Shader);

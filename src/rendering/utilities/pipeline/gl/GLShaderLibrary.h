@@ -31,7 +31,7 @@
 
 
 typedef struct {
-    char *name;
+    CCString name;
     GLuint shader;
 } GLShaderSourceInfo, *GLShaderSource;
 

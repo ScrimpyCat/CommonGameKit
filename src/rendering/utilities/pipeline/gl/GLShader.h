@@ -40,16 +40,14 @@ typedef struct {
 
 typedef struct {
     GLShaderInputInfo input;
-    char *name; //TODO: implement string type
-    //TODO: add cacheName for constant strings
+    CCString name;
     GLuint location;
     GFXBufferFormat type;
 } GLShaderAttributeInfo;
 
 typedef struct {
     GLShaderInputInfo input;
-    char *name;
-    //cacheName
+    CCString name;
     GLint location;
     GFXBufferFormat type;
     GLint count;

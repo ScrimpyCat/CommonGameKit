@@ -38,14 +38,14 @@ void GFXShaderLibraryDestroy(GFXShaderLibrary Library)
     GFXMain->library->destroy(Library);
 }
 
-const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, const char *Name, const char *Source)
+const GFXShaderSource GFXShaderLibraryCompile(GFXShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)
 {
     CCAssertLog(Library, "Library must not be null");
     
     return GFXMain->library->compile(Library, Type, Name, Source);
 }
 
-const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, const char *Name)
+const GFXShaderSource GFXShaderLibraryGetSource(GFXShaderLibrary Library, CCString Name)
 {
     CCAssertLog(Library, "Library must not be null");
     

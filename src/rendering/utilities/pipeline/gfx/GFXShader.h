@@ -61,6 +61,6 @@ void GFXShaderDestroy(GFXShader CC_DESTROY(Shader));
  * @param Name The name of the input.
  * @return The shader input.
  */
-GFXShaderInput GFXShaderGetInput(GFXShader Shader, const char *Name);
+GFXShaderInput GFXShaderGetInput(GFXShader Shader, CCString Name);
 
 #endif

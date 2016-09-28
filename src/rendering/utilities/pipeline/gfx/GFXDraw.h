@@ -43,7 +43,7 @@ typedef enum {
 } GFXPrimitiveType;
 
 typedef struct {
-    char *name;
+    CCString name;
     GFXShaderInput shaderInput;
 } GFXDrawInput;
 
@@ -167,7 +167,7 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer CC_RETAIN(Indexes), GFXBuffer
  * @param Stride The stride of the data.
  * @param Offset The offset of the data.
  */
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer CC_RETAIN(Buffer), GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset);
+void GFXDrawSetVertexBuffer(GFXDraw Draw, CCString CC_COPY(Input), GFXBuffer CC_RETAIN(Buffer), GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset);
 
 /*!
  * @brief Set the uniform of the draw command.
@@ -175,7 +175,7 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer CC_RETAIN
  * @param Input The input name from in the shader.
  * @param Buffer The buffer. Retains a reference to the buffer.
  */
-void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer CC_RETAIN(Buffer));
+void GFXDrawSetBuffer(GFXDraw Draw, CCString CC_COPY(Input), GFXBuffer CC_RETAIN(Buffer));
 
 /*!
  * @brief Set the texture of the draw command.
@@ -183,7 +183,7 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer CC_RETAIN(Buffe
  * @param Input The input name from in the shader.
  * @param Texture The texture. Retains a reference to the shader.
  */
-void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture CC_RETAIN(Texture));
+void GFXDrawSetTexture(GFXDraw Draw, CCString CC_COPY(Input), GFXTexture CC_RETAIN(Texture));
 
 /*!
  * @brief Set the blending for the draw command.

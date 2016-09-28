@@ -126,7 +126,7 @@ static void GUIExpressionDraw(CCExpression Render, GFXFramebuffer Framebuffer, s
     {
         const CCGraphicsExpressionValueDraw *Drawable = CCExpressionGetData(Render);
         GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
-        GFXDrawSetBuffer(Drawable->drawer, "modelViewProjectionMatrix", Projection);
+        GFXDrawSetBuffer(Drawable->drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
         GFXDrawSubmit(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
     }
     
@@ -136,7 +136,7 @@ static void GUIExpressionDraw(CCExpression Render, GFXFramebuffer Framebuffer, s
         CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
         {
             GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
-            GFXDrawSetBuffer(Drawable->drawer, "modelViewProjectionMatrix", Projection);
+            GFXDrawSetBuffer(Drawable->drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
             GFXDrawSubmitIndexed(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
         }
         CCCollectionDestroy(Drawables);

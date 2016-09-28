@@ -28,7 +28,7 @@
 
 static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Vertex, GLShaderSource Fragment);
 static void GLShaderDestructor(GLShader Shader);
-static GLShaderInputInfo *GLShaderGetInput(GLShader Shader, const char *Name);
+static GLShaderInputInfo *GLShaderGetInput(GLShader Shader, CCString Name);
 
 
 const GFXShaderInterface GLShaderInterface = {
@@ -276,8 +276,8 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
         
         for (GLint Loop = 0; Loop < Active; Loop++)
         {
-            GLShaderAttributeInfo CurrentAttribute = { .input = GLShaderInputTypeAttribute };
-            if (!(CurrentAttribute.name = CCMalloc(Allocator, MaxLength, NULL, CC_DEFAULT_ERROR_CALLBACK)))
+            char *CurrentAttributeName = CCMalloc(Allocator, MaxLength, NULL, CC_DEFAULT_ERROR_CALLBACK);
+            if (!CurrentAttributeName)
             {
                 CC_LOG_ERROR("Failed to create shader program, due to failure to allocate name for attribute. Allocation size (%d)", MaxLength);
                 
@@ -289,11 +289,15 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 return NULL;
             }
             
-            glGetActiveAttrib(Program, Loop, MaxLength, NULL, &Size, &Type, CurrentAttribute.name); CC_GL_CHECK();
+            GLShaderAttributeInfo CurrentAttribute = { .input = GLShaderInputTypeAttribute };
+            glGetActiveAttrib(Program, Loop, MaxLength, NULL, &Size, &Type, CurrentAttributeName); CC_GL_CHECK();
+            CurrentAttribute.name = CCStringCreate(Allocator, CCStringHintCopy, CurrentAttributeName);
             CurrentAttribute.type = GLShaderBufferFormatFromType(Type);
-            CurrentAttribute.location = glGetAttribLocation(Program, CurrentAttribute.name); CC_GL_CHECK();
+            CurrentAttribute.location = glGetAttribLocation(Program, CurrentAttributeName); CC_GL_CHECK();
             
             CCCollectionInsertElement(Attributes, &CurrentAttribute);
+            
+            CC_SAFE_Free(CurrentAttributeName);
         }
     }
     
@@ -308,8 +312,8 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
         for (GLint Loop = 0; Loop < Active; Loop++)
         {
             //TODO: Handle structures (so can submit a buffer for a structure)
-            GLShaderUniformInfo CurrentUniform = { .input = GLShaderInputTypeUniform };
-            if (!(CurrentUniform.name = CCMalloc(Allocator, MaxLength, NULL, CC_DEFAULT_ERROR_CALLBACK)))
+            char *CurrentUniformName = CCMalloc(Allocator, MaxLength, NULL, CC_DEFAULT_ERROR_CALLBACK);
+            if (!CurrentUniformName)
             {
                 CC_LOG_ERROR("Failed to create shader program, due to failure to allocate name for attribute. Allocation size (%d)", MaxLength);
                 
@@ -322,17 +326,20 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 return NULL;
             }
             
+            GLShaderUniformInfo CurrentUniform = { .input = GLShaderInputTypeUniform };
+            
             GLsizei Length;
-            glGetActiveUniform(Program, Loop, MaxLength, &Length, &Size, &Type, CurrentUniform.name); CC_GL_CHECK();
+            glGetActiveUniform(Program, Loop, MaxLength, &Length, &Size, &Type, CurrentUniformName); CC_GL_CHECK();
+            CurrentUniform.name = CCStringCreate(Allocator, CCStringHintCopy, CurrentUniformName);
             CurrentUniform.type = GLShaderBufferFormatFromType(Type);
             CurrentUniform.count = Size;
-            CurrentUniform.location = glGetUniformLocation(Program, CurrentUniform.name); CC_GL_CHECK();
+            CurrentUniform.location = glGetUniformLocation(Program, CurrentUniformName); CC_GL_CHECK();
             
             CCAssertLog(CurrentUniform.location != -1, "UBOs currently unsupported"); //TODO: Add support for UBOs
             
             if (Size > 1)
             {
-                char *Array = CurrentUniform.name + Length;
+                char *Array = CurrentUniformName + Length;
                 while (*Array-- != '[');
                 
                 Array[1] = 0;
@@ -369,23 +376,23 @@ static void GLShaderDestructor(GLShader Shader)
 
 static CCComparisonResult GLShaderFindAttribute(const GLShaderAttributeInfo *left, const GLShaderAttributeInfo *right)
 {
-    return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 static CCComparisonResult GLShaderFindUniform(const GLShaderUniformInfo *left, const GLShaderUniformInfo *right)
 {
-    return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static GLShaderInputInfo *GLShaderGetInput(GLShader Shader, const char *Name)
+static GLShaderInputInfo *GLShaderGetInput(GLShader Shader, CCString Name)
 {
-    GLShaderInputInfo *Input = CCCollectionGetElement(Shader->attributes, CCCollectionFindElement(Shader->attributes, &(GLShaderAttributeInfo){ .name = (char*)Name }, (CCComparator)GLShaderFindAttribute));
+    GLShaderInputInfo *Input = CCCollectionGetElement(Shader->attributes, CCCollectionFindElement(Shader->attributes, &(GLShaderAttributeInfo){ .name = Name }, (CCComparator)GLShaderFindAttribute));
     
     if (!Input)
     {
-        Input = CCCollectionGetElement(Shader->uniforms, CCCollectionFindElement(Shader->uniforms, &(GLShaderUniformInfo){ .name = (char*)Name }, (CCComparator)GLShaderFindUniform));
+        Input = CCCollectionGetElement(Shader->uniforms, CCCollectionFindElement(Shader->uniforms, &(GLShaderUniformInfo){ .name = Name }, (CCComparator)GLShaderFindUniform));
         
-        if (!Input) CC_LOG_DEBUG("Shader (%p) has no input: %s", Shader, Name);
+        if (!Input) CC_LOG_DEBUG_CUSTOM("Shader (%p) has no input: %S", Shader, Name);
     }
     
     return Input;

@@ -29,13 +29,13 @@
 static void GFXDrawInputBufferElementDestructor(CCCollection Collection, GFXDrawInputBuffer *Element)
 {
     GFXBufferDestroy(Element->buffer);
-    CC_SAFE_Free(Element->input.name);
+    CCStringDestroy(Element->input.name);
 }
 
 static void GFXDrawInputTextureElementDestructor(CCCollection Collection, GFXDrawInputTexture *Element)
 {
     GFXTextureDestroy(Element->texture);
-    CC_SAFE_Free(Element->input.name);
+    CCStringDestroy(Element->input.name);
 }
 
 static void GFXDrawDestructor(GFXDraw Draw)
@@ -160,14 +160,14 @@ void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Form
 
 static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDrawInput *right)
 {
-    return !strcmp(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset)
+void GFXDrawSetVertexBuffer(GFXDraw Draw, CCString Input, GFXBuffer Buffer, GFXBufferFormat Format, size_t Stride, ptrdiff_t Offset)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    GFXDrawInputVertexBuffer *VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionFindElement(Draw->vertexBuffers, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
+    GFXDrawInputVertexBuffer *VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionFindElement(Draw->vertexBuffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
     if (VertexBuffer)
     {
         CC_SAFE_Free(VertexBuffer->buffer);
@@ -179,17 +179,9 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
     
     else
     {
-        char *Str;
-        CC_SAFE_Malloc(Str, sizeof(char) * (strlen(Input) + 1),
-                       CC_LOG_ERROR("Failed to set vertex buffer input due to allocation failure. Allocation size: %zu", sizeof(char) * (strlen(Input) + 1));
-                       return;
-                       );
-        
-        strcpy(Str, Input);
-        
         VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionInsertElement(Draw->vertexBuffers, &(GFXDrawInputVertexBuffer){
             .input = {
-                .name = Str,
+                .name = CCStringCopy(Input),
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
             .buffer = CCRetain(Buffer),
@@ -202,11 +194,11 @@ void GFXDrawSetVertexBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer, G
     if (GFXMain->draw->optional.setVertexBuffer) GFXMain->draw->optional.setVertexBuffer(Draw, VertexBuffer);
 }
 
-void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer)
+void GFXDrawSetBuffer(GFXDraw Draw, CCString Input, GFXBuffer Buffer)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    GFXDrawInputBuffer *UniformBuffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
+    GFXDrawInputBuffer *UniformBuffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
     if (UniformBuffer)
     {
         CC_SAFE_Free(UniformBuffer->buffer);
@@ -215,17 +207,9 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer)
     
     else
     {
-        char *Str;
-        CC_SAFE_Malloc(Str, sizeof(char) * (strlen(Input) + 1),
-                       CC_LOG_ERROR("Failed to set buffer input due to allocation failure. Allocation size: %zu", sizeof(char) * (strlen(Input) + 1));
-                       return;
-                       );
-        
-        strcpy(Str, Input);
-        
         UniformBuffer = CCCollectionGetElement(Draw->buffers, CCCollectionInsertElement(Draw->buffers, &(GFXDrawInputBuffer){
             .input = {
-                .name = Str,
+                .name = CCStringCopy(Input),
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
             .buffer = CCRetain(Buffer)
@@ -235,11 +219,11 @@ void GFXDrawSetBuffer(GFXDraw Draw, const char *Input, GFXBuffer Buffer)
     if (GFXMain->draw->optional.setBuffer) GFXMain->draw->optional.setBuffer(Draw, UniformBuffer);
 }
 
-void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture)
+void GFXDrawSetTexture(GFXDraw Draw, CCString Input, GFXTexture Texture)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    GFXDrawInputTexture *UniformTexture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = (char*)Input }, (CCComparator)GFXDrawFindInput));
+    GFXDrawInputTexture *UniformTexture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
     if (UniformTexture)
     {
         CC_SAFE_Free(UniformTexture->texture);
@@ -248,17 +232,9 @@ void GFXDrawSetTexture(GFXDraw Draw, const char *Input, GFXTexture Texture)
     
     else
     {
-        char *Str;
-        CC_SAFE_Malloc(Str, sizeof(char) * (strlen(Input) + 1),
-                       CC_LOG_ERROR("Failed to set texture input due to allocation failure. Allocation size: %zu", sizeof(char) * (strlen(Input) + 1));
-                       return;
-                       );
-        
-        strcpy(Str, Input);
-        
         UniformTexture = CCCollectionGetElement(Draw->textures, CCCollectionInsertElement(Draw->textures, &(GFXDrawInputTexture){
             .input = {
-                .name = Str,
+                .name = CCStringCopy(Input),
                 .shaderInput = Draw->shader ? GFXShaderGetInput(Draw->shader, Input) : NULL
             },
             .texture = CCRetain(Texture)

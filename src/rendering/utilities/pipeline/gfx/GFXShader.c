@@ -38,7 +38,7 @@ void GFXShaderDestroy(GFXShader Shader)
     GFXMain->shader->destroy(Shader);
 }
 
-GFXShaderInput GFXShaderGetInput(GFXShader Shader, const char *Name)
+GFXShaderInput GFXShaderGetInput(GFXShader Shader, CCString Name)
 {
     CCAssertLog(Shader, "Shader must not be null");
     

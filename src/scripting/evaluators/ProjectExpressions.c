@@ -352,8 +352,7 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                                                 
                                                 FSHandleClose(Handle);
                                                 
-                                                
-                                                CC_STRING_TEMP_BUFFER(NameBuffer, CCExpressionGetString(Name)) GFXShaderLibraryCompile(Library, ShaderType, NameBuffer, Shader);
+                                                GFXShaderLibraryCompile(Library, ShaderType, CCExpressionGetString(Name), Shader);
                                                 
                                                 CC_SAFE_Free(Shader);
                                             }
@@ -366,7 +365,7 @@ CCExpression CCProjectExpressionLibrary(CCExpression Expression)
                                     {
                                         CC_STRING_TEMP_BUFFER(Shader, CCExpressionGetString(SourceArg))
                                         {
-                                            CC_STRING_TEMP_BUFFER(NameBuffer, CCExpressionGetString(Name)) GFXShaderLibraryCompile(Library, ShaderType, NameBuffer, Shader);
+                                            GFXShaderLibraryCompile(Library, ShaderType, CCExpressionGetString(Name), Shader);
                                         }
                                     }
                                     
