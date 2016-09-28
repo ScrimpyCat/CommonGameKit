@@ -40,14 +40,12 @@ typedef struct {
 
 typedef struct {
     GLShaderInputInfo input;
-    CCString name;
     GLuint location;
     GFXBufferFormat type;
 } GLShaderAttributeInfo;
 
 typedef struct {
     GLShaderInputInfo input;
-    CCString name;
     GLint location;
     GFXBufferFormat type;
     GLint count;
@@ -56,8 +54,8 @@ typedef struct {
 
 typedef struct {
     GLuint program;
-    CCCollection attributes;
-    CCCollection uniforms;
+    CCDictionary attributes;
+    CCDictionary uniforms;
 } GLShaderInfo, *GLShader;
 
 extern const GFXShaderInterface GLShaderInterface;

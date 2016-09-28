@@ -38,14 +38,12 @@ const GFXShaderInterface GLShaderInterface = {
 };
 
 
-static void GLShaderAttributeElementDestructor(CCCollection Collection, GLShaderAttributeInfo *Element)
+static void GLShaderAttributeElementDestructor(CCDictionary Dictionary, GLShaderAttributeInfo *Element)
 {
-    CCStringDestroy(Element->name);
 }
 
-static void GLShaderUniformElementDestructor(CCCollection Collection, GLShaderUniformInfo *Element)
+static void GLShaderUniformElementDestructor(CCDictionary Dictionary, GLShaderUniformInfo *Element)
 {
-    CCStringDestroy(Element->name);
     CC_SAFE_Free(Element->value);
 }
 
@@ -225,8 +223,8 @@ static void GLShaderDestroy(GLShader Shader)
 {
     glDeleteProgram(Shader->program); CC_GL_CHECK();
     
-    CCCollectionDestroy(Shader->attributes);
-    CCCollectionDestroy(Shader->uniforms);
+    CCDictionaryDestroy(Shader->attributes);
+    CCDictionaryDestroy(Shader->uniforms);
 }
 
 static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Vertex, GLShaderSource Fragment)
@@ -269,7 +267,12 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
     GLenum Type;
     glGetProgramiv(Program, GL_ACTIVE_ATTRIBUTES, &Active); CC_GL_CHECK();
     
-    CCCollection Attributes = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintConstantLength | CCCollectionHintConstantElements, sizeof(GLShaderAttributeInfo), (CCCollectionElementDestructor)GLShaderAttributeElementDestructor);
+    CCDictionary Attributes = CCDictionaryCreate(Allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(GLShaderAttributeInfo), &(CCDictionaryCallbacks){
+        .getHash = CCStringHasherForDictionary,
+        .compareKeys = CCStringComparatorForDictionary,
+        .keyDestructor = CCStringDestructorForDictionary,
+        .valueDestructor = (CCDictionaryElementDestructor)GLShaderAttributeElementDestructor
+    });
     if (Active)
     {
         glGetProgramiv(Program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &MaxLength); CC_GL_CHECK();
@@ -282,7 +285,7 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 CC_LOG_ERROR("Failed to create shader program, due to failure to allocate name for attribute. Allocation size (%d)", MaxLength);
                 
                 glDeleteProgram(Program); CC_GL_CHECK();
-                CCCollectionDestroy(Attributes);
+                CCDictionaryDestroy(Attributes);
                 
                 CC_GL_POP_GROUP_MARKER();
                 
@@ -291,11 +294,10 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
             
             GLShaderAttributeInfo CurrentAttribute = { .input = GLShaderInputTypeAttribute };
             glGetActiveAttrib(Program, Loop, MaxLength, NULL, &Size, &Type, CurrentAttributeName); CC_GL_CHECK();
-            CurrentAttribute.name = CCStringCreate(Allocator, CCStringHintCopy, CurrentAttributeName);
             CurrentAttribute.type = GLShaderBufferFormatFromType(Type);
             CurrentAttribute.location = glGetAttribLocation(Program, CurrentAttributeName); CC_GL_CHECK();
             
-            CCCollectionInsertElement(Attributes, &CurrentAttribute);
+            CCDictionarySetValue(Attributes, &(CCString){ CCStringCreate(Allocator, CCStringHintCopy, CurrentAttributeName) }, &CurrentAttribute);
             
             CC_SAFE_Free(CurrentAttributeName);
         }
@@ -304,7 +306,12 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
     
     glGetProgramiv(Program, GL_ACTIVE_UNIFORMS, &Active); CC_GL_CHECK();
     
-    CCCollection Uniforms = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintConstantLength | CCCollectionHintConstantElements, sizeof(GLShaderUniformInfo), (CCCollectionElementDestructor)GLShaderUniformElementDestructor);
+    CCDictionary Uniforms = CCDictionaryCreate(Allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(GLShaderUniformInfo), &(CCDictionaryCallbacks){
+        .getHash = CCStringHasherForDictionary,
+        .compareKeys = CCStringComparatorForDictionary,
+        .keyDestructor = CCStringDestructorForDictionary,
+        .valueDestructor = (CCDictionaryElementDestructor)GLShaderUniformElementDestructor
+    });
     if (Active)
     {
         glGetProgramiv(Program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &MaxLength); CC_GL_CHECK();
@@ -318,8 +325,8 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
                 CC_LOG_ERROR("Failed to create shader program, due to failure to allocate name for attribute. Allocation size (%d)", MaxLength);
                 
                 glDeleteProgram(Program); CC_GL_CHECK();
-                CCCollectionDestroy(Attributes);
-                CCCollectionDestroy(Uniforms);
+                CCDictionaryDestroy(Attributes);
+                CCDictionaryDestroy(Uniforms);
                 
                 CC_GL_POP_GROUP_MARKER();
                 
@@ -330,7 +337,6 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
             
             GLsizei Length;
             glGetActiveUniform(Program, Loop, MaxLength, &Length, &Size, &Type, CurrentUniformName); CC_GL_CHECK();
-            CurrentUniform.name = CCStringCreate(Allocator, CCStringHintCopy, CurrentUniformName);
             CurrentUniform.type = GLShaderBufferFormatFromType(Type);
             CurrentUniform.count = Size;
             CurrentUniform.location = glGetUniformLocation(Program, CurrentUniformName); CC_GL_CHECK();
@@ -348,7 +354,7 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
             const size_t BufferSize = GFXBufferFormatGetSize(CurrentUniform.type) * CurrentUniform.count;
             if ((CurrentUniform.value = CCMalloc(Allocator, BufferSize, NULL, CC_DEFAULT_ERROR_CALLBACK))) memset(CurrentUniform.value, 0, BufferSize);
             
-            CCCollectionInsertElement(Uniforms, &CurrentUniform);
+            CCDictionarySetValue(Uniforms, &(CCString){ CCStringCreate(Allocator, CCStringHintCopy, CurrentUniformName) }, &CurrentUniform);
         }
     }
     
@@ -374,23 +380,13 @@ static void GLShaderDestructor(GLShader Shader)
     CC_SAFE_Free(Shader);
 }
 
-static CCComparisonResult GLShaderFindAttribute(const GLShaderAttributeInfo *left, const GLShaderAttributeInfo *right)
-{
-    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
-}
-
-static CCComparisonResult GLShaderFindUniform(const GLShaderUniformInfo *left, const GLShaderUniformInfo *right)
-{
-    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
-}
-
 static GLShaderInputInfo *GLShaderGetInput(GLShader Shader, CCString Name)
 {
-    GLShaderInputInfo *Input = CCCollectionGetElement(Shader->attributes, CCCollectionFindElement(Shader->attributes, &(GLShaderAttributeInfo){ .name = Name }, (CCComparator)GLShaderFindAttribute));
+    GLShaderInputInfo *Input = CCDictionaryGetValue(Shader->attributes, &Name);
     
     if (!Input)
     {
-        Input = CCCollectionGetElement(Shader->uniforms, CCCollectionFindElement(Shader->uniforms, &(GLShaderUniformInfo){ .name = Name }, (CCComparator)GLShaderFindUniform));
+        Input = CCDictionaryGetValue(Shader->uniforms, &Name);
         
         if (!Input) CC_LOG_DEBUG_CUSTOM("Shader (%p) has no input: %S", Shader, Name);
     }
