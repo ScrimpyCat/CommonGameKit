@@ -36,17 +36,14 @@ typedef enum {
 
 typedef struct {
     CCAssetType type;
-    CCString name;
     void *asset;
     //FSPath reference
 } CCAssetInfo;
 
-static CCCollection Assets[CCAssetTypeCount] = {NULL};
+static CCDictionary Assets[CCAssetTypeCount] = {NULL};
 
-static void CCAssetElementDestructor(CCCollection Collection, CCAssetInfo *Element)
+static void CCAssetElementDestructor(CCDictionary Dictionary, CCAssetInfo *Element)
 {
-    CCStringDestroy(Element->name);
-    
     switch (Element->type)
     {
         case CCAssetTypeShaderLibrary:
@@ -70,16 +67,16 @@ static void CCAssetElementDestructor(CCCollection Collection, CCAssetInfo *Eleme
     }
 }
 
-static CCComparisonResult CCAssetElementNameComparator(const CCAssetInfo *left, const CCAssetInfo *right)
-{
-    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
-}
-
 void CCAssetManagerCreate(void)
 {
     for (size_t Loop = 0; Loop < CCAssetTypeCount; Loop++)
     {
-        Assets[Loop] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyFinding, sizeof(CCAssetInfo), (CCCollectionElementDestructor)CCAssetElementDestructor);
+        Assets[Loop] =  CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCAssetInfo), &(CCDictionaryCallbacks){
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary,
+            .keyDestructor = CCStringDestructorForDictionary,
+            .valueDestructor = (CCDictionaryElementDestructor)CCAssetElementDestructor
+        });
     }
 }
 
@@ -87,28 +84,27 @@ void CCAssetManagerDestroy(void)
 {
     for (size_t Loop = 0; Loop < CCAssetTypeCount; Loop++)
     {
-        CCCollectionDestroy(Assets[Loop]);
+        CCDictionaryDestroy(Assets[Loop]);
     }
 }
 
 #pragma mark - Shader Library
 void CCAssetManagerRegisterShaderLibrary(CCString Name, GFXShaderLibrary Library)
 {
-    CCCollectionInsertElement(Assets[CCAssetTypeShaderLibrary], &(CCAssetInfo){
-        .type = CCAssetTypeShader,
-        .name = CCStringCopy(Name),
+    CCDictionarySetValue(Assets[CCAssetTypeShaderLibrary], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
+        .type = CCAssetTypeShaderLibrary,
         .asset = CCRetain(Library)
     });
 }
 
 void CCAssetManagerDeregisterShaderLibrary(CCString Name)
 {
-    CCCollectionRemoveElement(Assets[CCAssetTypeShaderLibrary], CCCollectionFindElement(Assets[CCAssetTypeShaderLibrary], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCDictionaryRemoveValue(Assets[CCAssetTypeShaderLibrary], &Name);
 }
 
 GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
 {
-    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeShaderLibrary], CCCollectionFindElement(Assets[CCAssetTypeShaderLibrary], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeShaderLibrary], &Name);
     
     if (!Asset)
     {
@@ -122,21 +118,20 @@ GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
 #pragma mark - Shader
 void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader)
 {
-    CCCollectionInsertElement(Assets[CCAssetTypeShader], &(CCAssetInfo){
+    CCDictionarySetValue(Assets[CCAssetTypeShader], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
         .type = CCAssetTypeShader,
-        .name = CCStringCopy(Name),
         .asset = CCRetain(Shader)
     });
 }
 
 void CCAssetManagerDeregisterShader(CCString Name)
 {
-    CCCollectionRemoveElement(Assets[CCAssetTypeShader], CCCollectionFindElement(Assets[CCAssetTypeShader], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCDictionaryRemoveValue(Assets[CCAssetTypeShader], &Name);
 }
 
 GFXShader CCAssetManagerCreateShader(CCString Name)
 {
-    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeShader], CCCollectionFindElement(Assets[CCAssetTypeShader], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeShader], &Name);
     
     if (!Asset)
     {
@@ -150,21 +145,20 @@ GFXShader CCAssetManagerCreateShader(CCString Name)
 #pragma mark - Texture
 void CCAssetManagerRegisterTexture(CCString Name, GFXTexture Texture)
 {
-    CCCollectionInsertElement(Assets[CCAssetTypeTexture], &(CCAssetInfo){
+    CCDictionarySetValue(Assets[CCAssetTypeTexture], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
         .type = CCAssetTypeTexture,
-        .name = CCStringCopy(Name),
         .asset = CCRetain(Texture)
     });
 }
 
 void CCAssetManagerDeregisterTexture(CCString Name)
 {
-    CCCollectionRemoveElement(Assets[CCAssetTypeTexture], CCCollectionFindElement(Assets[CCAssetTypeTexture], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCDictionaryRemoveValue(Assets[CCAssetTypeTexture], &Name);
 }
 
 GFXTexture CCAssetManagerCreateTexture(CCString Name)
 {
-    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeTexture], CCCollectionFindElement(Assets[CCAssetTypeTexture], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeTexture], &Name);
     
     if (!Asset)
     {
@@ -179,21 +173,20 @@ GFXTexture CCAssetManagerCreateTexture(CCString Name)
 //TODO: Fix so it groups them into families (so we can have two arial fonts but they may differ by style or size)
 void CCAssetManagerRegisterFont(CCString Name, CCFont Font)
 {
-    CCCollectionInsertElement(Assets[CCAssetTypeFont], &(CCAssetInfo){
+    CCDictionarySetValue(Assets[CCAssetTypeFont], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
         .type = CCAssetTypeFont,
-        .name = CCStringCopy(Name),
         .asset = CCRetain(Font)
     });
 }
 
 void CCAssetManagerDeregisterFont(CCString Name)
 {
-    CCCollectionRemoveElement(Assets[CCAssetTypeFont], CCCollectionFindElement(Assets[CCAssetTypeFont], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCDictionaryRemoveValue(Assets[CCAssetTypeFont], &Name);
 }
 
 CCFont CCAssetManagerCreateFont(CCString Name)
 {
-    CCAssetInfo *Asset = CCCollectionGetElement(Assets[CCAssetTypeFont], CCCollectionFindElement(Assets[CCAssetTypeFont], &(CCAssetInfo){ .name = Name }, (CCComparator)CCAssetElementNameComparator));
+    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeFont], &Name);
     
     if (!Asset)
     {
