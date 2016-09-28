@@ -232,8 +232,8 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
     CC_GL_PUSH_GROUP_MARKER("Create Shader");
     
     GLuint Program = glCreateProgram(); CC_GL_CHECK();
-    glAttachShader(Program, Vertex->shader); CC_GL_CHECK();
-    glAttachShader(Program, Fragment->shader); CC_GL_CHECK();
+    glAttachShader(Program, (GLuint)Vertex); CC_GL_CHECK();
+    glAttachShader(Program, (GLuint)Fragment); CC_GL_CHECK();
     glLinkProgram(Program); CC_GL_CHECK();
     
     GLint Linked;

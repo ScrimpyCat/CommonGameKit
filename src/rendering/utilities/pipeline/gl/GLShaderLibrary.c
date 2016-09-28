@@ -39,20 +39,24 @@ const GFXShaderLibraryInterface GLShaderLibraryInterface = {
 };
 
 
-static void GLShaderLibraryElementDestructor(CCCollection Collection, GLShaderSource Element)
+static void GLShaderLibraryElementDestructor(CCDictionary Dictionary, GLShaderSource Element)
 {
-    CCStringDestroy(Element->name);
-    glDeleteShader(Element->shader); CC_GL_CHECK();
+    glDeleteShader((GLuint)Element); CC_GL_CHECK();
 }
 
 static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator)
 {
-    return CCCollectionCreate(Allocator, CCCollectionHintHeavyFinding, sizeof(GLShaderSourceInfo), (CCCollectionElementDestructor)GLShaderLibraryElementDestructor);
+    return CCDictionaryCreate(Allocator, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(GLShaderSource), &(CCDictionaryCallbacks){
+        .getHash = CCStringHasherForDictionary,
+        .compareKeys = CCStringComparatorForDictionary,
+        .keyDestructor = CCStringDestructorForDictionary,
+        .valueDestructor = (CCDictionaryElementDestructor)GLShaderLibraryElementDestructor
+    });
 }
 
 static void GLShaderLibraryDestructor(GLShaderLibrary Library)
 {
-    CCCollectionDestroy(Library);
+    CCDictionaryDestroy(Library);
 }
 
 static inline GLenum GLShaderType(GFXShaderSourceType Type)
@@ -103,7 +107,7 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         CC_TEMP_Malloc(ErrorLog, Length,
                        CC_LOG_ERROR_CUSTOM("Failed to compile %s shader (%S). Unable to get reason.", GLShaderTypeString(Type), Name);
                        CC_GL_POP_GROUP_MARKER();
-                       return NULL;
+                       return 0;
                        );
         
         glGetShaderInfoLog(Shader, Length, NULL, ErrorLog); CC_GL_CHECK();
@@ -114,23 +118,18 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         CC_TEMP_Free(ErrorLog);
         CC_GL_POP_GROUP_MARKER();
         
-        return NULL;
+        return 0;
     }
-    
-    
-    CCCollectionEntry Entry = CCCollectionInsertElement(Library, &(GLShaderSourceInfo){ .name = CCStringCopy(Name), .shader = Shader });
     
     CC_GL_POP_GROUP_MARKER();
     
-    return CCCollectionGetElement(Library, Entry);
-}
-
-static CCComparisonResult GLShaderLibraryElementFind(const GLShaderSource left, const GLShaderSource right)
-{
-    return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    CCDictionarySetValue(Library, &(CCString){ CCStringCopy(Name) }, &Shader);
+    
+    return (GLShaderSource)Shader;
 }
 
 static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, CCString Name)
 {
-    return CCCollectionGetElement(Library, CCCollectionFindElement(Library, &(GLShaderSourceInfo){ .name = Name }, (CCComparator)GLShaderLibraryElementFind));
+    GLuint *Source = CCDictionaryGetValue(Library, &Name);
+    return (GLShaderSource)(Source ? *Source : 0);
 }

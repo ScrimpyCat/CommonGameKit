@@ -30,12 +30,11 @@
 #include "GLSetup.h"
 
 
-typedef struct {
-    CCString name;
-    GLuint shader;
-} GLShaderSourceInfo, *GLShaderSource;
+typedef uintptr_t GLShaderSource;
 
-typedef CCCollection GLShaderLibrary;
+_Static_assert(sizeof(GLShaderSource) >= sizeof(GLuint), "Must be larger than an OpenGL object id");
+
+typedef CCDictionary GLShaderLibrary;
 
 extern const GFXShaderLibraryInterface GLShaderLibraryInterface;
 
