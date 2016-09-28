@@ -40,12 +40,12 @@ const GFXShaderInterface GLShaderInterface = {
 
 static void GLShaderAttributeElementDestructor(CCCollection Collection, GLShaderAttributeInfo *Element)
 {
-    CC_SAFE_Free(Element->name);
+    CCStringDestroy(Element->name);
 }
 
 static void GLShaderUniformElementDestructor(CCCollection Collection, GLShaderUniformInfo *Element)
 {
-    CC_SAFE_Free(Element->name);
+    CCStringDestroy(Element->name);
     CC_SAFE_Free(Element->value);
 }
 
