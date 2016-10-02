@@ -355,6 +355,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                     
                     CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(InitExpr))
                     {
+                        CCExpressionStateSetSuper(Child, InitExpr);
                         Child = CCExpressionEvaluate(Child);
                         if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
                         {
@@ -402,6 +403,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
                     
                     CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(*Expr))
                     {
+                        CCExpressionStateSetSuper(Child, *Expr);
                         Child = CCExpressionEvaluate(Child);
                         if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
                         {
