@@ -376,8 +376,11 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
             }
         }
         
-        CCCollectionDestroy(Expression->state.remove);
-        Expression->state.remove = NULL;
+        if (Expression->state.remove)
+        {
+            CCCollectionDestroy(Expression->state.remove);
+            Expression->state.remove = NULL;
+        }
         
         //override
         size_t Index = 0;
