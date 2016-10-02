@@ -118,6 +118,7 @@
 		F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814A71B4801DF00AD5D10 /* Keyboard.c */; };
 		F3E814D41B48116A00AD5D10 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E814D21B48116A00AD5D10 /* InputMapKeyboardComponent.c */; };
 		F3E84D551B45A3730082E510 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E84D531B45A3730082E510 /* InputSystem.c */; };
+		F3EFAB021DA0C96900067939 /* DebugExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3EFAB001DA0C96900067939 /* DebugExpressions.c */; };
 		F3F5D6381A56E8B4006D7F16 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F3F5D6341A56E8B4006D7F16 /* Images.xcassets */; };
 		F3F5D6811A56F4A9006D7F16 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F5D6801A56F4A9006D7F16 /* main.c */; };
 		F3F5D68F1A56F5DA006D7F16 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */; };
@@ -685,6 +686,8 @@
 		F3E84D531B45A3730082E510 /* InputSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputSystem.c; sourceTree = "<group>"; };
 		F3E84D541B45A3730082E510 /* InputSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputSystem.h; sourceTree = "<group>"; };
 		F3E84D821B45A51F0082E510 /* Window.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		F3EFAB001DA0C96900067939 /* DebugExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DebugExpressions.c; sourceTree = "<group>"; };
+		F3EFAB011DA0C96900067939 /* DebugExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugExpressions.h; sourceTree = "<group>"; };
 		F3F5D6341A56E8B4006D7F16 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = src/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		F3F5D6351A56E8B4006D7F16 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
 		F3F5D6801A56F4A9006D7F16 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = src/main.c; sourceTree = SOURCE_ROOT; };
@@ -1070,6 +1073,8 @@
 				F376997C1C105C7800F24A44 /* EqualityExpressions.c */,
 				F37699801C105DA700F24A44 /* ControlFlowExpressions.h */,
 				F376997F1C105DA700F24A44 /* ControlFlowExpressions.c */,
+				F3EFAB011DA0C96900067939 /* DebugExpressions.h */,
+				F3EFAB001DA0C96900067939 /* DebugExpressions.c */,
 				F376997A1C1053C400F24A44 /* IOExpressions.h */,
 				F37699791C1053C400F24A44 /* IOExpressions.c */,
 				F358D60F1C0BF39800FC10F1 /* ProjectExpressions.h */,
@@ -1900,6 +1905,7 @@
 				F313F9A41B7FB888006F5CF5 /* AnimationSystem.c in Sources */,
 				F3C020181B4ED68D00F546E7 /* InputMapGroupComponent.c in Sources */,
 				F3A21A4E1CB956B500518ACA /* ColourExpressions.c in Sources */,
+				F3EFAB021DA0C96900067939 /* DebugExpressions.c in Sources */,
 				F3E814A91B4801DF00AD5D10 /* Keyboard.c in Sources */,
 				F3A9D5D01C2767D30042BD2A /* GFXDraw.c in Sources */,
 				F3C020561B50DCDE00F546E7 /* InputMapMouseDropComponent.c in Sources */,
