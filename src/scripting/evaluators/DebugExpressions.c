@@ -34,36 +34,46 @@ CCExpression CCDebugExpressionInspect(CCExpression Expression)
         return Expression;
     }
     
-    CCExpression Arg = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
-    switch (CCExpressionGetType(Arg))
+    CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+    CCExpressionStateSetSuper(Expr, CCExpressionStateGetSuper(Expression));
+    
+    CCExpression Arg = CCExpressionEvaluate(Expr);
+    if (Arg)
     {
-        case CCExpressionValueTypeAtom:
-            CC_EXPRESSION_EVALUATOR_LOG("%S", CCExpressionGetAtom(Arg));
-            break;
-            
-        case CCExpressionValueTypeInteger:
-            CC_EXPRESSION_EVALUATOR_LOG("%" PRId32, CCExpressionGetInteger(Arg));
-            break;
-            
-        case CCExpressionValueTypeFloat:
-            CC_EXPRESSION_EVALUATOR_LOG("%f", CCExpressionGetFloat(Arg));
-            break;
-            
-        case CCExpressionValueTypeString:
-            CC_EXPRESSION_EVALUATOR_LOG("\"%S\"", CCExpressionGetString(Arg));
-            break;
-            
-        case CCExpressionValueTypeList:
-            CC_EXPRESSION_EVALUATOR_LOG("[%p]", CCExpressionGetList(Arg));
-            CCExpressionPrint(Arg);
-            break;
-            
-        default:
-            CC_EXPRESSION_EVALUATOR_LOG("(%d):%p", CCExpressionGetType(Arg), CCExpressionGetData(Arg));
-            break;
+        switch (CCExpressionGetType(Arg))
+        {
+            case CCExpressionValueTypeAtom:
+                CC_EXPRESSION_EVALUATOR_LOG("%S", CCExpressionGetAtom(Arg));
+                break;
+                
+            case CCExpressionValueTypeInteger:
+                CC_EXPRESSION_EVALUATOR_LOG("%" PRId32, CCExpressionGetInteger(Arg));
+                break;
+                
+            case CCExpressionValueTypeFloat:
+                CC_EXPRESSION_EVALUATOR_LOG("%f", CCExpressionGetFloat(Arg));
+                break;
+                
+            case CCExpressionValueTypeString:
+                CC_EXPRESSION_EVALUATOR_LOG("\"%S\"", CCExpressionGetString(Arg));
+                break;
+                
+            case CCExpressionValueTypeList:
+                CC_EXPRESSION_EVALUATOR_LOG("[%p]", CCExpressionGetList(Arg));
+                CCExpressionPrint(Arg);
+                break;
+                
+            default:
+                CC_EXPRESSION_EVALUATOR_LOG("(%d):%p", CCExpressionGetType(Arg), CCExpressionGetData(Arg));
+                break;
+        }
+        
+        Arg = CCExpressionRetain(Arg);
     }
     
-    return CCExpressionRetain(Arg);
+    else CC_EXPRESSION_EVALUATOR_LOG("(null)");
+    
+    return Arg;
 }
 
 CCExpression CCDebugExpressionBreak(CCExpression Expression)
@@ -75,6 +85,7 @@ CCExpression CCDebugExpressionBreak(CCExpression Expression)
     }
     
     CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+    CCExpressionStateSetSuper(Expr, CCExpressionStateGetSuper(Expression));
     
 #if CC_HARDWARE_ARCH_X86 || CC_HARDWARE_ARCH_X86_64
     asm("int $3");
@@ -84,5 +95,5 @@ CCExpression CCDebugExpressionBreak(CCExpression Expression)
     
     CCExpression Result = CCExpressionEvaluate(Expr);
     
-    return CCExpressionRetain(Result);
+    return Result ? CCExpressionRetain(Result) : Result;
 }

@@ -2,7 +2,7 @@
     "functions": [
         {
             "name": "inspect",
-            "description": "Inspect the expression. Differs from print, where it will return the argument as its result.",
+            "description": "Inspect the expression. Differs from print, where it will return the argument as its result and does not become a super.",
             "examples": ["(inspect 1) ;CCDebugExpressionInspect: 1"],
             "return": { "type": "expression" },
             "args": [
