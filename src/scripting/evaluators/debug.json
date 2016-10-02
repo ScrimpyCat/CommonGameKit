@@ -1,0 +1,22 @@
+{
+    "functions": [
+        {
+            "name": "inspect",
+            "description": "Inspect the expression. Differs from print, where it will return the argument as its result.",
+            "examples": ["(inspect 1) ;CCDebugExpressionInspect: 1"],
+            "return": { "type": "expression" },
+            "args": [
+                [{ "type": "expression" }]
+            ]
+        },
+        {
+            "name": "break",
+            "description": "Sets a software breakpoint. This is only available on select architectures, if unsupported it will not cause a break.",
+            "examples": ["(break (+ 1 2)) ; 3", "(+ 1 (break .x)) ; 3"],
+            "return": { "type": "expression" },
+            "args": [
+                [{ "type": "expression" }]
+            ]
+        }
+    ]
+}

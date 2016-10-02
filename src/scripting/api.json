@@ -15,6 +15,7 @@
         "evaluators/asset.json",
         "evaluators/colour.json",
         "evaluators/control_flow.json",
+        "evaluators/debug.json",
         "evaluators/equality.json",
         "evaluators/graphics.json",
         "evaluators/io.json",
