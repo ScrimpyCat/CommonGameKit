@@ -127,6 +127,106 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testStateInvalidation
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(begin (state! \".x\" 1) (state! \".y\" (quote .x)) .y)");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 1, @"Should return 1");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 2, @"Should be initialized");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 2, @"Should return 2");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    
+    Expression = CCExpressionCreateFromSource("(begin (state! \".x\" 1) (state! \".y\" (quote .x) (invalidate: (quote (< .x 2)))) .y)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 1, @"Should return 1");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 1, @"Should be initialized");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 1, @"Should return 1");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 0, @"Should be initialized");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 0, @"Should return 0");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    
+    Expression = CCExpressionCreate(CC_STD_ALLOCATOR, CCExpressionValueTypeExpression);
+    CCExpression State = CCExpressionCreateFromSource("(+ .x 10)");
+    
+    CCExpressionCreateState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE, NULL, FALSE);
+    CCExpressionCreateState(Expression, CC_STRING(".y"), State, TRUE, CCExpressionCreateFromSource("(< .x 2)"), FALSE);
+    CCExpressionCreateState(Expression, CC_STRING(".z"), State, FALSE, CCExpressionCreateFromSource("(< .x 3)"), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 11, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 11, @"Should be initialized");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 11, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 12, @"Should be initialized");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 3), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 11, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 12, @"Should be initialized");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 10, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 10, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    
+    Expression = CCExpressionCreateFromSource("(begin (state! \".x\" 1) (state! \".state\" (quote (quote (+ .x 10)))) (state! \".y\" .state (invalidate: (quote (< .x 2)))) (state! \".z\" .state (invalidate: (quote (< .x 3)))))");
+    CCExpressionEvaluate(Expression);
+
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 11, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 11, @"Should be initialized");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 2), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 11, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 12, @"Should be initialized");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 3), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 11, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 12, @"Should be initialized");
+    
+    CCExpressionSetState(Expression, CC_STRING(".x"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0), FALSE);
+    
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".y"))), 10, @"Should be initialized");
+    XCTAssertEqual(CCExpressionGetInteger(CCExpressionGetState(Expression, CC_STRING(".z"))), 10, @"Should be initialized");
+
+    
+    CCExpressionDestroy(Expression);
+}
+
 -(void) testEnum
 {
     CCExpression Expression = CCExpressionCreateFromSource("(begin (enum! \"&x\" \"&y\" \"&z\" (\"&a\" 20) \"&b\"))");

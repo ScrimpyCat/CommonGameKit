@@ -838,10 +838,21 @@ void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpressio
             .valueDestructor = (CCDictionaryElementDestructor)CCExpressionStateValueElementDestructor
         });
         
-        CCDictionarySetValue(Expression->state.values, &(CCString){ CCStringCopy(Name) }, &(CCExpressionStateValue){
-            .value = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value,
-            .invalidate = InvalidatorRetain ? (Invalidator ? CCExpressionRetain(Invalidator) : NULL) : Invalidator
-        });
+        CCExpressionStateValue StateValue = { .value = NULL, .invalidate = NULL };
+        if (Invalidator)
+        {
+            StateValue.invalidate = InvalidatorRetain ? CCExpressionRetain(Invalidator) : Invalidator;
+            
+            if (Value)
+            {
+                StateValue.value = CCExpressionCopy(Value);
+                if (!Retain) CCExpressionDestroy(Value);
+            }
+        }
+        
+        else if (Value) StateValue.value = Retain ? CCExpressionRetain(Value) : Value;
+        
+        CCDictionarySetValue(Expression->state.values, &(CCString){ CCStringCopy(Name) }, &StateValue);
     }
 }
 
@@ -906,8 +917,19 @@ CCExpression CCExpressionSetState(CCExpression Expression, CCString Name, CCExpr
     if (State)
     {
         if (State->value) CCExpressionDestroy(State->value);
-        State->value = Retain ? (Value ? CCExpressionRetain(Value) : NULL) : Value;
-        return Value;
+        
+        if (State->invalidate)
+        {
+            if (Value)
+            {
+                State->value = CCExpressionCopy(Value);
+                if (!Retain) CCExpressionDestroy(Value);
+            }
+        }
+        
+        else if (Value) State->value = Retain ? CCExpressionRetain(Value) : Value;
+        
+        return State->value;
     }
     
     return NULL;
@@ -921,6 +943,13 @@ void CCExpressionSetStateInvalidator(CCExpression Expression, CCString Name, CCE
     if (State)
     {
         if (State->invalidate) CCExpressionDestroy(State->invalidate);
+        else if (State->value)
+        {
+            CCExpression Value = State->value;
+            State->value = CCExpressionCopy(Value);
+            CCExpressionDestroy(Value);
+        }
+        
         State->invalidate = Retain ? (Invalidator ? CCExpressionRetain(Invalidator) : NULL) : Invalidator;
     }
 }
