@@ -809,6 +809,7 @@ static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression
     if (Value)
     {
         if (Value->value) CCExpressionStateSetSuper(Value->value, Expression);
+        if (Value->invalidate) CCExpressionStateSetSuper(Value->invalidate, Expression);
         return Value;
     }
     
