@@ -479,6 +479,255 @@
                     "return": { "type": "custom:text" }
                 }
             ]
+        },
+        {
+            "name": "gui-slider",
+            "description": "Create a slider. Appearance can be changed through setting the different states or completely customized through overriding the render option.",
+            "includes": [
+                "../../src/gui/gui-defines.json"
+            ],
+            "states": [
+                {
+                    "name": "value",
+                    "description": "The current value selected by the slider.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "min-value",
+                    "description": "The minimum range of the slider.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "max-value",
+                    "description": "The maximum range of the slider.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "colour",
+                    "description": "The colour to be used for the slider.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "thumb-colour",
+                    "description": "The colour to be used for the thumb of the slider.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "thumb-center",
+                    "description": "The center point of the thumb. Typically do not set this.",
+                    "return": { "type": "number" }
+                },
+                {
+                    "name": "min-rect",
+                    "description": "The rect bounds of the minimum range of the bar. Typically do not set this.",
+                    "return": { "type": "list" }
+                },
+                {
+                    "name": "max-rect",
+                    "description": "The rect bounds of the maximum range of the bar. Typically do not set this.",
+                    "return": { "type": "list" }
+                },
+                {
+                    "name": "thumb-size",
+                    "description": "The size of the thumb.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "thumb-rect",
+                    "description": "The rect bounds of the thumb. Typically do not set this.",
+                    "return": { "type": "list" }
+                },
+                {
+                    "name": "radius",
+                    "description": "The corner radius of the bar.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "thumb-radius",
+                    "description": "The corner radius of the thumb.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline",
+                    "description": "The width of the outline.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline-colour",
+                    "description": "The colour to be used for the outline.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "thumb-outline",
+                    "description": "The width of the thumb outline.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "thumb-outline-colour",
+                    "description": "The colour to be used for the thumb outline.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "status",
+                    "description": "The current event state of the button. Either &normal, &highlighted, or &pushed. Typically do not set this.",
+                    "return": { "type": "integer" }
+                },
+                {
+                    "name": "bar",
+                    "description": "The different bars (renderables) for the different states of the slider.",
+                    "return": { "type": "list" },
+                    "args": [[{ "type": "list", "value": [{ "type": "expression", "name": "normal" }, { "type": "expression", "name": "highlighted" }, { "type": "expression", "name": "pushed" }] }]]
+                },
+                {
+                    "name": "on-click",
+                    "description": "The event evaluated when the slider is clicked (finished changing).",
+                    "return": { "type": "expression" },
+                    "args": [[{ "type": "expression", "name": "event" }]]
+                },
+                {
+                    "name": "on-change",
+                    "description": "The event evaluated whilst the slider is changing.",
+                    "return": { "type": "expression" },
+                    "args": [[{ "type": "expression", "name": "event" }]]
+                },
+                {
+                    "name": "step",
+                    "description": "Whether the slider is a stepper (true) or smooth slider (false).",
+                    "return": { "type": "boolean" },
+                    "args": [[{ "type": "boolean" }]]
+                },
+                {
+                    "name": "interval",
+                    "description": "The interval for a step based slider.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "inside",
+                    "description": "Whether the cursor is currently inside the slider. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                },
+                {
+                    "name": "dragged",
+                    "description": "Whether the cursor is currently dragging the slider. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                }
+            ],
+            "enums": [
+                {
+                    "name": "normal",
+                    "return": { "type": "integer", "value": 0 },
+                    "description": "The button's state is normal."
+                },
+                {
+                    "name": "highlighted",
+                    "return": { "type": "integer", "value": 1 },
+                    "description": "The button's state is highlighted."
+                },
+                {
+                    "name": "pushed",
+                    "return": { "type": "integer", "value": 2 },
+                    "description": "The button's state is pushed."
+                }
+            ]
         }
     ]
 }
