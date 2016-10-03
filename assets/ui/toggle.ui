@@ -11,7 +11,9 @@
     (state! ".colour" (quote (get .active (.off-colour .on-colour))) (invalidate: (quote (frame-changed?))))
     (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?))))
     (state! ".outline" 0 (invalidate: (quote (frame-changed?))))
-    (state! ".outline-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
+    (state! ".outline-off-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
+    (state! ".outline-on-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
+    (state! ".outline-colour" (quote (get .active (.outline-off-colour .outline-on-colour))) (invalidate: (quote (frame-changed?))))
     (state! ".status" &off)
     (state! ".active" .status)
     (state! ".label" (quote (

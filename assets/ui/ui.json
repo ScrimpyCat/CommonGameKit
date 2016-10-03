@@ -213,7 +213,7 @@
                         ]
                     ]
                 },
-                                {
+                {
                     "name": "on-colour",
                     "description": "The colour to be used for the button when it is active.",
                     "return": { "type": "list" },
@@ -274,8 +274,56 @@
                     "args": [[{ "type": "number" }]]
                 },
                 {
+                    "name": "outline-off-colour",
+                    "description": "The colour to be used for the outline when the button is inactive.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "outline-on-colour",
+                    "description": "The colour to be used for the outline when the button is active.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
                     "name": "outline-colour",
-                    "description": "The colour to be used for the outline.",
+                    "description": "The colour to be used for the outline. Typically do not set this",
                     "return": { "type": "list" },
                     "args": [
                         [
