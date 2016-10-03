@@ -24,15 +24,15 @@
     (state! ".outline-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
     (state! ".bar" (quote (
         (quote (
-            (quote (render-rect .rect .min-colour (radius: .radius) (outline: .outline .outline-colour)))
+            (quote (render-rect .rect .colour (radius: .radius) (outline: .outline .outline-colour)))
             (quote (render-rect .thumb-rect .thumb-colour (radius: .thumb-radius)))
         )) ; &normal
         (quote (
-            (quote (render-rect .rect .min-colour (radius: .radius) (outline: .outline .outline-colour)))
+            (quote (render-rect .rect .colour (radius: .radius) (outline: .outline .outline-colour)))
             (quote (render-rect .thumb-rect .thumb-colour (radius: .thumb-radius)))
         )) ; &highlighted
         (quote (
-            (quote (render-rect .rect .min-colour (radius: .radius) (outline: .outline .outline-colour)))
+            (quote (render-rect .rect .colour (radius: .radius) (outline: .outline .outline-colour)))
             (quote (render-rect .thumb-rect .thumb-colour (radius: .thumb-radius)))
         )) ; &pushed
     )) (invalidate: (quote (frame-changed?))))
