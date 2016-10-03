@@ -41,7 +41,7 @@
     (state! ".on-click" (quote (print "Clicked!")))
     (state! ".on-change")
     (state! ".step" #f)
-    (state! ".interval" (quote (.value! (round .value))))
+    (state! ".interval" (quote (round .value)))
     (state! ".inside" #f)
     (state! ".dragged" #f)
 
@@ -59,8 +59,8 @@
         )
         (if .dragged
             (if .inside (on (cursor: .rect)
-                ((.status! &pushed) (.value! (- (* (min (max (/ (+ @pos-x (- 0.0 .x)) (+ .width (- 0.0 .x))) 0.0) 1.0) (+ (- 0.0 .min-value) .max-value)) (- 0.0 .min-value))) (if .step .interval) .on-change)
-                ((.status! &highlighted) (.value! (- (* (min (max (/ (+ @pos-x (- 0.0 .x)) (+ .width (- 0.0 .x))) 0.0) 1.0) (+ (- 0.0 .min-value) .max-value)) (- 0.0 .min-value))) (if .step .interval) .on-change)
+                ((.status! &pushed) (.value! (- (* (min (max (/ (+ @pos-x (- 0.0 .x)) (+ .width (- 0.0 .x))) 0.0) 1.0) (+ (- 0.0 .min-value) .max-value)) (- 0.0 .min-value))) (if .step (.value! .interval)) .on-change)
+                ((.status! &highlighted) (.value! (- (* (min (max (/ (+ @pos-x (- 0.0 .x)) (+ .width (- 0.0 .x))) 0.0) 1.0) (+ (- 0.0 .min-value) .max-value)) (- 0.0 .min-value))) (if .step (.value! .interval)) .on-change)
             ))
             (on (cursor: .rect) (.status! &highlighted) (.status! &normal))
         )
