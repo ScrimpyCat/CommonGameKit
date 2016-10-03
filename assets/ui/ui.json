@@ -36,23 +36,36 @@
                     "description": "The corner radius of the button.",
                     "return": { "type": "number" },
                     "args": [[{ "type": "number" }]]
-                }
-            ],
-            "enums": [
-                {
-                    "name": "normal",
-                    "return": { "type": "integer", "value": 0 },
-                    "description": "The button's state is normal."
                 },
                 {
-                    "name": "highlighted",
-                    "return": { "type": "integer", "value": 1 },
-                    "description": "The button's state is highlighted."
+                    "name": "outline",
+                    "description": "The width of the outline.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
                 },
                 {
-                    "name": "pushed",
-                    "return": { "type": "integer", "value": 2 },
-                    "description": "The button's state is pushed."
+                    "name": "outline-colour",
+                    "description": "The colour to be used for the outline.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
                 }
             ]
         },
@@ -92,6 +105,36 @@
                     "description": "The corner radius of the button.",
                     "return": { "type": "number" },
                     "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline",
+                    "description": "The width of the outline.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline-colour",
+                    "description": "The colour to be used for the outline.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
                 },
                 {
                     "name": "status",
@@ -223,6 +266,36 @@
                     "description": "The corner radius of the button.",
                     "return": { "type": "number" },
                     "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline",
+                    "description": "The width of the outline.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline-colour",
+                    "description": "The colour to be used for the outline.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
                 },
                 {
                     "name": "status",
