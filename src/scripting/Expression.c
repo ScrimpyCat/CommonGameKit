@@ -759,7 +759,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
             CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
             if (Expr)
             {
-                CCExpression Item = CCExpressionRetain(CCExpressionGetResult(*Expr) ? CCExpressionGetResult(*Expr) : CCExpressionEvaluate(*Expr));
+                CCExpression Item = CCExpressionRetain(CCExpressionEvaluate(*Expr));
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &Item);
                 
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
