@@ -340,34 +340,43 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         {
             CCExpressionStateSetSuper(InitExpr, Expression);
             
-            if (CCExpressionGetType(InitExpr) == CCExpressionValueTypeList)
+            if ((CCExpressionGetType(InitExpr) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(InitExpr))))
             {
-                CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(InitExpr), 0));
-                
-                if (CCStringEqual(Atom, StrRender))
+                CCExpression Arg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(InitExpr), 0);
+                if (CCExpressionGetType(Arg) == CCExpressionValueTypeAtom)
                 {
-                    BaseRender = InitExpr;
-                }
-                
-                else if (CCStringEqual(Atom, StrChildren))
-                {
-                    if (!Children) Children = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(GUIObject), NULL);
+                    CCString Atom = CCExpressionGetAtom(Arg);
                     
-                    CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(InitExpr))
+                    if (CCStringEqual(Atom, StrRender))
                     {
-                        CCExpressionStateSetSuper(Child, InitExpr);
-                        Child = CCExpressionEvaluate(Child);
-                        if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
+                        BaseRender = InitExpr;
+                    }
+                    
+                    else if (CCStringEqual(Atom, StrChildren))
+                    {
+                        if (!Children) Children = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(GUIObject), NULL);
+                        
+                        CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(InitExpr))
                         {
-                            CCExpressionChangeOwnership(Child, NULL, NULL);
-                            CCOrderedCollectionAppendElement(Children, &(GUIObject){ CCExpressionGetData(Child) });
+                            CCExpressionStateSetSuper(Child, InitExpr);
+                            Child = CCExpressionEvaluate(Child);
+                            if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
+                            {
+                                CCExpressionChangeOwnership(Child, NULL, NULL);
+                                CCOrderedCollectionAppendElement(Children, &(GUIObject){ CCExpressionGetData(Child) });
+                            }
                         }
                     }
-                }
-                
-                else if (CCStringEqual(Atom, StrControl))
-                {
-                    BaseControl = InitExpr;
+                    
+                    else if (CCStringEqual(Atom, StrControl))
+                    {
+                        BaseControl = InitExpr;
+                    }
+                    
+                    else
+                    {
+                        CCExpressionEvaluate(InitExpr);
+                    }
                 }
                 
                 else
@@ -388,34 +397,43 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
         {
             Index++;
-            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+            if ((CCExpressionGetType(*Expr) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(*Expr))))
             {
-                CCString Atom = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0));
-                
-                if (CCStringEqual(Atom, StrRender))
+                CCExpression Arg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0);
+                if (CCExpressionGetType(Arg) == CCExpressionValueTypeAtom)
                 {
-                    RenderIndex = Index;
-                }
-                
-                else if (CCStringEqual(Atom, StrChildren))
-                {
-                    if (!Children) Children = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(GUIObject), NULL);
+                    CCString Atom = CCExpressionGetAtom(Arg);
                     
-                    CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(*Expr))
+                    if (CCStringEqual(Atom, StrRender))
                     {
-                        CCExpressionStateSetSuper(Child, *Expr);
-                        Child = CCExpressionEvaluate(Child);
-                        if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
+                        RenderIndex = Index;
+                    }
+                    
+                    else if (CCStringEqual(Atom, StrChildren))
+                    {
+                        if (!Children) Children = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(GUIObject), NULL);
+                        
+                        CC_COLLECTION_FOREACH(CCExpression, Child, CCExpressionGetList(*Expr))
                         {
-                            CCExpressionChangeOwnership(Child, NULL, NULL);
-                            CCOrderedCollectionAppendElement(Children, &(GUIObject){ CCExpressionGetData(Child) });
+                            CCExpressionStateSetSuper(Child, *Expr);
+                            Child = CCExpressionEvaluate(Child);
+                            if (CCExpressionGetType(Child) == GUIExpressionValueTypeGUIObject)
+                            {
+                                CCExpressionChangeOwnership(Child, NULL, NULL);
+                                CCOrderedCollectionAppendElement(Children, &(GUIObject){ CCExpressionGetData(Child) });
+                            }
                         }
                     }
-                }
-                
-                else if (CCStringEqual(Atom, StrControl))
-                {
-                    ControlIndex = Index;
+                    
+                    else if (CCStringEqual(Atom, StrControl))
+                    {
+                        ControlIndex = Index;
+                    }
+                    
+                    else
+                    {
+                        CCExpressionEvaluate(*Expr);
+                    }
                 }
                 
                 else
