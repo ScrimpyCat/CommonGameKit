@@ -59,6 +59,14 @@ static void GUIManagerEventMouseCallback(CCComponent Component, CCMouseEvent Eve
     });
 }
 
+static void GUIManagerEventKeyboardCallback(CCComponent Component, CCKeyboardMap State)
+{
+    GUIManagerHandleEvent(&(GUIEventInfo){
+        .type = GUIEventTypeKey,
+        .key = { .state = State }
+    });
+}
+
 static void GUIObjectDestructor(CCCollection Collection, GUIObject *Object)
 {
     GUIObjectDestroy(*Object);
@@ -118,6 +126,15 @@ void GUIManagerCreate(void)
     
     Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID);
     CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+    CCEntityAttachComponent(ObjectManager.entity, Input);
+    CCComponentSystemAddComponent(Input);
+    
+    Input = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    CCInputMapComponentSetCallback(Input, GUIManagerEventKeyboardCallback);
+    CCInputMapKeyboardComponentSetKeycode(Input, CCInputMapKeyboardComponentKeycodeAny);
+    CCInputMapKeyboardComponentSetIsKeycode(Input, TRUE);
+    CCInputMapKeyboardComponentSetRepeats(Input, TRUE);
+    CCInputMapKeyboardComponentSetIgnoreModifier(Input, TRUE);
     CCEntityAttachComponent(ObjectManager.entity, Input);
     CCComponentSystemAddComponent(Input);
     
