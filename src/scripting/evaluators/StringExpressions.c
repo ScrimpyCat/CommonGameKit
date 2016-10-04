@@ -111,3 +111,56 @@ CCExpression CCStringExpressionReplace(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCStringExpressionConcatenate(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if ((ArgCount == 1) || (ArgCount == 2))
+    {
+        CCExpression StringsExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(StringsExpr) == CCExpressionValueTypeList)
+        {
+            CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCString), NULL);
+            CC_COLLECTION_FOREACH(CCExpression, String, CCExpressionGetList(StringsExpr))
+            {
+                if (CCExpressionGetType(String) == CCExpressionValueTypeString)
+                {
+                    CCOrderedCollectionAppendElement(Strings, &String);
+                }
+                
+                else
+                {
+                    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("cat", "strings:list [separator:string]");
+                    CCCollectionDestroy(Strings);
+                    
+                    return Expression;
+                }
+            }
+            
+            CCString Separator = 0;
+            if (ArgCount == 2)
+            {
+                CCExpression SeparatorExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+                if (CCExpressionGetType(SeparatorExpr) != CCExpressionValueTypeString)
+                {
+                    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("cat", "strings:list [separator:string]");
+                    CCCollectionDestroy(Strings);
+                    
+                    return Expression;
+                }
+                
+                Separator = CCExpressionGetString(SeparatorExpr);
+            }
+            
+            Expression = CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateByJoiningEntries(Strings, Separator), FALSE);
+            CCCollectionDestroy(Strings);
+            
+            return Expression;
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("cat", "strings:list [separator:string]");
+    
+    return Expression;
+}

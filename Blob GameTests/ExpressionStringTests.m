@@ -174,4 +174,24 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testJoin
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(cat (\"1\" \"2\" \"3\"))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be an string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("123")), @"Should be the correct string");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(cat (\"1\" \"2\" \"3\") \",\")");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be an string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("1,2,3")), @"Should be the correct string");
+    
+    CCExpressionDestroy(Expression);
+}
+
 @end
