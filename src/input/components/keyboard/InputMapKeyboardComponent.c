@@ -27,6 +27,8 @@
 
 const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
 
+const int32_t CCInputMapKeyboardComponentKeycodeAny = -1;
+
 void CCInputMapKeyboardComponentRegister(void)
 {
     CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);

@@ -78,7 +78,7 @@ void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, 
                 CCInputMapKeyboardCallback Callback = CCInputMapComponentGetCallback(*Input);
                 if (Callback)
                 {
-                    if ((CCInputMapKeyboardComponentGetIsKeycode(*Input) && (CCInputMapKeyboardComponentGetKeycode(*Input) == Keycode)) &&
+                    if ((CCInputMapKeyboardComponentGetIsKeycode(*Input) && ((CCInputMapKeyboardComponentGetKeycode(*Input) == Keycode) || (CCInputMapKeyboardComponentGetKeycode(*Input) == CCInputMapKeyboardComponentKeycodeAny))) &&
                         (CCInputMapKeyboardComponentGetIgnoreModifier(*Input) || (CCInputMapKeyboardComponentGetFlags(*Input) == Mods)))
                     {
                         Callback(*Input, TempKey);
@@ -109,7 +109,7 @@ void CCKeyboardCharInput(GLFWwindow *Window, unsigned int Codepoint, int Mods)
             CCInputMapKeyboardCallback Callback = CCInputMapComponentGetCallback(*Input);
             if (Callback)
             {
-                if (((CCInputMapKeyboardComponentGetIsKeycode(*Input) && (CCInputMapKeyboardComponentGetKeycode(*Input) == TempKey.keycode)) ||
+                if (((CCInputMapKeyboardComponentGetIsKeycode(*Input) && ((CCInputMapKeyboardComponentGetKeycode(*Input) == TempKey.keycode) || (CCInputMapKeyboardComponentGetKeycode(*Input) == CCInputMapKeyboardComponentKeycodeAny))) ||
                      (CCInputMapKeyboardComponentGetCharacter(*Input) == Codepoint)) &&
                     (CCInputMapKeyboardComponentGetIgnoreModifier(*Input) || (CCInputMapKeyboardComponentGetFlags(*Input) == Mods)))
                 {
@@ -134,7 +134,7 @@ CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
 {
     CCAssertLog(CCComponentGetID(Component) == CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, "Must be a input map keyboard component");
     
-    if (CCInputMapKeyboardComponentGetKeycode(Component) != GLFW_KEY_UNKNOWN)
+    if (CCInputMapKeyboardComponentGetKeycode(Component) != CCInputMapKeyboardComponentKeycodeAny)
     {
         CCKeyboardMap Key = atomic_load(&KeyList[CCInputMapKeyboardComponentGetKeycode(Component)]);
         if (((CCInputMapKeyboardComponentGetIsKeycode(Component)) ||
