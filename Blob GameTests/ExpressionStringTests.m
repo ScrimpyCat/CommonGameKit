@@ -192,6 +192,15 @@
     XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("1,2,3")), @"Should be the correct string");
     
     CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(cat (\"example!!!!!!\" \"!\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be an string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("example!!!!!!!")), @"Should be the correct string");
+    
+    CCExpressionDestroy(Expression);
 }
 
 @end

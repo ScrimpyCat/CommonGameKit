@@ -126,7 +126,7 @@ CCExpression CCStringExpressionConcatenate(CCExpression Expression)
             {
                 if (CCExpressionGetType(String) == CCExpressionValueTypeString)
                 {
-                    CCOrderedCollectionAppendElement(Strings, &String);
+                    CCOrderedCollectionAppendElement(Strings, &(CCString){ CCExpressionGetString(String) });
                 }
                 
                 else
