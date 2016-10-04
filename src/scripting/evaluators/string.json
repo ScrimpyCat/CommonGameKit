@@ -31,6 +31,13 @@
             "examples": ["(replace \" \" \"-\" \"1 2 3 4 5\") ;\"1-2-3-4-5\""],
             "return": { "type": "string" },
             "args": [[{ "type": "string", "name": "occurrence" }, { "type": "string", "name": "replacement" }, { "type": "string" }]]
+        },
+        {
+            "name": "cat",
+            "description": "Concatenate the list of strings, optionally inserting the separator between each.",
+            "examples": ["(cat (\"hello\" \"world\")) ;\"helloworld\"", "(cat (\"hello\" \"world\") \" \") ;\"hello world\""],
+            "return": { "type": "string" },
+            "args": [[{ "type": "list", "name": "strings" }, { "type": "string", "optional": true, "name": "separator" }]]
         }
     ]
 }
