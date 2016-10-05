@@ -742,7 +742,7 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
          TODO: Workout option arguments
          
          (key: :any) ; matches any key, no false expression
-         (key: :printable) ; matches any printable key, false for any other key.
+         (key: :grapheme) ; matches any printable key, false for any other key.
          (key: :control) ; matches any control combination key, false for any other key.
          (key: "s")  ; matches the "s" character, any other character will be false. caveat is "s" is only exposed on key-down not key-up.
          (key: 70)   ; matches keycode 70, any other keycode will be false.
@@ -759,6 +759,12 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
             {
                 IsEvent = TRUE;
                 *Predicate = TRUE;
+            }
+            
+            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":grapheme")))
+            {
+                IsEvent = TRUE;
+                *Predicate = (Event->key.state.character != 0) && !(Event->key.state.flags & ~(GLFW_MOD_SHIFT | GLFW_MOD_ALT));
             }
         }
         
