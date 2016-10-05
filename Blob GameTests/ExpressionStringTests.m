@@ -203,4 +203,33 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testLength
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(length \"123\")");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 3, @"Should be the correct length");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(length \"1234567890abcdef\")");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 16, @"Should be the correct length");
+    
+    CCExpressionDestroy(Expression);
+
+
+    Expression = CCExpressionCreateFromSource("(length \"\")");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 0, @"Should be the correct length");
+    
+    CCExpressionDestroy(Expression);
+}
+
 @end

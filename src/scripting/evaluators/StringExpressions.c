@@ -164,3 +164,21 @@ CCExpression CCStringExpressionConcatenate(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCStringExpressionLength(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if (ArgCount == 1)
+    {
+        CCExpression String = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(String) == CCExpressionValueTypeString)
+        {
+            return CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)CCStringGetLength(CCExpressionGetString(String)));
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("length", "string:string");
+    
+    return Expression;
+}

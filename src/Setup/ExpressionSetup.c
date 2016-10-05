@@ -72,6 +72,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("filename"), CCStringExpressionFilename);
     CCExpressionEvaluatorRegister(CC_STRING("replace"), CCStringExpressionReplace);
     CCExpressionEvaluatorRegister(CC_STRING("cat"), CCStringExpressionConcatenate);
+    CCExpressionEvaluatorRegister(CC_STRING("length"), CCStringExpressionLength);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
     CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeCastExpressionIntegerToFloat);
     CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeCastExpressionFloatToInteger);
