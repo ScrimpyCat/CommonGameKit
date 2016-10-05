@@ -744,6 +744,9 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
          (key: :any) ; matches any key, no false expression
          (key: :grapheme) ; matches any printable key, false for any other key.
          (key: :control) ; matches any control combination key, false for any other key.
+         (key: :delete) ; matches the delete key, false for any other key.
+         (key: :enter) ; matches the enter key, false for any other key.
+         (key: :tab) ; matches the tab key, false for any other key.
          (key: "s")  ; matches the "s" character, any other character will be false. caveat is "s" is only exposed on key-down not key-up.
          (key: 70)   ; matches keycode 70, any other keycode will be false.
          (key: key, :none) ; matches key with no modifiers, any other key will be false.
@@ -771,6 +774,24 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.flags & (GLFW_MOD_CONTROL | GLFW_MOD_SUPER));
+            }
+            
+            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":delete")))
+            {
+                IsEvent = TRUE;
+                *Predicate = (Event->key.state.keycode == GLFW_KEY_DELETE);
+            }
+            
+            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":enter")))
+            {
+                IsEvent = TRUE;
+                *Predicate = (Event->key.state.keycode == GLFW_KEY_ENTER);
+            }
+            
+            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":tab")))
+            {
+                IsEvent = TRUE;
+                *Predicate = (Event->key.state.keycode == GLFW_KEY_TAB);
             }
         }
         
