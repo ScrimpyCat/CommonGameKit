@@ -49,3 +49,37 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCListExpressionFlatten(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("flatten", "_:expr");
+        
+        return Expression;
+    }
+    
+    CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+    {
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
+        {
+            CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Result))
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(Element) });
+            }
+        }
+        
+        else
+        {
+            CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(Result) });
+        }
+    }
+    
+    return List;
+}
