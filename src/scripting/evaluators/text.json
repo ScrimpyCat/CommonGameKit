@@ -6,6 +6,13 @@
             "examples": ["(text-visible-length .text) ;14"],
             "return": { "type": "integer" },
             "args": [[{ "type": "custom:text" }]]
+        },
+        {
+            "name": "text-cursor-position",
+            "description": "Get the position for the cursor.",
+            "examples": ["text-cursor-position .text 0) ;(15 15)"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "custom:text" }, { "type": "integer", "name": "offset" }]]
         }
     ]
 }
