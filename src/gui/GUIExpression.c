@@ -766,6 +766,12 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.character != 0) && !(Event->key.state.flags & ~(GLFW_MOD_SHIFT | GLFW_MOD_ALT));
             }
+            
+            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":control")))
+            {
+                IsEvent = TRUE;
+                *Predicate = (Event->key.state.flags & (GLFW_MOD_CONTROL | GLFW_MOD_SUPER));
+            }
         }
         
         
