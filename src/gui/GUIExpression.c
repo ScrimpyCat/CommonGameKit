@@ -798,6 +798,12 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
         
         if (IsEvent)
         {
+            CCExpression Flags = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            if (Event->key.state.flags & GLFW_MOD_SHIFT) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":shift"), TRUE) });
+            if (Event->key.state.flags & GLFW_MOD_ALT) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":alt"), TRUE) });
+            if (Event->key.state.flags & GLFW_MOD_CONTROL) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":control"), TRUE) });
+            if (Event->key.state.flags & GLFW_MOD_SUPER) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":cmd"), TRUE) });
+            
             struct {
                 CCString name;
                 CCExpression value;
@@ -805,7 +811,8 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
                 { CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.down) },
                 { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, (char*)(CCChar[2]){ Event->key.state.character, 0 }), FALSE) }, //TODO: Implement CCStringCreateCharacter() to safely handle multi-byte CCChar
                 { CC_STRING("@keycode"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.keycode) },
-                { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) }
+                { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) },
+                { CC_STRING("@flags"), Flags }
             };
             
             for (size_t Loop = 0; Loop < sizeof(Inputs) / sizeof(typeof(*Inputs)); Loop++)
