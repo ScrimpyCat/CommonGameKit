@@ -47,7 +47,7 @@
                         },
                         {
                             "name": "press",
-                            "description": "Holds state of a button press. Button is down (0) or released (1). Created on click events.",
+                            "description": "Holds state of a button press. Button is down (0) or released (1). Created on click and key events.",
                             "return": { "type": "boolean" }
                         },
                         {
@@ -68,6 +68,26 @@
                         {
                             "name": "drop-files",
                             "description": "Holds the list of files being dropped. Created on drop events.",
+                            "return": { "type": "list" }
+                        },
+                        {
+                            "name": "char",
+                            "description": "The character of the key.",
+                            "return": { "type": "string" }
+                        },
+                        {
+                            "name": "keycode",
+                            "description": "The keycode of the key.",
+                            "return": { "type": "integer" }
+                        },
+                        {
+                            "name": "repeat",
+                            "description": "Whether the key event is a repeat or not.",
+                            "return": { "type": "boolean" }
+                        },
+                        {
+                            "name": "flags",
+                            "description": "The flag modifiers used with the current key event.",
                             "return": { "type": "list" }
                         }
                     ],
@@ -107,6 +127,20 @@
                             "description": "Predicate to match when a file drop event occurs inside the given rect. The `@drop-files` variable is set to the list of files being dropped.",
                             "examples": ["(drop: (0 0 10 10)) ;1", "(on (drop: (0 0 10 10)) @drop-files) ;(\"~/blah.txt\")"],
                             "args": [[{ "type": "list", "name": "rect", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }, { "type": "number", "name": "width" }, { "type": "number", "name": "height" }] }]]
+                        },
+                        {
+                            "name": "key",
+                            "description": "Predicate to match when a keyboard event occurs. Keys can be specified using `any` (any key), `grapheme` (printable key), `control` (control combination key), `delete` (delete key), `enter` (enter key), `tab` (tab key). The `@press` variable will be set to indicate whether the key is down (0) or released (1). And `@char`, `@keycode`, `@repeat`, `@flags` will also be set.",
+                            "examples": ["(key: :any) ;1", "(on (key: :any) @flags) ;(:shift :alt)"],
+                            "args": [
+                                [{ "type": "atom", "name": "key" }],
+                                [{ "type": "atom", "value": "any" }],
+                                [{ "type": "atom", "value": "grapheme" }],
+                                [{ "type": "atom", "value": "control" }],
+                                [{ "type": "atom", "value": "delete" }],
+                                [{ "type": "atom", "value": "enter" }],
+                                [{ "type": "atom", "value": "tab" }]
+                            ]
                         }
                     ]
                 }
