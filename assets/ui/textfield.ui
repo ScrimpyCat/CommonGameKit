@@ -1,0 +1,50 @@
+(gui "gui-textfield"
+    (state! ".colour" (110 120 255) (invalidate: (quote (frame-changed?))))
+    (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?))))
+    (state! ".outline" 0 (invalidate: (quote (frame-changed?))))
+    (state! ".outline-colour" (quote (darken .colour 5)) (invalidate: (quote (frame-changed?))))
+
+    (state! ".align" :left)
+    (state! ".wrap" :word)
+    (state! ".lines" :multi)
+    (state! ".cursor" 0)
+    (state! ".length" :max)
+    (state! ".string" "example")
+    (state! ".formatter" (quote (text: .string)))
+
+    (children:
+        (gui-rect
+            (.colour! (quote (super .colour)))
+            (.radius! (quote (super .radius)))
+            (.outline! (quote (super .outline)))
+            (.outline-colour! (quote (super .outline-colour)))
+        )
+        (gui-text
+            (.string! (quote (super .formatter)))
+            (.align! (quote (super .align)))
+            (.wrap! (quote (super .wrap)))
+            (.lines! (quote (super .lines)))
+            (.cursor! (quote (super .cursor)))
+            (.length! (quote (super .length)))
+        )
+    )
+
+    (state! ".active" #f)
+    (state! ".inside" #f)
+    (state! ".dragged" #f)
+
+    (control:
+        (on (click: :left .rect)
+            (if @press
+                ((.active! #f) (.inside! #t) (.dragged! #t))
+                ((if .inside (.active! #t)) (.inside! #f) (.dragged! #f))
+            )
+            ((.active! #f) (.inside! #f) (.dragged! @press))
+        )
+        (if .active
+            (begin
+                (on (key: :grapheme) (.string! (cat (.string @char))))
+            )
+        )
+    )
+)
