@@ -38,7 +38,7 @@
             "args": [[{ "type": "expression" }]]
         },
         {
-            "name": "super-strict",
+            "name": "strict-super",
             "description": "Evaluates the expression in next level up state.",
             "examples": ["(begin\n\t(state! \"x\" 10)\n\t(begin\n\t\t(state! \"x\" 20)\n\t\t(begin\n\t\t\t(strict-super x) ;20\n\t\t\t(strict-super (strict-super x)) ;10\n\t\t)\n\t)\n)"],
             "return": { "type": "expression" },
