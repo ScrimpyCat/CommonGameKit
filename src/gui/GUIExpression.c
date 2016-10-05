@@ -733,6 +733,66 @@ static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args
     return IsEvent;
 }
 
+static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+{
+    _Bool IsEvent = FALSE;
+    if ((Event->type == GUIEventTypeKey) && ((ArgCount == 1) || (ArgCount == 2)))
+    {
+        /*
+         TODO: Workout option arguments
+         
+         (key: :any) ; matches any key, no false expression
+         (key: :printable) ; matches any printable key, false for any other key.
+         (key: :control) ; matches any control combination key, false for any other key.
+         (key: "s")  ; matches the "s" character, any other character will be false. caveat is "s" is only exposed on key-down not key-up.
+         (key: 70)   ; matches keycode 70, any other keycode will be false.
+         (key: key, :none) ; matches key with no modifiers, any other key will be false.
+         (key: key :alt) ; matches key with alt modifier, any other key will be false.
+         (key: key, :cmd-alt) ; matches key with cmd+alt modifier, any other key will be false.
+         
+         Default modifier matching behaviour will match any modifier combination.
+         */
+        CCExpression Mode = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
+        if (CCExpressionGetType(Mode) == CCExpressionValueTypeAtom)
+        {
+            if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":any")))
+            {
+                IsEvent = TRUE;
+                *Predicate = TRUE;
+            }
+        }
+        
+        
+        if (IsEvent)
+        {
+            struct {
+                CCString name;
+                CCExpression value;
+            } Inputs[] = {
+                { CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.down) },
+                { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, (char*)(CCChar[2]){ Event->key.state.character, 0 }), FALSE) }, //TODO: Implement CCStringCreateCharacter() to safely handle multi-byte CCChar
+                { CC_STRING("@keycode"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.keycode) },
+                { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) }
+            };
+            
+            for (size_t Loop = 0; Loop < sizeof(Inputs) / sizeof(typeof(*Inputs)); Loop++)
+            {
+                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), Inputs[Loop].name))
+                {
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), Inputs[Loop].name, Inputs[Loop].value, FALSE);
+                }
+                
+                else
+                {
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), Inputs[Loop].name, Inputs[Loop].value, FALSE, NULL, FALSE);
+                }
+            }
+        }
+    }
+    
+    return IsEvent;
+}
+
 CCExpression GUIExpressionOnEvent(CCExpression Expression)
 {
     CCExpression Expr = Expression;
@@ -763,7 +823,8 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                             { CC_STRING("cursor:"), GUIExpressionOnEventCursorPredicate },
                             { CC_STRING("click:"), GUIExpressionOnEventClickPredicate },
                             { CC_STRING("scroll:"), GUIExpressionOnEventScrollPredicate },
-                            { CC_STRING("drop:"), GUIExpressionOnEventDropPredicate }
+                            { CC_STRING("drop:"), GUIExpressionOnEventDropPredicate },
+                            { CC_STRING("key:"), GUIExpressionOnEventKeyPredicate }
                         };
                         
                         GUIEvent Event = CCExpressionGetData(EventState);
