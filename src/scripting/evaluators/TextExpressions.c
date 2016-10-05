@@ -25,6 +25,7 @@
 
 #include "TextExpressions.h"
 #include "GraphicsExpressions.h"
+#include "ExpressionHelpers.h"
 
 CCExpression CCTextExpressionGetVisibleLength(CCExpression Expression)
 {
@@ -38,6 +39,23 @@ CCExpression CCTextExpressionGetVisibleLength(CCExpression Expression)
     }
     
     CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("text-visible-length", "text:text");
+    
+    return Expression;
+}
+
+CCExpression CCTextExpressionGetCursorPosition(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+    {
+        CCExpression Text = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression Offset = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(Text) == CCGraphicsExpressionValueTypeText) && (CCExpressionGetType(Offset) == CCExpressionValueTypeInteger))
+        {
+            return CCExpressionCreateVector2(CC_STD_ALLOCATOR, CCTextGetCursorPosition(CCExpressionGetData(Text), CCExpressionGetInteger(Offset)));
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("text-cursor-position", "text:text offset:integer");
     
     return Expression;
 }

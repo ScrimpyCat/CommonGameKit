@@ -30,5 +30,6 @@
 
 
 CC_EXPRESSION_EVALUATOR(text-visible-length) CCExpression CCTextExpressionGetVisibleLength(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(text-cursor-position) CCExpression CCTextExpressionGetCursorPosition(CCExpression Expression);
 
 #endif

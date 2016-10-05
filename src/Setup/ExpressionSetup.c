@@ -75,6 +75,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("cat"), CCStringExpressionConcatenate);
     CCExpressionEvaluatorRegister(CC_STRING("length"), CCStringExpressionLength);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
+    CCExpressionEvaluatorRegister(CC_STRING("text-cursor-position"), CCTextExpressionGetCursorPosition);
     CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeCastExpressionIntegerToFloat);
     CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeCastExpressionFloatToInteger);
     CCExpressionEvaluatorRegister(CC_STRING("window-percent-width"), CCWindowExpressionPercentageWidth);
