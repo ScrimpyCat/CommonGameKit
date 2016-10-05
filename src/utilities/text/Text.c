@@ -358,3 +358,67 @@ void CCTextSetOffset(CCText Text, size_t Offset)
         Text->visible.controls.offset = Offset;
     }
 }
+
+CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
+{
+    if (Offset == SIZE_MAX) Offset = CCTextGetLength(Text);
+    
+    size_t Length = Text->visible.controls.offset;
+    
+    if ((Text->strings) && (Length <= Offset))
+    {
+        CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
+        CCOrderedCollection Lines = CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x);
+        CCCollectionDestroy(Selection);
+        
+        float Height = 0.0f;
+        CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
+        {
+            Height += CCTextAttributeGetLineHeight(Line, TRUE);
+            if (Height > Text->frame.size.y) break;
+            
+            size_t PrevLength = Length;
+            Length += CCTextAttributeGetLength(Line);
+            
+            CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height));
+            if (Text->alignment != CCTextAlignmentLeft)
+            {
+                float LeadingWhitespace, TrailingWhitespace;
+                const float Width = CCTextAttributeGetLineWidth(Line, &LeadingWhitespace, &TrailingWhitespace);
+                Cursor.x += (Text->frame.size.x - Width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
+            }
+            
+            if (Length >= Offset)
+            {
+                CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
+                {
+                    const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
+                    CC_STRING_FOREACH(Letter, Attribute->string)
+                    {
+                        if (PrevLength++ == Offset)
+                        {
+                            CCCollectionDestroy(Lines);
+                            
+                            return Cursor;
+                        }
+                        
+                        const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
+                        if (Glyph)
+                        {
+                            CCRect Rect;
+                            Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, &Rect, NULL);
+                        }
+                    }
+                }
+                
+                CCCollectionDestroy(Lines);
+                
+                return Cursor;
+            }
+        }
+        
+        CCCollectionDestroy(Lines);
+    }
+    
+    return CCVector2DMake(NAN, NAN);
+}

@@ -144,4 +144,14 @@ size_t CCTextGetOffset(CCText Text);
  */
 void CCTextSetOffset(CCText Text, size_t Offset);
 
+/*!
+ * @brief Get the cursor position in the text.
+ * @param Text The text.
+ * @param Offset The character offset to get the cursor of. To get the cursor at
+ *        the end of the text for simplicity can pass SIZE_MAX.
+ *
+ * @return The position of the cursor.
+ */
+CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset);
+
 #endif
