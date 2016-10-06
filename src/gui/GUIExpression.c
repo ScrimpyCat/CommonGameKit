@@ -793,6 +793,12 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.keycode == GLFW_KEY_TAB);
             }
+            
+            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":direction")))
+            {
+                IsEvent = TRUE;
+                *Predicate = (Event->key.state.keycode == GLFW_KEY_LEFT) || (Event->key.state.keycode == GLFW_KEY_RIGHT) || (Event->key.state.keycode == GLFW_KEY_UP) || (Event->key.state.keycode == GLFW_KEY_DOWN);
+            }
         }
         
         
