@@ -5,11 +5,12 @@
             "description": "Equality operator, tests if all the inputs are equal to each other.",
             "examples": [
                 "(= 1 2 3) ;0",
-                "(= 1 1 1) ;1"
+                "(= 1 1 1) ;1",
+                "(= \":cool\" :cool) ;1"
             ],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
-                { "repeat": [{ "type": "number" }] }
+                { "repeat": [{ "type": "expression" }] }
             ]
         },
         {
@@ -19,7 +20,7 @@
                 "(!= 1 2 3) ;1",
                 "(!= 1 1 1) ;0"
             ],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
@@ -31,7 +32,7 @@
                 "(<= 1 2 3) ;1",
                 "(<= 1 1 1) ;1"
             ],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
@@ -43,7 +44,7 @@
                 "(>= 1 2 3) ;0",
                 "(>= 1 1 1) ;1"
             ],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
@@ -55,7 +56,7 @@
                 "(< 1 2 3) ;1",
                 "(< 1 1 1) ;0"
             ],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
@@ -67,7 +68,7 @@
                 "(> 1 2 3) ;0",
                 "(> 1 1 1) ;0"
             ],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
@@ -76,7 +77,7 @@
             "name": "not",
             "description": "Performs a logical not on the given value.",
             "examples": ["(not 1) ;0"],
-            "return": { "type": "number" },
+            "return": { "type": "boolean" },
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
