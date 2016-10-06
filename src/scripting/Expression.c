@@ -763,7 +763,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &Item);
                 
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
-                if (Item != *Expr) Expression->list.constant = FALSE;
+                if ((Item != *Expr) || ((CCExpressionGetType(Item) == CCExpressionValueTypeExpression) && (!Item->list.constant))) Expression->list.constant = FALSE;
 #endif
                 
                 while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
@@ -772,7 +772,7 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                     CCOrderedCollectionAppendElement(CCExpressionGetList(Expression->state.result), &Item);
                     
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
-                    if (Item != *Expr) Expression->list.constant = FALSE;
+                    if ((Item != *Expr) || ((CCExpressionGetType(Item) == CCExpressionValueTypeExpression) && (!Item->list.constant))) Expression->list.constant = FALSE;
 #endif
                 }
             }
