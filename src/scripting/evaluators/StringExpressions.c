@@ -167,9 +167,7 @@ CCExpression CCStringExpressionConcatenate(CCExpression Expression)
 
 CCExpression CCStringExpressionLength(CCExpression Expression)
 {
-    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
-    
-    if (ArgCount == 1)
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
     {
         CCExpression String = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         if (CCExpressionGetType(String) == CCExpressionValueTypeString)
@@ -179,6 +177,24 @@ CCExpression CCStringExpressionLength(CCExpression Expression)
     }
     
     CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("length", "string:string");
+    
+    return Expression;
+}
+
+CCExpression CCStringExpressionInsert(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 4)
+    {
+        CCExpression SrcExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression DstExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        CCExpression OffsetExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+        if ((CCExpressionGetType(SrcExpr) == CCExpressionValueTypeString) && (CCExpressionGetType(DstExpr) == CCExpressionValueTypeString) && (CCExpressionGetType(OffsetExpr) == CCExpressionValueTypeInteger))
+        {
+            return CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateByInsertingString(CCExpressionGetString(DstExpr), CCExpressionGetInteger(OffsetExpr), CCExpressionGetString(SrcExpr)), FALSE);
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("insert", "source:string destination:string offset:integer");
     
     return Expression;
 }

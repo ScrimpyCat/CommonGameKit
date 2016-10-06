@@ -74,6 +74,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("replace"), CCStringExpressionReplace);
     CCExpressionEvaluatorRegister(CC_STRING("cat"), CCStringExpressionConcatenate);
     CCExpressionEvaluatorRegister(CC_STRING("length"), CCStringExpressionLength);
+    CCExpressionEvaluatorRegister(CC_STRING("insert"), CCStringExpressionInsert);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
     CCExpressionEvaluatorRegister(CC_STRING("text-cursor-position"), CCTextExpressionGetCursorPosition);
     CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeCastExpressionIntegerToFloat);

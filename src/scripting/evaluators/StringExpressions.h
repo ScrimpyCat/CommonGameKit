@@ -35,5 +35,6 @@ CC_EXPRESSION_EVALUATOR(filename) CCExpression CCStringExpressionFilename(CCExpr
 CC_EXPRESSION_EVALUATOR(replace) CCExpression CCStringExpressionReplace(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(cat) CCExpression CCStringExpressionConcatenate(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(length) CCExpression CCStringExpressionLength(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(insert) CCExpression CCStringExpressionInsert(CCExpression Expression);
 
 #endif
