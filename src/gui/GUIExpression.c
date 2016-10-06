@@ -733,6 +733,130 @@ static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args
     return IsEvent;
 }
 
+static CCString NamedKeys[GLFW_KEY_LAST + 1] = {
+    [32] = CC_STRING(":space"),
+    [39] = CC_STRING(":apostrophe"),           /* ' */
+    [44] = CC_STRING(":comma"),                /* , */
+    [45] = CC_STRING(":minus"),                /* - */
+    [46] = CC_STRING(":period"),               /* . */
+    [47] = CC_STRING(":slash"),                /* / */
+    [48] = CC_STRING(":0"),
+    [49] = CC_STRING(":1"),
+    [50] = CC_STRING(":2"),
+    [51] = CC_STRING(":3"),
+    [52] = CC_STRING(":4"),
+    [53] = CC_STRING(":5"),
+    [54] = CC_STRING(":6"),
+    [55] = CC_STRING(":7"),
+    [56] = CC_STRING(":8"),
+    [57] = CC_STRING(":9"),
+    [59] = CC_STRING(":semicolon"),            /* ; */
+    [61] = CC_STRING(":equal"),                /* = */
+    [65] = CC_STRING(":a"),
+    [66] = CC_STRING(":b"),
+    [67] = CC_STRING(":c"),
+    [68] = CC_STRING(":d"),
+    [69] = CC_STRING(":e"),
+    [70] = CC_STRING(":f"),
+    [71] = CC_STRING(":g"),
+    [72] = CC_STRING(":h"),
+    [73] = CC_STRING(":i"),
+    [74] = CC_STRING(":j"),
+    [75] = CC_STRING(":k"),
+    [76] = CC_STRING(":l"),
+    [77] = CC_STRING(":m"),
+    [78] = CC_STRING(":n"),
+    [79] = CC_STRING(":o"),
+    [80] = CC_STRING(":p"),
+    [81] = CC_STRING(":q"),
+    [82] = CC_STRING(":r"),
+    [83] = CC_STRING(":s"),
+    [84] = CC_STRING(":t"),
+    [85] = CC_STRING(":u"),
+    [86] = CC_STRING(":v"),
+    [87] = CC_STRING(":w"),
+    [88] = CC_STRING(":x"),
+    [89] = CC_STRING(":y"),
+    [90] = CC_STRING(":z"),
+    [91] = CC_STRING(":left-bracket"),         /* [ */
+    [92] = CC_STRING(":backslash"),            /* \ */
+    [93] = CC_STRING(":right-bracket"),        /* ] */
+    [96] = CC_STRING(":grave-accent"),         /* ` */
+    [161] = CC_STRING(":world-1"),             /* non-us #1 */
+    [162] = CC_STRING(":world-2"),             /* non-us #2 */
+    
+    /* function keys */
+    [256] = CC_STRING(":escape"),
+    [257] = CC_STRING(":enter"),
+    [258] = CC_STRING(":tab"),
+    [259] = CC_STRING(":backspace"),
+    [260] = CC_STRING(":insert"),
+    [261] = CC_STRING(":delete"),
+    [262] = CC_STRING(":right"),
+    [263] = CC_STRING(":left"),
+    [264] = CC_STRING(":down"),
+    [265] = CC_STRING(":up"),
+    [266] = CC_STRING(":page-up"),
+    [267] = CC_STRING(":page-down"),
+    [268] = CC_STRING(":home"),
+    [269] = CC_STRING(":end"),
+    [280] = CC_STRING(":caps-lock"),
+    [281] = CC_STRING(":scroll-lock"),
+    [282] = CC_STRING(":num-lock"),
+    [283] = CC_STRING(":print-screen"),
+    [284] = CC_STRING(":pause"),
+    [290] = CC_STRING(":f1"),
+    [291] = CC_STRING(":f2"),
+    [292] = CC_STRING(":f3"),
+    [293] = CC_STRING(":f4"),
+    [294] = CC_STRING(":f5"),
+    [295] = CC_STRING(":f6"),
+    [296] = CC_STRING(":f7"),
+    [297] = CC_STRING(":f8"),
+    [298] = CC_STRING(":f9"),
+    [299] = CC_STRING(":f10"),
+    [300] = CC_STRING(":f11"),
+    [301] = CC_STRING(":f12"),
+    [302] = CC_STRING(":f13"),
+    [303] = CC_STRING(":f14"),
+    [304] = CC_STRING(":f15"),
+    [305] = CC_STRING(":f16"),
+    [306] = CC_STRING(":f17"),
+    [307] = CC_STRING(":f18"),
+    [308] = CC_STRING(":f19"),
+    [309] = CC_STRING(":f20"),
+    [310] = CC_STRING(":f21"),
+    [311] = CC_STRING(":f22"),
+    [312] = CC_STRING(":f23"),
+    [313] = CC_STRING(":f24"),
+    [314] = CC_STRING(":f25"),
+    [320] = CC_STRING(":kp-0"),
+    [321] = CC_STRING(":kp-1"),
+    [322] = CC_STRING(":kp-2"),
+    [323] = CC_STRING(":kp-3"),
+    [324] = CC_STRING(":kp-4"),
+    [325] = CC_STRING(":kp-5"),
+    [326] = CC_STRING(":kp-6"),
+    [327] = CC_STRING(":kp-7"),
+    [328] = CC_STRING(":kp-8"),
+    [329] = CC_STRING(":kp-9"),
+    [330] = CC_STRING(":kp-decimal"),
+    [331] = CC_STRING(":kp-divide"),
+    [332] = CC_STRING(":kp-multiply"),
+    [333] = CC_STRING(":kp-subtract"),
+    [334] = CC_STRING(":kp-add"),
+    [335] = CC_STRING(":kp-enter"),
+    [336] = CC_STRING(":kp-equal"),
+    [340] = CC_STRING(":left-shift"),
+    [341] = CC_STRING(":left-control"),
+    [342] = CC_STRING(":left-alt"),
+    [343] = CC_STRING(":left-super"),
+    [344] = CC_STRING(":right-shift"),
+    [345] = CC_STRING(":right-control"),
+    [346] = CC_STRING(":right-alt"),
+    [347] = CC_STRING(":right-super"),
+    [348] = CC_STRING(":menu")
+};
 static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
 {
     _Bool IsEvent = FALSE;
@@ -804,6 +928,8 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
         
         if (IsEvent)
         {
+            CCString Key = (Event->key.state.keycode != GLFW_KEY_UNKNOWN ? NamedKeys[Event->key.state.keycode] : 0);
+            
             CCExpression Flags = CCExpressionCreateList(CC_STD_ALLOCATOR);
             if (Event->key.state.flags & GLFW_MOD_SHIFT) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":shift"), TRUE) });
             if (Event->key.state.flags & GLFW_MOD_ALT) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":alt"), TRUE) });
@@ -818,7 +944,8 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
                 { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, (char*)(CCChar[2]){ Event->key.state.character, 0 }), FALSE) }, //TODO: Implement CCStringCreateCharacter() to safely handle multi-byte CCChar
                 { CC_STRING("@keycode"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.keycode) },
                 { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) },
-                { CC_STRING("@flags"), Flags }
+                { CC_STRING("@flags"), Flags },
+                { CC_STRING("@key"), CCExpressionCreateString(CC_STD_ALLOCATOR, (Key ? Key : CC_STRING(":unknown")), TRUE) }
             };
             
             for (size_t Loop = 0; Loop < sizeof(Inputs) / sizeof(typeof(*Inputs)); Loop++)
