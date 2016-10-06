@@ -45,6 +45,13 @@
             "examples": ["(length \"123\") ;3", "(length \"1234567890abcdef\") ;16"],
             "return": { "type": "integer" },
             "args": [[{ "type": "string" }]]
+        },
+        {
+            "name": "insert",
+            "description": "Insert a string into a certain location in another string.",
+            "examples": ["(insert \"!\" \"123\" 3) ;\"123!\"", "(insert \":\" \"hello\" 0) ;\":hello\""],
+            "return": { "type": "string" },
+            "args": [[{ "type": "string", "name": "src" }, { "type": "string", "name": "dst" }, { "type": "integer", "name": "offset" }]]
         }
     ]
 }
