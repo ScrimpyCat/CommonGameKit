@@ -30,7 +30,7 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
     {
         CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
-        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number/string/atom");
         
         return Expression;
     }
@@ -65,12 +65,6 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                         Equal = (float)FirstI == CCExpressionGetFloat(Result);
                     }
                     
-                    else
-                    {
-                        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("=", "_:number");
-                        return Expression;
-                    }
-                    
                     if (!Equal) break;
                 }
                 break;
@@ -94,12 +88,6 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                         Equal = FirstF == CCExpressionGetFloat(Result);
                     }
                     
-                    else
-                    {
-                        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("=", "_:number");
-                        return Expression;
-                    }
-                    
                     if (!Equal) break;
                 }
                 break;
@@ -117,12 +105,6 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                     if ((CCExpressionGetType(Result) == CCExpressionValueTypeString) || (CCExpressionGetType(Result) == CCExpressionValueTypeAtom))
                     {
                         Equal = CCStringEqual(FirstS, (Type == CCExpressionValueTypeString ? CCExpressionGetString : CCExpressionGetAtom)(Result));
-                    }
-                    
-                    else
-                    {
-                        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("=", "_:string/atom");
-                        return Expression;
                     }
                     
                     if (!Equal) break;
