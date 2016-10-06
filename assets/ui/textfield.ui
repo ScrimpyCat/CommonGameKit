@@ -7,10 +7,12 @@
     (state! ".align" :left)
     (state! ".wrap" :word)
     (state! ".lines" :multi)
-    (state! ".cursor" 0)
     (state! ".length" :max)
     (state! ".string" "example")
     (state! ".formatter" (quote (text: .string)))
+
+    (state! ".cursor" (length .string))
+    (state! ".cursor-colour" (255 110 120) (invalidate: (quote (frame-changed?))))
 
     (children:
         (gui-rect
@@ -24,8 +26,13 @@
             (.align! (quote (super .align)))
             (.wrap! (quote (super .wrap)))
             (.lines! (quote (super .lines)))
-            (.cursor! (quote (super .cursor)))
             (.length! (quote (super .length)))
+
+            (render:
+                (if .active
+                    (render-rect (strict-super (flatten (text-cursor-position .text (super .cursor)) 2 10)) .cursor-colour) ;todo: Think of nicer approach to the super problem see issue #1 https://github.com/ScrimpyCat/Blob-Game/issues/1
+                )
+            )
         )
     )
 
@@ -43,7 +50,13 @@
         )
         (if .active
             (begin
-                (on (key: :grapheme) (.string! (cat (.string @char))))
+                (on (key: :grapheme) ((.string! (insert @char .string .cursor)) (.cursor! (+ .cursor 1)))
+                (on (key: :direction)
+                    (
+                        (if (= @keycode 263) (.cursor! (max (- .cursor 1) 0)))
+                        (if (= @keycode 262) (.cursor! (min (+ .cursor 1) (length .string))))
+                    )
+                )
             )
         )
     )
