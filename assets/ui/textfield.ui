@@ -49,12 +49,12 @@
             ((.active! #f) (.inside! #f) (.dragged! @press))
         )
         (if .active
-            (begin
+            (
                 (on (key: :grapheme) ((.string! (insert @char .string .cursor)) (.cursor! (+ .cursor 1)))
                 (on (key: :direction)
                     (
-                        (if (= @keycode 263) (.cursor! (max (- .cursor 1) 0)))
-                        (if (= @keycode 262) (.cursor! (min (+ .cursor 1) (length .string))))
+                        (if (= @key :left) (.cursor! (max (- .cursor 1) 0)))
+                        (if (= @key :right) (.cursor! (min (+ .cursor 1) (length .string))))
                     )
                 )
             )
