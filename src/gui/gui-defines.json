@@ -81,6 +81,11 @@
                             "return": { "type": "integer" }
                         },
                         {
+                            "name": "key",
+                            "description": "The symbolic name for the key.",
+                            "return": { "type": "atom" }
+                        },
+                        {
                             "name": "repeat",
                             "description": "Whether the key event is a repeat or not.",
                             "return": { "type": "boolean" }
