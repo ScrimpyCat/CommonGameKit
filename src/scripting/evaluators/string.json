@@ -52,6 +52,13 @@
             "examples": ["(insert \"!\" \"123\" 3) ;\"123!\"", "(insert \":\" \"hello\" 0) ;\":hello\""],
             "return": { "type": "string" },
             "args": [[{ "type": "string", "name": "src" }, { "type": "string", "name": "dst" }, { "type": "integer", "name": "offset" }]]
+        },
+        {
+            "name": "remove",
+            "description": "Remove a portion of the string.",
+            "examples": ["(remove 0 3 \"123\") ;\"\"", "(remove 1 1 \"123\") ;\"13\""],
+            "return": { "type": "string" },
+            "args": [[{ "type": "integer", "name": "offset" }, { "type": "integer", "name": "length" }, { "type": "string" }]]
         }
     ]
 }

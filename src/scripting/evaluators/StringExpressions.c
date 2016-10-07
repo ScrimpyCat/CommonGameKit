@@ -198,3 +198,21 @@ CCExpression CCStringExpressionInsert(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCStringExpressionRemove(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 4)
+    {
+        CCExpression OffsetExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression LengthExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        CCExpression StringExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+        if ((CCExpressionGetType(OffsetExpr) == CCExpressionValueTypeInteger) && (CCExpressionGetType(LengthExpr) == CCExpressionValueTypeInteger) && (CCExpressionGetType(StringExpr) == CCExpressionValueTypeString))
+        {
+            return CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithoutRange(CCExpressionGetString(StringExpr), CCExpressionGetInteger(OffsetExpr), CCExpressionGetInteger(LengthExpr)), FALSE);
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("remove", "offset:integer length:integer offset:integer");
+    
+    return Expression;
+}
