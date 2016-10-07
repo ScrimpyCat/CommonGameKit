@@ -135,13 +135,14 @@
                         },
                         {
                             "name": "key",
-                            "description": "Predicate to match when a keyboard event occurs. Keys can be specified using `any` (any key), `grapheme` (printable key), `control` (control combination key), `delete` (delete key), `enter` (enter key), `tab` (tab key). The `@press` variable will be set to indicate whether the key is down (0) or released (1). And `@char`, `@keycode`, `@repeat`, `@flags` will also be set.",
+                            "description": "Predicate to match when a keyboard event occurs. Keys can be specified using `any` (any key), `grapheme` (printable key), `control` (control combination key), `direction` (directional keys), `delete` (delete key), `enter` (enter key), `tab` (tab key). The `@press` variable will be set to indicate whether the key is down (0) or released (1). And `@char`, `@keycode`, `@repeat`, `@flags` will also be set.",
                             "examples": ["(key: :any) ;1", "(on (key: :any) @flags) ;(:shift :alt)"],
                             "args": [
                                 [{ "type": "atom", "name": "key" }],
                                 [{ "type": "atom", "value": "any" }],
                                 [{ "type": "atom", "value": "grapheme" }],
                                 [{ "type": "atom", "value": "control" }],
+                                [{ "type": "atom", "value": "direction" }],
                                 [{ "type": "atom", "value": "delete" }],
                                 [{ "type": "atom", "value": "enter" }],
                                 [{ "type": "atom", "value": "tab" }]
