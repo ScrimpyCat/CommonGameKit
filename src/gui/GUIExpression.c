@@ -903,7 +903,7 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":delete")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.keycode == GLFW_KEY_DELETE);
+                *Predicate = (Event->key.state.keycode == GLFW_KEY_BACKSPACE);
             }
             
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":enter")))
