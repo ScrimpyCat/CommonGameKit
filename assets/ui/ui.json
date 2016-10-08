@@ -728,6 +728,164 @@
                     "description": "The button's state is pushed."
                 }
             ]
+        },
+        {
+            "name": "gui-textfield",
+            "description": "Create a textfield. Appearance can be changed through setting the different states or completely customized through overriding the render option.",
+            "includes": [
+                "../../src/gui/gui-defines.json"
+            ],
+            "states": [
+                {
+                    "name": "colour",
+                    "description": "The colour to be used for the textfield.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "radius",
+                    "description": "The corner radius of the textfield.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline",
+                    "description": "The width of the outline.",
+                    "return": { "type": "number" },
+                    "args": [[{ "type": "number" }]]
+                },
+                {
+                    "name": "outline-colour",
+                    "description": "The colour to be used for the outline.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "string",
+                    "description": "The current string in the textfield.",
+                    "return": { "type": "string" },
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "formatter",
+                    "description": "The attributed string to be drawn. Follows the same format as the text option passed to render-text.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [{ "type": "list", "value": [{ "type": "option", "name": "text" }, { "type": "string" }] }],
+                        [{ "type": "list" }]
+                    ]
+                },
+                {
+                    "name": "align",
+                    "description": "The alignment of the text.",
+                    "return": { "type": "atom" },
+                    "args": [
+                        [{ "type": "atom", "name": "left" }],
+                        [{ "type": "atom", "name": "right" }],
+                        [{ "type": "atom", "name": "center" }]
+                    ]
+                },
+                {
+                    "name": "wrap",
+                    "description": "The wrapping mode of the text.",
+                    "return": { "type": "atom" },
+                    "args": [
+                        [{ "type": "atom", "name": "char" }],
+                        [{ "type": "atom", "name": "word" }]
+                    ]
+                },
+                {
+                    "name": "lines",
+                    "description": "Whether the text should use multiple lines or a single line.",
+                    "return": { "type": "atom" },
+                    "args": [
+                        [{ "type": "atom", "name": "single" }],
+                        [{ "type": "atom", "name": "multi" }]
+                    ]
+                },
+                {
+                    "name": "cursor",
+                    "description": "The current location of the text cursor.",
+                    "return": { "type": "integer" },
+                    "args": [[{ "type": "integer" }]]
+                },
+                {
+                    "name": "cursor-colour",
+                    "description": "The colour of the text cursor.",
+                    "return": { "type": "list" },
+                    "args": [
+                        [
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number" },
+                            { "type": "number", "optional": true }
+                        ],
+                        [
+                            {
+                                "type": "list",
+                                "value": [
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number" },
+                                    { "type": "number", "optional": true }
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                {
+                    "name": "active",
+                    "description": "Whether the text cursor is currently active.",
+                    "return": { "type": "boolean" },
+                    "args": [[{ "type": "boolean" }]]
+                },
+                {
+                    "name": "inside",
+                    "description": "Whether the cursor is currently inside the textfield. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                },
+                {
+                    "name": "dragged",
+                    "description": "Whether the cursor is currently dragging the textfield. Typically do no set this.",
+                    "return": { "type": "boolean" }
+                }
+            ]
         }
     ]
 }
