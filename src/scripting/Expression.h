@@ -144,6 +144,7 @@ typedef struct CCExpressionState {
     CCExpression super;
     CCExpression result;
     CCCollection remove;
+    CCExpression private;
 } CCExpressionState;
 
 typedef struct CCExpressionValue {
@@ -340,6 +341,8 @@ static inline CCExpression CCExpressionStateGetSuper(CCExpression Expression);
 static inline void CCExpressionStateSetSuper(CCExpression Expression, CCExpression Super);
 static inline CCExpression CCExpressionStateGetResult(CCExpression Expression);
 static inline void CCExpressionStateSetResult(CCExpression Expression, CCExpression Result);
+static inline CCExpression CCExpressionStateGetPrivate(CCExpression Expression);
+static inline void CCExpressionStateSetPrivate(CCExpression Expression, CCExpression Private);
 
 
 
@@ -437,10 +440,24 @@ static inline CCExpression CCExpressionStateGetResult(CCExpression Expression)
 
 static inline void CCExpressionStateSetResult(CCExpression Expression, CCExpression Result)
 {
-    if (CCExpressionIsTagged(Expression))
+    if (!CCExpressionIsTagged(Expression))
     {
         if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
         Expression->state.result = Result;
+    }
+}
+
+static inline CCExpression CCExpressionStateGetPrivate(CCExpression Expression)
+{
+    return CCExpressionIsTagged(Expression) ? NULL : Expression->state.private;
+}
+
+static inline void CCExpressionStateSetPrivate(CCExpression Expression, CCExpression Private)
+{
+    if (!CCExpressionIsTagged(Expression))
+    {
+        if (Expression->state.private) CCExpressionDestroy(Expression->state.private);
+        Expression->state.private = Private;
     }
 }
 

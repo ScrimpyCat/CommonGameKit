@@ -67,6 +67,7 @@ static void CCExpressionDestructor(CCExpression Expression)
     if (Expression->destructor) Expression->destructor(CCExpressionGetData(Expression));
     if (Expression->state.values) CCDictionaryDestroy(Expression->state.values);
     if ((Expression->state.result) && (Expression->state.result != Expression)) CCExpressionDestroy(Expression->state.result);
+    if (Expression->state.private) CCExpressionDestroy(Expression->state.private);
 }
 
 CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType Type)
