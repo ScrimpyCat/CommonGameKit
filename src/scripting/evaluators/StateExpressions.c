@@ -66,6 +66,24 @@ CCExpression CCStateExpressionCreateState(CCExpression Expression)
     return NULL;
 }
 
+CCExpression CCStateExpressionCreateNamespace(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeAtom)
+        {
+            CCExpressionCreateState(Expression->state.super, CC_STRING("@namespace"), Name, TRUE, NULL, FALSE);
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("namespace!", "name:atom");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("namespace!", "name:atom");
+    
+    return NULL;
+}
+
 CCExpression CCStateExpressionCreateEnum(CCExpression Expression)
 {
     CCEnumerator Enumerator;
@@ -129,7 +147,35 @@ CCExpression CCStateExpressionSuper(CCExpression Expression)
         }
     }
     
-    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("super", "expression:expr");
+    else if (ArgCount == 2)
+    {
+        CCExpression Namespace = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2);
+        
+        if (CCExpressionGetType(Namespace) == CCExpressionValueTypeAtom)
+        {
+            CCExpression Super = Expression->state.super;
+            if (Super)
+            {
+                for ( ; Super; Super = Super->state.super)
+                {
+                    CCExpression Name = CCExpressionGetStateStrict(Super, CC_STRING("@namespace"));
+                    if ((Name) && (CCExpressionGetType(Name) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CCExpressionGetAtom(Namespace))))
+                    {
+                        CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+                        Expr->state.super = Super;
+                        
+                        return CCExpressionRetain(CCExpressionEvaluate(Expr));
+                    }
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find namespace (%S)", CCExpressionGetAtom(Namespace));
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("super", "expression:expr [namespace:atom]");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("super", "expression:expr [namespace:atom]");
     
     return Expression;
 }

@@ -22,6 +22,13 @@
             ]
         },
         {
+            "name": "namespace!",
+            "description": "Sets the namespace to identify the given scope.",
+            "examples": ["(namespace! :example)"],
+            "return": { "type": "expression" },
+            "args": [[{ "type": "atom", "name": "identifier" }]]
+        },
+        {
             "name": "enum!",
             "description": "Much the same as state except it makes it more convenient have enum like behaviour when declaring the states. Follows the same behaviour as C enums (with the exception that they may be set) where uninitialized enums count up in increments from previous (or 0), or are initialized with a specific integer.",
             "examples": ["(enum!\n\t\"x\" ;0\n\t\"y\" ;1\n\t\"z\" ;2\n\t(\"a\" 20) ;20\n\t\"b\" ;21\n)\n\ny ;1\nb ;21"],
@@ -32,10 +39,13 @@
         },
         {
             "name": "super",
-            "description": "Evaluates the expression in the former in-use state.",
+            "description": "Evaluates the expression in the former in-use state. Or evaluates the expressing in the given namespace.",
             "examples": ["(begin\n\t(state! \"x\" 10)\n\t(begin\n\t\t(state! \"x\" 20)\n\t\t(begin\n\t\t\t(super x) ;10\n\t\t\t(super (super x)) ;x\n\t\t)\n\t)\n)"],
             "return": { "type": "expression" },
-            "args": [[{ "type": "expression" }]]
+            "args": [
+                [{ "type": "expression" }],
+                [{ "type": "expression" }, { "type": "atom", "name": "namespace" }]
+            ]
         },
         {
             "name": "strict-super",

@@ -9,6 +9,11 @@
             "name": "file",
             "return": { "type": "string" },
             "description": "Holds the filename of the script."
+        },
+        {
+            "name": "namespace",
+            "return": { "type": "atom" },
+            "description": "The current namespace identifier."
         }
     ],
     "includes": [
