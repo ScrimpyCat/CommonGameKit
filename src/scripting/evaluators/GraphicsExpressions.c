@@ -29,6 +29,49 @@
 #include "AssetExpressions.h"
 
 typedef struct {
+    CCExpression drawer;
+    CCExpression args;
+} CCGraphicsExpressionCache;
+
+static void CCGraphicsExpressionCacheValueDestructor(CCGraphicsExpressionCache *Ptr)
+{
+    if (Ptr->drawer) CCExpressionDestroy(Ptr->drawer);
+    if (Ptr->args) CCExpressionDestroy(Ptr->args);
+}
+
+static CCExpression CCGraphicsExpressionCacheCreate(CCAllocatorType Allocator, CCExpression Drawer, CCExpression Args)
+{
+    CCGraphicsExpressionCache *Cache;
+    CC_SAFE_Malloc(Cache, sizeof(CCGraphicsExpressionCache),
+                   CC_LOG_ERROR("Failed to create CCGraphicsExpressionCache due to allocation failure. Allocation size (%zu)", sizeof(CCGraphicsExpressionCache));
+                   return NULL;
+                   );
+    
+    CCExpression Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Cache, CCExpressionRetainedValueCopy, CCFree);
+    if (Result)
+    {
+        CCMemorySetDestructor(Cache, (CCMemoryDestructorCallback)CCGraphicsExpressionCacheValueDestructor);
+        
+        if (Drawer) Cache->drawer = Drawer;
+        if (Args) Cache->args = Args;
+    }
+    
+    else CCFree(Cache);
+    
+    return Result;
+}
+
+static inline CCExpression CCGraphicsExpressionCacheGetDrawer(CCExpression Cache)
+{
+    return ((CCGraphicsExpressionCache*)CCExpressionGetData(Cache))->drawer;
+}
+
+static inline CCExpression CCGraphicsExpressionCacheGetArgs(CCExpression Cache)
+{
+    return ((CCGraphicsExpressionCache*)CCExpressionGetData(Cache))->args;
+}
+
+typedef struct {
     CCVector2D position;
     CCColourRGBA colour;
     CCColourRGBA outlineColour;
@@ -81,8 +124,6 @@ static void CCGraphicsExpressionRenderRectArgumentStateValueDestructor(CCGraphic
     GFXBufferDestroy(Ptr->radiusBuffer);
     GFXBufferDestroy(Ptr->scaleBuffer);
 }
-
-static CCString StrDrawer = CC_STRING(".drawer"), StrArgs = CC_STRING(".args");
 
 static CCGraphicsExpressionRenderRectEdge CCGraphicsExpressionRenderRectGetEdge(CCExpression Edge)
 {
@@ -152,13 +193,13 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
         }
         
         
-        CCExpression PreservedDraw = CCExpressionGetStateStrict(Expression, StrDrawer);
-        if (PreservedDraw)
+        CCExpression Cache = CCExpressionStateGetPrivate(Expression);
+        if (Cache)
         {
-            Result = CCExpressionRetain(PreservedDraw);
+            Result = CCExpressionRetain(CCGraphicsExpressionCacheGetDrawer(Cache));
             
             _Bool UpdateScale = TRUE;
-            CCGraphicsExpressionRenderRectArgumentState *Args = CCExpressionGetData(CCExpressionGetStateStrict(Expression, StrArgs));
+            CCGraphicsExpressionRenderRectArgumentState *Args = CCExpressionGetData(CCGraphicsExpressionCacheGetArgs(Cache));
             if ((Args->rect.position.x != Rect.position.x) ||
                 (Args->rect.position.y != Rect.position.y) ||
                 (Args->rect.size.x != Rect.size.x) ||
@@ -200,7 +241,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
                 
                 GFXBufferWriteBuffer(Args->radiusBuffer, 0, sizeof(float), &Radius);
                 
-                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(PreservedDraw))->drawer, (Radius != 0.0f) || (Args->colour.a < 1.0f) | (Args->outlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
+                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(Result))->drawer, (Radius != 0.0f) || (Args->colour.a < 1.0f) | (Args->outlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
             }
             
             if ((Args->outline.x != Outline.x) || (Args->outline.y != Outline.y))
@@ -290,8 +331,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
             };
             
             
-            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE, NULL, FALSE);
-            CCExpressionCreateState(Expression, StrArgs, CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Args, CCExpressionRetainedValueCopy, CCFree), TRUE, NULL, FALSE);
+            CCExpressionStateSetPrivate(Expression, CCGraphicsExpressionCacheCreate(CC_STD_ALLOCATOR, CCExpressionRetain(Result), CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Args, CCExpressionRetainedValueCopy, CCFree)));
         }
     }
     
@@ -465,11 +505,11 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
         }
         
         CCText Text;
-        CCExpression PreservedDraw = CCExpressionGetStateStrict(Expression, StrDrawer);
-        if (PreservedDraw)
+        CCExpression Cache = CCExpressionStateGetPrivate(Expression);
+        if (Cache)
         {
-            Text = CCExpressionGetData(PreservedDraw);
-            Result = CCExpressionRetain(PreservedDraw);
+            Result = CCExpressionRetain(CCGraphicsExpressionCacheGetDrawer(Cache));
+            Text = CCExpressionGetData(Result);
         }
         
         else
@@ -477,7 +517,7 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
             Text = CCTextCreate(CC_STD_ALLOCATOR);
             Result = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCGraphicsExpressionValueTypeText, Text, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCTextDestroy);
             
-            CCExpressionCreateState(Expression, StrDrawer, Result, TRUE, NULL, FALSE);
+            CCExpressionStateSetPrivate(Expression, CCGraphicsExpressionCacheCreate(CC_STD_ALLOCATOR, CCExpressionRetain(Result), NULL));
         }
         
         CCTextSetOffset(Text, Offset);
