@@ -75,6 +75,7 @@ const GUIObjectInterface * const GUIExpression = &GUIExpressionInterface;
 
 static void GUIExpressionChildrenElementDestructor(CCCollection Collection, GUIObject *Element)
 {
+    (*Element)->parent = NULL;
     GUIObjectDestroy(*Element);
 }
 
@@ -110,8 +111,9 @@ static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 
 static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
 {
-    CCExpressionDestroy(Internal->data);
+    if (Internal->data) CCExpressionDestroy(Internal->data);
     CCCollectionDestroy(Internal->children);
+    
     CC_SAFE_Free(Internal);
 }
 
