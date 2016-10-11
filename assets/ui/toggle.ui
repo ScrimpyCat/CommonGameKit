@@ -1,4 +1,5 @@
 (gui "gui-toggle"
+    (namespace! :toggle)
     (enum!
         "&off"
         "&on"

@@ -1,4 +1,5 @@
 (gui "gui-slider"
+    (namespace! :slider)
     (enum!
         "&normal"
         "&highlighted"

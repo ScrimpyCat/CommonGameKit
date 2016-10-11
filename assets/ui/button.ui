@@ -1,4 +1,5 @@
 (gui "gui-button"
+    (namespace! :button)
     (enum!
         "&normal"
         "&highlighted"

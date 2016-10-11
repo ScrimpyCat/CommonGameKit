@@ -1,4 +1,5 @@
 (gui "gui-text"
+    (namespace! :text)
     (state! ".string" (text: "text"))
     (state! ".align" :center)
     (state! ".wrap" :word)

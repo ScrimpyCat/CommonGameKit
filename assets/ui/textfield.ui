@@ -1,4 +1,5 @@
 (gui "gui-textfield"
+    (namespace! :textfield)
     (state! ".colour" (110 120 255) (invalidate: (quote (frame-changed?))))
     (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?))))
     (state! ".outline" 0 (invalidate: (quote (frame-changed?))))
@@ -30,7 +31,7 @@
 
             (render:
                 (if .active
-                    (render-rect (strict-super (flatten (text-cursor-position .text (super .cursor)) 2 10)) .cursor-colour) ;todo: Think of nicer approach to the super problem see issue #1 https://github.com/ScrimpyCat/Blob-Game/issues/1
+                    (render-rect (flatten (text-cursor-position .text (super .cursor)) 2 10) .cursor-colour)
                 )
             )
         )

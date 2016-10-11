@@ -1,4 +1,5 @@
 (gui "gui-rect"
+    (namespace! :rect)
     (state! ".colour" (239 239 239) (invalidate: (quote (frame-changed?))))
     (state! ".radius" (quote (/ 8.0 (max .width .height))) (invalidate: (quote (frame-changed?)))) ;(quote (/ 18.0 (+ .width .height))))
     (state! ".outline" 0 (invalidate: (quote (frame-changed?))))
