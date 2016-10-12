@@ -133,6 +133,8 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
                     Data = CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintRead, BufferSize, Buffer, NULL, NULL), CCColourFormatRGBA8Unorm_sRGB, Image.width, Image.height, 1);
                 }
                 
+                else CC_SAFE_Free(Buffer);
+                
                 png_image_free(&Image);
             }
             
