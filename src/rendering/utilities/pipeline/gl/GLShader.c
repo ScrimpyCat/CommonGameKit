@@ -297,9 +297,7 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
             CurrentAttribute.type = GLShaderBufferFormatFromType(Type);
             CurrentAttribute.location = glGetAttribLocation(Program, CurrentAttributeName); CC_GL_CHECK();
             
-            CCDictionarySetValue(Attributes, &(CCString){ CCStringCreate(Allocator, CCStringHintCopy, CurrentAttributeName) }, &CurrentAttribute);
-            
-            CC_SAFE_Free(CurrentAttributeName);
+            CCDictionarySetValue(Attributes, &(CCString){ CCStringCreate(Allocator, CCStringHintFree, CurrentAttributeName) }, &CurrentAttribute);
         }
     }
     
@@ -354,7 +352,7 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
             const size_t BufferSize = GFXBufferFormatGetSize(CurrentUniform.type) * CurrentUniform.count;
             if ((CurrentUniform.value = CCMalloc(Allocator, BufferSize, NULL, CC_DEFAULT_ERROR_CALLBACK))) memset(CurrentUniform.value, 0, BufferSize);
             
-            CCDictionarySetValue(Uniforms, &(CCString){ CCStringCreate(Allocator, CCStringHintCopy, CurrentUniformName) }, &CurrentUniform);
+            CCDictionarySetValue(Uniforms, &(CCString){ CCStringCreate(Allocator, CCStringHintFree, CurrentUniformName) }, &CurrentUniform);
         }
     }
     
