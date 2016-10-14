@@ -55,7 +55,7 @@ typedef CCExpression (*CCExpressionEvaluator)(CCExpression Expression);
  * @param Name The atom name of the expression function.
  * @param Evaluator The evaluator function.
  */
-void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluator);
+void CCExpressionEvaluatorRegister(CCString CC_COPY(Name), CCExpressionEvaluator Evaluator);
 
 /*!
  * @brief Get the expression evaluator for an atom.

@@ -60,7 +60,6 @@ CCExpressionEvaluator CCExpressionEvaluatorForName(CCString Name)
 CCExpressionEvaluator CCExpressionEvaluatorForIndex(size_t Index)
 {
     return Evaluators ? *(CCExpressionEvaluator*)CCArrayGetElementAtIndex(Evaluators, Index) : NULL;
-    
 }
 
 size_t CCExpressionEvaluatorIndexForName(CCString Name)
