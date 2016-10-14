@@ -132,6 +132,8 @@ CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _B
         uintptr_t EvalIndex = CCExpressionEvaluatorIndexForName(Atom);
         if ((EvalIndex != SIZE_MAX) && ((EvalIndex & CCExpressionTaggedFunctionIndexMask) == EvalIndex))
         {
+            if (!Copy) CCStringDestroy(Atom);
+            
             return (CCExpression)((EvalIndex << CCExpressionTaggedFunctionIndexBits) | (CCExpressionAtomTypeFunction << CCExpressionTaggedAtomTaggedBits) | CCExpressionTaggedExtendedAtom);
         }
     }
