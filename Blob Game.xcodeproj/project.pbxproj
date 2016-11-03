@@ -336,26 +336,40 @@
 			remoteGlobalIDString = A8715DFE24F44D049FBE0525;
 			remoteInfo = msaa;
 		};
+		F3AF32621DCBFE7300CAD472 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F362026717AC3FFD00153E85;
+			remoteInfo = CommonC;
+		};
+		F3AF32641DCBFE7300CAD472 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F362027F17AC3FFD00153E85;
+			remoteInfo = CommonCTests;
+		};
+		F3AF32661DCBFE7300CAD472 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F304379B1C62DFA200388C74;
+			remoteInfo = "CommonC-iOS";
+		};
+		F3AF32681DCBFE7300CAD472 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F30437A41C62DFA200388C74;
+			remoteInfo = "CommonC-iOSTests";
+		};
 		F3C401EA1A56E52800095ECD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3C401CE1A56E52800095ECD /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F3C401D51A56E52800095ECD;
 			remoteInfo = "Blob Game";
-		};
-		F3F5D68A1A56F562006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F362022D17AC3FD900153E85;
-			remoteInfo = Common;
-		};
-		F3F5D68C1A56F562006D7F16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F362024517AC3FDD00153E85;
-			remoteInfo = CommonTests;
 		};
 		F3F5D6BB1A56FBDC006D7F16 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -632,6 +646,7 @@
 		F3AE99701A73E2F000212838 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		F3AE99721A7402BB00212838 /* ComponentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentBase.h; sourceTree = "<group>"; };
 		F3AE99B51A750D6500212838 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
+		F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CommonC.xcodeproj; path = deps/CommonC/CommonC.xcodeproj; sourceTree = "<group>"; };
 		F3B147CE1C3FFED300ADC294 /* ListExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ListExpressions.c; sourceTree = "<group>"; };
 		F3B147CF1C3FFED300ADC294 /* ListExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListExpressions.h; sourceTree = "<group>"; };
 		F3B54B041C7D707A00523E20 /* ExpressionStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionStringTests.m; sourceTree = "<group>"; };
@@ -691,7 +706,6 @@
 		F3F5D6341A56E8B4006D7F16 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = src/mac/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		F3F5D6351A56E8B4006D7F16 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
 		F3F5D6801A56F4A9006D7F16 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = src/main.c; sourceTree = SOURCE_ROOT; };
-		F3F5D6821A56F562006D7F16 /* Common.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Common.xcodeproj; path = deps/Common/Common.xcodeproj; sourceTree = "<group>"; };
 		F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CommonC.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/Blob_Game-ftdhpyeuunmhwldillzwkfrvitku/Build/Products/Debug/CommonC.framework"; sourceTree = "<group>"; };
 		F3F5D6951A56F73E006D7F16 /* tinycthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tinycthread.c; path = deps/tinycthread/source/tinycthread.c; sourceTree = SOURCE_ROOT; };
 		F3F5D6961A56F73E006D7F16 /* tinycthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinycthread.h; path = deps/tinycthread/source/tinycthread.h; sourceTree = SOURCE_ROOT; };
@@ -1025,6 +1039,17 @@
 			path = gui;
 			sourceTree = "<group>";
 		};
+		F3AF325C1DCBFE7300CAD472 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3AF32631DCBFE7300CAD472 /* CommonC.framework */,
+				F3AF32651DCBFE7300CAD472 /* CommonCTests.xctest */,
+				F3AF32671DCBFE7300CAD472 /* CommonC.framework */,
+				F3AF32691DCBFE7300CAD472 /* CommonC-iOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3B657511CDD59B300B3C2FC /* Text */ = {
 			isa = PBXGroup;
 			children = (
@@ -1274,15 +1299,6 @@
 			path = systems;
 			sourceTree = "<group>";
 		};
-		F3F5D6831A56F562006D7F16 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3F5D68B1A56F562006D7F16 /* Common.framework */,
-				F3F5D68D1A56F562006D7F16 /* CommonTests.octest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F3F5D6901A56F714006D7F16 /* tinycthread */ = {
 			isa = PBXGroup;
 			children = (
@@ -1309,7 +1325,7 @@
 				F3F5D6981A56FA05006D7F16 /* stdatomic */,
 				F3F5D6901A56F714006D7F16 /* tinycthread */,
 				F3F5D68E1A56F5DA006D7F16 /* CommonC.framework */,
-				F3F5D6821A56F562006D7F16 /* Common.xcodeproj */,
+				F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */,
 			);
 			name = dependencies;
 			sourceTree = "<group>";
@@ -1495,8 +1511,8 @@
 					ProjectRef = F32393BE1A572148007BD168 /* Chipmunk7.xcodeproj */;
 				},
 				{
-					ProductGroup = F3F5D6831A56F562006D7F16 /* Products */;
-					ProjectRef = F3F5D6821A56F562006D7F16 /* Common.xcodeproj */;
+					ProductGroup = F3AF325C1DCBFE7300CAD472 /* Products */;
+					ProjectRef = F3AF325B1DCBFE7300CAD472 /* CommonC.xcodeproj */;
 				},
 				{
 					ProductGroup = F3F5D69A1A56FBDB006D7F16 /* Products */;
@@ -1723,18 +1739,32 @@
 			remoteRef = F35FBE6A1C75147100833474 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D68B1A56F562006D7F16 /* Common.framework */ = {
+		F3AF32631DCBFE7300CAD472 /* CommonC.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Common.framework;
-			remoteRef = F3F5D68A1A56F562006D7F16 /* PBXContainerItemProxy */;
+			path = CommonC.framework;
+			remoteRef = F3AF32621DCBFE7300CAD472 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3F5D68D1A56F562006D7F16 /* CommonTests.octest */ = {
+		F3AF32651DCBFE7300CAD472 /* CommonCTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = CommonTests.octest;
-			remoteRef = F3F5D68C1A56F562006D7F16 /* PBXContainerItemProxy */;
+			path = CommonCTests.xctest;
+			remoteRef = F3AF32641DCBFE7300CAD472 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3AF32671DCBFE7300CAD472 /* CommonC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CommonC.framework;
+			remoteRef = F3AF32661DCBFE7300CAD472 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3AF32691DCBFE7300CAD472 /* CommonC-iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "CommonC-iOSTests.xctest";
+			remoteRef = F3AF32681DCBFE7300CAD472 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3F5D6BC1A56FBDC006D7F16 /* libglfw3.a */ = {

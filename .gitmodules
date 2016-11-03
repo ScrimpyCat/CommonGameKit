@@ -19,3 +19,6 @@
 [submodule "deps/zlib"]
 	path = deps/zlib
 	url = https://github.com/madler/zlib
+[submodule "deps/CommonC"]
+	path = deps/CommonC
+	url = https://github.com/ScrimpyCat/CommonC.git
