@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "CCTestCase.h"
 #import "Font.h"
 
-@interface FontTests : XCTestCase
+@interface FontTests : CCTestCase
 
 @end
 

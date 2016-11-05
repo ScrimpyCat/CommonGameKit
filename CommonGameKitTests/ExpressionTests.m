@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "CCTestCase.h"
 #import "Expression.h"
 #import "ExpressionEvaluator.h"
 
-@interface ExpressionTests : XCTestCase
+@interface ExpressionTests : CCTestCase
 
 @end
 

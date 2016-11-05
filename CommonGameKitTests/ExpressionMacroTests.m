@@ -23,10 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "CCTestCase.h"
 #import "Expression.h"
 
-@interface ExpressionMacroTests : XCTestCase
+@interface ExpressionMacroTests : CCTestCase
 
 @end
 

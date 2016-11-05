@@ -29,6 +29,7 @@
 #else
 
 @import Cocoa;
+@import OpenGL.GL3;
 @import XCTest;
 
 @interface StateModernTests : XCTestCase
@@ -37,43 +38,36 @@
 
 @implementation StateModernTests
 {
-    GLFWwindow *window;
+    CGLContextObj ctx;
 }
 
 -(void) setUp
 {
     [super setUp];
     
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    CGLPixelFormatObj PixelFormat;
+    CGLChoosePixelFormat((CGLPixelFormatAttribute[]){
+        kCGLPFAAllRenderers,
+        kCGLPFAStencilSize, 1,
+        kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_GL4_Core,
+        0
+    }, &PixelFormat, &(GLint){0});
     
-    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    CGLCreateContext(PixelFormat, NULL, &ctx);
+    CGLDestroyPixelFormat(PixelFormat);
     
-    glfwWindowHint(GLFW_RED_BITS, 32);
-    glfwWindowHint(GLFW_GREEN_BITS, 32);
-    glfwWindowHint(GLFW_BLUE_BITS, 32);
-    glfwWindowHint(GLFW_ALPHA_BITS, 0);
-    glfwWindowHint(GLFW_DEPTH_BITS, 1);
-    glfwWindowHint(GLFW_STENCIL_BITS, 1);
-    
-    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-    
-    window = glfwCreateWindow(60, 60, "", NULL, NULL);
-    
-    glfwMakeContextCurrent(window);
+    CGLSetCurrentContext(ctx);
     
     CCGLCurrentState = CCGLStateCreate();
 }
 
 -(void) tearDown
 {
-    glfwMakeContextCurrent(NULL);
+    CGLSetCurrentContext(NULL);
+    
+    CGLReleaseContext(ctx);
     CCGLStateDestroy(CCGLCurrentState);
     CCGLCurrentState = NULL;
-    
-    glfwDestroyWindow(window);
     
     [super tearDown];
 }

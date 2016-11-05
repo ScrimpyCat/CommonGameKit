@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <XCTest/XCTest.h>
+#import "CCTestCase.h"
 #import "Expression.h"
 
 typedef struct {
@@ -38,7 +38,7 @@ typedef struct {
 extern const int32_t i;
 extern const float f;
 
-@interface ExpressionEvaluatorTests : XCTestCase
+@interface ExpressionEvaluatorTests : CCTestCase
 
 -(void) assert: (ExpressionResult*)test count: (size_t)count;
 
