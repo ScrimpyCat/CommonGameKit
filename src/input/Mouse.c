@@ -25,7 +25,8 @@
 
 #include "Mouse.h"
 #include "Window.h"
-#include "stdatomic.h"
+#include "Callbacks.h"
+#include <stdatomic.h>
 #include "InputSystem.h"
 #include "InputMapMousePositionComponent.h"
 #include "InputMapMouseButtonComponent.h"
@@ -34,17 +35,14 @@
 
 static struct {
     _Atomic(CCVector2D) position;
-    _Atomic(CCMouseButtonMap) buttons[GLFW_MOUSE_BUTTON_LAST + 1];
+    _Atomic(CCMouseButtonMap) buttons[CCMouseButtonCount];
 } Mouse;
 
-void CCMouseDropInput(GLFWwindow *Window, int Count, const char **Files)
+void CCMouseDropInput(CCCollection Files)
 {
-    CCOrderedCollection FileList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating | CCCollectionHintConstantLength | CCCollectionHintConstantElements | CCCollectionHintSizeSmall, sizeof(CCString), CCStringDestructorForCollection);
+    CCAssertLog(Files, "Files must not be null");
     
-    for (int Loop = 0; Loop < Count; Loop++) CCOrderedCollectionAppendElement(FileList, &(CCString){ CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, Files[Loop]) });
-    
-    
-    CCMouseMap State = { .position = atomic_load(&Mouse.position), .drop = { .files = FileList } };
+    CCMouseMap State = { .position = atomic_load(&Mouse.position), .drop = { .files = Files } };
     
     CCCollection InputFileDrops = CCInputSystemGetComponents(CCInputMapTypeMouseDrop);
     
@@ -58,15 +56,10 @@ void CCMouseDropInput(GLFWwindow *Window, int Count, const char **Files)
     }
     
     CCCollectionDestroy(InputFileDrops);
-    
-    
-    CCCollectionDestroy(FileList);
 }
 
-void CCMouseScrollInput(GLFWwindow *Window, double x, double y)
+void CCMouseScrollInput(CCVector2D ScrollDelta)
 {
-    CCVector2D ScrollDelta = CCVector2DMake(x, y);
-    
     CCMouseMap State = { .position = atomic_load(&Mouse.position), .scroll = { .delta = ScrollDelta } };
     
     CCCollection InputScrolls = CCInputSystemGetComponents(CCInputMapTypeMouseScroll);
@@ -83,42 +76,42 @@ void CCMouseScrollInput(GLFWwindow *Window, double x, double y)
     CCCollectionDestroy(InputScrolls);
 }
 
-void CCMouseButtonInput(GLFWwindow *Window, int Button, int Action, int Mods)
+void CCMouseButtonInput(CCMouseButton Button, CCKeyboardAction Action, CCKeyboardModifier Mods)
 {
-    CCMouseButtonMap ButtonMap = { .button = Button, .flags = Mods, .state = { .timestamp = glfwGetTime(), .down = Action == GLFW_PRESS } };
-    
-    atomic_store(&Mouse.buttons[Button], ButtonMap);
-    
-    
-    CCMouseMap State = { .position = atomic_load(&Mouse.position), .button = ButtonMap };
-    
-    CCCollection InputButtons = CCInputSystemGetComponents(CCInputMapTypeMouseButton);
-    
-    CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(InputButtons, &Enumerator);
-    
-    for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
+    if (Button != CCMouseButtonUnknown)
     {
-        CCInputMapMouseCallback Callback = CCInputMapComponentGetCallback(*Input);
-        if ((CCInputMapMouseButtonComponentGetButton(*Input) == Button) &&
-            (CCInputMapMouseButtonComponentGetIgnoreModifier(*Input) || (CCInputMapMouseButtonComponentGetFlags(*Input) == Mods)))
+        CCMouseButtonMap ButtonMap = { .button = Button, .flags = Mods, .state = { .timestamp = CCTimestamp(), .down = Action == CCKeyboardActionPress } };
+        
+        atomic_store(&Mouse.buttons[Button], ButtonMap);
+        
+        
+        CCMouseMap State = { .position = atomic_load(&Mouse.position), .button = ButtonMap };
+        
+        CCCollection InputButtons = CCInputSystemGetComponents(CCInputMapTypeMouseButton);
+        
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(InputButtons, &Enumerator);
+        
+        for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
         {
-            if (Callback) Callback(*Input, CCMouseEventButton, State);
+            CCInputMapMouseCallback Callback = CCInputMapComponentGetCallback(*Input);
+            if ((CCInputMapMouseButtonComponentGetButton(*Input) == Button) &&
+                (CCInputMapMouseButtonComponentGetIgnoreModifier(*Input) || (CCInputMapMouseButtonComponentGetFlags(*Input) == Mods)))
+            {
+                if (Callback) Callback(*Input, CCMouseEventButton, State);
+            }
         }
+        
+        CCCollectionDestroy(InputButtons);
     }
-    
-    CCCollectionDestroy(InputButtons);
 }
 
-void CCMousePositionInput(GLFWwindow *Window, double x, double y)
+void CCMousePositionInput(CCVector2D Position)
 {
-    int Height;
-    glfwGetWindowSize(Window, NULL, &Height);
+    CCVector2D PreviousPosition = atomic_load(&Mouse.position);
+    CCVector2D Delta = CCVector2Sub(Position, PreviousPosition);
     
-    CCVector2D PreviousPosition = atomic_load(&Mouse.position), CurrentPosition = CCVector2DMake(x, Height - y);
-    CCVector2D Delta = CCVector2DMake(CurrentPosition.x - PreviousPosition.x, CurrentPosition.y - PreviousPosition.y);
-    
-    atomic_store(&Mouse.position, CurrentPosition);
+    atomic_store(&Mouse.position, Position);
     
     
     CCMouseMap State = { .position = atomic_load(&Mouse.position), .move = { .delta = Delta } };
@@ -137,7 +130,7 @@ void CCMousePositionInput(GLFWwindow *Window, double x, double y)
     CCCollectionDestroy(InputPositions);
 }
 
-void CCMouseEnterInput(GLFWwindow *Window, int Entered)
+void CCMouseEnterInput(_Bool Entered)
 {
     //TODO: Do we want to provide a callback here?
 }

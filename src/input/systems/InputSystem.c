@@ -25,6 +25,7 @@
 
 #include "InputSystem.h"
 #include "Window.h"
+#include "Callbacks.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Controller.h"
@@ -42,7 +43,6 @@ typedef struct {
     CCInputState active;
 } CCInputMapGroupState;
 
-static void CCWindowFocus(GLFWwindow *Window, int Focus);
 static _Bool CCInputSystemHandlesComponent(CCComponentID id);
 static void CCInputSystemUpdate(void *Context, CCCollection Components);
 static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent Component);
@@ -52,19 +52,6 @@ static CCVector3D CCInputSystemGetSimulatedGroupPressure3(CCComponent Component)
 void CCInputSystemRegister(void)
 {
     CCKeyboardStateReset();
-    
-    glfwSetWindowFocusCallback(CCWindow, CCWindowFocus);
-    
-    glfwSetKeyCallback(CCWindow, CCKeyboardInput);
-    glfwSetCharModsCallback(CCWindow, CCKeyboardCharInput);
-    
-    glfwSetDropCallback(CCWindow, CCMouseDropInput);
-    glfwSetScrollCallback(CCWindow, CCMouseScrollInput);
-    glfwSetMouseButtonCallback(CCWindow, CCMouseButtonInput);
-    glfwSetCursorPosCallback(CCWindow, CCMousePositionInput);
-    glfwSetCursorEnterCallback(CCWindow, CCMouseEnterInput);
-    
-    CCControllerSetup();
     
     CCComponentSystemRegister(CC_INPUT_SYSTEM_ID, CCComponentSystemExecutionTypeInput, CCInputSystemUpdate, CCInputSystemHandlesComponent, NULL, NULL, NULL, NULL, NULL);
 }
@@ -190,7 +177,7 @@ CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
 
 static float CCInputSystemPressureForBinaryInput(CCInputState State, double Timestamp, float Ramp)
 {
-    Ramp *= (glfwGetTime() - Timestamp);
+    Ramp *= (CCTimestamp() - Timestamp);
     Ramp = Ramp == 0.0f ? 1.0f : Ramp;
     return CCClampf((State == CCInputStateActive ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
 }
@@ -285,7 +272,7 @@ CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, const char *Actio
     return CCVector3DZero;
 }
 
-static void CCWindowFocus(GLFWwindow *Window, int Focus)
+void CCInputSystemWindowFocus(_Bool Focus)
 {
     if (!Focus)
     {

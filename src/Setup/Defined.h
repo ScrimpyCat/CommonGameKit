@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2014, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,18 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InputMapKeyboardComponent.h"
+#ifndef CommonGL_Defined_h
+#define CommonGL_Defined_h
 
-const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
+#if defined(__gl_h_) || defined(__gl3_h_)
+#define CC_OPENGL 1
+#elif defined(ES1_GL_H_GUARD) || defined(__gl_es20_h_) || defined(__gl_es30_h_)
+#define CC_OPENGL_ES 1
+#else
+#include <CommonC/Platform.h>
 
-const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycodeUnknown;
+#if CC_PLATFORM_OS_X
+#define CC_OPENGL 1
 
-void CCInputMapKeyboardComponentRegister(void)
-{
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
-}
+#include <OpenGL/OpenGL.h>
 
-void CCInputMapKeyboardComponentDeregister(void)
-{
-    CCComponentDeregister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
-}
+#if defined(CC_OPENGL_MODERN)
+#include <OpenGL/gl3.h>
+#include <OpenGL/gl3ext.h>
+#elif defined(CC_OPENGL_LEGACY)
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
+#else
+#error Select OpenGL version
+#endif
+
+#elif CC_PLATFORM_IOS
+#define CC_OPENGL_ES 1
+
+#include <OpenGLES/EAGL.h>
+
+#if defined(CC_OPENGL_ES_MODERN)
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#elif defined(CC_OPENGL_ES_LEGACY)
+#include <OpenGLES/ES1/gl.h>
+#include <OpenGLES/ES1/glext.h>
+#warning Not entirely compatible with fixed function pipeline
+#else
+#error Select OpenGL ES version
+#endif
+
+#else
+#error Currently not supported
+#endif
+
+#endif
+
+#endif

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InputMapKeyboardComponent.h"
+/*!
+ * @header
+ * These callbacks should be set prior to any function from the library is called.
+ */
+#ifndef CommonGameKit_Callbacks_h
+#define CommonGameKit_Callbacks_h
 
-const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
+/*!
+ * @brief Set this to a function that can provide a high frequency timestamp.
+ * @warning Must not be NULL.
+ * @result The timestamp.
+ */
+extern double (*CCTimestamp)(void);
 
-const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycodeUnknown;
-
-void CCInputMapKeyboardComponentRegister(void)
-{
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
-}
-
-void CCInputMapKeyboardComponentDeregister(void)
-{
-    CCComponentDeregister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
-}
+#endif

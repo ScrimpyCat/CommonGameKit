@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,13 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Window_h
-#define Blob_Game_Window_h
+#ifndef CommonGameKit_Window_h
+#define CommonGameKit_Window_h
 
-#include "GLSetup.h"
-#include <stdatomic.h>
+#include <CommonC/Common.h>
 
-extern GLFWwindow * const CCWindow;
-extern _Atomic(uint32_t) CCWindowFrameID;
+/*!
+ * @brief Increment the window frame.
+ * @description Call this from your game's render loop.
+ * @return The previous frame ID. Note: This will rollover.
+ */
+uint32_t CCWindowFrameStep(void);
+
+/*!
+ * @brief Get the current frame ID.
+ * @return The current frame ID.
+ */
+uint32_t CCWindowGetFrameID(void);
+
+/*!
+ * @brief Set the window frame size.
+ * @description Call this whenever your game's window is resized. Note:
+ *              While this function is threadsafe, this may result in
+ *              flickering when resizing. If that is the case, some steps
+ *              to avoid that can be imposing an explicit lock around this
+ *              function call and your render loop, or only calling this
+ *              when the window has finished being resized.
+ */
+void CCWindowSetFrameSize(CCVector2Di Size);
+
+/*!
+ * @brief Get the window frame size.
+ * @return The current frame size.
+ */
+CCVector2Di CCWindowGetFrameSize(void);
 
 #endif

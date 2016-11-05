@@ -152,9 +152,8 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
     
     if (((GUIExpressionInfo*)Object->internal)->render)
     {
-        int w, h;
-        glfwGetFramebufferSize(CCWindow, &w, &h);
-        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, w, 0.0f, h, 0.0f, 1.0f);
+        CCVector2Di Size = CCWindowGetFrameSize();
+        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Size.x, 0.0f, Size.y, 0.0f, 1.0f);
         GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
         
         CC_COLLECTION_FOREACH(CCExpression, Render, CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->render))
@@ -635,15 +634,15 @@ static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Arg
         if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
         {
             uint32_t Mods = 0;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("shift")) != SIZE_MAX) Mods |= GLFW_MOD_SHIFT;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= GLFW_MOD_CONTROL;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("alt")) != SIZE_MAX) Mods |= GLFW_MOD_ALT;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= GLFW_MOD_SUPER;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("shift")) != SIZE_MAX) Mods |= CCKeyboardModifierShift;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= CCKeyboardModifierControl;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("alt")) != SIZE_MAX) Mods |= CCKeyboardModifierAlt;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= CCKeyboardModifierSuper;
             
-            uint32_t Key = UINT32_MAX;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("left")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_LEFT;
-            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("right")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_RIGHT;
-            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("middle")) != SIZE_MAX) Key = GLFW_MOUSE_BUTTON_MIDDLE;
+            uint32_t Key = CCMouseButtonUnknown;
+            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("left")) != SIZE_MAX) Key = CCMouseButtonLeft;
+            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("right")) != SIZE_MAX) Key = CCMouseButtonRight;
+            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("middle")) != SIZE_MAX) Key = CCMouseButtonMiddle;
             
             if ((Event->mouse.state.button.button == Key) && (Event->mouse.state.button.flags == Mods))
             {
@@ -735,7 +734,7 @@ static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args
     return IsEvent;
 }
 
-static CCString NamedKeys[GLFW_KEY_LAST + 1] = {
+static CCString NamedKeys[CCKeyboardKeycodeCount] = {
     [32] = CC_STRING(":space"),
     [39] = CC_STRING(":apostrophe"),           /* ' */
     [44] = CC_STRING(":comma"),                /* , */
@@ -893,50 +892,50 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":grapheme")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.character != 0) && !(Event->key.state.flags & ~(GLFW_MOD_SHIFT | GLFW_MOD_ALT));
+                *Predicate = (Event->key.state.character != 0) && !(Event->key.state.flags & ~(CCKeyboardModifierShift | CCKeyboardModifierAlt));
             }
             
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":control")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.flags & (GLFW_MOD_CONTROL | GLFW_MOD_SUPER));
+                *Predicate = (Event->key.state.flags & (CCKeyboardModifierControl | CCKeyboardModifierSuper));
             }
             
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":delete")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.keycode == GLFW_KEY_BACKSPACE);
+                *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeBackspace);
             }
             
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":enter")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.keycode == GLFW_KEY_ENTER);
+                *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeEnter);
             }
             
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":tab")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.keycode == GLFW_KEY_TAB);
+                *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeTab);
             }
             
             else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":direction")))
             {
                 IsEvent = TRUE;
-                *Predicate = (Event->key.state.keycode == GLFW_KEY_LEFT) || (Event->key.state.keycode == GLFW_KEY_RIGHT) || (Event->key.state.keycode == GLFW_KEY_UP) || (Event->key.state.keycode == GLFW_KEY_DOWN);
+                *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeLeft) || (Event->key.state.keycode == CCKeyboardKeycodeRight) || (Event->key.state.keycode == CCKeyboardKeycodeUp) || (Event->key.state.keycode == CCKeyboardKeycodeDown);
             }
         }
         
         
         if (IsEvent)
         {
-            CCString Key = (Event->key.state.keycode != GLFW_KEY_UNKNOWN ? NamedKeys[Event->key.state.keycode] : 0);
+            CCString Key = (Event->key.state.keycode != CCKeyboardKeycodeUnknown ? NamedKeys[Event->key.state.keycode] : 0);
             
             CCExpression Flags = CCExpressionCreateList(CC_STD_ALLOCATOR);
-            if (Event->key.state.flags & GLFW_MOD_SHIFT) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":shift"), TRUE) });
-            if (Event->key.state.flags & GLFW_MOD_ALT) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":alt"), TRUE) });
-            if (Event->key.state.flags & GLFW_MOD_CONTROL) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":control"), TRUE) });
-            if (Event->key.state.flags & GLFW_MOD_SUPER) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":cmd"), TRUE) });
+            if (Event->key.state.flags & CCKeyboardModifierShift) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":shift"), TRUE) });
+            if (Event->key.state.flags & CCKeyboardModifierAlt) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":alt"), TRUE) });
+            if (Event->key.state.flags & CCKeyboardModifierControl) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":control"), TRUE) });
+            if (Event->key.state.flags & CCKeyboardModifierSuper) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":cmd"), TRUE) });
             
             struct {
                 CCString name;

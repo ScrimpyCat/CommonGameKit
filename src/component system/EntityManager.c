@@ -28,7 +28,7 @@
 #include "ComponentBase.h"
 #include "ComponentSystem.h"
 #include <CommonC/Common.h>
-#include <tinycthread.h>
+#include <threads.h>
 #include <stdatomic.h>
 
 

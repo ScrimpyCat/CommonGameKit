@@ -29,6 +29,26 @@
 #include "GLSetup.h"
 #include "Component.h"
 #include <CommonC/Common.h>
+#include "Keyboard.h"
+
+/// The button input for the mouse input event. This is compatible with GLFW mouse buttons.
+typedef enum {
+    CCMouseButton1 =        0,
+    CCMouseButton2 =        1,
+    CCMouseButton3 =        2,
+    CCMouseButton4 =        3,
+    CCMouseButton5 =        4,
+    CCMouseButton6 =        5,
+    CCMouseButton7 =        6,
+    CCMouseButton8 =        7,
+    
+    CCMouseButtonCount,
+    
+    CCMouseButtonLeft =     CCMouseButton1,
+    CCMouseButtonRight =    CCMouseButton2,
+    CCMouseButtonMiddle =   CCMouseButton3,
+    CCMouseButtonUnknown = -1
+} CCMouseButton;
 
 typedef enum {
     CCMouseEventMove,
@@ -43,8 +63,8 @@ typedef struct {
 } CCMouseButtonState;
 
 typedef struct {
-    int32_t button;
-    uint32_t flags;
+    CCMouseButton button;
+    CCKeyboardModifier flags;
     CCMouseButtonState state;
 } CCMouseButtonMap;
 
@@ -66,11 +86,44 @@ typedef struct {
     };
 } CCMouseMap;
 
-void CCMouseDropInput(GLFWwindow *Window, int Count, const char **Files);
-void CCMouseScrollInput(GLFWwindow *Window, double x, double y);
-void CCMouseButtonInput(GLFWwindow *Window, int Button, int Action, int Mods);
-void CCMousePositionInput(GLFWwindow *Window, double x, double y);
-void CCMouseEnterInput(GLFWwindow *Window, int Entered);
+/*!
+ * @brief Register a mouse drop event.
+ * @param Files The list of files dropped.
+ */
+void CCMouseDropInput(CCCollection Files);
+
+/*!
+ * @brief Register a mouse scroll event.
+ * @param ScrollDelta The scroll delta.
+ */
+void CCMouseScrollInput(CCVector2D ScrollDelta);
+
+/*!
+ * @brief Register a mouse button event.
+ * @param Button The mouse button the event belongs to.
+ * @param Action The action of the event.
+ * @param Mods The modifiers applied.
+ */
+void CCMouseButtonInput(CCMouseButton Button, CCKeyboardAction Action, CCKeyboardModifier Mods);
+
+/*!
+ * @brief Register a mouse move event.
+ * @param Position The position of the mouse. Note: This should be in the coordinate space where
+ *        0,0 = bottom left corner of the window.
+ */
+void CCMousePositionInput(CCVector2D Position);
+
+/*!
+ * @brief Register a mouse has entered/exited the window.
+ * @param Entered TRUE if the mouse has entered the window, FALSE if it has exited.
+ */
+void CCMouseEnterInput(_Bool Entered);
+
+/*!
+ * @brief Get the mouse button state for the given component.
+ * @param Component The input map mouse button component.
+ * @return The mouse button state for the given component, or empty state if there is none available.
+ */
 CCMouseButtonState CCMouseButtonGetStateForComponent(CCComponent Component);
 
 #endif

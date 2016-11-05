@@ -31,13 +31,13 @@
 #define CC_INPUT_MAP_KEYBOARD_COMPONENT_ID (CCInputMapTypeKeyboard | CC_INPUT_COMPONENT_FLAG)
 
 extern const char * const CCInputMapKeyboardComponentName;
-extern const int32_t CCInputMapKeyboardComponentKeycodeAny;
+extern const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);
-    int32_t keycode;
-    uint32_t character;
-    uint32_t flags;
+    CCKeyboardKeycode keycode;
+    CCChar character;
+    CCKeyboardModifier flags;
     float ramp;
     _Bool isKeycode, ignoreModifier, repeats;
 } CCInputMapKeyboardComponentClass, *CCInputMapKeyboardComponentPrivate;
@@ -64,32 +64,32 @@ static inline void CCInputMapKeyboardComponentDeallocate(CCComponent Component)
     CCInputMapComponentDeallocate(Component);
 }
 
-static inline int32_t CCInputMapKeyboardComponentGetKeycode(CCComponent Component)
+static inline CCKeyboardKeycode CCInputMapKeyboardComponentGetKeycode(CCComponent Component)
 {
     return ((CCInputMapKeyboardComponentPrivate)Component)->keycode;
 }
 
-static inline void CCInputMapKeyboardComponentSetKeycode(CCComponent Component, int32_t Keycode)
+static inline void CCInputMapKeyboardComponentSetKeycode(CCComponent Component, CCKeyboardKeycode Keycode)
 {
     ((CCInputMapKeyboardComponentPrivate)Component)->keycode = Keycode;
 }
 
-static inline uint32_t CCInputMapKeyboardComponentGetCharacter(CCComponent Component)
+static inline CCChar CCInputMapKeyboardComponentGetCharacter(CCComponent Component)
 {
     return ((CCInputMapKeyboardComponentPrivate)Component)->character;
 }
 
-static inline void CCInputMapKeyboardComponentSetCharacter(CCComponent Component, uint32_t Character)
+static inline void CCInputMapKeyboardComponentSetCharacter(CCComponent Component, CCChar Character)
 {
     ((CCInputMapKeyboardComponentPrivate)Component)->character = Character;
 }
 
-static inline uint32_t CCInputMapKeyboardComponentGetFlags(CCComponent Component)
+static inline CCKeyboardModifier CCInputMapKeyboardComponentGetFlags(CCComponent Component)
 {
     return ((CCInputMapKeyboardComponentPrivate)Component)->flags;
 }
 
-static inline void CCInputMapKeyboardComponentSetFlags(CCComponent Component, uint32_t Flags)
+static inline void CCInputMapKeyboardComponentSetFlags(CCComponent Component, CCKeyboardModifier Flags)
 {
     ((CCInputMapKeyboardComponentPrivate)Component)->flags = Flags;
 }

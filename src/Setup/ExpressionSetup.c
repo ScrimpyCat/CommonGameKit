@@ -13,7 +13,6 @@
 #include "ListExpressions.h"
 #include "MacroExpressions.h"
 #include "MathExpressions.h"
-#include "ProjectExpressions.h"
 #include "StateExpressions.h"
 #include "StringExpressions.h"
 #include "TextExpressions.h"
@@ -60,10 +59,6 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("max"), CCMathExpressionMaximum);
     CCExpressionEvaluatorRegister(CC_STRING("random"), CCMathExpressionRandom);
     CCExpressionEvaluatorRegister(CC_STRING("round"), CCMathExpressionRound);
-    CCExpressionEvaluatorRegister(CC_STRING("game"), CCProjectExpressionGame);
-    CCExpressionEvaluatorRegister(CC_STRING("library"), CCProjectExpressionLibrary);
-    CCExpressionEvaluatorRegister(CC_STRING("source"), CCProjectExpressionLibrarySource);
-    CCExpressionEvaluatorRegister(CC_STRING("asset"), CCProjectExpressionAsset);
     CCExpressionEvaluatorRegister(CC_STRING("state!"), CCStateExpressionCreateState);
     CCExpressionEvaluatorRegister(CC_STRING("namespace!"), CCStateExpressionCreateNamespace);
     CCExpressionEvaluatorRegister(CC_STRING("enum!"), CCStateExpressionCreateEnum);

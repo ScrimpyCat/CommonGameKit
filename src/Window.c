@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,18 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InputMapKeyboardComponent.h"
+#include "Window.h"
+#include <stdatomic.h>
 
-const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
+static _Atomic(uint32_t) CCWindowFrameID = ATOMIC_VAR_INIT(0);
 
-const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycodeUnknown;
-
-void CCInputMapKeyboardComponentRegister(void)
+uint32_t CCWindowFrameStep(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
+    return atomic_fetch_add_explicit(&CCWindowFrameID, 1, memory_order_relaxed);
 }
 
-void CCInputMapKeyboardComponentDeregister(void)
+uint32_t CCWindowGetFrameID(void)
 {
-    CCComponentDeregister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    return atomic_load_explicit(&CCWindowFrameID, memory_order_relaxed);
 }
+
+static _Atomic(CCVector2Di) CCWindowFrameSize = ATOMIC_VAR_INIT(((CCVector2Di){ 0, 0 }));
+
+void CCWindowSetFrameSize(CCVector2Di Size)
+{
+    atomic_store_explicit(&CCWindowFrameSize, Size, memory_order_relaxed);
+}
+
+CCVector2Di CCWindowGetFrameSize(void)
+{
+    return atomic_load_explicit(&CCWindowFrameSize, memory_order_relaxed);
+}
+

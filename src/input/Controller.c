@@ -25,61 +25,95 @@
 
 #include "Controller.h"
 #include "Window.h"
-#include "stdatomic.h"
+#include "Callbacks.h"
+#include <stdatomic.h>
 #include "InputSystem.h"
 #include "InputMapControllerComponent.h"
 #include "InputMapControllerAxesComponent.h"
 #include "InputMapControllerButtonComponent.h"
 
-static struct {
-    const char *name;
+typedef struct {
+    CCString name;
     double timestamp;
     CCOrderedCollection axes;
     CCOrderedCollection buttons;
     _Bool connected;
     atomic_flag lock;
-} Controller[GLFW_JOYSTICK_LAST + 1];
+} CCController;
 
-void CCControllerSetup(void)
+static CCController *Controller = NULL;
+
+static size_t ControllerCount = 0;
+static CCControllerGetNameCallback ControllerGetName = NULL;
+static CCControllerUpdateAxesCallback ControllerUpdateAxes = NULL;
+static CCControllerUpdateButtonsCallback ControllerUpdateButtons = NULL;
+
+void CCControllerSetup(size_t Count, CCControllerGetNameCallback Name, CCControllerUpdateAxesCallback Axes, CCControllerUpdateButtonsCallback Buttons)
 {
-    for (size_t Loop = 0; Loop < sizeof(Controller) / sizeof(typeof(*Controller)); Loop++)
+    CCAssertLog(Name, "Name must not be null");
+    CCAssertLog(Axes, "Name must not be null");
+    CCAssertLog(Buttons, "Name must not be null");
+    
+    ControllerGetName = Name;
+    ControllerUpdateAxes = Axes;
+    ControllerUpdateButtons = Buttons;
+    
+    CC_SAFE_Malloc(Controller, sizeof(CCController) * Count,
+                   CC_LOG_ERROR("Failed to create controllers, due to allocation failure (%zu)", sizeof(CCController) * Count);
+                   return;
+                   );
+    
+    ControllerCount = Count;
+    
+    for (size_t Loop = 0; Loop < Count; Loop++)
     {
-        Controller[Loop].lock = (atomic_flag)ATOMIC_FLAG_INIT;
+        Controller[Loop] = (CCController){
+            .name = 0,
+            .timestamp = 0.0,
+            .axes = NULL,
+            .buttons = NULL,
+            .connected = FALSE,
+            .lock = (atomic_flag)ATOMIC_FLAG_INIT
+        };
     }
+}
+
+void CCControllerConnect(size_t Index, _Bool Connected)
+{
+    while (!atomic_flag_test_and_set(&Controller[Index].lock)) CC_SPIN_WAIT();
+    
+    if ((Controller[Index].connected = Connected))
+    {
+        Controller[Index].name = ControllerGetName(Index);
+        Controller[Index].axes = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(float), NULL);
+        Controller[Index].buttons = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(_Bool), NULL);
+    }
+    
+    else
+    {
+        CCStringDestroy(Controller[Index].name);
+        Controller[Index].name = 0;
+        
+        CCCollectionDestroy(Controller[Index].axes);
+        Controller[Index].axes = NULL;
+        
+        CCCollectionDestroy(Controller[Index].buttons);
+        Controller[Index].buttons = NULL;
+    }
+    
+    atomic_flag_clear(&Controller[Index].lock);
 }
 
 void CCControllerUpdateState(void)
 {
-    for (int Loop = 0; Loop < sizeof(Controller) / sizeof(typeof(*Controller)); Loop++)
+    for (int Loop = 0; Loop < ControllerCount; Loop++)
     {
         while (!atomic_flag_test_and_set(&Controller[Loop].lock)) CC_SPIN_WAIT();
-        if ((Controller[Loop].connected = glfwJoystickPresent(Loop)))
+        if (Controller[Loop].connected)
         {
-            Controller[Loop].name = glfwGetJoystickName(Loop);
-            Controller[Loop].timestamp = glfwGetTime();
-            
-            if (!Controller[Loop].axes) Controller[Loop].axes = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(float), NULL);
-            if (!Controller[Loop].buttons) Controller[Loop].buttons = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(unsigned char), NULL);
-            
-            int Count;
-            const float *Axes = glfwGetJoystickAxes(Loop, &Count);
-            
-            if (Count == CCCollectionGetCount(Controller[Loop].axes)) for (int Loop2 = 0; Loop2 < Count; Loop2++) CCOrderedCollectionReplaceElementAtIndex(Controller[Loop].axes, &Axes[Loop2], Loop2);
-            else
-            {
-                CCCollectionRemoveAllElements(Controller[Loop].axes);
-                for (int Loop2 = 0; Loop2 < Count; Loop2++) CCOrderedCollectionAppendElement(Controller[Loop].axes, &Axes[Loop2]);
-            }
-            
-            
-            const unsigned char *Buttons = glfwGetJoystickButtons(Loop, &Count);
-            
-            if (Count == CCCollectionGetCount(Controller[Loop].buttons)) for (int Loop2 = 0; Loop2 < Count; Loop2++) CCOrderedCollectionReplaceElementAtIndex(Controller[Loop].buttons, &Buttons[Loop2], Loop2);
-            else
-            {
-                CCCollectionRemoveAllElements(Controller[Loop].buttons);
-                for (int Loop2 = 0; Loop2 < Count; Loop2++) CCOrderedCollectionAppendElement(Controller[Loop].buttons, &Buttons[Loop2]);
-            }
+            Controller[Loop].timestamp = CCTimestamp();
+            ControllerUpdateAxes(Loop, Controller[Loop].axes);
+            ControllerUpdateButtons(Loop, Controller[Loop].buttons);
         }
         atomic_flag_clear(&Controller[Loop].lock);
     }
@@ -103,6 +137,8 @@ static float CCFloatPrecision(float Value, uint64_t Bits)
 
 CCControllerState CCControllerGetStateForComponent(CCComponent Component)
 {
+    CCAssertLog(CCComponentGetID(Component) == CC_INPUT_MAP_CONTROLLER_COMPONENT_ID, "Must be a input map controller component");
+    
     const int8_t Connection = CCInputMapControllerComponentGetConnection(Component);
     const char *Device = CCInputMapControllerComponentGetDevice(Component);
     
@@ -117,12 +153,15 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
-                if ((!Device) || (!strcmp(Device, Controller[Connection].name)))
+                CC_STRING_TEMP_BUFFER(Name, Controller[Connection].name) //TODO: make device CCString
                 {
-                    const size_t Count = CCCollectionGetCount(Controller[Connection].axes);
-                    if ((x >= 0) && (x < Count)) Position.x = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, x);
-                    if ((y >= 0) && (x < Count)) Position.y = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, y);
-                    if ((z >= 0) && (x < Count)) Position.z = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, z);
+                    if ((!Device) || (!strcmp(Device, Name)))
+                    {
+                        const size_t Count = CCCollectionGetCount(Controller[Connection].axes);
+                        if ((x >= 0) && (x < Count)) Position.x = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, x);
+                        if ((y >= 0) && (x < Count)) Position.y = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, y);
+                        if ((z >= 0) && (x < Count)) Position.z = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, z);
+                    }
                 }
             }
             atomic_flag_clear(&Controller[Connection].lock);
@@ -166,12 +205,15 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
-                if ((!Device) || (!strcmp(Device, Controller[Connection].name)))
+                CC_STRING_TEMP_BUFFER(Name, Controller[Connection].name) //TODO: make device CCString
                 {
-                    const size_t Count = CCCollectionGetCount(Controller[Connection].buttons);
-                    if ((Button >= 0) && (Button < Count)) Active = *(unsigned char*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].buttons, Button);
-                    
-                    Timestamp = Controller[Connection].timestamp;
+                    if ((!Device) || (!strcmp(Device, Name)))
+                    {
+                        const size_t Count = CCCollectionGetCount(Controller[Connection].buttons);
+                        if ((Button >= 0) && (Button < Count)) Active = *(_Bool*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].buttons, Button);
+                        
+                        Timestamp = Controller[Connection].timestamp;
+                    }
                 }
             }
             atomic_flag_clear(&Controller[Connection].lock);

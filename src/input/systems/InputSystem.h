@@ -62,6 +62,12 @@ void CCInputSystemRegister(void);
 void CCInputSystemDeregister(void);
 
 /*!
+ * @brief Set whether the window is in focus.
+ * @param Focus TRUE if the window has become focused, or FALSE if it is no longer focused.
+ */
+void CCInputSystemWindowFocus(_Bool Focus);
+
+/*!
  * @brief Get the input components registered by the system for a certain type.
  * @param InputType The type of components to retrieve.
  * @return The list of components. Note: This collection must be destroyed.

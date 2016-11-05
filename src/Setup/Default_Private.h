@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2014, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,18 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InputMapKeyboardComponent.h"
+/*
+ Change here API version used by framework
+ 
+ Maybe make it so if it's compiled as a framework/library then it will use runtime queries for functions it needs?
+ */
 
-const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
+#ifndef CommonGL_Default_Private_h
+#define CommonGL_Default_Private_h
 
-const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycodeUnknown;
+#include <CommonC/Platform.h>
+#include "GLSelectedState.h"
 
-void CCInputMapKeyboardComponentRegister(void)
-{
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
-}
+#if CC_PLATFORM_OS_X
+#define CC_OPENGL_MODERN
+#elif CC_PLATFORM_IOS
+#define CC_OPENGL_ES_MODERN
+#endif
 
-void CCInputMapKeyboardComponentDeregister(void)
-{
-    CCComponentDeregister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
-}
+#endif

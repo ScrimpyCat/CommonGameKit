@@ -25,13 +25,14 @@
 
 #include "Keyboard.h"
 #include "Window.h"
-#include "stdatomic.h"
+#include "Callbacks.h"
+#include <stdatomic.h>
 #include "InputSystem.h"
 #include "InputMapKeyboardComponent.h"
 #include <math.h>
 
 
-static _Atomic(CCKeyboardMap) KeyList[GLFW_KEY_LAST + 1];
+static _Atomic(CCKeyboardMap) KeyList[CCKeyboardKeycodeCount];
 
 /*
  TODO: Unsure if we can make this guarantee across all platforms or with future minor verson of GLFW.
@@ -40,15 +41,15 @@ static _Atomic(CCKeyboardMap) KeyList[GLFW_KEY_LAST + 1];
  Must make sure it won't possibly send in another keycode inbetween.
  */
 static CCKeyboardMap TempKey;
-void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, int Mods)
+void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeyboardModifier Mods)
 {
-    if ((TempKey.keycode = Keycode) != GLFW_KEY_UNKNOWN)
+    if ((TempKey.keycode = Keycode) != CCKeyboardKeycodeUnknown)
     {
-        CCAssertLog(Keycode >= 0 && Keycode <= GLFW_KEY_LAST, "Keycode is not within bounds");
+        CCAssertLog(Keycode >= 0 && Keycode < CCKeyboardKeycodeCount, "Keycode is not within bounds");
         
         TempKey.flags = Mods;
         
-        if (Action == GLFW_REPEAT)
+        if (Action == CCKeyboardActionRepeat)
         {
             CCKeyboardMap Prev = atomic_load(&KeyList[Keycode]);
             TempKey.state.timestamp = Prev.state.timestamp;
@@ -58,8 +59,8 @@ void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, 
         
         else
         {
-            TempKey.state.timestamp = glfwGetTime();
-            TempKey.state.down = Action == GLFW_PRESS;
+            TempKey.state.timestamp = CCTimestamp();
+            TempKey.state.down = Action == CCKeyboardActionPress;
             TempKey.state.repeat = FALSE;
         }
         
@@ -91,9 +92,9 @@ void CCKeyboardInput(GLFWwindow *Window, int Keycode, int Scancode, int Action, 
     }
 }
 
-void CCKeyboardCharInput(GLFWwindow *Window, unsigned int Codepoint, int Mods)
+void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods)
 {
-    if (TempKey.keycode != GLFW_KEY_UNKNOWN)
+    if (TempKey.keycode != CCKeyboardKeycodeUnknown)
     {
         TempKey.character = Codepoint;
         atomic_store(&KeyList[TempKey.keycode], TempKey);
@@ -126,7 +127,7 @@ void CCKeyboardStateReset(void)
 {
     for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
     {
-        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (uint32_t)Loop, .state = { .timestamp = -INFINITY, .down = FALSE, .repeat = FALSE } }));
+        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (CCKeyboardKeycode)Loop, .state = { .timestamp = -INFINITY, .down = FALSE, .repeat = FALSE } }));
     }
 }
 
@@ -150,7 +151,7 @@ CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
     {
         CCAssertLog(!CCInputMapKeyboardComponentGetIsKeycode(Component), "Must be a character match");
         
-        const uint32_t Character = CCInputMapKeyboardComponentGetCharacter(Component);
+        const CCChar Character = CCInputMapKeyboardComponentGetCharacter(Component);
         for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
         {
             CCKeyboardMap Key = atomic_load(&KeyList[Loop]);

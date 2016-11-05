@@ -34,8 +34,8 @@ extern const char * const CCInputMapMouseButtonComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);
-    int32_t button;
-    uint32_t flags;
+    CCMouseButton button;
+    CCKeyboardModifier flags;
     float ramp;
     _Bool ignoreModifier;
 } CCInputMapMouseButtonComponentClass, *CCInputMapMouseButtonComponentPrivate;
@@ -59,22 +59,22 @@ static inline void CCInputMapMouseButtonComponentDeallocate(CCComponent Componen
     CCInputMapComponentDeallocate(Component);
 }
 
-static inline int32_t CCInputMapMouseButtonComponentGetButton(CCComponent Component)
+static inline CCMouseButton CCInputMapMouseButtonComponentGetButton(CCComponent Component)
 {
     return ((CCInputMapMouseButtonComponentPrivate)Component)->button;
 }
 
-static inline void CCInputMapMouseButtonComponentSetButton(CCComponent Component, int32_t Button)
+static inline void CCInputMapMouseButtonComponentSetButton(CCComponent Component, CCMouseButton Button)
 {
     ((CCInputMapMouseButtonComponentPrivate)Component)->button = Button;
 }
 
-static inline uint32_t CCInputMapMouseButtonComponentGetFlags(CCComponent Component)
+static inline CCKeyboardModifier CCInputMapMouseButtonComponentGetFlags(CCComponent Component)
 {
     return ((CCInputMapMouseButtonComponentPrivate)Component)->flags;
 }
 
-static inline void CCInputMapMouseButtonComponentSetFlags(CCComponent Component, uint32_t Flags)
+static inline void CCInputMapMouseButtonComponentSetFlags(CCComponent Component, CCKeyboardModifier Flags)
 {
     ((CCInputMapMouseButtonComponentPrivate)Component)->flags = Flags;
 }

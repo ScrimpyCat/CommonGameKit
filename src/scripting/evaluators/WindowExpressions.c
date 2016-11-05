@@ -33,18 +33,17 @@ static CCExpression CCWindowExpressionPercentage(CCExpression Expression, const 
     
     if (ArgCount == 1)
     {
-        int Size[2];
-        glfwGetFramebufferSize(CCWindow, Size, Size + 1);
+        const CCVector2Di Size = CCWindowGetFrameSize();
         
         CCExpression Percent = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         if (CCExpressionGetType(Percent) == CCExpressionValueTypeInteger)
         {
-            Expr = CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)((float)Size[UseHeight] * ((float)CCExpressionGetInteger(Percent) / 100)));
+            Expr = CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)((float)Size.v[UseHeight] * ((float)CCExpressionGetInteger(Percent) / 100)));
         }
         
         else if (CCExpressionGetType(Percent) == CCExpressionValueTypeFloat)
         {
-            Expr = CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)Size[UseHeight] * CCExpressionGetFloat(Percent));
+            Expr = CCExpressionCreateFloat(CC_STD_ALLOCATOR, (float)Size.v[UseHeight] * CCExpressionGetFloat(Percent));
         }
         
         else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR(Name, "percent:number");
@@ -65,12 +64,9 @@ CCExpression CCWindowExpressionPercentageHeight(CCExpression Expression)
     return CCWindowExpressionPercentage(Expression, "window-percent-height", TRUE);
 }
 
-static CCExpression CCWindowExpressionSize(_Bool UseHeight)
+static inline CCExpression CCWindowExpressionSize(_Bool UseHeight)
 {
-    int Size[2];
-    glfwGetFramebufferSize(CCWindow, Size, Size + 1);
-    
-    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Size[UseHeight]);
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, CCWindowGetFrameSize().v[UseHeight]);
 }
 
 CCExpression CCWindowExpressionWidth(CCExpression Expression)
@@ -87,7 +83,7 @@ CCString StringFrameID = CC_STRING("@frame-id");
 CCExpression CCWindowExpressionFrameChanged(CCExpression Expression)
 {
     _Bool Changed = TRUE;
-    uint32_t FrameID = atomic_load_explicit(&CCWindowFrameID, memory_order_relaxed);
+    const uint32_t FrameID = CCWindowGetFrameID();
     
     CCExpression Frame = CCExpressionGetStateStrict(Expression, StringFrameID);
     if (Frame)

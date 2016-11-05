@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2011, 2013, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,18 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "InputMapKeyboardComponent.h"
+#import "GLSetup.h"
+#import <CommonC/Platform.h>
+#import <CommonC/Types.h>
 
-const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
+#if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
+#import <dlfcn.h>
+#endif
 
-const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycodeUnknown;
-
-void CCInputMapKeyboardComponentRegister(void)
+GLenum CCGLEnumRemap(GLenum Value, CCGLEnumMapping *Mapping, size_t MapTableSize)
 {
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
-}
-
-void CCInputMapKeyboardComponentDeregister(void)
-{
-    CCComponentDeregister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+    for (size_t Loop = 0; Loop < MapTableSize; Loop++)
+    {
+        if (Value == Mapping[Loop].from) return Mapping[Loop].to;
+    }
+    
+    return Value;
 }

@@ -28,6 +28,7 @@
 #include <stdatomic.h>
 #include "GLSetup.h"
 #include "ComponentBase.h"
+#include "Callbacks.h"
 
 
 typedef struct {
@@ -111,7 +112,7 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
     double Delta = 0.0;
     if (TimedUpdate)
     {
-        const double CurrentTime = glfwGetTime();
+        const double CurrentTime = CCTimestamp();
         if (ElapsedTime[ExecutionType] != 0.0) Delta = CurrentTime - ElapsedTime[ExecutionType];
         ElapsedTime[ExecutionType] = CurrentTime;
     }

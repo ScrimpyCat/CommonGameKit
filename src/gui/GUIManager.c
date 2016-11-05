@@ -34,7 +34,7 @@
 #include "InputMapMouseScrollComponent.h"
 #include "InputMapMouseDropComponent.h"
 
-#include <tinycthread.h>
+#include <threads.h>
 #include <stdatomic.h>
 
 
@@ -100,21 +100,21 @@ void GUIManagerCreate(void)
     
     Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
     CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCInputMapMouseButtonComponentSetButton(Input, GLFW_MOUSE_BUTTON_LEFT);
+    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonLeft);
     CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
     CCEntityAttachComponent(ObjectManager.entity, Input);
     CCComponentSystemAddComponent(Input);
     
     Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
     CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCInputMapMouseButtonComponentSetButton(Input, GLFW_MOUSE_BUTTON_RIGHT);
+    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonRight);
     CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
     CCEntityAttachComponent(ObjectManager.entity, Input);
     CCComponentSystemAddComponent(Input);
     
     Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
     CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCInputMapMouseButtonComponentSetButton(Input, GLFW_MOUSE_BUTTON_MIDDLE);
+    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonMiddle);
     CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
     CCEntityAttachComponent(ObjectManager.entity, Input);
     CCComponentSystemAddComponent(Input);

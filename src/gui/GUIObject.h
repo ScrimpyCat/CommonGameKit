@@ -30,7 +30,7 @@
 #include "GFX.h"
 #include "InputSystem.h"
 #include "Expression.h"
-#include <tinycthread.h>
+#include <threads.h>
 
 typedef const struct {
     enum {

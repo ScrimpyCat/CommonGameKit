@@ -28,15 +28,12 @@
 
 #include <CommonC/Common.h>
 
-#if CC_PLATFORM_OS_X
-#define GLFW_INCLUDE_GLCOREARB
+#if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
+#include "Default_Private.h"
+#include "Defined.h"
 #else
 #include <gl_core.h>
-#define GLFW_INCLUDE_NONE
 #endif
-
-#include <GLFW/glfw3.h>
-#define CC_GL_PIPELINE_GLFW
 
 #include "Pipeline.h"
 #include "PipelineVersion.h"

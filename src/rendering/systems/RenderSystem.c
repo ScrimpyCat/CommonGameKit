@@ -24,7 +24,7 @@
  */
 
 #include "RenderSystem.h"
-#include "tinycthread.h"
+#include <threads.h>
 #include <CommonC/Common.h>
 #include "GFX.h"
 

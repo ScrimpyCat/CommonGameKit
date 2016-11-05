@@ -24,7 +24,7 @@
  */
 
 #include "AnimationSystem.h"
-#include "tinycthread.h"
+#include <threads.h>
 #include <CommonC/Common.h>
 #include "AnimationComponent.h"
 #include "AnimationKeyframeComponent.h"

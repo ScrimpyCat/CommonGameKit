@@ -35,4 +35,12 @@ typedef /*double*/ GLclampf GLclampd;
 #define glGetDoublev(pname, params) glGetFloatv(pname, params)
 #endif
 
+typedef struct {
+    GLenum from;
+    GLenum to;
+} CCGLEnumMapping;
+
+
+GLenum CCGLEnumRemap(GLenum Value, CCGLEnumMapping *Mapping, size_t MapTableSize);
+
 #endif
