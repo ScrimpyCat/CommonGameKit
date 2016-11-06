@@ -112,4 +112,14 @@ void GLGFXSetup(void)
 #ifdef GL_MAX_COLOR_ATTACHMENTS
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &GLInfo.limits.maxColourAttachments); CC_GL_CHECK();
 #endif
+    
+    CC_GL_BIND_FRAMEBUFFER(GL_FRAMEBUFFER, 0);
+    
+    GLint Encoding;
+    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &Encoding); CC_GL_CHECK();
+    
+    if (Encoding == GL_SRGB)
+    {
+        CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
+    }
 }
