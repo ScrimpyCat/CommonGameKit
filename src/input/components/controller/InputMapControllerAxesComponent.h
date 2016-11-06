@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_InputMapControllerAxesComponent_h
-#define Blob_Game_InputMapControllerAxesComponent_h
+#ifndef CommonGameKit_InputMapControllerAxesComponent_h
+#define CommonGameKit_InputMapControllerAxesComponent_h
 
 #include "InputMapControllerComponent.h"
 

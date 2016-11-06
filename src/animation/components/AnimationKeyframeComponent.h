@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_AnimationKeyframeComponent_h
-#define Blob_Game_AnimationKeyframeComponent_h
+#ifndef CommonGameKit_AnimationKeyframeComponent_h
+#define CommonGameKit_AnimationKeyframeComponent_h
 
 #include "AnimationComponent.h"
 #include <CommonC/Common.h>

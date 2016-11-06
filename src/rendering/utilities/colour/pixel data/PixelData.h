@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_PixelData_h
-#define Blob_Game_PixelData_h
+#ifndef CommonGameKit_PixelData_h
+#define CommonGameKit_PixelData_h
 
 #include "Colour.h"
 #include <CommonC/Common.h>

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Mouse_h
-#define Blob_Game_Mouse_h
+#ifndef CommonGameKit_Mouse_h
+#define CommonGameKit_Mouse_h
 
 #include "GLSetup.h"
 #include "Component.h"

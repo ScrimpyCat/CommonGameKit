@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_MathExpressions_h
-#define Blob_Game_MathExpressions_h
+#ifndef CommonGameKit_MathExpressions_h
+#define CommonGameKit_MathExpressions_h
 
 #include "ExpressionEvaluator.h"
 

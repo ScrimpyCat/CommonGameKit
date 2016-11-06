@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_MacroExpressions_h
-#define Blob_Game_MacroExpressions_h
+#ifndef CommonGameKit_MacroExpressions_h
+#define CommonGameKit_MacroExpressions_h
 
 #include "ExpressionEvaluator.h"
 

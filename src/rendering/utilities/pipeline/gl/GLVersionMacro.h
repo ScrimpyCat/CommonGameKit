@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLVersionMacro_h
-#define Blob_Game_GLVersionMacro_h
+#ifndef CommonGameKit_GLVersionMacro_h
+#define CommonGameKit_GLVersionMacro_h
 
 #if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_1_0, CC_OPENGL_ES_VERSION_1_0)
 #define CC_GL_VERSION_ACTIVE_MIN_1_0(max, ...) CC_GL_VERSION_ACTIVE_MIN_1_0_MAX_##max(__VA_ARGS__)

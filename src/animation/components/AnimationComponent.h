@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_AnimationComponent_h
-#define Blob_Game_AnimationComponent_h
+#ifndef CommonGameKit_AnimationComponent_h
+#define CommonGameKit_AnimationComponent_h
 
 #include "AnimationSystem.h"
 #include "ComponentBase.h"

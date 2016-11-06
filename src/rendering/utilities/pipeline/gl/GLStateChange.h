@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_StateChange_h
-#define Blob_Game_StateChange_h
+#ifndef CommonGameKit_StateChange_h
+#define CommonGameKit_StateChange_h
 
 #include "PipelineVersion.h"
 #include "GLSelectedState.h"

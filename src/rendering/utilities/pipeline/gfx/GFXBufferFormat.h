@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFXBufferFormat_h
-#define Blob_Game_GFXBufferFormat_h
+#ifndef CommonGameKit_GFXBufferFormat_h
+#define CommonGameKit_GFXBufferFormat_h
 
 typedef enum {
     GFXBufferFormatNormalized = 1,

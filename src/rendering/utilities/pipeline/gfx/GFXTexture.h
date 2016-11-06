@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFXTexture_h
-#define Blob_Game_GFXTexture_h
+#ifndef CommonGameKit_GFXTexture_h
+#define CommonGameKit_GFXTexture_h
 
 #include <CommonC/Common.h>
 #include "PixelData.h"

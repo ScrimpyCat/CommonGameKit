@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GUIContainer_h
-#define Blob_Game_GUIContainer_h
+#ifndef CommonGameKit_GUIContainer_h
+#define CommonGameKit_GUIContainer_h
 
 #include "GUIObject.h"
 

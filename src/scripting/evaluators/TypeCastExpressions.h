@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_TypeCastExpressions_h
-#define Blob_Game_TypeCastExpressions_h
+#ifndef CommonGameKit_TypeCastExpressions_h
+#define CommonGameKit_TypeCastExpressions_h
 
 #include "ExpressionEvaluator.h"
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_AssetExpressions_h
-#define Blob_Game_AssetExpressions_h
+#ifndef CommonGameKit_AssetExpressions_h
+#define CommonGameKit_AssetExpressions_h
 
 #include "ExpressionEvaluator.h"
 

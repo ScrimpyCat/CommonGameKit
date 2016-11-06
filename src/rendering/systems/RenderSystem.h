@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_RenderSystem_h
-#define Blob_Game_RenderSystem_h
+#ifndef CommonGameKit_RenderSystem_h
+#define CommonGameKit_RenderSystem_h
 
 #include "ComponentSystem.h"
 

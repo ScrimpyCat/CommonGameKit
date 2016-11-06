@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFX_h
-#define Blob_Game_GFX_h
+#ifndef CommonGameKit_GFX_h
+#define CommonGameKit_GFX_h
 
 #include "GFXInterface.h"
 #include "GFXMain.h"

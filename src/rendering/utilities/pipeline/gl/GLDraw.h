@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLDraw_h
-#define Blob_Game_GLDraw_h
+#ifndef CommonGameKit_GLDraw_h
+#define CommonGameKit_GLDraw_h
 
 #include "GLGFX.h"
 #include "GLSetup.h"

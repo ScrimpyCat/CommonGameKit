@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Pipeline_h
-#define Blob_Game_Pipeline_h
+#ifndef CommonGameKit_Pipeline_h
+#define CommonGameKit_Pipeline_h
 
 #if defined(__gl_h_) || defined(__gl3_h_)
 #define CC_OPENGL 1

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_ExpressionSetup_h
-#define Blob_Game_ExpressionSetup_h
+#ifndef CommonGameKit_ExpressionSetup_h
+#define CommonGameKit_ExpressionSetup_h
 
 void CCExpressionSetup(void);
 

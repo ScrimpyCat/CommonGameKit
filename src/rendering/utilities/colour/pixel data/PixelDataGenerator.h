@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_PixelDataGenerator_h
-#define Blob_Game_PixelDataGenerator_h
+#ifndef CommonGameKit_PixelDataGenerator_h
+#define CommonGameKit_PixelDataGenerator_h
 
 #include "PixelData.h"
 

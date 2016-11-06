@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFXFramebuffer_h
-#define Blob_Game_GFXFramebuffer_h
+#ifndef CommonGameKit_GFXFramebuffer_h
+#define CommonGameKit_GFXFramebuffer_h
 
 #include "GFXTexture.h"
 #include <CommonC/Common.h>

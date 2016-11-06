@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Text_h
-#define Blob_Game_Text_h
+#ifndef CommonGameKit_Text_h
+#define CommonGameKit_Text_h
 
 #include "TextAttribute.h"
 

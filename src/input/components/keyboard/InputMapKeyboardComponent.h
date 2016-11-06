@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_InputMapKeyboardComponent_h
-#define Blob_Game_InputMapKeyboardComponent_h
+#ifndef CommonGameKit_InputMapKeyboardComponent_h
+#define CommonGameKit_InputMapKeyboardComponent_h
 
 #include "InputMapComponent.h"
 

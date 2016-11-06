@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_EntityManager_h
-#define Blob_Game_EntityManager_h
+#ifndef CommonGameKit_EntityManager_h
+#define CommonGameKit_EntityManager_h
 
 #include "Entity.h"
 

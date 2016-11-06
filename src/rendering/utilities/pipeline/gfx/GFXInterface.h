@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFXInterface_h
-#define Blob_Game_GFXInterface_h
+#ifndef CommonGameKit_GFXInterface_h
+#define CommonGameKit_GFXInterface_h
 
 #include <CommonC/Allocator.h>
 #include "GFXBuffer.h"

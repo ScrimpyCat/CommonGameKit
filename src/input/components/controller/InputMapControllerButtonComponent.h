@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_InputMapControllerButtonComponent_h
-#define Blob_Game_InputMapControllerButtonComponent_h
+#ifndef CommonGameKit_InputMapControllerButtonComponent_h
+#define CommonGameKit_InputMapControllerButtonComponent_h
 
 #include "InputMapControllerComponent.h"
 

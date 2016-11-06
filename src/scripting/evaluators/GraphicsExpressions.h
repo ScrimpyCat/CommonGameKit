@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GraphicsExpressions_h
-#define Blob_Game_GraphicsExpressions_h
+#ifndef CommonGameKit_GraphicsExpressions_h
+#define CommonGameKit_GraphicsExpressions_h
 
 #include "ExpressionEvaluator.h"
 #include "GFX.h"

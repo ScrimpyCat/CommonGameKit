@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Controller_h
-#define Blob_Game_Controller_h
+#ifndef CommonGameKit_Controller_h
+#define CommonGameKit_Controller_h
 
 #include "GLSetup.h"
 #include "Component.h"

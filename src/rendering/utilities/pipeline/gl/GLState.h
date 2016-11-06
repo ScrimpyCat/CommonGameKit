@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_State_h
-#define Blob_Game_State_h
+#ifndef CommonGameKit_State_h
+#define CommonGameKit_State_h
 
 #include "Pipeline.h"
 #include "PipelineVersion.h"

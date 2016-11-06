@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLShaderLibrary_h
-#define Blob_Game_GLShaderLibrary_h
+#ifndef CommonGameKit_GLShaderLibrary_h
+#define CommonGameKit_GLShaderLibrary_h
 
 #include "GLGFX.h"
 #include "GLSetup.h"

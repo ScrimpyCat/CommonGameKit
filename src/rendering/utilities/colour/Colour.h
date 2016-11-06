@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Colour_h
-#define Blob_Game_Colour_h
+#ifndef CommonGameKit_Colour_h
+#define CommonGameKit_Colour_h
 
 #include "ColourFormat.h"
 #include "ColourComponent.h"

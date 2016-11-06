@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GFXBlend_h
-#define Blob_Game_GFXBlend_h
+#ifndef CommonGameKit_GFXBlend_h
+#define CommonGameKit_GFXBlend_h
 
 typedef enum {
     GFXBlendOperationMask = (7 << 16),

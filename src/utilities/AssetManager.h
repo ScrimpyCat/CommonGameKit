@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_AssetManager_h
-#define Blob_Game_AssetManager_h
+#ifndef CommonGameKit_AssetManager_h
+#define CommonGameKit_AssetManager_h
 
 #include "GFX.h"
 #include "Font.h"

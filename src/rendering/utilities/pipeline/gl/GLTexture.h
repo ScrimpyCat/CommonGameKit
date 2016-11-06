@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_GLTexture_h
-#define Blob_Game_GLTexture_h
+#ifndef CommonGameKit_GLTexture_h
+#define CommonGameKit_GLTexture_h
 
 #include "GLGFX.h"
 #include "GLSetup.h"

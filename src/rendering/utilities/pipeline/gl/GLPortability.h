@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Types_h
-#define Blob_Game_Types_h
+#ifndef CommonGameKit_Types_h
+#define CommonGameKit_Types_h
 
 #include "Pipeline.h"
 

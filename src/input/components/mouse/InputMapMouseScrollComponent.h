@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_InputMapMouseScrollComponent_h
-#define Blob_Game_InputMapMouseScrollComponent_h
+#ifndef CommonGameKit_InputMapMouseScrollComponent_h
+#define CommonGameKit_InputMapMouseScrollComponent_h
 
 #include "InputMapComponent.h"
 

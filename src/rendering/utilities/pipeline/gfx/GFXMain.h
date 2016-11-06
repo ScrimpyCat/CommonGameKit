@@ -24,8 +24,8 @@
  */
 
 
-#ifndef Blob_Game_GFXMain_h
-#define Blob_Game_GFXMain_h
+#ifndef CommonGameKit_GFXMain_h
+#define CommonGameKit_GFXMain_h
 
 #include "GFXInterface.h"
 

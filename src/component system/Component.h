@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_Component_h
-#define Blob_Game_Component_h
+#ifndef CommonGameKit_Component_h
+#define CommonGameKit_Component_h
 
 #include <stdint.h>
 #include <CommonC/Common.h>

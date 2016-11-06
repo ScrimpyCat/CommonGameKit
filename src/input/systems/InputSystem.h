@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_InputSystem_h
-#define Blob_Game_InputSystem_h
+#ifndef CommonGameKit_InputSystem_h
+#define CommonGameKit_InputSystem_h
 
 #include "ComponentSystem.h"
 #include "Entity.h"

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Blob_Game_SelectedState_h
-#define Blob_Game_SelectedState_h
+#ifndef CommonGameKit_SelectedState_h
+#define CommonGameKit_SelectedState_h
 
 /*
  Define here the state required by the application that you want to keep track of.
