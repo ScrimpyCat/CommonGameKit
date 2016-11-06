@@ -43,6 +43,7 @@
 		F3897BDE1DCD8A00008D6C1D /* CCTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */; };
 		F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */; };
+		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
 		F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */; };
 		F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32951DCCD4EB00CAD472 /* AnimationComponent.c */; };
@@ -149,7 +150,7 @@
 		F3AF33E21DCCD4EC00CAD472 /* GLFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33141DCCD4EB00CAD472 /* GLFramebuffer.c */; };
 		F3AF33E31DCCD4EC00CAD472 /* GLFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33151DCCD4EB00CAD472 /* GLFramebuffer.h */; };
 		F3AF33E41DCCD4EC00CAD472 /* GLGFX.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33161DCCD4EB00CAD472 /* GLGFX.c */; };
-		F3AF33E51DCCD4EC00CAD472 /* GLGFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33171DCCD4EB00CAD472 /* GLGFX.h */; };
+		F3AF33E51DCCD4EC00CAD472 /* GLGFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33171DCCD4EB00CAD472 /* GLGFX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33E61DCCD4EC00CAD472 /* GLPortability.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33181DCCD4EB00CAD472 /* GLPortability.h */; };
 		F3AF33E71DCCD4EC00CAD472 /* GLSelectedState.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33191DCCD4EB00CAD472 /* GLSelectedState.h */; };
 		F3AF33E81DCCD4EC00CAD472 /* GLShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF331A1DCCD4EB00CAD472 /* GLShader.c */; };
@@ -420,6 +421,7 @@
 		F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CCTestCase.m; sourceTree = "<group>"; };
 		F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExpressionSetup.h; path = src/Setup/ExpressionSetup.h; sourceTree = SOURCE_ROOT; };
 		F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ExpressionSetup.c; path = src/Setup/ExpressionSetup.c; sourceTree = SOURCE_ROOT; };
+		F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLGFX_Private.h; sourceTree = "<group>"; };
 		F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonGameKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonGameKit.h; path = src/CommonGameKit.h; sourceTree = SOURCE_ROOT; };
 		F3AF327E1DCCD29000CAD472 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -1022,6 +1024,7 @@
 				F3AF33141DCCD4EB00CAD472 /* GLFramebuffer.c */,
 				F3AF33151DCCD4EB00CAD472 /* GLFramebuffer.h */,
 				F3AF33161DCCD4EB00CAD472 /* GLGFX.c */,
+				F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */,
 				F3AF33171DCCD4EB00CAD472 /* GLGFX.h */,
 				F3AF33181DCCD4EB00CAD472 /* GLPortability.h */,
 				F3897BCD1DCD7ABB008D6C1D /* GLPortability.c */,
@@ -1171,6 +1174,7 @@
 				F3AF33F11DCCD4EC00CAD472 /* GLVersionMacro.h in Headers */,
 				F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */,
 				F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */,
+				F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */,
 				F3AF34A71DCCD5AF00CAD472 /* StringExpressions.h in Headers */,
 				F3AF33E51DCCD4EC00CAD472 /* GLGFX.h in Headers */,
 				F3AF348C1DCCD5AF00CAD472 /* DebugExpressions.h in Headers */,

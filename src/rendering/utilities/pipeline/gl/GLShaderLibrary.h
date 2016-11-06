@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLShaderLibrary_h
 #define CommonGameKit_GLShaderLibrary_h
 
-#include "GLGFX.h"
+#include "GLGFX_Private.h"
 #include "GLSetup.h"
 
 

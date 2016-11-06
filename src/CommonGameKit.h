@@ -76,6 +76,7 @@
 #include <CommonGameKit/PixelDataStatic.h>
 
 #include <CommonGameKit/GFX.h>
+#include <CommonGameKit/GLGFX.h>
 
 #include <CommonGameKit/Expression.h>
 #include <CommonGameKit/ExpressionEvaluator.h>

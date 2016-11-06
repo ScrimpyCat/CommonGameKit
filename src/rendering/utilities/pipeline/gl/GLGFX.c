@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "GLGFX.h"
+#include "GLGFX_Private.h"
 #include "GLBuffer.h"
 #include "GLTexture.h"
 #include "GLFramebuffer.h"

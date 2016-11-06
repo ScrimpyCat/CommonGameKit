@@ -27,16 +27,12 @@
 #define CommonGameKit_GLGFX_h
 
 #include "GFX.h"
-#include "GLSetup.h"
-
-typedef struct {
-    struct {
-        GLint maxColourAttachments;
-    } limits;
-} GLInternal;
 
 extern GFXMainInfo * const GLGFX;
 
+/*!
+ * @brief Configure GFX to use the OpenGL backed implementation.
+ */
 void GLGFXSetup(void);
 
 #endif

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLDraw_h
 #define CommonGameKit_GLDraw_h
 
-#include "GLGFX.h"
+#include "GLGFX_Private.h"
 #include "GLSetup.h"
 
 

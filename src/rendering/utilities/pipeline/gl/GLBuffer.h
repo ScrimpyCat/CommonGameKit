@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLBuffer_h
 #define CommonGameKit_GLBuffer_h
 
-#include "GLGFX.h"
+#include "GLGFX_Private.h"
 #include "GLSetup.h"
 
 

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLTexture_h
 #define CommonGameKit_GLTexture_h
 
-#include "GLGFX.h"
+#include "GLGFX_Private.h"
 #include "GLSetup.h"
 
 

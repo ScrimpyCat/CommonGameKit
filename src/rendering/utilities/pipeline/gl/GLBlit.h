@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLBlit_h
 #define CommonGameKit_GLBlit_h
 
-#include "GLGFX.h"
+#include "GLGFX_Private.h"
 #include "GLSetup.h"
 
 

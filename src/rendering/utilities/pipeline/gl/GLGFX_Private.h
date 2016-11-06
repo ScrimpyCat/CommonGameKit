@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2016, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,43 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommonGameKit_GLShader_h
-#define CommonGameKit_GLShader_h
+#ifndef CommonGameKit_GLGFX_Private_h
+#define CommonGameKit_GLGFX_Private_h
 
-#include "GLGFX_Private.h"
+#include "GLGFX.h"
 #include "GLSetup.h"
 
-
 typedef struct {
-    enum {
-        GLShaderInputTypeAttribute,
-        GLShaderInputTypeUniform,
-        GLShaderInputTypeUniformBlock
-    } type;
-} GLShaderInputInfo;
-
-typedef struct {
-    GLShaderInputInfo input;
-    GLuint location;
-    GFXBufferFormat type;
-} GLShaderAttributeInfo;
-
-typedef struct {
-    GLShaderInputInfo input;
-    GLint location;
-    GFXBufferFormat type;
-    GLint count;
-    void *value;
-} GLShaderUniformInfo;
-
-typedef struct {
-    GLuint program;
-    CCDictionary attributes;
-    CCDictionary uniforms;
-} GLShaderInfo, *GLShader;
-
-extern const GFXShaderInterface GLShaderInterface;
-
-void GLShaderSetUniform(GLShader Shader, GLShaderUniformInfo *Uniform, size_t Count, const void *Data);
+    struct {
+        GLint maxColourAttachments;
+    } limits;
+} GLInternal;
 
 #endif
