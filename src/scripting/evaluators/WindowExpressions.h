@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_WindowExpressions_h
 #define CommonGameKit_WindowExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(window-percent-width) CCExpression CCWindowExpressionPercentageWidth(CCExpression Expression);

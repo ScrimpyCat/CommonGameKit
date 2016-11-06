@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_ListExpressions_h
 #define CommonGameKit_ListExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(get) CCExpression CCListExpressionGetter(CCExpression Expression);

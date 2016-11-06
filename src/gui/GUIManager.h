@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GUIManager_h
 #define CommonGameKit_GUIManager_h
 
-#include "GUIObject.h"
+#include <CommonGameKit/GUIObject.h>
 
 /*!
  * @brief Creates the global GUI manager.

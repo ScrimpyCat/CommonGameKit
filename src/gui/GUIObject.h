@@ -27,9 +27,9 @@
 #define CommonGameKit_GUIObject_h
 
 #include <CommonC/Common.h>
-#include "GFX.h"
-#include "InputSystem.h"
-#include "Expression.h"
+#include <CommonGameKit/GFX.h>
+#include <CommonGameKit/InputSystem.h>
+#include <CommonGameKit/Expression.h>
 #include <threads.h>
 
 typedef const struct {

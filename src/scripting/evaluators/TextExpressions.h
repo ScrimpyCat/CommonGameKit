@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_TextExpressions_h
 #define CommonGameKit_TextExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(text-visible-length) CCExpression CCTextExpressionGetVisibleLength(CCExpression Expression);

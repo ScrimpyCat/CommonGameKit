@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_PixelDataGenerator_h
 #define CommonGameKit_PixelDataGenerator_h
 
-#include "PixelData.h"
+#include <CommonGameKit/PixelData.h>
 
 typedef CCColour (*CCPixelDataGeneratorFunction)(size_t x, size_t y, size_t z);
 

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_AnimationInterpolateComponent_h
 #define CommonGameKit_AnimationInterpolateComponent_h
 
-#include "AnimationKeyframeComponent.h"
+#include <CommonGameKit/AnimationKeyframeComponent.h>
 
 #define CC_ANIMATION_INTERPOLATE_COMPONENT_ID (CCAnimationTypeInterpolate | CC_ANIMATION_COMPONENT_FLAG)
 

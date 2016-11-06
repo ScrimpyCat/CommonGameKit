@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_AnimationSystem_h
 #define CommonGameKit_AnimationSystem_h
 
-#include "ComponentSystem.h"
+#include <CommonGameKit/ComponentSystem.h>
 
 #define CC_ANIMATION_SYSTEM_ID 31
 #define CC_ANIMATION_COMPONENT_FLAG 0x3000000

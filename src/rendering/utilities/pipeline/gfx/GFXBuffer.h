@@ -27,7 +27,7 @@
 #define CommonGameKit_GFXBuffer_h
 
 #include <CommonC/Common.h>
-#include "GFXBufferFormat.h"
+#include <CommonGameKit/GFXBufferFormat.h>
 
 typedef enum {
     GFXBufferHintAccessMask = 3,

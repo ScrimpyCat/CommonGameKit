@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_InputMapComponent_h
 #define CommonGameKit_InputMapComponent_h
 
-#include "InputSystem.h"
-#include "ComponentBase.h"
+#include <CommonGameKit/InputSystem.h>
+#include <CommonGameKit/ComponentBase.h>
 
 #define CC_INPUT_MAP_COMPONENT_ID (CCInputMapTypeNone | CC_INPUT_COMPONENT_FLAG)
 

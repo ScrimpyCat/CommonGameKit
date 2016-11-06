@@ -27,7 +27,7 @@
 #ifndef CommonGameKit_GFXMain_h
 #define CommonGameKit_GFXMain_h
 
-#include "GFXInterface.h"
+#include <CommonGameKit/GFXInterface.h>
 
 typedef struct {
     void *internal;

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_StringExpressions_h
 #define CommonGameKit_StringExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(prefix) CCExpression CCStringExpressionPrefix(CCExpression Expression);

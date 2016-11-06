@@ -27,7 +27,7 @@
 #define CommonGameKit_Font_h
 
 #include <CommonC/Common.h>
-#include "GFX.h"
+#include <CommonGameKit/GFX.h>
 
 typedef enum {
     CCFontStyleBold = (1 << 0),

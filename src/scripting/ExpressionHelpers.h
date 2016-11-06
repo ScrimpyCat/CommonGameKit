@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_ExpressionHelpers_h
 #define CommonGameKit_ExpressionHelpers_h
 
-#include "Expression.h"
+#include <CommonGameKit/Expression.h>
 
 CC_NEW CCExpression CCExpressionCreateVector2(CCAllocatorType Allocator, CCVector2D v);
 CC_NEW CCExpression CCExpressionCreateVector3(CCAllocatorType Allocator, CCVector3D v);

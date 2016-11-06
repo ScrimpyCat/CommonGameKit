@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_DebugExpressions_h
 #define CommonGameKit_DebugExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(inspect) CCExpression CCDebugExpressionInspect(CCExpression Expression);

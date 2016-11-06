@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapMouseScrollComponent_h
 #define CommonGameKit_InputMapMouseScrollComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 
 #define CC_INPUT_MAP_MOUSE_SCROLL_COMPONENT_ID (CCInputMapTypeMouseScroll | CC_INPUT_COMPONENT_FLAG)
 

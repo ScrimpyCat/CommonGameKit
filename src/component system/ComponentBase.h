@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_ComponentBase_h
 #define CommonGameKit_ComponentBase_h
 
-#include "Component.h"
-#include "Entity.h"
+#include <CommonGameKit/Component.h>
+#include <CommonGameKit/Entity.h>
 
 #define CC_COMPONENT_ID 0
 

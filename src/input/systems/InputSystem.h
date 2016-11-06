@@ -26,10 +26,10 @@
 #ifndef CommonGameKit_InputSystem_h
 #define CommonGameKit_InputSystem_h
 
-#include "ComponentSystem.h"
-#include "Entity.h"
-#include "Keyboard.h"
-#include "Mouse.h"
+#include <CommonGameKit/ComponentSystem.h>
+#include <CommonGameKit/Entity.h>
+#include <CommonGameKit/Keyboard.h>
+#include <CommonGameKit/Mouse.h>
 
 //Note: Currently just a demo system
 

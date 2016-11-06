@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GFXShader_h
 #define CommonGameKit_GFXShader_h
 
-#include "GFXShaderLibrary.h"
+#include <CommonGameKit/GFXShaderLibrary.h>
 #include <CommonC/Common.h>
 
 /*!

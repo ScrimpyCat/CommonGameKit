@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_IOExpressions_h
 #define CommonGameKit_IOExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(print) CCExpression CCIOExpressionPrint(CCExpression Expression);

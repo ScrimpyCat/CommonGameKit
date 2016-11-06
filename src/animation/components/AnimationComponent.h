@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_AnimationComponent_h
 #define CommonGameKit_AnimationComponent_h
 
-#include "AnimationSystem.h"
-#include "ComponentBase.h"
+#include <CommonGameKit/AnimationSystem.h>
+#include <CommonGameKit/ComponentBase.h>
 #include <CommonC/Common.h>
 
 

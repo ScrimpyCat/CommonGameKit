@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapControllerAxesComponent_h
 #define CommonGameKit_InputMapControllerAxesComponent_h
 
-#include "InputMapControllerComponent.h"
+#include <CommonGameKit/InputMapControllerComponent.h>
 
 #define CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID (CCInputMapTypeControllerAxes | CC_INPUT_COMPONENT_FLAG)
 

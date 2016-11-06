@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapMousePositionComponent_h
 #define CommonGameKit_InputMapMousePositionComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 
 #define CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID (CCInputMapTypeMousePosition | CC_INPUT_COMPONENT_FLAG)
 

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_MacroExpressions_h
 #define CommonGameKit_MacroExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(quote) CCExpression CCMacroExpressionQuote(CCExpression Expression);

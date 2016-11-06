@@ -27,7 +27,7 @@
 #define CommonGameKit_ComponentSystem_h
 
 #include <stdint.h>
-#include "Component.h"
+#include <CommonGameKit/Component.h>
 
 /*!
  * @typedef CCComponentSystemExecutionType

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapMouseDropComponent_h
 #define CommonGameKit_InputMapMouseDropComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 
 #define CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID (CCInputMapTypeMouseDrop | CC_INPUT_COMPONENT_FLAG)
 

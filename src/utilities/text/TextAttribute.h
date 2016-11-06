@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_TextAttribute_h
 #define CommonGameKit_TextAttribute_h
 
-#include "Font.h"
+#include <CommonGameKit/Font.h>
 
 typedef enum {
     CCTextVisibilityMultiLine = (0 << 0),

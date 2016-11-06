@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_MathExpressions_h
 #define CommonGameKit_MathExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(+) CCExpression CCMathExpressionAddition(CCExpression Expression);

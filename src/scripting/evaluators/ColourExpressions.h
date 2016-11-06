@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_ColourExpressions_h
 #define CommonGameKit_ColourExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(lighten) CCExpression CCColourExpressionLighten(CCExpression Expression);

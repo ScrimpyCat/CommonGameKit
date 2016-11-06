@@ -26,15 +26,15 @@
 #ifndef CommonGameKit_GFX_h
 #define CommonGameKit_GFX_h
 
-#include "GFXInterface.h"
-#include "GFXMain.h"
-#include "GFXBuffer.h"
-#include "GFXTexture.h"
-#include "GFXFramebuffer.h"
-#include "GFXShaderLibrary.h"
-#include "GFXShader.h"
-#include "GFXBlend.h"
-#include "GFXDraw.h"
-#include "GFXBlit.h"
+#include <CommonGameKit/GFXInterface.h>
+#include <CommonGameKit/GFXMain.h>
+#include <CommonGameKit/GFXBuffer.h>
+#include <CommonGameKit/GFXTexture.h>
+#include <CommonGameKit/GFXFramebuffer.h>
+#include <CommonGameKit/GFXShaderLibrary.h>
+#include <CommonGameKit/GFXShader.h>
+#include <CommonGameKit/GFXBlend.h>
+#include <CommonGameKit/GFXDraw.h>
+#include <CommonGameKit/GFXBlit.h>
 
 #endif

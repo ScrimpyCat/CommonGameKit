@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_Text_h
 #define CommonGameKit_Text_h
 
-#include "TextAttribute.h"
+#include <CommonGameKit/TextAttribute.h>
 
 typedef enum {
     CCTextAlignmentLeft,

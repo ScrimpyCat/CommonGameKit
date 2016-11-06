@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_ControlFlowExpressions_h
 #define CommonGameKit_ControlFlowExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(begin) CCExpression CCControlFlowExpressionBegin(CCExpression Expression);

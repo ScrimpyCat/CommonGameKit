@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapGroupComponent_h
 #define CommonGameKit_InputMapGroupComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 #include <CommonC/Common.h>
 
 #define CC_INPUT_MAP_GROUP_COMPONENT_ID (CCInputMapTypeGroup | CC_INPUT_COMPONENT_FLAG)

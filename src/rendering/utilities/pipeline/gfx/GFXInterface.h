@@ -27,13 +27,13 @@
 #define CommonGameKit_GFXInterface_h
 
 #include <CommonC/Allocator.h>
-#include "GFXBuffer.h"
-#include "GFXTexture.h"
-#include "GFXFramebuffer.h"
-#include "GFXShaderLibrary.h"
-#include "GFXShader.h"
-#include "GFXDraw.h"
-#include "GFXBlit.h"
+#include <CommonGameKit/GFXBuffer.h>
+#include <CommonGameKit/GFXTexture.h>
+#include <CommonGameKit/GFXFramebuffer.h>
+#include <CommonGameKit/GFXShaderLibrary.h>
+#include <CommonGameKit/GFXShader.h>
+#include <CommonGameKit/GFXDraw.h>
+#include <CommonGameKit/GFXBlit.h>
 
 #pragma mark - Required Buffer Callbacks
 typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);

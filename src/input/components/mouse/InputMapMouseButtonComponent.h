@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapMouseButtonComponent_h
 #define CommonGameKit_InputMapMouseButtonComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 
 #define CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID (CCInputMapTypeMouseButton | CC_INPUT_COMPONENT_FLAG)
 

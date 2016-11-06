@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_ExpressionEvaluator_h
 #define CommonGameKit_ExpressionEvaluator_h
 
-#include "Expression.h"
+#include <CommonGameKit/Expression.h>
 
 /*!
  * @define CC_EXPRESSION_EVALUATOR

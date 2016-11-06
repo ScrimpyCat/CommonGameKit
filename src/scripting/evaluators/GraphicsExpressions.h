@@ -26,9 +26,9 @@
 #ifndef CommonGameKit_GraphicsExpressions_h
 #define CommonGameKit_GraphicsExpressions_h
 
-#include "ExpressionEvaluator.h"
-#include "GFX.h"
-#include "Text.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
+#include <CommonGameKit/GFX.h>
+#include <CommonGameKit/Text.h>
 
 
 typedef enum {

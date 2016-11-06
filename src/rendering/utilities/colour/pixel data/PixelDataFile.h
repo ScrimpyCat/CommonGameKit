@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_PixelDataFile_h
 #define CommonGameKit_PixelDataFile_h
 
-#include "PixelData.h"
+#include <CommonGameKit/PixelData.h>
 
 extern const CCPixelDataInterface * const CCPixelDataFile;
 

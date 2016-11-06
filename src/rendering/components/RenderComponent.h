@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_RenderComponent_h
 #define CommonGameKit_RenderComponent_h
 
-#include "RenderSystem.h"
-#include "ComponentBase.h"
+#include <CommonGameKit/RenderSystem.h>
+#include <CommonGameKit/ComponentBase.h>
 #include <CommonC/Common.h>
 
 //Note: Currently just a demo component

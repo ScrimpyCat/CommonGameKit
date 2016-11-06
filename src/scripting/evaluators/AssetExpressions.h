@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_AssetExpressions_h
 #define CommonGameKit_AssetExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 typedef enum {

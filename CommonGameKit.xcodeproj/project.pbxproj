@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
-		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; };
+		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
 		F3897B2F1DCD6B32008D6C1D /* stdatomic_clang.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2C1DCD6B32008D6C1D /* stdatomic_clang.h */; };
 		F3897B301DCD6B32008D6C1D /* stdatomic_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2D1DCD6B32008D6C1D /* stdatomic_portable.h */; };
@@ -41,102 +41,102 @@
 		F3897BCE1DCD7ABB008D6C1D /* GLPortability.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897BCD1DCD7ABB008D6C1D /* GLPortability.c */; };
 		F3897BD91DCD7E1B008D6C1D /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34C11DCCF4EC00CAD472 /* CommonC.framework */; };
 		F3897BDE1DCD8A00008D6C1D /* CCTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */; };
-		F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */; };
+		F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */; };
 		F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */; };
 		F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32951DCCD4EB00CAD472 /* AnimationComponent.c */; };
-		F3AF33781DCCD4EC00CAD472 /* AnimationComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32961DCCD4EB00CAD472 /* AnimationComponent.h */; };
+		F3AF33781DCCD4EC00CAD472 /* AnimationComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32961DCCD4EB00CAD472 /* AnimationComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33791DCCD4EC00CAD472 /* AnimationInterpolateComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32971DCCD4EB00CAD472 /* AnimationInterpolateComponent.c */; };
-		F3AF337A1DCCD4EC00CAD472 /* AnimationInterpolateComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32981DCCD4EB00CAD472 /* AnimationInterpolateComponent.h */; };
+		F3AF337A1DCCD4EC00CAD472 /* AnimationInterpolateComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32981DCCD4EB00CAD472 /* AnimationInterpolateComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF337B1DCCD4EC00CAD472 /* AnimationKeyframeComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32991DCCD4EB00CAD472 /* AnimationKeyframeComponent.c */; };
-		F3AF337C1DCCD4EC00CAD472 /* AnimationKeyframeComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF329A1DCCD4EB00CAD472 /* AnimationKeyframeComponent.h */; };
+		F3AF337C1DCCD4EC00CAD472 /* AnimationKeyframeComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF329A1DCCD4EB00CAD472 /* AnimationKeyframeComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF337D1DCCD4EC00CAD472 /* AnimationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF329C1DCCD4EB00CAD472 /* AnimationSystem.c */; };
-		F3AF337E1DCCD4EC00CAD472 /* AnimationSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF329D1DCCD4EB00CAD472 /* AnimationSystem.h */; };
+		F3AF337E1DCCD4EC00CAD472 /* AnimationSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF329D1DCCD4EB00CAD472 /* AnimationSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF337F1DCCD4EC00CAD472 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF329F1DCCD4EB00CAD472 /* Component.c */; };
-		F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A01DCCD4EB00CAD472 /* Component.h */; };
-		F3AF33811DCCD4EC00CAD472 /* ComponentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A11DCCD4EB00CAD472 /* ComponentBase.h */; };
+		F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A01DCCD4EB00CAD472 /* Component.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33811DCCD4EC00CAD472 /* ComponentBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A11DCCD4EB00CAD472 /* ComponentBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33821DCCD4EC00CAD472 /* ComponentSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32A21DCCD4EB00CAD472 /* ComponentSystem.c */; };
-		F3AF33831DCCD4EC00CAD472 /* ComponentSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A31DCCD4EB00CAD472 /* ComponentSystem.h */; };
+		F3AF33831DCCD4EC00CAD472 /* ComponentSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A31DCCD4EB00CAD472 /* ComponentSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33841DCCD4EC00CAD472 /* Entity.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32A41DCCD4EB00CAD472 /* Entity.c */; };
-		F3AF33851DCCD4EC00CAD472 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A51DCCD4EB00CAD472 /* Entity.h */; };
+		F3AF33851DCCD4EC00CAD472 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A51DCCD4EB00CAD472 /* Entity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33861DCCD4EC00CAD472 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32A61DCCD4EB00CAD472 /* EntityManager.c */; };
-		F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A71DCCD4EB00CAD472 /* EntityManager.h */; };
+		F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A71DCCD4EB00CAD472 /* EntityManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF338C1DCCD4EC00CAD472 /* GUIContainer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32AE1DCCD4EB00CAD472 /* GUIContainer.c */; };
 		F3AF338D1DCCD4EC00CAD472 /* GUIContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32AF1DCCD4EB00CAD472 /* GUIContainer.h */; };
 		F3AF338E1DCCD4EC00CAD472 /* GUIExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B01DCCD4EB00CAD472 /* GUIExpression.c */; };
-		F3AF338F1DCCD4EC00CAD472 /* GUIExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B11DCCD4EB00CAD472 /* GUIExpression.h */; };
+		F3AF338F1DCCD4EC00CAD472 /* GUIExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B11DCCD4EB00CAD472 /* GUIExpression.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33901DCCD4EC00CAD472 /* GUIManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B21DCCD4EB00CAD472 /* GUIManager.c */; };
-		F3AF33911DCCD4EC00CAD472 /* GUIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B31DCCD4EB00CAD472 /* GUIManager.h */; };
+		F3AF33911DCCD4EC00CAD472 /* GUIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B31DCCD4EB00CAD472 /* GUIManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33921DCCD4EC00CAD472 /* GUIObject.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B41DCCD4EB00CAD472 /* GUIObject.c */; };
-		F3AF33931DCCD4EC00CAD472 /* GUIObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B51DCCD4EB00CAD472 /* GUIObject.h */; };
+		F3AF33931DCCD4EC00CAD472 /* GUIObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B51DCCD4EB00CAD472 /* GUIObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33941DCCD4EC00CAD472 /* InputMapControllerAxesComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B91DCCD4EB00CAD472 /* InputMapControllerAxesComponent.c */; };
-		F3AF33951DCCD4EC00CAD472 /* InputMapControllerAxesComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BA1DCCD4EB00CAD472 /* InputMapControllerAxesComponent.h */; };
+		F3AF33951DCCD4EC00CAD472 /* InputMapControllerAxesComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BA1DCCD4EB00CAD472 /* InputMapControllerAxesComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33961DCCD4EC00CAD472 /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32BB1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.c */; };
-		F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BC1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.h */; };
+		F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BC1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33981DCCD4EC00CAD472 /* InputMapControllerComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32BD1DCCD4EB00CAD472 /* InputMapControllerComponent.c */; };
-		F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BE1DCCD4EB00CAD472 /* InputMapControllerComponent.h */; };
-		F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BF1DCCD4EB00CAD472 /* InputMapComponent.h */; };
+		F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BE1DCCD4EB00CAD472 /* InputMapControllerComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BF1DCCD4EB00CAD472 /* InputMapComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF339B1DCCD4EC00CAD472 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C01DCCD4EB00CAD472 /* InputMapGroupComponent.c */; };
-		F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C11DCCD4EB00CAD472 /* InputMapGroupComponent.h */; };
+		F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C11DCCD4EB00CAD472 /* InputMapGroupComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF339D1DCCD4EC00CAD472 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C31DCCD4EB00CAD472 /* InputMapKeyboardComponent.c */; };
-		F3AF339E1DCCD4EC00CAD472 /* InputMapKeyboardComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C41DCCD4EB00CAD472 /* InputMapKeyboardComponent.h */; };
+		F3AF339E1DCCD4EC00CAD472 /* InputMapKeyboardComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C41DCCD4EB00CAD472 /* InputMapKeyboardComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF339F1DCCD4EC00CAD472 /* InputMapMouseButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C61DCCD4EB00CAD472 /* InputMapMouseButtonComponent.c */; };
-		F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C71DCCD4EB00CAD472 /* InputMapMouseButtonComponent.h */; };
+		F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C71DCCD4EB00CAD472 /* InputMapMouseButtonComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A11DCCD4EC00CAD472 /* InputMapMouseDropComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C81DCCD4EB00CAD472 /* InputMapMouseDropComponent.c */; };
-		F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C91DCCD4EB00CAD472 /* InputMapMouseDropComponent.h */; };
+		F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C91DCCD4EB00CAD472 /* InputMapMouseDropComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A31DCCD4EC00CAD472 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32CA1DCCD4EB00CAD472 /* InputMapMousePositionComponent.c */; };
-		F3AF33A41DCCD4EC00CAD472 /* InputMapMousePositionComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CB1DCCD4EB00CAD472 /* InputMapMousePositionComponent.h */; };
+		F3AF33A41DCCD4EC00CAD472 /* InputMapMousePositionComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CB1DCCD4EB00CAD472 /* InputMapMousePositionComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A51DCCD4EC00CAD472 /* InputMapMouseScrollComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32CC1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.c */; };
-		F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CD1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.h */; };
+		F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CD1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A71DCCD4EC00CAD472 /* Controller.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32CE1DCCD4EB00CAD472 /* Controller.c */; };
-		F3AF33A81DCCD4EC00CAD472 /* Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CF1DCCD4EB00CAD472 /* Controller.h */; };
+		F3AF33A81DCCD4EC00CAD472 /* Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CF1DCCD4EB00CAD472 /* Controller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A91DCCD4EC00CAD472 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32D01DCCD4EB00CAD472 /* Keyboard.c */; };
-		F3AF33AA1DCCD4EC00CAD472 /* Keyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D11DCCD4EB00CAD472 /* Keyboard.h */; };
+		F3AF33AA1DCCD4EC00CAD472 /* Keyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D11DCCD4EB00CAD472 /* Keyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33AB1DCCD4EC00CAD472 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32D21DCCD4EB00CAD472 /* Mouse.c */; };
-		F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D31DCCD4EB00CAD472 /* Mouse.h */; };
+		F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D31DCCD4EB00CAD472 /* Mouse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33AD1DCCD4EC00CAD472 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32D51DCCD4EB00CAD472 /* InputSystem.c */; };
-		F3AF33AE1DCCD4EC00CAD472 /* InputSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D61DCCD4EB00CAD472 /* InputSystem.h */; };
+		F3AF33AE1DCCD4EC00CAD472 /* InputSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D61DCCD4EB00CAD472 /* InputSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B11DCCD4EC00CAD472 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32DC1DCCD4EB00CAD472 /* RenderComponent.c */; };
-		F3AF33B21DCCD4EC00CAD472 /* RenderComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32DD1DCCD4EB00CAD472 /* RenderComponent.h */; };
+		F3AF33B21DCCD4EC00CAD472 /* RenderComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32DD1DCCD4EB00CAD472 /* RenderComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B31DCCD4EC00CAD472 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32DF1DCCD4EB00CAD472 /* RenderSystem.c */; };
-		F3AF33B41DCCD4EC00CAD472 /* RenderSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E01DCCD4EB00CAD472 /* RenderSystem.h */; };
+		F3AF33B41DCCD4EC00CAD472 /* RenderSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E01DCCD4EB00CAD472 /* RenderSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B51DCCD4EC00CAD472 /* Colour.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32E31DCCD4EB00CAD472 /* Colour.c */; };
-		F3AF33B61DCCD4EC00CAD472 /* Colour.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E41DCCD4EB00CAD472 /* Colour.h */; };
+		F3AF33B61DCCD4EC00CAD472 /* Colour.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E41DCCD4EB00CAD472 /* Colour.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B71DCCD4EC00CAD472 /* ColourComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32E51DCCD4EB00CAD472 /* ColourComponent.c */; };
-		F3AF33B81DCCD4EC00CAD472 /* ColourComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E61DCCD4EB00CAD472 /* ColourComponent.h */; };
+		F3AF33B81DCCD4EC00CAD472 /* ColourComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E61DCCD4EB00CAD472 /* ColourComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B91DCCD4EC00CAD472 /* ColourFormat.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32E71DCCD4EB00CAD472 /* ColourFormat.c */; };
-		F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E81DCCD4EB00CAD472 /* ColourFormat.h */; };
-		F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E91DCCD4EB00CAD472 /* ColourFormatHSV.h */; };
-		F3AF33BC1DCCD4EC00CAD472 /* ColourFormatRGB.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32EA1DCCD4EB00CAD472 /* ColourFormatRGB.h */; };
+		F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E81DCCD4EB00CAD472 /* ColourFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32E91DCCD4EB00CAD472 /* ColourFormatHSV.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33BC1DCCD4EC00CAD472 /* ColourFormatRGB.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32EA1DCCD4EB00CAD472 /* ColourFormatRGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33BD1DCCD4EC00CAD472 /* PixelData.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32EC1DCCD4EB00CAD472 /* PixelData.c */; };
-		F3AF33BE1DCCD4EC00CAD472 /* PixelData.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32ED1DCCD4EB00CAD472 /* PixelData.h */; };
+		F3AF33BE1DCCD4EC00CAD472 /* PixelData.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32ED1DCCD4EB00CAD472 /* PixelData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33BF1DCCD4EC00CAD472 /* PixelDataFile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32EE1DCCD4EB00CAD472 /* PixelDataFile.c */; };
-		F3AF33C01DCCD4EC00CAD472 /* PixelDataFile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32EF1DCCD4EB00CAD472 /* PixelDataFile.h */; };
+		F3AF33C01DCCD4EC00CAD472 /* PixelDataFile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32EF1DCCD4EB00CAD472 /* PixelDataFile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33C11DCCD4EC00CAD472 /* PixelDataGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32F01DCCD4EB00CAD472 /* PixelDataGenerator.c */; };
-		F3AF33C21DCCD4EC00CAD472 /* PixelDataGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F11DCCD4EB00CAD472 /* PixelDataGenerator.h */; };
+		F3AF33C21DCCD4EC00CAD472 /* PixelDataGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F11DCCD4EB00CAD472 /* PixelDataGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33C31DCCD4EC00CAD472 /* PixelDataStatic.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32F21DCCD4EB00CAD472 /* PixelDataStatic.c */; };
-		F3AF33C41DCCD4EC00CAD472 /* PixelDataStatic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F31DCCD4EB00CAD472 /* PixelDataStatic.h */; };
-		F3AF33C51DCCD4EC00CAD472 /* GFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F61DCCD4EB00CAD472 /* GFX.h */; };
-		F3AF33C61DCCD4EC00CAD472 /* GFXBlend.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F71DCCD4EB00CAD472 /* GFXBlend.h */; };
+		F3AF33C41DCCD4EC00CAD472 /* PixelDataStatic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F31DCCD4EB00CAD472 /* PixelDataStatic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33C51DCCD4EC00CAD472 /* GFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F61DCCD4EB00CAD472 /* GFX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33C61DCCD4EC00CAD472 /* GFXBlend.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F71DCCD4EB00CAD472 /* GFXBlend.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33C71DCCD4EC00CAD472 /* GFXBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32F81DCCD4EB00CAD472 /* GFXBlit.c */; };
-		F3AF33C81DCCD4EC00CAD472 /* GFXBlit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F91DCCD4EB00CAD472 /* GFXBlit.h */; };
+		F3AF33C81DCCD4EC00CAD472 /* GFXBlit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32F91DCCD4EB00CAD472 /* GFXBlit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33C91DCCD4EC00CAD472 /* GFXBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32FA1DCCD4EB00CAD472 /* GFXBuffer.c */; };
-		F3AF33CA1DCCD4EC00CAD472 /* GFXBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32FB1DCCD4EB00CAD472 /* GFXBuffer.h */; };
-		F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32FC1DCCD4EB00CAD472 /* GFXBufferFormat.h */; };
+		F3AF33CA1DCCD4EC00CAD472 /* GFXBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32FB1DCCD4EB00CAD472 /* GFXBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32FC1DCCD4EB00CAD472 /* GFXBufferFormat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33CC1DCCD4EC00CAD472 /* GFXDraw.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32FD1DCCD4EB00CAD472 /* GFXDraw.c */; };
-		F3AF33CD1DCCD4EC00CAD472 /* GFXDraw.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32FE1DCCD4EB00CAD472 /* GFXDraw.h */; };
+		F3AF33CD1DCCD4EC00CAD472 /* GFXDraw.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32FE1DCCD4EB00CAD472 /* GFXDraw.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33CE1DCCD4EC00CAD472 /* GFXFramebuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32FF1DCCD4EB00CAD472 /* GFXFramebuffer.c */; };
-		F3AF33CF1DCCD4EC00CAD472 /* GFXFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33001DCCD4EB00CAD472 /* GFXFramebuffer.h */; };
-		F3AF33D01DCCD4EC00CAD472 /* GFXInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33011DCCD4EB00CAD472 /* GFXInterface.h */; };
+		F3AF33CF1DCCD4EC00CAD472 /* GFXFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33001DCCD4EB00CAD472 /* GFXFramebuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF33D01DCCD4EC00CAD472 /* GFXInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33011DCCD4EB00CAD472 /* GFXInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33D11DCCD4EC00CAD472 /* GFXMain.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33021DCCD4EB00CAD472 /* GFXMain.c */; };
-		F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33031DCCD4EB00CAD472 /* GFXMain.h */; };
+		F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33031DCCD4EB00CAD472 /* GFXMain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33D31DCCD4EC00CAD472 /* GFXShader.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33041DCCD4EB00CAD472 /* GFXShader.c */; };
-		F3AF33D41DCCD4EC00CAD472 /* GFXShader.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33051DCCD4EB00CAD472 /* GFXShader.h */; };
+		F3AF33D41DCCD4EC00CAD472 /* GFXShader.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33051DCCD4EB00CAD472 /* GFXShader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33D51DCCD4EC00CAD472 /* GFXShaderLibrary.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33061DCCD4EB00CAD472 /* GFXShaderLibrary.c */; };
-		F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33071DCCD4EB00CAD472 /* GFXShaderLibrary.h */; };
+		F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33071DCCD4EB00CAD472 /* GFXShaderLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33D71DCCD4EC00CAD472 /* GFXTexture.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33081DCCD4EB00CAD472 /* GFXTexture.c */; };
-		F3AF33D81DCCD4EC00CAD472 /* GFXTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33091DCCD4EB00CAD472 /* GFXTexture.h */; };
+		F3AF33D81DCCD4EC00CAD472 /* GFXTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33091DCCD4EB00CAD472 /* GFXTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33D91DCCD4EC00CAD472 /* GLBlit.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF330B1DCCD4EB00CAD472 /* GLBlit.c */; };
 		F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF330C1DCCD4EB00CAD472 /* GLBlit.h */; };
 		F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF330D1DCCD4EB00CAD472 /* GLBuffer.c */; };
@@ -166,56 +166,56 @@
 		F3AF33F31DCCD4EC00CAD472 /* PipelineVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33251DCCD4EB00CAD472 /* PipelineVersion.h */; };
 		F3AF34321DCCD4EC00CAD472 /* GLSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33671DCCD4EC00CAD472 /* GLSetup.h */; };
 		F3AF34371DCCD4EC00CAD472 /* AssetManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF336D1DCCD4EC00CAD472 /* AssetManager.c */; };
-		F3AF34381DCCD4EC00CAD472 /* AssetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF336E1DCCD4EC00CAD472 /* AssetManager.h */; };
+		F3AF34381DCCD4EC00CAD472 /* AssetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF336E1DCCD4EC00CAD472 /* AssetManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34391DCCD4EC00CAD472 /* Font.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33701DCCD4EC00CAD472 /* Font.c */; };
-		F3AF343A1DCCD4EC00CAD472 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33711DCCD4EC00CAD472 /* Font.h */; };
+		F3AF343A1DCCD4EC00CAD472 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33711DCCD4EC00CAD472 /* Font.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF343B1DCCD4EC00CAD472 /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33721DCCD4EC00CAD472 /* Text.c */; };
-		F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33731DCCD4EC00CAD472 /* Text.h */; };
+		F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33731DCCD4EC00CAD472 /* Text.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF343D1DCCD4EC00CAD472 /* TextAttribute.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF33741DCCD4EC00CAD472 /* TextAttribute.c */; };
-		F3AF343E1DCCD4EC00CAD472 /* TextAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33751DCCD4EC00CAD472 /* TextAttribute.h */; };
+		F3AF343E1DCCD4EC00CAD472 /* TextAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF33751DCCD4EC00CAD472 /* TextAttribute.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34821DCCD5AF00CAD472 /* AssetExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF344A1DCCD5AF00CAD472 /* AssetExpressions.c */; };
-		F3AF34831DCCD5AF00CAD472 /* AssetExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF344B1DCCD5AF00CAD472 /* AssetExpressions.h */; };
+		F3AF34831DCCD5AF00CAD472 /* AssetExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF344B1DCCD5AF00CAD472 /* AssetExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34851DCCD5AF00CAD472 /* ColourExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF344D1DCCD5AF00CAD472 /* ColourExpressions.c */; };
-		F3AF34861DCCD5AF00CAD472 /* ColourExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF344E1DCCD5AF00CAD472 /* ColourExpressions.h */; };
+		F3AF34861DCCD5AF00CAD472 /* ColourExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF344E1DCCD5AF00CAD472 /* ColourExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34881DCCD5AF00CAD472 /* ControlFlowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34501DCCD5AF00CAD472 /* ControlFlowExpressions.c */; };
-		F3AF34891DCCD5AF00CAD472 /* ControlFlowExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34511DCCD5AF00CAD472 /* ControlFlowExpressions.h */; };
+		F3AF34891DCCD5AF00CAD472 /* ControlFlowExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34511DCCD5AF00CAD472 /* ControlFlowExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF348B1DCCD5AF00CAD472 /* DebugExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34531DCCD5AF00CAD472 /* DebugExpressions.c */; };
-		F3AF348C1DCCD5AF00CAD472 /* DebugExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34541DCCD5AF00CAD472 /* DebugExpressions.h */; };
+		F3AF348C1DCCD5AF00CAD472 /* DebugExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34541DCCD5AF00CAD472 /* DebugExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF348E1DCCD5AF00CAD472 /* EqualityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34561DCCD5AF00CAD472 /* EqualityExpressions.c */; };
-		F3AF348F1DCCD5AF00CAD472 /* EqualityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34571DCCD5AF00CAD472 /* EqualityExpressions.h */; };
+		F3AF348F1DCCD5AF00CAD472 /* EqualityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34571DCCD5AF00CAD472 /* EqualityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34911DCCD5AF00CAD472 /* GraphicsExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34591DCCD5AF00CAD472 /* GraphicsExpressions.c */; };
-		F3AF34921DCCD5AF00CAD472 /* GraphicsExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF345A1DCCD5AF00CAD472 /* GraphicsExpressions.h */; };
+		F3AF34921DCCD5AF00CAD472 /* GraphicsExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF345A1DCCD5AF00CAD472 /* GraphicsExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34941DCCD5AF00CAD472 /* IOExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF345C1DCCD5AF00CAD472 /* IOExpressions.c */; };
-		F3AF34951DCCD5AF00CAD472 /* IOExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF345D1DCCD5AF00CAD472 /* IOExpressions.h */; };
+		F3AF34951DCCD5AF00CAD472 /* IOExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF345D1DCCD5AF00CAD472 /* IOExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34971DCCD5AF00CAD472 /* ListExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF345F1DCCD5AF00CAD472 /* ListExpressions.c */; };
-		F3AF34981DCCD5AF00CAD472 /* ListExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34601DCCD5AF00CAD472 /* ListExpressions.h */; };
+		F3AF34981DCCD5AF00CAD472 /* ListExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34601DCCD5AF00CAD472 /* ListExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF349A1DCCD5AF00CAD472 /* MacroExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34621DCCD5AF00CAD472 /* MacroExpressions.c */; };
-		F3AF349B1DCCD5AF00CAD472 /* MacroExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34631DCCD5AF00CAD472 /* MacroExpressions.h */; };
+		F3AF349B1DCCD5AF00CAD472 /* MacroExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34631DCCD5AF00CAD472 /* MacroExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF349D1DCCD5AF00CAD472 /* MathExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34651DCCD5AF00CAD472 /* MathExpressions.c */; };
-		F3AF349E1DCCD5AF00CAD472 /* MathExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34661DCCD5AF00CAD472 /* MathExpressions.h */; };
+		F3AF349E1DCCD5AF00CAD472 /* MathExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34661DCCD5AF00CAD472 /* MathExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34A31DCCD5AF00CAD472 /* StateExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF346B1DCCD5AF00CAD472 /* StateExpressions.c */; };
-		F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF346C1DCCD5AF00CAD472 /* StateExpressions.h */; };
+		F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF346C1DCCD5AF00CAD472 /* StateExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34A61DCCD5AF00CAD472 /* StringExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF346E1DCCD5AF00CAD472 /* StringExpressions.c */; };
-		F3AF34A71DCCD5AF00CAD472 /* StringExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF346F1DCCD5AF00CAD472 /* StringExpressions.h */; };
+		F3AF34A71DCCD5AF00CAD472 /* StringExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF346F1DCCD5AF00CAD472 /* StringExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34A91DCCD5AF00CAD472 /* TextExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34711DCCD5AF00CAD472 /* TextExpressions.c */; };
-		F3AF34AA1DCCD5AF00CAD472 /* TextExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34721DCCD5AF00CAD472 /* TextExpressions.h */; };
+		F3AF34AA1DCCD5AF00CAD472 /* TextExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34721DCCD5AF00CAD472 /* TextExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34AC1DCCD5AF00CAD472 /* TypeCastExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34741DCCD5AF00CAD472 /* TypeCastExpressions.c */; };
-		F3AF34AD1DCCD5AF00CAD472 /* TypeCastExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34751DCCD5AF00CAD472 /* TypeCastExpressions.h */; };
+		F3AF34AD1DCCD5AF00CAD472 /* TypeCastExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34751DCCD5AF00CAD472 /* TypeCastExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34AF1DCCD5AF00CAD472 /* WindowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34771DCCD5AF00CAD472 /* WindowExpressions.c */; };
-		F3AF34B01DCCD5AF00CAD472 /* WindowExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34781DCCD5AF00CAD472 /* WindowExpressions.h */; };
+		F3AF34B01DCCD5AF00CAD472 /* WindowExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34781DCCD5AF00CAD472 /* WindowExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34B11DCCD5AF00CAD472 /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34791DCCD5AF00CAD472 /* Expression.c */; };
-		F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF347A1DCCD5AF00CAD472 /* Expression.h */; };
+		F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF347A1DCCD5AF00CAD472 /* Expression.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34B31DCCD5AF00CAD472 /* ExpressionEvaluator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF347B1DCCD5AF00CAD472 /* ExpressionEvaluator.c */; };
-		F3AF34B41DCCD5AF00CAD472 /* ExpressionEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF347C1DCCD5AF00CAD472 /* ExpressionEvaluator.h */; };
+		F3AF34B41DCCD5AF00CAD472 /* ExpressionEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF347C1DCCD5AF00CAD472 /* ExpressionEvaluator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34B51DCCD5AF00CAD472 /* ExpressionHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF347D1DCCD5AF00CAD472 /* ExpressionHelpers.c */; };
-		F3AF34B61DCCD5AF00CAD472 /* ExpressionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF347E1DCCD5AF00CAD472 /* ExpressionHelpers.h */; };
+		F3AF34B61DCCD5AF00CAD472 /* ExpressionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF347E1DCCD5AF00CAD472 /* ExpressionHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34C81DCCF4FE00CAD472 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34C11DCCF4EC00CAD472 /* CommonC.framework */; };
 		F3AF34CA1DCCF54A00CAD472 /* CommonC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34C11DCCF4EC00CAD472 /* CommonC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3AF34D31DCCFB7C00CAD472 /* Defined.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D21DCCFB7C00CAD472 /* Defined.h */; };
 		F3AF34D51DCCFBEC00CAD472 /* Default_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D41DCCFBEC00CAD472 /* Default_Private.h */; };
 		F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34D61DCCFC3E00CAD472 /* OpenGL.framework */; };
 		F3AF34DA1DCD014700CAD472 /* Window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34D81DCD014700CAD472 /* Window.c */; };
-		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; };
+		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1007,6 +1007,9 @@
 		F3AF330A1DCCD4EB00CAD472 /* GL */ = {
 			isa = PBXGroup;
 			children = (
+				F3AF34D41DCCFBEC00CAD472 /* Default_Private.h */,
+				F3AF34D21DCCFB7C00CAD472 /* Defined.h */,
+				F3AF33671DCCD4EC00CAD472 /* GLSetup.h */,
 				F3AF330B1DCCD4EB00CAD472 /* GLBlit.c */,
 				F3AF330C1DCCD4EB00CAD472 /* GLBlit.h */,
 				F3AF330D1DCCD4EB00CAD472 /* GLBuffer.c */,
@@ -1041,9 +1044,6 @@
 		F3AF33601DCCD4EC00CAD472 /* Setup */ = {
 			isa = PBXGroup;
 			children = (
-				F3AF34D41DCCFBEC00CAD472 /* Default_Private.h */,
-				F3AF34D21DCCFB7C00CAD472 /* Defined.h */,
-				F3AF33671DCCD4EC00CAD472 /* GLSetup.h */,
 				F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */,
 				F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */,
 			);
@@ -1736,8 +1736,9 @@
 		F3AF328E1DCCD29100CAD472 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1765,8 +1766,9 @@
 		F3AF328F1DCCD29100CAD472 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1794,7 +1796,9 @@
 		F3AF32911DCCD29100CAD472 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = NO;
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/deps/threads,
 					$PROJECT_DIR/deps/stdatomic,
@@ -1811,7 +1815,9 @@
 		F3AF32921DCCD29100CAD472 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = NO;
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/deps/threads,
 					$PROJECT_DIR/deps/stdatomic,

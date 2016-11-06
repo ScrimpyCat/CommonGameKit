@@ -26,10 +26,9 @@
 #ifndef CommonGameKit_Mouse_h
 #define CommonGameKit_Mouse_h
 
-#include "GLSetup.h"
-#include "Component.h"
+#include <CommonGameKit/Component.h>
 #include <CommonC/Common.h>
-#include "Keyboard.h"
+#include <CommonGameKit/Keyboard.h>
 
 /// The button input for the mouse input event. This is compatible with GLFW mouse buttons.
 typedef enum {

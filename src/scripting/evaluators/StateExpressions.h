@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_StateExpressions_h
 #define CommonGameKit_StateExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(state!) CCExpression CCStateExpressionCreateState(CCExpression Expression);

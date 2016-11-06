@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapKeyboardComponent_h
 #define CommonGameKit_InputMapKeyboardComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 
 #define CC_INPUT_MAP_KEYBOARD_COMPONENT_ID (CCInputMapTypeKeyboard | CC_INPUT_COMPONENT_FLAG)
 

@@ -26,11 +26,11 @@
 #ifndef CommonGameKit_GFXDraw_h
 #define CommonGameKit_GFXDraw_h
 
-#include "GFXBuffer.h"
-#include "GFXShader.h"
-#include "GFXTexture.h"
-#include "GFXFramebuffer.h"
-#include "GFXBlend.h"
+#include <CommonGameKit/GFXBuffer.h>
+#include <CommonGameKit/GFXShader.h>
+#include <CommonGameKit/GFXTexture.h>
+#include <CommonGameKit/GFXFramebuffer.h>
+#include <CommonGameKit/GFXBlend.h>
 #include <CommonC/Common.h>
 
 

@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_Colour_h
 #define CommonGameKit_Colour_h
 
-#include "ColourFormat.h"
-#include "ColourComponent.h"
+#include <CommonGameKit/ColourFormat.h>
+#include <CommonGameKit/ColourComponent.h>
 #include <CommonC/Common.h>
 
 typedef struct {

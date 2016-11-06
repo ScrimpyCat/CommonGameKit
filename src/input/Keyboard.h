@@ -26,8 +26,7 @@
 #ifndef CommonGameKit_Keyboard_h
 #define CommonGameKit_Keyboard_h
 
-#include "GLSetup.h"
-#include "Component.h"
+#include <CommonGameKit/Component.h>
 
 /// The action type of the keyboard input event. This is compatible with GLFW actions.
 typedef enum {

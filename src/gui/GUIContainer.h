@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GUIContainer_h
 #define CommonGameKit_GUIContainer_h
 
-#include "GUIObject.h"
+#include <CommonGameKit/GUIObject.h>
 
 extern const GUIObjectInterface * const GUIContainer;
 

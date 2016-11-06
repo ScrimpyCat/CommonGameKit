@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 #include <CommonC/Common.h>
-#include "Component.h"
+#include <CommonGameKit/Component.h>
 
 /*!
  * @brief An ID to identify the entity.

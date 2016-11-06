@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_GUIExpression_h
 #define CommonGameKit_GUIExpression_h
 
-#include "GUIObject.h"
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/GUIObject.h>
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 typedef enum {
     GUIExpressionValueTypeGUIObject = 'gui\0'

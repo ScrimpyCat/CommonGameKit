@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_AssetManager_h
 #define CommonGameKit_AssetManager_h
 
-#include "GFX.h"
-#include "Font.h"
+#include <CommonGameKit/GFX.h>
+#include <CommonGameKit/Font.h>
 
 /*!
  * @brief Creates the global asset manager.

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_EqualityExpressions_h
 #define CommonGameKit_EqualityExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(=) CCExpression CCEqualityExpressionEqual(CCExpression Expression);

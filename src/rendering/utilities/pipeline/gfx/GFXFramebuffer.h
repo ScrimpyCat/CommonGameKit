@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GFXFramebuffer_h
 #define CommonGameKit_GFXFramebuffer_h
 
-#include "GFXTexture.h"
+#include <CommonGameKit/GFXTexture.h>
 #include <CommonC/Common.h>
 
 typedef enum {

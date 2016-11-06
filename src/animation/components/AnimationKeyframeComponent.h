@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_AnimationKeyframeComponent_h
 #define CommonGameKit_AnimationKeyframeComponent_h
 
-#include "AnimationComponent.h"
+#include <CommonGameKit/AnimationComponent.h>
 #include <CommonC/Common.h>
 
 #define CC_ANIMATION_KEYFRAME_COMPONENT_ID (CCAnimationTypeKeyframe | CC_ANIMATION_COMPONENT_FLAG)

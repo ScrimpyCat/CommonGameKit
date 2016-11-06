@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_InputMapControllerComponent_h
 #define CommonGameKit_InputMapControllerComponent_h
 
-#include "InputMapComponent.h"
+#include <CommonGameKit/InputMapComponent.h>
 
 #define CC_INPUT_MAP_CONTROLLER_COMPONENT_ID (CCInputMapTypeController | CC_INPUT_COMPONENT_FLAG)
 

@@ -27,7 +27,7 @@
 #define CommonGameKit_GFXTexture_h
 
 #include <CommonC/Common.h>
-#include "PixelData.h"
+#include <CommonGameKit/PixelData.h>
 
 typedef enum {
     GFXTextureHintDimensionMask = 3,

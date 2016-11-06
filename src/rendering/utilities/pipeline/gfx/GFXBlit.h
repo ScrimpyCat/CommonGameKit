@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_GFXBlit_h
 #define CommonGameKit_GFXBlit_h
 
-#include "GFXTexture.h"
-#include "GFXFramebuffer.h"
+#include <CommonGameKit/GFXTexture.h>
+#include <CommonGameKit/GFXFramebuffer.h>
 
 typedef struct {
     GFXFramebuffer framebuffer;

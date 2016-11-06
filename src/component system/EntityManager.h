@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_EntityManager_h
 #define CommonGameKit_EntityManager_h
 
-#include "Entity.h"
+#include <CommonGameKit/Entity.h>
 
 /*!
  * @brief Creates the global entity manager.

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_TypeCastExpressions_h
 #define CommonGameKit_TypeCastExpressions_h
 
-#include "ExpressionEvaluator.h"
+#include <CommonGameKit/ExpressionEvaluator.h>
 
 
 CC_EXPRESSION_EVALUATOR(integer->float) CCExpression CCTypeCastExpressionIntegerToFloat(CCExpression Expression);
