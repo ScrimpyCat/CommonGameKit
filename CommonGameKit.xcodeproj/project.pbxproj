@@ -44,6 +44,7 @@
 		F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */; };
 		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
+		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */; };
 		F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32951DCCD4EB00CAD472 /* AnimationComponent.c */; };
@@ -422,6 +423,7 @@
 		F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExpressionSetup.h; path = src/Setup/ExpressionSetup.h; sourceTree = SOURCE_ROOT; };
 		F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ExpressionSetup.c; path = src/Setup/ExpressionSetup.c; sourceTree = SOURCE_ROOT; };
 		F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLGFX_Private.h; sourceTree = "<group>"; };
+		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonGameKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonGameKit.h; path = src/CommonGameKit.h; sourceTree = SOURCE_ROOT; };
 		F3AF327E1DCCD29000CAD472 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -983,6 +985,7 @@
 			children = (
 				F3AF32F61DCCD4EB00CAD472 /* GFX.h */,
 				F3AF32F71DCCD4EB00CAD472 /* GFXBlend.h */,
+				F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */,
 				F3AF32F81DCCD4EB00CAD472 /* GFXBlit.c */,
 				F3AF32F91DCCD4EB00CAD472 /* GFXBlit.h */,
 				F3AF32FA1DCCD4EB00CAD472 /* GFXBuffer.c */,
@@ -1255,6 +1258,7 @@
 				F3AF33ED1DCCD4EC00CAD472 /* GLState.h in Headers */,
 				F3AF34981DCCD5AF00CAD472 /* ListExpressions.h in Headers */,
 				F3AF33911DCCD4EC00CAD472 /* GUIManager.h in Headers */,
+				F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */,
 				F3AF33781DCCD4EC00CAD472 /* AnimationComponent.h in Headers */,
 				F3AF33EE1DCCD4EC00CAD472 /* GLStateChange.h in Headers */,
 				F3AF338D1DCCD4EC00CAD472 /* GUIContainer.h in Headers */,

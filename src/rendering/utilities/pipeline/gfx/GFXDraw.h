@@ -31,6 +31,7 @@
 #include <CommonGameKit/GFXTexture.h>
 #include <CommonGameKit/GFXFramebuffer.h>
 #include <CommonGameKit/GFXBlend.h>
+#include <CommonGameKit/GFXViewport.h>
 #include <CommonC/Common.h>
 
 
@@ -84,6 +85,10 @@ typedef struct {
     GFXDrawDestination destination;
     GFXDrawIndexBuffer index;
     GFXBlend blending;
+    struct {
+        GFXViewport bounds;
+        _Bool useDefault;
+    } viewport;
 } GFXDrawInfo;
 
 /*!
@@ -187,9 +192,20 @@ void GFXDrawSetTexture(GFXDraw Draw, CCString CC_COPY(Input), GFXTexture CC_RETA
 
 /*!
  * @brief Set the blending for the draw command.
+ * @description The default is opaque.
  * @param Draw The draw operation.
  * @param BlendMask The blend mask.
  */
 void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask);
+
+/*!
+ * @brief Set the clipping viewport for the draw command.
+ * @description The default is equal to the bounds of the @b GFXDrawDestination and 0.0 -
+ *              1.0 for the depth range.
+ *
+ * @param Draw The draw operation.
+ * @param Viewport The viewport.
+ */
+void GFXDrawSetViewport(GFXDraw Draw, GFXViewport Viewport);
 
 #endif

@@ -34,6 +34,7 @@
 #include <CommonGameKit/GFXShader.h>
 #include <CommonGameKit/GFXDraw.h>
 #include <CommonGameKit/GFXBlit.h>
+#include <CommonGameKit/GFXViewport.h>
 
 #pragma mark - Required Buffer Callbacks
 typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
@@ -96,6 +97,7 @@ typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexB
 typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
 typedef void (*GFXDrawSetTextureCallback)(GFXDraw Draw, GFXDrawInputTexture *Texture);
 typedef void (*GFXDrawSetBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask);
+typedef void (*GFXDrawSetViewportCallback)(GFXDraw Draw, GFXViewport Viewport);
 
 #pragma mark Optional Blit Callbacks
 typedef void (*GFXBlitConstructorCallback)(CCAllocatorType Allocator, GFXBlit Blit);
@@ -167,6 +169,7 @@ typedef struct {
         GFXDrawSetBufferCallback setBuffer;
         GFXDrawSetTextureCallback setTexture;
         GFXDrawSetBlendingCallback setBlend;
+        GFXDrawSetViewportCallback setViewport;
     } optional;
 } GFXDrawInterface;
 

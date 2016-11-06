@@ -34,6 +34,7 @@
 #include <CommonGameKit/GFXShaderLibrary.h>
 #include <CommonGameKit/GFXShader.h>
 #include <CommonGameKit/GFXBlend.h>
+#include <CommonGameKit/GFXViewport.h>
 #include <CommonGameKit/GFXDraw.h>
 #include <CommonGameKit/GFXBlit.h>
 

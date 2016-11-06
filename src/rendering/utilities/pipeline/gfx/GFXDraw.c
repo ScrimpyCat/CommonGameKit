@@ -25,6 +25,7 @@
 
 #include "GFXDraw.h"
 #include "GFXMain.h"
+#include "Window.h"
 
 static void GFXDrawInputBufferElementDestructor(CCCollection Collection, GFXDrawInputBuffer *Element)
 {
@@ -72,7 +73,8 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
                 .buffer = NULL,
                 .format = 0
             },
-            .blending = GFXBlendOpaque
+            .blending = GFXBlendOpaque,
+            .viewport = { .bounds = GFXViewport2D(0.0f, 0.0f, 0.0f, 0.0f), .useDefault = TRUE }
         };
         
         if (GFXMain->draw->optional.create) GFXMain->draw->optional.create(Allocator, Draw);
@@ -141,6 +143,26 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
         .framebuffer = CCRetain(Framebuffer),
         .index = Index
     };
+    
+    if ((Framebuffer) && (Draw->viewport.useDefault))
+    {
+        if (Framebuffer == GFXFramebufferDefault())
+        {
+            CCVector2Di FrameSize = CCWindowGetFrameSize();
+            Draw->viewport.bounds = GFXViewport2D(0.0f, 0.0f, FrameSize.x, FrameSize.y);
+        }
+        
+        else
+        {
+            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Framebuffer, Index);
+            if (Attachment)
+            {
+                size_t Width, Height;
+                GFXTextureGetSize(Attachment->texture, &Width, &Height, NULL);
+                Draw->viewport.bounds = GFXViewport2D(0.0f, 0.0f, (float)Width, (float)Height);
+            }
+        }
+    }
     
     if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, &Draw->destination);
 }
@@ -251,4 +273,14 @@ void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask)
     Draw->blending = BlendMask;
     
     if (GFXMain->draw->optional.setBlend) GFXMain->draw->optional.setBlend(Draw, BlendMask);
+}
+
+void GFXDrawSetViewport(GFXDraw Draw, GFXViewport Viewport)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->viewport.bounds = Viewport;
+    Draw->viewport.useDefault = FALSE;
+    
+    if (GFXMain->draw->optional.setViewport) GFXMain->draw->optional.setViewport(Draw, Viewport);
 }
