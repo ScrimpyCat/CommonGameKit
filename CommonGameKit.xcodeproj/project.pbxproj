@@ -62,8 +62,6 @@
 		F3AF33851DCCD4EC00CAD472 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A51DCCD4EB00CAD472 /* Entity.h */; };
 		F3AF33861DCCD4EC00CAD472 /* EntityManager.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32A61DCCD4EB00CAD472 /* EntityManager.c */; };
 		F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32A71DCCD4EB00CAD472 /* EntityManager.h */; };
-		F3AF338A1DCCD4EC00CAD472 /* gui-defines.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AF32AC1DCCD4EB00CAD472 /* gui-defines.json */; };
-		F3AF338B1DCCD4EC00CAD472 /* gui.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AF32AD1DCCD4EB00CAD472 /* gui.json */; };
 		F3AF338C1DCCD4EC00CAD472 /* GUIContainer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32AE1DCCD4EB00CAD472 /* GUIContainer.c */; };
 		F3AF338D1DCCD4EC00CAD472 /* GUIContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32AF1DCCD4EB00CAD472 /* GUIContainer.h */; };
 		F3AF338E1DCCD4EC00CAD472 /* GUIExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B01DCCD4EB00CAD472 /* GUIExpression.c */; };
@@ -444,8 +442,6 @@
 		F3AF32A51DCCD4EB00CAD472 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		F3AF32A61DCCD4EB00CAD472 /* EntityManager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityManager.c; sourceTree = "<group>"; };
 		F3AF32A71DCCD4EB00CAD472 /* EntityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityManager.h; sourceTree = "<group>"; };
-		F3AF32AC1DCCD4EB00CAD472 /* gui-defines.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "gui-defines.json"; sourceTree = "<group>"; };
-		F3AF32AD1DCCD4EB00CAD472 /* gui.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = gui.json; sourceTree = "<group>"; };
 		F3AF32AE1DCCD4EB00CAD472 /* GUIContainer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIContainer.c; sourceTree = "<group>"; };
 		F3AF32AF1DCCD4EB00CAD472 /* GUIContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIContainer.h; sourceTree = "<group>"; };
 		F3AF32B01DCCD4EB00CAD472 /* GUIExpression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIExpression.c; sourceTree = "<group>"; };
@@ -801,8 +797,6 @@
 		F3AF32AB1DCCD4EB00CAD472 /* GUI */ = {
 			isa = PBXGroup;
 			children = (
-				F3AF32AC1DCCD4EB00CAD472 /* gui-defines.json */,
-				F3AF32AD1DCCD4EB00CAD472 /* gui.json */,
 				F3AF32AE1DCCD4EB00CAD472 /* GUIContainer.c */,
 				F3AF32AF1DCCD4EB00CAD472 /* GUIContainer.h */,
 				F3AF32B01DCCD4EB00CAD472 /* GUIExpression.c */,
@@ -1500,8 +1494,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3AF338A1DCCD4EC00CAD472 /* gui-defines.json in Resources */,
-				F3AF338B1DCCD4EC00CAD472 /* gui.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
