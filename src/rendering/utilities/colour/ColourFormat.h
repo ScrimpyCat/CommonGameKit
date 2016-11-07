@@ -196,14 +196,14 @@ enum {
 };
 
 #pragma mark - RGB Colour Formats
-#include "ColourFormatRGB.h"
+#include <CommonGameKit/ColourFormatRGB.h>
 
 #pragma mark - YUV Colour Formats
 //TODO: YUV formats
 
 #pragma mark - HSL/HSV Colour Formats
 //TODO: HSL
-#include "ColourFormatHSV.h"
+#include <CommonGameKit/ColourFormatHSV.h>
 
 #pragma mark - CMYK Colour Formats
 //TODO: CMYK formats

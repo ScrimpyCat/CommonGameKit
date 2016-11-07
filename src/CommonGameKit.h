@@ -67,8 +67,6 @@
 #include <CommonGameKit/Colour.h>
 #include <CommonGameKit/ColourComponent.h>
 #include <CommonGameKit/ColourFormat.h>
-#include <CommonGameKit/ColourFormatHSV.h>
-#include <CommonGameKit/ColourFormatRGB.h>
 
 #include <CommonGameKit/PixelData.h>
 #include <CommonGameKit/PixelDataFile.h>
