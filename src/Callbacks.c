@@ -47,7 +47,7 @@ static CCStringMap Map31[31] = { //ASCII set 0, -, !, @, :, ., [a-y]
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y'
 };
 
-int CCMain(CCEngineMain Main, int argc, char *argv[])
+int CCMain(CCEngineMain Main, int argc, const char *argv[])
 {
     CCStringRegisterMap(CCStringEncodingASCII, Map63, CCStringMapSet63);
     CCStringRegisterMap(CCStringEncodingASCII, Map31, CCStringMapSet31);
