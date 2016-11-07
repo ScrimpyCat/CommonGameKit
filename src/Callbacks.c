@@ -27,7 +27,10 @@
 #include <stddef.h>
 #include <CommonC/Common.h>
 #include "ExpressionSetup.h"
+
+#if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
 #include <CoreFoundation/CoreFoundation.h>
+#endif
 
 double (*CCTimestamp)(void) = NULL;
 
@@ -65,7 +68,7 @@ int CCMain(CCEngineMain Main, int argc, const char *argv[])
     CCExpressionSetup();
     
 #if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
-    CFBundleRef Bundle = CFBundleGetMainBundle();
+    CFBundleRef Bundle = CFBundleGetBundleWithIdentifier(CFSTR("io.scrimpycat.CommonGameKit"));
     CFURLRef ResourceURL = CFBundleCopyResourcesDirectoryURL(Bundle);
     char ResourcePath[PATH_MAX];
     
