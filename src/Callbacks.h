@@ -30,6 +30,23 @@
 #ifndef CommonGameKit_Callbacks_h
 #define CommonGameKit_Callbacks_h
 
+typedef int (*CCEngineMain)(int argc, char *argv[]);
+
+/*!
+ * @brief Call the libraries initial setup/main entrypoint. This should be called
+ *        inside your main function.
+ *
+ * @description All required callbacks should be set before this call and no library
+ *              functions should be called prior to this function. After this call
+ *              your engine is required to setup any of the required modules.
+ *
+ * @param Main The function to be called after CCMain has successfully been executed.
+ * @param argc The number of entries in argv.
+ * @param argv The program inputs.
+ * @result The error code upon completion/exit of your program.
+ */
+int CCMain(CCEngineMain Main, int argc, char *argv[]);
+
 /*!
  * @brief Set this to a function that can provide a high frequency timestamp.
  * @warning Must not be NULL.

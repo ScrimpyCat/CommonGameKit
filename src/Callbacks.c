@@ -25,5 +25,41 @@
 
 #include "Callbacks.h"
 #include <stddef.h>
+#include <CommonC/Common.h>
+#include "ExpressionSetup.h"
 
 double (*CCTimestamp)(void) = NULL;
+
+static CCStringMap Map63[63] = { //ASCII set 0, [-+:&() !@<>.], [a-z], [A-G], I, [N-P], [R-T]
+    0,
+    '-', '+', ':', '&', '(', ')', ' ', '!', '@', '<', '>', '.',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'N', 'O', 'P', 'R', 'S', 'T'
+};
+
+static CCStringMap Map31[31] = { //ASCII set 0, -, !, @, :, ., [a-y]
+    0,
+    '-', '!', '@', ':', '.',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y'
+};
+
+int CCMain(CCEngineMain Main, int argc, char *argv[])
+{
+    CCStringRegisterMap(CCStringEncodingASCII, Map63, CCStringMapSet63);
+    CCStringRegisterMap(CCStringEncodingASCII, Map31, CCStringMapSet31);
+    
+    char Path[] = __FILE__;
+    Path[sizeof(__FILE__) - sizeof("CommonGameKit/src/Callbacks.c")] = 0;
+    CCFileFilterInputAddPath(Path);
+    CCLogAddFilter(CCLogFilterInput, CCFileFilterInput);
+    CCLogAddFilter(CCLogFilterSpecifier, CCBinaryFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCArrayFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCDeletionFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCStringFormatSpecifier);
+    CCLogAddFilter(CCLogFilterSpecifier, CCCharFormatSpecifier);
+    
+    CCExpressionSetup();
+    
+    return Main(argc, argv);
+}

@@ -41,7 +41,7 @@
 		F3897BCE1DCD7ABB008D6C1D /* GLPortability.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897BCD1DCD7ABB008D6C1D /* GLPortability.c */; };
 		F3897BD91DCD7E1B008D6C1D /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34C11DCCF4EC00CAD472 /* CommonC.framework */; };
 		F3897BDE1DCD8A00008D6C1D /* CCTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */; };
-		F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BDF1DCDFFB4008D6C1D /* ExpressionSetup.h */; };
 		F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897BE11DCDFFBA008D6C1D /* ExpressionSetup.c */; };
 		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };

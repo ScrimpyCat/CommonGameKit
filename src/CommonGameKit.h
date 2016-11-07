@@ -81,7 +81,6 @@
 #include <CommonGameKit/Expression.h>
 #include <CommonGameKit/ExpressionEvaluator.h>
 #include <CommonGameKit/ExpressionHelpers.h>
-#include <CommonGameKit/ExpressionSetup.h>
 
 //TODO: generate header for these
 #include <CommonGameKit/AssetExpressions.h>
