@@ -27,7 +27,6 @@
         "evaluators/list.json",
         "evaluators/macro.json",
         "evaluators/math.json",
-        "evaluators/project.json",
         "evaluators/state.json",
         "evaluators/string.json",
         "evaluators/text.json",
