@@ -32,7 +32,7 @@
 
 #include <CommonC/Common.h>
 
-typedef int (*CCEngineMain)(int argc, char *argv[]);
+typedef int (*CCEngineMain)(int argc, const char *argv[]);
 
 /*!
  * @brief Call the libraries initial setup/main entrypoint. This should be called
@@ -47,7 +47,7 @@ typedef int (*CCEngineMain)(int argc, char *argv[]);
  * @param argv The program inputs.
  * @result The error code upon completion/exit of your program.
  */
-int CCMain(CCEngineMain Main, int argc, char *argv[]);
+int CCMain(CCEngineMain Main, int argc, const char *argv[]);
 
 /*!
  * @brief The path for the core assets.
