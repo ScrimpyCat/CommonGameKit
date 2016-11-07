@@ -1823,7 +1823,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/stdatomic;
+				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = (
 					"-Wno-ambiguous-macro",
 					"-Wno-multichar",
@@ -1853,7 +1853,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = $PROJECT_DIR/deps/stdatomic;
+				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = (
 					"-Wno-ambiguous-macro",
 					"-Wno-multichar",
