@@ -32,11 +32,22 @@
 typedef enum {
     CCAssetExpressionValueTypeShader = 'shd\0',
     CCAssetExpressionValueTypeTexture = 'tex\0',
-    CCAssetExpressionValueTypeFont = 'fnt\0'
+    CCAssetExpressionValueTypeFont = 'fnt\0',
+    CCAssetExpressionValueTypeShaderLibrary = 'lib\0'
 } CCAssetExpressionValueType;
+
+typedef struct {
+    CCString name;
+    GFXShaderLibrary library;
+} CCAssetExpressionValueShaderLibrary;
+
 
 CC_EXPRESSION_EVALUATOR(shader) CCExpression CCAssetExpressionShader(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(texture) CCExpression CCAssetExpressionTexture(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(font) CCExpression CCAssetExpressionFont(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(library) CCExpression CCAssetExpressionLibrary(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(source) CCExpression CCAssetExpressionLibrarySource(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(asset) CCExpression CCAssetExpressionAsset(CCExpression Expression);
+
 
 #endif
