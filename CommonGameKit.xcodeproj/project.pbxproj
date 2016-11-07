@@ -676,6 +676,79 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F3897CF71DD07FC3008D6C1D /* Component System */ = {
+			isa = PBXGroup;
+			children = (
+				F3897BA11DCD764E008D6C1D /* ComponentSystemTests.m */,
+				F3897BA21DCD764E008D6C1D /* ComponentTests.m */,
+				F3897BA31DCD764E008D6C1D /* EntityManagerTests.m */,
+				F3897BA41DCD764E008D6C1D /* EntityTests.m */,
+			);
+			name = "Component System";
+			sourceTree = "<group>";
+		};
+		F3897CF81DD07FDD008D6C1D /* GL */ = {
+			isa = PBXGroup;
+			children = (
+				F3897BB11DCD764E008D6C1D /* GLDebugTests.m */,
+				F3897BB21DCD764E008D6C1D /* GLStateModernTests.m */,
+			);
+			name = GL;
+			sourceTree = "<group>";
+		};
+		F3897CF91DD07FE8008D6C1D /* Colour */ = {
+			isa = PBXGroup;
+			children = (
+				F3897BA01DCD764E008D6C1D /* ColourFormatTests.m */,
+				F3897CFA1DD07FFC008D6C1D /* Pixel Data */,
+			);
+			name = Colour;
+			sourceTree = "<group>";
+		};
+		F3897CFA1DD07FFC008D6C1D /* Pixel Data */ = {
+			isa = PBXGroup;
+			children = (
+				F3897BB31DCD764E008D6C1D /* PixelDataGeneratorTests.m */,
+				F3897BB41DCD764E008D6C1D /* PixelDataStaticTests.m */,
+			);
+			name = "Pixel Data";
+			sourceTree = "<group>";
+		};
+		F3897CFB1DD08042008D6C1D /* Scripting */ = {
+			isa = PBXGroup;
+			children = (
+				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
+				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
+				F3897BA51DCD764E008D6C1D /* ExpressionControlFlowTests.m */,
+				F3897BA61DCD764E008D6C1D /* ExpressionEqualityTests.m */,
+				F3897BA91DCD764E008D6C1D /* ExpressionListTests.m */,
+				F3897BAA1DCD764E008D6C1D /* ExpressionMacroTests.m */,
+				F3897BAB1DCD764E008D6C1D /* ExpressionMathTests.m */,
+				F3897BAD1DCD764E008D6C1D /* ExpressionStateTests.m */,
+				F3897BAE1DCD764E008D6C1D /* ExpressionStringTests.m */,
+				F3897BAF1DCD764E008D6C1D /* ExpressionTests.m */,
+			);
+			name = Scripting;
+			sourceTree = "<group>";
+		};
+		F3897CFC1DD08074008D6C1D /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F3897BB01DCD764E008D6C1D /* FontTests.m */,
+				F3897BB51DCD764E008D6C1D /* TextAttributeTests.m */,
+				F3897BB61DCD764E008D6C1D /* TextTests.m */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
+		F3897D021DD0ADF2008D6C1D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F3AF328A1DCCD29100CAD472 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		F3AF326F1DCCD29000CAD472 = {
 			isa = PBXGroup;
 			children = (
@@ -721,31 +794,14 @@
 		F3AF32871DCCD29100CAD472 /* CommonGameKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				F3AF328A1DCCD29100CAD472 /* Info.plist */,
 				F3897BDB1DCD88A4008D6C1D /* CCTestCase.h */,
 				F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */,
-				F3897BA01DCD764E008D6C1D /* ColourFormatTests.m */,
-				F3897BA11DCD764E008D6C1D /* ComponentSystemTests.m */,
-				F3897BA21DCD764E008D6C1D /* ComponentTests.m */,
-				F3897BA31DCD764E008D6C1D /* EntityManagerTests.m */,
-				F3897BA41DCD764E008D6C1D /* EntityTests.m */,
-				F3897BA51DCD764E008D6C1D /* ExpressionControlFlowTests.m */,
-				F3897BA61DCD764E008D6C1D /* ExpressionEqualityTests.m */,
-				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
-				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
-				F3897BA91DCD764E008D6C1D /* ExpressionListTests.m */,
-				F3897BAA1DCD764E008D6C1D /* ExpressionMacroTests.m */,
-				F3897BAB1DCD764E008D6C1D /* ExpressionMathTests.m */,
-				F3897BAD1DCD764E008D6C1D /* ExpressionStateTests.m */,
-				F3897BAE1DCD764E008D6C1D /* ExpressionStringTests.m */,
-				F3897BAF1DCD764E008D6C1D /* ExpressionTests.m */,
-				F3897BB01DCD764E008D6C1D /* FontTests.m */,
-				F3897BB11DCD764E008D6C1D /* GLDebugTests.m */,
-				F3897BB21DCD764E008D6C1D /* GLStateModernTests.m */,
-				F3897BB31DCD764E008D6C1D /* PixelDataGeneratorTests.m */,
-				F3897BB41DCD764E008D6C1D /* PixelDataStaticTests.m */,
-				F3897BB51DCD764E008D6C1D /* TextAttributeTests.m */,
-				F3897BB61DCD764E008D6C1D /* TextTests.m */,
+				F3897CFC1DD08074008D6C1D /* Utilities */,
+				F3897CFB1DD08042008D6C1D /* Scripting */,
+				F3897CF81DD07FDD008D6C1D /* GL */,
+				F3897CF91DD07FE8008D6C1D /* Colour */,
+				F3897CF71DD07FC3008D6C1D /* Component System */,
+				F3897D021DD0ADF2008D6C1D /* Supporting Files */,
 			);
 			path = CommonGameKitTests;
 			sourceTree = "<group>";
