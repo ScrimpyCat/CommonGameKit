@@ -27,8 +27,11 @@
 #include <stddef.h>
 #include <CommonC/Common.h>
 #include "ExpressionSetup.h"
+#include <CoreFoundation/CoreFoundation.h>
 
 double (*CCTimestamp)(void) = NULL;
+
+FSPath CCAssetPath = NULL;
 
 static CCStringMap Map63[63] = { //ASCII set 0, [-+:&() !@<>.], [a-z], [A-G], I, [N-P], [R-T]
     0,
@@ -60,6 +63,34 @@ int CCMain(CCEngineMain Main, int argc, char *argv[])
     CCLogAddFilter(CCLogFilterSpecifier, CCCharFormatSpecifier);
     
     CCExpressionSetup();
+    
+#if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
+    CFBundleRef Bundle = CFBundleGetMainBundle();
+    CFURLRef ResourceURL = CFBundleCopyResourcesDirectoryURL(Bundle);
+    char ResourcePath[PATH_MAX];
+    
+    if ((!ResourceURL) || (!CFURLGetFileSystemRepresentation(ResourceURL, TRUE, (UInt8*)ResourcePath, sizeof(ResourcePath))))
+    {
+        CC_LOG_ERROR("Could not find asset path");
+        return EXIT_FAILURE;
+    }
+    
+    CFRelease(ResourceURL);
+    
+    CCAssetPath = FSPathCreateFromSystemPath(ResourcePath);
+    FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "assets"));
+#else
+    CCAssetPath = FSPathCreateFromSystemPath(Path);
+    FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "CommonGameKit"));
+    FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "assets"));
+#endif
+    
+    if (!FSManagerExists(CCAssetPath))
+    {
+        FSPathDestroy(CCAssetPath);
+        CC_LOG_ERROR("Could not find asset path");
+        return EXIT_FAILURE;
+    }
     
     return Main(argc, argv);
 }

@@ -30,6 +30,8 @@
 #ifndef CommonGameKit_Callbacks_h
 #define CommonGameKit_Callbacks_h
 
+#include <CommonC/Common.h>
+
 typedef int (*CCEngineMain)(int argc, char *argv[]);
 
 /*!
@@ -46,6 +48,15 @@ typedef int (*CCEngineMain)(int argc, char *argv[]);
  * @result The error code upon completion/exit of your program.
  */
 int CCMain(CCEngineMain Main, int argc, char *argv[]);
+
+/*!
+ * @brief The path for the core assets.
+ * @description Use these paths to load the required assets. This will be set
+ *              automatically in @b CCMain. However if the engine chooses to
+ *              move the contents anywhere else, this path should be re-set. If
+ *              re-setting, the current value should be destroyed.
+ */
+extern FSPath CCAssetPath;
 
 /*!
  * @brief Set this to a function that can provide a high frequency timestamp.
