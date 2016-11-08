@@ -108,6 +108,21 @@ void GLGFXSetup(void)
     CCGLStateInitializeWithCurrent(CCGLCurrentState);
     
     
+    //Log
+    CC_LOG_INFO("GFX: OpenGL");
+    CC_LOG_INFO("Vendor: %s", glGetString(GL_VENDOR));
+    CC_LOG_INFO("Renderer: %s", glGetString(GL_RENDERER));
+    CC_LOG_INFO("OpenGL Version: %s", glGetString(GL_VERSION));
+    CC_LOG_INFO("GLSL Version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    
+    GLint ExtCount;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &ExtCount);
+    for (GLint Loop = 0; Loop < ExtCount; Loop++)
+    {
+        CC_LOG_INFO("Extensions: %s", glGetStringi(GL_EXTENSIONS, Loop));
+    }
+    
+    
     //Initialize GLInternal state
 #ifdef GL_MAX_COLOR_ATTACHMENTS
     glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &GLInfo.limits.maxColourAttachments); CC_GL_CHECK();
