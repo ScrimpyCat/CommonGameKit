@@ -115,11 +115,19 @@ void GLGFXSetup(void)
     
     CC_GL_BIND_FRAMEBUFFER(GL_FRAMEBUFFER, 0);
     
-    GLint Encoding;
-    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &Encoding); CC_GL_CHECK();
+#if CC_PLATFORM_OS_X
+    /*
+     OS X GL context's pixel formats support sRGB. Interestingly GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING will only report that
+     the sRGB encoding is being used if GL_FRAMEBUFFER_SRGB is enabled.
+     */
+    CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
+#else
+    GLint Encoding = 0;
+    glGetFramebufferAttachmentParameteriv(GL_DRAW_FRAMEBUFFER, GL_BACK_LEFT, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &Encoding); CC_GL_CHECK();
     
     if (Encoding == GL_SRGB)
     {
         CC_GL_ENABLE(GL_FRAMEBUFFER_SRGB);
     }
+#endif
 }
