@@ -91,14 +91,23 @@ void CCControllerConnect(size_t Index, _Bool Connected)
     
     else
     {
-        CCStringDestroy(Controller[Index].name);
-        Controller[Index].name = 0;
+        if (Controller[Index].name)
+        {
+            CCStringDestroy(Controller[Index].name);
+            Controller[Index].name = 0;
+        }
         
-        CCCollectionDestroy(Controller[Index].axes);
-        Controller[Index].axes = NULL;
+        if (Controller[Index].axes)
+        {
+            CCCollectionDestroy(Controller[Index].axes);
+            Controller[Index].axes = NULL;
+        }
         
-        CCCollectionDestroy(Controller[Index].buttons);
-        Controller[Index].buttons = NULL;
+        if (Controller[Index].buttons)
+        {
+            CCCollectionDestroy(Controller[Index].buttons);
+            Controller[Index].buttons = NULL;
+        }
     }
     
     atomic_flag_clear(&Controller[Index].lock);
