@@ -59,6 +59,8 @@ static void TestSystemRegisteringUpdate(void *Context, CCCollection Components)
 
 -(void) testSystemRegistering
 {
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    
     CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemRegisteringUpdate, NULL, NULL, NULL, NULL, NULL, NULL);
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);

@@ -106,10 +106,10 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
 
 void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
 {
-    if (!Systems[ExecutionType]) return;
-    
     _Bool TimedUpdate = ExecutionType & CCComponentSystemExecutionOptionTimedUpdate;
     ExecutionType &= CCComponentSystemExecutionTypeMask;
+    
+    if (!Systems[ExecutionType]) return;
     
     double Delta = 0.0;
     if (TimedUpdate)
