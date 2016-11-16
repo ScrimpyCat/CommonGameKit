@@ -119,56 +119,58 @@ static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components)
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_RENDER_SYSTEM_ID));
     
     const size_t Count = CCCollectionGetCount(Components);
-    
-    DemoVertData *Data;
-    CC_SAFE_Malloc(Data, sizeof(DemoVertData) * 4 * Count);
-    
-    CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(Components, &Enumerator);
-    
-    size_t Index = 0;
-    for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
+    if (Count)
     {
-        if (CCComponentGetID(*Component) == CC_RENDER_COMPONENT_ID)
-        {
-            CCColourRGB Colour = CCRenderComponentGetColour(*Component);
-            CCRect Rect = CCRenderComponentGetRect(*Component);
-            
-            Data[Index * 4].position = Rect.position;
-            Data[Index * 4].colour = Colour;
-            Data[(Index * 4) + 1].position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f));
-            Data[(Index * 4) + 1].colour = Colour;
-            Data[(Index * 4) + 2].position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y));
-            Data[(Index * 4) + 2].colour = Colour;
-            Data[(Index * 4) + 3].position = CCVector2Add(Rect.position, Rect.size);
-            Data[(Index * 4) + 3].colour = Colour;
-            
-            Index++;
-        }
-    }
-    
-    GFXBufferSetSize(VertBuffer, sizeof(DemoVertData) * 4 * Count);
-    GFXBufferWriteBuffer(VertBuffer, 0, sizeof(DemoVertData) * 4 * Count, Data);
-    CC_SAFE_Free(Data);
-    
-    
-    size_t Vertices = (Count * 4) + DEMO_DEGENERATE_STRIPS(Count);
-    size_t Loop = 0;
-    if (Count > DEMO_QUAD_BATCH_SIZE)
-    {
-        const size_t Batch = (DEMO_QUAD_BATCH_SIZE * 4) + DEMO_DEGENERATE_STRIPS(DEMO_QUAD_BATCH_SIZE);
+        DemoVertData *Data;
+        CC_SAFE_Malloc(Data, sizeof(DemoVertData) * 4 * Count);
         
-        for (size_t C = DEMO_QUAD_BATCH_SIZE * (Count / DEMO_QUAD_BATCH_SIZE); Loop < C; Loop += DEMO_QUAD_BATCH_SIZE)
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(Components, &Enumerator);
+        
+        size_t Index = 0;
+        for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
         {
-            GFXDrawSubmitIndexed(Drawer, GFXPrimitiveTypeTriangleStrip, Loop * 4, Batch);
+            if (CCComponentGetID(*Component) == CC_RENDER_COMPONENT_ID)
+            {
+                CCColourRGB Colour = CCRenderComponentGetColour(*Component);
+                CCRect Rect = CCRenderComponentGetRect(*Component);
+                
+                Data[Index * 4].position = Rect.position;
+                Data[Index * 4].colour = Colour;
+                Data[(Index * 4) + 1].position = CCVector2Add(Rect.position, CCVector2DMake(Rect.size.x, 0.0f));
+                Data[(Index * 4) + 1].colour = Colour;
+                Data[(Index * 4) + 2].position = CCVector2Add(Rect.position, CCVector2DMake(0.0f, Rect.size.y));
+                Data[(Index * 4) + 2].colour = Colour;
+                Data[(Index * 4) + 3].position = CCVector2Add(Rect.position, Rect.size);
+                Data[(Index * 4) + 3].colour = Colour;
+                
+                Index++;
+            }
         }
         
-        Vertices = ((Count - Loop) * 4) + DEMO_DEGENERATE_STRIPS((Count - Loop));
-    }
-    
-    if (Vertices)
-    {
-        GFXDrawSubmitIndexed(Drawer, GFXPrimitiveTypeTriangleStrip, Loop * 4, Vertices);
+        GFXBufferSetSize(VertBuffer, sizeof(DemoVertData) * 4 * Count);
+        GFXBufferWriteBuffer(VertBuffer, 0, sizeof(DemoVertData) * 4 * Count, Data);
+        CC_SAFE_Free(Data);
+        
+        
+        size_t Vertices = (Count * 4) + DEMO_DEGENERATE_STRIPS(Count);
+        size_t Loop = 0;
+        if (Count > DEMO_QUAD_BATCH_SIZE)
+        {
+            const size_t Batch = (DEMO_QUAD_BATCH_SIZE * 4) + DEMO_DEGENERATE_STRIPS(DEMO_QUAD_BATCH_SIZE);
+            
+            for (size_t C = DEMO_QUAD_BATCH_SIZE * (Count / DEMO_QUAD_BATCH_SIZE); Loop < C; Loop += DEMO_QUAD_BATCH_SIZE)
+            {
+                GFXDrawSubmitIndexed(Drawer, GFXPrimitiveTypeTriangleStrip, Loop * 4, Batch);
+            }
+            
+            Vertices = ((Count - Loop) * 4) + DEMO_DEGENERATE_STRIPS((Count - Loop));
+        }
+        
+        if (Vertices)
+        {
+            GFXDrawSubmitIndexed(Drawer, GFXPrimitiveTypeTriangleStrip, Loop * 4, Vertices);
+        }
     }
 }
 
