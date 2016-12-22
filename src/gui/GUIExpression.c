@@ -96,6 +96,11 @@ static void *GUIExpressionConstructor(CCAllocatorType Allocator)
     if (!Window)
     {
         Window = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, NULL, NULL, NULL);
+        
+        CCExpression Pos = CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0);
+        CCExpressionCreateState(Window, StrX, Pos, TRUE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        CCExpressionCreateState(Window, StrY, Pos, FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
+        
         CCExpressionCreateState(Window, StrWidth, CCExpressionCreateFromSource("(window-width)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Window, StrHeight, CCExpressionCreateFromSource("(window-height)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
     }
