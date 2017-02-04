@@ -175,8 +175,16 @@ void CCComponentSystemAddComponent(CCComponent Component);
 void CCComponentSystemRemoveComponent(CCComponent Component);
 
 /*!
+ * @brief Get the mailbox for the system.
+ * @param id The unique ID of the system.
+ * @return The mailbox for the system.
+ */
+CCConcurrentQueue CCComponentSystemGetMailbox(CCComponentSystemID id);
+
+/*!
  * @brief Get the current components for the system.
  * @warning Should obtain locks to the system prior to calling this function.
+ * @param id The unique ID of the system.
  * @return The current component list.
  */
 CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);

@@ -37,6 +37,8 @@ typedef struct {
     
     CCComponentSystemUpdateCallback update;
     
+    CCConcurrentQueue mailbox;
+    
     CCComponentSystemHandlesComponentCallback handlesComponent;
     CCComponentSystemAddingComponentCallback addingComponent;
     CCComponentSystemRemovingComponentCallback removingComponent;
@@ -65,6 +67,8 @@ static void CCComponentSystemDestructor(CCCollection Collection, CCComponentSyst
     if (System->components.added) CCCollectionDestroy(System->components.added);
     if (System->components.removed) CCCollectionDestroy(System->components.removed);
     if (System->components.destroy) CCCollectionDestroy(System->components.destroy);
+    
+    CCConcurrentQueueDestroy(System->mailbox);
 }
 
 void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
@@ -76,6 +80,7 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
         .id = id,
         .executionType = ExecutionType,
         .update = Update,
+        .mailbox = CCConcurrentQueueCreate(CC_STD_ALLOCATOR, CCConcurrentGarbageCollectorCreate(CC_STD_ALLOCATOR, CCEpochGarbageCollector)),
         .handlesComponent = HandlesComponent,
         .addingComponent = AddingComponent,
         .removingComponent = RemovingComponent,
@@ -211,6 +216,12 @@ static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
     }
     
     return NULL;
+}
+
+CCConcurrentQueue CCComponentSystemGetMailbox(CCComponentSystemID id)
+{
+    CCComponentSystem *System = CCComponentSystemFind(id);
+    return System->mailbox;
 }
 
 CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id)
