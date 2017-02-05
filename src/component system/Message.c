@@ -62,16 +62,19 @@ void CCMessageDestructor(CCMessage *Message)
 
 void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *Router, size_t Size, const void *Data)
 {
+    CCAssertLog(Router, "Router must not be null");
+    
     CCMessage *Message = CCMalloc(Allocator, sizeof(CCMessage) + Size, NULL, CC_DEFAULT_ERROR_CALLBACK);
     
     if (Message)
     {
+        if (Data) memcpy(((CCMessageData*)Message)->data, Data, Size);
+        
         Message->id = id;
         Message->router = Router;
-        if (Data) memcpy(((CCMessageData*)Message)->data, Data, Size);
+        
+        Router->post(Router, Message);
     }
-    
-    Router->post(Router, Message);
 }
 
 #pragma mark - Component Belonging To Entity

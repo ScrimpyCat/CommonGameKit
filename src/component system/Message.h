@@ -106,6 +106,18 @@ static inline void *CCMessageRouterGetData(CCMessageRouter *Router);
  */
 static inline void *CCMessageGetData(CCMessage *Message);
 
+#pragma mark - Sending
+
+/*!
+ * @brief Send a message.
+ * @param Allocator The allocator to be used.
+ * @param id The id of the message, so it can be identified.
+ * @param Router The destination of the message.
+ * @param Size The size of the data attached to the message.
+ * @param Data The data to attach to the message.
+ */
+void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *CC_OWN(Router), size_t Size, const void *Data);
+
 #pragma mark - Routers
 
 /*!
