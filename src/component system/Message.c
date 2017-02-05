@@ -71,10 +71,7 @@ void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *R
         if (Data) memcpy(((CCMessageData*)Message)->data, Data, Size);
     }
     
-    //Post to mailboxes for routes
-    
-//    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(Allocator, sizeof(CCMessage*), &Message);
-//    CCMemorySetDestructor(Node, CCFree);
+    Router->post(Router, Message);
 }
 
 #pragma mark - Component Belonging To Entity
@@ -109,11 +106,11 @@ static void CCMessageRouteComponentEntityDeliverer(CCMessage *Message, CCCompone
     
     if (Component)
     {
-//        CCComponentHandleMessage(Component, Message);
+        CCComponentHandleMessage(Component, Message);
     }
 }
 
-CCMessageRouter *CCMessageDeliverToComponentOfTypeBelongingToEntity(CCComponentID ComponentID, CCEntity Entity)
+CCMessageRouter *CCMessageDeliverToComponentBelongingToEntity(CCComponentID ComponentID, CCEntity Entity)
 {
     return CCMessageRouterCreate(CC_STD_ALLOCATOR, CCMessageRouteComponentEntityPoster, CCMessageRouteComponentEntityDeliverer, sizeof(CCMessageRouteComponentEntity), &(CCMessageRouteComponentEntity){
         .componentID = ComponentID,

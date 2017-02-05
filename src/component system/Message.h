@@ -29,6 +29,7 @@
 #include <CommonC/Common.h>
 #include <CommonGameKit/MessageType.h>
 #include <CommonGameKit/ComponentSystem.h>
+#include <CommonGameKit/Entity.h>
 
 
 /*!
@@ -104,6 +105,16 @@ static inline void *CCMessageRouterGetData(CCMessageRouter *Router);
  * @return A pointer to the data it contains.
  */
 static inline void *CCMessageGetData(CCMessage *Message);
+
+#pragma mark - Routers
+
+/*!
+ * @brief Create a router to send a message to a specific component belonging to a specific entity.
+ * @param ComponentID The id of the target component.
+ * @param Entity The target entity.
+ * @param The message router. Must be destroyed to free memory.
+ */
+CC_NEW CCMessageRouter *CCMessageDeliverToComponentBelongingToEntity(CCComponentID ComponentID, CCEntity Entity);
 
 
 #pragma mark -
