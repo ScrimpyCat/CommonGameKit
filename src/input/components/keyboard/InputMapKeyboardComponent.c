@@ -31,7 +31,7 @@ const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycod
 
 void CCInputMapKeyboardComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, CCInputMapKeyboardComponentDeallocate);
+    CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, NULL, CCInputMapKeyboardComponentDeallocate);
 }
 
 void CCInputMapKeyboardComponentDeregister(void)

@@ -29,7 +29,7 @@ const char * const CCInputMapMousePositionComponentName = "input_map_mouse_posit
 
 void CCInputMapMousePositionComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID, CCInputMapMousePositionComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapMousePositionComponentClass), CCInputMapMousePositionComponentInitialize, CCInputMapMousePositionComponentDeallocate);
+    CCComponentRegister(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID, CCInputMapMousePositionComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapMousePositionComponentClass), CCInputMapMousePositionComponentInitialize, NULL, CCInputMapMousePositionComponentDeallocate);
 }
 
 void CCInputMapMousePositionComponentDeregister(void)

@@ -29,7 +29,7 @@ const char * const CCRenderComponentName = "render";
 
 void CCRenderComponentRegister(void)
 {
-    CCComponentRegister(CC_RENDER_COMPONENT_ID, CCRenderComponentName, CC_STD_ALLOCATOR, sizeof(CCRenderComponentClass), CCRenderComponentInitialize, CCRenderComponentDeallocate);
+    CCComponentRegister(CC_RENDER_COMPONENT_ID, CCRenderComponentName, CC_STD_ALLOCATOR, sizeof(CCRenderComponentClass), CCRenderComponentInitialize, NULL, CCRenderComponentDeallocate);
 }
 
 void CCRenderComponentDeregister(void)

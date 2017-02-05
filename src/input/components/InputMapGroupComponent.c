@@ -29,7 +29,7 @@ const char * const CCInputMapGroupComponentName = "input_map_group";
 
 void CCInputMapGroupComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_GROUP_COMPONENT_ID, CCInputMapGroupComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapGroupComponentClass), CCInputMapGroupComponentInitialize, CCInputMapGroupComponentDeallocate);
+    CCComponentRegister(CC_INPUT_MAP_GROUP_COMPONENT_ID, CCInputMapGroupComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapGroupComponentClass), CCInputMapGroupComponentInitialize, NULL, CCInputMapGroupComponentDeallocate);
 }
 
 void CCInputMapGroupComponentDeregister(void)

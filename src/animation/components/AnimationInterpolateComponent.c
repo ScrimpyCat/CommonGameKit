@@ -29,7 +29,7 @@ const char * const CCAnimationInterpolateComponentName = "animation_interpolate"
 
 void CCAnimationInterpolateComponentRegister(void)
 {
-    CCComponentRegister(CC_ANIMATION_INTERPOLATE_COMPONENT_ID, CCAnimationInterpolateComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationInterpolateComponentClass), CCAnimationInterpolateComponentInitialize, CCAnimationInterpolateComponentDeallocate);
+    CCComponentRegister(CC_ANIMATION_INTERPOLATE_COMPONENT_ID, CCAnimationInterpolateComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationInterpolateComponentClass), CCAnimationInterpolateComponentInitialize, NULL, CCAnimationInterpolateComponentDeallocate);
 }
 
 void CCAnimationInterpolateComponentDeregister(void)

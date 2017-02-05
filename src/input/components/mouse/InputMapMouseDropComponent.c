@@ -29,7 +29,7 @@ const char * const CCInputMapMouseDropComponentName = "input_map_mouse_drop";
 
 void CCInputMapMouseDropComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID, CCInputMapMouseDropComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapMouseDropComponentClass), CCInputMapMouseDropComponentInitialize, CCInputMapMouseDropComponentDeallocate);
+    CCComponentRegister(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID, CCInputMapMouseDropComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapMouseDropComponentClass), CCInputMapMouseDropComponentInitialize, NULL, CCInputMapMouseDropComponentDeallocate);
 }
 
 void CCInputMapMouseDropComponentDeregister(void)

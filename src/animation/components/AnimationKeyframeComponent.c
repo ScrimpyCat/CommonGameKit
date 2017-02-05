@@ -29,7 +29,7 @@ const char * const CCAnimationKeyframeComponentName = "animation_keyframe";
 
 void CCAnimationKeyframeComponentRegister(void)
 {
-    CCComponentRegister(CC_ANIMATION_KEYFRAME_COMPONENT_ID, CCAnimationKeyframeComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationKeyframeComponentClass), CCAnimationKeyframeComponentInitialize, CCAnimationKeyframeComponentDeallocate);
+    CCComponentRegister(CC_ANIMATION_KEYFRAME_COMPONENT_ID, CCAnimationKeyframeComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationKeyframeComponentClass), CCAnimationKeyframeComponentInitialize, NULL, CCAnimationKeyframeComponentDeallocate);
 }
 
 void CCAnimationKeyframeComponentDeregister(void)

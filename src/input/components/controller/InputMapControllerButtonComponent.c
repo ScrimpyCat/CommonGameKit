@@ -29,7 +29,7 @@ const char * const CCInputMapControllerButtonComponentName = "input_map_controll
 
 void CCInputMapControllerButtonComponentRegister(void)
 {
-    CCComponentRegister(CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID, CCInputMapControllerButtonComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapControllerButtonComponentClass), CCInputMapControllerButtonComponentInitialize, CCInputMapControllerButtonComponentDeallocate);
+    CCComponentRegister(CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID, CCInputMapControllerButtonComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapControllerButtonComponentClass), CCInputMapControllerButtonComponentInitialize, NULL, CCInputMapControllerButtonComponentDeallocate);
 }
 
 void CCInputMapControllerButtonComponentDeregister(void)

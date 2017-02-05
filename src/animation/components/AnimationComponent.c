@@ -29,7 +29,7 @@ const char * const CCAnimationComponentName = "animation";
 
 void CCAnimationComponentRegister(void)
 {
-    CCComponentRegister(CC_ANIMATION_COMPONENT_ID, CCAnimationComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationComponentClass), CCAnimationComponentInitialize, CCAnimationComponentDeallocate);
+    CCComponentRegister(CC_ANIMATION_COMPONENT_ID, CCAnimationComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationComponentClass), CCAnimationComponentInitialize, NULL, CCAnimationComponentDeallocate);
 }
 
 void CCAnimationComponentDeregister(void)
