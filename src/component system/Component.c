@@ -27,6 +27,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include "ComponentBase.h"
+#include "Message.h"
 
 
 typedef struct {

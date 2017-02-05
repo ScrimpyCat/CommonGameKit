@@ -27,25 +27,9 @@
 #define CommonGameKit_Message_h
 
 #include <CommonC/Common.h>
-#include "Entity.h"
-#include "Component.h"
-#include "ComponentSystem.h"
+#include <CommonGameKit/MessageType.h>
+#include <CommonGameKit/ComponentSystem.h>
 
-
-/*!
- * @brief An ID to identify the message.
- */
-typedef uint32_t CCMessageID;
-
-/*!
- * @brief A message.
- */
-typedef struct CCMessage CCMessage;
-
-/*!
- * @brief A message router.
- */
-typedef struct CCMessageRouter CCMessageRouter;
 
 /*!
  * @brief Decide on which system mailboxes to post the message to.
@@ -56,11 +40,10 @@ typedef void (*CCMessageRouterPost)(CCMessageRouter *Router, CCMessage *Message)
 
 /*!
  * @brief Decide on what message handlers to the message should be delivered to.
- * @param Router The routing data.
  * @param Message The message to be delivered.
  * @param SystemID The system the mailbox this message was taken from.
  */
-typedef void (*CCMessageRouterDeliver)(CCMessageRouter *Router, CCMessage *Message, CCComponentSystemID SystemID);
+typedef void (*CCMessageRouterDeliver)(CCMessage *Message, CCComponentSystemID SystemID);
 
 struct CCMessageRouter {
     CCMessageRouterPost post;

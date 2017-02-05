@@ -28,7 +28,7 @@
 
 #include <stdint.h>
 #include <CommonC/Common.h>
-#include <CommonGameKit/Message.h>
+#include <CommonGameKit/MessageType.h>
 
 #define CC_COMPONENT_INHERIT(component) component __inherit
 #define CC_COMPONENT_ID_RESERVED_MASK ~((CCComponentID)-1 >> 1)

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
 		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
@@ -390,6 +391,7 @@
 /* Begin PBXFileReference section */
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 		F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Callbacks.c; sourceTree = "<group>"; };
 		F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callbacks.h; sourceTree = "<group>"; };
 		F3897B2B1DCD6B32008D6C1D /* stdatomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdatomic.h; sourceTree = "<group>"; };
@@ -852,6 +854,7 @@
 				F3AF32A11DCCD4EB00CAD472 /* ComponentBase.h */,
 				F3AF32A21DCCD4EB00CAD472 /* ComponentSystem.c */,
 				F3AF32A31DCCD4EB00CAD472 /* ComponentSystem.h */,
+				F36954EC1E475E0F00135AF0 /* MessageType.h */,
 				F36954CD1E45E2DB00135AF0 /* Message.c */,
 				F36954CE1E45E2DB00135AF0 /* Message.h */,
 				F3AF32A41DCCD4EB00CAD472 /* Entity.c */,
@@ -1296,6 +1299,7 @@
 				F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */,
 				F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */,
 				F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */,
+				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
 				F3AF33F21DCCD4EC00CAD472 /* Pipeline.h in Headers */,
 				F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */,
 				F3897B4F1DCD6D4F008D6C1D /* threads.h in Headers */,

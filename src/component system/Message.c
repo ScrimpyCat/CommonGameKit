@@ -24,6 +24,7 @@
  */
 
 #include "Message.h"
+#include "ComponentBase.h"
 
 
 CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data)
@@ -57,4 +58,65 @@ void CCMessageDestroy(CCMessage *Message)
 void CCMessageDestructor(CCMessage *Message)
 {
     CCFree(Message->router);
+}
+
+void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *Router, size_t Size, const void *Data)
+{
+    CCMessage *Message = CCMalloc(Allocator, sizeof(CCMessage) + Size, NULL, CC_DEFAULT_ERROR_CALLBACK);
+    
+    if (Message)
+    {
+        Message->id = id;
+        Message->router = Router;
+        if (Data) memcpy(((CCMessageData*)Message)->data, Data, Size);
+    }
+    
+    //Post to mailboxes for routes
+    
+//    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(Allocator, sizeof(CCMessage*), &Message);
+//    CCMemorySetDestructor(Node, CCFree);
+}
+
+#pragma mark - Component Belonging To Entity
+
+typedef struct {
+    CCEntity entity;
+    CCComponentID componentID;
+} CCMessageRouteComponentEntity;
+
+static void CCMessageRouteComponentEntityPoster(CCMessageRouter *Router, CCMessage *Message)
+{
+    CCComponentSystemID SystemID = CCComponentSystemHandlesComponentID(((CCMessageRouteComponentEntity*)CCMessageRouterGetData(Router))->componentID);
+    CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(SystemID);
+    
+    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &Message);
+    CCMemorySetDestructor(Node, CCFree);
+    
+    CCConcurrentQueuePush(Mailbox, Node);
+}
+
+static CCComparisonResult CCMessageRouteComponentEntityFindComponent(const CCComponent *Component, const CCMessageRouteComponentEntity *Data)
+{
+    if ((CCComponentGetID(*Component) == Data->componentID) && (CCComponentGetEntity(*Component) == Data->entity)) return CCComparisonResultEqual;
+    
+    return CCComparisonResultInvalid;
+}
+
+static void CCMessageRouteComponentEntityDeliverer(CCMessage *Message, CCComponentSystemID SystemID)
+{
+    CCCollection Components = CCComponentSystemGetComponentsForSystem(SystemID); //Or can we safely CCEntityGetComponents?
+    CCComponent *Component = CCCollectionGetElement(Components, CCCollectionFindElement(Components, CCMessageRouterGetData(Message->router), (CCComparator)CCMessageRouteComponentEntityFindComponent));
+    
+    if (Component)
+    {
+//        CCComponentHandleMessage(Component, Message);
+    }
+}
+
+CCMessageRouter *CCMessageDeliverToComponentOfTypeBelongingToEntity(CCComponentID ComponentID, CCEntity Entity)
+{
+    return CCMessageRouterCreate(CC_STD_ALLOCATOR, CCMessageRouteComponentEntityPoster, CCMessageRouteComponentEntityDeliverer, sizeof(CCMessageRouteComponentEntity), &(CCMessageRouteComponentEntity){
+        .componentID = ComponentID,
+        .entity = Entity
+    });
 }
