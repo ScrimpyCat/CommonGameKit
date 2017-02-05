@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
+		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; };
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
 		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
@@ -386,6 +388,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
+		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Callbacks.c; sourceTree = "<group>"; };
 		F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callbacks.h; sourceTree = "<group>"; };
 		F3897B2B1DCD6B32008D6C1D /* stdatomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdatomic.h; sourceTree = "<group>"; };
@@ -848,6 +852,8 @@
 				F3AF32A11DCCD4EB00CAD472 /* ComponentBase.h */,
 				F3AF32A21DCCD4EB00CAD472 /* ComponentSystem.c */,
 				F3AF32A31DCCD4EB00CAD472 /* ComponentSystem.h */,
+				F36954CD1E45E2DB00135AF0 /* Message.c */,
+				F36954CE1E45E2DB00135AF0 /* Message.h */,
 				F3AF32A41DCCD4EB00CAD472 /* Entity.c */,
 				F3AF32A51DCCD4EB00CAD472 /* Entity.h */,
 				F3AF32A61DCCD4EB00CAD472 /* EntityManager.c */,
@@ -1253,6 +1259,7 @@
 				F3AF33C41DCCD4EC00CAD472 /* PixelDataStatic.h in Headers */,
 				F3AF34381DCCD4EC00CAD472 /* AssetManager.h in Headers */,
 				F3AF34951DCCD5AF00CAD472 /* IOExpressions.h in Headers */,
+				F36954D01E45E2DB00135AF0 /* Message.h in Headers */,
 				F3AF339E1DCCD4EC00CAD472 /* InputMapKeyboardComponent.h in Headers */,
 				F3AF33F31DCCD4EC00CAD472 /* PipelineVersion.h in Headers */,
 				F3AF33A81DCCD4EC00CAD472 /* Controller.h in Headers */,
@@ -1586,6 +1593,7 @@
 				F3AF33DD1DCCD4EC00CAD472 /* GLDebug.c in Sources */,
 				F3AF339D1DCCD4EC00CAD472 /* InputMapKeyboardComponent.c in Sources */,
 				F3AF339F1DCCD4EC00CAD472 /* InputMapMouseButtonComponent.c in Sources */,
+				F36954CF1E45E2DB00135AF0 /* Message.c in Sources */,
 				F3AF33E21DCCD4EC00CAD472 /* GLFramebuffer.c in Sources */,
 				F3AF33A31DCCD4EC00CAD472 /* InputMapMousePositionComponent.c in Sources */,
 				F3AF33D11DCCD4EC00CAD472 /* GFXMain.c in Sources */,
