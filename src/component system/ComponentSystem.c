@@ -47,6 +47,7 @@ typedef struct {
     CCComponentSystemUpdateCallback update;
     
     CCConcurrentQueue mailbox;
+    CCComponentSystemMessageHandlerCallback messageHandler;
     
     CCComponentSystemHandlesComponentCallback handlesComponent;
     CCComponentSystemAddingComponentCallback addingComponent;
@@ -80,7 +81,7 @@ static void CCComponentSystemDestructor(CCCollection Collection, CCComponentSyst
     CCConcurrentQueueDestroy(System->mailbox);
 }
 
-void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
+void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemMessageHandlerCallback MessageHandler, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
 {
     ExecutionType &= CCComponentSystemExecutionTypeMask;
     if (!Systems[ExecutionType]) Systems[ExecutionType] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintHeavyEnumerating, sizeof(CCComponentSystem), (CCCollectionElementDestructor)CCComponentSystemDestructor);
@@ -90,6 +91,7 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
         .executionType = ExecutionType,
         .update = Update,
         .mailbox = CCConcurrentQueueCreate(CC_STD_ALLOCATOR, CCConcurrentGarbageCollectorCreate(CC_STD_ALLOCATOR, CCEpochGarbageCollector)),
+        .messageHandler = MessageHandler,
         .handlesComponent = HandlesComponent,
         .addingComponent = AddingComponent,
         .removingComponent = RemovingComponent,
@@ -244,6 +246,15 @@ static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
     }
     
     return NULL;
+}
+
+void CCComponentSystemHandleMessage(CCComponentSystemID id, CCMessage *Message)
+{
+    CCComponentSystem *System = CCComponentSystemFind(id);
+    if (System)
+    {
+        if (System->messageHandler) System->messageHandler(Message);
+    }
 }
 
 CCConcurrentQueue CCComponentSystemGetMailbox(CCComponentSystemID id)

@@ -28,6 +28,7 @@
 
 #include <stdint.h>
 #include <CommonGameKit/Component.h>
+#include <CommonGameKit/MessageType.h>
 
 /*!
  * @typedef CCComponentSystemExecutionType
@@ -81,6 +82,16 @@ typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCCollect
 
 
 /*!
+ * @brief The message handler callback.
+ * @description Handle any messages the system should respond to internally. If the message is not
+ *              known, it can be ignored.
+ *
+ * @param Message The message to be handled.
+ */
+typedef void (*CCComponentSystemMessageHandlerCallback)(CCMessage *Message);
+
+
+/*!
  * @brief Handles component callback.
  * @description Determine whether a system has ownership (manages) of a particular component type.
  */
@@ -128,6 +139,7 @@ typedef void (*CCComponentSystemUnlockCallback)(void);
  * @param id The unique ID of the system.
  * @param ExecutionType How the system should be executed.
  * @param Update The update callback of the system. Type of update depends on execution type. May be NULL.
+ * @param MessageHandler The callback to use for handling messages. May be NULL.
  * @param HandlesComponent The callback to determine if the system manages the component. May be NULL.
  * @param AddingComponent The callback to let the system know a component has been added. May be NULL,
  *        must then call CCComponentSystemGetAddedComponentsForSystem.
@@ -139,7 +151,7 @@ typedef void (*CCComponentSystemUnlockCallback)(void);
  * @param Lock The callback to lock the system. May be NULL.
  * @param Unlock The callback to unlock the system. May be NULL.
  */
-void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback TryLock, CCComponentSystemLockCallback Lock, CCComponentSystemUnlockCallback Unlock);
+void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemMessageHandlerCallback MessageHandler, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback TryLock, CCComponentSystemLockCallback Lock, CCComponentSystemUnlockCallback Unlock);
 
 /*!
  * @brief Deregister the system.
@@ -155,6 +167,13 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
  * @param ExecutionType The execution type to be executed.
  */
 void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType);
+
+/*!
+ * @brief Pass a message to the system.
+ * @param id The unique ID of the system.
+ * @param Message The message to be handled.
+ */
+void CCComponentSystemHandleMessage(CCComponentSystemID id, CCMessage *Message);
 
 /*!
  * @brief Add component to the system.
