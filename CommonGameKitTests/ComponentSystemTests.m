@@ -41,7 +41,7 @@
 {
     [super setUp];
     
-    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL);
+    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL, NULL);
 }
 
 -(void) tearDown
@@ -61,7 +61,7 @@ static void TestSystemRegisteringUpdate(void *Context, CCCollection Components)
 {
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     
-    CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemRegisteringUpdate, NULL, NULL, NULL, NULL, NULL, NULL);
+    CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemRegisteringUpdate, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertTrue(TestSystemRegisteringUpdateCalled, @"Update callback should be called");
@@ -88,7 +88,7 @@ static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID 
 
 -(void) testSystemAddingComponentNonCallback
 {
-    CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemAddingComponentNonCallbackUpdate, TestSystemAddingComponentNonCallbackHandlesComponent, NULL, NULL, NULL, NULL, NULL);
+    CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemAddingComponentNonCallbackUpdate, NULL, TestSystemAddingComponentNonCallbackHandlesComponent, NULL, NULL, NULL, NULL, NULL);
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertFalse(TestSystemAddingComponentNonCallbackHasActiveComponents, @"Should not have any active components");
@@ -141,7 +141,7 @@ static void TestSystemAddingComponentCallbackRemovingComponent(CCComponent Compo
 
 -(void) testSystemAddingComponentCallback
 {
-    CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemAddingComponentCallbackUpdate, TestSystemAddingComponentNonCallbackHandlesComponent, TestSystemAddingComponentCallbackAddingComponent, TestSystemAddingComponentCallbackRemovingComponent, NULL, NULL, NULL);
+    CCComponentSystemRegister(TEST_SYSTEM_ID, CCComponentSystemExecutionTypeManual, TestSystemAddingComponentCallbackUpdate, NULL, TestSystemAddingComponentNonCallbackHandlesComponent, TestSystemAddingComponentCallbackAddingComponent, TestSystemAddingComponentCallbackRemovingComponent, NULL, NULL, NULL);
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertFalse(TestSystemAddingComponentCallbackHasActiveComponents, @"Should not have any active components");
