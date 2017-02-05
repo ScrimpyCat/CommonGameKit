@@ -48,7 +48,7 @@ void CCRenderSystemRegister(void)
     
     CCRenderSystemLoadResources();
     
-    CCComponentSystemRegister(CC_RENDER_SYSTEM_ID, CCComponentSystemExecutionTypeRender, (CCComponentSystemUpdateCallback)CCRenderSystemUpdate, CCRenderSystemHandlesComponent, NULL, NULL, CCRenderSystemTryLock, CCRenderSystemLock, CCRenderSystemUnlock);
+    CCComponentSystemRegister(CC_RENDER_SYSTEM_ID, CCComponentSystemExecutionTypeRender, (CCComponentSystemUpdateCallback)CCRenderSystemUpdate, NULL, CCRenderSystemHandlesComponent, NULL, NULL, CCRenderSystemTryLock, CCRenderSystemLock, CCRenderSystemUnlock);
 }
 
 void CCRenderSystemDeregister(void)

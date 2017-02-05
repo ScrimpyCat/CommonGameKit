@@ -53,7 +53,7 @@ void CCInputSystemRegister(void)
 {
     CCKeyboardStateReset();
     
-    CCComponentSystemRegister(CC_INPUT_SYSTEM_ID, CCComponentSystemExecutionTypeInput, CCInputSystemUpdate, CCInputSystemHandlesComponent, NULL, NULL, NULL, NULL, NULL);
+    CCComponentSystemRegister(CC_INPUT_SYSTEM_ID, CCComponentSystemExecutionTypeInput, CCInputSystemUpdate, NULL, CCInputSystemHandlesComponent, NULL, NULL, NULL, NULL, NULL);
 }
 
 void CCInputSystemDeregister(void)

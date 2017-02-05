@@ -46,7 +46,7 @@ void CCAnimationSystemRegister(void)
         exit(EXIT_FAILURE); //TODO: How should we handle this?
     }
     
-    CCComponentSystemRegister(CC_ANIMATION_SYSTEM_ID, CCComponentSystemExecutionTypeRender, (CCComponentSystemUpdateCallback)CCAnimationSystemUpdate, CCAnimationSystemHandlesComponent, NULL, NULL, CCAnimationSystemTryLock, CCAnimationSystemLock, CCAnimationSystemUnlock);
+    CCComponentSystemRegister(CC_ANIMATION_SYSTEM_ID, CCComponentSystemExecutionTypeRender, (CCComponentSystemUpdateCallback)CCAnimationSystemUpdate, NULL, CCAnimationSystemHandlesComponent, NULL, NULL, CCAnimationSystemTryLock, CCAnimationSystemLock, CCAnimationSystemUnlock);
 }
 
 void CCAnimationSystemDeregister(void)
