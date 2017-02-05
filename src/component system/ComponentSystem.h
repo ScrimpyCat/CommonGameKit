@@ -175,6 +175,13 @@ void CCComponentSystemAddComponent(CCComponent Component);
 void CCComponentSystemRemoveComponent(CCComponent Component);
 
 /*!
+ * @brief Get the system ID of the system responsible for the component type.
+ * @param ComponentID The component type to find the responsible system for.
+ * @return The system ID of the responsible system.
+ */
+CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentID);
+
+/*!
  * @brief Get the mailbox for the system.
  * @param id The unique ID of the system.
  * @return The mailbox for the system.

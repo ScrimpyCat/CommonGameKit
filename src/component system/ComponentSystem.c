@@ -22,7 +22,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+/*
+ TODO: Cleanup component system so it's easier to work with.
+    * Expose CCComponentSystem instead of CCComponentSystemID
+ 
+    * Let multiple systems handle the same components? (not sure about this, as it
+      will may make threading trickier)
+ 
+    * Easily find which systems manage which components, access all systems, systems
+      belonging to a particular thread, etc.
+ */
 #include "ComponentSystem.h"
 #include <CommonC/Common.h>
 #include <stdatomic.h>
@@ -154,6 +163,25 @@ static CCComponentSystem *CCComponentSystemHandlesComponentFind(CCComponent Comp
     }
     
     return NULL;
+}
+
+static CCComparisonResult CCComponentSystemComponentIDComparator(CCComponentSystem *System, CCComponentID *ComponentID)
+{
+    return (System->handlesComponent) && (System->handlesComponent(*ComponentID)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+}
+
+CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentID)
+{
+    for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
+    {
+        if (Systems[Loop])
+        {
+            CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &ComponentID, (CCComparator)CCComponentSystemComponentIDComparator));
+            if (System) return System->id;
+        }
+    }
+    
+    return 0;
 }
 
 void CCComponentSystemAddComponent(CCComponent Component)
