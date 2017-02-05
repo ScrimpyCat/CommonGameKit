@@ -41,6 +41,7 @@
 #include <CommonGameKit/ComponentSystem.h>
 #include <CommonGameKit/Entity.h>
 #include <CommonGameKit/EntityManager.h>
+#include <CommonGameKit/Message.h>
 
 #include <CommonGameKit/GUIExpression.h>
 #include <CommonGameKit/GUIManager.h>

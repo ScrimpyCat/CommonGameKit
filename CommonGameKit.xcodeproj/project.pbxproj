@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
-		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; };
+		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
 		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
