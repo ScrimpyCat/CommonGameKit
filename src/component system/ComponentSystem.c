@@ -38,6 +38,7 @@
 #include "GLSetup.h"
 #include "ComponentBase.h"
 #include "Callbacks.h"
+#include "Message.h"
 
 
 typedef struct {
@@ -120,6 +121,16 @@ void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecut
     CCCollectionRemoveElement(Systems[ExecutionType], CCCollectionFindElement(Systems[ExecutionType], &id, (CCComparator)CCComponentSystemIDComparator));
 }
 
+static void CCComponentSystemFlushMailbox(CCComponentSystem *System)
+{
+    //TODO: Should we set a hard limit?
+    for (CCConcurrentQueueNode *Node; (Node = CCConcurrentQueuePop(System->mailbox)); CCConcurrentQueueDestroyNode(Node))
+    {
+        CCMessage *Message = *(CCMessage**)CCConcurrentQueueGetNodeData(Node);
+        Message->router->deliver(Message, System->id);
+    }
+}
+
 void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
 {
     _Bool TimedUpdate = ExecutionType & CCComponentSystemExecutionOptionTimedUpdate;
@@ -142,6 +153,8 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
         CCCollection ActiveComponents = System->components.active;
         
         if (System->lock) System->lock();
+        CCComponentSystemFlushMailbox(System);
+        
         if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)System->update)(Delta, ActiveComponents);
         else System->update(NULL, ActiveComponents);
         if (System->unlock) System->unlock();
