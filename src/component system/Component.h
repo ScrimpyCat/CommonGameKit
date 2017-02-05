@@ -28,6 +28,7 @@
 
 #include <stdint.h>
 #include <CommonC/Common.h>
+#include <CommonGameKit/Message.h>
 
 #define CC_COMPONENT_INHERIT(component) component __inherit
 #define CC_COMPONENT_ID_RESERVED_MASK ~((CCComponentID)-1 >> 1)
@@ -62,6 +63,16 @@ typedef void (*CCComponentInitializer)(CCComponent Component, CCComponentID id);
  */
 typedef void (*CCComponentDestructor)(CCComponent Component);
 
+/*!
+ * @brief The message handler callback.
+ * @description Handle any messages the component should respond to internally. If the message is not
+ *              known, it can be ignored.
+ *
+ * @param Component The component to handle the message.
+ * @param Message The message to be handled.
+ */
+typedef void (*CCComponentMessageHandler)(CCComponent Component, CCMessage *Message);
+
 
 /*!
  * @brief Register a component type.
@@ -70,8 +81,10 @@ typedef void (*CCComponentDestructor)(CCComponent Component);
  * @param Allocator The type of allocator to be used.
  * @param Size The total size of this component.
  * @param Initializer The callback to use for initialization of this component.
+ * @param MessageHandler The callback to use for handling messages. May be NULL.
+ * @param Destructor The callback to use for cleanup of this component.
  */
-void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentDestructor Destructor);
+void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor);
 
 /*!
  * @brief Deregister a component type.
@@ -100,5 +113,12 @@ CC_NEW CCComponent CCComponentCreateForName(const char *Name);
  * @param Component The component to be destroyed.
  */
 void CCComponentDestroy(CCComponent CC_DESTROY(Component));
+
+/*!
+ * @brief Pass a message to the component.
+ * @param Component The component to handle the message.
+ * @param Message The message to be handled.
+ */
+void CCComponentHandleMessage(CCComponent Component, CCMessage *Message);
 
 #endif

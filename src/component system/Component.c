@@ -35,6 +35,7 @@ typedef struct {
     CCAllocatorType allocator;
     CCComponentInitializer initializer;
     CCComponentDestructor destructor;
+    CCComponentMessageHandler messageHandler;
     size_t size;
     //TODO: Dependencies
 } CCComponentInfo;
@@ -45,7 +46,7 @@ static void CCComponentListElementDestructor(CCCollection Collection, CCComponen
 }
 
 static CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
-void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentDestructor Destructor)
+void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor)
 {
     if (!ComponentList) ComponentList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCComponentInfo), (CCCollectionElementDestructor)CCComponentListElementDestructor);
     
@@ -67,6 +68,7 @@ void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType All
         .allocator = Allocator,
         .initializer = Initializer,
         .destructor = Destructor,
+        .messageHandler = MessageHandler,
         .size = Size
     });
 }
@@ -148,5 +150,17 @@ void CCComponentDestroy(CCComponent Component)
         }
         
         CC_SAFE_Free(Component);
+    }
+}
+
+void CCComponentHandleMessage(CCComponent Component, CCMessage *Message)
+{
+    CCAssertLog(Component, "Component must not be NULL");
+    
+    CCComponentInfo *Info = CCComponentInfoFindByID(CCComponentGetID(Component));
+    
+    if (Info)
+    {
+        if (Info->messageHandler) Info->messageHandler(Component, Message);
     }
 }
