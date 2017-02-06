@@ -34,6 +34,7 @@
 
 /*!
  * @brief Decide on which system mailboxes to post the message to.
+ * @description The poster should retain a reference to every copy of the message it sends.
  * @param Router The routing data.
  * @param Message The message to be posted.
  */

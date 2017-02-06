@@ -74,7 +74,13 @@ void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *R
         Message->router = Router;
         
         Router->post(Router, Message);
+        CCMessageDestroy(Message);
     }
+}
+
+static void CCMessageNodeDataDestructor(CCConcurrentQueueNode *Node)
+{
+    CCMessageDestroy(*(CCMessage**)CCConcurrentQueueGetNodeData(Node));
 }
 
 #pragma mark - Component Belonging To Entity
@@ -89,8 +95,8 @@ static void CCMessageRouteComponentEntityPoster(CCMessageRouter *Router, CCMessa
     CCComponentSystemID SystemID = CCComponentSystemHandlesComponentID(((CCMessageRouteComponentEntity*)CCMessageRouterGetData(Router))->componentID);
     CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(SystemID);
     
-    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &Message);
-    CCMemorySetDestructor(Node, CCFree);
+    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
+    CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
     
     CCConcurrentQueuePush(Mailbox, Node);
 }
