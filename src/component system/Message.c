@@ -115,7 +115,7 @@ static void CCMessageRouteComponentEntityDeliverer(CCMessage *Message, CCCompone
     
     if (Component)
     {
-        CCComponentHandleMessage(Component, Message);
+        CCComponentHandleMessage(*Component, Message);
     }
 }
 
