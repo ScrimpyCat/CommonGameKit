@@ -34,6 +34,14 @@ typedef enum {
     CCComponentExpressionValueTypeComponent = 'cmpt'
 } CCComponentExpressionValueType;
 
+/*!
+ * @brief Evaluate a component argument.
+ * @description The initializer is responsible for evaluating any arguments of the parent
+ *              component as well.
+ *
+ * @param Component The component whose state is to be set.
+ * @param Arg The expression of the argument, which takes the form of an option.
+ */
 typedef void (*CCComponentExpressionArgInitializer)(CCComponent Component, CCExpression Arg);
 
 typedef struct {
@@ -41,6 +49,11 @@ typedef struct {
     CCComponentExpressionArgInitializer initializer;
 } CCComponentExpressionDescriptor;
 
+/*!
+ * @brief Register component evaluators.
+ * @param Name The name of the component expression.
+ * @param Descriptor The descriptor to workout how to create the component from the expression.
+ */
 void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpressionDescriptor *Descriptor);
 
 #endif
