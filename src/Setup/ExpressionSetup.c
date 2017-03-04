@@ -5,6 +5,7 @@
 #include "GUIExpression.h"
 #include "AssetExpressions.h"
 #include "ColourExpressions.h"
+#include "ComponentExpressions.h"
 #include "ControlFlowExpressions.h"
 #include "DebugExpressions.h"
 #include "EqualityExpressions.h"
@@ -33,6 +34,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("asset"), CCAssetExpressionAsset);
     CCExpressionEvaluatorRegister(CC_STRING("lighten"), CCColourExpressionLighten);
     CCExpressionEvaluatorRegister(CC_STRING("darken"), CCColourExpressionDarken);
+    CCExpressionEvaluatorRegister(CC_STRING("component"), CCComponentExpressionComponent);
     CCExpressionEvaluatorRegister(CC_STRING("begin"), CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister(CC_STRING("if"), CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);

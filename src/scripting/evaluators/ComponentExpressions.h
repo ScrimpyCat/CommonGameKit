@@ -56,4 +56,6 @@ typedef struct {
  */
 void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpressionDescriptor *Descriptor);
 
+CC_EXPRESSION_EVALUATOR(component) CCExpression CCComponentExpressionComponent(CCExpression Expression);
+
 #endif

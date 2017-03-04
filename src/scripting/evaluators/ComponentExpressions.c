@@ -39,3 +39,38 @@ void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDes
     
     CCDictionarySetValue(ComponentDescriptors, &(CCString){ CCStringCopy(Name) }, &Descriptor);
 }
+
+CCExpression CCComponentExpressionComponent(CCExpression Expression)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    CCExpression *NameExpr = CCCollectionEnumeratorNext(&Enumerator);
+    if (NameExpr)
+    {
+        CCExpression Name = CCExpressionEvaluate(*NameExpr);
+        if (CCExpressionGetType(Name) == CCExpressionValueTypeAtom)
+        {
+            const CCComponentExpressionDescriptor *Descriptor = CCDictionaryGetValue(ComponentDescriptors, &(CCString){ CCExpressionGetAtom(*NameExpr) });
+            if (Descriptor)
+            {
+                CCComponent Component = CCComponentCreate(Descriptor->id);
+                
+                for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+                {
+                    Descriptor->initializer(Component, CCExpressionEvaluate(*Expr));
+                }
+                
+                return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCComponentExpressionValueTypeComponent, Component, NULL, (CCExpressionValueDestructor)CCComponentDestroy);
+            }
+            
+            else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid argument component: no component for name (%S)", CCExpressionGetAtom(*NameExpr));
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("component", "name:atom [...:expr]");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("component", "name:atom [...:expr]");
+    
+    return Expression;
+}
