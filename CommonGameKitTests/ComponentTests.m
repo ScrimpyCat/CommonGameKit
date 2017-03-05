@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@import Cocoa;
-@import XCTest;
+#import "CCTestCase.h"
 #import "Component.h"
 #import "ComponentBase.h"
+#import "ComponentExpressions.h"
+#import "ExpressionHelpers.h"
 
 
 #define TEST_COMPONENT_ID 1
@@ -50,8 +51,13 @@ static inline int TestComponentGetValue(CCComponent Component)
     return ((TestComponentPrivate)Component)->value;
 }
 
+static inline void TestComponentSetValue(CCComponent Component, int Value)
+{
+    ((TestComponentPrivate)Component)->value = Value;
+}
 
-@interface ComponentTests : XCTestCase
+
+@interface ComponentTests : CCTestCase
 
 @end
 
@@ -123,6 +129,79 @@ static inline int TestComponentGetValue(CCComponent Component)
     
     CCComponentDeregister(CC_COMPONENT_ID);
     CCComponentDeregister(TEST_COMPONENT_ID);
+}
+
+static void TestArgInitializer(CCComponent Component, CCExpression Arg)
+{
+    if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Arg))))
+    {
+        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+        if ((CCExpressionGetType(Name) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CC_STRING("value:"))))
+        {
+            TestComponentSetValue(Component, CCExpressionGetNamedInteger(Arg));
+        }
+    }
+}
+
+static CCComponentExpressionDescriptor Descriptor = {
+    .id = TEST_COMPONENT_ID,
+    .initializer = TestArgInitializer
+};
+
+-(void) testComponentExpression
+{
+    CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL, NULL);
+    
+    CCComponentExpressionRegister(CC_STRING("test-component"), &Descriptor, TRUE);
+    
+    CCExpression Expression = CCExpressionCreateFromSource("(test-component (value: 120))");
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    
+    XCTAssertEqual(CCExpressionGetType(Result), CCComponentExpressionValueTypeComponent, @"Should contain a component");
+    
+    CCComponent Component = CCExpressionGetData(Result);
+    XCTAssertEqual(CCComponentGetID(Component), TEST_COMPONENT_ID, @"Should be the correct component");
+    XCTAssertEqual(TestComponentGetValue(Component), 120, @"Should be the correct component");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(component :test-component (value: 11))");
+    Result = CCExpressionEvaluate(Expression);
+    
+    XCTAssertEqual(CCExpressionGetType(Result), CCComponentExpressionValueTypeComponent, @"Should contain a component");
+    
+    Component = CCExpressionGetData(Result);
+    XCTAssertEqual(CCComponentGetID(Component), TEST_COMPONENT_ID, @"Should be the correct component");
+    XCTAssertEqual(TestComponentGetValue(Component), 11, @"Should be the correct component");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    
+    CCComponentExpressionRegister(CC_STRING("test-component-2"), &Descriptor, FALSE);
+    
+    Expression = CCExpressionCreateFromSource("(test-component-2 (value: 120))");
+    Result = CCExpressionEvaluate(Expression);
+    
+    XCTAssertNotEqual(CCExpressionGetType(Result), CCComponentExpressionValueTypeComponent, @"Should contain a component");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(component :test-component-2 (value: 11))");
+    Result = CCExpressionEvaluate(Expression);
+    
+    XCTAssertEqual(CCExpressionGetType(Result), CCComponentExpressionValueTypeComponent, @"Should contain a component");
+    
+    Component = CCExpressionGetData(Result);
+    XCTAssertEqual(CCComponentGetID(Component), TEST_COMPONENT_ID, @"Should be the correct component");
+    XCTAssertEqual(TestComponentGetValue(Component), 11, @"Should be the correct component");
+    
+    CCExpressionDestroy(Expression);
+    
+    CCComponentDeregister(TEST_COMPONENT_ID);
+
 }
 
 @end
