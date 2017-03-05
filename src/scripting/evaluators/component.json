@@ -1,0 +1,13 @@
+{
+    "functions": [
+        {
+            "name": "component",
+            "description": "Create a component and initialize its state.",
+            "examples": ["(component :test (field: 1))"],
+            "return": { "type": "custom:component" },
+            "args": [[
+                { "type": "atom", "name": "name" }
+            ]]
+        }
+    ]
+}
