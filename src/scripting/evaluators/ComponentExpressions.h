@@ -53,8 +53,9 @@ typedef struct {
  * @brief Register component evaluators.
  * @param Name The name of the component expression.
  * @param Descriptor The descriptor to workout how to create the component from the expression.
+ * @param Wrapper Whether or not a wrapper function should be created.
  */
-void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpressionDescriptor *Descriptor);
+void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpressionDescriptor *Descriptor, _Bool Wrapper);
 
 CC_EXPRESSION_EVALUATOR(component) CCExpression CCComponentExpressionComponent(CCExpression Expression);
 
