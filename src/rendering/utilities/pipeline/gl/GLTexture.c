@@ -28,6 +28,7 @@
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 static void GLTextureDestructor(GLTexture Texture);
 static GFXTextureHint GLTextureGetHint(GLTexture Texture);
+static CCPixelData GLTextureGetData(GLTexture Texture);
 static void GLTextureGetSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
@@ -37,6 +38,7 @@ const GFXTextureInterface GLTextureInterface = {
     .create = (GFXTextureConstructorCallback)GLTextureConstructor,
     .destroy = (GFXTextureDestructorCallback)GLTextureDestructor,
     .hints = (GFXTextureGetHintCallback)GLTextureGetHint,
+    .data = (GFXTextureGetDataCallback)GLTextureGetData,
     .size = (GFXTextureGetSizeCallback)GLTextureGetSize,
     .setFilterMode = (GFXTextureSetFilterModeCallback)GLTextureSetFilterMode,
     .setAddressMode = (GFXTextureSetAddressModeCallback)GLTextureSetAddressMode,
@@ -251,6 +253,11 @@ static void GLTextureDestructor(GLTexture Texture)
 static GFXTextureHint GLTextureGetHint(GLTexture Texture)
 {
     return Texture->hint;
+}
+
+static CCPixelData GLTextureGetData(GLTexture Texture)
+{
+    return Texture->data;
 }
 
 static void GLTextureGetSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
