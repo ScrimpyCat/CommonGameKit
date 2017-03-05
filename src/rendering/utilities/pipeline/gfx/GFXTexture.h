@@ -85,6 +85,13 @@ void GFXTextureDestroy(GFXTexture CC_DESTROY(Texture));
 GFXTextureHint GFXTextureGetHints(GFXTexture Texture);
 
 /*!
+ * @brief Get the pixel data for the texture.
+ * @param Texture The texture to get the pixel data of.
+ * @return The pixel data for the texture. May be NULL if there is no current pixel data reference.
+ */
+CCPixelData GFXTextureGetData(GFXTexture Texture);
+
+/*!
  * @brief Get the dimensions of the texture.
  * @param Texture The texture get the dimension sizes for.
  * @param Width The width of the texture. May be NULL if not needed.

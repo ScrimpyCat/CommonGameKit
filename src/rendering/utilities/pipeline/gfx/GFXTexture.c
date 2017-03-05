@@ -45,6 +45,13 @@ GFXTextureHint GFXTextureGetHints(GFXTexture Texture)
     return GFXMain->texture->hints(Texture);
 }
 
+CCPixelData GFXTextureGetData(GFXTexture Texture)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    return GFXMain->texture->data(Texture);
+}
+
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
 {
     CCAssertLog(Texture, "Texture must not be null");
