@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
-		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; };
+		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -20,7 +20,7 @@
 		F3897B4F1DCD6D4F008D6C1D /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B4E1DCD6D4F008D6C1D /* threads.h */; };
 		F3897B521DCD6E12008D6C1D /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B501DCD6E12008D6C1D /* tinycthread.c */; };
 		F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B511DCD6E12008D6C1D /* tinycthread.h */; };
-		F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16.a */; };
+		F3897B9A1DCD74C1008D6C1D /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
 		F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B661DCD7149008D6C1D /* libz.a */; };
 		F3897BB71DCD764E008D6C1D /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BA01DCD764E008D6C1D /* ColourFormatTests.m */; };
 		F3897BB81DCD764E008D6C1D /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BA11DCD764E008D6C1D /* ComponentSystemTests.m */; };
@@ -619,7 +619,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */,
-				F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */,
+				F3897B9A1DCD74C1008D6C1D /* libpng16d.a in Frameworks */,
 				F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */,
 				F3AF34C81DCCF4FE00CAD472 /* CommonC.framework in Frameworks */,
 			);
@@ -675,7 +675,7 @@
 			children = (
 				F3897B7D1DCD715A008D6C1D /* libpng16d.16.22.0.dylib */,
 				F3897B7F1DCD715A008D6C1D /* png-fix-itxt */,
-				F3897B811DCD715A008D6C1D /* libpng16.a */,
+				F3897B811DCD715A008D6C1D /* libpng16d.a */,
 				F3897B831DCD715A008D6C1D /* pngfix */,
 				F3897B851DCD715A008D6C1D /* pngimage */,
 				F3897B871DCD715A008D6C1D /* pngstest */,
@@ -1492,10 +1492,9 @@
 			remoteRef = F3897B7E1DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B811DCD715A008D6C1D /* libpng16.a */ = {
+		F3897B811DCD715A008D6C1D /* libpng16d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = libpng16.a;
 			path = libpng16d.a;
 			remoteRef = F3897B801DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
