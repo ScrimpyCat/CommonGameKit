@@ -31,6 +31,11 @@ GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCCo
     return GFXMain->texture->create(Allocator, Hint, Format, Width, Height, Depth, Data);
 }
 
+GFXTexture GFXTextureCreateSubTexture(CCAllocatorType Allocator, GFXTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
+{
+    return GFXMain->texture->createSub(Allocator, CCRetain(Texture), X, Y, Z, Width, Height, Depth, Data);
+}
+
 void GFXTextureDestroy(GFXTexture Texture)
 {
     CCAssertLog(Texture, "Texture must not be null");

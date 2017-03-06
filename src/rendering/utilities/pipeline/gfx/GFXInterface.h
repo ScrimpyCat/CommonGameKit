@@ -47,6 +47,7 @@ typedef size_t (*GFXBufferWriteBufferCallback)(GFXBuffer Internal, ptrdiff_t Off
 
 #pragma mark Required Texture Callbacks
 typedef GFXTexture (*GFXTextureConstructorCallback)(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+typedef GFXTexture (*GFXTextureSubConstructorCallback)(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 typedef void (*GFXTextureDestructorCallback)(GFXTexture Texture);
 typedef GFXTextureHint (*GFXTextureGetHintCallback)(GFXTexture Texture);
 typedef CCPixelData (*GFXTextureGetDataCallback)(GFXTexture Texture);
@@ -127,6 +128,7 @@ typedef struct {
 
 typedef struct {
     GFXTextureConstructorCallback create;
+    GFXTextureSubConstructorCallback createSub;
     GFXTextureDestructorCallback destroy;
     GFXTextureGetHintCallback hints;
     GFXTextureGetDataCallback data;

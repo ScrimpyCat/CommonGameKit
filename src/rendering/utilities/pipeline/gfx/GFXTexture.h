@@ -72,6 +72,21 @@ typedef struct GFXTexture *GFXTexture;
 CC_NEW GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
 
 /*!
+ * @brief Create a sub texture reference.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Texture The root texture.
+ * @param X The x coordinate in the root texture the sub is located.
+ * @param Y The y coordinate in the root texture the sub is located.
+ * @param Z The z coordinate in the root texture the sub is located.
+ * @param Width The width of the texture.
+ * @param Height The height of the texture.
+ * @param Depth The depth of the texture.
+ * @param Data The pixel data to be used for the texture. Note: Takes ownership of the pixel data.
+ * @return The created texture.
+ */
+CC_NEW GFXTexture GFXTextureCreateSubTexture(CCAllocatorType Allocator, GFXTexture CC_RETAIN(Texture), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
+
+/*!
  * @brief Destroy a texture.
  * @param Texture The texture to be destroyed.
  */
