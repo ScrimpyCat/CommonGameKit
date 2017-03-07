@@ -33,6 +33,14 @@ GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCCo
 
 GFXTexture GFXTextureCreateSubTexture(CCAllocatorType Allocator, GFXTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
 {
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    size_t W, H, D;
+    GFXTextureGetSize(Texture, &W, &H, &D);
+    
+    CCAssertLog(((X + Width) <= W) && ((Y + Height) <= H) && ((Z + Depth) <= D), "Sub texture must not exceed bounds of parent texture");
+    CCAssertLog(((X + Width) > X) && ((Y + Height) > Y) && ((Z + Depth) > Z), "Sub texture bounds must be greater than 1 or must not overflow");
+    
     return GFXMain->texture->createSub(Allocator, CCRetain(Texture), X, Y, Z, Width, Height, Depth, Data);
 }
 
