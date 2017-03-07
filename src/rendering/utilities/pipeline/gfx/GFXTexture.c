@@ -65,6 +65,13 @@ CCPixelData GFXTextureGetData(GFXTexture Texture)
     return GFXMain->texture->data(Texture);
 }
 
+void GFXTextureGetOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    GFXMain->texture->offset(Texture, X, Y, Z);
+}
+
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
 {
     CCAssertLog(Texture, "Texture must not be null");

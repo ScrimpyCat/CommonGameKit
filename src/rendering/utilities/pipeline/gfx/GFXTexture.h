@@ -107,6 +107,16 @@ GFXTextureHint GFXTextureGetHints(GFXTexture Texture);
 CCPixelData GFXTextureGetData(GFXTexture Texture);
 
 /*!
+ * @brief Get the offsets of the texture.
+ * @description The coordinates the sub texture was created at.
+ * @param Texture The texture get the offsets for.
+ * @param X The x coordinate of the texture. May be NULL if not needed.
+ * @param Y The y coordinate of the texture. May be NULL if not needed.
+ * @param Z The z coordinate of the texture. May be NULL if not needed.
+ */
+void GFXTextureGetOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z);
+
+/*!
  * @brief Get the dimensions of the texture.
  * @param Texture The texture get the dimension sizes for.
  * @param Width The width of the texture. May be NULL if not needed.
