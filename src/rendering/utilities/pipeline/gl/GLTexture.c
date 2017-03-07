@@ -26,6 +26,7 @@
 #include "GLTexture.h"
 
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 static void GLTextureDestructor(GLTexture Texture);
 static GFXTextureHint GLTextureGetHint(GLTexture Texture);
 static CCPixelData GLTextureGetData(GLTexture Texture);
@@ -36,6 +37,7 @@ static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate
 
 const GFXTextureInterface GLTextureInterface = {
     .create = (GFXTextureConstructorCallback)GLTextureConstructor,
+    .createSub = (GFXTextureSubConstructorCallback)GLTextureSubConstructor,
     .destroy = (GFXTextureDestructorCallback)GLTextureDestructor,
     .hints = (GFXTextureGetHintCallback)GLTextureGetHint,
     .data = (GFXTextureGetDataCallback)GLTextureGetData,
@@ -127,49 +129,54 @@ static CC_CONSTANT_FUNCTION GLenum GLTextureInternalFormat(CCColourFormat Format
 static void GLTextureDestroy(GLTexture Texture)
 {
     if (Texture->data) CCPixelDataDestroy(Texture->data);
-    glDeleteTextures(1, &Texture->texture); CC_GL_CHECK();
-    
-#if CC_GL_STATE_TEXTURE
-    GLuint *BoundTextureState = NULL;
-    
-    switch (GLTextureTarget(Texture->hint))
+    if (Texture->isRoot)
     {
+        glDeleteTextures(1, &Texture->root.texture); CC_GL_CHECK();
+        
+#if CC_GL_STATE_TEXTURE
+        GLuint *BoundTextureState = NULL;
+        
+        switch (GLTextureTarget(Texture->root.hint))
+        {
 #if CC_GL_STATE_TEXTURE_1D
-        case GL_TEXTURE_1D:
-            BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_1D;
-            break;
+            case GL_TEXTURE_1D:
+                BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_1D;
+                break;
 #endif
             
 #if CC_GL_STATE_TEXTURE_2D
-        case GL_TEXTURE_2D:
-            BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_2D;
-            break;
+            case GL_TEXTURE_2D:
+                BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_2D;
+                break;
 #endif
             
 #if CC_GL_STATE_TEXTURE_3D
-        case GL_TEXTURE_3D:
-            BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_3D;
-            break;
+            case GL_TEXTURE_3D:
+                BoundTextureState = &CC_GL_CURRENT_STATE->bindTexture[0]._GL_TEXTURE_3D;
+                break;
 #endif
             
-        default:
-            return;
-    }
-    
+            default:
+                return;
+        }
+        
 #if CC_GL_STATE_TEXTURE_MAX
-    const GLint Count = CC_GL_STATE_TEXTURE_MAX;
+        const GLint Count = CC_GL_STATE_TEXTURE_MAX;
 #else
-    GLint Count;
-    CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, glGetIntegerv(GL_MAX_TEXTURE_UNITS, &Count); CC_GL_CHECK());
-    CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &Count); CC_GL_CHECK());
+        GLint Count;
+        CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, glGetIntegerv(GL_MAX_TEXTURE_UNITS, &Count); CC_GL_CHECK());
+        CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &Count); CC_GL_CHECK());
 #endif
-    
-    for (int Loop = 0; Loop < Count; Loop++)
-    {
-        GLuint *BoundTexture = (GLuint*)((typeof(*CC_GL_CURRENT_STATE->bindTexture)*)BoundTextureState + Loop);
-        if (*BoundTexture == Texture->texture) *BoundTexture = 0;
+        
+        for (int Loop = 0; Loop < Count; Loop++)
+        {
+            GLuint *BoundTexture = (GLuint*)((typeof(*CC_GL_CURRENT_STATE->bindTexture)*)BoundTextureState + Loop);
+            if (*BoundTexture == Texture->root.texture) *BoundTexture = 0;
+        }
+#endif
     }
-#endif
+    
+    else GFXTextureDestroy(Texture->sub.parent);
 }
 
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
@@ -179,17 +186,18 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
     {
         CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)GLTextureDestroy);
         
-        Texture->hint = Hint;
+        Texture->isRoot = TRUE;
+        Texture->root.hint = Hint;
         Texture->data = Data;
-        Texture->format = Format;
+        Texture->root.format = Format;
         Texture->width = Width;
         Texture->height = Height;
         Texture->depth = Depth;
         
         const GLenum Target = GLTextureTarget(Hint);
         
-        glGenTextures(1, &Texture->texture); CC_GL_CHECK();
-        CC_GL_BIND_TEXTURE_TARGET(Target, Texture->texture);
+        glGenTextures(1, &Texture->root.texture); CC_GL_CHECK();
+        CC_GL_BIND_TEXTURE_TARGET(Target, Texture->root.texture);
         
         glTexParameteri(Target, GL_TEXTURE_MIN_FILTER, GLTextureFilter(Hint, GFXTextureHintFilterMin)); CC_GL_CHECK();
         glTexParameteri(Target, GL_TEXTURE_MAG_FILTER, GLTextureFilter(Hint, GFXTextureHintFilterMag)); CC_GL_CHECK();
@@ -214,7 +222,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
         {
             FreePixels = TRUE;
             
-            const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0);
+            const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Data->format, CCColourFormatChannelPlanarIndex0);
             CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
                            CC_LOG_ERROR("Failed to allocate memory for texture transfer. Allocation size (%zu)", SampleSize * Width * Height * Depth);
                            GLTextureDestructor(Texture);
@@ -245,6 +253,85 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
     return Texture;
 }
 
+static void GLTextureGetRootCoordinates(GLTexture Texture, size_t *X, size_t *Y, size_t *Z)
+{
+    if (X) *X = 0;
+    if (Y) *Y = 0;
+    if (Z) *Z = 0;
+    
+    while (!Texture->isRoot)
+    {
+        if (X) *X += Texture->sub.x;
+        if (Y) *Y += Texture->sub.y;
+        if (Z) *Z += Texture->sub.z;
+        
+        Texture = (GLTexture)Texture->sub.parent;
+    }
+}
+
+static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
+{
+    GLTexture Texture = CCMalloc(Allocator, sizeof(GLTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Texture)
+    {
+        CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)GLTextureDestroy);
+        
+        Texture->isRoot = FALSE;
+        Texture->sub.parent = Root;
+        Texture->sub.x = X;
+        Texture->sub.y = Y;
+        Texture->sub.z = Z;
+        Texture->data = Data;
+        Texture->width = Width;
+        Texture->height = Height;
+        Texture->depth = Depth;
+        
+        const GLuint ID = GLTextureGetID(Texture);
+        const GLenum Target = GLTextureGetHint(Texture);
+        CC_GL_BIND_TEXTURE_TARGET(Target, ID);
+        
+        const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Unorm;
+        const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
+        
+        _Bool FreePixels = FALSE;
+        void *Pixels = NULL; //TODO: Add optional internal buffer access
+        if ((!Pixels) && (Data))
+        {
+            FreePixels = TRUE;
+            
+            const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Data->format, CCColourFormatChannelPlanarIndex0);
+            CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
+                           CC_LOG_ERROR("Failed to allocate memory for texture transfer. Allocation size (%zu)", SampleSize * Width * Height * Depth);
+                           GLTextureDestructor(Texture);
+                           return NULL;
+                           );
+            
+            CCPixelDataGetPackedData(Data, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+        }
+        
+        GLTextureGetRootCoordinates(Texture, &X, &Y, &Z);
+        
+        switch (Target)
+        {
+            case GL_TEXTURE_3D:
+                glTexSubImage3D(GL_TEXTURE_3D, 0, (GLint)X, (GLint)Y, (GLint)Z, (GLsizei)Width, (GLsizei)Height, (GLsizei)Depth, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                break;
+                
+            case GL_TEXTURE_2D:
+                glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)X, (GLint)Y, (GLsizei)Width, (GLsizei)Height, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                break;
+                
+            case GL_TEXTURE_1D:
+                glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)X, (GLsizei)Width, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                break;
+        }
+        
+        if (FreePixels) CC_SAFE_Free(Pixels);
+    }
+    
+    return Texture;
+}
+
 static void GLTextureDestructor(GLTexture Texture)
 {
     CC_SAFE_Free(Texture);
@@ -252,7 +339,7 @@ static void GLTextureDestructor(GLTexture Texture)
 
 static GFXTextureHint GLTextureGetHint(GLTexture Texture)
 {
-    return Texture->hint;
+    return Texture->isRoot ? Texture->root.hint : GLTextureGetHint((GLTexture)Texture->sub.parent);
 }
 
 static CCPixelData GLTextureGetData(GLTexture Texture)
@@ -269,18 +356,28 @@ static void GLTextureGetSize(GLTexture Texture, size_t *Width, size_t *Height, s
 
 static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)
 {
-    //TODO: Later set a copy of the Texture->hint and only apply the changes when required
-    const GLenum Target = GLTextureTarget(Texture->hint);
-    
-    CC_GL_BIND_TEXTURE_TARGET(Target, Texture->texture);
-    glTexParameteri(Target, FilterType == GFXTextureHintFilterMin ? GL_TEXTURE_MIN_FILTER : GL_TEXTURE_MAG_FILTER, GLTextureFilter(FilterMode, FilterType)); CC_GL_CHECK();
+    if (Texture->isRoot)
+    {
+        //TODO: Later set a copy of the Texture->hint and only apply the changes when required
+        const GLenum Target = GLTextureTarget(Texture->root.hint);
+        
+        CC_GL_BIND_TEXTURE_TARGET(Target, Texture->root.texture);
+        glTexParameteri(Target, FilterType == GFXTextureHintFilterMin ? GL_TEXTURE_MIN_FILTER : GL_TEXTURE_MAG_FILTER, GLTextureFilter(FilterMode, FilterType)); CC_GL_CHECK();
+    }
+    //TODO: Likely replace with sampler objects (ARB_sampler_objects) so sub textures and root textures can retain their own sampling preferences
+    else CCAssertLog(0, "Cannot set a sub texture's filtering mode"); //GLTextureSetFilterMode((GLTexture)Texture->sub.parent, FilterType, FilterMode);
 }
 
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode)
 {
-    //TODO: Later set a copy of the Texture->hint and only apply the changes when required
-    const GLenum Target = GLTextureTarget(Texture->hint);
-    
-    CC_GL_BIND_TEXTURE_TARGET(Target, Texture->texture);
-    glTexParameterf(Target, (GLenum[3]){ GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_TEXTURE_WRAP_R }[Coordinate], GLTextureAddressMode(AddressMode, Coordinate)); CC_GL_CHECK();
+    if (Texture->isRoot)
+    {
+        //TODO: Later set a copy of the Texture->hint and only apply the changes when required
+        const GLenum Target = GLTextureTarget(Texture->root.hint);
+        
+        CC_GL_BIND_TEXTURE_TARGET(Target, Texture->root.texture);
+        glTexParameterf(Target, (GLenum[3]){ GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_TEXTURE_WRAP_R }[Coordinate], GLTextureAddressMode(AddressMode, Coordinate)); CC_GL_CHECK();
+    }
+    //TODO: Likely replace with sampler objects (ARB_sampler_objects) so sub textures and root textures can retain their own sampling preferences
+    else CCAssertLog(0, "Cannot set a sub texture's filtering mode"); //GLTextureSetAddressMode((GLTexture)Texture->sub.parent, Coordinate, AddressMode);
 }

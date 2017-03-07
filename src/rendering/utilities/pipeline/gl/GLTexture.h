@@ -31,13 +31,24 @@
 
 
 typedef struct {
-    GFXTextureHint hint;
     CCPixelData data;
-    CCColourFormat format;
     size_t width;
     size_t height;
     size_t depth;
-    GLuint texture;
+    union {
+        struct {
+            GFXTextureHint hint;
+            CCColourFormat format;
+            GLuint texture;
+        } root;
+        struct {
+            size_t x;
+            size_t y;
+            size_t z;
+            GFXTexture parent;
+        } sub;
+    };
+    _Bool isRoot;
 } GLTextureInfo, *GLTexture;
 
 extern const GFXTextureInterface GLTextureInterface;
@@ -48,7 +59,7 @@ static inline GLuint GLTextureGetID(GLTexture Texture);
 
 static inline GLuint GLTextureGetID(GLTexture Texture)
 {
-    return Texture->texture;
+    return Texture->isRoot ? Texture->root.texture : GLTextureGetID((GLTexture)Texture->sub.parent);
 }
 
 #endif
