@@ -93,6 +93,13 @@ CC_NEW GFXTexture GFXTextureCreateSubTexture(CCAllocatorType Allocator, GFXTextu
 void GFXTextureDestroy(GFXTexture CC_DESTROY(Texture));
 
 /*!
+ * @brief Get the parent texture.
+ * @param Texture The texture to get the parent of.
+ * @return The parent texture or NULL if the texture is already the root texture.
+ */
+GFXTexture GFXTextureGetParent(GFXTexture Texture);
+
+/*!
  * @brief Get the hints for the texture.
  * @param Texture The texture to get the hints.
  * @return The hints for the texture.

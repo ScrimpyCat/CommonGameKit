@@ -51,6 +51,13 @@ void GFXTextureDestroy(GFXTexture Texture)
     GFXMain->texture->destroy(Texture);
 }
 
+GFXTexture GFXTextureGetParent(GFXTexture Texture)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    return GFXMain->texture->parent(Texture);
+}
+
 GFXTextureHint GFXTextureGetHints(GFXTexture Texture)
 {
     CCAssertLog(Texture, "Texture must not be null");
