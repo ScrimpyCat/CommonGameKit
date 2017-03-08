@@ -133,6 +133,14 @@ void GFXTextureGetOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z);
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 
 /*!
+ * @brief Get the normalized coordinates of the texture.
+ * @param Texture The texture get the coordinates for.
+ * @param Origin The origin coords of the texture. May be NULL if not needed.
+ * @param Size The size coords of the texture. May be NULL if not needed.
+ */
+void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Origin, CCVector3D *Size);
+
+/*!
  * @brief Get the filter mode for the filter type of the texture.
  * @param Texture The texture get the filter mode for.
  * @param FilterType The filter type to get the filter mode for.
