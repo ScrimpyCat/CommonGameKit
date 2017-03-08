@@ -28,6 +28,7 @@
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 static void GLTextureDestructor(GLTexture Texture);
+static GFXTexture GLTextureGetParent(GLTexture Texture);
 static GFXTextureHint GLTextureGetHint(GLTexture Texture);
 static CCPixelData GLTextureGetData(GLTexture Texture);
 static void GLTextureGetOffset(GLTexture Texture, size_t *X, size_t *Y, size_t *Z);
@@ -40,6 +41,7 @@ const GFXTextureInterface GLTextureInterface = {
     .create = (GFXTextureConstructorCallback)GLTextureConstructor,
     .createSub = (GFXTextureSubConstructorCallback)GLTextureSubConstructor,
     .destroy = (GFXTextureDestructorCallback)GLTextureDestructor,
+    .parent = (GFXTextureGetParentCallback)GLTextureGetParent,
     .hints = (GFXTextureGetHintCallback)GLTextureGetHint,
     .data = (GFXTextureGetDataCallback)GLTextureGetData,
     .offset = (GFXTextureGetOffsetCallback)GLTextureGetOffset,
@@ -337,6 +339,11 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
 static void GLTextureDestructor(GLTexture Texture)
 {
     CC_SAFE_Free(Texture);
+}
+
+static GFXTexture GLTextureGetParent(GLTexture Texture)
+{
+    return Texture->isRoot ? NULL : Texture->sub.parent;
 }
 
 static GFXTextureHint GLTextureGetHint(GLTexture Texture)
