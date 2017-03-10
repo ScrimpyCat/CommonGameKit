@@ -117,4 +117,37 @@
     GFXTextureDestroy(Root);
 }
 
+-(void) testTextureCoordNormalization
+{
+    GFXTexture Root = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension1D, CCColourFormatRGB8Unorm, 100, 1, 1, NULL);
+    
+    GFXTexture Sub = GFXTextureCreateSubTexture(CC_STD_ALLOCATOR, Root, 10, 0, 0, 5, 1, 1, NULL);
+    
+    GFXTexture Root2 = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension1D, CCColourFormatRGB8Unorm, 50, 1, 1, NULL);
+    
+    CCVector3D Multiplier = GFXTextureGetMultiplier(Root);
+    
+    XCTAssertEqual(Multiplier.x, 0.01f, @"Should have correct multiplier");
+    XCTAssertEqual(Multiplier.y, 1.0f, @"Should have correct multiplier");
+    XCTAssertEqual(Multiplier.z, 1.0f, @"Should have correct multiplier");
+    
+    
+    Multiplier = GFXTextureGetMultiplier(Sub);
+    
+    XCTAssertEqual(Multiplier.x, 0.01f, @"Should have correct multiplier");
+    XCTAssertEqual(Multiplier.y, 1.0f, @"Should have correct multiplier");
+    XCTAssertEqual(Multiplier.z, 1.0f, @"Should have correct multiplier");
+    
+    
+    Multiplier = GFXTextureGetMultiplier(Root2);
+    
+    XCTAssertEqual(Multiplier.x, 0.02f, @"Should have correct multiplier");
+    XCTAssertEqual(Multiplier.y, 1.0f, @"Should have correct multiplier");
+    XCTAssertEqual(Multiplier.z, 1.0f, @"Should have correct multiplier");
+    
+    GFXTextureDestroy(Root2);
+    GFXTextureDestroy(Sub);
+    GFXTextureDestroy(Root);
+}
+
 @end
