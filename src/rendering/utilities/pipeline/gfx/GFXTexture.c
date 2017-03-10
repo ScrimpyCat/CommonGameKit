@@ -136,5 +136,5 @@ void GFXTextureInvalidate(GFXTexture Texture)
 {
     CCAssertLog(Texture, "Texture must not be null");
     
-    GFXMain->texture->optional.invalidate(Texture);
+    if (GFXMain->texture->optional.invalidate) GFXMain->texture->optional.invalidate(Texture);
 }
