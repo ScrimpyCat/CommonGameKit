@@ -79,6 +79,32 @@ void GFXTextureGetOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z)
     GFXMain->texture->offset(Texture, X, Y, Z);
 }
 
+void GFXTextureGetInternalOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    if (GFXMain->texture->optional.internalOffset) GFXMain->texture->optional.internalOffset(Texture, X, Y, Z);
+    else
+    {
+        size_t RealX = 0, RealY = 0, RealZ = 0;
+        while (Texture)
+        {
+            size_t CurX, CurY, CurZ;
+            GFXTextureGetOffset(Texture, &CurX, &CurY, &CurZ);
+            
+            RealX += CurX;
+            RealY += CurY;
+            RealZ += CurZ;
+            
+            Texture = GFXTextureGetParent(Texture);
+        }
+        
+        *X = RealX;
+        *Y = RealY;
+        *Z = RealZ;
+    }
+}
+
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
 {
     CCAssertLog(Texture, "Texture must not be null");

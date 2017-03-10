@@ -124,6 +124,16 @@ CCPixelData GFXTextureGetData(GFXTexture Texture);
 void GFXTextureGetOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z);
 
 /*!
+ * @brief Get the real offsets of the texture.
+ * @description The coordinates of the texture in the root texture.
+ * @param Texture The texture get the real offsets for.
+ * @param X The real x coordinate of the texture. May be NULL if not needed.
+ * @param Y The real y coordinate of the texture. May be NULL if not needed.
+ * @param Z The real z coordinate of the texture. May be NULL if not needed.
+ */
+void GFXTextureGetInternalOffset(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z);
+
+/*!
  * @brief Get the dimensions of the texture.
  * @param Texture The texture get the dimension sizes for.
  * @param Width The width of the texture. May be NULL if not needed.
