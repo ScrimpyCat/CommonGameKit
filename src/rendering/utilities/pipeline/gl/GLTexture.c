@@ -32,7 +32,9 @@ static GFXTexture GLTextureGetParent(GLTexture Texture);
 static GFXTextureHint GLTextureGetHint(GLTexture Texture);
 static CCPixelData GLTextureGetData(GLTexture Texture);
 static void GLTextureGetOffset(GLTexture Texture, size_t *X, size_t *Y, size_t *Z);
+static void GLTextureGetInternalOffset(GLTexture Texture, size_t *X, size_t *Y, size_t *Z);
 static void GLTextureGetSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
+static void GLTextureGetInternalSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
 
@@ -50,6 +52,8 @@ const GFXTextureInterface GLTextureInterface = {
     .setAddressMode = (GFXTextureSetAddressModeCallback)GLTextureSetAddressMode,
     .optional = {
         //TODO: Add invalidation .invalidate = (GFXTextureInvalidateCallback)GLTextureInvalidate
+        .internalOffset = (GFXTextureGetInternalOffsetCallback)GLTextureGetInternalOffset,
+        .internalSize = (GFXTextureGetInternalSizeCallback)GLTextureGetInternalSize
     }
 };
 
@@ -257,22 +261,6 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
     return Texture;
 }
 
-static void GLTextureGetRootCoordinates(GLTexture Texture, size_t *X, size_t *Y, size_t *Z)
-{
-    if (X) *X = 0;
-    if (Y) *Y = 0;
-    if (Z) *Z = 0;
-    
-    while (!Texture->isRoot)
-    {
-        if (X) *X += Texture->sub.x;
-        if (Y) *Y += Texture->sub.y;
-        if (Z) *Z += Texture->sub.z;
-        
-        Texture = (GLTexture)Texture->sub.parent;
-    }
-}
-
 static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
 {
     GLTexture Texture = CCMalloc(Allocator, sizeof(GLTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -290,8 +278,22 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
         Texture->height = Height;
         Texture->depth = Depth;
         
-        const GLuint ID = GLTextureGetID(Texture);
-        const GLenum Target = GLTextureGetHint(Texture);
+        Texture->sub.internal.x = X;
+        Texture->sub.internal.y = Y;
+        Texture->sub.internal.z = Z;
+        
+        GLTexture Root = (GLTexture)Texture->sub.parent;
+        for (; !Root->isRoot; Root = (GLTexture)Root->sub.parent)
+        {
+            Texture->sub.internal.x += Root->sub.x;
+            Texture->sub.internal.y += Root->sub.y;
+            Texture->sub.internal.z += Root->sub.z;
+        }
+        
+        Texture->sub.internal.root = (GFXTexture)Root;
+        
+        const GLuint ID = Root->root.texture;
+        const GLenum Target = GLTextureTarget(Root->root.hint);
         CC_GL_BIND_TEXTURE_TARGET(Target, ID);
         
         const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Unorm;
@@ -313,20 +315,18 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
             CCPixelDataGetPackedData(Data, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
         }
         
-        GLTextureGetRootCoordinates(Texture, &X, &Y, &Z);
-        
         switch (Target)
         {
             case GL_TEXTURE_3D:
-                glTexSubImage3D(GL_TEXTURE_3D, 0, (GLint)X, (GLint)Y, (GLint)Z, (GLsizei)Width, (GLsizei)Height, (GLsizei)Depth, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                glTexSubImage3D(GL_TEXTURE_3D, 0, (GLint)Texture->sub.internal.x, (GLint)Texture->sub.internal.y, (GLint)Texture->sub.internal.z, (GLsizei)Width, (GLsizei)Height, (GLsizei)Depth, InputFormat, InputType, Pixels); CC_GL_CHECK();
                 break;
                 
             case GL_TEXTURE_2D:
-                glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)X, (GLint)Y, (GLsizei)Width, (GLsizei)Height, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)Texture->sub.internal.x, (GLint)Texture->sub.internal.y, (GLsizei)Width, (GLsizei)Height, InputFormat, InputType, Pixels); CC_GL_CHECK();
                 break;
                 
             case GL_TEXTURE_1D:
-                glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)X, (GLsizei)Width, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)Texture->sub.internal.x, (GLsizei)Width, InputFormat, InputType, Pixels); CC_GL_CHECK();
                 break;
         }
         
@@ -348,7 +348,7 @@ static GFXTexture GLTextureGetParent(GLTexture Texture)
 
 static GFXTextureHint GLTextureGetHint(GLTexture Texture)
 {
-    return Texture->isRoot ? Texture->root.hint : GLTextureGetHint((GLTexture)Texture->sub.parent);
+    return Texture->isRoot ? Texture->root.hint : ((GLTexture)Texture->sub.internal.root)->root.hint;
 }
 
 static CCPixelData GLTextureGetData(GLTexture Texture)
@@ -373,11 +373,45 @@ static void GLTextureGetOffset(GLTexture Texture, size_t *X, size_t *Y, size_t *
     }
 }
 
+static void GLTextureGetInternalOffset(GLTexture Texture, size_t *X, size_t *Y, size_t *Z)
+{
+    if (Texture->isRoot)
+    {
+        if (X) *X = 0;
+        if (Y) *Y = 0;
+        if (Z) *Z = 0;
+    }
+    
+    else
+    {
+        if (X) *X = Texture->sub.internal.x;
+        if (Y) *Y = Texture->sub.internal.y;
+        if (Z) *Z = Texture->sub.internal.z;
+    }
+}
+
 static void GLTextureGetSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
 {
     if (Width) *Width = Texture->width;
     if (Height) *Height = Texture->height;
     if (Depth) *Depth = Texture->depth;
+}
+
+static void GLTextureGetInternalSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
+{
+    if (Texture->isRoot)
+    {
+        if (Width) *Width = Texture->width;
+        if (Height) *Height = Texture->height;
+        if (Depth) *Depth = Texture->depth;
+    }
+    
+    else
+    {
+        if (Width) *Width = ((GLTexture)Texture->sub.internal.root)->width;
+        if (Height) *Height = ((GLTexture)Texture->sub.internal.root)->height;
+        if (Depth) *Depth = ((GLTexture)Texture->sub.internal.root)->depth;
+    }
 }
 
 static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)

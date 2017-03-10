@@ -45,6 +45,12 @@ typedef struct {
             size_t x;
             size_t y;
             size_t z;
+            struct {
+                size_t x;
+                size_t y;
+                size_t z;
+                GFXTexture root;
+            } internal;
             GFXTexture parent;
         } sub;
     };
@@ -59,7 +65,7 @@ static inline GLuint GLTextureGetID(GLTexture Texture);
 
 static inline GLuint GLTextureGetID(GLTexture Texture)
 {
-    return Texture->isRoot ? Texture->root.texture : GLTextureGetID((GLTexture)Texture->sub.parent);
+    return Texture->isRoot ? Texture->root.texture : ((GLTexture)Texture->sub.internal.root)->root.texture;
 }
 
 #endif
