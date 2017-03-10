@@ -292,45 +292,48 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
         
         Texture->sub.internal.root = (GFXTexture)Root;
         
-        const GLuint ID = Root->root.texture;
-        const GLenum Target = GLTextureTarget(Root->root.hint);
-        CC_GL_BIND_TEXTURE_TARGET(Target, ID);
-        
-        const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Unorm;
-        const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
-        
-        _Bool FreePixels = FALSE;
-        void *Pixels = NULL; //TODO: Add optional internal buffer access
-        if ((!Pixels) && (Data))
+        if (Data)
         {
-            FreePixels = TRUE;
+            const GLuint ID = Root->root.texture;
+            const GLenum Target = GLTextureTarget(Root->root.hint);
+            CC_GL_BIND_TEXTURE_TARGET(Target, ID);
             
-            const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Data->format, CCColourFormatChannelPlanarIndex0);
-            CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
-                           CC_LOG_ERROR("Failed to allocate memory for texture transfer. Allocation size (%zu)", SampleSize * Width * Height * Depth);
-                           GLTextureDestructor(Texture);
-                           return NULL;
-                           );
+            const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Unorm;
+            const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
             
-            CCPixelDataGetPackedData(Data, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
-        }
-        
-        switch (Target)
-        {
-            case GL_TEXTURE_3D:
-                glTexSubImage3D(GL_TEXTURE_3D, 0, (GLint)Texture->sub.internal.x, (GLint)Texture->sub.internal.y, (GLint)Texture->sub.internal.z, (GLsizei)Width, (GLsizei)Height, (GLsizei)Depth, InputFormat, InputType, Pixels); CC_GL_CHECK();
-                break;
+            _Bool FreePixels = FALSE;
+            void *Pixels = NULL; //TODO: Add optional internal buffer access
+            if (!Pixels)
+            {
+                FreePixels = TRUE;
                 
-            case GL_TEXTURE_2D:
-                glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)Texture->sub.internal.x, (GLint)Texture->sub.internal.y, (GLsizei)Width, (GLsizei)Height, InputFormat, InputType, Pixels); CC_GL_CHECK();
-                break;
+                const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Data->format, CCColourFormatChannelPlanarIndex0);
+                CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
+                               CC_LOG_ERROR("Failed to allocate memory for texture transfer. Allocation size (%zu)", SampleSize * Width * Height * Depth);
+                               GLTextureDestructor(Texture);
+                               return NULL;
+                               );
                 
-            case GL_TEXTURE_1D:
-                glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)Texture->sub.internal.x, (GLsizei)Width, InputFormat, InputType, Pixels); CC_GL_CHECK();
-                break;
+                CCPixelDataGetPackedData(Data, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+            }
+            
+            switch (Target)
+            {
+                case GL_TEXTURE_3D:
+                    glTexSubImage3D(GL_TEXTURE_3D, 0, (GLint)Texture->sub.internal.x, (GLint)Texture->sub.internal.y, (GLint)Texture->sub.internal.z, (GLsizei)Width, (GLsizei)Height, (GLsizei)Depth, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                    break;
+                    
+                case GL_TEXTURE_2D:
+                    glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)Texture->sub.internal.x, (GLint)Texture->sub.internal.y, (GLsizei)Width, (GLsizei)Height, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                    break;
+                    
+                case GL_TEXTURE_1D:
+                    glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)Texture->sub.internal.x, (GLsizei)Width, InputFormat, InputType, Pixels); CC_GL_CHECK();
+                    break;
+            }
+            
+            if (FreePixels) CC_SAFE_Free(Pixels);
         }
-        
-        if (FreePixels) CC_SAFE_Free(Pixels);
     }
     
     return Texture;
