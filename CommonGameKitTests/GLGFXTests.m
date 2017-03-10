@@ -79,38 +79,38 @@
     
     GFXTexture Sub2 = GFXTextureCreateSubTexture(CC_STD_ALLOCATOR, Sub, 2, 0, 0, 2, 1, 1, NULL);
     
-    CCVector3D Origin, Size;
-    GFXTextureGetBounds(Sub2, &Origin, &Size);
+    CCVector3D Bottom, Top;
+    GFXTextureGetBounds(Sub2, &Bottom, &Top);
     
-    XCTAssertEqual(Origin.x, 0.12f, @"Should have correct origin");
-    XCTAssertEqual(Origin.y, 0.0f, @"Should have correct origin");
-    XCTAssertEqual(Origin.z, 0.0f, @"Should have correct origin");
+    XCTAssertEqual(Bottom.x, 0.12f, @"Should have correct coord");
+    XCTAssertEqual(Bottom.y, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Bottom.z, 0.0f, @"Should have correct coord");
     
-    XCTAssertEqual(Size.x, 0.14f, @"Should have correct size");
-    XCTAssertEqual(Size.y, 1.0f, @"Should have correct size");
-    XCTAssertEqual(Size.z, 1.0f, @"Should have correct size");
-    
-    
-    GFXTextureGetBounds(Sub, &Origin, &Size);
-    
-    XCTAssertEqual(Origin.x, 0.1f, @"Should have correct origin");
-    XCTAssertEqual(Origin.y, 0.0f, @"Should have correct origin");
-    XCTAssertEqual(Origin.z, 0.0f, @"Should have correct origin");
-    
-    XCTAssertEqual(Size.x, 0.15f, @"Should have correct size");
-    XCTAssertEqual(Size.y, 1.0f, @"Should have correct size");
-    XCTAssertEqual(Size.z, 1.0f, @"Should have correct size");
+    XCTAssertEqual(Top.x, 0.14f, @"Should have correct coord");
+    XCTAssertEqual(Top.y, 1.0f, @"Should have correct coord");
+    XCTAssertEqual(Top.z, 1.0f, @"Should have correct coord");
     
     
-    GFXTextureGetBounds(Root, &Origin, &Size);
+    GFXTextureGetBounds(Sub, &Bottom, &Top);
     
-    XCTAssertEqual(Origin.x, 0.0f, @"Should have correct origin");
-    XCTAssertEqual(Origin.y, 0.0f, @"Should have correct origin");
-    XCTAssertEqual(Origin.z, 0.0f, @"Should have correct origin");
+    XCTAssertEqual(Bottom.x, 0.1f, @"Should have correct coord");
+    XCTAssertEqual(Bottom.y, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Bottom.z, 0.0f, @"Should have correct coord");
     
-    XCTAssertEqual(Size.x, 1.0f, @"Should have correct size");
-    XCTAssertEqual(Size.y, 1.0f, @"Should have correct size");
-    XCTAssertEqual(Size.z, 1.0f, @"Should have correct size");
+    XCTAssertEqual(Top.x, 0.15f, @"Should have correct coord");
+    XCTAssertEqual(Top.y, 1.0f, @"Should have correct coord");
+    XCTAssertEqual(Top.z, 1.0f, @"Should have correct coord");
+    
+    
+    GFXTextureGetBounds(Root, &Bottom, &Top);
+    
+    XCTAssertEqual(Bottom.x, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Bottom.y, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Bottom.z, 0.0f, @"Should have correct coord");
+    
+    XCTAssertEqual(Top.x, 1.0f, @"Should have correct coord");
+    XCTAssertEqual(Top.y, 1.0f, @"Should have correct coord");
+    XCTAssertEqual(Top.z, 1.0f, @"Should have correct coord");
     
     GFXTextureDestroy(Sub2);
     GFXTextureDestroy(Sub);

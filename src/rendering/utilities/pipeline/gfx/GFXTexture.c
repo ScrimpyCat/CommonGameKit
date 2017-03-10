@@ -86,7 +86,7 @@ void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t
     GFXMain->texture->size(Texture, Width, Height, Depth);
 }
 
-void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Origin, CCVector3D *Size)
+void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Bottom, CCVector3D *Top)
 {
     CCAssertLog(Texture, "Texture must not be null");
     
@@ -109,13 +109,13 @@ void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Origin, CCVector3D *Siz
         Texture = GFXTextureGetParent(Texture);
     }
     
-    if (Origin) *Origin = CCVector3DMake((float)RealX / (float)RealW,
+    if (Bottom) *Bottom = CCVector3DMake((float)RealX / (float)RealW,
                                          (float)RealY / (float)RealH,
                                          (float)RealZ / (float)RealD);
     
-    if (Size) *Size = CCVector3DMake((float)(RealX + Width) / (float)RealW,
-                                     (float)(RealY + Height) / (float)RealH,
-                                     (float)(RealZ + Depth) / (float)RealD);
+    if (Top) *Top = CCVector3DMake((float)(RealX + Width) / (float)RealW,
+                                   (float)(RealY + Height) / (float)RealH,
+                                   (float)(RealZ + Depth) / (float)RealD);
 }
 
 void GFXTextureSetFilterMode(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)
