@@ -112,6 +112,25 @@ void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t
     GFXMain->texture->size(Texture, Width, Height, Depth);
 }
 
+void GFXTextureGetInternalSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    if (GFXMain->texture->optional.internalSize) GFXMain->texture->optional.internalSize(Texture, Width, Height, Depth);
+    else
+    {
+        GFXTexture Root = Texture;
+        while (Texture)
+        {
+            Texture = GFXTextureGetParent(Texture);
+            
+            if (Texture) Root = Texture;
+        }
+        
+        GFXTextureGetSize(Root, Width, Height, Depth);
+    }
+}
+
 void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Bottom, CCVector3D *Top)
 {
     CCAssertLog(Texture, "Texture must not be null");

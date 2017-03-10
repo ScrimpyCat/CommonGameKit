@@ -143,6 +143,15 @@ void GFXTextureGetInternalOffset(GFXTexture Texture, size_t *X, size_t *Y, size_
 void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 
 /*!
+ * @brief Get the dimensions of the root texture/backing store.
+ * @param Texture The texture get the internal sizes for.
+ * @param Width The width of the texture. May be NULL if not needed.
+ * @param Height The height of the texture. May be NULL if not needed.
+ * @param Depth The depth of the texture. May be NULL if not needed.
+ */
+void GFXTextureGetInternalSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
+
+/*!
  * @brief Get the normalized coordinates of the texture.
  * @param Texture The texture get the coordinates for.
  * @param Bottom The bottom coords of the texture. May be NULL if not needed.

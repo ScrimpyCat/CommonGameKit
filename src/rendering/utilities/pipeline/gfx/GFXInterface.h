@@ -91,6 +91,7 @@ typedef size_t (*GFXBufferFillBufferCallback)(GFXBuffer Internal, ptrdiff_t Offs
 #pragma mark Optional Texture Callbacks
 typedef void (*GFXTextureInvalidateCallback)(GFXTexture Texture);
 typedef void (*GFXTextureGetInternalOffsetCallback)(GFXTexture Texture, size_t *X, size_t *Y, size_t *Z);
+typedef void (*GFXTextureGetInternalSizeCallback)(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 
 #pragma mark Optional Draw Callbacks
 typedef void (*GFXDrawConstructorCallback)(CCAllocatorType Allocator, GFXDraw Draw);
@@ -143,6 +144,7 @@ typedef struct {
     struct {
         GFXTextureInvalidateCallback invalidate;
         GFXTextureGetInternalOffsetCallback internalOffset;
+        GFXTextureGetInternalSizeCallback internalSize;
     } optional;
 } GFXTextureInterface;
 
