@@ -140,18 +140,28 @@ void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Bottom, CCVector3D *Top
     
     size_t RealX = 0, RealY = 0, RealZ = 0;
     size_t RealW = 0, RealH = 0, RealD = 0;
-    while (Texture)
+    
+    if ((GFXMain->texture->optional.internalOffset) && (GFXMain->texture->optional.internalSize))
     {
-        size_t X, Y, Z;
-        GFXTextureGetOffset(Texture, &X, &Y, &Z);
-        
-        RealX += X;
-        RealY += Y;
-        RealZ += Z;
-        
-        GFXTextureGetSize(Texture, &RealW, &RealH, &RealD);
-        
-        Texture = GFXTextureGetParent(Texture);
+        GFXTextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
+        GFXTextureGetInternalSize(Texture, &RealW, &RealH, &RealD);
+    }
+    
+    else
+    {
+        while (Texture)
+        {
+            size_t X, Y, Z;
+            GFXTextureGetOffset(Texture, &X, &Y, &Z);
+            
+            RealX += X;
+            RealY += Y;
+            RealZ += Z;
+            
+            GFXTextureGetSize(Texture, &RealW, &RealH, &RealD);
+            
+            Texture = GFXTextureGetParent(Texture);
+        }
     }
     
     if (Bottom) *Bottom = CCVector3DMake((float)RealX / (float)RealW,
@@ -168,12 +178,7 @@ CCVector3D GFXTextureGetMultiplier(GFXTexture Texture)
     CCAssertLog(Texture, "Texture must not be null");
     
     size_t RealW = 0, RealH = 0, RealD = 0;
-    while (Texture)
-    {
-        GFXTextureGetSize(Texture, &RealW, &RealH, &RealD);
-        
-        Texture = GFXTextureGetParent(Texture);
-    }
+    GFXTextureGetInternalSize(Texture, &RealW, &RealH, &RealD);
     
     return CCVector3DMake(1.0f / (float)RealW,
                           1.0f / (float)RealH,
