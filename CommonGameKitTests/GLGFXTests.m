@@ -125,25 +125,39 @@
     
     GFXTexture Root2 = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension1D, CCColourFormatRGB8Unorm, 50, 1, 1, NULL);
     
-    CCVector3D Multiplier = GFXTextureGetMultiplier(Root);
+    CCVector3D Multiplier = GFXTextureGetMultiplier(Root), Coord = GFXTextureNormalizePoint(Root, 1, 0, 0);
     
     XCTAssertEqual(Multiplier.x, 0.01f, @"Should have correct multiplier");
     XCTAssertEqual(Multiplier.y, 1.0f, @"Should have correct multiplier");
     XCTAssertEqual(Multiplier.z, 1.0f, @"Should have correct multiplier");
+    
+    XCTAssertEqual(Coord.x, 0.01f, @"Should have correct coord");
+    XCTAssertEqual(Coord.y, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Coord.z, 0.0f, @"Should have correct coord");
     
     
     Multiplier = GFXTextureGetMultiplier(Sub);
+    Coord = GFXTextureNormalizePoint(Sub, 1, 0, 0);
     
     XCTAssertEqual(Multiplier.x, 0.01f, @"Should have correct multiplier");
     XCTAssertEqual(Multiplier.y, 1.0f, @"Should have correct multiplier");
     XCTAssertEqual(Multiplier.z, 1.0f, @"Should have correct multiplier");
     
+    XCTAssertEqual(Coord.x, 0.11f, @"Should have correct coord");
+    XCTAssertEqual(Coord.y, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Coord.z, 0.0f, @"Should have correct coord");
+    
     
     Multiplier = GFXTextureGetMultiplier(Root2);
+    Coord = GFXTextureNormalizePoint(Root2, 1, 0, 0);
     
     XCTAssertEqual(Multiplier.x, 0.02f, @"Should have correct multiplier");
     XCTAssertEqual(Multiplier.y, 1.0f, @"Should have correct multiplier");
     XCTAssertEqual(Multiplier.z, 1.0f, @"Should have correct multiplier");
+    
+    XCTAssertEqual(Coord.x, 0.02f, @"Should have correct coord");
+    XCTAssertEqual(Coord.y, 0.0f, @"Should have correct coord");
+    XCTAssertEqual(Coord.z, 0.0f, @"Should have correct coord");
     
     GFXTextureDestroy(Root2);
     GFXTextureDestroy(Sub);
