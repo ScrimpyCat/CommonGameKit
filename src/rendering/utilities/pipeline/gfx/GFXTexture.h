@@ -168,6 +168,13 @@ void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Bottom, CCVector3D *Top
 CCVector3D GFXTextureGetMultiplier(GFXTexture Texture);
 
 /*!
+ * @brief Normalize a coordinate in the texture.
+ * @param Texture The texture to normalize the coordinate of.
+ * @return The normalized coordinate.
+ */
+CCVector3D GFXTextureNormalizePoint(GFXTexture Texture, size_t X, size_t Y, size_t Z);
+
+/*!
  * @brief Get the filter mode for the filter type of the texture.
  * @param Texture The texture get the filter mode for.
  * @param FilterType The filter type to get the filter mode for.

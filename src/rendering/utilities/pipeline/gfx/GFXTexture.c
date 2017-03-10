@@ -185,6 +185,16 @@ CCVector3D GFXTextureGetMultiplier(GFXTexture Texture)
                           1.0f / (float)RealD);
 }
 
+CCVector3D GFXTextureNormalizePoint(GFXTexture Texture, size_t X, size_t Y, size_t Z)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    size_t BaseX = 0, BaseY = 0, BaseZ = 0;
+    GFXTextureGetInternalOffset(Texture, &BaseX, &BaseY, &BaseZ);
+    
+    return CCVector3Mul(CCVector3DMake(BaseX + X, BaseY + Y, BaseZ + Z), GFXTextureGetMultiplier(Texture));
+}
+
 void GFXTextureSetFilterMode(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)
 {
     CCAssertLog(Texture, "Texture must not be null");
