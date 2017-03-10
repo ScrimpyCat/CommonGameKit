@@ -224,6 +224,7 @@
 		F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34D61DCCFC3E00CAD472 /* OpenGL.framework */; };
 		F3AF34DA1DCD014700CAD472 /* Window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34D81DCD014700CAD472 /* Window.c */; };
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -611,6 +612,7 @@
 		F3AF34D61DCCFC3E00CAD472 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F3AF34D81DCD014700CAD472 /* Window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Window.c; sourceTree = "<group>"; };
 		F3AF34D91DCD014700CAD472 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -701,6 +703,7 @@
 			isa = PBXGroup;
 			children = (
 				F3897BB11DCD764E008D6C1D /* GLDebugTests.m */,
+				F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */,
 				F3897BB21DCD764E008D6C1D /* GLStateModernTests.m */,
 			);
 			name = GL;
@@ -1683,6 +1686,7 @@
 			files = (
 				F3897BCE1DCD7ABB008D6C1D /* GLPortability.c in Sources */,
 				F3897BC61DCD764E008D6C1D /* FontTests.m in Sources */,
+				F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */,
 				F3897BC41DCD764E008D6C1D /* ExpressionStringTests.m in Sources */,
 				F3897BC01DCD764E008D6C1D /* ExpressionMacroTests.m in Sources */,
 				F3897BBB1DCD764E008D6C1D /* EntityTests.m in Sources */,
