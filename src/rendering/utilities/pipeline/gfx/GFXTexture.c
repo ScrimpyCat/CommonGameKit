@@ -118,6 +118,23 @@ void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Bottom, CCVector3D *Top
                                    (float)(RealZ + Depth) / (float)RealD);
 }
 
+CCVector3D GFXTextureGetMultiplier(GFXTexture Texture)
+{
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    size_t RealW = 0, RealH = 0, RealD = 0;
+    while (Texture)
+    {
+        GFXTextureGetSize(Texture, &RealW, &RealH, &RealD);
+        
+        Texture = GFXTextureGetParent(Texture);
+    }
+    
+    return CCVector3DMake(1.0f / (float)RealW,
+                          1.0f / (float)RealH,
+                          1.0f / (float)RealD);
+}
+
 void GFXTextureSetFilterMode(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode)
 {
     CCAssertLog(Texture, "Texture must not be null");

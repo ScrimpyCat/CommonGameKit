@@ -141,6 +141,14 @@ void GFXTextureGetSize(GFXTexture Texture, size_t *Width, size_t *Height, size_t
 void GFXTextureGetBounds(GFXTexture Texture, CCVector3D *Bottom, CCVector3D *Top);
 
 /*!
+ * @brief Get the normalization multiplier of a texture.
+ * @description This multiplier can be used to convert a fixed unit into a normalized unit.
+ * @param Texture The texture to get multiplier for.
+ * @return The normalization multiplier.
+ */
+CCVector3D GFXTextureGetMultiplier(GFXTexture Texture);
+
+/*!
  * @brief Get the filter mode for the filter type of the texture.
  * @param Texture The texture get the filter mode for.
  * @param FilterType The filter type to get the filter mode for.
