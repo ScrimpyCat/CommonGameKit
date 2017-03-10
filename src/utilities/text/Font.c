@@ -143,17 +143,17 @@ CCVector2D CCFontPositionGlyph(CCFont Font, const CCFontGlyph *Glyph, CCFontAttr
     {
         if (Font->charset.texture)
         {
-            size_t Width, Height;
-            GFXTextureGetSize(Font->charset.texture, &Width, &Height, NULL);
+            const CCVector3D Position = GFXTextureNormalizePoint(Font->charset.texture, Glyph->coord.position.x, Glyph->coord.position.y, 0);
+            const CCVector3D Size = GFXTextureNormalizePoint(Font->charset.texture, Glyph->coord.size.x, Glyph->coord.size.y, 0);
             
             *TexCoord = (CCRect){
                 .position = {
-                    Glyph->coord.position.x / Width,
-                    Glyph->coord.position.y / Height
+                    Position.x,
+                    Position.y
                 },
                 .size = {
-                    Glyph->coord.size.x / Width,
-                    Glyph->coord.size.y / Height
+                    Size.x,
+                    Size.y
                 }
             };
         }
