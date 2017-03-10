@@ -215,3 +215,19 @@ void GFXTextureInvalidate(GFXTexture Texture)
     
     if (GFXMain->texture->optional.invalidate) GFXMain->texture->optional.invalidate(Texture);
 }
+
+CCPixelData GFXTextureRead(GFXTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+{
+    /*
+     TODO: To support async reads in the future, the CCPixelData (or CCData) could just implement a new deferred/future type.
+     */
+    CCAssertLog(Texture, "Texture must not be null");
+    
+    size_t W, H, D;
+    GFXTextureGetSize(Texture, &W, &H, &D);
+    
+    CCAssertLog(((X + Width) <= W) && ((Y + Height) <= H) && ((Z + Depth) <= D), "Read must not exceed bounds of texture");
+    CCAssertLog(((X + Width) > X) && ((Y + Height) > Y) && ((Z + Depth) > Z), "Read bounds must be greater than 1 or must not overflow");
+    
+    return GFXMain->texture->read(Texture, Allocator, Format, X, Y, Z, Width, Height, Depth);
+}

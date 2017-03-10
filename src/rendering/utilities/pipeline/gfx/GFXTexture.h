@@ -175,6 +175,22 @@ CCVector3D GFXTextureGetMultiplier(GFXTexture Texture);
 CCVector3D GFXTextureNormalizePoint(GFXTexture Texture, size_t X, size_t Y, size_t Z);
 
 /*!
+ * @brief Read the pixel data from the internal texture storage.
+ * @description Does not set the texture's pixel data source reference.
+ * @param Texture The texture to be read.
+ * @param Allocator The allocator to be used for the pixel data.
+ * @param Format The colour format to retrieve the pixel data as.
+ * @param X The x coordinate to begin reading.
+ * @param Y The y coordinate to begin reading.
+ * @param Z The z coordinate to begin reading.
+ * @param Width The width of the region to be read.
+ * @param Height The height of the region to be read.
+ * @param Depth The depth of the region to be read.
+ * @return The pixel data.
+ */
+CC_NEW CCPixelData GFXTextureRead(GFXTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+
+/*!
  * @brief Get the filter mode for the filter type of the texture.
  * @param Texture The texture get the filter mode for.
  * @param FilterType The filter type to get the filter mode for.
