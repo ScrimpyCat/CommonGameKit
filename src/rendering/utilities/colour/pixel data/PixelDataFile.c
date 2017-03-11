@@ -37,6 +37,7 @@ static void CCPixelDataFileDestructor(CCPixelDataFileInternal *Internal);
 static CCColour CCPixelDataFileGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z);
 static void CCPixelDataFileGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
 static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
+static const void *CCPixelDataFileGetBuffer(CCPixelData Pixels, CCColourFormat PlanarIndex);
 
 const CCPixelDataInterface CCPixelDataFileInterface = {
     .create = CCPixelDataFileConstructor,
@@ -44,7 +45,8 @@ const CCPixelDataInterface CCPixelDataFileInterface = {
     .colour = CCPixelDataFileGetColour,
     .optional = {
         .size = CCPixelDataFileGetSize,
-        .packedData = CCPixelDataFileGetPackedData
+        .packedData = CCPixelDataFileGetPackedData,
+        .buffer = CCPixelDataFileGetBuffer
     }
 };
 
@@ -92,6 +94,11 @@ static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Typ
 {
     CCPixelDataGetPackedDataWithFormat(((CCPixelDataFileInternal*)Pixels->internal)->data, Type, x, y, z, Width, Height, Depth, Data);
     return TRUE;
+}
+
+static const void *CCPixelDataFileGetBuffer(CCPixelData Pixels, CCColourFormat PlanarIndex)
+{
+    return CCPixelDataGetBuffer(((CCPixelDataFileInternal*)Pixels->internal)->data, PlanarIndex);
 }
 
 CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
