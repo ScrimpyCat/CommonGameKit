@@ -230,7 +230,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
         const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat), InternalFormat = GLTextureInternalFormat(Format);
         
         _Bool FreePixels = FALSE;
-        void *Pixels = NULL; //TODO: Add optional internal buffer access
+        const void *Pixels = Data ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
         if ((!Pixels) && (Data))
         {
             FreePixels = TRUE;
@@ -242,7 +242,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
                            return NULL;
                            );
             
-            CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+            CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, (void*)Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
         }
         
         switch (Target)
@@ -260,7 +260,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
                 break;
         }
         
-        if (FreePixels) CC_SAFE_Free(Pixels);
+        if (FreePixels) CCFree((void*)Pixels);
     }
     
     return Texture;
@@ -307,7 +307,7 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
             const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
             
             _Bool FreePixels = FALSE;
-            void *Pixels = NULL; //TODO: Add optional internal buffer access
+            const void *Pixels = Data ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
             if (!Pixels)
             {
                 FreePixels = TRUE;
@@ -319,7 +319,7 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
                                return NULL;
                                );
                 
-                CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+                CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, (void*)Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
             }
             
             switch (Target)
@@ -337,7 +337,7 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
                     break;
             }
             
-            if (FreePixels) CC_SAFE_Free(Pixels);
+            if (FreePixels) CCFree((void*)Pixels);
         }
     }
     
@@ -504,7 +504,7 @@ static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size
     const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
     
     _Bool FreePixels = FALSE;
-    void *Pixels = NULL; //TODO: Add optional internal buffer access
+    const void *Pixels = CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0);
     if (!Pixels)
     {
         FreePixels = TRUE;
@@ -515,7 +515,7 @@ static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size
                        return;
                        );
         
-        CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+        CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, (void*)Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
     }
     
     size_t RealX = 0, RealY = 0, RealZ = 0;
@@ -536,5 +536,5 @@ static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size
             break;
     }
     
-    if (FreePixels) CC_SAFE_Free(Pixels);
+    if (FreePixels) CCFree((void*)Pixels);
 }
