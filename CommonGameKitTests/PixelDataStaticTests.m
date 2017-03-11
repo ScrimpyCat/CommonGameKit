@@ -110,7 +110,7 @@
 -(void) testPackedData
 {
     uint8_t PixelData[6];
-    CCPixelDataGetPackedData(pixelData, 3, 2, 1, PixelData);
+    CCPixelDataGetPackedData(pixelData, 0, 0, 0, 3, 2, 1, PixelData);
     
     XCTAssertEqual(PixelData[0], 1, @"Should contain the correct value");
     XCTAssertEqual(PixelData[1], 4, @"Should contain the correct value");
@@ -118,6 +118,28 @@
     XCTAssertEqual(PixelData[3], 2, @"Should contain the correct value");
     XCTAssertEqual(PixelData[4], 3, @"Should contain the correct value");
     XCTAssertEqual(PixelData[5], 0, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(pixelData, 0, 0, 0, 2, 2, 1, PixelData);
+    
+    XCTAssertEqual(PixelData[0], 1, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[1], 4, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[2], 2, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[3], 3, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(pixelData, 1, 0, 0, 2, 2, 1, PixelData);
+    
+    XCTAssertEqual(PixelData[0], 4, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[1], 7, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[2], 3, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[3], 0, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(pixelData, 0, 1, 0, 2, 1, 1, PixelData);
+    
+    XCTAssertEqual(PixelData[0], 2, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[1], 3, @"Should contain the correct value");
 }
 
 @end
