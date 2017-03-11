@@ -92,22 +92,27 @@ void CCPixelDataGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_
     if (Pixels->interface->optional.size) Pixels->interface->optional.size(Pixels, Width, Height, Depth);
 }
 
-void CCPixelDataGetPackedData(CCPixelData Pixels, size_t Width, size_t Height, size_t Depth, void *Data)
+void CCPixelDataGetPackedData(CCPixelData Pixels, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
 {
-    CCPixelDataGetPackedDataWithFormat(Pixels, Pixels->format, Width, Height, Depth, Data);
+    CCPixelDataGetPackedDataWithFormat(Pixels, Pixels->format, x, y, z, Width, Height, Depth, Data);
 }
 
-void CCPixelDataGetPackedDataWithFormat(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data)
+void CCPixelDataGetPackedDataWithFormat(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
 {
     CCAssertLog(Pixels, "Pixel data must not be null");
+    CCAssertLog((x <= (Width + x)) && (y <= (Height + y)) && (z <= (Depth + z)), "Sample region must not overflow"); //unless allow overflowing sampling?
     
-    if ((!Pixels->interface->optional.packedData) || (!Pixels->interface->optional.packedData(Pixels, Type, Width, Height, Depth, Data)))
+    if ((!Pixels->interface->optional.packedData) || (!Pixels->interface->optional.packedData(Pixels, Type, x, y, z, Width, Height, Depth, Data)))
     {
-        for (size_t LoopZ = 0; LoopZ < Depth; LoopZ++)
+        Width += x;
+        Height += y;
+        Depth += z;
+        
+        for (size_t LoopZ = z; LoopZ < Depth; LoopZ++)
         {
-            for (size_t LoopY = 0; LoopY < Height; LoopY++)
+            for (size_t LoopY = y; LoopY < Height; LoopY++)
             {
-                for (size_t LoopX = 0; LoopX < Width; LoopX++)
+                for (size_t LoopX = x; LoopX < Width; LoopX++)
                 {
                     CCColour Pixel = CCColourConversion(CCPixelDataGetColour(Pixels, LoopX, LoopY, LoopZ), Type);
                     

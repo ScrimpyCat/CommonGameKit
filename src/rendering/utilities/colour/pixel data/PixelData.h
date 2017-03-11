@@ -40,7 +40,7 @@ typedef CC_NEW void *(*CCPixelDataConstructorCallback)(CCAllocatorType Allocator
 typedef void (*CCPixelDataDestructorCallback)(void *CC_DESTROY(Internal));
 typedef CCColour (*CCPixelDataGetColourCallback)(CCPixelData Pixels, size_t x, size_t y, size_t z);
 typedef void (*CCPixelDataGetSizeCallback)(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
-typedef _Bool (*CCPixelDataGetPackedDataCallback)(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
+typedef _Bool (*CCPixelDataGetPackedDataCallback)(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
 
 
 typedef struct {
@@ -109,24 +109,30 @@ void CCPixelDataGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_
  * @brief Get the packed data from the pixel data container.
  * @discussion Combines all bit planes.
  * @param Pixels The pixel data container to get the data from.
+ * @param x The x coordinate to begin the sample.
+ * @param y The y coordinate to begin the sample.
+ * @param z The z coordinate to begin the sample.
  * @param Width The width of the sample.
  * @param Height The height of the sample.
  * @param Depth The depth of the sample.
  * @param Data The data to store the pixel data.
  */
-void CCPixelDataGetPackedData(CCPixelData Pixels, size_t Width, size_t Height, size_t Depth, void *Data);
+void CCPixelDataGetPackedData(CCPixelData Pixels, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
 
 /*!
  * @brief Get the packed data from the pixel data container.
  * @discussion Combines all bit planes.
  * @param Pixels The pixel data container to get the data from.
  * @param Type The colour format to store the pixel data as.
+ * @param x The x coordinate to begin the sample.
+ * @param y The y coordinate to begin the sample.
+ * @param z The z coordinate to begin the sample.
  * @param Width The width of the sample.
  * @param Height The height of the sample.
  * @param Depth The depth of the sample.
  * @param Data The data to store the pixel data.
  */
-void CCPixelDataGetPackedDataWithFormat(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
+void CCPixelDataGetPackedDataWithFormat(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
 
 /*!
  * @brief Check if the point is inside the bounds of the pixel data.

@@ -237,7 +237,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
                            return NULL;
                            );
             
-            CCPixelDataGetPackedData(Data, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+            CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
         }
         
         switch (Target)
@@ -314,7 +314,7 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
                                return NULL;
                                );
                 
-                CCPixelDataGetPackedData(Data, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+                CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
             }
             
             switch (Target)

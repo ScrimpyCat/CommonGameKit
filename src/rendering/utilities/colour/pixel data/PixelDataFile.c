@@ -36,7 +36,7 @@ static void *CCPixelDataFileConstructor(CCAllocatorType Allocator);
 static void CCPixelDataFileDestructor(CCPixelDataFileInternal *Internal);
 static CCColour CCPixelDataFileGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z);
 static void CCPixelDataFileGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
-static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
+static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
 
 const CCPixelDataInterface CCPixelDataFileInterface = {
     .create = CCPixelDataFileConstructor,
@@ -88,9 +88,9 @@ static void CCPixelDataFileGetSize(CCPixelData Pixels, size_t *Width, size_t *He
     CCPixelDataGetSize(((CCPixelDataFileInternal*)Pixels->internal)->data, Width, Height, Depth);
 }
 
-static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data)
+static _Bool CCPixelDataFileGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
 {
-    CCPixelDataGetPackedDataWithFormat(((CCPixelDataFileInternal*)Pixels->internal)->data, Type, Width, Height, Depth, Data);
+    CCPixelDataGetPackedDataWithFormat(((CCPixelDataFileInternal*)Pixels->internal)->data, Type, x, y, z, Width, Height, Depth, Data);
     return TRUE;
 }
 

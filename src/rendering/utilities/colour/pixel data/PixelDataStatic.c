@@ -35,7 +35,7 @@ static void *CCPixelDataStaticConstructor(CCAllocatorType Allocator);
 static void CCPixelDataStaticDestructor(CCPixelDataStaticInternal *Internal);
 static CCColour CCPixelDataStaticGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z);
 static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
-static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data);
+static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
 
 const CCPixelDataInterface CCPixelDataStaticInterface = {
     .create = CCPixelDataStaticConstructor,
@@ -104,9 +104,12 @@ static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *
     if (Depth) *Depth = ((CCPixelDataStaticInternal*)Pixels->internal)->depth;
 }
 
-static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t Width, size_t Height, size_t Depth, void *Data)
+static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
 {
     if ((Pixels->format == Type) && (CCColourFormatPlaneCount(Type) == 1) &&
+        (!x) &&
+        (!y) &&
+        (!z) &&
         (((CCPixelDataStaticInternal*)Pixels->internal)->width == Width) &&
         (((CCPixelDataStaticInternal*)Pixels->internal)->height == Height) &&
         (((CCPixelDataStaticInternal*)Pixels->internal)->depth == Depth))
