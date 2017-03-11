@@ -57,6 +57,8 @@ typedef void (*GFXTextureGetSizeCallback)(GFXTexture Texture, size_t *Width, siz
 typedef void (*GFXTextureSetFilterModeCallback)(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 typedef void (*GFXTextureSetAddressModeCallback)(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
 typedef CCPixelData (*GFXTextureReadCallback)(GFXTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+typedef void (*GFXTextureWriteCallback)(GFXTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+
 
 #pragma mark Required Framebuffer Callbacks
 typedef GFXFramebuffer (*GFXFramebufferConstructorCallback)(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
@@ -143,6 +145,7 @@ typedef struct {
     GFXTextureSetFilterModeCallback setFilterMode;
     GFXTextureSetAddressModeCallback setAddressMode;
     GFXTextureReadCallback read;
+    GFXTextureWriteCallback write;
     struct {
         GFXTextureInvalidateCallback invalidate;
         GFXTextureGetInternalOffsetCallback internalOffset;

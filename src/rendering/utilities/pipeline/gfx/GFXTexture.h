@@ -191,6 +191,19 @@ CCVector3D GFXTextureNormalizePoint(GFXTexture Texture, size_t X, size_t Y, size
 CC_NEW CCPixelData GFXTextureRead(GFXTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
 
 /*!
+ * @brief Write the pixel data to the internal texture storage.
+ * @param Texture The texture to be written to.
+ * @param X The x coordinate to begin reading.
+ * @param Y The y coordinate to begin reading.
+ * @param Z The z coordinate to begin reading.
+ * @param Width The width of the region to be read.
+ * @param Height The height of the region to be read.
+ * @param Depth The depth of the region to be read.
+ * @param Data The pixel data to be copied from.
+ */
+void GFXTextureWrite(GFXTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+
+/*!
  * @brief Get the filter mode for the filter type of the texture.
  * @param Texture The texture get the filter mode for.
  * @param FilterType The filter type to get the filter mode for.
