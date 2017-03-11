@@ -36,6 +36,7 @@ static void CCPixelDataStaticDestructor(CCPixelDataStaticInternal *Internal);
 static CCColour CCPixelDataStaticGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z);
 static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
 static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
+static const void *CCPixelDataStaticGetBuffer(CCPixelData Pixels, CCColourFormat PlanarIndex);
 
 const CCPixelDataInterface CCPixelDataStaticInterface = {
     .create = CCPixelDataStaticConstructor,
@@ -43,7 +44,8 @@ const CCPixelDataInterface CCPixelDataStaticInterface = {
     .colour = CCPixelDataStaticGetColour,
     .optional = {
         .size = CCPixelDataStaticGetSize,
-        .packedData = CCPixelDataStaticGetPackedData
+        .packedData = CCPixelDataStaticGetPackedData,
+        .buffer = CCPixelDataStaticGetBuffer
     }
 };
 
@@ -126,6 +128,13 @@ static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat T
     }
     
     return FALSE;
+}
+
+static const void *CCPixelDataStaticGetBuffer(CCPixelData Pixels, CCColourFormat PlanarIndex)
+{
+    CCData Data = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer[CCColourFormatChannelPlanarToLiteralIndex(PlanarIndex & CCColourFormatChannelPlanarIndexMask)];
+    
+    return Data ? CCDataGetBuffer(Data) : NULL;
 }
 
 CCPixelData CCPixelDataStaticCreate(CCAllocatorType Allocator, CCData Data, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
