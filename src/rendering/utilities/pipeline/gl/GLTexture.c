@@ -39,6 +39,7 @@ static void GLTextureGetInternalSize(GLTexture Texture, size_t *Width, size_t *H
 static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
 static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 
 
 const GFXTextureInterface GLTextureInterface = {
@@ -53,6 +54,7 @@ const GFXTextureInterface GLTextureInterface = {
     .setFilterMode = (GFXTextureSetFilterModeCallback)GLTextureSetFilterMode,
     .setAddressMode = (GFXTextureSetAddressModeCallback)GLTextureSetAddressMode,
     .read = (GFXTextureReadCallback)GLTextureRead,
+    .write = (GFXTextureWriteCallback)GLTextureWrite,
     .optional = {
         //TODO: Add invalidation .invalidate = (GFXTextureInvalidateCallback)GLTextureInvalidate
         .internalOffset = (GFXTextureGetInternalOffsetCallback)GLTextureGetInternalOffset,
@@ -490,4 +492,49 @@ static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, C
     CCPixelDataDestroy(CopiedData);
     
     return CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree, SampleSize * Width * Height * Depth, Pixels, NULL, NULL), Format, Width, Height, Depth);
+}
+
+static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
+{
+    const GLuint ID = GLTextureGetID(Texture);
+    const GLenum Target = GLTextureTarget(GLTextureGetHint(Texture));
+    CC_GL_BIND_TEXTURE_TARGET(Target, ID);
+    
+    const CCColourFormat PixelFormat = Data ? Data->format : CCColourFormatRGB8Unorm;
+    const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
+    
+    _Bool FreePixels = FALSE;
+    void *Pixels = NULL; //TODO: Add optional internal buffer access
+    if (!Pixels)
+    {
+        FreePixels = TRUE;
+        
+        const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Data->format, CCColourFormatChannelPlanarIndex0);
+        CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
+                       CC_LOG_ERROR("Failed to allocate memory for texture transfer. Allocation size (%zu)", SampleSize * Width * Height * Depth);
+                       return;
+                       );
+        
+        CCPixelDataGetPackedData(Data, 0, 0, 0, Width, Height, Depth, Pixels); //TODO: Or use the conversion variant, so we handle the conversion instead of GL (slower, but can support many more formats)
+    }
+    
+    size_t RealX = 0, RealY = 0, RealZ = 0;
+    GLTextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
+    
+    switch (Target)
+    {
+        case GL_TEXTURE_3D:
+            glTexSubImage3D(GL_TEXTURE_3D, 0, (GLint)(RealX + X), (GLint)(RealY + Y), (GLint)(RealZ + Z), (GLsizei)Width, (GLsizei)Height, (GLsizei)Depth, InputFormat, InputType, Pixels); CC_GL_CHECK();
+            break;
+            
+        case GL_TEXTURE_2D:
+            glTexSubImage2D(GL_TEXTURE_2D, 0, (GLint)(RealX + X), (GLint)(RealY + Y), (GLsizei)Width, (GLsizei)Height, InputFormat, InputType, Pixels); CC_GL_CHECK();
+            break;
+            
+        case GL_TEXTURE_1D:
+            glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)(RealX + X), (GLsizei)Width, InputFormat, InputType, Pixels); CC_GL_CHECK();
+            break;
+    }
+    
+    if (FreePixels) CC_SAFE_Free(Pixels);
 }
