@@ -37,8 +37,8 @@
 #include <CommonGameKit/GFXViewport.h>
 
 #pragma mark - Required Buffer Callbacks
-typedef GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
-typedef void (*GFXBufferDestructorCallback)(GFXBuffer Internal);
+typedef CC_NEW GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
+typedef void (*GFXBufferDestructorCallback)(GFXBuffer CC_DESTROY(Internal));
 typedef GFXBufferHint (*GFXBufferGetHintCallback)(GFXBuffer Internal);
 typedef size_t (*GFXBufferGetSizeCallback)(GFXBuffer Internal);
 typedef _Bool (*GFXBufferResizeCallback)(GFXBuffer Buffer, size_t Size);
@@ -46,9 +46,9 @@ typedef size_t (*GFXBufferReadBufferCallback)(GFXBuffer Internal, ptrdiff_t Offs
 typedef size_t (*GFXBufferWriteBufferCallback)(GFXBuffer Internal, ptrdiff_t Offset, size_t Size, const void *Data);
 
 #pragma mark Required Texture Callbacks
-typedef GFXTexture (*GFXTextureConstructorCallback)(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
-typedef GFXTexture (*GFXTextureSubConstructorCallback)(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
-typedef void (*GFXTextureDestructorCallback)(GFXTexture Texture);
+typedef CC_NEW GFXTexture (*GFXTextureConstructorCallback)(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
+typedef CC_NEW GFXTexture (*GFXTextureSubConstructorCallback)(CCAllocatorType Allocator, GFXTexture CC_OWN(Root), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
+typedef void (*GFXTextureDestructorCallback)(GFXTexture CC_DESTROY(Texture));
 typedef GFXTexture (*GFXTextureGetParentCallback)(GFXTexture Texture);
 typedef GFXTextureHint (*GFXTextureGetHintCallback)(GFXTexture Texture);
 typedef CCPixelData (*GFXTextureGetDataCallback)(GFXTexture Texture);
@@ -56,25 +56,25 @@ typedef void (*GFXTextureGetOffsetCallback)(GFXTexture Texture, size_t *X, size_
 typedef void (*GFXTextureGetSizeCallback)(GFXTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 typedef void (*GFXTextureSetFilterModeCallback)(GFXTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 typedef void (*GFXTextureSetAddressModeCallback)(GFXTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
-typedef CCPixelData (*GFXTextureReadCallback)(GFXTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+typedef CC_NEW CCPixelData (*GFXTextureReadCallback)(GFXTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
 typedef void (*GFXTextureWriteCallback)(GFXTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 
 
 #pragma mark Required Framebuffer Callbacks
-typedef GFXFramebuffer (*GFXFramebufferConstructorCallback)(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
-typedef void (*GFXFramebufferDestructorCallback)(GFXFramebuffer Framebuffer);
+typedef CC_NEW GFXFramebuffer (*GFXFramebufferConstructorCallback)(CCAllocatorType Allocator, GFXFramebufferAttachment *CC_OWN(Attachments), size_t Count);
+typedef void (*GFXFramebufferDestructorCallback)(GFXFramebuffer CC_DESTROY(Framebuffer));
 typedef GFXFramebuffer (*GFXFramebufferDefaultCallback)(void);
 typedef GFXFramebufferAttachment *(*GFXFramebufferGetAttachmentCallback)(GFXFramebuffer Framebuffer, size_t Index);
 
 #pragma mark Required Shader Library Callbacks
-typedef GFXShaderLibrary (*GFXShaderLibraryConstructorCallback)(CCAllocatorType Allocator);
-typedef void (*GFXShaderLibraryDestructorCallback)(GFXShaderLibrary Library);
-typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source);
+typedef CC_NEW GFXShaderLibrary (*GFXShaderLibraryConstructorCallback)(CCAllocatorType Allocator);
+typedef void (*GFXShaderLibraryDestructorCallback)(GFXShaderLibrary CC_DESTROY(Library));
+typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, CCString CC_COPY(Name), const char *Source);
 typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibrary Library, CCString Name);
 
 #pragma mark Required Shader Callbacks
-typedef GFXShader (*GFXShaderConstructorCallback)(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
-typedef void (*GFXShaderDestructorCallback)(GFXShader Shader);
+typedef CC_NEW GFXShader (*GFXShaderConstructorCallback)(CCAllocatorType Allocator, GFXShaderSource Vertex, GFXShaderSource Fragment);
+typedef void (*GFXShaderDestructorCallback)(GFXShader CC_DESTROY(Shader));
 typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, CCString Name);
 
 #pragma mark Required Draw Callbacks
