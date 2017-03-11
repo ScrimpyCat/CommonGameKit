@@ -146,3 +146,10 @@ unsigned int CCPixelDataGetPlaneCount(CCPixelData Pixels)
     
     return CCColourFormatPlaneCount(Pixels->format);
 }
+
+const void *CCPixelDataGetBuffer(CCPixelData Pixels, CCColourFormat PlanarIndex)
+{
+    CCAssertLog(Pixels, "Pixel data must not be null");
+    
+    return Pixels->interface->optional.buffer ? Pixels->interface->optional.buffer(Pixels, PlanarIndex) : NULL;
+}

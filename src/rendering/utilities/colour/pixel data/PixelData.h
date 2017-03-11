@@ -41,6 +41,7 @@ typedef void (*CCPixelDataDestructorCallback)(void *CC_DESTROY(Internal));
 typedef CCColour (*CCPixelDataGetColourCallback)(CCPixelData Pixels, size_t x, size_t y, size_t z);
 typedef void (*CCPixelDataGetSizeCallback)(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
 typedef _Bool (*CCPixelDataGetPackedDataCallback)(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
+typedef const void *(*CCPixelDataGetBufferCallback)(CCPixelData Pixels, CCColourFormat PlanarIndex);
 
 
 typedef struct {
@@ -50,6 +51,7 @@ typedef struct {
     struct {
         CCPixelDataGetSizeCallback size;
         CCPixelDataGetPackedDataCallback packedData;
+        CCPixelDataGetBufferCallback buffer;
     } optional;
 } CCPixelDataInterface;
 
@@ -150,5 +152,18 @@ _Bool CCPixelDataInsideBounds(CCPixelData Pixels, size_t x, size_t y, size_t z);
  * @return The number of planes.
  */
 unsigned int CCPixelDataGetPlaneCount(CCPixelData Pixels);
+
+/*!
+ * @brief Get the internal buffer for the pixel data if possible.
+ * @param Pixels The pixels data container to retrieve the internal buffer to.
+ * @param PlanarIndex The plane to be used.
+ *        @b CCColourFormatChannelPlanarIndex0
+ *        @b CCColourFormatChannelPlanarIndex1
+ *        @b CCColourFormatChannelPlanarIndex2
+ *        @b CCColourFormatChannelPlanarIndex3
+ *
+ * @return The pointer to the data, or NULL if it cannot access the internal buffer.
+ */
+const void *CCPixelDataGetBuffer(CCPixelData Pixels, CCColourFormat PlanarIndex);
 
 #endif
