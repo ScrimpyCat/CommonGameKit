@@ -24,6 +24,7 @@
  */
 
 #include "GLTexture.h"
+#include "PixelDataStatic.h"
 
 static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
 static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
@@ -37,6 +38,7 @@ static void GLTextureGetSize(GLTexture Texture, size_t *Width, size_t *Height, s
 static void GLTextureGetInternalSize(GLTexture Texture, size_t *Width, size_t *Height, size_t *Depth);
 static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType, GFXTextureHint FilterMode);
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
+static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
 
 
 const GFXTextureInterface GLTextureInterface = {
@@ -50,6 +52,7 @@ const GFXTextureInterface GLTextureInterface = {
     .size = (GFXTextureGetSizeCallback)GLTextureGetSize,
     .setFilterMode = (GFXTextureSetFilterModeCallback)GLTextureSetFilterMode,
     .setAddressMode = (GFXTextureSetAddressModeCallback)GLTextureSetAddressMode,
+    .read = (GFXTextureReadCallback)GLTextureRead,
     .optional = {
         //TODO: Add invalidation .invalidate = (GFXTextureInvalidateCallback)GLTextureInvalidate
         .internalOffset = (GFXTextureGetInternalOffsetCallback)GLTextureGetInternalOffset,
@@ -354,6 +357,11 @@ static GFXTextureHint GLTextureGetHint(GLTexture Texture)
     return Texture->isRoot ? Texture->root.hint : ((GLTexture)Texture->sub.internal.root)->root.hint;
 }
 
+static CCColourFormat GLTextureGetFormat(GLTexture Texture)
+{
+    return Texture->isRoot ? Texture->root.format : ((GLTexture)Texture->sub.internal.root)->root.format;
+}
+
 static CCPixelData GLTextureGetData(GLTexture Texture)
 {
     return Texture->data;
@@ -443,4 +451,43 @@ static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate
     }
     //TODO: Likely replace with sampler objects (ARB_sampler_objects) so sub textures and root textures can retain their own sampling preferences
     else CCAssertLog(0, "Cannot set a sub texture's filtering mode"); //GLTextureSetAddressMode((GLTexture)Texture->sub.parent, Coordinate, AddressMode);
+}
+
+static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+{
+    const GLuint ID = GLTextureGetID(Texture);
+    const GLenum Target = GLTextureTarget(GLTextureGetHint(Texture));
+    CC_GL_BIND_TEXTURE_TARGET(Target, ID);
+    
+    const CCColourFormat PixelFormat = GLTextureGetFormat(Texture);
+    const GLenum InternalFormat = GLTextureInputFormat(PixelFormat), InternalType = GLTextureInputFormatType(PixelFormat);
+    
+    GLTexture Root = Texture->isRoot ? Texture : (GLTexture)Texture->sub.internal.root;
+    
+    void *Pixels;
+    const size_t InternalSampleSize = CCColourFormatSampleSizeForPlanar(PixelFormat, CCColourFormatChannelPlanarIndex0);
+    CC_SAFE_Malloc(Pixels, InternalSampleSize * Root->width * Root->height * Root->depth,
+                   CC_LOG_ERROR("Failed to allocate memory for texture receive. Allocation size (%zu)", InternalSampleSize * Width * Height * Depth);
+                   return NULL;
+                   );
+    
+    glGetTexImage(Target, 0, InternalFormat, InternalType, Pixels); CC_GL_CHECK();
+    
+    CCPixelData CopiedData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataBufferHintFree, InternalSampleSize * Root->width * Root->height * Root->depth, Pixels, NULL, NULL), PixelFormat, Root->width, Root->height, Root->depth);
+    
+    size_t RealX = 0, RealY = 0, RealZ = 0;
+    GLTextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
+    
+    const size_t SampleSize = CCColourFormatSampleSizeForPlanar(PixelFormat, CCColourFormatChannelPlanarIndex0);
+    if (!(Pixels = CCMalloc(Allocator, SampleSize * Width * Height * Depth, NULL, CC_DEFAULT_ERROR_CALLBACK)))
+    {
+        CC_LOG_ERROR("Failed to allocate memory for texture receive. Allocation size (%zu)", SampleSize * Width * Height * Depth);
+        CCPixelDataDestroy(CopiedData);
+        return NULL;
+    }
+    
+    CCPixelDataGetPackedDataWithFormat(CopiedData, Format, RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth, Pixels);
+    CCPixelDataDestroy(CopiedData);
+    
+    return CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree, SampleSize * Width * Height * Depth, Pixels, NULL, NULL), Format, Width, Height, Depth);
 }
