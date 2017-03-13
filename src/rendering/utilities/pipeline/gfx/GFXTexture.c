@@ -26,6 +26,191 @@
 #include "GFXTexture.h"
 #include "GFXMain.h"
 
+#pragma mark Texture Stream
+typedef struct {
+    size_t x, y, z;
+    size_t width, height, depth;
+} GFXTextureStreamRegion3D;
+
+typedef struct GFXTextureStreamNode {
+    struct GFXTextureStreamNode *child[2];
+    GFXTexture texture;
+    GFXTextureStreamRegion3D region;
+} GFXTextureStreamNode;
+
+typedef struct GFXTextureStream {
+    CCAllocatorType allocator;
+    GFXTextureStreamNode root;
+} GFXTextureStreamInfo;
+
+static GFXTextureStreamNode *GFXTextureStreamCreateNode(CCAllocatorType Allocator, GFXTextureStreamRegion3D Region)
+{
+    GFXTextureStreamNode *Node = CCMalloc(Allocator, sizeof(GFXTextureStreamNode), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    
+    if (Node)
+    {
+        *Node = (GFXTextureStreamNode){
+            .child = { NULL, NULL },
+            .texture = NULL,
+            .region = Region
+        };
+    }
+    
+    return Node;
+}
+
+static void GFXTextureStreamDestroyNode(GFXTextureStreamNode *Node)
+{
+    CCAssertLog(Node, "Node must not be null");
+    
+    if (Node->child[0]) GFXTextureStreamDestroyNode(Node->child[0]);
+    if (Node->child[1]) GFXTextureStreamDestroyNode(Node->child[1]);
+    
+    if (Node->texture) GFXTextureDestroy(Node->texture);
+    
+    CCFree(Node);
+}
+
+static inline _Bool GFXTextureStreamNodeRegionFit(GFXTextureStreamRegion3D Container, size_t Width, size_t Height, size_t Depth)
+{
+    return (Width <= Container.width) && (Height <= Container.height) && (Depth <= Container.depth);
+}
+
+static inline _Bool GFXTextureStreamNodeRegionExactFit(GFXTextureStreamRegion3D Container, size_t Width, size_t Height, size_t Depth)
+{
+    return (Width == Container.width) && (Height == Container.height) && (Depth == Container.depth);
+}
+
+static inline _Bool GFXTextureStreamNodeHasChildren(GFXTextureStreamNode *Node)
+{
+    return Node->child[0] || Node->child[1];
+}
+
+static GFXTextureStreamNode *GFXTextureStreamNodeFindAvailable(GFXTextureStreamNode *Node, size_t Width, size_t Height, size_t Depth, CCAllocatorType Allocator, _Bool Root)
+{
+    if ((!Root) && (Node->texture)) return NULL;
+    
+    if (GFXTextureStreamNodeRegionFit(Node->region, Width, Height, Depth))
+    {
+        if (GFXTextureStreamNodeRegionExactFit(Node->region, Width, Height, Depth))
+        {
+            return GFXTextureStreamNodeHasChildren(Node) ? NULL : Node;
+        }
+        
+        else if (GFXTextureStreamNodeHasChildren(Node))
+        {
+            GFXTextureStreamNode *N = GFXTextureStreamNodeFindAvailable(Node->child[0], Width, Height, Depth, Allocator, FALSE);
+            if (!N) N = GFXTextureStreamNodeFindAvailable(Node->child[1], Width, Height, Depth, Allocator, FALSE);
+            
+            return N;
+        }
+        
+        else
+        {
+            const size_t DiffW = Node->region.width - Width, DiffH = Node->region.height - Height, DiffD = Node->region.depth - Depth;
+            
+            if ((DiffW > DiffH) && (DiffW > DiffD))
+            {
+                Node->child[0] = GFXTextureStreamCreateNode(Allocator, (GFXTextureStreamRegion3D){
+                    .x = Node->region.x, .width = Width,
+                    .y = Node->region.y, .height = Node->region.height,
+                    .z = Node->region.z, .depth = Node->region.depth
+                });
+                Node->child[1] = GFXTextureStreamCreateNode(Allocator, (GFXTextureStreamRegion3D){
+                    .x = Node->region.x + Width, .width = Node->region.width - Width,
+                    .y = Node->region.y, .height = Node->region.height,
+                    .z = Node->region.z, .depth = Node->region.depth
+                });
+            }
+            
+            else if (DiffH > DiffD)
+            {
+                Node->child[0] = GFXTextureStreamCreateNode(Allocator, (GFXTextureStreamRegion3D){
+                    .x = Node->region.x, .width = Node->region.width,
+                    .y = Node->region.y, .height = Height,
+                    .z = Node->region.z, .depth = Node->region.depth
+                });
+                Node->child[1] = GFXTextureStreamCreateNode(Allocator, (GFXTextureStreamRegion3D){
+                    .x = Node->region.x, .width = Node->region.width,
+                    .y = Node->region.y + Height, .height = Node->region.height - Height,
+                    .z = Node->region.z, .depth = Node->region.depth
+                });
+            }
+            
+            else
+            {
+                Node->child[0] = GFXTextureStreamCreateNode(Allocator, (GFXTextureStreamRegion3D){
+                    .x = Node->region.x, .width = Node->region.width,
+                    .y = Node->region.y, .height = Node->region.height,
+                    .z = Node->region.z, .depth = Depth
+                });
+                Node->child[1] = GFXTextureStreamCreateNode(Allocator, (GFXTextureStreamRegion3D){
+                    .x = Node->region.x, .width = Node->region.width,
+                    .y = Node->region.y, .height = Node->region.height,
+                    .z = Node->region.z + Depth, .depth = Node->region.depth - Depth
+                });
+            }
+            
+            return GFXTextureStreamNodeFindAvailable(Node->child[0], Width, Height, Depth, Allocator, FALSE);
+        }
+    }
+    
+    return NULL;
+}
+
+static void GFXTextureStreamDestructor(GFXTextureStream Stream)
+{
+    if (Stream->root.child[0]) GFXTextureStreamDestroyNode(Stream->root.child[0]);
+    if (Stream->root.child[1]) GFXTextureStreamDestroyNode(Stream->root.child[1]);
+    
+    GFXTextureDestroy(Stream->root.texture);
+}
+
+GFXTextureStream GFXTextureStreamCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
+{
+    GFXTextureStream Stream = CCMalloc(Allocator, sizeof(GFXTextureStreamInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Stream)
+    {
+        GFXTexture Texture = GFXTextureCreate(Allocator, Hint, Format, Width, Height, Depth, NULL);
+        if (Texture)
+        {
+            CCMemorySetDestructor(Stream, (CCMemoryDestructorCallback)GFXTextureStreamDestructor);
+            
+            *Stream = (GFXTextureStreamInfo){
+                .allocator = Allocator,
+                .root = (GFXTextureStreamNode){
+                    .child = { NULL, NULL },
+                    .texture = Texture,
+                    .region = (GFXTextureStreamRegion3D){
+                        .x = 0, .width = Width,
+                        .y = 0, .height = Height,
+                        .z = 0, .depth = Depth
+                    }
+                }
+            };
+        }
+        
+        else
+        {
+            CC_LOG_ERROR("Failed to create texture stream: Couldn't create root texture");
+            CCFree(Stream);
+        }
+    }
+    
+    else CC_LOG_ERROR("Failed to allocate memory for texture stream. Allocation size (%zu)", sizeof(GFXTextureStreamInfo));
+    
+    return Stream;
+}
+
+void GFXTextureStreamDestroy(GFXTextureStream Stream)
+{
+    CCAssertLog(Stream, "Stream must not be null");
+    
+    CCFree(Stream);
+}
+
+#pragma mark - Texture
+
 GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
 {
     return GFXMain->texture->create(Allocator, Hint, Format, Width, Height, Depth, Data);

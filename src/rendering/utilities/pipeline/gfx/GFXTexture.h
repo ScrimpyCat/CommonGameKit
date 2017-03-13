@@ -57,6 +57,31 @@ typedef enum {
  */
 typedef struct GFXTexture *GFXTexture;
 
+/*!
+ * @brief The graphics texture stream.
+ * @description Allows @b CCRetain.
+ */
+typedef struct GFXTextureStream *GFXTextureStream;
+
+
+/*!
+ * @brief Create a texture stream.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Hint The required usage for the texture.
+ * @param Format The colour format of the texture.
+ * @param Width The width of the texture.
+ * @param Height The height of the texture.
+ * @param Depth The depth of the texture.
+ * @return The created texture stream.
+ */
+CC_NEW GFXTextureStream GFXTextureStreamCreate(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+
+/*!
+ * @brief Destroy a texture stream.
+ * @description Textures from the stream may remain in use/memory until they are destroyed too.
+ * @param Stream The texture stream to be destroyed.
+ */
+void GFXTextureStreamDestroy(GFXTextureStream CC_DESTROY(Stream));
 
 /*!
  * @brief Create a texture.
