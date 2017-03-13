@@ -318,6 +318,20 @@
     GFXTextureDestroy(Texture2);
     GFXTextureDestroy(Texture1);
     GFXTextureStreamDestroy(Stream);
+    
+    
+    
+    
+    Stream = GFXTextureStreamCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension1D, CCColourFormatRGB8Unorm, 4, 1, 1);
+    
+    Texture1 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 2, 1, 1, NULL);
+    Texture3 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    
+    GFXTextureStreamDestroy(Stream);
+    GFXTextureDestroy(Texture3);
+    GFXTextureDestroy(Texture2);
+    GFXTextureDestroy(Texture1);
 }
 
 @end
