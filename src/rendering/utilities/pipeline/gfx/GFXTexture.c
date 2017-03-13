@@ -44,6 +44,16 @@ typedef struct GFXTextureStream {
     GFXTextureStreamNode root;
 } GFXTextureStreamInfo;
 
+static void GFXTextureStreamDestroyNode(GFXTextureStreamNode *Node);
+
+static void GFXTextureStreamNodeDestructor(GFXTextureStreamNode *Node)
+{
+    if (Node->child[0]) GFXTextureStreamDestroyNode(Node->child[0]);
+    if (Node->child[1]) GFXTextureStreamDestroyNode(Node->child[1]);
+    
+    if (Node->texture) GFXTextureDestroy(Node->texture);
+}
+
 static GFXTextureStreamNode *GFXTextureStreamCreateNode(CCAllocatorType Allocator, GFXTextureStreamRegion3D Region)
 {
     GFXTextureStreamNode *Node = CCMalloc(Allocator, sizeof(GFXTextureStreamNode), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -56,6 +66,8 @@ static GFXTextureStreamNode *GFXTextureStreamCreateNode(CCAllocatorType Allocato
             .destructor = NULL,
             .region = Region
         };
+        
+        CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)GFXTextureStreamNodeDestructor);
     }
     
     return Node;
@@ -64,11 +76,6 @@ static GFXTextureStreamNode *GFXTextureStreamCreateNode(CCAllocatorType Allocato
 static void GFXTextureStreamDestroyNode(GFXTextureStreamNode *Node)
 {
     CCAssertLog(Node, "Node must not be null");
-    
-    if (Node->child[0]) GFXTextureStreamDestroyNode(Node->child[0]);
-    if (Node->child[1]) GFXTextureStreamDestroyNode(Node->child[1]);
-    
-    if (Node->texture) GFXTextureDestroy(Node->texture);
     
     CCFree(Node);
 }
@@ -252,6 +259,8 @@ static void GFXTextureDestructor(GFXTexture Texture)
     
     Node->destructor(Node->texture);
     Node->texture = NULL;
+    
+    GFXTextureStreamDestroyNode(Node);
 }
 
 GFXTexture GFXTextureCreateFromStream(CCAllocatorType Allocator, GFXTextureStream Stream, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
@@ -265,7 +274,7 @@ GFXTexture GFXTextureCreateFromStream(CCAllocatorType Allocator, GFXTextureStrea
     
     if (Node->texture)
     {
-        GFXMain->texture->setStream(Node->texture, Node);
+        GFXMain->texture->setStream(Node->texture, CCRetain(Node));
         Node->destructor = CCMemorySetDestructor(Node->texture, (CCMemoryDestructorCallback)GFXTextureDestructor);
     }
     
