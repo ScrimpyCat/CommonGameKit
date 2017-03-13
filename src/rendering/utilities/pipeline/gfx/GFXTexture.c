@@ -88,18 +88,30 @@ static inline _Bool GFXTextureStreamNodeHasChildren(GFXTextureStreamNode *Node)
     return Node->child[0] || Node->child[1];
 }
 
+static inline void GFXTextureStreamNodePurge(GFXTextureStreamNode *Node)
+{
+    if ((!GFXTextureStreamNodeHasChildren(Node->child[0]) || !Node->child[0]->texture) && (!GFXTextureStreamNodeHasChildren(Node->child[1]) || !Node->child[1]->texture))
+    {
+        GFXTextureStreamDestroyNode(Node->child[0]);
+        GFXTextureStreamDestroyNode(Node->child[1]);
+    }
+}
+
 static GFXTextureStreamNode *GFXTextureStreamNodeFindAvailable(GFXTextureStreamNode *Node, size_t Width, size_t Height, size_t Depth, CCAllocatorType Allocator, _Bool Root)
 {
     if ((!Root) && (Node->texture)) return NULL;
     
     if (GFXTextureStreamNodeRegionFit(Node->region, Width, Height, Depth))
     {
+        const _Bool Children = GFXTextureStreamNodeHasChildren(Node);
+        if (Children) GFXTextureStreamNodePurge(Node);
+        
         if (GFXTextureStreamNodeRegionExactFit(Node->region, Width, Height, Depth))
         {
-            return GFXTextureStreamNodeHasChildren(Node) ? NULL : Node;
+            return Children ? NULL : Node;
         }
         
-        else if (GFXTextureStreamNodeHasChildren(Node))
+        else if (Children)
         {
             GFXTextureStreamNode *N = GFXTextureStreamNodeFindAvailable(Node->child[0], Width, Height, Depth, Allocator, FALSE);
             if (!N) N = GFXTextureStreamNodeFindAvailable(Node->child[1], Width, Height, Depth, Allocator, FALSE);
