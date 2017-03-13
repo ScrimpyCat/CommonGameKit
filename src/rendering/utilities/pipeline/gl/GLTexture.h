@@ -31,6 +31,7 @@
 
 
 typedef struct {
+    void *stream;
     CCPixelData data;
     size_t width;
     size_t height;

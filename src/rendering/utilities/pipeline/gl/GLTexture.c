@@ -40,6 +40,8 @@ static void GLTextureSetFilterMode(GLTexture Texture, GFXTextureHint FilterType,
 static void GLTextureSetAddressMode(GLTexture Texture, GFXTextureHint Coordinate, GFXTextureHint AddressMode);
 static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, CCColourFormat Format, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
 static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data);
+static void *GLTextureGetStreamData(GLTexture Texture);
+static void GLTextureSetStreamData(GLTexture Texture, void *Stream);
 
 
 const GFXTextureInterface GLTextureInterface = {
@@ -55,6 +57,8 @@ const GFXTextureInterface GLTextureInterface = {
     .setAddressMode = (GFXTextureSetAddressModeCallback)GLTextureSetAddressMode,
     .read = (GFXTextureReadCallback)GLTextureRead,
     .write = (GFXTextureWriteCallback)GLTextureWrite,
+    .getStream = (GFXTextureGetStreamDataCallback)GLTextureGetStreamData,
+    .setStream = (GFXTextureSetStreamDataCallback)GLTextureSetStreamData,
     .optional = {
         //TODO: Add invalidation .invalidate = (GFXTextureInvalidateCallback)GLTextureInvalidate
         .internalOffset = (GFXTextureGetInternalOffsetCallback)GLTextureGetInternalOffset,
@@ -201,6 +205,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
         
         Texture->isRoot = TRUE;
         Texture->root.hint = Hint;
+        Texture->stream = NULL;
         Texture->data = Data;
         Texture->root.format = Format;
         Texture->width = Width;
@@ -278,6 +283,7 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
         Texture->sub.x = X;
         Texture->sub.y = Y;
         Texture->sub.z = Z;
+        Texture->stream = NULL;
         Texture->data = Data;
         Texture->width = Width;
         Texture->height = Height;
@@ -537,4 +543,14 @@ static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size
     }
     
     if (FreePixels) CCFree((void*)Pixels);
+}
+
+static void *GLTextureGetStreamData(GLTexture Texture)
+{
+    return Texture->stream;
+}
+
+static void GLTextureSetStreamData(GLTexture Texture, void *Stream)
+{
+    Texture->stream = Stream;
 }
