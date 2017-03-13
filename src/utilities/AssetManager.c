@@ -30,6 +30,7 @@ typedef enum {
     CCAssetTypeShaderLibrary,
     CCAssetTypeShader,
     CCAssetTypeTexture,
+    CCAssetTypeTextureStream,
     CCAssetTypeFont,
     CCAssetTypeCount
 } CCAssetType;
@@ -56,6 +57,10 @@ static void CCAssetElementDestructor(CCDictionary Dictionary, CCAssetInfo *Eleme
             
         case CCAssetTypeTexture:
             GFXTextureDestroy(Element->asset);
+            break;
+            
+        case CCAssetTypeTextureStream:
+            GFXTextureStreamDestroy(Element->asset);
             break;
             
         case CCAssetTypeFont:
@@ -163,6 +168,33 @@ GFXTexture CCAssetManagerCreateTexture(CCString Name)
     if (!Asset)
     {
         CC_LOG_ERROR_CUSTOM("No texture asset available with name: %S", Name);
+        return NULL;
+    }
+    
+    return CCRetain(Asset->asset);
+}
+
+#pragma mark - Texture Stream
+void CCAssetManagerRegisterTextureStream(CCString Name, GFXTextureStream Stream)
+{
+    CCDictionarySetValue(Assets[CCAssetTypeTextureStream], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
+        .type = CCAssetTypeTextureStream,
+        .asset = CCRetain(Stream)
+    });
+}
+
+void CCAssetManagerDeregisterTextureStream(CCString Name)
+{
+    CCDictionaryRemoveValue(Assets[CCAssetTypeTextureStream], &Name);
+}
+
+GFXTextureStream CCAssetManagerCreateTextureStream(CCString Name)
+{
+    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeTextureStream], &Name);
+    
+    if (!Asset)
+    {
+        CC_LOG_ERROR_CUSTOM("No texture stream asset available with name: %S", Name);
         return NULL;
     }
     

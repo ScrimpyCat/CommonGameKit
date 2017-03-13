@@ -101,6 +101,26 @@ void CCAssetManagerDeregisterTexture(CCString Name);
 CC_NEW GFXTexture CCAssetManagerCreateTexture(CCString Name);
 
 /*!
+ * @brief Registers the texture stream with the asset manager.
+ * @param Name The lookup name for the texture stream asset entry.
+ * @param Stream The texture stream to be managed. Retains a reference to the texture stream.
+ */
+void CCAssetManagerRegisterTextureStream(CCString CC_COPY(Name), GFXTextureStream CC_RETAIN(Stream));
+
+/*!
+ * @brief Deregisters the texture stream from the asset manager.
+ * @param Name The lookup name for the texture stream asset entry.
+ */
+void CCAssetManagerDeregisterTextureStream(CCString Name);
+
+/*!
+ * @brief Creates the registered texture stream.
+ * @param Name The lookup name for the texture stream asset entry.
+ * @return The texture stream. Must be destroyed.
+ */
+CC_NEW GFXTextureStream CCAssetManagerCreateTextureStream(CCString Name);
+
+/*!
  * @brief Registers the font with the asset manager.
  * @param Name The lookup name for the font asset entry.
  * @param Font The font to be managed. Retains a reference to the font.
