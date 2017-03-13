@@ -164,4 +164,160 @@
     GFXTextureDestroy(Root);
 }
 
+-(void) testStreams
+{
+    GFXTextureStream Stream = GFXTextureStreamCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension1D, CCColourFormatRGB8Unorm, 4, 1, 1);
+    
+    GFXTexture Texture1 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    GFXTexture Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 2, 1, 1, NULL);
+    GFXTexture Texture3 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    GFXTexture Texture4 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    
+    XCTAssertNotEqual(Texture1, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture2, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture3, NULL, "Should have enough room to create the texture");
+    XCTAssertEqual(Texture4, NULL, "Should not have enough room to create the texture");
+    
+    size_t x;
+    GFXTextureGetOffset(Texture1, &x, NULL, NULL);
+    XCTAssertEqual(x, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture2, &x, NULL, NULL);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture3, &x, NULL, NULL);
+    XCTAssertEqual(x, 3, "Should position the texture in the correct location in the stream");
+    
+    
+    GFXTextureDestroy(Texture2);
+    Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    Texture4 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    
+    XCTAssertNotEqual(Texture2, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture4, NULL, "Should have enough room to create the texture");
+    
+    
+    GFXTextureGetOffset(Texture2, &x, NULL, NULL);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture4, &x, NULL, NULL);
+    XCTAssertEqual(x, 2, "Should position the texture in the correct location in the stream");
+
+    
+    GFXTextureDestroy(Texture4);
+    GFXTextureDestroy(Texture3);
+    GFXTextureDestroy(Texture2);
+    GFXTextureDestroy(Texture1);
+    GFXTextureStreamDestroy(Stream);
+    
+    
+    
+    
+    Stream = GFXTextureStreamCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D, CCColourFormatRGB8Unorm, 3, 2, 1);
+    
+    Texture1 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 2, 2, 1, NULL);
+    Texture3 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    Texture4 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    
+    XCTAssertNotEqual(Texture1, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture2, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture3, NULL, "Should have enough room to create the texture");
+    XCTAssertEqual(Texture4, NULL, "Should not have enough room to create the texture");
+    
+    size_t y;
+    GFXTextureGetOffset(Texture1, &x, &y, NULL);
+    XCTAssertEqual(x, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture2, &x, &y, NULL);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture3, &x, &y, NULL);
+    XCTAssertEqual(x, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 1, "Should position the texture in the correct location in the stream");
+    
+    
+    GFXTextureDestroy(Texture2);
+    Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    Texture4 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    
+    XCTAssertNotEqual(Texture2, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture4, NULL, "Should have enough room to create the texture");
+    
+    
+    GFXTextureGetOffset(Texture2, &x, &y, NULL);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture4, &x, &y, NULL);
+    XCTAssertEqual(x, 2, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    
+    
+    GFXTextureDestroy(Texture4);
+    GFXTextureDestroy(Texture3);
+    GFXTextureDestroy(Texture2);
+    GFXTextureDestroy(Texture1);
+    GFXTextureStreamDestroy(Stream);
+    
+    
+    
+    
+    Stream = GFXTextureStreamCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension3D, CCColourFormatRGB8Unorm, 3, 2, 2);
+    
+    Texture1 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 2, NULL);
+    Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 2, 2, 2, NULL);
+    Texture3 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 2, NULL);
+    Texture4 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    
+    XCTAssertNotEqual(Texture1, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture2, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture3, NULL, "Should have enough room to create the texture");
+    XCTAssertEqual(Texture4, NULL, "Should not have enough room to create the texture");
+    
+    size_t z;
+    GFXTextureGetOffset(Texture1, &x, &y, &z);
+    XCTAssertEqual(x, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(z, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture2, &x, &y, &z);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(z, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture3, &x, &y, &z);
+    XCTAssertEqual(x, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 1, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(z, 0, "Should position the texture in the correct location in the stream");
+    
+    
+    GFXTextureDestroy(Texture2);
+    Texture2 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 1, 1, 1, NULL);
+    Texture4 = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, 2, 2, 1, NULL);
+    
+    XCTAssertNotEqual(Texture2, NULL, "Should have enough room to create the texture");
+    XCTAssertNotEqual(Texture4, NULL, "Should have enough room to create the texture");
+    
+    
+    GFXTextureGetOffset(Texture2, &x, &y, &z);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(z, 0, "Should position the texture in the correct location in the stream");
+    
+    GFXTextureGetOffset(Texture4, &x, &y, &z);
+    XCTAssertEqual(x, 1, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(y, 0, "Should position the texture in the correct location in the stream");
+    XCTAssertEqual(z, 1, "Should position the texture in the correct location in the stream");
+    
+    
+    GFXTextureDestroy(Texture4);
+    GFXTextureDestroy(Texture3);
+    GFXTextureDestroy(Texture2);
+    GFXTextureDestroy(Texture1);
+    GFXTextureStreamDestroy(Stream);
+}
+
 @end
