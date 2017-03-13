@@ -90,7 +90,7 @@ static inline _Bool GFXTextureStreamNodeHasChildren(GFXTextureStreamNode *Node)
 
 static inline void GFXTextureStreamNodePurge(GFXTextureStreamNode *Node)
 {
-    if ((!GFXTextureStreamNodeHasChildren(Node->child[0]) || !Node->child[0]->texture) && (!GFXTextureStreamNodeHasChildren(Node->child[1]) || !Node->child[1]->texture))
+    if ((!GFXTextureStreamNodeHasChildren(Node->child[0]) && !Node->child[0]->texture) && (!GFXTextureStreamNodeHasChildren(Node->child[1]) && !Node->child[1]->texture))
     {
         GFXTextureStreamDestroyNode(Node->child[0]);
         GFXTextureStreamDestroyNode(Node->child[1]);
