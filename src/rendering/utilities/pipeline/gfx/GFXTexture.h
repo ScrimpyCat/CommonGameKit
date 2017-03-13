@@ -64,6 +64,7 @@ typedef struct GFXTexture *GFXTexture;
 typedef struct GFXTextureStream *GFXTextureStream;
 
 
+#pragma mark - Texture Stream
 /*!
  * @brief Create a texture stream.
  * @param Allocator The allocator to be used for the allocations.
@@ -82,6 +83,8 @@ CC_NEW GFXTextureStream GFXTextureStreamCreate(CCAllocatorType Allocator, GFXTex
  * @param Stream The texture stream to be destroyed.
  */
 void GFXTextureStreamDestroy(GFXTextureStream CC_DESTROY(Stream));
+
+#pragma mark - Texture
 
 /*!
  * @brief Create a texture.
@@ -110,6 +113,18 @@ CC_NEW GFXTexture GFXTextureCreate(CCAllocatorType Allocator, GFXTextureHint Hin
  * @return The created texture.
  */
 CC_NEW GFXTexture GFXTextureCreateSubTexture(CCAllocatorType Allocator, GFXTexture CC_RETAIN(Texture), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
+
+/*!
+ * @brief Create a texture from a stream.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Stream The texture stream.
+ * @param Width The width of the texture.
+ * @param Height The height of the texture.
+ * @param Depth The depth of the texture.
+ * @param Data The pixel data to be used for the texture. Note: Takes ownership of the pixel data.
+ * @return The created texture, or NULL if the texture could not be created from the stream.
+ */
+CC_NEW GFXTexture GFXTextureCreateFromStream(CCAllocatorType Allocator, GFXTextureStream Stream, size_t Width, size_t Height, size_t Depth, CCPixelData CC_OWN(Data));
 
 /*!
  * @brief Destroy a texture.

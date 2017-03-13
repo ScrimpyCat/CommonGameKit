@@ -35,6 +35,7 @@ typedef struct {
 typedef struct GFXTextureStreamNode {
     struct GFXTextureStreamNode *child[2];
     GFXTexture texture;
+    CCMemoryDestructorCallback destructor;
     GFXTextureStreamRegion3D region;
 } GFXTextureStreamNode;
 
@@ -52,6 +53,7 @@ static GFXTextureStreamNode *GFXTextureStreamCreateNode(CCAllocatorType Allocato
         *Node = (GFXTextureStreamNode){
             .child = { NULL, NULL },
             .texture = NULL,
+            .destructor = NULL,
             .region = Region
         };
     }
@@ -181,6 +183,7 @@ GFXTextureStream GFXTextureStreamCreate(CCAllocatorType Allocator, GFXTextureHin
                 .root = (GFXTextureStreamNode){
                     .child = { NULL, NULL },
                     .texture = Texture,
+                    .destructor = NULL,
                     .region = (GFXTextureStreamRegion3D){
                         .x = 0, .width = Width,
                         .y = 0, .height = Height,
@@ -227,6 +230,34 @@ GFXTexture GFXTextureCreateSubTexture(CCAllocatorType Allocator, GFXTexture Text
     CCAssertLog(((X + Width) > X) && ((Y + Height) > Y) && ((Z + Depth) > Z), "Sub texture bounds must be greater than 1 or must not overflow");
     
     return GFXMain->texture->createSub(Allocator, CCRetain(Texture), X, Y, Z, Width, Height, Depth, Data);
+}
+
+static void GFXTextureDestructor(GFXTexture Texture)
+{
+    GFXTextureStreamNode *Node = GFXMain->texture->getStream(Texture);
+    
+    CCAssertLog(Node->destructor, "Destructor must be set");
+    
+    Node->destructor(Node->texture);
+    Node->texture = NULL;
+}
+
+GFXTexture GFXTextureCreateFromStream(CCAllocatorType Allocator, GFXTextureStream Stream, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
+{
+    CCAssertLog(Stream, "Stream must not be null");
+    
+    GFXTextureStreamNode *Node = GFXTextureStreamNodeFindAvailable(&Stream->root, Width, Height, Depth, Stream->allocator, TRUE);
+    if (!Node) return NULL;
+    
+    Node->texture = GFXTextureCreateSubTexture(Allocator, Stream->root.texture, Node->region.x, Node->region.y, Node->region.z, Width, Height, Depth, Data);
+    
+    if (Node->texture)
+    {
+        GFXMain->texture->setStream(Node->texture, Node);
+        Node->destructor = CCMemorySetDestructor(Node->texture, (CCMemoryDestructorCallback)GFXTextureDestructor);
+    }
+    
+    return Node->texture;
 }
 
 void GFXTextureDestroy(GFXTexture Texture)
