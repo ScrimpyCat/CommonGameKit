@@ -137,15 +137,15 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                 }
             }
             
-            else if (ArgCount == 3)
+            else if (ArgCount >= 3)
             {
                 CCExpression Filter = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 2));
                 CCExpression File = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 3));
                 
                 if ((CCExpressionGetType(Filter) == CCExpressionValueTypeAtom) && (CCExpressionGetType(File) == CCExpressionValueTypeList))
                 {
-                    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(File));
-                    if (ArgCount == 2)
+                    const size_t FileArgCount = CCCollectionGetCount(CCExpressionGetList(File));
+                    if (FileArgCount == 2)
                     {
                         CCExpression SourceType = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(File), 0);
                         CCExpression SourceArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(File), 1);
@@ -154,13 +154,39 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                         {
                             if (CCStringEqual(CCExpressionGetAtom(SourceType), CC_STRING("dir:")))
                             {
+                                CCString GroupName = 0;
+                                if (ArgCount == 4)
+                                {
+                                    CCExpression Group = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Asset), 4));
+                                    
+                                    if (CCExpressionGetType(Group) == CCExpressionValueTypeList)
+                                    {
+                                        const size_t GroupArgCount = CCCollectionGetCount(CCExpressionGetList(Group));
+                                        if (GroupArgCount == 2)
+                                        {
+                                            CCExpression GroupType = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Group), 0);
+                                            CCExpression GroupArg = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Group), 1);
+                                            
+                                            if ((CCExpressionGetType(GroupType) == CCExpressionValueTypeAtom) && (CCExpressionGetType(GroupArg) == CCExpressionValueTypeString))
+                                            {
+                                                if (CCStringEqual(CCExpressionGetAtom(GroupType), CC_STRING("stream:")))
+                                                {
+                                                    GroupName = CCExpressionGetString(GroupArg);
+                                                }
+                                                
+                                                else
+                                                {
+                                                    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [filter:atom] (dir: [path:string]) [(stream: group:string)]");
+                                                    
+                                                    return Asset;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                
                                 CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(SourceArg))
                                 {
-                                    /*
-                                     TODO: Change it so it combines textures
-                                     Or alternatively maybe make texture combining explicit functionality in the scripts.
-                                     */
-                                    
                                     FSPath Path = FSPathCreate(Buffer);
                                     CCPixelData Data = CCPixelDataFileCreate(CC_STD_ALLOCATOR, Path);
                                     FSPathDestroy(Path);
@@ -174,7 +200,31 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
                                         size_t Width, Height, Depth;
                                         CCPixelDataGetSize(Data, &Width, &Height, &Depth);
                                         
-                                        GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (Filtering << GFXTextureHintFilterMin) | (Filtering << GFXTextureHintFilterMag), Data->format, Width, Height, Depth, Data);
+                                        GFXTexture Texture;
+                                        if (GroupName)
+                                        {
+                                            /*
+                                             TODO: Temporary solution for exposing streams to scripting language texture creation
+                                             To allow more flexibility with creating streams, will probably expose another asset function to
+                                             create the streams directly. And then pass in the stream to be used to the texture function.
+                                             
+                                             e.g.
+                                             (texture-stream "my-stream" :linear :RGBA8Unorm_sRGB (size: 2048 2048)) #etc.
+                                             (texture "name" (texture-stream "my-stream") (dir: "blah.png"))
+                                             */
+                                            GFXTextureStream Stream = CCAssetManagerCreateTextureStream(GroupName);
+                                            if (!Stream)
+                                            {
+                                                Stream = GFXTextureStreamCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (Filtering << GFXTextureHintFilterMin) | (Filtering << GFXTextureHintFilterMag), CCColourFormatRGBA8Unorm_sRGB, 2048, 2048, 1);
+                                                CCAssetManagerRegisterTextureStream(GroupName, Stream);
+                                            }
+                                            
+                                            Texture = GFXTextureCreateFromStream(CC_STD_ALLOCATOR, Stream, Width, Height, Depth, Data);
+                                            
+                                            GFXTextureStreamDestroy(Stream);
+                                        }
+                                        
+                                        else Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (Filtering << GFXTextureHintFilterMin) | (Filtering << GFXTextureHintFilterMag), Data->format, Width, Height, Depth, Data);
                                         
                                         CCAssetManagerRegisterTexture(CCExpressionGetString(Name), Texture);
                                         
@@ -193,7 +243,7 @@ CCExpression CCAssetExpressionTexture(CCExpression Asset)
         }
     }
     
-    if (Ret == Asset) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [filter:atom] (dir: [path:string])");
+    if (Ret == Asset) CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("texture", "name:string [filter:atom] (dir: [path:string]) [(stream: group:string)]");
     
     return Ret;
 }
