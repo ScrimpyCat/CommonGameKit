@@ -18,7 +18,9 @@
             "args": [
                 [{ "type": "string", "name": "name" }],
                 [{ "type": "string", "name": "name" }, { "type": "atom", "value": "linear" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }],
-                [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }]
+                [{ "type": "string", "name": "name" }, { "type": "atom", "value": "linear" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }, { "type": "list", "value": [{ "type": "option", "value": "stream" }, { "type": "string", "name": "name" }] }],
+                [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }],
+                [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }, { "type": "list", "value": [{ "type": "option", "value": "stream" }, { "type": "string", "name": "name" }] }]
             ]
         },
         {
