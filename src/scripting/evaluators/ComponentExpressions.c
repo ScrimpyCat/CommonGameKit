@@ -28,22 +28,22 @@
 
 static CCExpression CCComponentExpressionWrapper(CCExpression Expression);
 
-static CCDictionary ComponentDescriptors = NULL, ComponentNameDescriptors = NULL;
+static CCDictionary ComponentDescriptorsName = NULL, ComponentDescriptorsID = NULL;
 void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDescriptor *Descriptor, _Bool Wrapper)
 {
-    if (!ComponentDescriptors)
+    if (!ComponentDescriptorsName)
     {
-        ComponentDescriptors = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCComponentExpressionDescriptor*), &(CCDictionaryCallbacks){
+        ComponentDescriptorsName = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCComponentExpressionDescriptor*), &(CCDictionaryCallbacks){
             .keyDestructor = CCStringDestructorForDictionary,
             .getHash = CCStringHasherForDictionary,
             .compareKeys = CCStringComparatorForDictionary
         });
         
-        ComponentNameDescriptors = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantElements, sizeof(CCComponentID), sizeof(CCComponentExpressionDescriptor*), NULL);
+        ComponentDescriptorsID = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantElements, sizeof(CCComponentID), sizeof(CCComponentExpressionDescriptor*), NULL);
     }
     
-    CCDictionarySetValue(ComponentDescriptors, &(CCString){ CCStringCreateByInsertingString(Name, 0, CC_STRING(":")) }, &Descriptor);
-    CCDictionarySetValue(ComponentNameDescriptors, &Descriptor->id, &Descriptor);
+    CCDictionarySetValue(ComponentDescriptorsName, &(CCString){ CCStringCreateByInsertingString(Name, 0, CC_STRING(":")) }, &Descriptor);
+    CCDictionarySetValue(ComponentDescriptorsID, &Descriptor->id, &Descriptor);
     
     if (Wrapper) CCExpressionEvaluatorRegister(Name, CCComponentExpressionWrapper);
 }
@@ -53,7 +53,7 @@ CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent 
     CCAssertLog(Component, "Component must not be null");
     
     CCExpression Result = NULL;
-    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentNameDescriptors, &(CCComponentID){ CCComponentGetID(Component) });
+    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentDescriptorsID, &(CCComponentID){ CCComponentGetID(Component) });
     if (Descriptor) Result = (*Descriptor)->serialize(Allocator, Component);
     else CC_LOG_ERROR("No serializer for the given component (%u)", CCComponentGetID(Component));
     
@@ -62,7 +62,7 @@ CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent 
 
 static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumerator *Enumerator, CCExpression DefaultResult)
 {
-    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentDescriptors, &Name);
+    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentDescriptorsName, &Name);
     if (Descriptor)
     {
         CCComponent Component = CCComponentCreate((*Descriptor)->id);
