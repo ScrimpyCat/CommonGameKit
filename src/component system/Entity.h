@@ -31,12 +31,6 @@
 #include <CommonGameKit/Component.h>
 
 /*!
- * @brief An ID to identify the entity.
- * @description May be unique, or may be used for multiple entities to identify them all together.
- */
-typedef uint32_t CCEntityID;
-
-/*!
  * @brief The entity.
  */
 typedef struct CCEntityInfo *CCEntity;
@@ -47,11 +41,11 @@ typedef struct CCEntityInfo *CCEntity;
  * @performance Suggested usage is to use one allocator for static entities and another allocator(s)
  *              for dynamic entities.
  *
- * @param id The id to identify this entity.
+ * @param id The id to identify this entity. May be NULL, if the entity should not be identifiable.
  * @param Allocator The allocator to be used to allocate the entity with.
  * @return The created entity.
  */
-CC_NEW CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator);
+CC_NEW CCEntity CCEntityCreate(CCString CC_COPY(id), CCAllocatorType Allocator);
 
 /*!
  * @brief Destroy an entity.

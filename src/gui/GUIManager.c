@@ -38,7 +38,7 @@
 #include <stdatomic.h>
 
 
-#define GUI_MANAGER_ENTITY_ID (CCEntityID)'gui'
+#define GUI_MANAGER_ENTITY_ID CC_STRING("gui")
 
 typedef struct {
     CCEntity entity;

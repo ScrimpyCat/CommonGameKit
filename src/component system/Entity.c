@@ -30,7 +30,7 @@
 
 
 typedef struct CCEntityInfo {
-    CCEntityID id;
+    CCString id;
     CCCollection components;
 } CCEntityInfo;
 
@@ -42,21 +42,21 @@ static void CCEntityComponentDestructor(CCCollection Collection, CCComponent *Co
     CCComponentDestroy(*Component);
 }
 
-CCEntity CCEntityCreate(CCEntityID id, CCAllocatorType Allocator)
+CCEntity CCEntityCreate(CCString id, CCAllocatorType Allocator)
 {
     CCEntity Entity = CCMalloc(Allocator, sizeof(CCEntityInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
 
     if (Entity)
     {
         *Entity = (CCEntityInfo){
-            .id = id,
+            .id = CCStringCopy(id),
             .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), (CCCollectionElementDestructor)CCEntityComponentDestructor)
         };
     }
     
     else
     {
-        CC_LOG_ERROR("Failed to create entity (%" PRIu32 ")", id);
+        CC_LOG_ERROR_CUSTOM("Failed to create entity (%S)", id);
     }
     
     return Entity;
