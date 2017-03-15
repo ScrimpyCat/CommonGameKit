@@ -24,10 +24,11 @@
  */
 
 #include "ComponentExpressions.h"
+#include "ComponentBase.h"
 
 static CCExpression CCComponentExpressionWrapper(CCExpression Expression);
 
-static CCDictionary ComponentDescriptors = NULL;
+static CCDictionary ComponentDescriptors = NULL, ComponentNameDescriptors = NULL;
 void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDescriptor *Descriptor, _Bool Wrapper)
 {
     if (!ComponentDescriptors)
@@ -37,11 +38,26 @@ void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDes
             .getHash = CCStringHasherForDictionary,
             .compareKeys = CCStringComparatorForDictionary
         });
+        
+        ComponentNameDescriptors = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantElements, sizeof(CCComponentID), sizeof(CCComponentExpressionDescriptor*), NULL);
     }
     
     CCDictionarySetValue(ComponentDescriptors, &(CCString){ CCStringCreateByInsertingString(Name, 0, CC_STRING(":")) }, &Descriptor);
+    CCDictionarySetValue(ComponentNameDescriptors, &Descriptor->id, &Descriptor);
     
     if (Wrapper) CCExpressionEvaluatorRegister(Name, CCComponentExpressionWrapper);
+}
+
+CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent Component)
+{
+    CCAssertLog(Component, "Component must not be null");
+    
+    CCExpression Result = NULL;
+    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentNameDescriptors, &(CCComponentID){ CCComponentGetID(Component) });
+    if (Descriptor) Result = (*Descriptor)->serialize(Allocator, Component);
+    else CC_LOG_ERROR("No serializer for the given component (%u)", CCComponentGetID(Component));
+    
+    return Result;
 }
 
 static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumerator *Enumerator, CCExpression DefaultResult)

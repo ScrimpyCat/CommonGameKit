@@ -46,10 +46,11 @@ typedef void (*CCComponentExpressionDeserializer)(CCComponent Component, CCExpre
 
 /*!
  * @brief Convert a component into an expression.
+ * @param Allocator The allocator to be used.
  * @param Component The component to be converted into an expression.
- * @result The expression.
+ * @return The expression.
  */
-typedef CC_NEW CCExpression (*CCComponentExpressionSerializer)(CCComponent Component);
+typedef CC_NEW CCExpression (*CCComponentExpressionSerializer)(CCAllocatorType Allocator, CCComponent Component);
 
 typedef struct {
     CCComponentID id;
@@ -64,6 +65,14 @@ typedef struct {
  * @param Wrapper Whether or not a wrapper function should be created.
  */
 void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpressionDescriptor *Descriptor, _Bool Wrapper);
+
+/*!
+ * @brief Create a component expression for a given component.
+ * @param Allocator The allocator to be used.
+ * @param Component The component to be converted into an expression.
+ * @return The expression that will evaluate into an equivalent component.
+ */
+CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent Component);
 
 CC_EXPRESSION_EVALUATOR(component) CCExpression CCComponentExpressionComponent(CCExpression Expression);
 
