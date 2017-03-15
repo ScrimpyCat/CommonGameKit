@@ -25,6 +25,7 @@
 
 #include "ComponentExpressions.h"
 #include "ComponentBase.h"
+#include "ComponentSystem.h"
 
 static CCExpression CCComponentExpressionWrapper(CCExpression Expression);
 
@@ -60,6 +61,12 @@ CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent 
     return Result;
 }
 
+static void CCComponentExpressionComponentDestructor(CCComponent Component)
+{
+    CCComponentSystemRemoveComponent(Component);
+    CCComponentDestroy(Component);
+}
+
 static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumerator *Enumerator, CCExpression DefaultResult)
 {
     const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentDescriptorsName, &Name);
@@ -72,7 +79,9 @@ static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumer
             (*Descriptor)->deserialize(Component, CCExpressionEvaluate(*Expr));
         }
         
-        return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCComponentExpressionValueTypeComponent, Component, NULL, (CCExpressionValueDestructor)CCComponentDestroy);
+        CCComponentSystemAddComponent(Component);
+        
+        return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCComponentExpressionValueTypeComponent, Component, NULL, (CCExpressionValueDestructor)CCComponentExpressionComponentDestructor);
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid argument component: no component for name (%S)", Name);
