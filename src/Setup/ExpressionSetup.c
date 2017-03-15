@@ -8,6 +8,7 @@
 #include "ComponentExpressions.h"
 #include "ControlFlowExpressions.h"
 #include "DebugExpressions.h"
+#include "EntityExpressions.h"
 #include "EqualityExpressions.h"
 #include "GraphicsExpressions.h"
 #include "IOExpressions.h"
@@ -40,6 +41,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);
     CCExpressionEvaluatorRegister(CC_STRING("inspect"), CCDebugExpressionInspect);
     CCExpressionEvaluatorRegister(CC_STRING("break"), CCDebugExpressionBreak);
+    CCExpressionEvaluatorRegister(CC_STRING("entity"), CCEntityExpressionEntity);
     CCExpressionEvaluatorRegister(CC_STRING("="), CCEqualityExpressionEqual);
     CCExpressionEvaluatorRegister(CC_STRING("!="), CCEqualityExpressionNotEqual);
     CCExpressionEvaluatorRegister(CC_STRING("<="), CCEqualityExpressionLessThanEqual);

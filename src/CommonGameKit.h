@@ -87,6 +87,7 @@
 #include <CommonGameKit/ComponentExpressions.h>
 #include <CommonGameKit/ControlFlowExpressions.h>
 #include <CommonGameKit/DebugExpressions.h>
+#include <CommonGameKit/EntityExpressions.h>
 #include <CommonGameKit/EqualityExpressions.h>
 #include <CommonGameKit/GraphicsExpressions.h>
 #include <CommonGameKit/IOExpressions.h>

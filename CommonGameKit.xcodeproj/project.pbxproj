@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F33CAF971E79286900792063 /* EntityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F33CAF951E79286900792063 /* EntityExpressions.c */; };
+		F33CAF981E79286900792063 /* EntityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAF961E79286900792063 /* EntityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -394,6 +396,8 @@
 /* Begin PBXFileReference section */
 		F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentExpressions.c; sourceTree = "<group>"; };
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
+		F33CAF951E79286900792063 /* EntityExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityExpressions.c; sourceTree = "<group>"; };
+		F33CAF961E79286900792063 /* EntityExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityExpressions.h; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
@@ -1193,6 +1197,8 @@
 				F3AF34511DCCD5AF00CAD472 /* ControlFlowExpressions.h */,
 				F3AF34531DCCD5AF00CAD472 /* DebugExpressions.c */,
 				F3AF34541DCCD5AF00CAD472 /* DebugExpressions.h */,
+				F33CAF951E79286900792063 /* EntityExpressions.c */,
+				F33CAF961E79286900792063 /* EntityExpressions.h */,
 				F3AF34561DCCD5AF00CAD472 /* EqualityExpressions.c */,
 				F3AF34571DCCD5AF00CAD472 /* EqualityExpressions.h */,
 				F3AF34591DCCD5AF00CAD472 /* GraphicsExpressions.c */,
@@ -1311,6 +1317,7 @@
 				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
 				F3AF33F21DCCD4EC00CAD472 /* Pipeline.h in Headers */,
 				F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */,
+				F33CAF981E79286900792063 /* EntityExpressions.h in Headers */,
 				F3897B4F1DCD6D4F008D6C1D /* threads.h in Headers */,
 				F3AF33B61DCCD4EC00CAD472 /* Colour.h in Headers */,
 				F3AF34DB1DCD014700CAD472 /* Window.h in Headers */,
@@ -1635,6 +1642,7 @@
 				F3AF33EA1DCCD4EC00CAD472 /* GLShaderLibrary.c in Sources */,
 				F3AF33B11DCCD4EC00CAD472 /* RenderComponent.c in Sources */,
 				F3AF34971DCCD5AF00CAD472 /* ListExpressions.c in Sources */,
+				F33CAF971E79286900792063 /* EntityExpressions.c in Sources */,
 				F3AF33B51DCCD4EC00CAD472 /* Colour.c in Sources */,
 				F3AF33921DCCD4EC00CAD472 /* GUIObject.c in Sources */,
 				F3AF33A51DCCD4EC00CAD472 /* InputMapMouseScrollComponent.c in Sources */,
