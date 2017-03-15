@@ -1,0 +1,13 @@
+{
+    "functions": [
+        {
+            "name": "entity",
+            "description": "Create a entity and initialize its state.",
+            "examples": ["(entity \"test\" (component :test (field: 1)))"],
+            "return": { "type": "custom:entity" },
+            "args": [[
+                { "type": "string", "name": "name" }
+            ]]
+        }
+    ]
+}
