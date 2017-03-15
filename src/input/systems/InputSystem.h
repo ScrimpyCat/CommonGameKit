@@ -101,7 +101,7 @@ float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action);
  *
  * @param Entity The entity that has the component attached to it.
  * @param Action The action to look for.
- * @return The amount of pressure currently applied to the action it wil either be in the form of (0.0 - 1.0),
+ * @return The amount of pressure currently applied to the action it will either be in the form of (0.0 - 1.0),
  *         or (-1.0 - +1.0), where 0.0 is no pressure and -/+1.0 is the maximum amount of pressure allowed.
  */
 CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Action);
@@ -115,7 +115,7 @@ CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Actio
  *
  * @param Entity The entity that has the component attached to it.
  * @param Action The action to look for.
- * @return The amount of pressure currently applied to the action it wil either be in the form of (0.0 - 1.0),
+ * @return The amount of pressure currently applied to the action it will either be in the form of (0.0 - 1.0),
  *         or (-1.0 - +1.0), where 0.0 is no pressure and -/+1.0 is the maximum amount of pressure allowed.
  */
 CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, const char *Action);
