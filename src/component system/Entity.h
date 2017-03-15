@@ -32,6 +32,7 @@
 
 /*!
  * @brief The entity.
+ * @description Allows @b CCRetain.
  */
 typedef struct CCEntityInfo *CCEntity;
 

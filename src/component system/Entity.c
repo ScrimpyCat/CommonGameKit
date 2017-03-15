@@ -42,6 +42,11 @@ static void CCEntityComponentDestructor(CCCollection Collection, CCComponent *Co
     CCComponentDestroy(*Component);
 }
 
+static void CCEntityDestructor(CCEntity Entity)
+{
+    CCCollectionDestroy(Entity->components);
+}
+
 CCEntity CCEntityCreate(CCString id, CCAllocatorType Allocator)
 {
     CCEntity Entity = CCMalloc(Allocator, sizeof(CCEntityInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
@@ -52,6 +57,8 @@ CCEntity CCEntityCreate(CCString id, CCAllocatorType Allocator)
             .id = CCStringCopy(id),
             .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), (CCCollectionElementDestructor)CCEntityComponentDestructor)
         };
+        
+        CCMemorySetDestructor(Entity, (CCMemoryDestructorCallback)CCEntityDestructor);
     }
     
     else
@@ -64,8 +71,7 @@ CCEntity CCEntityCreate(CCString id, CCAllocatorType Allocator)
 
 void CCEntityDestroy(CCEntity Entity)
 {
-    CCCollectionDestroy(Entity->components);
-    CC_SAFE_Free(Entity);
+    CCFree(Entity);
 }
 
 void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
