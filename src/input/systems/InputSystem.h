@@ -80,7 +80,7 @@ CCCollection CCInputSystemGetComponents(CCInputMapType InputType);
  * @param Action The action to look for.
  * @return CCInputStateActive if the action is active, or CCInputStateInactive if it is not or does not exist.
  */
-CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action);
+CCInputState CCInputSystemGetStateForAction(CCEntity Entity, CCString Action);
 
 /*!
  * @brief Gets the pressure of the action belonging to the entity.
@@ -90,7 +90,7 @@ CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
  * @return The amount of pressure currently applied to the action (0.0 - 1.0), where 0.0 is no pressure and 1.0
  *         is the maximum amount of pressure allowed.
  */
-float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action);
+float CCInputSystemGetPressureForAction(CCEntity Entity, CCString Action);
 
 /*!
  * @brief Gets the 2 axis pressure of the action belonging to the entity.
@@ -104,7 +104,7 @@ float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action);
  * @return The amount of pressure currently applied to the action it will either be in the form of (0.0 - 1.0),
  *         or (-1.0 - +1.0), where 0.0 is no pressure and -/+1.0 is the maximum amount of pressure allowed.
  */
-CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Action);
+CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, CCString Action);
 
 /*!
  * @brief Gets the 3 axis pressure of the action belonging to the entity.
@@ -118,6 +118,6 @@ CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Actio
  * @return The amount of pressure currently applied to the action it will either be in the form of (0.0 - 1.0),
  *         or (-1.0 - +1.0), where 0.0 is no pressure and -/+1.0 is the maximum amount of pressure allowed.
  */
-CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, const char *Action);
+CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, CCString Action);
 
 #endif

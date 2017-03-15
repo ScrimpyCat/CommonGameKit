@@ -119,7 +119,7 @@ CCCollection CCInputSystemGetComponents(CCInputMapType InputType)
     return CCInputSystemGetComponentsInCollection(CCComponentSystemGetComponentsForSystem(CC_INPUT_SYSTEM_ID), InputType);
 }
 
-static CCComponent CCInputSystemFindComponentForActionInCollection(CCCollection Group, const char *Action)
+static CCComponent CCInputSystemFindComponentForActionInCollection(CCCollection Group, CCString Action)
 {
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(Group, &Enumerator);
@@ -129,8 +129,8 @@ static CCComponent CCInputSystemFindComponentForActionInCollection(CCCollection 
         CCComponentID id = CCComponentGetID(*Component);
         if ((id & CC_INPUT_COMPONENT_FLAG) == CC_INPUT_COMPONENT_FLAG)
         {
-            const char *InputAction = CCInputMapComponentGetAction(*Component);
-            if ((InputAction) && (!strcmp(InputAction, Action))) return *Component;
+            CCString InputAction = CCInputMapComponentGetAction(*Component);
+            if ((InputAction) && (CCStringEqual(InputAction, Action))) return *Component;
             else if (id == CC_INPUT_MAP_GROUP_COMPONENT_ID)
             {
                 CCComponent Input = CCInputSystemFindComponentForActionInCollection(CCInputMapGroupComponentGetInputMaps(*Component), Action);
@@ -142,7 +142,7 @@ static CCComponent CCInputSystemFindComponentForActionInCollection(CCCollection 
     return NULL;
 }
 
-CCInputState CCInputSystemGetStateForAction(CCEntity Entity, const char *Action)
+CCInputState CCInputSystemGetStateForAction(CCEntity Entity, CCString Action)
 {
     CCComponent Input = CCInputSystemFindComponentForActionInCollection(CCEntityGetComponents(Entity), Action);
     if (Input)
@@ -182,7 +182,7 @@ static float CCInputSystemPressureForBinaryInput(CCInputState State, double Time
     return CCClampf((State == CCInputStateActive ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
 }
 
-float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action)
+float CCInputSystemGetPressureForAction(CCEntity Entity, CCString Action)
 {
     CCComponent Input = CCInputSystemFindComponentForActionInCollection(CCEntityGetComponents(Entity), Action);
     if (Input)
@@ -227,7 +227,7 @@ float CCInputSystemGetPressureForAction(CCEntity Entity, const char *Action)
     return 0.0f;
 }
 
-CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Action)
+CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, CCString Action)
 {
     CCComponent Input = CCInputSystemFindComponentForActionInCollection(CCEntityGetComponents(Entity), Action);
     if (Input)
@@ -251,7 +251,7 @@ CCVector2D CCInputSystemGetPressure2ForAction(CCEntity Entity, const char *Actio
     return CCVector2DZero;
 }
 
-CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, const char *Action)
+CCVector3D CCInputSystemGetPressure3ForAction(CCEntity Entity, CCString Action)
 {
     CCComponent Input = CCInputSystemFindComponentForActionInCollection(CCEntityGetComponents(Entity), Action);
     if (Input)
