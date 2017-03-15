@@ -36,17 +36,25 @@ typedef enum {
 
 /*!
  * @brief Evaluate a component argument.
- * @description The initializer is responsible for evaluating any arguments of the parent
+ * @description The deserializer is responsible for evaluating any arguments of the parent
  *              component as well.
  *
  * @param Component The component whose state is to be set.
  * @param Arg The expression of the argument, which takes the form of an option.
  */
-typedef void (*CCComponentExpressionArgInitializer)(CCComponent Component, CCExpression Arg);
+typedef void (*CCComponentExpressionDeserializer)(CCComponent Component, CCExpression Arg);
+
+/*!
+ * @brief Convert a component into an expression.
+ * @param Component The component to be converted into an expression.
+ * @result The expression.
+ */
+typedef CC_NEW CCExpression (*CCComponentExpressionSerializer)(CCComponent Component);
 
 typedef struct {
     CCComponentID id;
-    CCComponentExpressionArgInitializer initializer;
+    CCComponentExpressionDeserializer deserialize;
+    CCComponentExpressionSerializer serialize;
 } CCComponentExpressionDescriptor;
 
 /*!

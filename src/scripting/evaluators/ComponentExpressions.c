@@ -53,7 +53,7 @@ static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumer
         
         for (CCExpression *Expr = CCCollectionEnumeratorNext(Enumerator); Expr; Expr = CCCollectionEnumeratorNext(Enumerator))
         {
-            (*Descriptor)->initializer(Component, CCExpressionEvaluate(*Expr));
+            (*Descriptor)->deserialize(Component, CCExpressionEvaluate(*Expr));
         }
         
         return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, (CCExpressionValueType)CCComponentExpressionValueTypeComponent, Component, NULL, (CCExpressionValueDestructor)CCComponentDestroy);

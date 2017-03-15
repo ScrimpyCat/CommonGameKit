@@ -131,7 +131,7 @@ static inline void TestComponentSetValue(CCComponent Component, int Value)
     CCComponentDeregister(TEST_COMPONENT_ID);
 }
 
-static void TestArgInitializer(CCComponent Component, CCExpression Arg)
+static void TestDeserializer(CCComponent Component, CCExpression Arg)
 {
     if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Arg))))
     {
@@ -145,7 +145,7 @@ static void TestArgInitializer(CCComponent Component, CCExpression Arg)
 
 static CCComponentExpressionDescriptor Descriptor = {
     .id = TEST_COMPONENT_ID,
-    .initializer = TestArgInitializer
+    .deserialize = TestDeserializer
 };
 
 -(void) testComponentExpression
