@@ -227,6 +227,7 @@
 		F3AF34DA1DCD014700CAD472 /* Window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34D81DCD014700CAD472 /* Window.c */; };
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
+		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -617,6 +618,7 @@
 		F3AF34D81DCD014700CAD472 /* Window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Window.c; sourceTree = "<group>"; };
 		F3AF34D91DCD014700CAD472 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
+		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -912,6 +914,7 @@
 		F3AF32B71DCCD4EB00CAD472 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */,
 				F3AF32BF1DCCD4EB00CAD472 /* InputMapComponent.h */,
 				F3AF32C01DCCD4EB00CAD472 /* InputMapGroupComponent.c */,
 				F3AF32C11DCCD4EB00CAD472 /* InputMapGroupComponent.h */,
@@ -1621,6 +1624,7 @@
 				F3AF33961DCCD4EC00CAD472 /* InputMapControllerButtonComponent.c in Sources */,
 				F3AF343B1DCCD4EC00CAD472 /* Text.c in Sources */,
 				F3AF33C71DCCD4EC00CAD472 /* GFXBlit.c in Sources */,
+				F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */,
 				F3AF34391DCCD4EC00CAD472 /* Font.c in Sources */,
 				F3AF33C31DCCD4EC00CAD472 /* PixelDataStatic.c in Sources */,
 				F3AF33821DCCD4EC00CAD472 /* ComponentSystem.c in Sources */,

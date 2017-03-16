@@ -28,6 +28,7 @@
 
 #include <CommonGameKit/InputSystem.h>
 #include <CommonGameKit/ComponentBase.h>
+#include <CommonGameKit/Expression.h>
 
 #define CC_INPUT_MAP_COMPONENT_ID (CCInputMapTypeNone | CC_INPUT_COMPONENT_FLAG)
 
@@ -37,6 +38,7 @@ typedef struct {
     void (*callback)();
 } CCInputMapComponentClass, *CCInputMapComponentPrivate;
 
+void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg);
 
 static inline void CCInputMapComponentInitialize(CCComponent Component, CCComponentID id)
 {
