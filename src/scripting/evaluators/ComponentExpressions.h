@@ -58,6 +58,36 @@ typedef struct {
     CCComponentExpressionSerializer serialize;
 } CCComponentExpressionDescriptor;
 
+typedef enum {
+    CCComponentExpressionArgumentTypeUInt8,
+    CCComponentExpressionArgumentTypeUInt16,
+    CCComponentExpressionArgumentTypeUInt32,
+    CCComponentExpressionArgumentTypeUInt64,
+    CCComponentExpressionArgumentTypeInt8,
+    CCComponentExpressionArgumentTypeInt16,
+    CCComponentExpressionArgumentTypeInt32,
+    CCComponentExpressionArgumentTypeInt64,
+    CCComponentExpressionArgumentTypeFloat32,
+    CCComponentExpressionArgumentTypeFloat64,
+    CCComponentExpressionArgumentTypeVector2,
+    CCComponentExpressionArgumentTypeVector3,
+    CCComponentExpressionArgumentTypeVector4,
+    CCComponentExpressionArgumentTypeColour,
+    CCComponentExpressionArgumentTypeString,
+    CCComponentExpressionArgumentTypeData
+} CCComponentExpressionArgumentSetterType;
+
+typedef struct {
+    /// The name of the argument to be matched.
+    CCString name;
+    /// Ignored if @b CCExpressionValueTypeUnspecified otherwise is checked and used to inform the conversion
+    CCExpressionValueType serializedType;
+    /// The type of setter being used.
+    CCComponentExpressionArgumentSetterType setterType;
+    /// The component setter to be used for the given deserializer.
+    void (*setter)();
+} CCComponentExpressionArgumentDeserializer;
+
 /*!
  * @brief Register component evaluators.
  * @param Name The name of the component expression.
@@ -65,6 +95,16 @@ typedef struct {
  * @param Wrapper Whether or not a wrapper function should be created.
  */
 void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpressionDescriptor *Descriptor, _Bool Wrapper);
+
+/*!
+ * @brief Deserialize and set a component argument.
+ * @param Component The component to be set.
+ * @param Arg The expression argument to be deserialized.
+ * @param Deserializer The argument deserializers.
+ * @param Count The number of argument deserializers.
+ * @return TRUE if the argument was successfully deserialized, otherwise FALSE if it was not.
+ */
+_Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count);
 
 /*!
  * @brief Create a component expression for a given component.
