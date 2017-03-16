@@ -43,6 +43,7 @@ typedef struct {
 void CCInputMapGroupComponentRegister(void);
 void CCInputMapGroupComponentDeregister(void);
 void CCInputMapGroupComponentElementDestructor(CCCollection Collection, CCComponent *Element);
+void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg);
 
 
 static inline void CCInputMapGroupComponentInitialize(CCComponent Component, CCComponentID id)
