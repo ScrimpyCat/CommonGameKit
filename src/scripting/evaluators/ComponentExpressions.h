@@ -59,6 +59,7 @@ typedef struct {
 } CCComponentExpressionDescriptor;
 
 typedef enum {
+    CCComponentExpressionArgumentTypeBool,
     CCComponentExpressionArgumentTypeUInt8,
     CCComponentExpressionArgumentTypeUInt16,
     CCComponentExpressionArgumentTypeUInt32,

@@ -90,6 +90,14 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         {
                             switch (Deserializer[Loop].setterType)
                             {
+                                case CCComponentExpressionArgumentTypeBool:
+                                    if (ArgType == CCExpressionValueTypeInteger)
+                                    {
+                                        ((void(*)(CCComponent,_Bool))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
+                                        return TRUE;
+                                    }
+                                    break;
+                                    
                                 case CCComponentExpressionArgumentTypeUInt8:
                                     if (ArgType == CCExpressionValueTypeInteger)
                                     {
