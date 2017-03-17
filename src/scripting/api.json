@@ -19,8 +19,10 @@
     "includes": [
         "evaluators/asset.json",
         "evaluators/colour.json",
+        "evaluators/component.json",
         "evaluators/control_flow.json",
         "evaluators/debug.json",
+        "evaluators/entity.json",
         "evaluators/equality.json",
         "evaluators/graphics.json",
         "evaluators/io.json",
