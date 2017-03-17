@@ -45,6 +45,7 @@ typedef struct {
 
 void CCInputMapKeyboardComponentRegister(void);
 void CCInputMapKeyboardComponentDeregister(void);
+void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression Arg);
 
 
 static inline void CCInputMapKeyboardComponentInitialize(CCComponent Component, CCComponentID id)
