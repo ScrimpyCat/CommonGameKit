@@ -1,0 +1,32 @@
+{
+    "functions": [
+        {
+            "name": "input-group",
+            "description": "Create an input map group component.",
+            "examples": ["(input-group\n\t(action: \"move\")\n\t(input:\n\t\t(input-keyboard (keycode: :left))\n\t\t(input-keyboard (keycode: :right))\n\t)\n)"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "action",
+                    "description": "The name of the action.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "input",
+                    "description": "The inputs to be grouped together.",
+                    "args": [
+                        {
+                            "set": [{ "type": "list", "name": "inputs", "value": [{ "type": "custom:component", "name": "input" }] }],
+                            "repeat": [{ "type": "custom:component", "name": "input" }]
+                        }
+                    ]
+                },
+                {
+                    "name": "all-active",
+                    "description": "Whether all the grouped inputs need to be active.",
+                    "args": [[{ "type": "boolean" }]]
+                }
+            ]
+        }
+    ]
+}
