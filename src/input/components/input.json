@@ -15,10 +15,8 @@
                     "name": "input",
                     "description": "The inputs to be grouped together.",
                     "args": [
-                        {
-                            "set": [{ "type": "list", "name": "inputs", "value": [{ "type": "custom:component", "name": "input" }] }],
-                            "repeat": [{ "type": "custom:component", "name": "input" }]
-                        }
+                        [{ "type": "list", "name": "inputs", "value": [{ "type": "custom:component", "name": "input" }] }],
+                        { "repeat": [{ "type": "custom:component", "name": "input" }] }
                     ]
                 },
                 {
