@@ -2,6 +2,7 @@
     "includes": [
         "src/scripting/api.json",
         "src/gui/gui.json",
+        "src/input/components/input.json",
         "assets/ui/ui.json"
     ]
 }
