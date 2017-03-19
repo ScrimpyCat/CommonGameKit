@@ -287,6 +287,7 @@ static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumer
     if (Descriptor)
     {
         CCComponent Component = CCComponentCreate((*Descriptor)->id);
+        if ((*Descriptor)->initialize) (*Descriptor)->initialize(Component);
         
         for (CCExpression *Expr = CCCollectionEnumeratorNext(Enumerator); Expr; Expr = CCCollectionEnumeratorNext(Enumerator))
         {

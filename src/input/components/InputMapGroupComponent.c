@@ -32,6 +32,7 @@ static CCExpression CCInputMapGroupComponentSerializer(CCAllocatorType Allocator
 
 static const CCComponentExpressionDescriptor CCInputMapGroupComponentDescriptor = {
     .id = CC_INPUT_MAP_GROUP_COMPONENT_ID,
+    .initialize = NULL,
     .deserialize = CCInputMapGroupComponentDeserializer,
     .serialize = CCInputMapGroupComponentSerializer
 };

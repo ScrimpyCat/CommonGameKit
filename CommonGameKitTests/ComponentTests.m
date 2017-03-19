@@ -145,7 +145,9 @@ static void TestDeserializer(CCComponent Component, CCExpression Arg)
 
 static CCComponentExpressionDescriptor Descriptor = {
     .id = TEST_COMPONENT_ID,
-    .deserialize = TestDeserializer
+    .initialize = NULL,
+    .deserialize = TestDeserializer,
+    .serialize = NULL
 };
 
 -(void) testComponentExpression

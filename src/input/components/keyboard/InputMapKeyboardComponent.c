@@ -32,6 +32,7 @@ const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycod
 
 static const CCComponentExpressionDescriptor CCInputMapKeyboardComponentDescriptor = {
     .id = CC_INPUT_MAP_KEYBOARD_COMPONENT_ID,
+    .initialize = NULL,
     .deserialize = CCInputMapKeyboardComponentDeserializer,
     .serialize = NULL
 };

@@ -35,6 +35,12 @@ typedef enum {
 } CCComponentExpressionValueType;
 
 /*!
+ * @brief Initialize a component.
+ * @param Component The component to be initialized.
+ */
+typedef void (*CCComponentExpressionInitializer)(CCComponent Component);
+
+/*!
  * @brief Evaluate a component argument.
  * @description The deserializer is responsible for evaluating any arguments of the parent
  *              component as well.
@@ -54,6 +60,7 @@ typedef CC_NEW CCExpression (*CCComponentExpressionSerializer)(CCAllocatorType A
 
 typedef struct {
     CCComponentID id;
+    CCComponentExpressionInitializer initialize;
     CCComponentExpressionDeserializer deserialize;
     CCComponentExpressionSerializer serialize;
 } CCComponentExpressionDescriptor;
