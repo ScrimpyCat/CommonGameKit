@@ -11,6 +11,7 @@
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F33CAF971E79286900792063 /* EntityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F33CAF951E79286900792063 /* EntityExpressions.c */; };
 		F33CAF981E79286900792063 /* EntityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAF961E79286900792063 /* EntityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -399,6 +400,7 @@
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
 		F33CAF951E79286900792063 /* EntityExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityExpressions.c; sourceTree = "<group>"; };
 		F33CAF961E79286900792063 /* EntityExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityExpressions.h; sourceTree = "<group>"; };
+		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
@@ -746,6 +748,7 @@
 				F3897BAD1DCD764E008D6C1D /* ExpressionStateTests.m */,
 				F3897BAE1DCD764E008D6C1D /* ExpressionStringTests.m */,
 				F3897BAF1DCD764E008D6C1D /* ExpressionTests.m */,
+				F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */,
 			);
 			name = Scripting;
 			sourceTree = "<group>";
@@ -1717,6 +1720,7 @@
 				F3897BC91DCD764E008D6C1D /* PixelDataGeneratorTests.m in Sources */,
 				F3897BBD1DCD764E008D6C1D /* ExpressionEqualityTests.m in Sources */,
 				F3897BC51DCD764E008D6C1D /* ExpressionTests.m in Sources */,
+				F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */,
 				F3897BB91DCD764E008D6C1D /* ComponentTests.m in Sources */,
 				F3897BC71DCD764E008D6C1D /* GLDebugTests.m in Sources */,
 				F3897BBC1DCD764E008D6C1D /* ExpressionControlFlowTests.m in Sources */,
