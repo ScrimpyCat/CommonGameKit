@@ -62,8 +62,8 @@ void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Ar
 {
     if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2))
     {
-        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 0);
-        if ((CCExpressionGetType(Arg) == CCExpressionValueTypeString) && (CCStringEqual(CCExpressionGetString(Name), CC_STRING("input:"))))
+        CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+        if ((CCExpressionGetType(Arg) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CC_STRING("input:"))))
         {
             CCEnumerator Enumerator;
             CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);

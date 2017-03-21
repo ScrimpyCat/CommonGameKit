@@ -27,7 +27,7 @@
 #include "ComponentExpressions.h"
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("action:"), .setterType = CCComponentExpressionArgumentTypeString, .setter = CCInputMapComponentSetAction }
+    { .name = CC_STRING("action:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = CCInputMapComponentSetAction }
 };
 
 static CCDictionary Callbacks[CCInputMapTypeCount];
@@ -38,20 +38,20 @@ void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
         const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Arg));
         if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
         {
-            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 0);
-            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeString)
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
             {
-                CCString Name = CCExpressionGetString(NameExpr);
+                CCString Name = CCExpressionGetAtom(NameExpr);
                 if (CCStringEqual(Name, CC_STRING("callback:")))
                 {
                     if (ArgCount == 2)
                     {
-                        CCExpression CallbackNameExpr = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 1);
+                        CCExpression CallbackNameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
                         if (CCExpressionGetType(CallbackNameExpr) == CCExpressionValueTypeAtom)
                         {
                             CCString CallbackName = CCExpressionGetAtom(CallbackNameExpr);
                             
-                            void (**Callback)() = CCDictionaryGetValue(Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask], &Name);
+                            void (**Callback)() = Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask] ? CCDictionaryGetValue(Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask], &CallbackName) : NULL;
                             if (Callback)
                             {
                                 CCInputMapComponentSetCallback(Component, *Callback);

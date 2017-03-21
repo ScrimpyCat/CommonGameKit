@@ -189,7 +189,7 @@ void CCInputMapKeyboardComponentRegister(void)
         .compareKeys = CCStringComparatorForDictionary
     });
     
-    for (size_t Loop = 0; Loop < sizeof(NamedKeys) / sizeof(typeof(NamedKeys)); Loop++)
+    for (size_t Loop = 0; Loop < sizeof(NamedKeys) / sizeof(typeof(*NamedKeys)); Loop++)
     {
         CCDictionarySetValue(Keycodes, &NamedKeys[Loop].key, &NamedKeys[Loop].code);
     }
@@ -200,7 +200,7 @@ void CCInputMapKeyboardComponentRegister(void)
         .compareKeys = CCStringComparatorForDictionary
     });
     
-    for (size_t Loop = 0; Loop < sizeof(NamedModifiers) / sizeof(typeof(NamedModifiers)); Loop++)
+    for (size_t Loop = 0; Loop < sizeof(NamedModifiers) / sizeof(typeof(*NamedModifiers)); Loop++)
     {
         CCDictionarySetValue(Modifiers, &NamedModifiers[Loop].modifier, &NamedModifiers[Loop].flag);
     }
@@ -225,15 +225,15 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
         const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Arg));
         if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
         {
-            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 0);
-            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeString)
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
             {
-                CCString Name = CCExpressionGetString(NameExpr);
+                CCString Name = CCExpressionGetAtom(NameExpr);
                 if (CCStringEqual(Name, CC_STRING("keycode:")))
                 {
                     if (ArgCount == 2)
                     {
-                        CCExpression Keycode = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 1);
+                        CCExpression Keycode = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
                         if (CCExpressionGetType(Keycode) == CCExpressionValueTypeAtom)
                         {
                             CCString Code = CCExpressionGetAtom(Keycode);
@@ -298,7 +298,7 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
                 {
                     if (ArgCount == 2)
                     {
-                        CCExpression Char = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 1);
+                        CCExpression Char = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
                         if ((CCExpressionGetType(Char) == CCExpressionValueTypeString) && (CCStringGetLength(CCExpressionGetString(Char)) == 1))
                         {
                             CCInputMapKeyboardComponentSetCharacter(Component, CCStringGetCharacterAtIndex(CCExpressionGetString(Char), 0));

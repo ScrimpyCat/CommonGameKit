@@ -58,9 +58,9 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
         if (ArgCount >= 2)
         {
             CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
-            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeString)
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
             {
-                CCString Name = CCExpressionGetString(NameExpr);
+                CCString Name = CCExpressionGetAtom(NameExpr);
                 for (size_t Loop = 0; Loop < Count; Loop++)
                 {
                     if (CCStringEqual(Name, Deserializer[Loop].name))
