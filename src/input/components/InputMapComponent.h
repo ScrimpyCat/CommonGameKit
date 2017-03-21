@@ -39,6 +39,7 @@ typedef struct {
 } CCInputMapComponentClass, *CCInputMapComponentPrivate;
 
 void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg);
+void CCInputMapComponentRegisterCallback(CCString CC_COPY(Name), CCInputMapType Type, void (*Callback)());
 
 static inline void CCInputMapComponentInitialize(CCComponent Component, CCComponentID id)
 {

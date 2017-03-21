@@ -30,7 +30,60 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("action:"), .setterType = CCComponentExpressionArgumentTypeString, .setter = CCInputMapComponentSetAction }
 };
 
+static CCDictionary Callbacks[CCInputMapTypeCount];
 void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
 {
+    if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
+    {
+        const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Arg));
+        if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
+        {
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeString)
+            {
+                CCString Name = CCExpressionGetString(NameExpr);
+                if (CCStringEqual(Name, CC_STRING("callback:")))
+                {
+                    if (ArgCount == 2)
+                    {
+                        CCExpression CallbackNameExpr = *(CCExpression*)CCOrderedCollectionGetEntryAtIndex(CCExpressionGetList(Arg), 1);
+                        if (CCExpressionGetType(CallbackNameExpr) == CCExpressionValueTypeAtom)
+                        {
+                            CCString CallbackName = CCExpressionGetAtom(CallbackNameExpr);
+                            
+                            void (**Callback)() = CCDictionaryGetValue(Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask], &Name);
+                            if (Callback)
+                            {
+                                CCInputMapComponentSetCallback(Component, *Callback);
+                            }
+                            
+                            else CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (callback:) is not a valid atom", CallbackName);
+                        }
+                        
+                        else CC_LOG_ERROR("Expect value for argument (callback:) to be an atom");
+                    }
+                    
+                    else CC_LOG_ERROR("Expect value for argument (callback:) to be an atom");
+                    
+                    return;
+                }
+            }
+        }
+    }
+    
     CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)));
+}
+
+void CCInputMapComponentRegisterCallback(CCString Name, CCInputMapType Type, void (*Callback)())
+{
+    if (!Callbacks[Type])
+    {
+        Callbacks[Type] = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(Callback), &(CCDictionaryCallbacks){
+            .keyDestructor = CCStringDestructorForDictionary,
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary
+        });
+    }
+    
+    CCDictionarySetValue(Callbacks[Type], &(CCString){ CCStringCopy(Name) }, &Callback);
 }

@@ -47,7 +47,8 @@ typedef enum {
     CCInputMapTypeController,
     CCInputMapTypeControllerAxes,
     CCInputMapTypeControllerButton,
-    CCInputMapTypeGroup
+    CCInputMapTypeGroup,
+    CCInputMapTypeCount
 } CCInputMapType;
 
 typedef enum {
