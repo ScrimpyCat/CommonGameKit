@@ -38,6 +38,11 @@
                     "args": [[{ "type": "string" }]]
                 },
                 {
+                    "name": "callback",
+                    "description": "The name of the callback.",
+                    "args": [[{ "type": "atom" }]]
+                },
+                {
                     "name": "keycode",
                     "description": "The keycode to be mapped.",
                     "args": [
