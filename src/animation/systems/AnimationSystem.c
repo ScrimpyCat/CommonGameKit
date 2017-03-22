@@ -87,7 +87,7 @@ static void CCAnimationSystemUnlock(void)
 
 static _Bool CCAnimationSystemHandlesComponent(CCComponentID id)
 {
-    return (id & 0x7f000000) == CC_ANIMATION_COMPONENT_FLAG;
+    return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_ANIMATION_COMPONENT_FLAG;
 }
 
 static void CCAnimationSystemUpdate(double DeltaTime, CCCollection Components)

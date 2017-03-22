@@ -282,7 +282,7 @@ void CCInputSystemWindowFocus(_Bool Focus)
 
 static _Bool CCInputSystemHandlesComponent(CCComponentID id)
 {
-    return (id & 0x7f000000) == CC_INPUT_COMPONENT_FLAG;
+    return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_INPUT_COMPONENT_FLAG;
 }
 
 static void CCInputSystemUpdate(void *Context, CCCollection Components)

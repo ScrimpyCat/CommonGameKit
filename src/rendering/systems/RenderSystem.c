@@ -91,7 +91,7 @@ static void CCRenderSystemUnlock(void)
 
 static _Bool CCRenderSystemHandlesComponent(CCComponentID id)
 {
-    return (id & 0x7f000000) == CC_RENDER_COMPONENT_FLAG;
+    return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_RENDER_COMPONENT_FLAG;
 }
 
 #warning demo rendering behaviour (this will be changed later)
