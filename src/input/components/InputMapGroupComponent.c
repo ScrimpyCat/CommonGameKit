@@ -63,7 +63,7 @@ void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Ar
     if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2))
     {
         CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
-        if ((CCExpressionGetType(Arg) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CC_STRING("input:"))))
+        if ((CCExpressionGetType(Name) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CC_STRING("input:"))))
         {
             CCEnumerator Enumerator;
             CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);
@@ -75,7 +75,7 @@ void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Ar
                     CCExpressionChangeOwnership(*Expr, NULL, NULL);
                     
                     CCComponent Map = CCExpressionGetData(*Expr);
-                    if ((CCComponentGetID(Map) & CC_INPUT_COMPONENT_FLAG) == CC_INPUT_COMPONENT_FLAG)
+                    if ((CCComponentGetID(Map) & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_INPUT_COMPONENT_FLAG)
                     {
                         CCInputMapGroupComponentAddInputMap(Component, Map);
                     }
@@ -92,7 +92,7 @@ void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Ar
                             CCExpressionChangeOwnership(MapExpr, NULL, NULL);
                             
                             CCComponent Map = CCExpressionGetData(MapExpr);
-                            if ((CCComponentGetID(Map) & CC_INPUT_COMPONENT_FLAG) == CC_INPUT_COMPONENT_FLAG)
+                            if ((CCComponentGetID(Map) & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_INPUT_COMPONENT_FLAG)
                             {
                                 CCInputMapGroupComponentAddInputMap(Component, Map);
                             }
