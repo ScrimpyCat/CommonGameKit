@@ -27,6 +27,7 @@
 #import "Expression.h"
 #import "ExpressionEvaluator.h"
 #import "ComponentExpressions.h"
+#import "InputMapGroupComponent.h"
 #import "InputMapKeyboardComponent.h"
 
 @interface ExpressionComponentTests : CCTestCase
@@ -43,9 +44,39 @@ static void KeyboardCallback()
 {
     [super setUp];
     
+    CCInputMapGroupComponentRegister();
     CCInputMapKeyboardComponentRegister();
     
     CCInputMapComponentRegisterCallback(CC_STRING(":test"), CCInputMapTypeKeyboard, KeyboardCallback);
+}
+
+-(void) testInputMapGroup
+{
+    CCExpression Expr = CCExpressionCreateFromSource("(input-group (action: \"test\") (input: (input-keyboard (keycode: :left)) (input-keyboard (keycode: :right))) (all-active: #t))");
+    CCExpression Result = CCExpressionEvaluate(Expr);
+    
+    XCTAssertEqual(CCExpressionGetType(Result), CCComponentExpressionValueTypeComponent, @"Should create the component");
+    
+    CCComponent Component = CCExpressionGetData(Result);
+    XCTAssertEqual(CCComponentGetID(Component), CC_INPUT_MAP_GROUP_COMPONENT_ID, @"Should be correct component");
+    
+    XCTAssertTrue(CCInputMapGroupComponentGetWantsAllActive(Component), @"Should initialize correctly");
+    XCTAssertTrue(CCStringEqual(CCInputMapComponentGetAction(Component), CC_STRING("test")), @"Should initialize correctly");
+    XCTAssertEqual(CCCollectionGetCount(CCInputMapGroupComponentGetInputMaps(Component)), 2, @"Should be correct component");
+    
+    CCKeyboardKeycode Keycode[2] = { CCKeyboardKeycodeLeft, CCKeyboardKeycodeRight };
+    CC_COLLECTION_FOREACH(CCComponent, Key, CCInputMapGroupComponentGetInputMaps(Component))
+    {
+        XCTAssertEqual(CCComponentGetID(Key), CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, @"Should be correct component");
+        
+        XCTAssertTrue(CCInputMapKeyboardComponentGetIsKeycode(Key), @"Should initialize correctly");
+        XCTAssertEqual(CCInputMapKeyboardComponentGetKeycode(Key), Keycode[CCOrderedCollectionGetIndex(CCInputMapGroupComponentGetInputMaps(Component), CCCollectionEnumeratorGetEntry(&CC_COLLECTION_CURRENT_ENUMERATOR))], @"Should initialize correctly");
+        XCTAssertTrue(CCInputMapKeyboardComponentGetIgnoreModifier(Key), @"Should initialize correctly");
+        XCTAssertFalse(CCInputMapKeyboardComponentGetRepeats(Key), @"Should initialize correctly");
+        XCTAssertEqual(CCInputMapKeyboardComponentGetRamp(Key), 0.0f, @"Should initialize correctly");
+    }
+    
+    CCExpressionDestroy(Expr);
 }
 
 -(void) testInputMapKeyboard
