@@ -80,6 +80,9 @@ typedef enum {
     CCComponentExpressionArgumentTypeVector2,
     CCComponentExpressionArgumentTypeVector3,
     CCComponentExpressionArgumentTypeVector4,
+    CCComponentExpressionArgumentTypeVector2i,
+    CCComponentExpressionArgumentTypeVector3i,
+    CCComponentExpressionArgumentTypeVector4i,
     CCComponentExpressionArgumentTypeColour,
     CCComponentExpressionArgumentTypeString,
     CCComponentExpressionArgumentTypeData

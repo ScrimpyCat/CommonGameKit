@@ -202,6 +202,30 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     }
                                     break;
                                     
+                                case CCComponentExpressionArgumentTypeVector2i:
+                                    if (ArgType == CCExpressionValueTypeList)
+                                    {
+                                        ((void(*)(CCComponent,CCVector2Di))Deserializer[Loop].setter)(Component, CCExpressionGetVector2i(ArgExpr));
+                                        return TRUE;
+                                    }
+                                    break;
+                                    
+                                case CCComponentExpressionArgumentTypeVector3i:
+                                    if (ArgType == CCExpressionValueTypeList)
+                                    {
+                                        ((void(*)(CCComponent,CCVector3Di))Deserializer[Loop].setter)(Component, CCExpressionGetVector3i(ArgExpr));
+                                        return TRUE;
+                                    }
+                                    break;
+                                    
+                                case CCComponentExpressionArgumentTypeVector4i:
+                                    if (ArgType == CCExpressionValueTypeList)
+                                    {
+                                        ((void(*)(CCComponent,CCVector4Di))Deserializer[Loop].setter)(Component, CCExpressionGetVector4i(ArgExpr));
+                                        return TRUE;
+                                    }
+                                    break;
+                                    
                                 case CCComponentExpressionArgumentTypeColour:
                                     if (ArgType == CCExpressionValueTypeList)
                                     {
@@ -242,6 +266,18 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     
                                 case CCComponentExpressionArgumentTypeVector4:
                                     ((void(*)(CCComponent,CCVector4D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector4(Arg));
+                                    return TRUE;
+                                    
+                                case CCComponentExpressionArgumentTypeVector2i:
+                                    ((void(*)(CCComponent,CCVector2Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2i(Arg));
+                                    return TRUE;
+                                    
+                                case CCComponentExpressionArgumentTypeVector3i:
+                                    ((void(*)(CCComponent,CCVector3Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector3i(Arg));
+                                    return TRUE;
+                                    
+                                case CCComponentExpressionArgumentTypeVector4i:
+                                    ((void(*)(CCComponent,CCVector4Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector4i(Arg));
                                     return TRUE;
                                     
                                 case CCComponentExpressionArgumentTypeColour:
