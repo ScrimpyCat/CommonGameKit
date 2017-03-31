@@ -70,6 +70,44 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testFlatten
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(= (1 2 3 4) (flatten (1 2 3 4)))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= ((1 2) (3) 4) (flatten ((1 2) (3) 4)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (1 2 3 4 5) (flatten (1 2 3) 4 5)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (1 2 3 4 5 6 (7)) (flatten (1 2 3) 4 (5 6 (7)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+}
+
 -(void) testParts
 {
     CCExpression Expression = CCExpressionCreateFromSource("(parts 0 (10 20 30 40))");
