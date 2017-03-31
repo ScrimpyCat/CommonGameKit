@@ -15,6 +15,13 @@
             "args": [
                 { "repeat": [{ "type": "expression" }] }
             ]
+        },
+        {
+            "name": "parts",
+            "description": "Divide the list into subdivided parts.",
+            "examples": ["(parts 2 (1 2 3 4)) ;((1 2) (3 4))", "(parts 3 (1 2 3 4)) ;((1 2) (3 4) ())"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "integer", "name": "chunks" }, { "type": "list" }]]
         }
     ]
 }
