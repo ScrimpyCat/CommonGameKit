@@ -25,6 +25,58 @@
 
 #include "EqualityExpressions.h"
 
+static _Bool CCEqualityExpressionCompare(CCExpression Left, CCExpression Right)
+{
+    const CCExpressionValueType LeftType = CCExpressionGetType(Left), RightType = CCExpressionGetType(Right);
+    switch (LeftType)
+    {
+        case CCExpressionValueTypeInteger:
+            if (RightType == CCExpressionValueTypeInteger) return CCExpressionGetInteger(Left) == CCExpressionGetInteger(Right);
+            else if (RightType == CCExpressionValueTypeFloat) return (float)CCExpressionGetInteger(Left) == CCExpressionGetFloat(Right);
+            break;
+            
+        case CCExpressionValueTypeFloat:
+            if (RightType == CCExpressionValueTypeInteger) return CCExpressionGetInteger(Left) == (float)CCExpressionGetInteger(Right);
+            else if (RightType == CCExpressionValueTypeFloat) return CCExpressionGetInteger(Left) == CCExpressionGetFloat(Right);
+            break;
+            
+        case CCExpressionValueTypeString:
+            if (RightType == CCExpressionValueTypeString) return CCStringEqual(CCExpressionGetString(Left), CCExpressionGetString(Right));
+            else if (RightType == CCExpressionValueTypeAtom) return CCStringEqual(CCExpressionGetString(Left), CCExpressionGetAtom(Right));
+            break;
+            
+        case CCExpressionValueTypeAtom:
+            if (RightType == CCExpressionValueTypeString) return CCStringEqual(CCExpressionGetAtom(Left), CCExpressionGetString(Right));
+            else if (RightType == CCExpressionValueTypeAtom) return CCStringEqual(CCExpressionGetAtom(Left), CCExpressionGetAtom(Right));
+            break;
+            
+        case CCExpressionValueTypeList:
+        {
+            if (RightType == CCExpressionValueTypeList)
+            {
+                CCEnumerator LeftEnumerator, RightEnumerator;
+                
+                CCCollectionGetEnumerator(CCExpressionGetList(Left), &LeftEnumerator);
+                CCCollectionGetEnumerator(CCExpressionGetList(Right), &RightEnumerator);
+                
+                CCExpression *LeftExpr = CCCollectionEnumeratorGetCurrent(&LeftEnumerator), *RightExpr = CCCollectionEnumeratorGetCurrent(&RightEnumerator);
+                for ( ; LeftExpr && RightExpr; LeftExpr = CCCollectionEnumeratorNext(&LeftEnumerator), RightExpr = CCCollectionEnumeratorNext(&RightEnumerator))
+                {
+                    if (!CCEqualityExpressionCompare(*LeftExpr, *RightExpr)) return FALSE;
+                }
+                
+                return LeftExpr == RightExpr;
+            }
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+}
+
 CCExpression CCEqualityExpressionEqual(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
@@ -106,6 +158,20 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                     {
                         Equal = CCStringEqual(FirstS, (Type == CCExpressionValueTypeString ? CCExpressionGetString : CCExpressionGetAtom)(Result));
                     }
+                    
+                    if (!Equal) break;
+                }
+                break;
+            }
+                
+            case CCExpressionValueTypeList:
+            {
+                for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+                {
+                    Equal = FALSE;
+                    
+                    Result = CCExpressionEvaluate(*Expr);
+                    Equal = CCEqualityExpressionCompare(*FirstExpr, Result);
                     
                     if (!Equal) break;
                 }
