@@ -83,3 +83,48 @@ CCExpression CCListExpressionFlatten(CCExpression Expression)
     
     return List;
 }
+
+CCExpression CCListExpressionParts(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 2)
+    {
+        CCExpression Chunks = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(Chunks) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+        {
+            const size_t Count = CCCollectionGetCount(CCExpressionGetList(List)), ChunkCount = CCExpressionGetInteger(Chunks);
+            
+            size_t ItemsPerChunk = ChunkCount ? Count / ChunkCount : 0;
+            if (ItemsPerChunk * ChunkCount < Count) ItemsPerChunk++;
+            
+            CCExpression Parts = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
+            CCEnumerator Enumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(List), &Enumerator);
+            
+            for (size_t Loop = 0; Loop < ChunkCount; Loop++)
+            {
+                CCExpression Part = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                
+                for (size_t Loop2 = 0; Loop2 < ItemsPerChunk; Loop2++)
+                {
+                    const size_t Index = (Loop * ItemsPerChunk) + Loop2;
+                    if (Index >= Count) break;
+                    
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Part), &(CCExpression){ CCExpressionCopy(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), Index)) });
+                }
+                
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Parts), &(CCExpression){ Part });
+            }
+            
+            return Parts;
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("parts", "chunks:integer list:list");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("parts", "chunks:integer list:list");
+    
+    return Expression;
+}
