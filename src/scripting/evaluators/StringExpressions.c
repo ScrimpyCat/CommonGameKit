@@ -219,7 +219,15 @@ CCExpression CCStringExpressionRemove(CCExpression Expression)
     return Expression;
 }
 
-static CCString CCStringExpressionBinaryFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+typedef struct {
+    CCString separator;
+    CCString prefix;
+    CCString suffix;
+    int precision;
+    _Bool compact;
+} CCStringExpressionFormattingOptions;
+
+static CCString CCStringExpressionBinaryFormatter(CCExpression Expression, CCExpressionValueType Type, const CCStringExpressionFormattingOptions *Options)
 {
     char Bits[(sizeof(int32_t) * 8) + 1];
     uint32_t Value = Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) };
@@ -233,7 +241,7 @@ static CCString CCStringExpressionBinaryFormatter(CCExpression Expression, CCExp
     
     size_t FormattedLength = Count;
     const char *Formatted = Bits;
-    if (Compact)
+    if (Options->compact)
     {
         uint64_t HighestSetBitIndex = CCBitCountSet(CCBitMaskForValue(CCBitHighestSet(Value)));
         if (HighestSetBitIndex)
@@ -245,14 +253,22 @@ static CCString CCStringExpressionBinaryFormatter(CCExpression Expression, CCExp
         else FormattedLength = 1;
     }
     
+    else
+    {
+        int Precision = Options->precision == -1 ? 32 : Options->precision;
+        
+        Formatted = Bits + (Count - Precision);
+        FormattedLength = Precision;
+    }
+    
     CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Formatted, FormattedLength);
     
     size_t PartCount = 0;
     CCString Parts[3];
     
-    if (Prefix) Parts[PartCount++] = Prefix;
+    if (Options->prefix) Parts[PartCount++] = Options->prefix;
     Parts[PartCount++] = String;
-    if (Suffix) Parts[PartCount++] = Suffix;
+    if (Options->suffix) Parts[PartCount++] = Options->suffix;
     
     if (PartCount == 1) return String;
     
@@ -262,19 +278,22 @@ static CCString CCStringExpressionBinaryFormatter(CCExpression Expression, CCExp
     return FormattedString;
 }
 
-static CCString CCStringExpressionDecimalFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+static CCString CCStringExpressionDecimalFormatter(CCExpression Expression, CCExpressionValueType Type, const CCStringExpressionFormattingOptions *Options)
 {
+    int Precision = Options->precision == -1 ? 0 : Options->precision;
+    
+    int32_t Value = Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : (int32_t)CCExpressionGetFloat(Expression);
     char Digits[12];
-    size_t Length = sprintf(Digits, "%" PRId32, (Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : (int32_t)CCExpressionGetFloat(Expression)));
+    size_t Length = Options->compact ? sprintf(Digits, "%" PRId32, Value) : sprintf(Digits, "%.*" PRId32, Precision, Value);
     
     CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
     
     size_t PartCount = 0;
     CCString Parts[3];
     
-    if (Prefix) Parts[PartCount++] = Prefix;
+    if (Options->prefix) Parts[PartCount++] = Options->prefix;
     Parts[PartCount++] = String;
-    if (Suffix) Parts[PartCount++] = Suffix;
+    if (Options->suffix) Parts[PartCount++] = Options->suffix;
     
     if (PartCount == 1) return String;
     
@@ -284,19 +303,22 @@ static CCString CCStringExpressionDecimalFormatter(CCExpression Expression, CCEx
     return FormattedString;
 }
 
-static CCString CCStringExpressionHexFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+static CCString CCStringExpressionHexFormatter(CCExpression Expression, CCExpressionValueType Type, const CCStringExpressionFormattingOptions *Options)
 {
+    int Precision = Options->precision == -1 ? 8 : Options->precision;
+    
+    uint32_t Value = Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) };
     char Digits[9];
-    size_t Length = sprintf(Digits, (Compact ? "%" PRIx32 : "%0.8" PRIx32 ), (Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) }));
+    size_t Length = Options->compact ? sprintf(Digits, "%" PRIx32, Value) : sprintf(Digits, "%.*" PRIx32, Precision, Value);
     
     CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
     
     size_t PartCount = 0;
     CCString Parts[3];
     
-    if (Prefix) Parts[PartCount++] = Prefix;
+    if (Options->prefix) Parts[PartCount++] = Options->prefix;
     Parts[PartCount++] = String;
-    if (Suffix) Parts[PartCount++] = Suffix;
+    if (Options->suffix) Parts[PartCount++] = Options->suffix;
     
     if (PartCount == 1) return String;
     
@@ -306,15 +328,17 @@ static CCString CCStringExpressionHexFormatter(CCExpression Expression, CCExpres
     return FormattedString;
 }
 
-static CCString CCStringExpressionFloatFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+static CCString CCStringExpressionFloatFormatter(CCExpression Expression, CCExpressionValueType Type, const CCStringExpressionFormattingOptions *Options)
 {
-    char Digits[32];
-    size_t Length = sprintf(Digits, "%.6f", (Type == CCExpressionValueTypeInteger ? (float)CCExpressionGetInteger(Expression) : CCExpressionGetFloat(Expression)));
+    int Precision = Options->precision == -1 ? 6 : Options->precision;
     
-    if (Compact)
+    char Digits[32];
+    size_t Length = sprintf(Digits, "%.*f", Precision, (Type == CCExpressionValueTypeInteger ? (float)CCExpressionGetInteger(Expression) : CCExpressionGetFloat(Expression)));
+    
+    if ((Options->compact) && (Precision > 1))
     {
         size_t Loop = 0;
-        for ( ; Loop < 5; Loop++)
+        for (size_t CompactPrecision = Precision - 1; Loop < CompactPrecision; Loop++)
         {
             if (Digits[Length - (Loop + 1)] != '0') break;
         }
@@ -327,9 +351,9 @@ static CCString CCStringExpressionFloatFormatter(CCExpression Expression, CCExpr
     size_t PartCount = 0;
     CCString Parts[3];
     
-    if (Prefix) Parts[PartCount++] = Prefix;
+    if (Options->prefix) Parts[PartCount++] = Options->prefix;
     Parts[PartCount++] = String;
-    if (Suffix) Parts[PartCount++] = Suffix;
+    if (Options->suffix) Parts[PartCount++] = Options->suffix;
     
     if (PartCount == 1) return String;
     
@@ -339,14 +363,14 @@ static CCString CCStringExpressionFloatFormatter(CCExpression Expression, CCExpr
     return FormattedString;
 }
 
-static CCString CCStringExpressionConvertToString(CCExpression Expression, CCString Separator, CCString Prefix, CCString Suffix, _Bool Compact, CCString (*Formatter)(CCExpression, CCExpressionValueType, CCString, CCString, _Bool))
+static CCString CCStringExpressionConvertToString(CCExpression Expression, const CCStringExpressionFormattingOptions *Options, CCString (*Formatter)(CCExpression, CCExpressionValueType, const CCStringExpressionFormattingOptions *))
 {
     const CCExpressionValueType Type = CCExpressionGetType(Expression);
     switch (Type)
     {
         case CCExpressionValueTypeInteger:
         case CCExpressionValueTypeFloat:
-            return Formatter(Expression, Type, Prefix, Suffix, Compact);
+            return Formatter(Expression, Type, Options);
             
         case CCExpressionValueTypeString:
             return CCStringCopy(CCExpressionGetString(Expression));
@@ -359,12 +383,12 @@ static CCString CCStringExpressionConvertToString(CCExpression Expression, CCStr
             CCString String = 0;
             CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
             {
-                CCString Result = CCStringExpressionConvertToString(Expr, Separator, Prefix, Suffix, Compact, Formatter);
+                CCString Result = CCStringExpressionConvertToString(Expr, Options, Formatter);
                 if (Result)
                 {
                     if (String)
                     {
-                        CCString FormattedString = CCStringCreateByJoiningStrings((CCString[2]){ String, Result }, 2, Separator);
+                        CCString FormattedString = CCStringCreateByJoiningStrings((CCString[2]){ String, Result }, 2, Options->separator);
                         
                         CCStringDestroy(Result);
                         CCStringDestroy(String);
@@ -395,7 +419,7 @@ CCExpression CCStringExpressionFormat(CCExpression Expression)
         
         if (CCExpressionGetType(TypeExpr) == CCExpressionValueTypeAtom)
         {
-            CCString (*Formatter)(CCExpression, CCExpressionValueType, CCString, CCString, _Bool);
+            CCString (*Formatter)(CCExpression, CCExpressionValueType, const CCStringExpressionFormattingOptions *);
             CCString Type = CCExpressionGetAtom(TypeExpr);
             
             if (CCStringEqual(Type, CC_STRING(":dec"))) Formatter = CCStringExpressionDecimalFormatter;
@@ -410,8 +434,11 @@ CCExpression CCStringExpressionFormat(CCExpression Expression)
             }
             
             
-            CCString Separator = 0, Prefix = 0, Suffix = 0;
-            _Bool Compact = TRUE;
+            CCStringExpressionFormattingOptions Options = {
+                .separator = 0, .prefix = 0, .suffix = 0,
+                .compact = TRUE,
+                .precision = -1
+            };
             
             for (CCExpression *OptionExpr; (OptionExpr = CCCollectionEnumeratorNext(&Enumerator)); )
             {
@@ -424,22 +451,27 @@ CCExpression CCStringExpressionFormat(CCExpression Expression)
                         CCString Name = CCExpressionGetAtom(NameExpr);
                         if (CCStringEqual(Name, CC_STRING("separator:")))
                         {
-                            Separator = CCExpressionGetNamedString(Option);
+                            Options.separator = CCExpressionGetNamedString(Option);
                         }
                         
                         else if (CCStringEqual(Name, CC_STRING("prefix:")))
                         {
-                            Prefix = CCExpressionGetNamedString(Option);
+                            Options.prefix = CCExpressionGetNamedString(Option);
                         }
                         
                         else if (CCStringEqual(Name, CC_STRING("suffix:")))
                         {
-                            Suffix = CCExpressionGetNamedString(Option);
+                            Options.suffix = CCExpressionGetNamedString(Option);
                         }
                         
                         else if (CCStringEqual(Name, CC_STRING("compact:")))
                         {
-                            Compact = CCExpressionGetNamedInteger(Option);
+                            Options.compact = CCExpressionGetNamedInteger(Option);
+                        }
+                        
+                        else if (CCStringEqual(Name, CC_STRING("precision:")))
+                        {
+                            Options.precision = CCExpressionGetNamedInteger(Option);
                         }
                         
                         else
@@ -467,7 +499,7 @@ CCExpression CCStringExpressionFormat(CCExpression Expression)
             }
             
             
-            CCString Result = CCStringExpressionConvertToString(ValueExpr, Separator, Prefix, Suffix, Compact, Formatter);
+            CCString Result = CCStringExpressionConvertToString(ValueExpr, &Options, Formatter);
             
             return Result ? CCExpressionCreateString(CC_STD_ALLOCATOR, Result, FALSE) : CCExpressionCreateString(CC_STD_ALLOCATOR, CC_STRING(""), TRUE);
         }
