@@ -59,6 +59,46 @@
             "examples": ["(remove 0 3 \"123\") ;\"\"", "(remove 1 1 \"123\") ;\"13\""],
             "return": { "type": "string" },
             "args": [[{ "type": "integer", "name": "offset" }, { "type": "integer", "name": "length" }, { "type": "string" }]]
+        },
+        {
+            "name": "format",
+            "description": "Format expressions as string.",
+            "examples": ["(format :bin 5) ;\"101\"", "(format :hex (1, 2, 3) (precision: 2) (compact: #f) (prefix: \"0x\") (separator: \",\")) ;\"0x01,0x02,0x03\""],
+            "return": { "type": "string" },
+            "args": [
+                [{ "type": "atom", "name": "type" }, { "type": "expression" }],
+                [{ "type": "atom", "value": "bin" }, { "type": "expression" }],
+                [{ "type": "atom", "value": "dec" }, { "type": "expression" }],
+                [{ "type": "atom", "value": "hex" }, { "type": "expression" }],
+                [{ "type": "atom", "value": "flt" }, { "type": "expression" }]
+            ],
+            "options": [
+                {
+                    "name": "compact",
+                    "description": "Whether or not values should be in compact form or not.",
+                    "args": [[{ "type": "boolean" }]]
+                },
+                {
+                    "name": "precision",
+                    "description": "The precision to be used for the conversion. This is typically the minimum character limit.",
+                    "args": [[{ "type": "integer" }]]
+                },
+                {
+                    "name": "separator",
+                    "description": "The string to be used to separate the list items.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "prefix",
+                    "description": "The string to be used infront of every converted literal.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "suffix",
+                    "description": "The string to be used at the end of every converted literal.",
+                    "args": [[{ "type": "string" }]]
+                }
+            ]
         }
     ]
 }
