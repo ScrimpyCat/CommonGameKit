@@ -420,7 +420,7 @@ static CCString CCExpressionStringConvertEscapes(CCAllocatorType Allocator, cons
     CCString s1 = CCStringCreateWithSize(Allocator, CCStringEncodingASCII | CCStringHintCopy, Input, Length);
     
     CCString s2 = CCStringCreateByReplacingOccurrencesOfGroupedStrings(s1, (CCString[4]){
-        CC_STRING("\\\""), CC_STRING("\\\n"), CC_STRING("\\\t"), CC_STRING("\\\\")
+        CC_STRING("\\\""), CC_STRING("\\n"), CC_STRING("\\t"), CC_STRING("\\\\")
     }, (CCString[4]){
         CC_STRING("\""), CC_STRING("\n"), CC_STRING("\t"), CC_STRING("\\")
     }, 4);
