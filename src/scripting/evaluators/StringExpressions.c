@@ -24,6 +24,8 @@
  */
 
 #include "StringExpressions.h"
+#include "ExpressionHelpers.h"
+#include <inttypes.h>
 
 CCExpression CCStringExpressionPrefix(CCExpression Expression)
 {
@@ -213,6 +215,254 @@ CCExpression CCStringExpressionRemove(CCExpression Expression)
     }
     
     CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("remove", "offset:integer length:integer offset:integer");
+    
+    return Expression;
+}
+
+static CCString CCStringExpressionBinaryFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+{
+    char Bits[(sizeof(int32_t) * 8) + 1];
+    uint32_t Value = Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) };
+    size_t Count = sizeof(uint32_t) * 8;
+    for (size_t Loop = 0; Loop < Count; Loop++)
+    {
+        Bits[(Count - Loop) - 1] = ((Value >> Loop) & 1) + '0';
+    }
+    Bits[Count] = 0;
+    
+    
+    size_t FormattedLength = Count;
+    const char *Formatted = Bits;
+    if (Compact)
+    {
+        uint64_t HighestSetBitIndex = CCBitCountSet(CCBitMaskForValue(CCBitHighestSet(Value)));
+        if (HighestSetBitIndex)
+        {
+            Formatted = Bits + (Count - HighestSetBitIndex);
+            FormattedLength = HighestSetBitIndex;
+        }
+        
+        else FormattedLength = 1;
+    }
+    
+    CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Formatted, FormattedLength);
+    
+    size_t PartCount = 0;
+    CCString Parts[3];
+    
+    if (Prefix) Parts[PartCount++] = Prefix;
+    Parts[PartCount++] = String;
+    if (Suffix) Parts[PartCount++] = Suffix;
+    
+    if (PartCount == 1) return String;
+    
+    CCString FormattedString = CCStringCreateByJoiningStrings(Parts, PartCount, 0);
+    CCStringDestroy(String);
+    
+    return FormattedString;
+}
+
+static CCString CCStringExpressionDecimalFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+{
+    char Digits[12];
+    size_t Length = sprintf(Digits, "%" PRId32, (Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : (int32_t)CCExpressionGetFloat(Expression)));
+    
+    CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
+    
+    size_t PartCount = 0;
+    CCString Parts[3];
+    
+    if (Prefix) Parts[PartCount++] = Prefix;
+    Parts[PartCount++] = String;
+    if (Suffix) Parts[PartCount++] = Suffix;
+    
+    if (PartCount == 1) return String;
+    
+    CCString FormattedString = CCStringCreateByJoiningStrings(Parts, PartCount, 0);
+    CCStringDestroy(String);
+    
+    return FormattedString;
+}
+
+static CCString CCStringExpressionHexFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+{
+    char Digits[12];
+    size_t Length = sprintf(Digits, "%" PRIx32, (Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) }));
+    
+    CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
+    
+    size_t PartCount = 0;
+    CCString Parts[3];
+    
+    if (Prefix) Parts[PartCount++] = Prefix;
+    Parts[PartCount++] = String;
+    if (Suffix) Parts[PartCount++] = Suffix;
+    
+    if (PartCount == 1) return String;
+    
+    CCString FormattedString = CCStringCreateByJoiningStrings(Parts, PartCount, 0);
+    CCStringDestroy(String);
+    
+    return FormattedString;
+}
+
+static CCString CCStringExpressionFloatFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
+{
+    char Digits[12];
+    size_t Length = sprintf(Digits, "%.6f", (Type == CCExpressionValueTypeInteger ? (float)CCExpressionGetInteger(Expression) : CCExpressionGetFloat(Expression)));
+    
+    CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
+    
+    size_t PartCount = 0;
+    CCString Parts[3];
+    
+    if (Prefix) Parts[PartCount++] = Prefix;
+    Parts[PartCount++] = String;
+    if (Suffix) Parts[PartCount++] = Suffix;
+    
+    if (PartCount == 1) return String;
+    
+    CCString FormattedString = CCStringCreateByJoiningStrings(Parts, PartCount, 0);
+    CCStringDestroy(String);
+    
+    return FormattedString;
+}
+
+static CCString CCStringExpressionConvertToString(CCExpression Expression, CCString Separator, CCString Prefix, CCString Suffix, _Bool Compact, CCString (*Formatter)(CCExpression, CCExpressionValueType, CCString, CCString, _Bool))
+{
+    const CCExpressionValueType Type = CCExpressionGetType(Expression);
+    switch (Type)
+    {
+        case CCExpressionValueTypeInteger:
+        case CCExpressionValueTypeFloat:
+            return Formatter(Expression, Type, Prefix, Suffix, Compact);
+            
+        case CCExpressionValueTypeString:
+            return CCStringCopy(CCExpressionGetString(Expression));
+
+        case CCExpressionValueTypeAtom:
+            return CCStringCopy(CCExpressionGetAtom(Expression));
+            
+        case CCExpressionValueTypeList:
+        {
+            CCString String = 0;
+            CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
+            {
+                CCString Result = CCStringExpressionConvertToString(Expr, Separator, Prefix, Suffix, Compact, Formatter);
+                if (Result)
+                {
+                    if (String)
+                    {
+                        CCString FormattedString = CCStringCreateByJoiningStrings((CCString[2]){ String, Result }, 2, Separator);
+                        
+                        CCStringDestroy(Result);
+                        CCStringDestroy(String);
+                        
+                        String = FormattedString;
+                    }
+                    
+                    else String = Result;
+                }
+            }
+            
+            return String;
+        }
+    }
+    
+    return 0;
+}
+
+CCExpression CCStringExpressionFormat(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 3)
+    {
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+        
+        CCExpression TypeExpr = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
+        CCExpression ValueExpr = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
+        
+        if (CCExpressionGetType(TypeExpr) == CCExpressionValueTypeAtom)
+        {
+            CCString (*Formatter)(CCExpression, CCExpressionValueType, CCString, CCString, _Bool);
+            CCString Type = CCExpressionGetAtom(TypeExpr);
+            
+            if (CCStringEqual(Type, CC_STRING(":dec"))) Formatter = CCStringExpressionDecimalFormatter;
+            else if (CCStringEqual(Type, CC_STRING(":hex"))) Formatter = CCStringExpressionHexFormatter;
+            else if (CCStringEqual(Type, CC_STRING(":flt"))) Formatter = CCStringExpressionFloatFormatter;
+            else if (CCStringEqual(Type, CC_STRING(":bin"))) Formatter = CCStringExpressionBinaryFormatter;
+            else
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("format", "type:atom value:expr ...:options");
+                
+                return Expression;
+            }
+            
+            
+            CCString Separator = 0, Prefix = 0, Suffix = 0;
+            _Bool Compact = TRUE;
+            
+            for (CCExpression *OptionExpr; (OptionExpr = CCCollectionEnumeratorNext(&Enumerator)); )
+            {
+                CCExpression Option = CCExpressionEvaluate(*OptionExpr);
+                if ((CCExpressionGetType(Option) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Option)) == 2))
+                {
+                    CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Option), 0);
+                    if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                    {
+                        CCString Name = CCExpressionGetAtom(NameExpr);
+                        if (CCStringEqual(Name, CC_STRING("separator:")))
+                        {
+                            Separator = CCExpressionGetNamedString(Option);
+                        }
+                        
+                        else if (CCStringEqual(Name, CC_STRING("prefix:")))
+                        {
+                            Prefix = CCExpressionGetNamedString(Option);
+                        }
+                        
+                        else if (CCStringEqual(Name, CC_STRING("suffix:")))
+                        {
+                            Suffix = CCExpressionGetNamedString(Option);
+                        }
+                        
+                        else if (CCStringEqual(Name, CC_STRING("compact:")))
+                        {
+                            Compact = CCExpressionGetNamedInteger(Option);
+                        }
+                        
+                        else
+                        {
+                            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("format", "type:atom value:expr ...:options");
+                            
+                            return Expression;
+                        }
+                    }
+                    
+                    else
+                    {
+                        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("format", "type:atom value:expr ...:options");
+                        
+                        return Expression;
+                    }
+                }
+                
+                else
+                {
+                    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("format", "type:atom value:expr ...:options");
+                    
+                    return Expression;
+                }
+            }
+            
+            
+            CCString Result = CCStringExpressionConvertToString(ValueExpr, Separator, Prefix, Suffix, Compact, Formatter);
+            
+            return Result ? CCExpressionCreateString(CC_STD_ALLOCATOR, Result, FALSE) : CCExpressionCreateString(CC_STD_ALLOCATOR, CC_STRING(""), TRUE);
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("format", "type:atom value:expr ...:options");
     
     return Expression;
 }
