@@ -232,4 +232,186 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testFormat
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(format :bin 5)");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("101")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin -5))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("11111111111111111111111111111011")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin 1.0))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("111111100000000000000000000000")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin \"foo\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("foo")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :dec 5)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("5")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :dec -5))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("-5")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :dec 1.0))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("1")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :dec \"foo\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("foo")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :hex 5)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("5")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :hex -5))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("fffffffb")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :hex 1.0))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("3f800000")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :hex \"foo\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("foo")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :flt 5)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("5.000000")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :flt -5))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("-5.000000")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :flt 1.0))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("1.000000")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :flt \"foo\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("foo")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin 5 (compact: #f))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("00000000000000000000000000000101")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin 5 (compact: #t))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("101")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin (5 0 2 7) (separator: \",\") (compact: #t))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("101,0,10,111")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(format :bin (5 0 2 7) (separator: \",\") (prefix: \"(\") (suffix: \")\") (compact: #t))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeString, @"Should be a string");
+    XCTAssertTrue(CCStringEqual(CCExpressionGetString(Result), CC_STRING("(101),(0),(10),(111)")), @"Should be formatted correctly");
+    
+    CCExpressionDestroy(Expression);
+}
+
 @end
