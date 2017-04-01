@@ -629,7 +629,7 @@
     XCTAssertEqual(CCCollectionGetCount(Lines), 3, @"Should produce 3 lines");
     XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0)), 2, @"Should contain 2 attributes");
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 0))->string, CC_STRING("a ")), @"Should be the correct string");
-    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 1))->string, CC_STRING("a\n")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 1))->string, CC_STRING("a")), @"Should be the correct string");
     XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1)), 2, @"Should contain 2 attributes");
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 0))->string, CC_STRING("ab")), @"Should be the correct string");
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 1))->string, CC_STRING("b ")), @"Should be the correct string");

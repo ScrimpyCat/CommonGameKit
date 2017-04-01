@@ -284,7 +284,7 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                 {
                     WordStart = 0;
                     
-                    CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length) });
+                    CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length - 1) });
                     
                     Offset += Length;
                     Length = 0;
