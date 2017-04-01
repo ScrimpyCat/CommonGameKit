@@ -286,8 +286,8 @@ static CCString CCStringExpressionDecimalFormatter(CCExpression Expression, CCEx
 
 static CCString CCStringExpressionHexFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
 {
-    char Digits[12];
-    size_t Length = sprintf(Digits, "%" PRIx32, (Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) }));
+    char Digits[9];
+    size_t Length = sprintf(Digits, (Compact ? "%" PRIx32 : "%0.8" PRIx32 ), (Type == CCExpressionValueTypeInteger ? CCExpressionGetInteger(Expression) : *(uint32_t*)&(float){ CCExpressionGetFloat(Expression) }));
     
     CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
     
@@ -308,8 +308,19 @@ static CCString CCStringExpressionHexFormatter(CCExpression Expression, CCExpres
 
 static CCString CCStringExpressionFloatFormatter(CCExpression Expression, CCExpressionValueType Type, CCString Prefix, CCString Suffix, _Bool Compact)
 {
-    char Digits[12];
+    char Digits[32];
     size_t Length = sprintf(Digits, "%.6f", (Type == CCExpressionValueTypeInteger ? (float)CCExpressionGetInteger(Expression) : CCExpressionGetFloat(Expression)));
+    
+    if (Compact)
+    {
+        size_t Loop = 0;
+        for ( ; Loop < 5; Loop++)
+        {
+            if (Digits[Length - (Loop + 1)] != '0') break;
+        }
+        
+        Length -= Loop;
+    }
     
     CCString String = CCStringCreateWithSize(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Digits, Length);
     
