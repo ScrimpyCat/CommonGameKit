@@ -128,3 +128,60 @@ CCExpression CCListExpressionParts(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCListExpressionSplit(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 2)
+    {
+        CCExpression Indexes = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(Indexes) == CCExpressionValueTypeList) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+        {
+            CCEnumerator Enumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(Indexes), &Enumerator);
+            
+            CCExpression *SplitIndex = CCCollectionEnumeratorGetCurrent(&Enumerator);
+            if ((SplitIndex) && (CCExpressionGetType(*SplitIndex) != CCExpressionValueTypeInteger))
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of split: indexes must contain integers only");
+                
+                return Expression;
+            }
+            
+            CCExpression Parts = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            CCExpression Part = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            CCOrderedCollectionAppendElement(CCExpressionGetList(Parts), &(CCExpression){ Part });
+            
+            size_t Index = 0;
+            CC_COLLECTION_FOREACH(CCExpression, Item, CCExpressionGetList(List))
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Part), &(CCExpression){ CCExpressionCopy(Item) });
+                
+                if ((SplitIndex) && (CCExpressionGetInteger(*SplitIndex) == Index))
+                {
+                    Part = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Parts), &(CCExpression){ Part });
+                    
+                    SplitIndex = CCCollectionEnumeratorNext(&Enumerator);
+                    if ((SplitIndex) && ((CCExpressionGetType(*SplitIndex) != CCExpressionValueTypeInteger) || (CCExpressionGetInteger(*SplitIndex) <= Index)))
+                    {
+                        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of split: indexes must contain a sorted list of integers only");
+                        
+                        return Expression;
+                    }
+                }
+                
+                Index++;
+            }
+            
+            return Parts;
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("split", "indexes:list list:list");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("split", "indexes:list list:list");
+    
+    return Expression;
+}
