@@ -22,6 +22,13 @@
             "examples": ["(parts 2 (1 2 3 4)) ;((1 2) (3 4))", "(parts 3 (1 2 3 4)) ;((1 2) (3 4) ())"],
             "return": { "type": "list" },
             "args": [[{ "type": "integer", "name": "chunks" }, { "type": "list" }]]
+        },
+        {
+            "name": "split",
+            "description": "Split the list at each index into sublists.",
+            "examples": ["(split (0) (1 2 3 4)) ;((1) (2 3 4))", "(split (0 1) (1 2 3 4)) ;((1) (2) (3 4))"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "list", "name": "indexes" }, { "type": "list" }]]
         }
     ]
 }
