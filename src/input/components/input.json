@@ -198,6 +198,64 @@
                     "args": [[{ "type": "boolean" }]]
                 }
             ]
+        },
+        {
+            "name": "input-controller-axes",
+            "description": "Create an input map controller axes component.",
+            "examples": ["(input-controller-axes (action: \"action\") (x: 0) (y: 1 :flip) (deadzone: 0.05))"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "action",
+                    "description": "The name of the action.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "callback",
+                    "description": "The name of the callback.",
+                    "args": [[{ "type": "atom" }]]
+                },
+                {
+                    "name": "x",
+                    "description": "The x axis to be mapped.",
+                    "args": [
+                        [{ "type": "integer", "name": "identifier" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "one-sided" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }, { "type": "atom", "value": "one-sided" }]
+                    ]
+                },
+                {
+                    "name": "y",
+                    "description": "The y axis to be mapped.",
+                    "args": [
+                        [{ "type": "integer", "name": "identifier" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "one-sided" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }, { "type": "atom", "value": "one-sided" }]
+                    ]
+                },
+                {
+                    "name": "z",
+                    "description": "The z axis to be mapped.",
+                    "args": [
+                        [{ "type": "integer", "name": "identifier" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "one-sided" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }, { "type": "atom", "value": "one-sided" }]
+                    ]
+                },
+                {
+                    "name": "deadzone",
+                    "description": "The deadzone to be applied to the axes.",
+                    "args": [[{ "type": "float", "name": "radius" }]]
+                },
+                {
+                    "name": "resolution",
+                    "description": "The amount of precision for the axes.",
+                    "args": [[{ "type": "integer", "name": "precision" }]]
+                }
+            ]
         }
     ]
 }
