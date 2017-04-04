@@ -24,6 +24,7 @@
  */
 
 #include "InputMapControllerAxesComponent.h"
+#include "ComponentExpressions.h"
 
 const char * const CCInputMapControllerAxesComponentName = "input_map_controller_axes";
 
@@ -35,4 +36,81 @@ void CCInputMapControllerAxesComponentRegister(void)
 void CCInputMapControllerAxesComponentDeregister(void)
 {
     CCComponentDeregister(CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID);
+}
+
+static CCComponentExpressionArgumentDeserializer Arguments[] = {
+    { .name = CC_STRING("deadzone:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (void(*)())CCInputMapControllerAxesComponentSetDeadzone },
+    { .name = CC_STRING("resolution:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeUInt8, .setter = (void(*)())CCInputMapControllerAxesComponentSetResolution }
+};
+
+void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpression Arg)
+{
+    if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
+    {
+        if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
+        {
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+            {
+                static const struct {
+                    void (*identifier)(CCComponent, int32_t);
+                    void (*oneSided)(CCComponent, _Bool);
+                    void (*flip)(CCComponent, _Bool);
+                } Axes[3] = {
+                    { .identifier = CCInputMapControllerAxesComponentSetX, .oneSided = CCInputMapControllerAxesComponentSetOneSidedX, .flip = CCInputMapControllerAxesComponentSetFlipX },
+                    { .identifier = CCInputMapControllerAxesComponentSetY, .oneSided = CCInputMapControllerAxesComponentSetOneSidedY, .flip = CCInputMapControllerAxesComponentSetFlipY },
+                    { .identifier = CCInputMapControllerAxesComponentSetZ, .oneSided = CCInputMapControllerAxesComponentSetOneSidedZ, .flip = CCInputMapControllerAxesComponentSetFlipZ }
+                };
+                
+                size_t Axis = SIZE_MAX;
+                CCString Name = CCExpressionGetAtom(NameExpr);
+                
+                if (CCStringEqual(Name, CC_STRING("x:"))) Axis = 0;
+                else if (CCStringEqual(Name, CC_STRING("y:"))) Axis = 1;
+                else if (CCStringEqual(Name, CC_STRING("z:"))) Axis = 2;
+                
+                if (Axis != SIZE_MAX)
+                {
+                    CCEnumerator Enumerator;
+                    CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);
+                    
+                    CCExpression *IDExpr = CCCollectionEnumeratorNext(&Enumerator);
+                    if ((IDExpr) && (CCExpressionGetType(*IDExpr) == CCExpressionValueTypeInteger))
+                    {
+                        Axes[Axis].identifier(Component, CCExpressionGetInteger(*IDExpr));
+                        
+                        for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+                        {
+                            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeAtom)
+                            {
+                                CCString Flag = CCExpressionGetString(*Expr);
+                                if (CCStringEqual(Flag, CC_STRING("one-sided")))
+                                {
+                                    Axes[Axis].oneSided(Component, TRUE);
+                                }
+                                
+                                else if (CCStringEqual(Flag, CC_STRING("flip")))
+                                {
+                                    Axes[Axis].flip(Component, TRUE);
+                                }
+                                
+                                else CC_LOG_ERROR_CUSTOM("Flag (%S) for argument (%S) is not a valid atom", Flag, Name);
+                            }
+                            
+                            else CC_LOG_ERROR_CUSTOM("Flag for argument (%S) is not an atom", Name);
+                        }
+                    }
+                    
+                    else CC_LOG_ERROR_CUSTOM("Identifier value for argument (%S) is not an integer", Name);
+                    
+                    return;
+                }
+            }
+        }
+    }
+    
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    {
+        CCInputMapComponentDeserializer(Component, Arg);
+    }
 }

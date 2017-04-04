@@ -44,6 +44,7 @@ typedef struct {
 
 void CCInputMapControllerAxesComponentRegister(void);
 void CCInputMapControllerAxesComponentDeregister(void);
+void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpression Arg);
 
 
 static inline void CCInputMapControllerAxesComponentInitialize(CCComponent Component, CCComponentID id)
