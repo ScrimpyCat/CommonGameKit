@@ -704,13 +704,14 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
     {
         CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
-        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
         
         return Expression;
     }
     
-    int32_t FirstI = 0, MulI = 1;
-    float FirstF = 0.0f, MulF = 1.0f;
+    int32_t FirstI = 0, ProdI = 1;
+    float FirstF = 0.0f, ProdF = 1.0f;
+    CCArray FirstVector = NULL, Vector = NULL;
     
     _Bool IsInteger = TRUE;
     
@@ -732,39 +733,229 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
             IsInteger = FALSE;
         }
         
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
+        {
+            FirstVector = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCMathExpressionValue), 4);
+            
+            CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Result))
+            {
+                CCMathExpressionValue Value = { .i = 1, .f = 1.0f, .isInteger = TRUE };
+                if (CCExpressionGetType(Element) == CCExpressionValueTypeInteger)
+                {
+                    Value.i = CCExpressionGetInteger(Element);
+                }
+                
+                else if (CCExpressionGetType(Element) == CCExpressionValueTypeFloat)
+                {
+                    Value.f = CCExpressionGetFloat(Element);
+                    Value.isInteger = FALSE;
+                }
+                
+                else
+                {
+                    CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
+                    
+                    if (FirstVector) CCArrayDestroy(FirstVector);
+                    
+                    return Expression;
+                }
+                
+                CCArrayAppendElement(FirstVector, &Value);
+            }
+        }
+        
         else
         {
             CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
-            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
             
             return Expression;
         }
         
         for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
         {
-            Result = CCExpressionEvaluate(*Expr);
+            CCExpression Result = CCExpressionEvaluate(*Expr);
             if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
             {
-                MulI *= CCExpressionGetInteger(Result);
+                ProdI *= CCExpressionGetInteger(Result);
             }
             
             else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
             {
-                MulF *= CCExpressionGetFloat(Result);
+                ProdF *= CCExpressionGetFloat(Result);
                 IsInteger = FALSE;
+            }
+            
+            else if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
+            {
+                if (Vector)
+                {
+                    const size_t Count = CCArrayGetCount(Vector);
+                    size_t Index = 0;
+                    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Result))
+                    {
+                        CCMathExpressionValue Value = { .i = 1, .f = 1.0f, .isInteger = TRUE };
+                        if (CCExpressionGetType(Element) == CCExpressionValueTypeInteger)
+                        {
+                            Value.i = CCExpressionGetInteger(Element);
+                        }
+                        
+                        else if (CCExpressionGetType(Element) == CCExpressionValueTypeFloat)
+                        {
+                            Value.f = CCExpressionGetFloat(Element);
+                            Value.isInteger = FALSE;
+                        }
+                        
+                        else
+                        {
+                            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
+                            
+                            if (Vector) CCArrayDestroy(Vector);
+                            if (FirstVector) CCArrayDestroy(FirstVector);
+                            
+                            return Expression;
+                        }
+                        
+                        if (Index < Count)
+                        {
+                            CCMathExpressionValue *Prod = CCArrayGetElementAtIndex(Vector, Index);
+                            if (Value.isInteger) Prod->i *= Value.i;
+                            else
+                            {
+                                Prod->f *= Value.f;
+                                Prod->isInteger = FALSE;
+                            }
+                        }
+                        
+                        else CCArrayAppendElement(Vector, &Value);
+                        
+                        Index++;
+                    }
+                }
+                
+                else
+                {
+                    Vector = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCMathExpressionValue), 4);
+                    
+                    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Result))
+                    {
+                        CCMathExpressionValue Value = { .i = 1, .f = 1.0f, .isInteger = TRUE };
+                        if (CCExpressionGetType(Element) == CCExpressionValueTypeInteger)
+                        {
+                            Value.i = CCExpressionGetInteger(Element);
+                        }
+                        
+                        else if (CCExpressionGetType(Element) == CCExpressionValueTypeFloat)
+                        {
+                            Value.f = CCExpressionGetFloat(Element);
+                            Value.isInteger = FALSE;
+                        }
+                        
+                        else
+                        {
+                            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
+                            
+                            if (Vector) CCArrayDestroy(Vector);
+                            if (FirstVector) CCArrayDestroy(FirstVector);
+                            
+                            return Expression;
+                        }
+                        
+                        CCArrayAppendElement(Vector, &Value);
+                    }
+                }
             }
             
             else
             {
                 CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
-                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
+                
+                if (Vector) CCArrayDestroy(Vector);
+                if (FirstVector) CCArrayDestroy(FirstVector);
                 
                 return Expression;
             }
         }
     }
     
-    return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, FirstI / MulI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((float)FirstI + FirstF) / ((float)MulI * MulF));
+    
+    if (!FirstVector)
+    {
+        if (Vector)
+        {
+            CCExpression Vec = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            for (size_t Loop = 0, Count = CCArrayGetCount(Vector); Loop < Count; Loop++)
+            {
+                CCMathExpressionValue *Prod = CCArrayGetElementAtIndex(Vector, Loop);
+                
+                if (IsInteger) Prod->i *= ProdI;
+                else
+                {
+                    Prod->f *= (float)ProdI * ProdF;
+                    Prod->isInteger = FALSE;
+                }
+                
+                CCExpression Value = Prod->isInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, FirstI / Prod->i) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((float)FirstI + FirstF) / ((float)Prod->i * Prod->f));
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Vec), &Value);
+            }
+            
+            CCArrayDestroy(Vector);
+            
+            return Vec;
+        }
+        
+        return IsInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, FirstI / ProdI) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((float)FirstI + FirstF) / ((float)ProdI * ProdF));
+    }
+    
+    
+    const size_t CountA = CCArrayGetCount(FirstVector), CountB = Vector ? CCArrayGetCount(Vector) : 0;
+    CCExpression Vec = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    for (size_t Loop = 0, Count = CountA > CountB ? CountA : CountB; Loop < Count; Loop++)
+    {
+        CCMathExpressionValue Prod = { .i = ProdI, .f = ProdF, .isInteger = IsInteger };
+        
+        if (Loop < CountA)
+        {
+            if (Loop < CountB)
+            {
+                CCMathExpressionValue *ProdB = CCArrayGetElementAtIndex(Vector, Loop);
+                Prod.i *= ProdB->i;
+                Prod.f *= ProdB->f;
+                Prod.isInteger &= ProdB->isInteger;
+            }
+            
+            CCMathExpressionValue *ProdA = CCArrayGetElementAtIndex(FirstVector, Loop);
+            
+            if ((Prod.isInteger) && (ProdA->isInteger))
+            {
+                Prod.i = ProdA->i / Prod.i;
+            }
+            
+            else
+            {
+                Prod.f = ((float)ProdA->i + ProdA->f) / ((float)Prod.i * Prod.f);
+                Prod.isInteger = FALSE;
+            }
+            
+            CCExpression Value = Prod.isInteger ? CCExpressionCreateInteger(CC_STD_ALLOCATOR, Prod.i) : CCExpressionCreateFloat(CC_STD_ALLOCATOR, Prod.f);
+            CCOrderedCollectionAppendElement(CCExpressionGetList(Vec), &Value);
+        }
+        
+        else
+        {
+            CCExpression Value = CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0);
+            CCOrderedCollectionAppendElement(CCExpressionGetList(Vec), &Value);
+        }
+    }
+    
+    if (Vector) CCArrayDestroy(Vector);
+    CCArrayDestroy(FirstVector);
+    
+    return Vec;
 }
 
 CCExpression CCMathExpressionMinimum(CCExpression Expression)
