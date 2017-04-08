@@ -37,7 +37,7 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
     {
         CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
-        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number");
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:number:list");
         
         return Expression;
     }
@@ -168,7 +168,7 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
         if (IsInteger) Sum->i += SumI;
         else
         {
-            Sum->f += SumF;
+            Sum->f += (float)SumI + SumF;
             Sum->isInteger = FALSE;
         }
         

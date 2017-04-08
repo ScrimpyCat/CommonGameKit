@@ -159,6 +159,15 @@
     XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
     
     CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (14.75 8.5) (+ 1 2.5 (10.25 5) (1)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
 }
 
 -(void) testSubstraction
