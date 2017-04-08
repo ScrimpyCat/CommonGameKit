@@ -937,7 +937,7 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
             
             else
             {
-                Prod.f = ((float)ProdA->i + ProdA->f) / ((float)Prod.i * Prod.f);
+                Prod.f = ((float)ProdA->i * ProdA->f) / ((float)Prod.i * Prod.f);
                 Prod.isInteger = FALSE;
             }
             
