@@ -24,7 +24,7 @@
  */
 
 #include "EqualityExpressions.h"
-
+//TODO: Make an ulps option (ulps: integer) for the equals expression
 static _Bool CCEqualityExpressionCompare(CCExpression Left, CCExpression Right)
 {
     const CCExpressionValueType LeftType = CCExpressionGetType(Left), RightType = CCExpressionGetType(Right);
@@ -32,12 +32,12 @@ static _Bool CCEqualityExpressionCompare(CCExpression Left, CCExpression Right)
     {
         case CCExpressionValueTypeInteger:
             if (RightType == CCExpressionValueTypeInteger) return CCExpressionGetInteger(Left) == CCExpressionGetInteger(Right);
-            else if (RightType == CCExpressionValueTypeFloat) return (float)CCExpressionGetInteger(Left) == CCExpressionGetFloat(Right);
+            else if (RightType == CCExpressionValueTypeFloat) return CCFloatEqualUlps((float)CCExpressionGetInteger(Left), CCExpressionGetFloat(Right), 4);
             break;
             
         case CCExpressionValueTypeFloat:
-            if (RightType == CCExpressionValueTypeInteger) return CCExpressionGetInteger(Left) == (float)CCExpressionGetInteger(Right);
-            else if (RightType == CCExpressionValueTypeFloat) return CCExpressionGetInteger(Left) == CCExpressionGetFloat(Right);
+            if (RightType == CCExpressionValueTypeInteger) return CCFloatEqualUlps(CCExpressionGetFloat(Left), (float)CCExpressionGetInteger(Right), 4);
+            else if (RightType == CCExpressionValueTypeFloat) return CCFloatEqualUlps(CCExpressionGetFloat(Left), CCExpressionGetFloat(Right), 4);
             break;
             
         case CCExpressionValueTypeString:
@@ -114,7 +114,7 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                     
                     else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
                     {
-                        Equal = (float)FirstI == CCExpressionGetFloat(Result);
+                        Equal = CCFloatEqualUlps((float)FirstI, CCExpressionGetFloat(Result), 4);
                     }
                     
                     if (!Equal) break;
@@ -132,12 +132,12 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                     Result = CCExpressionEvaluate(*Expr);
                     if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
                     {
-                        Equal = FirstF == (float)CCExpressionGetInteger(Result);
+                        Equal = CCFloatEqualUlps(FirstF, (float)CCExpressionGetInteger(Result), 4);
                     }
                     
                     else if (CCExpressionGetType(Result) == CCExpressionValueTypeFloat)
                     {
-                        Equal = FirstF == CCExpressionGetFloat(Result);
+                        Equal = CCFloatEqualUlps(FirstF, CCExpressionGetFloat(Result), 4);
                     }
                     
                     if (!Equal) break;
