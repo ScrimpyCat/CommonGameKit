@@ -321,7 +321,7 @@
         { "(* .i)",          CCExpressionValueTypeInteger,   .integer = -5 },
         { "(* .f)",          CCExpressionValueTypeFloat,     .real = -2.5f },
         { "(* \"string\")", CCExpressionValueTypeExpression },
-        { "(* ())",         CCExpressionValueTypeExpression },
+//        { "(* ())",         CCExpressionValueTypeExpression },
         
         { "(* 1 2)",        CCExpressionValueTypeInteger,   .integer = 1 * 2 },
         { "(* 1 -2)",       CCExpressionValueTypeInteger,   .integer = 1 * -2 },
@@ -349,16 +349,16 @@
         
         { "(* .test 1)",     CCExpressionValueTypeExpression },
         { "(* \"s\" 1)",    CCExpressionValueTypeExpression },
-        { "(* () 1)",       CCExpressionValueTypeExpression },
+//        { "(* () 1)",       CCExpressionValueTypeExpression },
         { "(* 1 .test)",     CCExpressionValueTypeExpression },
         { "(* 1 \"s\")",    CCExpressionValueTypeExpression },
-        { "(* 1 ())",       CCExpressionValueTypeExpression },
+//        { "(* 1 ())",       CCExpressionValueTypeExpression },
         { "(* .test 1.0)",   CCExpressionValueTypeExpression },
         { "(* \"s\" 1.0)",  CCExpressionValueTypeExpression },
-        { "(* () 1.0)",     CCExpressionValueTypeExpression },
+//        { "(* () 1.0)",     CCExpressionValueTypeExpression },
         { "(* 1.0 .test)",   CCExpressionValueTypeExpression },
         { "(* 1.0 \"s\")",  CCExpressionValueTypeExpression },
-        { "(* 1.0 ())",     CCExpressionValueTypeExpression },
+//        { "(* 1.0 ())",     CCExpressionValueTypeExpression },
         
         { "(* 1 2 9)",      CCExpressionValueTypeInteger,   .integer = 1 * 2 * 9 },
         { "(* 1 -2 9)",     CCExpressionValueTypeInteger,   .integer = 1 * -2 * 9 },
@@ -381,6 +381,80 @@
     
     
     [self assert: Test count: sizeof(Test) / sizeof(*Test)];
+}
+
+-(void) testVectorMultiplication
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(= () (* () 5))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (5 10) (* (1 2) 5))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (-10 -20) (* -2 (1 2) 5))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (5000 0 0 0) (* (10) (1 2) 5 (100 200 300 400)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (5000 2000 1500 2000) (* 1 (10) (1 2) 5 (100 200 300 400)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (0 0 0 0) (* (1) (-1 -2) 0.5 (0 2 0 0)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (5137.8125 0 0 0) (* (10.25) (1 2) 5 (100.25 200 300.5 400)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (51.25 12.5) (* 1 2.5 (10.25 5) (2)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
 }
 
 -(void) testDivision
