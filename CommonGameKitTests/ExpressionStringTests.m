@@ -232,6 +232,98 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testChop
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(= (\"abcdefg\") (chop () \"abcdefg\"))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"a\" \"bcdefg\") (chop (0) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"ab\" \"cdefg\") (chop (1) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"abc\" \"defg\") (chop (2) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"abcd\" \"efg\") (chop (3) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"abcde\" \"fg\") (chop (4) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"abcdef\" \"g\") (chop (5) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"abcdefg\") (chop (6) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"abcdefg\") (chop (7) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"ab\" \"c\" \"def\" \"g\") (chop (1 2 5) \"abcdefg\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+}
+
 -(void) testFormat
 {
     CCExpression Expression = CCExpressionCreateFromSource("(format :bin 5)");
