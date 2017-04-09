@@ -168,6 +168,8 @@ CCExpression CCListExpressionSplit(CCExpression Expression)
                     {
                         CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of split: indexes must contain a sorted list of integers only");
                         
+                        CCExpressionDestroy(Parts);
+                        
                         return Expression;
                     }
                 }
