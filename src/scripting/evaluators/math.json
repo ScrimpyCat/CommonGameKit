@@ -2,7 +2,7 @@
     "functions": [
         {
             "name": "+",
-            "description": "Adds all the inputs together, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "description": "Adds all the inputs together, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers. Or if using lists of numbers it will return a list applying the other lists or scalar values to it.",
             "examples": [
                 "(+ 1 2 3) ;6",
                 "(+ 1 1.2) ;2.2"
@@ -14,7 +14,7 @@
         },
         {
             "name": "-",
-            "description": "Subtracts all the inputs from the first input, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "description": "Subtracts all the inputs from the first input, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers. Or if using lists of numbers it will return a list applying the other lists or scalar values to it. If the first item is a list it will be extended with 0s to accommodate larger lists in the equation.",
             "examples": [
                 "(- 3 2 2) ;-1",
                 "(- 1 0.5) ;0.5"
@@ -26,7 +26,7 @@
         },
         {
             "name": "*",
-            "description": "Multiplies all inputs together, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "description": "Multiplies all inputs together, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers. Or if using lists of numbers it will return a list applying the other lists or scalar values to it. If the first item is a list it will be extended with 0s to accommodate larger lists in the equation.",
             "examples": [
                 "(* 2 2 2) ;8",
                 "(* 2 0.5) ;1"
@@ -38,7 +38,7 @@
         },
         {
             "name": "/",
-            "description": "Divides all the inputs from the first input, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers.",
+            "description": "Divides all the inputs from the first input, returning a float is any of the inputs contains a float otherwise returning an integer if all inputs are integers. Or if using lists of numbers it will return a list applying the other lists or scalar values to it. If the first item is a list it will be extended with 0s to accommodate larger lists in the equation.",
             "examples": [
                 "(/ 2 2 2) ;0",
                 "(/ 2 2 2.0) ;0.5"
