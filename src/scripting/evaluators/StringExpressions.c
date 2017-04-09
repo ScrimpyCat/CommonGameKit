@@ -219,6 +219,53 @@ CCExpression CCStringExpressionRemove(CCExpression Expression)
     return Expression;
 }
 
+CCExpression CCStringExpressionChop(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 2)
+    {
+        CCExpression Indexes = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression StringExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(Indexes) == CCExpressionValueTypeList) && (CCExpressionGetType(StringExpr) == CCExpressionValueTypeString))
+        {
+            CCString String = CCExpressionGetString(StringExpr);
+            const size_t Length = CCStringGetLength(String);
+            
+            CCExpression Parts = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            size_t PrevIndex = 0;
+            
+            size_t Count = 0;
+            CC_COLLECTION_FOREACH(CCExpression, SplitIndex, CCExpressionGetList(Indexes))
+            {
+                size_t Index = CCExpressionGetInteger(SplitIndex) + 1;
+                if (Index >= Length) break;
+                else if ((Index <= PrevIndex) && (Count++))
+                {
+                    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of chop: indexes must contain a sorted list of integers only");
+
+                    CCExpressionDestroy(Parts);
+
+                    return Expression;
+                }
+                
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Parts), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCopySubstring(String, PrevIndex, Index - PrevIndex), FALSE) });
+                
+                PrevIndex = Index;
+            }
+            
+            CCOrderedCollectionAppendElement(CCExpressionGetList(Parts), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCopySubstring(String, PrevIndex, Length - PrevIndex), FALSE) });
+            
+            return Parts;
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("chop", "indexes:list string:string");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("chop", "indexes:list string:string");
+    
+    return Expression;
+}
+
 typedef struct {
     CCString separator;
     CCString prefix;

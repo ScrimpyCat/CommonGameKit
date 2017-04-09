@@ -81,6 +81,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("length"), CCStringExpressionLength);
     CCExpressionEvaluatorRegister(CC_STRING("insert"), CCStringExpressionInsert);
     CCExpressionEvaluatorRegister(CC_STRING("remove"), CCStringExpressionRemove);
+    CCExpressionEvaluatorRegister(CC_STRING("chop"), CCStringExpressionChop);
     CCExpressionEvaluatorRegister(CC_STRING("format"), CCStringExpressionFormat);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
     CCExpressionEvaluatorRegister(CC_STRING("text-cursor-position"), CCTextExpressionGetCursorPosition);
