@@ -616,7 +616,8 @@ static CCExpression CCExpressionParse(const char **Source)
 
 static void CCExpressionPrintStatement(CCExpression Expression)
 {
-    switch (CCExpressionGetType(Expression))
+    const CCExpressionValueType Type = CCExpressionGetType(Expression);
+    switch (Type)
     {
         case CCExpressionValueTypeAtom:
         {
@@ -651,6 +652,11 @@ static void CCExpressionPrintStatement(CCExpression Expression)
         }
             
         default:
+#if CC_HARDWARE_ENDIAN_LITTLE
+            printf("<%p:%c%c%c%c>", Expression, (Type >> 24) & 0xff, (Type >> 16) & 0xff, (Type >> 8) & 0xff, Type & 0xff);
+#else
+            printf("<%p:%c%c%c%c>", Expression, Type & 0xff, (Type >> 8) & 0xff, (Type >> 16) & 0xff, (Type >> 24) & 0xff);
+#endif
             break;
     }
 }
