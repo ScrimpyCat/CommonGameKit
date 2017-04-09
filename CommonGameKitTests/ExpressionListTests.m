@@ -298,4 +298,33 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testCount
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(= 0 (count ()))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= 1 (count (1)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= 5 (count (1 2 3 4 5)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+}
+
 @end
