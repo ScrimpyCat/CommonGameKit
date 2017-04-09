@@ -187,3 +187,22 @@ CCExpression CCListExpressionSplit(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCListExpressionCount(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 1)
+    {
+        CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(List) == CCExpressionValueTypeList)
+        {
+            return CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)CCCollectionGetCount(CCExpressionGetList(List)));
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("split", "list:list");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("count", "list:list");
+    
+    return Expression;
+}

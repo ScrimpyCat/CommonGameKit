@@ -58,6 +58,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("flatten"), CCListExpressionFlatten);
     CCExpressionEvaluatorRegister(CC_STRING("parts"), CCListExpressionParts);
     CCExpressionEvaluatorRegister(CC_STRING("split"), CCListExpressionSplit);
+    CCExpressionEvaluatorRegister(CC_STRING("count"), CCListExpressionCount);
     CCExpressionEvaluatorRegister(CC_STRING("quote"), CCMacroExpressionQuote);
     CCExpressionEvaluatorRegister(CC_STRING("unquote"), CCMacroExpressionUnquote);
     CCExpressionEvaluatorRegister(CC_STRING("+"), CCMathExpressionAddition);

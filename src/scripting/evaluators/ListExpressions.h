@@ -33,5 +33,6 @@ CC_EXPRESSION_EVALUATOR(get) CCExpression CCListExpressionGetter(CCExpression Ex
 CC_EXPRESSION_EVALUATOR(flatten) CCExpression CCListExpressionFlatten(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(parts) CCExpression CCListExpressionParts(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(split) CCExpression CCListExpressionSplit(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(count) CCExpression CCListExpressionCount(CCExpression Expression);
 
 #endif
