@@ -84,7 +84,9 @@ CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
                 {
                     CCExpressionSetState(Expression, CCExpressionGetString(Var), Item, TRUE);
                     
-                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(Expr)) });
+                    CCExpression ItemExpr = CCExpressionCopy(Expr); //So we can correctly handle expressions with cached internal state
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(ItemExpr)) });
+                    CCExpressionDestroy(ItemExpr);
                 }
                 
                 return Result;
