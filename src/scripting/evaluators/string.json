@@ -61,6 +61,13 @@
             "args": [[{ "type": "integer", "name": "offset" }, { "type": "integer", "name": "length" }, { "type": "string" }]]
         },
         {
+            "name": "chop",
+            "description": "Chop the string at each index into substrings.",
+            "examples": ["(chop (0) \"1234\") ;(\"1\" \"234\")", "(chop (0 1) \"1234\") ;(\"1\" \"2\" \"3 4\")"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "list", "name": "indexes" }, { "type": "string" }]]
+        },
+        {
             "name": "format",
             "description": "Format expressions as string.",
             "examples": ["(format :bin 5) ;\"101\"", "(format :hex (1, 2, 3) (precision: 2) (compact: #f) (prefix: \"0x\") (separator: \",\")) ;\"0x01,0x02,0x03\""],
