@@ -29,6 +29,13 @@
             "examples": ["(split (0) (1 2 3 4)) ;((1) (2 3 4))", "(split (0 1) (1 2 3 4)) ;((1) (2) (3 4))"],
             "return": { "type": "list" },
             "args": [[{ "type": "list", "name": "indexes" }, { "type": "list" }]]
+        },
+        {
+            "name": "count",
+            "description": "Get the number of elements in a list.",
+            "examples": ["(count (1 2 3 4)) ;4"],
+            "return": { "type": "integer" },
+            "args": [[{ "type": "list" }]]
         }
     ]
 }
