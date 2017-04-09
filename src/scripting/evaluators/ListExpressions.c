@@ -112,7 +112,7 @@ CCExpression CCListExpressionParts(CCExpression Expression)
                     const size_t Index = (Loop * ItemsPerChunk) + Loop2;
                     if (Index >= Count) break;
                     
-                    CCOrderedCollectionAppendElement(CCExpressionGetList(Part), &(CCExpression){ CCExpressionCopy(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), Index)) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Part), &(CCExpression){ CCExpressionRetain(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), Index)) });
                 }
                 
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Parts), &(CCExpression){ Part });
@@ -156,7 +156,7 @@ CCExpression CCListExpressionSplit(CCExpression Expression)
             size_t Index = 0;
             CC_COLLECTION_FOREACH(CCExpression, Item, CCExpressionGetList(List))
             {
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Part), &(CCExpression){ CCExpressionCopy(Item) });
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Part), &(CCExpression){ CCExpressionRetain(Item) });
                 
                 if ((SplitIndex) && (CCExpressionGetInteger(*SplitIndex) == Index))
                 {
