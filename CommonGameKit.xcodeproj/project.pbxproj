@@ -232,6 +232,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F38828351E9B293400E6D7A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F38828241E9B291D00E6D7A3;
+			remoteInfo = "blob-repl";
+		};
 		F3897B5F1DCD7149008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
@@ -404,6 +411,7 @@
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
+		F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "blob-repl.xcodeproj"; path = "blob-repl/blob-repl.xcodeproj"; sourceTree = "<group>"; };
 		F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Callbacks.c; sourceTree = "<group>"; };
 		F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callbacks.h; sourceTree = "<group>"; };
 		F3897B2B1DCD6B32008D6C1D /* stdatomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdatomic.h; sourceTree = "<group>"; };
@@ -647,6 +655,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F38828321E9B293400E6D7A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F38828361E9B293400E6D7A3 /* blob-repl */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3897B2A1DCD6B32008D6C1D /* stdatomic */ = {
 			isa = PBXGroup;
 			children = (
@@ -779,6 +795,7 @@
 				F3AF327B1DCCD29000CAD472 /* CommonGameKit */,
 				F3AF32871DCCD29100CAD472 /* CommonGameKitTests */,
 				F3AF327A1DCCD29000CAD472 /* Products */,
+				F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1445,6 +1462,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F38828321E9B293400E6D7A3 /* Products */;
+					ProjectRef = F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */;
+				},
+				{
 					ProductGroup = F3AF34BA1DCCF4EC00CAD472 /* Products */;
 					ProjectRef = F3AF34B91DCCF4EC00CAD472 /* CommonC.xcodeproj */;
 				},
@@ -1466,6 +1487,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F38828361E9B293400E6D7A3 /* blob-repl */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "blob-repl";
+			remoteRef = F38828351E9B293400E6D7A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3897B601DCD7149008D6C1D /* example */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
