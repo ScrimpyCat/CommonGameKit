@@ -123,4 +123,57 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testRepeat
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(repeat \"@var\" 3 @var)");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeList, @"Should be a list");
+    XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Result)), 3, @"Should have 3 values");
+    
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1)), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 2)), CCExpressionValueTypeInteger, @"Should be an integer");
+    
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), 0, @"Should be the value");
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1)), 1, @"Should be the value");
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 2)), 2, @"Should be the value");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(repeat \"@var\" 3 (+ @var @var))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeList, @"Should be a list");
+    XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Result)), 3, @"Should have 3 values");
+    
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1)), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 2)), CCExpressionValueTypeInteger, @"Should be an integer");
+    
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), 0, @"Should be the value");
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1)), 2, @"Should be the value");
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 2)), 4, @"Should be the value");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(repeat \"@var\" 3 0)");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeList, @"Should be a list");
+    XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Result)), 3, @"Should have 3 values");
+    
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1)), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 2)), CCExpressionValueTypeInteger, @"Should be an integer");
+    
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), 0, @"Should be the value");
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1)), 0, @"Should be the value");
+    XCTAssertEqual(CCExpressionGetInteger(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 2)), 0, @"Should be the value");
+    
+    CCExpressionDestroy(Expression);
+}
+
 @end
