@@ -32,6 +32,19 @@
                 { "type": "list" },
                 { "type": "expression" }
             ]]
+        },
+        {
+            "name": "repeat",
+            "description": "Repeat the given expression a certain number of times, assigning the iteration index to the given state variable.",
+            "examples": [
+                "(repeat \"var\" 2 var) ;(0 1)",
+                "(repeat \"val\" 2 (+ val 1)) ;(1 2)"
+            ],
+            "args": [[
+                { "type": "string", "name": "@item" },
+                { "type": "integer", "name": "times" },
+                { "type": "expression" }
+            ]]
         }
     ]
 }
