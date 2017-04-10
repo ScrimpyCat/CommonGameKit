@@ -133,7 +133,7 @@ CCExpression CCControlFlowExpressionRepeat(CCExpression Expression)
         }
     }
     
-    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("loop", "var:string count:integer iteration:expr");
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("repeat", "var:string count:integer iteration:expr");
     
     return Expression;
 }
