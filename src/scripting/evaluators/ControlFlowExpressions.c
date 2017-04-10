@@ -98,3 +98,42 @@ CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCControlFlowExpressionRepeat(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if (ArgCount == 3)
+    {
+        CCExpression Var = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Var) == CCExpressionValueTypeString)
+        {
+            CCExpression CountExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+            CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3);
+            
+            if (CCExpressionGetType(CountExpr) == CCExpressionValueTypeInteger)
+            {
+                if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
+                {
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), NULL, FALSE, NULL, FALSE);
+                }
+                
+                CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                for (size_t Loop = 0, Count = CCExpressionGetInteger(CountExpr); Loop < Count; Loop++)
+                {
+                    CCExpressionSetState(Expression, CCExpressionGetString(Var), CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)Loop), FALSE);
+                    
+                    CCExpression ItemExpr = CCExpressionCopy(Expr); //So we can correctly handle expressions with cached internal state
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(ItemExpr)) });
+                    CCExpressionDestroy(ItemExpr);
+                }
+                
+                return Result;
+            }
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("loop", "var:string count:integer iteration:expr");
+    
+    return Expression;
+}
