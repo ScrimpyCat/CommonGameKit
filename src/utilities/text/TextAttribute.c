@@ -342,7 +342,7 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                             if (!isspace(Next)) return Lines;
                         }
                         
-                        else if (WordStart != Length)
+                        else if (WordStart < Length)
                         {
                             const size_t WordLength = Length - WordStart;
                             Length -= WordLength;
