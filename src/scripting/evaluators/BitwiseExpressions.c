@@ -276,3 +276,119 @@ CCExpression CCBitwiseExpressionOr(CCExpression Expression)
     
     return Vec;
 }
+
+CCExpression CCBitwiseExpressionXor(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:integer:list");
+        
+        return Expression;
+    }
+    
+    uint32_t SumI = 0;
+    
+    CCArray Vector = NULL;
+    
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+    {
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
+        {
+            SumI ^= CCExpressionGetInteger(Result);
+        }
+        
+        else if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
+        {
+            if (Vector)
+            {
+                const size_t Count = CCArrayGetCount(Vector);
+                size_t Index = 0;
+                CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Result))
+                {
+                    uint32_t Value = 0;
+                    if (CCExpressionGetType(Element) == CCExpressionValueTypeInteger)
+                    {
+                        Value = CCExpressionGetInteger(Element);
+                    }
+                    
+                    else
+                    {
+                        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:integer:list");
+                        
+                        if (Vector) CCArrayDestroy(Vector);
+                        
+                        return Expression;
+                    }
+                    
+                    if (Index < Count)
+                    {
+                        uint32_t *Sum = CCArrayGetElementAtIndex(Vector, Index);
+                        *Sum ^= Value;
+                    }
+                    
+                    else CCArrayAppendElement(Vector, &Value);
+                    
+                    Index++;
+                }
+            }
+            
+            else
+            {
+                Vector = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(uint32_t), 4);
+                
+                CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Result))
+                {
+                    uint32_t Value = 0;
+                    if (CCExpressionGetType(Element) == CCExpressionValueTypeInteger)
+                    {
+                        Value = CCExpressionGetInteger(Element);
+                    }
+                    
+                    else
+                    {
+                        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+                        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:integer:list");
+                        
+                        if (Vector) CCArrayDestroy(Vector);
+                        
+                        return Expression;
+                    }
+                    
+                    CCArrayAppendElement(Vector, &Value);
+                }
+            }
+        }
+        
+        else
+        {
+            CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:integer:list");
+            
+            if (Vector) CCArrayDestroy(Vector);
+            
+            return Expression;
+        }
+    }
+    
+    
+    if (!Vector) return CCExpressionCreateInteger(CC_STD_ALLOCATOR, SumI);
+    
+    
+    CCExpression Vec = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    for (size_t Loop = 0, Count = CCArrayGetCount(Vector); Loop < Count; Loop++)
+    {
+        uint32_t *Sum = CCArrayGetElementAtIndex(Vector, Loop);
+        
+        CCOrderedCollectionAppendElement(CCExpressionGetList(Vec), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, *Sum ^ SumI) });
+    }
+    
+    CCArrayDestroy(Vector);
+    
+    return Vec;
+}
