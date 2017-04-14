@@ -4,8 +4,20 @@
             "name": "and",
             "description": "Bitwise AND all the inputs together. If using lists of numbers it will return a list applying the other lists or scalar values to it.",
             "examples": [
-                "(and 1 2) ;3",
+                "(and 1 2) ;1",
                 "(and 1 1) ;1"
+            ],
+            "return": { "type": "integer" },
+            "args": [
+                { "repeat": [{ "type": "integer" }] }
+            ]
+        },
+        {
+            "name": "or",
+            "description": "Bitwise OR all the inputs together. If using lists of numbers it will return a list applying the other lists or scalar values to it.",
+            "examples": [
+                "(or 1 2) ;3",
+                "(or 1 1) ;1"
             ],
             "return": { "type": "integer" },
             "args": [
