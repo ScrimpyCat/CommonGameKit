@@ -74,4 +74,27 @@
     [self assert: Test count: sizeof(Test) / sizeof(*Test)];
 }
 
+-(void) testOr
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
+#pragma clang diagnostic ignored "-Wtautological-compare"
+    ExpressionResult Test[] = {
+        { "(or)",            CCExpressionValueTypeExpression },
+        { "(or test)",          CCExpressionValueTypeExpression },
+        { "(or 1.5)",         CCExpressionValueTypeExpression },
+        { "(or \"test\")",        CCExpressionValueTypeExpression },
+        { "(= () (or ()))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= 1 (or 1))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= (1 2) (or (1 2)))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= 7 (or 3 5))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= (7 7 5) (or (5 3 5) (3 5 4)))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= (7 7 5 1) (or (5 3 5) (3 5 4 1)))",       CCExpressionValueTypeInteger,   .integer = TRUE }
+    };
+#pragma clang diagnostic pop
+    
+    
+    [self assert: Test count: sizeof(Test) / sizeof(*Test)];
+}
+
 @end
