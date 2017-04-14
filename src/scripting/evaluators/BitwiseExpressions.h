@@ -31,5 +31,6 @@
 
 CC_EXPRESSION_EVALUATOR(not) CCExpression CCBitwiseExpressionNot(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(and) CCExpression CCBitwiseExpressionAnd(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(or) CCExpression CCBitwiseExpressionOr(CCExpression Expression);
 
 #endif

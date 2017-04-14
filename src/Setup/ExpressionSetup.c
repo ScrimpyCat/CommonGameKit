@@ -36,6 +36,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("asset"), CCAssetExpressionAsset);
     CCExpressionEvaluatorRegister(CC_STRING("not"), CCBitwiseExpressionNot);
     CCExpressionEvaluatorRegister(CC_STRING("and"), CCBitwiseExpressionAnd);
+    CCExpressionEvaluatorRegister(CC_STRING("or"), CCBitwiseExpressionOr);
     CCExpressionEvaluatorRegister(CC_STRING("lighten"), CCColourExpressionLighten);
     CCExpressionEvaluatorRegister(CC_STRING("darken"), CCColourExpressionDarken);
     CCExpressionEvaluatorRegister(CC_STRING("component"), CCComponentExpressionComponent);
