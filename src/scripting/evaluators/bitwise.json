@@ -23,6 +23,18 @@
             "args": [
                 { "repeat": [{ "type": "integer" }] }
             ]
+        },
+        {
+            "name": "xor",
+            "description": "Bitwise XOR all the inputs together. If using lists of numbers it will return a list applying the other lists or scalar values to it.",
+            "examples": [
+                "(xor 1 2) ;3",
+                "(xor 1 1) ;0"
+            ],
+            "return": { "type": "integer" },
+            "args": [
+                { "repeat": [{ "type": "integer" }] }
+            ]
         }
     ]
 }
