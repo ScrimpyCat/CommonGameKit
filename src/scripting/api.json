@@ -18,6 +18,7 @@
     ],
     "includes": [
         "evaluators/asset.json",
+        "evaluators/bitwise.json",
         "evaluators/colour.json",
         "evaluators/component.json",
         "evaluators/control_flow.json",

@@ -72,15 +72,6 @@
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
-        },
-        {
-            "name": "not",
-            "description": "Performs a logical not on the given value.",
-            "examples": ["(not 1) ;0"],
-            "return": { "type": "boolean" },
-            "args": [
-                { "repeat": [{ "type": "number" }] }
-            ]
         }
     ]
 }
