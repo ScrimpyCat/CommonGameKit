@@ -154,7 +154,9 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                     Equal = FALSE;
                     
                     Result = CCExpressionEvaluate(*Expr);
-                    if ((CCExpressionGetType(Result) == CCExpressionValueTypeString) || (CCExpressionGetType(Result) == CCExpressionValueTypeAtom))
+                    Type = CCExpressionGetType(Result);
+                    
+                    if ((Type == CCExpressionValueTypeString) || (Type == CCExpressionValueTypeAtom))
                     {
                         Equal = CCStringEqual(FirstS, (Type == CCExpressionValueTypeString ? CCExpressionGetString : CCExpressionGetAtom)(Result));
                     }
@@ -263,7 +265,9 @@ CCExpression CCEqualityExpressionNotEqual(CCExpression Expression)
                     Equal = FALSE;
                     
                     Result = CCExpressionEvaluate(*Expr);
-                    if ((CCExpressionGetType(Result) == CCExpressionValueTypeString) || (CCExpressionGetType(Result) == CCExpressionValueTypeAtom))
+                    Type = CCExpressionGetType(Result);
+                    
+                    if ((Type == CCExpressionValueTypeString) || (Type == CCExpressionValueTypeAtom))
                     {
                         Equal = CCStringEqual(FirstS, (Type == CCExpressionValueTypeString ? CCExpressionGetString : CCExpressionGetAtom)(Result));
                     }
