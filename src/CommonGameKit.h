@@ -83,6 +83,7 @@
 
 //TODO: generate header for these
 #include <CommonGameKit/AssetExpressions.h>
+#include <CommonGameKit/BitwiseExpressions.h>
 #include <CommonGameKit/ColourExpressions.h>
 #include <CommonGameKit/ComponentExpressions.h>
 #include <CommonGameKit/ControlFlowExpressions.h>

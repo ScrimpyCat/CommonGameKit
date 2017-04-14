@@ -4,6 +4,7 @@
 
 #include "GUIExpression.h"
 #include "AssetExpressions.h"
+#include "BitwiseExpressions.h"
 #include "ColourExpressions.h"
 #include "ComponentExpressions.h"
 #include "ControlFlowExpressions.h"
@@ -33,6 +34,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("library"), CCAssetExpressionLibrary);
     CCExpressionEvaluatorRegister(CC_STRING("source"), CCAssetExpressionLibrarySource);
     CCExpressionEvaluatorRegister(CC_STRING("asset"), CCAssetExpressionAsset);
+    CCExpressionEvaluatorRegister(CC_STRING("and"), CCBitwiseExpressionAnd);
     CCExpressionEvaluatorRegister(CC_STRING("lighten"), CCColourExpressionLighten);
     CCExpressionEvaluatorRegister(CC_STRING("darken"), CCColourExpressionDarken);
     CCExpressionEvaluatorRegister(CC_STRING("component"), CCComponentExpressionComponent);

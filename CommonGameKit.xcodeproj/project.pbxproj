@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */; };
+		F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F33CAF971E79286900792063 /* EntityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F33CAF951E79286900792063 /* EntityExpressions.c */; };
 		F33CAF981E79286900792063 /* EntityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAF961E79286900792063 /* EntityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
@@ -405,6 +407,8 @@
 /* Begin PBXFileReference section */
 		F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentExpressions.c; sourceTree = "<group>"; };
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
+		F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BitwiseExpressions.c; sourceTree = "<group>"; };
+		F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitwiseExpressions.h; sourceTree = "<group>"; };
 		F33CAF951E79286900792063 /* EntityExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityExpressions.c; sourceTree = "<group>"; };
 		F33CAF961E79286900792063 /* EntityExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityExpressions.h; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
@@ -1212,6 +1216,8 @@
 			children = (
 				F3AF344A1DCCD5AF00CAD472 /* AssetExpressions.c */,
 				F3AF344B1DCCD5AF00CAD472 /* AssetExpressions.h */,
+				F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */,
+				F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */,
 				F3AF344D1DCCD5AF00CAD472 /* ColourExpressions.c */,
 				F3AF344E1DCCD5AF00CAD472 /* ColourExpressions.h */,
 				F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */,
@@ -1312,6 +1318,7 @@
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
 				F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */,
 				F3AF33E61DCCD4EC00CAD472 /* GLPortability.h in Headers */,
+				F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */,
 				F3AF34B61DCCD5AF00CAD472 /* ExpressionHelpers.h in Headers */,
 				F3AF34891DCCD5AF00CAD472 /* ControlFlowExpressions.h in Headers */,
 				F3AF343A1DCCD4EC00CAD472 /* Font.h in Headers */,
@@ -1703,6 +1710,7 @@
 				F3AF33CC1DCCD4EC00CAD472 /* GFXDraw.c in Sources */,
 				F3AF34A91DCCD5AF00CAD472 /* TextExpressions.c in Sources */,
 				F3AF33D91DCCD4EC00CAD472 /* GLBlit.c in Sources */,
+				F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */,
 				F3AF33901DCCD4EC00CAD472 /* GUIManager.c in Sources */,
 				F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */,
 				F3AF337D1DCCD4EC00CAD472 /* AnimationSystem.c in Sources */,
