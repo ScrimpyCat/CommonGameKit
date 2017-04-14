@@ -34,6 +34,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("library"), CCAssetExpressionLibrary);
     CCExpressionEvaluatorRegister(CC_STRING("source"), CCAssetExpressionLibrarySource);
     CCExpressionEvaluatorRegister(CC_STRING("asset"), CCAssetExpressionAsset);
+    CCExpressionEvaluatorRegister(CC_STRING("not"), CCBitwiseExpressionNot);
     CCExpressionEvaluatorRegister(CC_STRING("and"), CCBitwiseExpressionAnd);
     CCExpressionEvaluatorRegister(CC_STRING("lighten"), CCColourExpressionLighten);
     CCExpressionEvaluatorRegister(CC_STRING("darken"), CCColourExpressionDarken);
@@ -51,7 +52,6 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING(">="), CCEqualityExpressionGreaterThanEqual);
     CCExpressionEvaluatorRegister(CC_STRING("<"), CCEqualityExpressionLessThan);
     CCExpressionEvaluatorRegister(CC_STRING(">"), CCEqualityExpressionGreaterThan);
-    CCExpressionEvaluatorRegister(CC_STRING("not"), CCEqualityExpressionNot);
     CCExpressionEvaluatorRegister(CC_STRING("render-rect"), CCGraphicsExpressionRenderRect);
     CCExpressionEvaluatorRegister(CC_STRING("render-text"), CCGraphicsExpressionRenderText);
     CCExpressionEvaluatorRegister(CC_STRING("print"), CCIOExpressionPrint);
