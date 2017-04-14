@@ -11,6 +11,7 @@
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */; };
 		F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */; };
 		F33CAF971E79286900792063 /* EntityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F33CAF951E79286900792063 /* EntityExpressions.c */; };
 		F33CAF981E79286900792063 /* EntityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAF961E79286900792063 /* EntityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
@@ -409,6 +410,7 @@
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
 		F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BitwiseExpressions.c; sourceTree = "<group>"; };
 		F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitwiseExpressions.h; sourceTree = "<group>"; };
+		F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionBitwiseTests.m; sourceTree = "<group>"; };
 		F33CAF951E79286900792063 /* EntityExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityExpressions.c; sourceTree = "<group>"; };
 		F33CAF961E79286900792063 /* EntityExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityExpressions.h; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
@@ -761,6 +763,7 @@
 				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
 				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
 				F3897BA51DCD764E008D6C1D /* ExpressionControlFlowTests.m */,
+				F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */,
 				F3897BA61DCD764E008D6C1D /* ExpressionEqualityTests.m */,
 				F3897BA91DCD764E008D6C1D /* ExpressionListTests.m */,
 				F3897BAA1DCD764E008D6C1D /* ExpressionMacroTests.m */,
@@ -1752,6 +1755,7 @@
 				F3897BCB1DCD764E008D6C1D /* TextAttributeTests.m in Sources */,
 				F3897BCC1DCD764E008D6C1D /* TextTests.m in Sources */,
 				F3897BBF1DCD764E008D6C1D /* ExpressionListTests.m in Sources */,
+				F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */,
 				F3897BC31DCD764E008D6C1D /* ExpressionStateTests.m in Sources */,
 				F3897BC91DCD764E008D6C1D /* PixelDataGeneratorTests.m in Sources */,
 				F3897BBD1DCD764E008D6C1D /* ExpressionEqualityTests.m in Sources */,
