@@ -97,4 +97,27 @@
     [self assert: Test count: sizeof(Test) / sizeof(*Test)];
 }
 
+-(void) testXor
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
+#pragma clang diagnostic ignored "-Wtautological-compare"
+    ExpressionResult Test[] = {
+        { "(xor)",            CCExpressionValueTypeExpression },
+        { "(xor test)",          CCExpressionValueTypeExpression },
+        { "(xor 1.5)",         CCExpressionValueTypeExpression },
+        { "(xor \"test\")",        CCExpressionValueTypeExpression },
+        { "(= () (xor ()))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= 1 (xor 1))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= (1 2) (xor (1 2)))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= 6 (xor 3 5))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= (6 6 1) (xor (5 3 5) (3 5 4)))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= (6 6 1 1) (xor (5 3 5) (3 5 4 1)))",       CCExpressionValueTypeInteger,   .integer = TRUE }
+    };
+#pragma clang diagnostic pop
+    
+    
+    [self assert: Test count: sizeof(Test) / sizeof(*Test)];
+}
+
 @end
