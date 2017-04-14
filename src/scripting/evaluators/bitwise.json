@@ -8,6 +8,18 @@
             "args": [
                 { "repeat": [{ "type": "number" }] }
             ]
+        },
+        {
+            "name": "and",
+            "description": "Bitwise and all the inputs together. If using lists of numbers it will return a list applying the other lists or scalar values to it.",
+            "examples": [
+                "(and 1 2) ;3",
+                "(and 1 1) ;1"
+            ],
+            "return": { "type": "integer" },
+            "args": [
+                { "repeat": [{ "type": "integer" }] }
+            ]
         }
     ]
 }
