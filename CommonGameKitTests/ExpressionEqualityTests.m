@@ -587,4 +587,25 @@
     [self assert: Test count: sizeof(Test) / sizeof(*Test)];
 }
 
+-(void) testNot
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
+#pragma clang diagnostic ignored "-Wtautological-compare"
+    ExpressionResult Test[] = {
+        { "(not)",            CCExpressionValueTypeExpression },
+        { "(not test)",          CCExpressionValueTypeExpression },
+        { "(not 1.5)",         CCExpressionValueTypeExpression },
+        { "(not \"test\")",        CCExpressionValueTypeExpression },
+        { "(not ())",       CCExpressionValueTypeExpression },
+        { "(= 0 (not 1))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= 1 (not 0))",       CCExpressionValueTypeInteger,   .integer = TRUE },
+        { "(= 0 (not 10))",       CCExpressionValueTypeInteger,   .integer = TRUE }
+    };
+#pragma clang diagnostic pop
+    
+    
+    [self assert: Test count: sizeof(Test) / sizeof(*Test)];
+}
+
 @end
