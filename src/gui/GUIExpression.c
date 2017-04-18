@@ -129,24 +129,39 @@ static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
 
 static void GUIExpressionDraw(CCExpression Render, GFXFramebuffer Framebuffer, size_t Index, GFXBuffer Projection)
 {
-    if (CCExpressionGetType(Render) == CCGraphicsExpressionValueTypeDraw)
+    switch (CCExpressionGetType(Render))
     {
-        const CCGraphicsExpressionValueDraw *Drawable = CCExpressionGetData(Render);
-        GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
-        GFXDrawSetBuffer(Drawable->drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
-        GFXDrawSubmit(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
-    }
-    
-    else if (CCExpressionGetType(Render) == CCGraphicsExpressionValueTypeText)
-    {
-        CCOrderedCollection Drawables = CCTextGetDrawables(CCExpressionGetData(Render));
-        CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
+        case CCGraphicsExpressionValueTypeDraw:
         {
+            const CCGraphicsExpressionValueDraw *Drawable = CCExpressionGetData(Render);
             GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
             GFXDrawSetBuffer(Drawable->drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
-            GFXDrawSubmitIndexed(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
+            GFXDrawSubmit(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
+            break;
         }
-        CCCollectionDestroy(Drawables);
+            
+        case CCGraphicsExpressionValueTypeText:
+        {
+            CCOrderedCollection Drawables = CCTextGetDrawables(CCExpressionGetData(Render));
+            CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
+            {
+                GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
+                GFXDrawSetBuffer(Drawable->drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
+                GFXDrawSubmitIndexed(Drawable->drawer, GFXPrimitiveTypeTriangleStrip, 0, Drawable->vertices);
+            }
+            CCCollectionDestroy(Drawables);
+            break;
+        }
+            
+        case CCExpressionValueTypeList:
+        {
+            CC_COLLECTION_FOREACH(CCExpression, Draw, CCExpressionGetList(Render))
+            {
+                GUIExpressionDraw(Draw, Framebuffer, Index, Projection);
+            }
+            break;
+        }
+            
     }
 }
 
@@ -166,18 +181,7 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
             Render->state.super = ((GUIExpressionInfo*)Object->internal)->render;
             Render = CCExpressionEvaluate(Render);
             
-            if (CCExpressionGetType(Render) == CCExpressionValueTypeList)
-            {
-                CC_COLLECTION_FOREACH(CCExpression, Draw, CCExpressionGetList(Render))
-                {
-                    GUIExpressionDraw(Draw, Framebuffer, Index, Proj);
-                }
-            }
-            
-            else
-            {
-                GUIExpressionDraw(Render, Framebuffer, Index, Proj);
-            }
+            GUIExpressionDraw(Render, Framebuffer, Index, Proj);
         }
         
         GFXBufferDestroy(Proj);
