@@ -154,6 +154,7 @@ CCExpression CCIOExpressionEval(CCExpression Expression)
                 CCExpression Src = CCExpressionCreateFromSourceFile(Path);
                 if (Src)
                 {
+                    CCExpressionStateSetSuper(Src, Expression);
                     Expr = CCExpressionRetain(CCExpressionEvaluate(Src));
                     CCExpressionDestroy(Src);
                 }
