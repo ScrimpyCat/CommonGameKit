@@ -36,6 +36,10 @@ CCExpression CCIOExpressionPrint(CCExpression Expression)
         CCExpression Arg = CCExpressionEvaluate(*Expr);
         switch (CCExpressionGetType(Arg))
         {
+            case CCExpressionValueTypeNull:
+                CC_EXPRESSION_EVALUATOR_LOG("<null>");
+                break;
+                
             case CCExpressionValueTypeAtom:
                 CC_EXPRESSION_EVALUATOR_LOG("%S", CCExpressionGetAtom(Arg));
                 break;

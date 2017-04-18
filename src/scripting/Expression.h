@@ -47,6 +47,7 @@
 #define CC_EXPRESSION_ENABLE_CONSTANT_LISTS 1
 
 enum {
+    CCExpressionValueTypeNull,
     CCExpressionValueTypeAtom,
     CCExpressionValueTypeInteger,
     CCExpressionValueTypeFloat,
@@ -75,7 +76,7 @@ enum {
      00 -> atom
      01 -> integer
      10 -> float
-     11 -> ??
+     11 -> null
      */
     CCExpressionTaggedMask = 7,
     CCExpressionTaggedExtended = (1 << 2),
@@ -83,7 +84,7 @@ enum {
     CCExpressionTaggedExtendedAtom = (0 << 3) | CCExpressionTaggedExtended,
     CCExpressionTaggedExtendedInteger = (1 << 3) | CCExpressionTaggedExtended,
     CCExpressionTaggedExtendedFloat = (2 << 3) | CCExpressionTaggedExtended,
-//    CCExpressionTaggedExtendedReserved = (3 << 3)
+    CCExpressionTaggedExtendedNull = (3 << 3) | CCExpressionTaggedExtended,
     
     CCExpressionTaggedBits = 5,
     CCExpressionTaggedFloatTaggedBits = CCExpressionTaggedBits,
@@ -314,6 +315,7 @@ void CCExpressionPrintState(CCExpression Expression);
 #pragma mark -
 
 //Convenience getters and initializers for when introducing tagged types.
+CC_NEW CCExpression CCExpressionCreateNull(CCAllocatorType Allocator);
 CC_NEW CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy);
 CC_NEW CCExpression CCExpressionCreateInteger(CCAllocatorType Allocator, int32_t Value);
 CC_NEW CCExpression CCExpressionCreateFloat(CCAllocatorType Allocator, float Value);

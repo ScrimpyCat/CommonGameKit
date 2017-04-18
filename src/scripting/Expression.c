@@ -113,6 +113,17 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
     return Expression;
 }
 
+CCExpression CCExpressionCreateNull(CCAllocatorType Allocator)
+{
+#if CC_EXPRESSION_ENABLE_TAGGED_TYPES
+    return (CCExpression)CCExpressionTaggedExtendedNull;
+#else
+    CCExpression Expression = CCExpressionCreate(Allocator, CCExpressionValueTypeNull);
+    
+    return Expression;
+#endif
+}
+
 CCExpression CCExpressionCreateAtom(CCAllocatorType Allocator, CCString Atom, _Bool Copy)
 {
     const CCChar Prefix = CCStringGetCharacterAtIndex(Atom, 0), Suffix = CCStringGetCharacterAtIndex(Atom, CCStringGetLength(Atom) - 1);
@@ -317,6 +328,9 @@ CCExpressionValueType CCExpressionGetTaggedType(uintptr_t Expression)
     {
         switch (Expression & CCExpressionTaggedExtendedMask)
         {
+            case CCExpressionTaggedExtendedNull:
+                return CCExpressionValueTypeNull;
+                
             case CCExpressionTaggedExtendedAtom:
                 return CCExpressionValueTypeAtom;
                 
@@ -619,6 +633,10 @@ static void CCExpressionPrintStatement(CCExpression Expression)
     const CCExpressionValueType Type = CCExpressionGetType(Expression);
     switch (Type)
     {
+        case CCExpressionValueTypeNull:
+            printf("<null>");
+            break;
+            
         case CCExpressionValueTypeAtom:
         {
             CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetAtom(Expression)) printf("%s", Buffer);
@@ -741,7 +759,10 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
                 CCExpression Super = Expression->state.super;
                 if (!Super->state.remove) Super->state.remove = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall, sizeof(CCCollectionEntry), NULL);
                 
-                CCCollectionInsertElement(Super->state.remove, &(CCCollectionEntry){ CCCollectionFindElement(CCExpressionGetList(Super), &Expression, NULL) });
+                CCCollectionEntry Entry = CCCollectionFindElement(CCExpressionGetList(Super), &Expression, NULL);
+                if (Entry) CCCollectionInsertElement(Super->state.remove, &Entry);
+                
+                Expression->state.result = CCExpressionCreateNull(CC_STD_ALLOCATOR);
             }
         }
         

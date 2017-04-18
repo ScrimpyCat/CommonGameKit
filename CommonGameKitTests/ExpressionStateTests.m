@@ -37,10 +37,7 @@
     CCExpression Expression = CCExpressionCreateFromSource("(begin (state! \".x\") (state! \".y\" 15) (state! \".ref-x\" (quote (+ .x 10))))");
     
     CCExpression Result = CCExpressionEvaluate(Expression);
-    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeExpression, @"Should be an expression");
-    XCTAssertEqual(Result, Expression, @"Should be the expression");
-    XCTAssertEqual(CCCollectionGetCount(CCExpressionGetList(Result)), 1, @"Should have removed the state expressions");
-    XCTAssertTrue(CCStringEqual(CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0)), CC_STRING("begin")), @"Should be the begin function");
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeNull, @"Should be a null expression");
     
     XCTAssertEqual(CCExpressionGetState(Expression, CC_STRING(".x")), NULL, @"Should be uninitialized");
     XCTAssertEqual(CCExpressionGetType(CCExpressionGetState(Expression, CC_STRING(".y"))), CCExpressionValueTypeInteger, @"Should be initialized");
