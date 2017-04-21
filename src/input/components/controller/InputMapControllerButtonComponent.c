@@ -24,15 +24,38 @@
  */
 
 #include "InputMapControllerButtonComponent.h"
+#include "ComponentExpressions.h"
 
 const char * const CCInputMapControllerButtonComponentName = "input_map_controller_button";
+
+static const CCComponentExpressionDescriptor CCInputMapControllerButtonComponentDescriptor = {
+    .id = CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCInputMapControllerButtonComponentDeserializer,
+    .serialize = NULL
+};
 
 void CCInputMapControllerButtonComponentRegister(void)
 {
     CCComponentRegister(CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID, CCInputMapControllerButtonComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapControllerButtonComponentClass), CCInputMapControllerButtonComponentInitialize, NULL, CCInputMapControllerButtonComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("input-controller-button"), &CCInputMapControllerButtonComponentDescriptor, TRUE);
 }
 
 void CCInputMapControllerButtonComponentDeregister(void)
 {
     CCComponentDeregister(CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID);
+}
+
+static CCComponentExpressionArgumentDeserializer Arguments[] = {
+    { .name = CC_STRING("button:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (void(*)())CCInputMapControllerButtonComponentSetButton },
+    { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (void(*)())CCInputMapControllerButtonComponentSetRamp }
+};
+
+void CCInputMapControllerButtonComponentDeserializer(CCComponent Component, CCExpression Arg)
+{
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    {
+        CCInputMapComponentDeserializer(Component, Arg);
+    }
 }
