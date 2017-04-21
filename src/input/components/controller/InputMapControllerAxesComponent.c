@@ -28,9 +28,18 @@
 
 const char * const CCInputMapControllerAxesComponentName = "input_map_controller_axes";
 
+static const CCComponentExpressionDescriptor CCInputMapControllerAxesComponentDescriptor = {
+    .id = CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCInputMapControllerAxesComponentDeserializer,
+    .serialize = NULL
+};
+
 void CCInputMapControllerAxesComponentRegister(void)
 {
     CCComponentRegister(CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID, CCInputMapControllerAxesComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapControllerAxesComponentClass), CCInputMapControllerAxesComponentInitialize, NULL, CCInputMapControllerAxesComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("input-controller-axes"), &CCInputMapControllerAxesComponentDescriptor, TRUE);
 }
 
 void CCInputMapControllerAxesComponentDeregister(void)
