@@ -256,6 +256,34 @@
                     "args": [[{ "type": "integer", "name": "precision" }]]
                 }
             ]
+        },
+        {
+            "name": "input-controller-button",
+            "description": "Create an input map controller button component.",
+            "examples": ["(input-controller-button (action: \"action\") (x: 0) (y: 1 :flip) (deadzone: 0.05))"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "action",
+                    "description": "The name of the action.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "callback",
+                    "description": "The name of the callback.",
+                    "args": [[{ "type": "atom" }]]
+                },
+                {
+                    "name": "button",
+                    "description": "The button to be mapped.",
+                    "args": [[{ "type": "integer", "name": "identifier" }]]
+                },
+                {
+                    "name": "ramp",
+                    "description": "The ramping applied when retrieving pressure states. The value effects the speed of the build up/falloff per second.",
+                    "args": [[{ "type": "number", "name": "speed" }]]
+                }
+            ]
         }
     ]
 }
