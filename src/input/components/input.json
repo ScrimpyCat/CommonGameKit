@@ -216,6 +216,16 @@
                     "args": [[{ "type": "atom" }]]
                 },
                 {
+                    "name": "device",
+                    "description": "The name of the device to be mapped. Use this to target a specific device.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "connection",
+                    "description": "The index of the connected device.",
+                    "args": [[{ "type": "integer" }]]
+                },
+                {
                     "name": "x",
                     "description": "The x axis to be mapped.",
                     "args": [
@@ -272,6 +282,16 @@
                     "name": "callback",
                     "description": "The name of the callback.",
                     "args": [[{ "type": "atom" }]]
+                },
+                {
+                    "name": "device",
+                    "description": "The name of the device to be mapped. Use this to target a specific device.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "connection",
+                    "description": "The index of the connected device to be mapped.",
+                    "args": [[{ "type": "integer" }]]
                 },
                 {
                     "name": "button",
