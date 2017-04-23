@@ -34,7 +34,7 @@ extern const char * const CCInputMapControllerComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);
-    char *device; //TODO: Should probably make a string type
+    CCString device;
     int8_t connection;
 } CCInputMapControllerComponentClass, *CCInputMapControllerComponentPrivate;
 
@@ -46,35 +46,26 @@ void CCInputMapControllerComponentDeregister(void);
 static inline void CCInputMapControllerComponentInitialize(CCComponent Component, CCComponentID id)
 {
     CCInputMapComponentInitialize(Component, id);
-    ((CCInputMapControllerComponentPrivate)Component)->device = NULL;
+    ((CCInputMapControllerComponentPrivate)Component)->device = 0;
     ((CCInputMapControllerComponentPrivate)Component)->connection = 0;
 }
 
 static inline void CCInputMapControllerComponentDeallocate(CCComponent Component)
 {
-    CC_SAFE_Free(((CCInputMapControllerComponentPrivate)Component)->device);
+    if (((CCInputMapControllerComponentPrivate)Component)->device) CCStringDestroy(((CCInputMapControllerComponentPrivate)Component)->device);
     CCInputMapComponentDeallocate(Component);
 }
 
-static inline const char *CCInputMapControllerComponentGetDevice(CCComponent Component)
+static inline CCString CCInputMapControllerComponentGetDevice(CCComponent Component)
 {
     return ((CCInputMapControllerComponentPrivate)Component)->device;
 }
 
-static inline void CCInputMapControllerComponentSetDevice(CCComponent Component, const char *Device)
+static inline void CCInputMapControllerComponentSetDevice(CCComponent Component, CCString Device)
 {
-    if (Device)
-    {
-        const size_t Length = strlen(Device);
-        CC_SAFE_Realloc(((CCInputMapControllerComponentPrivate)Component)->device, (Length + 1) * sizeof(char),
-                        CC_LOG_ERROR("Failed to create new device name (%" PRIu32 " : %s) due to allocation failure", CCComponentGetID(Component), Device);
-                        return;
-                        );
-        
-        strcpy(((CCInputMapControllerComponentPrivate)Component)->device, Device);
-    }
+    if (((CCInputMapControllerComponentPrivate)Component)->device) CCStringDestroy(((CCInputMapControllerComponentPrivate)Component)->device);
     
-    else CC_SAFE_Free(((CCInputMapControllerComponentPrivate)Component)->device);
+    ((CCInputMapControllerComponentPrivate)Component)->device = Device ? CCStringCopy(Device) : 0;
 }
 
 static inline int8_t CCInputMapControllerComponentGetConnection(CCComponent Component)

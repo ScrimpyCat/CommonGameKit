@@ -149,7 +149,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
     CCAssertLog(CCComponentGetID(Component) == CC_INPUT_MAP_CONTROLLER_COMPONENT_ID, "Must be a input map controller component");
     
     const int8_t Connection = CCInputMapControllerComponentGetConnection(Component);
-    const char *Device = CCInputMapControllerComponentGetDevice(Component);
+    const CCString Device = CCInputMapControllerComponentGetDevice(Component);
     
     switch (CCComponentGetID(Component) & CCInputMapTypeMask)
     {
@@ -162,15 +162,12 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
-                CC_STRING_TEMP_BUFFER(Name, Controller[Connection].name) //TODO: make device CCString
+                if ((!Device) || (CCStringEqual(Device, Controller[Connection].name)))
                 {
-                    if ((!Device) || (!strcmp(Device, Name)))
-                    {
-                        const size_t Count = CCCollectionGetCount(Controller[Connection].axes);
-                        if ((x >= 0) && (x < Count)) Position.x = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, x);
-                        if ((y >= 0) && (x < Count)) Position.y = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, y);
-                        if ((z >= 0) && (x < Count)) Position.z = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, z);
-                    }
+                    const size_t Count = CCCollectionGetCount(Controller[Connection].axes);
+                    if ((x >= 0) && (x < Count)) Position.x = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, x);
+                    if ((y >= 0) && (x < Count)) Position.y = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, y);
+                    if ((z >= 0) && (x < Count)) Position.z = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, z);
                 }
             }
             atomic_flag_clear(&Controller[Connection].lock);
@@ -214,15 +211,12 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
-                CC_STRING_TEMP_BUFFER(Name, Controller[Connection].name) //TODO: make device CCString
+                if ((!Device) || (CCStringEqual(Device, Controller[Connection].name)))
                 {
-                    if ((!Device) || (!strcmp(Device, Name)))
-                    {
-                        const size_t Count = CCCollectionGetCount(Controller[Connection].buttons);
-                        if ((Button >= 0) && (Button < Count)) Active = *(_Bool*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].buttons, Button);
-                        
-                        Timestamp = Controller[Connection].timestamp;
-                    }
+                    const size_t Count = CCCollectionGetCount(Controller[Connection].buttons);
+                    if ((Button >= 0) && (Button < Count)) Active = *(_Bool*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].buttons, Button);
+                    
+                    Timestamp = Controller[Connection].timestamp;
                 }
             }
             atomic_flag_clear(&Controller[Connection].lock);
