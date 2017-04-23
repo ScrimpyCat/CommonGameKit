@@ -56,6 +56,6 @@ void CCInputMapControllerButtonComponentDeserializer(CCComponent Component, CCEx
 {
     if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
     {
-        CCInputMapComponentDeserializer(Component, Arg);
+        CCInputMapControllerComponentDeserializer(Component, Arg);
     }
 }

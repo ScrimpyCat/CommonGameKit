@@ -120,6 +120,6 @@ void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpr
     
     if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
     {
-        CCInputMapComponentDeserializer(Component, Arg);
+        CCInputMapControllerComponentDeserializer(Component, Arg);
     }
 }

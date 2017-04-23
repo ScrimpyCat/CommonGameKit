@@ -24,6 +24,7 @@
  */
 
 #include "InputMapControllerComponent.h"
+#include "ComponentExpressions.h"
 
 const char * const CCInputMapControllerComponentName = "input_map_controller";
 
@@ -35,4 +36,17 @@ void CCInputMapControllerComponentRegister(void)
 void CCInputMapControllerComponentDeregister(void)
 {
     CCComponentDeregister(CC_INPUT_MAP_CONTROLLER_COMPONENT_ID);
+}
+
+static CCComponentExpressionArgumentDeserializer Arguments[] = {
+    { .name = CC_STRING("connection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (void(*)())CCInputMapControllerComponentSetConnection },
+    { .name = CC_STRING("device:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (void(*)())CCInputMapControllerComponentSetDevice }
+};
+
+void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg)
+{
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    {
+        CCInputMapComponentDeserializer(Component, Arg);
+    }
 }
