@@ -203,7 +203,7 @@ void GUIManagerRemoveObject(GUIObject Object)
     atomic_flag_clear(&ObjectManager.removedLock);
 }
 
-CCCollection GUIManagerGetEntities(void)
+CCCollection GUIManagerGetObjects(void)
 {
     return ObjectManager.active;
 }
