@@ -76,7 +76,7 @@ CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
             {
                 if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
                 {
-                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), NULL, FALSE, NULL, FALSE);
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), CCExpressionCreateNull(CC_STD_ALLOCATOR), FALSE, NULL, FALSE);
                 }
                 
                 CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -115,7 +115,7 @@ CCExpression CCControlFlowExpressionRepeat(CCExpression Expression)
             {
                 if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
                 {
-                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), NULL, FALSE, NULL, FALSE);
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), CCExpressionCreateNull(CC_STD_ALLOCATOR), FALSE, NULL, FALSE);
                 }
                 
                 CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
