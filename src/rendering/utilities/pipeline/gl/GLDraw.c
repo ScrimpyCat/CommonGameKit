@@ -361,7 +361,7 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     }
     
     
-    if ((Attachment->store == GFXFramebufferAttachmentActionClear) || (Attachment->store == GFXFramebufferAttachmentActionFlagClearOnce))
+    if ((Attachment->store == GFXFramebufferAttachmentActionClear) || (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce))
     {
         CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
         glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
