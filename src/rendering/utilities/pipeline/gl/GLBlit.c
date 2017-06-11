@@ -51,6 +51,23 @@ static void GLBlitSetSourceFramebufferState(GLFramebuffer Framebuffer, size_t In
         glReadBuffer(GLFramebufferGetAttachmentIndex(Framebuffer, Index)); CC_GL_CHECK();
     }
 #endif
+    
+    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment((GFXFramebuffer)Framebuffer, Index);
+    if ((Attachment->load == GFXFramebufferAttachmentActionClear) || (Attachment->load & GFXFramebufferAttachmentActionFlagClearOnce))
+    {
+        CC_GL_BIND_FRAMEBUFFER(GL_DRAW_FRAMEBUFFER, GLFramebufferGetID(Framebuffer, Index));
+#ifdef GL_COLOR_ATTACHMENT1
+        if ((GFXFramebuffer)Framebuffer != GFXFramebufferDefault())
+        {
+            glDrawBuffers(1, &(GLenum){ GLFramebufferGetAttachmentIndex(Framebuffer, Index) }); CC_GL_CHECK();
+        }
+#endif
+        
+        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+        
+        Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+    }
 }
 
 static void GLBlitSetDestinationFramebufferState(GLFramebuffer Framebuffer, size_t Index)
@@ -62,6 +79,15 @@ static void GLBlitSetDestinationFramebufferState(GLFramebuffer Framebuffer, size
         glDrawBuffers(1, &(GLenum){ GLFramebufferGetAttachmentIndex(Framebuffer, Index) }); CC_GL_CHECK();
     }
 #endif
+    
+    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment((GFXFramebuffer)Framebuffer, Index);
+    if ((Attachment->load == GFXFramebufferAttachmentActionClear) || (Attachment->load & GFXFramebufferAttachmentActionFlagClearOnce))
+    {
+        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+        
+        Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+    }
 }
 
 static inline CC_CONSTANT_FUNCTION GLenum GLBlitFilter(GFXTextureHint FilterMode)
@@ -85,4 +111,13 @@ static void GLBlitSubmit(GFXBlit Blit)
                       Blit->destination.region.position.y,
                       Blit->destination.region.position.x + Blit->destination.region.size.x,
                       Blit->destination.region.position.y + Blit->destination.region.size.y, GL_COLOR_BUFFER_BIT, GLBlitFilter(Blit->filter)); CC_GL_CHECK();
+    
+    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Blit->destination.framebuffer, Blit->destination.index);
+    if ((Attachment->store == GFXFramebufferAttachmentActionClear) || (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce))
+    {
+        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+        
+        Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+    }
 }
