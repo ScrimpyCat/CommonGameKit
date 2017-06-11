@@ -182,7 +182,7 @@ void CCComponentSystemHandleMessage(CCComponentSystemID id, CCMessage *Message);
  *
  * @param Component The component to be added.
  */
-void CCComponentSystemAddComponent(CCComponent Component);
+void CCComponentSystemAddComponent(CCComponent CC_RETAIN(Component));
 
 /*!
  * @brief Remove component from the system.
@@ -191,7 +191,7 @@ void CCComponentSystemAddComponent(CCComponent Component);
  *
  * @param Component The component to be removed.
  */
-void CCComponentSystemRemoveComponent(CCComponent Component);
+void CCComponentSystemRemoveComponent(CCComponent CC_DESTROY(Component));
 
 /*!
  * @brief Get the system ID of the system responsible for the component type.

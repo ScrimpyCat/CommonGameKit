@@ -41,7 +41,8 @@
 typedef uint32_t CCComponentID;
 
 /*!
- * @brief Generic Component handler.
+ * @brief Generic Component handle.
+ * @description Allows @b CCRetain.
  */
 typedef void *CCComponent;
 

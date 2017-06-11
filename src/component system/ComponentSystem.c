@@ -201,6 +201,8 @@ CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentI
 
 void CCComponentSystemAddComponent(CCComponent Component)
 {
+    CCRetain(Component);
+    
     CCComponentSystem *System = CCComponentSystemHandlesComponentFind(Component);
     if (System)
     {
@@ -245,6 +247,8 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
             atomic_flag_clear(&System->components.removedLock);
         }
     }
+    
+    CCComponentDestroy(Component);
 }
 
 static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)

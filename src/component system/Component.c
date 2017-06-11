@@ -97,9 +97,17 @@ static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
         CC_LOG_ERROR("Failed to create component (%" PRIu32 " : %s) of size (%zu)", Info->id, Info->name, Info->size);
     }
     
-    else if (Info->initializer)
+    else
     {
-        Info->initializer(Component, Info->id);
+        if (Info->initializer)
+        {
+            Info->initializer(Component, Info->id);
+        }
+        
+        if (Info->destructor)
+        {
+            CCMemorySetDestructor(Component, Info->destructor);
+        }
     }
     
     return Component;
@@ -141,17 +149,7 @@ CCComponent CCComponentCreateForName(const char *Name)
 
 void CCComponentDestroy(CCComponent Component)
 {
-    if (Component)
-    {
-        CCComponentInfo *Info = CCComponentInfoFindByID(CCComponentGetID(Component));
-        
-        if (Info)
-        {
-            if (Info->destructor) Info->destructor(Component);
-        }
-        
-        CC_SAFE_Free(Component);
-    }
+    CCFree(Component);
 }
 
 void CCComponentHandleMessage(CCComponent Component, CCMessage *Message)

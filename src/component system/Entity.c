@@ -36,8 +36,6 @@ typedef struct CCEntityInfo {
 
 static void CCEntityComponentDestructor(CCCollection Collection, CCComponent *Component)
 {
-    CCAssertLog(!CCComponentGetIsManaged(*Component), "Entity should not be destroying managed components");
-    
     CCComponentSetEntity(*Component, NULL);
     CCComponentDestroy(*Component);
 }
