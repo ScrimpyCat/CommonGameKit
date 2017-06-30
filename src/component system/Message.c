@@ -83,6 +83,42 @@ static void CCMessageNodeDataDestructor(CCConcurrentQueueNode *Node)
     CCMessageDestroy(*(CCMessage**)CCConcurrentQueueGetNodeData(Node));
 }
 
+#pragma mark - Component
+
+typedef struct {
+    CCComponentID componentID;
+} CCMessageRouteComponent;
+
+static void CCMessageRouteComponentPoster(CCMessageRouter *Router, CCMessage *Message)
+{
+    CCComponentSystemID SystemID = CCComponentSystemHandlesComponentID(((CCMessageRouteComponent*)CCMessageRouterGetData(Router))->componentID);
+    CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(SystemID);
+    
+    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
+    CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
+    
+    CCConcurrentQueuePush(Mailbox, Node);
+}
+
+static void CCMessageRouteComponentDeliverer(CCMessage *Message, CCComponentSystemID SystemID)
+{
+    CCCollection Components = CCComponentSystemGetComponentsForSystem(SystemID);
+    CC_COLLECTION_FOREACH(CCComponent, Component, Components)
+    {
+        if (CCComponentGetID(Component) == ((CCMessageRouteComponent*)CCMessageRouterGetData(Message->router))->componentID)
+        {
+            CCComponentHandleMessage(Component, Message);
+        }
+    }
+}
+
+CCMessageRouter *CCMessageDeliverToComponent(CCComponentID ComponentID)
+{
+    return CCMessageRouterCreate(CC_STD_ALLOCATOR, CCMessageRouteComponentPoster, CCMessageRouteComponentDeliverer, sizeof(CCMessageRouteComponent), &(CCMessageRouteComponent){
+        .componentID = ComponentID
+    });
+}
+
 #pragma mark - Component Belonging To Entity
 
 typedef struct {

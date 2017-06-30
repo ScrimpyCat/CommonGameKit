@@ -122,6 +122,13 @@ void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *C
 #pragma mark - Routers
 
 /*!
+ * @brief Create a router to send a message to specific components of type.
+ * @param ComponentID The id of the target component.
+ * @param The message router. Must be destroyed to free memory.
+ */
+CC_NEW CCMessageRouter *CCMessageDeliverToComponent(CCComponentID ComponentID);
+
+/*!
  * @brief Create a router to send a message to a specific component belonging to a specific entity.
  * @param ComponentID The id of the target component.
  * @param Entity The target entity.
