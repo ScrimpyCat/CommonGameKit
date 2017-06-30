@@ -33,11 +33,13 @@ typedef uint32_t CCMessageID;
 
 /*!
  * @brief A message.
+ * @description Allows @b CCRetain.
  */
 typedef struct CCMessage CCMessage;
 
 /*!
  * @brief A message router.
+ * @description Allows @b CCRetain.
  */
 typedef struct CCMessageRouter CCMessageRouter;
 
