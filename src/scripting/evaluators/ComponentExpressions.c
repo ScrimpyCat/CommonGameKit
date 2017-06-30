@@ -299,6 +299,13 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
     return FALSE;
 }
 
+const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForName(CCString Name)
+{
+    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentDescriptorsName, &Name);
+    
+    return Descriptor ? *Descriptor : NULL;
+}
+
 CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent Component)
 {
     CCAssertLog(Component, "Component must not be null");

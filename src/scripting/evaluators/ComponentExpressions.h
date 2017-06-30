@@ -118,6 +118,13 @@ void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpr
 _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count);
 
 /*!
+ * @brief Get the component expression descriptor for the given name it was registered under.
+ * @param Name The name of the component expression.
+ * @return The component expression descriptor for the name, or NULL if one was not found.
+ */
+const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForName(CCString Name);
+
+/*!
  * @brief Create a component expression for a given component.
  * @param Allocator The allocator to be used.
  * @param Component The component to be converted into an expression.
