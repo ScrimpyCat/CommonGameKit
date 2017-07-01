@@ -231,6 +231,8 @@
 		F3AF34DA1DCD014700CAD472 /* Window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34D81DCD014700CAD472 /* Window.c */; };
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
+		F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E361961EF5758000FCE1A5 /* MessageExpressions.c */; };
+		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; };
 		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
 /* End PBXBuildFile section */
 
@@ -634,6 +636,8 @@
 		F3AF34D81DCD014700CAD472 /* Window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Window.c; sourceTree = "<group>"; };
 		F3AF34D91DCD014700CAD472 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
+		F3E361961EF5758000FCE1A5 /* MessageExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MessageExpressions.c; sourceTree = "<group>"; };
+		F3E361971EF5758000FCE1A5 /* MessageExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageExpressions.h; sourceTree = "<group>"; };
 		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1241,6 +1245,8 @@
 				F3AF34601DCCD5AF00CAD472 /* ListExpressions.h */,
 				F3AF34621DCCD5AF00CAD472 /* MacroExpressions.c */,
 				F3AF34631DCCD5AF00CAD472 /* MacroExpressions.h */,
+				F3E361961EF5758000FCE1A5 /* MessageExpressions.c */,
+				F3E361971EF5758000FCE1A5 /* MessageExpressions.h */,
 				F3AF34651DCCD5AF00CAD472 /* MathExpressions.c */,
 				F3AF34661DCCD5AF00CAD472 /* MathExpressions.h */,
 				F3AF346B1DCCD5AF00CAD472 /* StateExpressions.c */,
@@ -1395,6 +1401,7 @@
 				F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */,
 				F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */,
 				F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */,
+				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */,
 				F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */,
 			);
@@ -1713,6 +1720,7 @@
 				F3AF33CC1DCCD4EC00CAD472 /* GFXDraw.c in Sources */,
 				F3AF34A91DCCD5AF00CAD472 /* TextExpressions.c in Sources */,
 				F3AF33D91DCCD4EC00CAD472 /* GLBlit.c in Sources */,
+				F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */,
 				F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */,
 				F3AF33901DCCD4EC00CAD472 /* GUIManager.c in Sources */,
 				F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */,

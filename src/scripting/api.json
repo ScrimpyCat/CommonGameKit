@@ -30,6 +30,7 @@
         "evaluators/list.json",
         "evaluators/macro.json",
         "evaluators/math.json",
+        "evaluators/message.json",
         "evaluators/state.json",
         "evaluators/string.json",
         "evaluators/text.json",
