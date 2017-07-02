@@ -38,9 +38,10 @@ typedef enum {
  * @param Router The message router to be used.
  * @param id The type of message.
  * @param Args The optional arguments passed with the message. May be NULL.
- * @return Whether the message was successfully posted (TRUE) or not (FALSE).
+ * @return Whether the message was successfully posted (TRUE) or not (FALSE). Regardless the function is
+ *         responsible for destroying the router.
  */
-typedef _Bool (*CCMessageExpressionPoster)(CCMessageRouter *Router, CCMessageID id, CCExpression Args);
+typedef _Bool (*CCMessageExpressionPoster)(CCMessageRouter *CC_OWN(Router), CCMessageID id, CCExpression Args);
 
 typedef struct {
     CCComponentID id;
@@ -53,6 +54,16 @@ typedef struct {
  * @param Descriptor The descriptor to workout how to handle delivery of the message.
  */
 void CCMessageExpressionRegister(CCString CC_COPY(Name), const CCMessageExpressionDescriptor *Descriptor);
+
+/*!
+ * @brief A basic message poster.
+ * @description Will post messages without attaching any data.
+ * @param Router The message router to be used.
+ * @param id The type of message.
+ * @param Args If the args are not NULL, this poster will fail.
+ * @return Whether the message was successfully posted (TRUE) or not (FALSE).
+ */
+_Bool CCMessageExpressionBasicPoster(CCMessageRouter *CC_OWN(Router), CCMessageID id, CCExpression Args);
 
 CC_EXPRESSION_EVALUATOR(component-router) CCExpression CCMessageExpressionComponentRouter(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(message) CCExpression CCMessageExpressionMessage(CCExpression Expression);

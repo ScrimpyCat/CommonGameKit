@@ -42,11 +42,24 @@ void CCMessageExpressionRegister(CCString Name, const CCMessageExpressionDescrip
     CCDictionarySetValue(MessageDescriptors, &(CCString){ CCStringCopy(Name) }, &Descriptor);
 }
 
+_Bool CCMessageExpressionBasicPoster(CCMessageRouter *Router, CCMessageID id, CCExpression Args)
+{
+    if (!Args)
+    {
+        CCMessagePost(CC_STD_ALLOCATOR, id, Router, 0, NULL);
+        return TRUE;
+    }
+    
+    CCMessageRouterDestroy(Router);
+    
+    return FALSE;
+}
+
 CCExpression CCMessageExpressionComponentRouter(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
     {
-        CCExpression Name = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         if (CCExpressionGetType(Name) == CCExpressionValueTypeAtom)
         {
             const CCComponentExpressionDescriptor *Descriptor = CCComponentExpressionDescriptorForName(CCExpressionGetAtom(Name));
@@ -54,7 +67,7 @@ CCExpression CCMessageExpressionComponentRouter(CCExpression Expression)
             {
                 CCMessageRouter *Router = CCMessageDeliverToComponent(Descriptor->id);
                 
-                return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCMessageExpressionValueTypeRouter, &Router, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCMessageRouterDestroy);
+                return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCMessageExpressionValueTypeRouter, Router, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCMessageRouterDestroy);
             }
             
             CC_EXPRESSION_EVALUATOR_LOG_ERROR("component-router: No component exists for name (%S)", CCExpressionGetAtom(Name));
@@ -73,14 +86,14 @@ CCExpression CCMessageExpressionMessage(CCExpression Expression)
     size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     if ((ArgCount >= 2) && (ArgCount <= 3))
     {
-        CCExpression Router = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
-        CCExpression Name = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2);
+        CCExpression Router = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
         if ((CCExpressionGetType(Router) == CCMessageExpressionValueTypeRouter) && (CCExpressionGetType(Name) == CCExpressionValueTypeAtom))
         {
             const CCMessageExpressionDescriptor **Descriptor = CCDictionaryGetValue(MessageDescriptors, &(CCString){ CCExpressionGetAtom(Name) });
             if (Descriptor)
             {
-                return CCExpressionCreateInteger(CC_STD_ALLOCATOR, (*Descriptor)->post(CCExpressionGetData(Router), (*Descriptor)->id, (ArgCount == 3 ? CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3) : NULL)));
+                return CCExpressionCreateInteger(CC_STD_ALLOCATOR, (*Descriptor)->post(CCRetain(CCExpressionGetData(Router)), (*Descriptor)->id, (ArgCount == 3 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3)) : NULL)));
             }
             
             CC_EXPRESSION_EVALUATOR_LOG_ERROR("message: No message exists for name (%S)", CCExpressionGetAtom(Name));
