@@ -95,6 +95,7 @@
 #include <CommonGameKit/ListExpressions.h>
 #include <CommonGameKit/MacroExpressions.h>
 #include <CommonGameKit/MathExpressions.h>
+#include <CommonGameKit/MessageExpressions.h>
 #include <CommonGameKit/StateExpressions.h>
 #include <CommonGameKit/StringExpressions.h>
 #include <CommonGameKit/TextExpressions.h>

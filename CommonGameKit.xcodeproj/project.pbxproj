@@ -232,7 +232,7 @@
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 		F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E361961EF5758000FCE1A5 /* MessageExpressions.c */; };
-		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; };
+		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
 /* End PBXBuildFile section */
 
@@ -1376,6 +1376,7 @@
 				F3AF33C61DCCD4EC00CAD472 /* GFXBlend.h in Headers */,
 				F3AF33BC1DCCD4EC00CAD472 /* ColourFormatRGB.h in Headers */,
 				F3AF33D81DCCD4EC00CAD472 /* GFXTexture.h in Headers */,
+				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */,
 				F3AF33DE1DCCD4EC00CAD472 /* GLDebug.h in Headers */,
 				F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */,
@@ -1401,7 +1402,6 @@
 				F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */,
 				F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */,
 				F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */,
-				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */,
 				F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */,
 			);
