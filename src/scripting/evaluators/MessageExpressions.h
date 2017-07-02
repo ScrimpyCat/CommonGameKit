@@ -33,6 +33,14 @@ typedef enum {
     CCMessageExpressionValueTypeRouter = 'rout'
 } CCMessageExpressionValueType;
 
+typedef void (*CCMessageExpressionPoster)(CCExpression Name, CCExpression Args);
+
+/*!
+ * @brief Register a message poster.
+ * @param Name The name of the message expression.
+ * @param Poster The callback to handle delivery of the message.
+ */
+void CCMessageExpressionRegister(CCString CC_COPY(Name), CCMessageExpressionPoster Poster);
 
 CC_EXPRESSION_EVALUATOR(component-router) CCExpression CCMessageExpressionComponentRouter(CCExpression Expression);
 

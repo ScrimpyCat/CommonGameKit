@@ -27,6 +27,21 @@
 #include "ComponentExpressions.h"
 #include "Message.h"
 
+static CCDictionary Messages = NULL;
+void CCMessageExpressionRegister(CCString Name, CCMessageExpressionPoster Poster)
+{
+    if (!Messages)
+    {
+        Messages = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCMessageExpressionPoster), &(CCDictionaryCallbacks){
+            .keyDestructor = CCStringDestructorForDictionary,
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary
+        });
+    }
+    
+    CCDictionarySetValue(Messages, &(CCString){ CCStringCopy(Name) }, &Poster);
+}
+
 CCExpression CCMessageExpressionComponentRouter(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
