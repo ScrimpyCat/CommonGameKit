@@ -1,9 +1,9 @@
 {
     "functions": [
         {
-            "name": "component-router!",
+            "name": "component-router",
             "description": "Creates a router to route messages to a specific component.",
-            "examples": ["(component-router! :input-keyboard)"],
+            "examples": ["(component-router :input-keyboard)"],
             "return": { "type": "custom:router" },
             "args": [
                 [{ "type": "atom", "name": "component" }]
