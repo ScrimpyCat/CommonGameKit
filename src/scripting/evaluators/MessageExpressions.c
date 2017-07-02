@@ -27,19 +27,19 @@
 #include "ComponentExpressions.h"
 #include "Message.h"
 
-static CCDictionary Messages = NULL;
-void CCMessageExpressionRegister(CCString Name, CCMessageExpressionPoster Poster)
+static CCDictionary MessageDescriptors = NULL;
+void CCMessageExpressionRegister(CCString Name, const CCMessageExpressionDescriptor *Descriptor)
 {
-    if (!Messages)
+    if (!MessageDescriptors)
     {
-        Messages = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCMessageExpressionPoster), &(CCDictionaryCallbacks){
+        MessageDescriptors = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCMessageExpressionDescriptor*), &(CCDictionaryCallbacks){
             .keyDestructor = CCStringDestructorForDictionary,
             .getHash = CCStringHasherForDictionary,
             .compareKeys = CCStringComparatorForDictionary
         });
     }
     
-    CCDictionarySetValue(Messages, &(CCString){ CCStringCopy(Name) }, &Poster);
+    CCDictionarySetValue(MessageDescriptors, &(CCString){ CCStringCopy(Name) }, &Descriptor);
 }
 
 CCExpression CCMessageExpressionComponentRouter(CCExpression Expression)
@@ -64,6 +64,32 @@ CCExpression CCMessageExpressionComponentRouter(CCExpression Expression)
     }
     
     CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("component-router", "name:atom");
+    
+    return Expression;
+}
+
+CCExpression CCMessageExpressionMessage(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if ((ArgCount >= 2) && (ArgCount <= 3))
+    {
+        CCExpression Router = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+        CCExpression Name = CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2);
+        if ((CCExpressionGetType(Router) == CCMessageExpressionValueTypeRouter) && (CCExpressionGetType(Name) == CCExpressionValueTypeAtom))
+        {
+            const CCMessageExpressionDescriptor **Descriptor = CCDictionaryGetValue(MessageDescriptors, &(CCString){ CCExpressionGetAtom(Name) });
+            if (Descriptor)
+            {
+                return CCExpressionCreateInteger(CC_STD_ALLOCATOR, (*Descriptor)->post(CCExpressionGetData(Router), (*Descriptor)->id, (ArgCount == 3 ? CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3) : NULL)));
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("message: No message exists for name (%S)", CCExpressionGetAtom(Name));
+            
+            return Expression;
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("message", "router:custom message:atom [args:expr]");
     
     return Expression;
 }
