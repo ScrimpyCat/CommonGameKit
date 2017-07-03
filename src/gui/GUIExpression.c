@@ -671,6 +671,20 @@ static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Arg
                     {
                         CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE, NULL, FALSE);
                     }
+                    
+                    if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+                    {
+                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+                    }
+                    
+                    else
+                    {
+                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                    }
                 }
             }
         }
@@ -704,6 +718,20 @@ static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Ar
                 CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE, NULL, FALSE);
                 CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE, NULL, FALSE);
             }
+            
+            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+            {
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+            }
+            
+            else
+            {
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+            }
         }
     }
     
@@ -736,6 +764,20 @@ static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args
             else
             {
                 CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE, NULL, FALSE);
+            }
+            
+            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+            {
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+            }
+            
+            else
+            {
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
             }
         }
     }
