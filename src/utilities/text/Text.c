@@ -41,6 +41,16 @@ typedef struct CCTextInfo {
         size_t length; //cached visible length
     } visible;
     size_t length; //cached length
+    enum {
+        CCTextChangedString = (1 << 0),
+        CCTextChangedAlignment = (1 << 1),
+        CCTextChangedFrame = (1 << 2),
+        CCTextChangedVisibility = (1 << 3),
+        CCTextChangedVisibleOffset = (1 << 4),
+        CCTextChangedVisibleLength = (1 << 5),
+        
+        CCTextChangedEverything = CCTextChangedString | CCTextChangedAlignment | CCTextChangedFrame | CCTextChangedVisibleLength
+    } changed;
 } CCTextInfo;
 
 static void CCTextDestructor(CCText Text)
@@ -68,7 +78,8 @@ CCText CCTextCreate(CCAllocatorType Allocator)
                 },
                 .length = 0
             },
-            .length = 0
+            .length = 0,
+            .changed = CCTextChangedEverything
         };
         
         CCMemorySetDestructor(Text, (CCMemoryDestructorCallback)CCTextDestructor);
@@ -102,6 +113,7 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
 {
     CCAssertLog(Text, "Text must not be null");
     
+    if ((!Text->changed) && (Text->drawers)) return CCRetain(Text->drawers);
     /*
      TODO: Optimize!
      
@@ -257,6 +269,8 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
         CCCollectionDestroy(Lines);
     }
     
+    Text->changed = 0;
+    
     if (Text->drawers) CCCollectionDestroy(Text->drawers);
     
     return CCRetain((Text->drawers = Drawables));
@@ -274,10 +288,45 @@ void CCTextSetString(CCText Text, CCOrderedCollection AttributedStrings)
         Length = CCTextAttributeGetLength(AttributedStrings);
     }
     
-    //TODO: compare difference between new Strings and old Text->strings
-    if (Text->strings) CCCollectionDestroy(Text->strings);
+    if (Text->strings)
+    {
+        if ((Text->length == Length) && (CCCollectionGetCount(Text->strings) == CCCollectionGetCount(Strings)))
+        {
+            CCEnumerator Enumerator1, Enumerator2;
+            
+            CCCollectionGetEnumerator(Text->strings, &Enumerator1);
+            CCCollectionGetEnumerator(Strings, &Enumerator2);
+            
+            _Bool Match = TRUE;
+            for (CCTextAttribute *Attribute1 = CCCollectionEnumeratorGetCurrent(&Enumerator1), *Attribute2 = CCCollectionEnumeratorGetCurrent(&Enumerator2); (Attribute1) && (Attribute2); Attribute1 = CCCollectionEnumeratorNext(&Enumerator1), Attribute2 = CCCollectionEnumeratorNext(&Enumerator2))
+            {
+                Match = CCStringEqual(Attribute1->string, Attribute2->string) &&
+                (Attribute1->font == Attribute2->font) && //TODO: if false check internal values?
+                ((Attribute1->colour.r == Attribute2->colour.r) && (Attribute1->colour.g == Attribute2->colour.g) && (Attribute1->colour.b == Attribute2->colour.b) && (Attribute1->colour.a == Attribute2->colour.a)) &&
+                CCVector2Equal(Attribute1->scale, Attribute2->scale) &&
+                CCVector2Equal(Attribute1->offset, Attribute2->offset) &&
+                CCVector2Equal(Attribute1->tilt, Attribute2->tilt) &&
+                (Attribute1->space == Attribute2->space) &&
+                (Attribute1->softness == Attribute2->softness) &&
+                (Attribute1->thickness == Attribute2->thickness);
+                
+                if (!Match) break;
+            }
+            
+            if (Match)
+            {
+                CCCollectionDestroy(Strings);
+                return;
+            }
+        }
+        
+        CCCollectionDestroy(Text->strings);
+    }
+    
     Text->strings = Strings;
     Text->length = Length;
+    
+    Text->changed |= CCTextChangedString;
 }
 
 void CCTextSetAlignment(CCText Text, CCTextAlignment Alignment)
@@ -286,8 +335,8 @@ void CCTextSetAlignment(CCText Text, CCTextAlignment Alignment)
     
     if (Text->alignment != Alignment)
     {
-        //TODO: set change in alignment
         Text->alignment = Alignment;
+        Text->changed |= CCTextChangedAlignment;
     }
 }
 
@@ -297,8 +346,8 @@ void CCTextSetVisibility(CCText Text, CCTextVisibility Visibility)
     
     if (Text->visible.controls.options != Visibility)
     {
-        //TODO: set change visibility
         Text->visible.controls.options = Visibility;
+        Text->changed |= CCTextChangedVisibility;
     }
 }
 
@@ -311,8 +360,8 @@ void CCTextSetFrame(CCText Text, CCRect Frame)
         (Text->frame.size.x != Frame.size.x) ||
         (Text->frame.size.y != Frame.size.y))
     {
-        //TODO: set change frame
         Text->frame = Frame;
+        Text->changed |= CCTextChangedFrame;
     }
 }
 
@@ -336,8 +385,8 @@ void CCTextSetVisibleLength(CCText Text, size_t Length)
     
     if (Text->visible.controls.length != Length)
     {
-        //TODO: set change visible length
         Text->visible.controls.length = Length;
+        Text->changed |= CCTextChangedVisibleLength;
     }
 }
 
@@ -354,8 +403,8 @@ void CCTextSetOffset(CCText Text, size_t Offset)
     
     if (Text->visible.controls.offset != Offset)
     {
-        //TODO: set change visible length
         Text->visible.controls.offset = Offset;
+        Text->changed |= CCTextChangedVisibleOffset;
     }
 }
 
