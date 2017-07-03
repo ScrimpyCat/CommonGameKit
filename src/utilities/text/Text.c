@@ -30,6 +30,8 @@ typedef struct CCTextInfo {
     CCAllocatorType allocator;
     CCOrderedCollection drawers;
     CCOrderedCollection strings;
+    CCOrderedCollection selection;
+    CCOrderedCollection lines;
     CCTextAlignment alignment;
     CCRect frame;
     struct {
@@ -49,7 +51,9 @@ typedef struct CCTextInfo {
         CCTextChangedVisibleOffset = (1 << 4),
         CCTextChangedVisibleLength = (1 << 5),
         
-        CCTextChangedEverything = CCTextChangedString | CCTextChangedAlignment | CCTextChangedFrame | CCTextChangedVisibleLength
+        CCTextChangedEverything = CCTextChangedString | CCTextChangedAlignment | CCTextChangedFrame | CCTextChangedVisibleLength,
+        CCTextChangedSelection = CCTextChangedString | CCTextChangedVisibleOffset | CCTextChangedVisibleLength,
+        CCTextChangedLines = CCTextChangedVisibility | CCTextChangedFrame | CCTextChangedSelection
     } changed;
 } CCTextInfo;
 
@@ -119,16 +123,17 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
      
      - The CCTextAttribute functions are not designed for optimal usage, later combine their operations.
      - The drawables should be ordered into groups that can be drawn together in a single call.
-     - Drawables should be cached and only recreated when necessary.
      */
     CCOrderedCollection Drawables = CCCollectionCreate(Text->allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextDrawable), (CCCollectionElementDestructor)CCTextDrawableElementDestructor);
     
     Text->visible.length = 0;
     if (Text->strings)
     {
-        CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
-        CCOrderedCollection Lines = CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x);
-        CCCollectionDestroy(Selection);
+        CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
+        CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
+        
+        if (Text->selection) CCCollectionDestroy(Text->selection);
+        Text->selection = Selection;
         
         float Height = 0.0f;
         CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
@@ -171,6 +176,10 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
                             unsigned short *Indices;
                             CC_SAFE_Malloc(Indices, sizeof(unsigned short) * IBO_SIZE,
                                            CC_LOG_ERROR("Failed to allocate IBO");
+                                           
+                                           if (Text->lines) CCCollectionDestroy(Text->lines);
+                                           Text->lines = Lines;
+                                           
                                            return NULL;
                                            );
                             
@@ -266,7 +275,8 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
             }
         }
         
-        CCCollectionDestroy(Lines);
+        if (Text->lines) CCCollectionDestroy(Text->lines);
+        Text->lines = Lines;
     }
     
     Text->changed = 0;
@@ -416,9 +426,11 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
     
     if ((Text->strings) && (Length <= Offset))
     {
-        CCOrderedCollection Selection = CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length);
-        CCOrderedCollection Lines = CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x);
-        CCCollectionDestroy(Selection);
+        CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
+        CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
+        
+        if (Text->selection) CCCollectionDestroy(Text->selection);
+        Text->selection = Selection;
         
         float Height = 0.0f;
         CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
@@ -446,7 +458,8 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
                     {
                         if (PrevLength++ == Offset)
                         {
-                            CCCollectionDestroy(Lines);
+                            if (Text->lines) CCCollectionDestroy(Text->lines);
+                            Text->lines = Lines;
                             
                             return Cursor;
                         }
@@ -460,13 +473,15 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
                     }
                 }
                 
-                CCCollectionDestroy(Lines);
+                if (Text->lines) CCCollectionDestroy(Text->lines);
+                Text->lines = Lines;
                 
                 return Cursor;
             }
         }
         
-        CCCollectionDestroy(Lines);
+        if (Text->lines) CCCollectionDestroy(Text->lines);
+        Text->lines = Lines;
     }
     
     return CCVector2DMake(NAN, NAN);
