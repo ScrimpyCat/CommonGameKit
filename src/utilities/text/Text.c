@@ -61,6 +61,8 @@ static void CCTextDestructor(CCText Text)
 {
     if (Text->drawers) CCCollectionDestroy(Text->drawers);
     if (Text->strings) CCCollectionDestroy(Text->strings);
+    if (Text->selection) CCCollectionDestroy(Text->selection);
+    if (Text->lines) CCCollectionDestroy(Text->lines);
 }
 
 CCText CCTextCreate(CCAllocatorType Allocator)
@@ -311,14 +313,14 @@ void CCTextSetString(CCText Text, CCOrderedCollection AttributedStrings)
             for (CCTextAttribute *Attribute1 = CCCollectionEnumeratorGetCurrent(&Enumerator1), *Attribute2 = CCCollectionEnumeratorGetCurrent(&Enumerator2); (Attribute1) && (Attribute2); Attribute1 = CCCollectionEnumeratorNext(&Enumerator1), Attribute2 = CCCollectionEnumeratorNext(&Enumerator2))
             {
                 Match = CCStringEqual(Attribute1->string, Attribute2->string) &&
-                (Attribute1->font == Attribute2->font) && //TODO: if false check internal values?
-                ((Attribute1->colour.r == Attribute2->colour.r) && (Attribute1->colour.g == Attribute2->colour.g) && (Attribute1->colour.b == Attribute2->colour.b) && (Attribute1->colour.a == Attribute2->colour.a)) &&
-                CCVector2Equal(Attribute1->scale, Attribute2->scale) &&
-                CCVector2Equal(Attribute1->offset, Attribute2->offset) &&
-                CCVector2Equal(Attribute1->tilt, Attribute2->tilt) &&
-                (Attribute1->space == Attribute2->space) &&
-                (Attribute1->softness == Attribute2->softness) &&
-                (Attribute1->thickness == Attribute2->thickness);
+                        (Attribute1->font == Attribute2->font) && //TODO: if false check internal values?
+                        ((Attribute1->colour.r == Attribute2->colour.r) && (Attribute1->colour.g == Attribute2->colour.g) && (Attribute1->colour.b == Attribute2->colour.b) && (Attribute1->colour.a == Attribute2->colour.a)) &&
+                        CCVector2Equal(Attribute1->scale, Attribute2->scale) &&
+                        CCVector2Equal(Attribute1->offset, Attribute2->offset) &&
+                        CCVector2Equal(Attribute1->tilt, Attribute2->tilt) &&
+                        (Attribute1->space == Attribute2->space) &&
+                        (Attribute1->softness == Attribute2->softness) &&
+                        (Attribute1->thickness == Attribute2->thickness);
                 
                 if (!Match) break;
             }
