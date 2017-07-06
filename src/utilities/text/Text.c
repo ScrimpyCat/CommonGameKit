@@ -32,6 +32,7 @@ typedef struct CCTextInfo {
     CCOrderedCollection strings;
     CCOrderedCollection selection;
     CCOrderedCollection lines;
+    CCArray lineInfo;
     CCTextAlignment alignment;
     CCRect frame;
     struct {
@@ -51,11 +52,19 @@ typedef struct CCTextInfo {
         CCTextChangedVisibleOffset = (1 << 4),
         CCTextChangedVisibleLength = (1 << 5),
         
-        CCTextChangedEverything = CCTextChangedString | CCTextChangedAlignment | CCTextChangedFrame | CCTextChangedVisibleLength,
+        CCTextChangedEverything = CCTextChangedString | CCTextChangedAlignment | CCTextChangedFrame | CCTextChangedVisibility | CCTextChangedVisibleOffset | CCTextChangedVisibleLength,
         CCTextChangedSelection = CCTextChangedString | CCTextChangedVisibleOffset | CCTextChangedVisibleLength,
         CCTextChangedLines = CCTextChangedVisibility | CCTextChangedFrame | CCTextChangedSelection
     } changed;
 } CCTextInfo;
+
+typedef struct {
+    size_t length;
+    float width;
+    float height;
+    float leading;
+    float trailing;
+} CCTextLineInfo;
 
 static void CCTextDestructor(CCText Text)
 {
@@ -63,6 +72,7 @@ static void CCTextDestructor(CCText Text)
     if (Text->strings) CCCollectionDestroy(Text->strings);
     if (Text->selection) CCCollectionDestroy(Text->selection);
     if (Text->lines) CCCollectionDestroy(Text->lines);
+    if (Text->lineInfo) CCArrayDestroy(Text->lineInfo);
 }
 
 CCText CCTextCreate(CCAllocatorType Allocator)
@@ -74,6 +84,9 @@ CCText CCTextCreate(CCAllocatorType Allocator)
             .allocator = Allocator,
             .drawers = NULL,
             .strings = NULL,
+            .selection = NULL,
+            .lines = NULL,
+            .lineInfo = CCArrayCreate(Allocator, sizeof(CCTextLineInfo), 4),
             .alignment = 0,
             .frame = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(0.0f) },
             .visible = {
@@ -137,20 +150,34 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
         if (Text->selection) CCCollectionDestroy(Text->selection);
         Text->selection = Selection;
         
+        if (Text->changed & CCTextChangedLines) CCArrayRemoveAllElements(Text->lineInfo);
+        
+        size_t LineIndex = 0;
         float Height = 0.0f;
         CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
         {
-            Height += CCTextAttributeGetLineHeight(Line, TRUE);
+            if (LineIndex >= CCArrayGetCount(Text->lineInfo))
+            {
+                CCTextLineInfo Info = {
+                    .height = CCTextAttributeGetLineHeight(Line, TRUE),
+                    .length = CCTextAttributeGetLength(Line),
+                    .width = CCTextAttributeGetLineWidth(Line, &Info.leading, &Info.trailing)
+                };
+                
+                CCArrayAppendElement(Text->lineInfo, &Info);
+            }
+            
+            const CCTextLineInfo *LineInfo = CCArrayGetElementAtIndex(Text->lineInfo, LineIndex++);
+            
+            Height += LineInfo->height;
             if (Height > Text->frame.size.y) break;
             
-            Text->visible.length += CCTextAttributeGetLength(Line);
+            Text->visible.length += LineInfo->length;
             
             CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height));
             if (Text->alignment != CCTextAlignmentLeft)
             {
-                float LeadingWhitespace, TrailingWhitespace;
-                const float Width = CCTextAttributeGetLineWidth(Line, &LeadingWhitespace, &TrailingWhitespace);
-                Cursor.x += (Text->frame.size.x - Width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
+                Cursor.x += (Text->frame.size.x - LineInfo->width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
             }
             
             CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
@@ -434,21 +461,33 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
         if (Text->selection) CCCollectionDestroy(Text->selection);
         Text->selection = Selection;
         
+        size_t LineIndex = 0;
         float Height = 0.0f;
         CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
         {
-            Height += CCTextAttributeGetLineHeight(Line, TRUE);
+            if (LineIndex >= CCArrayGetCount(Text->lineInfo))
+            {
+                CCTextLineInfo Info = {
+                    .height = CCTextAttributeGetLineHeight(Line, TRUE),
+                    .length = CCTextAttributeGetLength(Line),
+                    .width = CCTextAttributeGetLineWidth(Line, &Info.leading, &Info.trailing)
+                };
+                
+                CCArrayAppendElement(Text->lineInfo, &Info);
+            }
+            
+            const CCTextLineInfo *LineInfo = CCArrayGetElementAtIndex(Text->lineInfo, LineIndex++);
+            
+            Height += LineInfo->height;
             if (Height > Text->frame.size.y) break;
             
             size_t PrevLength = Length;
-            Length += CCTextAttributeGetLength(Line);
+            Length += LineInfo->length;
             
             CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height));
             if (Text->alignment != CCTextAlignmentLeft)
             {
-                float LeadingWhitespace, TrailingWhitespace;
-                const float Width = CCTextAttributeGetLineWidth(Line, &LeadingWhitespace, &TrailingWhitespace);
-                Cursor.x += (Text->frame.size.x - Width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
+                Cursor.x += (Text->frame.size.x - LineInfo->width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
             }
             
             if (Length >= Offset)
