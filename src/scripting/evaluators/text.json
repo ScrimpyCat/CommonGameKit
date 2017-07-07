@@ -13,6 +13,13 @@
             "examples": ["text-cursor-position .text 0) ;(15 15)"],
             "return": { "type": "list" },
             "args": [[{ "type": "custom:text" }, { "type": "integer", "name": "offset" }]]
+        },
+        {
+            "name": "text-cursor-offset",
+            "description": "Get the offset of the cursor at position. Returns -1 on an invalid position.",
+            "examples": ["text-cursor-offset .text (15 15)) ;0"],
+            "return": { "type": "integer" },
+            "args": [[{ "type": "custom:text" }, { "type": "list", "name": "position", "value": [{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }] }]]
         }
     ]
 }

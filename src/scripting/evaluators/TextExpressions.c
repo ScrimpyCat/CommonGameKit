@@ -59,3 +59,21 @@ CCExpression CCTextExpressionGetCursorPosition(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCTextExpressionGetCursorOffset(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+    {
+        CCExpression Text = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression Position = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(Text) == CCGraphicsExpressionValueTypeText) && (CCExpressionGetType(Position) == CCExpressionValueTypeList))
+        {
+            size_t Offset = CCTextGetCursorOffset(CCExpressionGetData(Text), CCExpressionGetVector2(Position));
+            return CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)(Offset == SIZE_MAX ? -1 : Offset));
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("text-cursor-offset", "text:text position:list");
+    
+    return Expression;
+}
