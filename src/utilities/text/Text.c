@@ -33,6 +33,7 @@ typedef struct CCTextInfo {
     CCOrderedCollection selection;
     CCOrderedCollection lines;
     CCArray lineInfo;
+    CCArray charInfo;
     CCTextAlignment alignment;
     CCRect frame;
     struct {
@@ -66,6 +67,10 @@ typedef struct {
     float trailing;
 } CCTextLineInfo;
 
+typedef struct {
+    CCVector2D cursor;
+} CCTextCharInfo;
+
 static void CCTextDestructor(CCText Text)
 {
     if (Text->drawers) CCCollectionDestroy(Text->drawers);
@@ -73,6 +78,7 @@ static void CCTextDestructor(CCText Text)
     if (Text->selection) CCCollectionDestroy(Text->selection);
     if (Text->lines) CCCollectionDestroy(Text->lines);
     if (Text->lineInfo) CCArrayDestroy(Text->lineInfo);
+    if (Text->charInfo) CCArrayDestroy(Text->charInfo);
 }
 
 CCText CCTextCreate(CCAllocatorType Allocator)
@@ -87,6 +93,7 @@ CCText CCTextCreate(CCAllocatorType Allocator)
             .selection = NULL,
             .lines = NULL,
             .lineInfo = CCArrayCreate(Allocator, sizeof(CCTextLineInfo), 4),
+            .charInfo = CCArrayCreate(Allocator, sizeof(CCTextCharInfo), 16),
             .alignment = 0,
             .frame = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(0.0f) },
             .visible = {
@@ -150,7 +157,11 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
         if (Text->selection) CCCollectionDestroy(Text->selection);
         Text->selection = Selection;
         
-        if (Text->changed & CCTextChangedLines) CCArrayRemoveAllElements(Text->lineInfo);
+        if (Text->changed & CCTextChangedLines)
+        {
+            CCArrayRemoveAllElements(Text->lineInfo);
+            CCArrayRemoveAllElements(Text->charInfo);
+        }
         
         size_t LineIndex = 0;
         float Height = 0.0f;
@@ -182,11 +193,26 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
             
             CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
             {
+                const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
+                
+                CCVector2D CachedCursor = Cursor;
                 size_t GlyphCount = 0;
                 CC_STRING_FOREACH(Letter, Attribute->string)
                 {
                     const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
-                    if (Glyph) GlyphCount++;
+                    if (Glyph)
+                    {
+                        GlyphCount++;
+                        
+                        CCArrayAppendElement(Text->charInfo, &(CCTextCharInfo){ .cursor = CachedCursor });
+                        
+                        CachedCursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, CachedCursor, NULL, NULL);
+                    }
+                    
+                    else
+                    {
+                        CCArrayAppendElement(Text->charInfo, &(CCTextCharInfo){ .cursor = CachedCursor });
+                    }
                 }
                 
                 if (GlyphCount)
@@ -232,7 +258,6 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
                         }
                         
                         
-                        const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
                         size_t Index = 0;
                         CC_STRING_FOREACH(Letter, Attribute->string)
                         {
@@ -455,6 +480,8 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
     
     if ((Text->strings) && (Length <= Offset))
     {
+        if (Offset < CCArrayGetCount(Text->charInfo)) return ((CCTextCharInfo*)CCArrayGetElementAtIndex(Text->charInfo, Offset))->cursor;
+        
         CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
         CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
         
@@ -508,8 +535,7 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
                         const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
                         if (Glyph)
                         {
-                            CCRect Rect;
-                            Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, &Rect, NULL);
+                            Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, NULL, NULL);
                         }
                     }
                 }
