@@ -101,5 +101,6 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("window-percent-height"), CCWindowExpressionPercentageHeight);
     CCExpressionEvaluatorRegister(CC_STRING("window-width"), CCWindowExpressionWidth);
     CCExpressionEvaluatorRegister(CC_STRING("window-height"), CCWindowExpressionHeight);
+    CCExpressionEvaluatorRegister(CC_STRING("window-resized?"), CCWindowExpressionWindowResized);
     CCExpressionEvaluatorRegister(CC_STRING("frame-changed?"), CCWindowExpressionFrameChanged);
 }

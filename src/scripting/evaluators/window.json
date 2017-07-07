@@ -27,6 +27,12 @@
             "args": [[{ "type": "number", "name": "percent" }]]
         },
         {
+            "name": "window-resized?",
+            "description": "Check whether the window has been resized. Typically used as an invalidator for state invalidations.",
+            "examples": ["(window-resized?) ;1"],
+            "return": { "type": "number" }
+        },
+        {
             "name": "frame-changed?",
             "description": "Check whether the frame has changed. Typically used as an invalidator for state invalidations.",
             "examples": ["(frame-changed?) ;1"],

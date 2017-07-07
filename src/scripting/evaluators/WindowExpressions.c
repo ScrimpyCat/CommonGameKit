@@ -25,6 +25,7 @@
 
 #include "WindowExpressions.h"
 #include "Window.h"
+#include "ExpressionHelpers.h"
 
 static CCExpression CCWindowExpressionPercentage(CCExpression Expression, const char *Name, _Bool UseHeight)
 {
@@ -77,6 +78,27 @@ CCExpression CCWindowExpressionWidth(CCExpression Expression)
 CCExpression CCWindowExpressionHeight(CCExpression Expression)
 {
     return CCWindowExpressionSize(TRUE);
+}
+
+CCString StringWindowSize = CC_STRING("@window-size");
+CCExpression CCWindowExpressionWindowResized(CCExpression Expression)
+{
+    _Bool Changed = TRUE;
+    const CCVector2Di CurrentSize = CCWindowGetFrameSize();
+    
+    CCExpression Size = CCExpressionGetStateStrict(Expression, StringWindowSize);
+    if (Size)
+    {
+        const CCVector2Di OldSize = CCExpressionGetVector2i(Size);
+        if ((Changed = ((OldSize.x != CurrentSize.x) || (OldSize.y != CurrentSize.y))))
+        {
+            CCExpressionSetState(Expression, StringWindowSize, CCExpressionCreateVector2i(CC_STD_ALLOCATOR, CurrentSize), FALSE);
+        }
+    }
+    
+    else CCExpressionCreateState(Expression, StringWindowSize, CCExpressionCreateVector2i(CC_STD_ALLOCATOR, CurrentSize), FALSE, NULL, FALSE);
+    
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Changed);
 }
 
 CCString StringFrameID = CC_STRING("@frame-id");
