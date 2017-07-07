@@ -94,7 +94,7 @@ CCExpression CCWindowExpressionFrameChanged(CCExpression Expression)
         }
     }
     
-    else CCExpressionCreateState(Expression, StringFrameID, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID), FALSE, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE);
+    else CCExpressionCreateState(Expression, StringFrameID, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID), FALSE, NULL, FALSE);
     
     return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Changed);
 }
