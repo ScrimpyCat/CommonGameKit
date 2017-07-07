@@ -587,6 +587,7 @@ size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
             Height += LineInfo->height;
             if (Height > Text->frame.size.y) break;
             
+            size_t Offset = Length;
             Length += LineInfo->length;
             
             CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height));
@@ -619,11 +620,11 @@ size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
                                     if (Text->lines) CCCollectionDestroy(Text->lines);
                                     Text->lines = Lines;
                                     
-                                    return Length;
+                                    return Offset;
                                 }
                             }
                             
-                            Length++;
+                            Offset++;
                         }
                     }
                 }
