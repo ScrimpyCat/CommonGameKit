@@ -553,3 +553,88 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
     
     return CCVector2DMake(NAN, NAN);
 }
+
+size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
+{
+    size_t Length = Text->visible.controls.offset;
+    
+    if ((Text->strings) && (CCVector2LessThanEqual(Text->frame.position, Position)) && (CCVector2LessThanEqual(Position, CCVector2Add(Text->frame.position, Text->frame.size))))
+    {
+        CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
+        CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
+        
+        if (Text->selection) CCCollectionDestroy(Text->selection);
+        Text->selection = Selection;
+        
+        size_t LineIndex = 0;
+        float Height = 0.0f;
+        
+        CC_COLLECTION_FOREACH(CCOrderedCollection, Line, Lines)
+        {
+            if (LineIndex >= CCArrayGetCount(Text->lineInfo))
+            {
+                CCTextLineInfo Info = {
+                    .height = CCTextAttributeGetLineHeight(Line, TRUE),
+                    .length = CCTextAttributeGetLength(Line),
+                    .width = CCTextAttributeGetLineWidth(Line, &Info.leading, &Info.trailing)
+                };
+                
+                CCArrayAppendElement(Text->lineInfo, &Info);
+            }
+            
+            const CCTextLineInfo *LineInfo = CCArrayGetElementAtIndex(Text->lineInfo, LineIndex++);
+            
+            Height += LineInfo->height;
+            if (Height > Text->frame.size.y) break;
+            
+            Length += LineInfo->length;
+            
+            CCVector2D Cursor = CCVector2Add(Text->frame.position, CCVector2DMake(0.0f, Text->frame.size.y - Height));
+            if ((Cursor.y <= Position.y) && (Position.y <= (Cursor.y + Height)))
+            {
+                if (Text->alignment != CCTextAlignmentLeft)
+                {
+                    Cursor.x += (Text->frame.size.x - LineInfo->width) / (Text->alignment == CCTextAlignmentCenter ? 2.0f : 1.0f);
+                }
+                
+                if ((Cursor.x <= Position.x) && (Position.x <= (Cursor.x + LineInfo->width)))
+                {
+                    CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
+                    {
+                        const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
+                        CC_STRING_FOREACH(Letter, Attribute->string)
+                        {
+                            const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
+                            if (Glyph)
+                            {
+                                CCRect Rect;
+                                Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, &Rect, NULL);
+                                
+                                Rect.position = CCVector2Add(Rect.position, Attribute->offset);
+                                
+                                //TODO: Option to match tilts?
+                                
+                                if ((CCVector2LessThanEqual(Rect.position, Position)) && (CCVector2LessThanEqual(Position, CCVector2Add(Rect.position, Rect.size))))
+                                {
+                                    if (Text->lines) CCCollectionDestroy(Text->lines);
+                                    Text->lines = Lines;
+                                    
+                                    return Length;
+                                }
+                            }
+                            
+                            Length++;
+                        }
+                    }
+                }
+                
+                else break;
+            }
+        }
+        
+        if (Text->lines) CCCollectionDestroy(Text->lines);
+        Text->lines = Lines;
+    }
+    
+    return SIZE_MAX;
+}
