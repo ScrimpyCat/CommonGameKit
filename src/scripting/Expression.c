@@ -922,15 +922,18 @@ CCExpression CCExpressionGetState(CCExpression Expression, CCString Name)
     if ((State) && (State->value))
     {
         CCExpression Result = CCExpressionGetResult(State->value);
-        if ((Result) && (State->invalidate))
+        if (State->invalidate)
         {
             CCExpression Invalidate = CCExpressionEvaluate(State->invalidate);
-            if (CCExpressionGetType(Invalidate) == CCExpressionValueTypeInteger)
+            if (Result)
             {
-                if (!CCExpressionGetInteger(Invalidate)) return Result;
+                if (CCExpressionGetType(Invalidate) == CCExpressionValueTypeInteger)
+                {
+                    if (!CCExpressionGetInteger(Invalidate)) return Result;
+                }
+                
+                else CC_LOG_ERROR_CUSTOM("State (%S) invalidator is not valid, should return a boolean", Name);
             }
-            
-            else CC_LOG_ERROR_CUSTOM("State (%S) invalidator is not valid, should return a boolean", Name);
         }
         
         return CCExpressionEvaluate(State->value);
