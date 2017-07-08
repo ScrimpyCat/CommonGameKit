@@ -172,8 +172,8 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
     
     if (((GUIExpressionInfo*)Object->internal)->render)
     {
-        CCExpression Rect = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect);
-        CCRect CurrentRect = CCExpressionGetRect(Rect), PrevRect = CCExpressionGetRect(CCExpressionStateGetPrivate(((GUIExpressionInfo*)Object->internal)->data));
+        CCExpression Rect = CCRetain(CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect)), OldRect = CCExpressionStateGetPrivate(((GUIExpressionInfo*)Object->internal)->data);
+        const CCRect CurrentRect = CCExpressionGetRect(Rect), PrevRect = OldRect ? CCExpressionGetRect(OldRect) : (CCRect){ .position = { 0.0f, 0.0f }, .size = { 0.0f, 0.0f } };
         
         CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRectChanged, CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((CurrentRect.position.x != PrevRect.position.x) || (CurrentRect.position.y != PrevRect.position.y) || (CurrentRect.size.x != PrevRect.size.x) || (CurrentRect.size.y != PrevRect.size.y))), FALSE);
         
@@ -190,6 +190,8 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
         }
         
         GFXBufferDestroy(Proj);
+        
+        CCExpressionStateSetPrivate(((GUIExpressionInfo*)Object->internal)->data, Rect);
     }
     
     CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
@@ -343,8 +345,6 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         size_t RenderIndex = 0, ControlIndex = 0;
         CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
-        
-        CCExpressionStateSetPrivate(Expression, CCExpressionCreateFromSource("(0 0 0 0)"));
         
         CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
