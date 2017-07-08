@@ -45,6 +45,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("if"), CCControlFlowExpressionBranch);
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);
     CCExpressionEvaluatorRegister(CC_STRING("repeat"), CCControlFlowExpressionRepeat);
+    CCExpressionEvaluatorRegister(CC_STRING("any?"), CCControlFlowExpressionAny);
     CCExpressionEvaluatorRegister(CC_STRING("inspect"), CCDebugExpressionInspect);
     CCExpressionEvaluatorRegister(CC_STRING("break"), CCDebugExpressionBreak);
     CCExpressionEvaluatorRegister(CC_STRING("entity"), CCEntityExpressionEntity);
