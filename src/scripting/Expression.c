@@ -107,7 +107,7 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
             break;
     }
     
-    Expression->state = (CCExpressionState){ .values = NULL, .super = NULL, .result = NULL, .remove = NULL };
+    Expression->state = (CCExpressionState){ .values = NULL, .super = NULL, .result = NULL, .remove = NULL, .private = NULL };
     Expression->allocator = Allocator;
     
     return Expression;
@@ -1003,6 +1003,7 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
         Destination->state.values = NULL;
     }
     
+    Destination->state.private = NULL;
     Destination->state.remove = NULL;
     Destination->state.result = NULL;
     Destination->state.super = Source->state.super;
