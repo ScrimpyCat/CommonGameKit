@@ -80,43 +80,41 @@ CCExpression CCWindowExpressionHeight(CCExpression Expression)
     return CCWindowExpressionSize(TRUE);
 }
 
-CCString StringWindowSize = CC_STRING("@window-size");
 CCExpression CCWindowExpressionWindowResized(CCExpression Expression)
 {
     _Bool Changed = TRUE;
     const CCVector2Di CurrentSize = CCWindowGetFrameSize();
     
-    CCExpression Size = CCExpressionGetStateStrict(Expression, StringWindowSize);
+    CCExpression Size = CCExpressionStateGetPrivate(Expression);
     if (Size)
     {
         const CCVector2Di OldSize = CCExpressionGetVector2i(Size);
         if ((Changed = ((OldSize.x != CurrentSize.x) || (OldSize.y != CurrentSize.y))))
         {
-            CCExpressionSetState(Expression, StringWindowSize, CCExpressionCreateVector2i(CC_STD_ALLOCATOR, CurrentSize), FALSE);
+            CCExpressionStateSetPrivate(Expression, CCExpressionCreateVector2i(CC_STD_ALLOCATOR, CurrentSize));
         }
     }
     
-    else CCExpressionCreateState(Expression, StringWindowSize, CCExpressionCreateVector2i(CC_STD_ALLOCATOR, CurrentSize), FALSE, NULL, FALSE);
+    else CCExpressionStateSetPrivate(Expression, CCExpressionCreateVector2i(CC_STD_ALLOCATOR, CurrentSize));
     
     return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Changed);
 }
 
-CCString StringFrameID = CC_STRING("@frame-id");
 CCExpression CCWindowExpressionFrameChanged(CCExpression Expression)
 {
     _Bool Changed = TRUE;
     const uint32_t FrameID = CCWindowGetFrameID();
     
-    CCExpression Frame = CCExpressionGetStateStrict(Expression, StringFrameID);
+    CCExpression Frame = CCExpressionStateGetPrivate(Expression);
     if (Frame)
     {
         if ((Changed = (CCExpressionGetInteger(Frame) != FrameID)))
         {
-            CCExpressionSetState(Expression, StringFrameID, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID), FALSE);
+            CCExpressionStateSetPrivate(Expression, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID));
         }
     }
     
-    else CCExpressionCreateState(Expression, StringFrameID, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID), FALSE, NULL, FALSE);
+    else CCExpressionStateSetPrivate(Expression, CCExpressionCreateInteger(CC_STD_ALLOCATOR, FrameID));
     
     return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Changed);
 }
