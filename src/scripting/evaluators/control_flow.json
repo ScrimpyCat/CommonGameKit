@@ -48,10 +48,22 @@
         },
         {
             "name": "any?",
-            "description": "Checks if any of the values is true (equivalent to a short-circuiting logical OR).",
+            "description": "Checks if any of the values are true (equivalent to a short-circuiting logical OR).",
             "examples": [
                 "(any? 0 1) ;1",
                 "(any? 0 0) ;0"
+            ],
+            "return": { "type": "integer" },
+            "args": [
+                { "repeat": [{ "type": "integer" }] }
+            ]
+        },
+        {
+            "name": "all?",
+            "description": "Checks if all of the values are true (equivalent to a short-circuiting logical AND).",
+            "examples": [
+                "(all? 0 1) ;0",
+                "(all? 1 1) ;1"
             ],
             "return": { "type": "integer" },
             "args": [

@@ -162,3 +162,28 @@ CCExpression CCControlFlowExpressionAny(CCExpression Expression)
     
     return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
 }
+
+CCExpression CCControlFlowExpressionAll(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCString Function = CCExpressionGetAtom(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0));
+        CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S %s)", Function, Function, "_:integer:list");
+        
+        return Expression;
+    }
+    
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+    {
+        CCExpression Result = CCExpressionEvaluate(*Expr);
+        if (CCExpressionGetType(Result) == CCExpressionValueTypeInteger)
+        {
+            if (!CCExpressionGetInteger(Result)) return CCExpressionCreateInteger(CC_STD_ALLOCATOR, FALSE);
+        }
+    }
+    
+    return CCExpressionCreateInteger(CC_STD_ALLOCATOR, TRUE);
+}
