@@ -50,6 +50,33 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
     return Expression;
 }
 
+CCExpression CCListExpressionSetter(CCExpression Expression)
+{
+    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 3)
+    {
+        //TODO: Index could be a list of indices, which would return a new list
+        CCExpression Index = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        CCExpression Value = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+        if ((CCExpressionGetType(Index) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+        {
+            size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
+            if (CCExpressionGetInteger(Index) < Count)
+            {
+                CCOrderedCollectionReplaceElementAtIndex(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(Value) }, CCExpressionGetInteger(Index));
+                return CCExpressionRetain(List);
+            }
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("set", "index:integer list:list value:expr");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("set", "index:integer list:list value:expr");
+    
+    return Expression;
+}
+
 CCExpression CCListExpressionFlatten(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)

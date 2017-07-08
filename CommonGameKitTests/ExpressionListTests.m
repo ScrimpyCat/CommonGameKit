@@ -70,6 +70,44 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testSetElement
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(= (1 20 30) (set 0 (10 20 30) 1))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), TRUE, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (10 1 30) (set 1 (10 20 30) 1))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), TRUE, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (10 20 1) (set 2 (10 20 30) 1))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), TRUE, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(set 3 (10 20 30))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeExpression, @"Should be an expression");
+    XCTAssertEqual(Result, Expression, @"Should not evaluate");
+    
+    CCExpressionDestroy(Expression);
+}
+
 -(void) testFlatten
 {
     CCExpression Expression = CCExpressionCreateFromSource("(= (1 2 3 4) (flatten (1 2 3 4)))");

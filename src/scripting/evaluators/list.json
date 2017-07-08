@@ -8,6 +8,13 @@
             "args": [[{ "type": "integer", "name": "index" }, { "type": "list" }]]
         },
         {
+            "name": "set",
+            "description": "Set an element in a list.",
+            "examples": ["(set 0 (1 2 3) :new) ;(:new 2 3)", "(set 2 (1 2 3) 9) ;(1 2 9)"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "integer", "name": "index" }, { "type": "list" }, { "type": "expression", "name": "value" }]]
+        },
+        {
             "name": "flatten",
             "description": "Flatten the elements into a list.",
             "examples": ["(flatten (1 2 3) 4 5) ;(1 2 3 4 5)", "(flatten (1 (2 3)) 4 (5)) ;(1 (2 3) 4 5)"],
