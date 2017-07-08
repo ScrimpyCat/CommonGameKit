@@ -207,6 +207,11 @@
             "description": "Whether the element is enabled or not.",
             "return": { "type": "boolean" },
             "args": [[{ "type": "boolean" }]]
+        },
+        {
+            "name": "rect-changed",
+            "description": "Whether the rect changed since the previous render frame or not.",
+            "return": { "type": "boolean" }
         }
     ]
 }

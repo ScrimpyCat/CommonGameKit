@@ -89,7 +89,7 @@ GUIObject GUIExpressionCreate(CCAllocatorType Allocator, CCExpression Expression
 }
 
 //TODO: Later should probably runtime create these so they can be tagged version or maybe make a tagged macro that will get precomputed.
-static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render:"), StrChildren = CC_STRING("children:"), StrControl = CC_STRING("control:");
+static CCString StrX = CC_STRING(".x"), StrY = CC_STRING(".y"), StrWidth = CC_STRING(".width"), StrHeight = CC_STRING(".height"), StrRect = CC_STRING(".rect"), StrRectChanged = CC_STRING(".rect-changed"), StrEnabled = CC_STRING(".enabled"), StrRender = CC_STRING("render:"), StrChildren = CC_STRING("children:"), StrControl = CC_STRING("control:");
 static CCExpression Window = NULL;
 static void *GUIExpressionConstructor(CCAllocatorType Allocator)
 {
@@ -172,6 +172,11 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
     
     if (((GUIExpressionInfo*)Object->internal)->render)
     {
+        CCExpression Rect = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect);
+        CCRect CurrentRect = CCExpressionGetRect(Rect), PrevRect = CCExpressionGetRect(CCExpressionStateGetPrivate(((GUIExpressionInfo*)Object->internal)->data));
+        
+        CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRectChanged, CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((CurrentRect.position.x != PrevRect.position.x) || (CurrentRect.position.y != PrevRect.position.y) || (CurrentRect.size.x != PrevRect.size.x) || (CurrentRect.size.y != PrevRect.size.y))), FALSE);
+        
         CCVector2Di Size = CCWindowGetFrameSize();
         CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Size.x, 0.0f, Size.y, 0.0f, 1.0f);
         GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
@@ -339,12 +344,15 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
         
+        CCExpressionStateSetPrivate(Expression, CCExpressionCreateFromSource("(0 0 0 0)"));
+        
         CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrHeight, CCExpressionCreateFromSource("(get 3 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrRect, CCExpressionCreateFromSource("(super (.x .y .width .height))"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
-        CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE, NULL, FALSE);
+        CCExpressionCreateState(Expression, StrRectChanged, CCExpressionCreateInteger(CC_STD_ALLOCATOR, TRUE), FALSE, NULL, FALSE);
+        CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, TRUE), FALSE, NULL, FALSE);
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
         {
