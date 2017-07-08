@@ -172,7 +172,7 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
     
     if (((GUIExpressionInfo*)Object->internal)->render)
     {
-        CCExpression Rect = CCRetain(CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect)), OldRect = CCExpressionStateGetPrivate(((GUIExpressionInfo*)Object->internal)->data);
+        CCExpression Rect = CCExpressionRetain(CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect)), OldRect = CCExpressionStateGetPrivate(((GUIExpressionInfo*)Object->internal)->data);
         const CCRect CurrentRect = CCExpressionGetRect(Rect), PrevRect = OldRect ? CCExpressionGetRect(OldRect) : (CCRect){ .position = { 0.0f, 0.0f }, .size = { 0.0f, 0.0f } };
         
         CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRectChanged, CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((CurrentRect.position.x != PrevRect.position.x) || (CurrentRect.position.y != PrevRect.position.y) || (CurrentRect.size.x != PrevRect.size.x) || (CurrentRect.size.y != PrevRect.size.y))), FALSE);
