@@ -480,7 +480,13 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
     
     if ((Text->strings) && (Length <= Offset))
     {
-        if (Offset < CCArrayGetCount(Text->charInfo)) return ((CCTextCharInfo*)CCArrayGetElementAtIndex(Text->charInfo, Offset))->cursor;
+        if (Text->changed & CCTextChangedLines)
+        {
+            CCArrayRemoveAllElements(Text->lineInfo);
+            CCArrayRemoveAllElements(Text->charInfo);
+        }
+        
+        else if (Offset < CCArrayGetCount(Text->charInfo)) return ((CCTextCharInfo*)CCArrayGetElementAtIndex(Text->charInfo, Offset))->cursor;
         
         CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
         CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
@@ -560,6 +566,12 @@ size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
     
     if ((Text->strings) && (CCVector2LessThanEqual(Text->frame.position, Position)) && (CCVector2LessThanEqual(Position, CCVector2Add(Text->frame.position, Text->frame.size))))
     {
+        if (Text->changed & CCTextChangedLines)
+        {
+            CCArrayRemoveAllElements(Text->lineInfo);
+            CCArrayRemoveAllElements(Text->charInfo);
+        }
+        
         CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
         CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
         
