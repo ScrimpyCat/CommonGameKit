@@ -670,12 +670,15 @@ static void CCExpressionPrintStatement(CCExpression Expression)
         }
             
         default:
+        {
 #if CC_HARDWARE_ENDIAN_LITTLE
-            printf("<%p:%c%c%c%c>", Expression, (Type >> 24) & 0xff, (Type >> 16) & 0xff, (Type >> 8) & 0xff, Type & 0xff);
+            char Identifier[5] = { (Type >> 24) & 0xff, (Type >> 16) & 0xff, (Type >> 8) & 0xff, Type & 0xff, 0 };
 #else
-            printf("<%p:%c%c%c%c>", Expression, Type & 0xff, (Type >> 8) & 0xff, (Type >> 16) & 0xff, (Type >> 24) & 0xff);
+            char Identifier[5] = { Type & 0xff, (Type >> 8) & 0xff, (Type >> 16) & 0xff, (Type >> 24) & 0xff, 0 };
 #endif
+            printf("<%p:%s>", Expression, Identifier);
             break;
+        }
     }
 }
 
