@@ -854,6 +854,8 @@ static void CCExpressionStateValueElementDestructor(CCDictionary Dictionary, CCE
 
 void CCExpressionCreateState(CCExpression Expression, CCString Name, CCExpression Value, _Bool Retain, CCExpression Invalidator, _Bool InvalidatorRetain)
 {
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
     if ((Expression->state.values) && (CCDictionaryFindKey(Expression->state.values, &Name)))
     {
         CC_LOG_ERROR_CUSTOM("Creating duplicate state (%S)", Name);
