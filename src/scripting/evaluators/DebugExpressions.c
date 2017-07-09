@@ -103,11 +103,16 @@ CCExpression CCDebugExpressionBreak(CCExpression Expression)
     return Result ? CCExpressionRetain(Result) : Result;
 }
 
+typedef struct {
+    size_t historyIndex;
+    double history[16];
+} CCDebugExpressionMeasureState;
+
 CCExpression CCDebugExpressionMeasure(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) != 2)
     {
-        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("break", "expression:expr");
+        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("measure", "expression:expr");
         return Expression;
     }
     
@@ -118,7 +123,35 @@ CCExpression CCDebugExpressionMeasure(CCExpression Expression)
     CCExpression Result = CCExpressionEvaluate(Expr);
     double End = CCTimestamp();
     
-    CC_EXPRESSION_EVALUATOR_LOG("Execution time: %f", End - Start);
+    CCExpression State = CCExpressionStateGetPrivate(Expression);
+    if (!State)
+    {
+        CCDebugExpressionMeasureState *Stats;
+        CC_SAFE_Malloc(Stats, sizeof(CCDebugExpressionMeasureState),
+                       CC_LOG_ERROR("Failed to setup internal measurement storage due to allocation failure. Allocation size: %zu", sizeof(CCDebugExpressionMeasureState));
+                       return Result ? CCExpressionRetain(Result) : Result;
+                       );
+        
+        memset(Stats, 0, sizeof(CCDebugExpressionMeasureState));
+        
+        CCExpressionStateSetPrivate(Expression, (State = CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCExpressionValueTypeUnspecified, Stats, NULL, CCFree)));
+    }
+    
+    CCDebugExpressionMeasureState *Stats = CCExpressionGetData(State);
+    
+    const double CurrentTime = End - Start;
+    Stats->history[Stats->historyIndex++ % 16] = CurrentTime;
+    
+    double Avg = 0.0;
+    const size_t Count = Stats->historyIndex < 16 ? Stats->historyIndex : 16;
+    for (size_t Loop = 0; Loop < Count; Loop++)
+    {
+        Avg += Stats->history[Loop];
+    }
+    
+    Avg /= Count;
+    
+    CC_EXPRESSION_EVALUATOR_LOG("((exec: %f) (avg: %f))", CurrentTime, Avg);
     
     return Result ? CCExpressionRetain(Result) : Result;
 }
