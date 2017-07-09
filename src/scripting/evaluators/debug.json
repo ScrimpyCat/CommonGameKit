@@ -17,6 +17,15 @@
             "args": [
                 [{ "type": "expression" }]
             ]
+        },
+        {
+            "name": "measure",
+            "description": "Measure the performance of the expression. Prints the statistics and returns the result of the expression.",
+            "examples": ["(measure 1) ; 1"],
+            "return": { "type": "expression" },
+            "args": [
+                [{ "type": "expression" }]
+            ]
         }
     ]
 }

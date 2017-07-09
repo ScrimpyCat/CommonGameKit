@@ -25,6 +25,7 @@
 
 #include "DebugExpressions.h"
 #include <inttypes.h>
+#include "Callbacks.h"
 
 CCExpression CCDebugExpressionInspect(CCExpression Expression)
 {
@@ -98,6 +99,26 @@ CCExpression CCDebugExpressionBreak(CCExpression Expression)
 #endif
     
     CCExpression Result = CCExpressionEvaluate(Expr);
+    
+    return Result ? CCExpressionRetain(Result) : Result;
+}
+
+CCExpression CCDebugExpressionMeasure(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) != 2)
+    {
+        CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("break", "expression:expr");
+        return Expression;
+    }
+    
+    CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+    CCExpressionStateSetSuper(Expr, CCExpressionStateGetSuper(Expression));
+    
+    double Start = CCTimestamp();
+    CCExpression Result = CCExpressionEvaluate(Expr);
+    double End = CCTimestamp();
+    
+    CC_EXPRESSION_EVALUATOR_LOG("Execution time: %f", End - Start);
     
     return Result ? CCExpressionRetain(Result) : Result;
 }

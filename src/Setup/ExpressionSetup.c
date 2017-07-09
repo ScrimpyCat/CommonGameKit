@@ -49,6 +49,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("all?"), CCControlFlowExpressionAll);
     CCExpressionEvaluatorRegister(CC_STRING("inspect"), CCDebugExpressionInspect);
     CCExpressionEvaluatorRegister(CC_STRING("break"), CCDebugExpressionBreak);
+    CCExpressionEvaluatorRegister(CC_STRING("measure"), CCDebugExpressionMeasure);
     CCExpressionEvaluatorRegister(CC_STRING("entity"), CCEntityExpressionEntity);
     CCExpressionEvaluatorRegister(CC_STRING("="), CCEqualityExpressionEqual);
     CCExpressionEvaluatorRegister(CC_STRING("!="), CCEqualityExpressionNotEqual);

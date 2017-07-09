@@ -31,5 +31,6 @@
 
 CC_EXPRESSION_EVALUATOR(inspect) CCExpression CCDebugExpressionInspect(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(break) CCExpression CCDebugExpressionBreak(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(measure) CCExpression CCDebugExpressionMeasure(CCExpression Expression);
 
 #endif
