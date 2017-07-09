@@ -695,6 +695,10 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
     Expression->state.result = Expression;
     if ((CCExpressionGetType(Expression) == CCExpressionValueTypeExpression) && (CCCollectionGetCount(CCExpressionGetList(Expression))))
     {
+#if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
+        if (Expression->list.constant) return Expression;
+#endif
+        
         _Bool IsList = TRUE;
         CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
         {
@@ -776,8 +780,6 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
         if (IsList) //evaluate list
         {
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
-            if (Expression->list.constant) return Expression->state.result;
-            
             Expression->list.constant = TRUE;
 #endif
             
