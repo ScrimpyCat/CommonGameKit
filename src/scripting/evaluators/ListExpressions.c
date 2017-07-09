@@ -55,17 +55,16 @@ CCExpression CCListExpressionSetter(CCExpression Expression)
     size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     if (ArgCount == 3)
     {
-        //TODO: Index could be a list of indices, which would return a new list
+        //TODO: Index could be a list of indices, which would set a list of elements
         CCExpression Index = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
-        CCExpression Value = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
         if ((CCExpressionGetType(Index) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
         {
             size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
             if (CCExpressionGetInteger(Index) < Count)
             {
                 List = CCExpressionCopy(List);
-                CCOrderedCollectionReplaceElementAtIndex(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(Value) }, CCExpressionGetInteger(Index));
+                CCOrderedCollectionReplaceElementAtIndex(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3))) }, CCExpressionGetInteger(Index));
                 return List;
             }
         }
