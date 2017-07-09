@@ -64,8 +64,9 @@ CCExpression CCListExpressionSetter(CCExpression Expression)
             size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
             if (CCExpressionGetInteger(Index) < Count)
             {
+                List = CCExpressionCopy(List);
                 CCOrderedCollectionReplaceElementAtIndex(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(Value) }, CCExpressionGetInteger(Index));
-                return CCExpressionRetain(List);
+                return List;
             }
         }
         
