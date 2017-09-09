@@ -57,6 +57,8 @@
 		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
+		F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */; };
+		F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */; };
 		F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32951DCCD4EB00CAD472 /* AnimationComponent.c */; };
@@ -460,6 +462,8 @@
 		F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLGFX_Private.h; sourceTree = "<group>"; };
 		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SpatialTransformComponent.c; sourceTree = "<group>"; };
+		F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialTransformComponent.h; sourceTree = "<group>"; };
 		F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonGameKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonGameKit.h; path = src/CommonGameKit.h; sourceTree = SOURCE_ROOT; };
 		F3AF327E1DCCD29000CAD472 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -798,6 +802,25 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F3AD06811F6454C8004AE159 /* Spatial */ = {
+			isa = PBXGroup;
+			children = (
+				F3AD069E1F645518004AE159 /* Components */,
+			);
+			name = Spatial;
+			path = spatial;
+			sourceTree = "<group>";
+		};
+		F3AD069E1F645518004AE159 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */,
+				F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */,
+			);
+			name = Components;
+			path = components;
+			sourceTree = "<group>";
+		};
 		F3AF326F1DCCD29000CAD472 = {
 			isa = PBXGroup;
 			children = (
@@ -834,6 +857,7 @@
 				F3AF32DA1DCCD4EB00CAD472 /* Rendering */,
 				F3AF34461DCCD5AF00CAD472 /* Scripting */,
 				F3AF33601DCCD4EC00CAD472 /* Setup */,
+				F3AD06811F6454C8004AE159 /* Spatial */,
 				F3AF336C1DCCD4EC00CAD472 /* Utilities */,
 				F3AF34451DCCD53E00CAD472 /* Supporting Files */,
 			);
@@ -1375,6 +1399,7 @@
 				F3AF337A1DCCD4EC00CAD472 /* AnimationInterpolateComponent.h in Headers */,
 				F3AF33C61DCCD4EC00CAD472 /* GFXBlend.h in Headers */,
 				F3AF33BC1DCCD4EC00CAD472 /* ColourFormatRGB.h in Headers */,
+				F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */,
 				F3AF33D81DCCD4EC00CAD472 /* GFXTexture.h in Headers */,
 				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */,
@@ -1665,6 +1690,7 @@
 				F36954CF1E45E2DB00135AF0 /* Message.c in Sources */,
 				F3AF33E21DCCD4EC00CAD472 /* GLFramebuffer.c in Sources */,
 				F3AF33A31DCCD4EC00CAD472 /* InputMapMousePositionComponent.c in Sources */,
+				F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */,
 				F3AF33D11DCCD4EC00CAD472 /* GFXMain.c in Sources */,
 				F3AF33EC1DCCD4EC00CAD472 /* GLState.c in Sources */,
 				F3AF33861DCCD4EC00CAD472 /* EntityManager.c in Sources */,
