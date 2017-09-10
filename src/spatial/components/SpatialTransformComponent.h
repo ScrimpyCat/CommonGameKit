@@ -85,4 +85,14 @@ static inline void CCSpatialTransformComponentSetScale(CCComponent Component, CC
     ((CCSpatialTransformComponentPrivate)Component)->scale = Scale;
 }
 
+static inline CCMatrix4 CCSpatialTransformComponentGetTransformationMatrix(CCComponent Component)
+{
+    CCMatrix4 TransformMatrix = CCMatrix4MakeScale(((CCSpatialTransformComponentPrivate)Component)->scale);
+    TransformMatrix = CCMatrix4RotateX(TransformMatrix, ((CCSpatialTransformComponentPrivate)Component)->rotation.x);
+    TransformMatrix = CCMatrix4RotateY(TransformMatrix, ((CCSpatialTransformComponentPrivate)Component)->rotation.y);
+    TransformMatrix = CCMatrix4RotateZ(TransformMatrix, ((CCSpatialTransformComponentPrivate)Component)->rotation.z);
+    
+    return CCMatrix4Translate(TransformMatrix, ((CCSpatialTransformComponentPrivate)Component)->position);
+}
+
 #endif
