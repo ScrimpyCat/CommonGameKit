@@ -48,6 +48,8 @@ static inline void CCSpatialTransformComponentInitialize(CCComponent Component, 
 {
     CCComponentInitialize(Component, id);
     ((CCSpatialTransformComponentPrivate)Component)->position = CCVector3DZero;
+    ((CCSpatialTransformComponentPrivate)Component)->rotation = CCVector3DZero;
+    ((CCSpatialTransformComponentPrivate)Component)->scale = CCVector3DZero;
 }
 
 static inline void CCSpatialTransformComponentDeallocate(CCComponent Component)
