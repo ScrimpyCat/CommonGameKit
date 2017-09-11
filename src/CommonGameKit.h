@@ -65,6 +65,8 @@
 #include <CommonGameKit/RenderComponent.h>
 #include <CommonGameKit/RenderSystem.h>
 
+#include <CommonGameKit/RelationParentComponent.h>
+
 #include <CommonGameKit/SpatialTransformComponent.h>
 
 #include <CommonGameKit/Colour.h>

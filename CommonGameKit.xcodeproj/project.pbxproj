@@ -59,6 +59,8 @@
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
 		F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */; };
 		F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */; };
+		F3AD06B01F66BEAE004AE159 /* RelationParentComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06AE1F66BEAE004AE159 /* RelationParentComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */; };
 		F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32951DCCD4EB00CAD472 /* AnimationComponent.c */; };
@@ -464,6 +466,8 @@
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SpatialTransformComponent.c; sourceTree = "<group>"; };
 		F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialTransformComponent.h; sourceTree = "<group>"; };
+		F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationParentComponent.c; sourceTree = "<group>"; };
+		F3AD06AE1F66BEAE004AE159 /* RelationParentComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RelationParentComponent.h; sourceTree = "<group>"; };
 		F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonGameKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonGameKit.h; path = src/CommonGameKit.h; sourceTree = SOURCE_ROOT; };
 		F3AF327E1DCCD29000CAD472 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -821,6 +825,25 @@
 			path = components;
 			sourceTree = "<group>";
 		};
+		F3AD06A31F66BBBF004AE159 /* Relation */ = {
+			isa = PBXGroup;
+			children = (
+				F3AD06AC1F66BE96004AE159 /* Components */,
+			);
+			name = Relation;
+			path = relation;
+			sourceTree = "<group>";
+		};
+		F3AD06AC1F66BE96004AE159 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */,
+				F3AD06AE1F66BEAE004AE159 /* RelationParentComponent.h */,
+			);
+			name = Components;
+			path = components;
+			sourceTree = "<group>";
+		};
 		F3AF326F1DCCD29000CAD472 = {
 			isa = PBXGroup;
 			children = (
@@ -854,6 +877,7 @@
 				F3AF329E1DCCD4EB00CAD472 /* Component System */,
 				F3AF32AB1DCCD4EB00CAD472 /* GUI */,
 				F3AF32B61DCCD4EB00CAD472 /* Input */,
+				F3AD06A31F66BBBF004AE159 /* Relation */,
 				F3AF32DA1DCCD4EB00CAD472 /* Rendering */,
 				F3AF34461DCCD5AF00CAD472 /* Scripting */,
 				F3AF33601DCCD4EC00CAD472 /* Setup */,
@@ -1338,6 +1362,7 @@
 				F3AF34831DCCD5AF00CAD472 /* AssetExpressions.h in Headers */,
 				F3AF33C41DCCD4EC00CAD472 /* PixelDataStatic.h in Headers */,
 				F3AF34381DCCD4EC00CAD472 /* AssetManager.h in Headers */,
+				F3AD06B01F66BEAE004AE159 /* RelationParentComponent.h in Headers */,
 				F3AF34951DCCD5AF00CAD472 /* IOExpressions.h in Headers */,
 				F36954D01E45E2DB00135AF0 /* Message.h in Headers */,
 				F3AF339E1DCCD4EC00CAD472 /* InputMapKeyboardComponent.h in Headers */,
@@ -1752,6 +1777,7 @@
 				F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */,
 				F3AF337D1DCCD4EC00CAD472 /* AnimationSystem.c in Sources */,
 				F3AF33B91DCCD4EC00CAD472 /* ColourFormat.c in Sources */,
+				F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */,
 				F3AF33C11DCCD4EC00CAD472 /* PixelDataGenerator.c in Sources */,
 				F3AF33AB1DCCD4EC00CAD472 /* Mouse.c in Sources */,
 				F3AF33D31DCCD4EC00CAD472 /* GFXShader.c in Sources */,
