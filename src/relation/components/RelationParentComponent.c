@@ -24,15 +24,59 @@
  */
 
 #include "RelationParentComponent.h"
+#include "ComponentExpressions.h"
+#include "EntityExpressions.h"
 
 const char * const CCRelationParentComponentName = "parent";
+
+static void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg);
+
+static const CCComponentExpressionDescriptor CCRelationParentComponentDescriptor = {
+    .id = CC_RELATION_PARENT_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCRelationParentComponentDeserializer,
+    .serialize = NULL
+};
 
 void CCRelationParentComponentRegister(void)
 {
     CCComponentRegister(CC_RELATION_PARENT_COMPONENT_ID, CCRelationParentComponentName, CC_STD_ALLOCATOR, sizeof(CCRelationParentComponentClass), CCRelationParentComponentInitialize, NULL, CCRelationParentComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("parent"), &CCRelationParentComponentDescriptor, TRUE);
 }
 
 void CCRelationParentComponentDeregister(void)
 {
     CCComponentDeregister(CC_RELATION_PARENT_COMPONENT_ID);
+}
+
+void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg)
+{
+    if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
+    {
+        const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Arg));
+        if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
+        {
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+            {
+                CCString Name = CCExpressionGetAtom(NameExpr);
+                if (CCStringEqual(Name, CC_STRING("entity:")))
+                {
+                    if (ArgCount == 2)
+                    {
+                        CCExpression Entity = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
+                        if (CCExpressionGetType(Entity) == CCEntityExpressionValueTypeEntity)
+                        {
+                            CCRelationParentComponentSetParent(Component, CCExpressionGetData(Entity));
+                        }
+                        
+                        else CC_LOG_ERROR("Expect value for argument (entity:) to be an entity");
+                    }
+                    
+                    else CC_LOG_ERROR("Expect value for argument (entity:) to be an entity");
+                }
+            }
+        }
+    }
 }
