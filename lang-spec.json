@@ -3,6 +3,7 @@
         "src/scripting/api.json",
         "src/gui/gui.json",
         "src/input/components/input.json",
+        "src/relation/components/relation.json",
         "assets/ui/ui.json"
     ]
 }

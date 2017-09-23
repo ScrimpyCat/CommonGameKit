@@ -1,0 +1,17 @@
+{
+    "functions": [
+        {
+            "name": "parent",
+            "description": "Attach the entity to a parent entity.",
+            "examples": ["(parent\n\t(entity: .some-entity)\n)"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "entity",
+                    "description": "The parent entity.",
+                    "args": [[{ "type": "custom:entity" }]]
+                }
+            ]
+        }
+    ]
+}
