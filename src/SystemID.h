@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2015, Stefan Johnson
+ *  Copyright (c) 2017, Stefan Johnson
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without modification,
@@ -23,15 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommonGameKit_RenderSystem_h
-#define CommonGameKit_RenderSystem_h
+#ifndef CommonGameKit_SystemID_h
+#define CommonGameKit_SystemID_h
 
-#include <CommonGameKit/ComponentSystem.h>
-#include <CommonGameKit/SystemID.h>
+#define CC_RENDER_SYSTEM_ID 11
+#define CC_RENDER_COMPONENT_FLAG 0x1000000
 
-//Note: Currently just a demo system
+#define CC_INPUT_SYSTEM_ID 21
+#define CC_INPUT_COMPONENT_FLAG 0x2000000
 
-void CCRenderSystemRegister(void);
-void CCRenderSystemDeregister(void);
+#define CC_ANIMATION_SYSTEM_ID 31
+#define CC_ANIMATION_COMPONENT_FLAG 0x3000000
+
+#define CC_RELATION_SYSTEM_ID 41
+#define CC_RELATION_COMPONENT_FLAG 0x4000000
 
 #endif

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F32C1C071F6A071600C68B43 /* RelationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F32C1C051F6A071600C68B43 /* RelationSystem.c */; };
+		F32C1C081F6A071600C68B43 /* RelationSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F32C1C061F6A071600C68B43 /* RelationSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */; };
 		F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */; };
@@ -235,6 +237,7 @@
 		F3AF34DA1DCD014700CAD472 /* Window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34D81DCD014700CAD472 /* Window.c */; };
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
+		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E361961EF5758000FCE1A5 /* MessageExpressions.c */; };
 		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
@@ -414,6 +417,8 @@
 /* Begin PBXFileReference section */
 		F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentExpressions.c; sourceTree = "<group>"; };
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
+		F32C1C051F6A071600C68B43 /* RelationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationSystem.c; sourceTree = "<group>"; };
+		F32C1C061F6A071600C68B43 /* RelationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RelationSystem.h; sourceTree = "<group>"; };
 		F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BitwiseExpressions.c; sourceTree = "<group>"; };
 		F332EAE71EA0FC4900BCDAC7 /* BitwiseExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitwiseExpressions.h; sourceTree = "<group>"; };
 		F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionBitwiseTests.m; sourceTree = "<group>"; };
@@ -644,6 +649,7 @@
 		F3AF34D81DCD014700CAD472 /* Window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Window.c; sourceTree = "<group>"; };
 		F3AF34D91DCD014700CAD472 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
+		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
 		F3E361961EF5758000FCE1A5 /* MessageExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MessageExpressions.c; sourceTree = "<group>"; };
 		F3E361971EF5758000FCE1A5 /* MessageExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageExpressions.h; sourceTree = "<group>"; };
 		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
@@ -673,6 +679,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F32C1BE81F6A06F800C68B43 /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				F32C1C051F6A071600C68B43 /* RelationSystem.c */,
+				F32C1C061F6A071600C68B43 /* RelationSystem.h */,
+			);
+			name = Systems;
+			path = systems;
+			sourceTree = "<group>";
+		};
 		F38828321E9B293400E6D7A3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -828,6 +844,7 @@
 		F3AD06A31F66BBBF004AE159 /* Relation */ = {
 			isa = PBXGroup;
 			children = (
+				F32C1BE81F6A06F800C68B43 /* Systems */,
 				F3AD06AC1F66BE96004AE159 /* Components */,
 			);
 			name = Relation;
@@ -869,6 +886,7 @@
 			isa = PBXGroup;
 			children = (
 				F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */,
+				F3E0693B1F978114009F23E4 /* SystemID.h */,
 				F3AF34D81DCD014700CAD472 /* Window.c */,
 				F3AF34D91DCD014700CAD472 /* Window.h */,
 				F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */,
@@ -1393,6 +1411,7 @@
 				F3AF33B41DCCD4EC00CAD472 /* RenderSystem.h in Headers */,
 				F3AF34D51DCCFBEC00CAD472 /* Default_Private.h in Headers */,
 				F3AF33AA1DCCD4EC00CAD472 /* Keyboard.h in Headers */,
+				F3E069581F978174009F23E4 /* SystemID.h in Headers */,
 				F3AF349E1DCCD5AF00CAD472 /* MathExpressions.h in Headers */,
 				F3AF33CA1DCCD4EC00CAD472 /* GFXBuffer.h in Headers */,
 				F3897B301DCD6B32008D6C1D /* stdatomic_portable.h in Headers */,
@@ -1400,6 +1419,7 @@
 				F3AF33F01DCCD4EC00CAD472 /* GLTexture.h in Headers */,
 				F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */,
 				F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */,
+				F32C1C081F6A071600C68B43 /* RelationSystem.h in Headers */,
 				F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */,
 				F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */,
 				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
@@ -1774,6 +1794,7 @@
 				F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */,
 				F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */,
 				F3AF33901DCCD4EC00CAD472 /* GUIManager.c in Sources */,
+				F32C1C071F6A071600C68B43 /* RelationSystem.c in Sources */,
 				F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */,
 				F3AF337D1DCCD4EC00CAD472 /* AnimationSystem.c in Sources */,
 				F3AF33B91DCCD4EC00CAD472 /* ColourFormat.c in Sources */,

@@ -27,9 +27,7 @@
 #define CommonGameKit_AnimationSystem_h
 
 #include <CommonGameKit/ComponentSystem.h>
-
-#define CC_ANIMATION_SYSTEM_ID 31
-#define CC_ANIMATION_COMPONENT_FLAG 0x3000000
+#include <CommonGameKit/SystemID.h>
 
 typedef enum {
     CCAnimationTypeMask = 0xff,

@@ -30,11 +30,7 @@
 #include <CommonGameKit/Entity.h>
 #include <CommonGameKit/Keyboard.h>
 #include <CommonGameKit/Mouse.h>
-
-//Note: Currently just a demo system
-
-#define CC_INPUT_SYSTEM_ID 21
-#define CC_INPUT_COMPONENT_FLAG 0x2000000
+#include <CommonGameKit/SystemID.h>
 
 typedef enum {
     CCInputMapTypeMask = 0xff,
