@@ -998,6 +998,8 @@ void CCExpressionCopyState(CCExpression Source, CCExpression Destination)
 {
     CCAssertLog(Source && Destination, "Source and destination expressions must not be NULL");
     
+    if ((CCExpressionIsTagged(Source)) || (CCExpressionIsTagged(Destination))) return;
+    
     if (Source->state.values)
     {
         CC_DICTIONARY_FOREACH_KEY(CCString, Key, Source->state.values)
