@@ -474,6 +474,8 @@ void CCTextSetOffset(CCText Text, size_t Offset)
 
 CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
 {
+    CCAssertLog(Text, "Text must not be null");
+    
     if (Offset == SIZE_MAX) Offset = CCTextGetLength(Text);
     
     size_t Length = Text->visible.controls.offset;
@@ -562,6 +564,8 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
 
 size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
 {
+    CCAssertLog(Text, "Text must not be null");
+    
     size_t Length = Text->visible.controls.offset;
     
     if ((Text->strings) && (CCVector2LessThanEqual(Text->frame.position, Position)) && (CCVector2LessThanEqual(Position, CCVector2Add(Text->frame.position, Text->frame.size))))
