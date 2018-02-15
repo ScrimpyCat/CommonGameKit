@@ -655,3 +655,32 @@ size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
     
     return SIZE_MAX;
 }
+
+CCString CCTextGetFullString(CCText Text)
+{
+    CCAssertLog(Text, "Text must not be null");
+    
+    if (Text->strings)
+    {
+        const size_t Count = CCCollectionGetCount(Text->strings);
+        
+        CCString *Strings = NULL;
+        CC_TEMP_Malloc(Strings, sizeof(CCString) * Count,
+                       CC_LOG_ERROR("Failed to get string, due to allocation failure. Allocation size (%zu)", sizeof(CCString) * Count);
+                       return 0;
+                       );
+        
+        size_t Loop = 0;
+        CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Text->strings)
+        {
+            Strings[Loop++] = Attribute->string;
+        }
+        
+        CCString String = CCStringCreateByJoiningStrings(Strings, Count, 0);
+        CC_TEMP_Free(Strings);
+        
+        return String;
+    }
+    
+    return CC_STRING("");
+}

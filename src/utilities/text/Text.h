@@ -162,4 +162,11 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset);
  */
 size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position);
 
+/*!
+ * @brief Get the full string.
+ * @param Text The text.
+ * @return The full string in the text object.
+ */
+CCString CCTextGetFullString(CCText Text);
+
 #endif
