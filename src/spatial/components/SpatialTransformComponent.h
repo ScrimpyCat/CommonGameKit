@@ -32,6 +32,8 @@
 
 #define CC_SPATIAL_TRANSFORM_COMPONENT_ID 1
 
+extern const CCString CCSpatialTransformComponentName;
+
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);
     CCVector3D position;

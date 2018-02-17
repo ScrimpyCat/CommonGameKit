@@ -30,7 +30,7 @@
 
 #define CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID (CCInputMapTypeControllerAxes | CC_INPUT_COMPONENT_FLAG)
 
-extern const char * const CCInputMapControllerAxesComponentName;
+extern const CCString CCInputMapControllerAxesComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapControllerComponentClass);

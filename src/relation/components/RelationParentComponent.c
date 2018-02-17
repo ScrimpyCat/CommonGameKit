@@ -27,7 +27,7 @@
 #include "ComponentExpressions.h"
 #include "EntityExpressions.h"
 
-const char * const CCRelationParentComponentName = "parent";
+const CCString CCRelationParentComponentName = CC_STRING("parent");
 
 static void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg);
 

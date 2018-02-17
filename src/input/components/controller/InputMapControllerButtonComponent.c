@@ -26,7 +26,7 @@
 #include "InputMapControllerButtonComponent.h"
 #include "ComponentExpressions.h"
 
-const char * const CCInputMapControllerButtonComponentName = "input_map_controller_button";
+const CCString CCInputMapControllerButtonComponentName = CC_STRING("input_map_controller_button");
 
 static const CCComponentExpressionDescriptor CCInputMapControllerButtonComponentDescriptor = {
     .id = CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID,

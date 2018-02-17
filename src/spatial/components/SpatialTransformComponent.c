@@ -25,7 +25,7 @@
 
 #include "SpatialTransformComponent.h"
 
-const char * const CCSpatialTransformComponentName = "transform";
+const CCString CCSpatialTransformComponentName = CC_STRING("transform");
 
 void CCSpatialTransformComponentRegister(void)
 {

@@ -26,7 +26,7 @@
 #include "InputMapKeyboardComponent.h"
 #include "ComponentExpressions.h"
 
-const char * const CCInputMapKeyboardComponentName = "input_map_keyboard";
+const CCString CCInputMapKeyboardComponentName = CC_STRING("input_map_keyboard");
 
 const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny = CCKeyboardKeycodeUnknown;
 

@@ -25,7 +25,7 @@
 
 #include "AnimationComponent.h"
 
-const char * const CCAnimationComponentName = "animation";
+const CCString CCAnimationComponentName = CC_STRING("animation");
 
 void CCAnimationComponentRegister(void)
 {

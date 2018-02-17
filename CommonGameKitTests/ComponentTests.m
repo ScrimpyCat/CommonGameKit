@@ -32,7 +32,7 @@
 
 #define TEST_COMPONENT_ID 1
 
-const char * const TestComponentName = "Test";
+const CCString TestComponentName = CC_STRING("Test");
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);
@@ -97,7 +97,7 @@ static inline void TestComponentSetValue(CCComponent Component, int Value)
 
 -(void) testComponentCreationForID
 {
-    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL, NULL);
+    CCComponentRegister(CC_COMPONENT_ID, CC_STRING("Base"), CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL, NULL);
     CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL, NULL);
     
     XCTAssertEqual(CCComponentCreate(2), NULL, "No component with id 2 has been registered and should not be available");
@@ -115,14 +115,14 @@ static inline void TestComponentSetValue(CCComponent Component, int Value)
 
 -(void) testComponentCreationForName
 {
-    CCComponentRegister(CC_COMPONENT_ID, "Base", CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL, NULL);
+    CCComponentRegister(CC_COMPONENT_ID, CC_STRING("Base"), CC_STD_ALLOCATOR, sizeof(CCComponentClass), CCComponentInitialize, NULL, NULL);
     CCComponentRegister(TEST_COMPONENT_ID, TestComponentName, CC_STD_ALLOCATOR, sizeof(TestComponentClass), TestComponentInitialize, NULL, NULL);
     
-    XCTAssertEqual(CCComponentCreateForName("blah"), NULL, "No component with name \"blah\" has been registered and should not be available");
+    XCTAssertEqual(CCComponentCreateForName(CC_STRING("blah")), NULL, "No component with name \"blah\" has been registered and should not be available");
     
-    CCComponent a = CCComponentCreateForName("Base"), b = CCComponentCreateForName(TestComponentName);
+    CCComponent a = CCComponentCreateForName(CC_STRING("Base")), b = CCComponentCreateForName(TestComponentName);
     XCTAssertNotEqual(a, NULL, "Component with name \"%s\" has been registered and should be available", "Base");
-    XCTAssertNotEqual(b, NULL, "Component with name \"%s\" has been registered and should be available", TestComponentName);
+    CC_STRING_TEMP_BUFFER(Buffer, TestComponentName) XCTAssertNotEqual(b, NULL, "Component with name \"%s\" has been registered and should be available", Buffer);
     
     CCComponentDestroy(a);
     CCComponentDestroy(b);

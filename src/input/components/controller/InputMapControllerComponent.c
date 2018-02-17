@@ -26,7 +26,7 @@
 #include "InputMapControllerComponent.h"
 #include "ComponentExpressions.h"
 
-const char * const CCInputMapControllerComponentName = "input_map_controller";
+const CCString CCInputMapControllerComponentName = CC_STRING("input_map_controller");
 
 void CCInputMapControllerComponentRegister(void)
 {

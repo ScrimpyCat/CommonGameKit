@@ -26,7 +26,7 @@
 #include "InputMapGroupComponent.h"
 #include "ComponentExpressions.h"
 
-const char * const CCInputMapGroupComponentName = "input_map_group";
+const CCString CCInputMapGroupComponentName = CC_STRING("input_map_group");
 
 static CCExpression CCInputMapGroupComponentSerializer(CCAllocatorType Allocator, CCComponent Component);
 

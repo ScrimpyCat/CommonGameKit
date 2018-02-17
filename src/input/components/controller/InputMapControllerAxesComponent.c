@@ -26,7 +26,7 @@
 #include "InputMapControllerAxesComponent.h"
 #include "ComponentExpressions.h"
 
-const char * const CCInputMapControllerAxesComponentName = "input_map_controller_axes";
+const CCString CCInputMapControllerAxesComponentName = CC_STRING("input_map_controller_axes");
 
 static const CCComponentExpressionDescriptor CCInputMapControllerAxesComponentDescriptor = {
     .id = CC_INPUT_MAP_CONTROLLER_AXES_COMPONENT_ID,

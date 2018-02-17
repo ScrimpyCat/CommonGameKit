@@ -30,7 +30,7 @@
 
 #define CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID (CCInputMapTypeMousePosition | CC_INPUT_COMPONENT_FLAG)
 
-extern const char * const CCInputMapMousePositionComponentName;
+extern const CCString CCInputMapMousePositionComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);

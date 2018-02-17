@@ -32,7 +32,7 @@
 
 typedef struct {
     CCComponentID id;
-    char *name; //TODO: Could be put into its own hashmap
+    CCString name; //TODO: Could be put into its own hashmap
     CCAllocatorType allocator;
     CCComponentInitializer initializer;
     CCComponentDestructor destructor;
@@ -43,29 +43,17 @@ typedef struct {
 
 static void CCComponentListElementDestructor(CCCollection Collection, CCComponentInfo *Element)
 {
-    CC_SAFE_Free(Element->name);
+    if (Element->name) CCStringDestroy(Element->name);
 }
 
 static CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
-void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor)
+void CCComponentRegister(CCComponentID id, CCString Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor)
 {
     if (!ComponentList) ComponentList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCComponentInfo), (CCCollectionElementDestructor)CCComponentListElementDestructor);
     
-    char *ComponentName = NULL;
-    if (Name)
-    {
-        CC_SAFE_Malloc(ComponentName, sizeof(char) * (strlen(Name) + 1),
-                       CC_LOG_ERROR("Failed to add new component (%" PRIu32 " : %s) due to allocation space for name failing. Allocation size: %zu", id, Name, sizeof(char) * (strlen(Name) + 1));
-                       return;
-                       );
-        
-        strcpy(ComponentName, Name);
-    }
-    
-    
     CCCollectionInsertElement(ComponentList, &(CCComponentInfo){
         .id = id,
-        .name = ComponentName,
+        .name = (Name ? CCStringCopy(Name) : 0),
         .allocator = Allocator,
         .initializer = Initializer,
         .destructor = Destructor,
@@ -79,9 +67,9 @@ static CCComparisonResult CCComponentIDComparator(const CCComponentInfo *Compone
     return Component->id == *id ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static CCComparisonResult CCComponentNameComparator(const CCComponentInfo *Component, const char **Name)
+static CCComparisonResult CCComponentNameComparator(const CCComponentInfo *Component, CCString *Name)
 {
-    return (Component->name) && (!strcmp(*Name, Component->name)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return (Component->name) && (CCStringEqual(*Name, Component->name)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 void CCComponentDeregister(CCComponentID id)
@@ -94,7 +82,7 @@ static CCComponent CCComponentCreateFromInfo(CCComponentInfo *Info)
     CCComponent Component = CCMalloc(Info->allocator, Info->size, NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (!Component)
     {
-        CC_LOG_ERROR("Failed to create component (%" PRIu32 " : %s) of size (%zu)", Info->id, Info->name, Info->size);
+        CC_LOG_ERROR_CUSTOM("Failed to create component (%" PRIu32 " : %S) of size (%zu)", Info->id, Info->name, Info->size);
     }
     
     else
@@ -118,7 +106,7 @@ static CCComponentInfo *CCComponentInfoFindByID(CCComponentID id)
     return CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &id, (CCComparator)CCComponentIDComparator));
 }
 
-static CCComponentInfo *CCComponentInfoFindByName(const char *Name)
+static CCComponentInfo *CCComponentInfoFindByName(CCString Name)
 {
     return CCCollectionGetElement(ComponentList, CCCollectionFindElement(ComponentList, &Name, (CCComparator)CCComponentNameComparator));
 }
@@ -134,7 +122,7 @@ CCComponent CCComponentCreate(CCComponentID id)
     return NULL;
 }
 
-CCComponent CCComponentCreateForName(const char *Name)
+CCComponent CCComponentCreateForName(CCString Name)
 {
     CCAssertLog(Name, "Name cannot be NULL");
     
@@ -142,7 +130,7 @@ CCComponent CCComponentCreateForName(const char *Name)
     
     if (Info) return CCComponentCreateFromInfo(Info);
     
-    CC_LOG_WARNING("Could not find component with name (%s)", Name);
+    CC_LOG_WARNING_CUSTOM("Could not find component with name (%S)", Name);
     
     return NULL;
 }

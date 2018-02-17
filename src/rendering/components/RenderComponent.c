@@ -25,7 +25,7 @@
 
 #include "RenderComponent.h"
 
-const char * const CCRenderComponentName = "render";
+const CCString CCRenderComponentName = CC_STRING("render");
 
 void CCRenderComponentRegister(void)
 {

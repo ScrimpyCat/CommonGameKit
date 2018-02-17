@@ -30,7 +30,7 @@
 
 #define CC_INPUT_MAP_CONTROLLER_BUTTON_COMPONENT_ID (CCInputMapTypeControllerButton | CC_INPUT_COMPONENT_FLAG)
 
-extern const char * const CCInputMapControllerButtonComponentName;
+extern const CCString CCInputMapControllerButtonComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapControllerComponentClass);

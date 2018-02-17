@@ -35,7 +35,7 @@
 
 #define CC_RENDER_COMPONENT_ID (1 | CC_RENDER_COMPONENT_FLAG)
 
-extern const char * const CCRenderComponentName;
+extern const CCString CCRenderComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);

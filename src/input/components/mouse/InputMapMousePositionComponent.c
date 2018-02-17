@@ -25,7 +25,7 @@
 
 #include "InputMapMousePositionComponent.h"
 
-const char * const CCInputMapMousePositionComponentName = "input_map_mouse_position";
+const CCString CCInputMapMousePositionComponentName = CC_STRING("input_map_mouse_position");
 
 void CCInputMapMousePositionComponentRegister(void)
 {

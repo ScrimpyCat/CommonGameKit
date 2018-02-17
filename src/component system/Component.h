@@ -86,7 +86,7 @@ typedef void (*CCComponentMessageHandler)(CCComponent Component, CCMessage *Mess
  * @param MessageHandler The callback to use for handling messages. May be NULL.
  * @param Destructor The callback to use for cleanup of this component.
  */
-void CCComponentRegister(CCComponentID id, const char *Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor);
+void CCComponentRegister(CCComponentID id, CCString CC_COPY(Name), CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor);
 
 /*!
  * @brief Deregister a component type.
@@ -108,7 +108,7 @@ CC_NEW CCComponent CCComponentCreate(CCComponentID id);
  * @param Name The unique name of the component type.
  * @return The created component.
  */
-CC_NEW CCComponent CCComponentCreateForName(const char *Name);
+CC_NEW CCComponent CCComponentCreateForName(CCString Name);
 
 /*!
  * @brief Destroy a component.

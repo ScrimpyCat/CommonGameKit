@@ -30,7 +30,7 @@
 
 #define CC_INPUT_MAP_KEYBOARD_COMPONENT_ID (CCInputMapTypeKeyboard | CC_INPUT_COMPONENT_FLAG)
 
-extern const char * const CCInputMapKeyboardComponentName;
+extern const CCString CCInputMapKeyboardComponentName;
 extern const CCKeyboardKeycode CCInputMapKeyboardComponentKeycodeAny;
 
 typedef struct {

@@ -25,7 +25,7 @@
 
 #include "InputMapMouseButtonComponent.h"
 
-const char * const CCInputMapMouseButtonComponentName = "input_map_mouse_button";
+const CCString CCInputMapMouseButtonComponentName = CC_STRING("input_map_mouse_button");
 
 void CCInputMapMouseButtonComponentRegister(void)
 {
