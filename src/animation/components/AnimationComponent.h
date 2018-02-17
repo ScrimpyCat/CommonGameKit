@@ -35,7 +35,7 @@
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);
-    char *name; //TODO: string type
+    CCString name;
     CCAnimationLoop loop;
     struct {
         float speed;
@@ -48,12 +48,97 @@ typedef struct {
 void CCAnimationComponentRegister(void);
 void CCAnimationComponentDeregister(void);
 
+/*!
+ * @brief Initialize the animation component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCAnimationComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the animation component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCAnimationComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the name of the animation.
+ * @param Component The animation component.
+ * @return The animation name.
+ */
+static inline CCString CCAnimationComponentGetName(CCComponent Component);
+
+/*!
+ * @brief Set the name of the animation.
+ * @param Component The animation component.
+ * @param Name The animation name. Ownership is transferred to the component.
+ */
+static inline void CCAnimationComponentSetName(CCComponent Component, CCString CC_OWN(Name));
+
+/*!
+ * @brief Get the repetition type for the animation.
+ * @param Component The animation component.
+ * @return The animation repetition.
+ */
+static inline CCAnimationLoop CCAnimationComponentGetLoop(CCComponent Component);
+
+/*!
+ * @brief Set the repetition type of the animation.
+ * @param Component The animation component.
+ * @param Loop The animation repetition.
+ */
+static inline void CCAnimationComponentSetLoop(CCComponent Component, CCAnimationLoop Loop);
+
+/*!
+ * @brief Get the speed of the animation.
+ * @param Component The animation component.
+ * @return The animation speed.
+ */
+static inline float CCAnimationComponentGetSpeed(CCComponent Component);
+
+/*!
+ * @brief Set the speed of the animation.
+ * @param Component The animation component.
+ * @param Speed The animation speed.
+ */
+static inline void CCAnimationComponentSetSpeed(CCComponent Component, float Speed);
+
+/*!
+ * @brief Get the position of the animation.
+ * @param Component The animation component.
+ * @return The animation position.
+ */
+static inline double CCAnimationComponentGetPosition(CCComponent Component);
+
+/*!
+ * @brief Set the position of the animation.
+ * @param Component The animation component.
+ * @param Position The animation position.
+ */
+static inline void CCAnimationComponentSetPosition(CCComponent Component, double Position);
+
+/*!
+ * @brief Get whether the animation is playing.
+ * @param Component The animation component.
+ * @return Whether the animation is currently playing (TRUE), or not (FALSE).
+ */
+static inline _Bool CCAnimationComponentGetPlaying(CCComponent Component);
+
+/*!
+ * @brief Set whether the animation should be playing.
+ * @param Component The animation component.
+ * @param Playing Whether the animation should be playing.
+ */
+static inline void CCAnimationComponentSetPlaying(CCComponent Component, _Bool Playing);
+
+
+#pragma mark -
 
 static inline void CCAnimationComponentInitialize(CCComponent Component, CCComponentID id)
 {
     CCComponentInitialize(Component, id);
     ((CCAnimationComponentPrivate)Component)->loop = CCAnimationLoopOnce;
-    ((CCAnimationComponentPrivate)Component)->name = NULL;
+    ((CCAnimationComponentPrivate)Component)->name = 0;
     ((CCAnimationComponentPrivate)Component)->control.speed = 1.0f;
     ((CCAnimationComponentPrivate)Component)->control.position = 0.0f;
     ((CCAnimationComponentPrivate)Component)->control.playing = FALSE;
@@ -61,29 +146,20 @@ static inline void CCAnimationComponentInitialize(CCComponent Component, CCCompo
 
 static inline void CCAnimationComponentDeallocate(CCComponent Component)
 {
-    CC_SAFE_Free(((CCAnimationComponentPrivate)Component)->name);
+    if (((CCAnimationComponentPrivate)Component)->name) CCStringDestroy(((CCAnimationComponentPrivate)Component)->name);
     CCComponentDeallocate(Component);
 }
 
-static inline const char *CCAnimationComponentGetName(CCComponent Component)
+static inline CCString CCAnimationComponentGetName(CCComponent Component)
 {
     return ((CCAnimationComponentPrivate)Component)->name;
 }
 
-static inline void CCAnimationComponentSetName(CCComponent Component, const char *Name)
+static inline void CCAnimationComponentSetName(CCComponent Component, CCString Name)
 {
-    if (Name)
-    {
-        const size_t Length = strlen(Name);
-        CC_SAFE_Realloc(((CCAnimationComponentPrivate)Component)->name, (Length + 1) * sizeof(char),
-                        CC_LOG_ERROR("Failed to create new action name (%" PRIu32 " : %s) due to allocation failure", CCComponentGetID(Component), Name);
-                        return;
-                        );
-        
-        strcpy(((CCAnimationComponentPrivate)Component)->name, Name);
-    }
+    if (((CCAnimationComponentPrivate)Component)->name) CCStringDestroy(((CCAnimationComponentPrivate)Component)->name);
     
-    else CC_SAFE_Free(((CCAnimationComponentPrivate)Component)->name);
+    ((CCAnimationComponentPrivate)Component)->name = Name;
 }
 
 static inline CCAnimationLoop CCAnimationComponentGetLoop(CCComponent Component)
