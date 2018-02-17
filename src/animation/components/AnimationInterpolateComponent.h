@@ -30,7 +30,7 @@
 
 #define CC_ANIMATION_INTERPOLATE_COMPONENT_ID (CCAnimationTypeInterpolate | CC_ANIMATION_COMPONENT_FLAG)
 
-extern const char * const CCAnimationInterpolateComponentName;
+extern const CCString CCAnimationInterpolateComponentName;
 
 typedef void (*CCAnimationInterpolator)(void *Previous, void *Next, double Time, void *Result);
 
@@ -44,6 +44,42 @@ typedef struct {
 void CCAnimationInterpolateComponentRegister(void);
 void CCAnimationInterpolateComponentDeregister(void);
 
+/*!
+ * @brief Initialize the animation component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCAnimationInterpolateComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the animation component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCAnimationInterpolateComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the interpolator of the animation.
+ * @param Component The animation component.
+ * @return The animation interpolator.
+ */
+static inline CCAnimationInterpolator CCAnimationInterpolateComponentGetInterpolator(CCComponent Component);
+
+/*!
+ * @brief Set the interpolator of the animation.
+ * @param Component The animation component.
+ * @param Interpolator The animation interpolator.
+ */
+static inline void CCAnimationInterpolateComponentSetInterpolator(CCComponent Component, CCAnimationInterpolator Interpolator);
+
+/*!
+ * @brief Get the current interpolated data from the animation.
+ * @param Component The animation component.
+ * @return The interpolated data.
+ */
+static inline void *CCAnimationInterpolateComponentGetCurrentInterpolatedData(CCComponent Component);
+
+
+#pragma mark -
 
 static inline void CCAnimationInterpolateComponentInitialize(CCComponent Component, CCComponentID id)
 {

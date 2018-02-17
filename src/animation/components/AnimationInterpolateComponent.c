@@ -25,7 +25,7 @@
 
 #include "AnimationInterpolateComponent.h"
 
-const char * const CCAnimationInterpolateComponentName = "animation_interpolate";
+const CCString CCAnimationInterpolateComponentName = CC_STRING("animation_interpolate");
 
 void CCAnimationInterpolateComponentRegister(void)
 {
