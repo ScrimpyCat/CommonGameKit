@@ -25,7 +25,7 @@
 
 #include "AnimationKeyframeComponent.h"
 
-const char * const CCAnimationKeyframeComponentName = "animation_keyframe";
+const CCString CCAnimationKeyframeComponentName = CC_STRING("animation_keyframe");
 
 void CCAnimationKeyframeComponentRegister(void)
 {

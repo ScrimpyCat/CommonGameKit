@@ -31,7 +31,7 @@
 
 #define CC_ANIMATION_KEYFRAME_COMPONENT_ID (CCAnimationTypeKeyframe | CC_ANIMATION_COMPONENT_FLAG)
 
-extern const char * const CCAnimationKeyframeComponentName;
+extern const CCString CCAnimationKeyframeComponentName;
 
 typedef enum {
     CCAnimationKeyframeDirectionForward = 1,
@@ -58,6 +58,145 @@ typedef struct {
 void CCAnimationKeyframeComponentRegister(void);
 void CCAnimationKeyframeComponentDeregister(void);
 
+/*!
+ * @brief Initialize the keyframe animation component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCAnimationKeyframeComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the keyframe animation component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCAnimationKeyframeComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the data associated with each frame from the animation.
+ * @description Use @b CCAnimationKeyframeComponentGetIndex to get the index of the data
+ *              for the current frame.
+ *
+ * @param Component The animation component.
+ * @return The data frames.
+ */
+static inline CCOrderedCollection CCAnimationKeyframeComponentGetData(CCComponent Component);
+
+/*!
+ * @brief Set the data for each frame of the animation.
+ * @param Component The animation component.
+ * @param Data The animation frame data.
+ */
+static inline void CCAnimationKeyframeComponentSetData(CCComponent Component, CCOrderedCollection Data);
+
+/*!
+ * @brief Get the frame time steps for the animation.
+ * @description Use @b CCAnimationKeyframeComponentGetIndex to get the index of the time
+ *              for the current frame.
+ *
+ * @param Component The animation component.
+ * @return The time steps.
+ */
+static inline CCOrderedCollection CCAnimationKeyframeComponentGetFrames(CCComponent Component);
+
+/*!
+ * @brief Set the frame time steps for the animation.
+ * @param Component The animation component.
+ * @param Frames The times for each frame.
+ */
+static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection Frames);
+
+/*!
+ * @brief Get the frame time step for the animation.
+ * @description A uniform time that is applied to every data frame.
+ * @param Component The animation component.
+ * @return The frame time.
+ */
+static inline double CCAnimationKeyframeComponentGetFrame(CCComponent Component);
+
+/*!
+ * @brief Set the uniform frame time for the animation.
+ * @param Component The animation component.
+ * @param Frame The time for each frame.
+ */
+static inline void CCAnimationKeyframeComponentSetFrame(CCComponent Component, double Frame);
+
+/*!
+ * @brief Get the index for the current frame in the animation.
+ * @param Component The animation component.
+ * @return The frame index.
+ */
+static inline size_t CCAnimationKeyframeComponentGetIndex(CCComponent Component);
+
+/*!
+ * @brief Set the frame index for the animation.
+ * @param Component The animation component.
+ * @param Index The index of the frame to be selected.
+ */
+static inline void CCAnimationKeyframeComponentSetIndex(CCComponent Component, size_t Index);
+
+/*!
+ * @brief Get the direction of the animation.
+ * @param Component The animation component.
+ * @return The direction.
+ */
+static inline CCAnimationKeyframeDirection CCAnimationKeyframeComponentGetDirection(CCComponent Component);
+
+/*!
+ * @brief Set the direction for the animation.
+ * @param Component The animation component.
+ * @param Direction The direction of the animation to be used.
+ */
+static inline void CCAnimationKeyframeComponentSetDirection(CCComponent Component, CCAnimationKeyframeDirection Direction);
+
+/*!
+ * @brief Get whether a single or multiple time steps are used.
+ * @description This indicates whether the pluralised {Get/Set}Frames functions should be used
+ *              or the singular {Get/Set}Frame functions should be used instead.
+ *
+ * @param Component The animation component.
+ * @return Whether the animation has multiple time frames.
+ */
+static inline _Bool CCAnimationKeyframeComponentGetHasMultipleFrames(CCComponent Component);
+
+/*!
+ * @brief Check whether the animation has finished (reached the end of the animation).
+ * @param Component The animation component.
+ * @return Whether the animation has finished.
+ */
+static inline _Bool CCAnimationKeyframeComponentGetIsFinished(CCComponent Component);
+
+/*!
+ * @brief Set the whether the animation has finished.
+ * @param Component The animation component.
+ * @param Finished Indicates whether animation has finished or not.
+ */
+static inline void CCAnimationKeyframeComponentSetIsFinished(CCComponent Component, _Bool Finished);
+
+#pragma mark - Convenience functions
+
+/*!
+ * @brief Get the time step for the current frame.
+ * @param Component The animation component.
+ * @return The time for the current frame.
+ */
+static inline double CCAnimationKeyframeComponentGetCurrentFrame(CCComponent Component);
+
+/*!
+ * @brief Get the data for the current frame.
+ * @param Component The animation component.
+ * @return The data for the current frame or NULL if there is none.
+ */
+static inline void *CCAnimationKeyframeComponentGetCurrentData(CCComponent Component);
+
+/*!
+ * @brief Reset the animation state back to its starting position.
+ * @description This can be used to restart the animation.
+ * @param Component The animation component.
+ */
+static inline void CCAnimationKeyframeComponentReset(CCComponent Component);
+
+
+#pragma mark -
 
 static inline void CCAnimationKeyframeComponentInitialize(CCComponent Component, CCComponentID id)
 {
