@@ -45,14 +45,14 @@ void CCAnimationInterpolateComponentRegister(void);
 void CCAnimationInterpolateComponentDeregister(void);
 
 /*!
- * @brief Initialize the animation component.
+ * @brief Initialize the interpolated animation component.
  * @param Component The component to be initialized.
  * @param id The component ID.
  */
 static inline void CCAnimationInterpolateComponentInitialize(CCComponent Component, CCComponentID id);
 
 /*!
- * @brief Deallocate the animation component.
+ * @brief Deallocate the interpolated animation component.
  * @param Component The component to be deallocated.
  */
 static inline void CCAnimationInterpolateComponentDeallocate(CCComponent Component);
