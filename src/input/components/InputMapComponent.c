@@ -51,7 +51,7 @@ void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
                         {
                             CCString CallbackName = CCExpressionGetAtom(CallbackNameExpr);
                             
-                            void (**Callback)() = Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask] ? CCDictionaryGetValue(Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask], &CallbackName) : NULL;
+                            CCInputMapComponentCallback *Callback = Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask] ? CCDictionaryGetValue(Callbacks[CCComponentGetID(Component) & CCInputMapTypeMask], &CallbackName) : NULL;
                             if (Callback)
                             {
                                 CCInputMapComponentSetCallback(Component, *Callback);
@@ -74,7 +74,7 @@ void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
     CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)));
 }
 
-void CCInputMapComponentRegisterCallback(CCString Name, CCInputMapType Type, void (*Callback)())
+void CCInputMapComponentRegisterCallback(CCString Name, CCInputMapType Type, CCInputMapComponentCallback Callback)
 {
     if (!Callbacks[Type])
     {

@@ -32,14 +32,37 @@
 
 #define CC_INPUT_MAP_COMPONENT_ID (CCInputMapTypeNone | CC_INPUT_COMPONENT_FLAG)
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+/*!
+ * @brief Callback to respond to input events.
+ * @description This should take the form of one of the valid input map callbacks:
+ *
+ *              - @b CCInputMapKeyboardCallback
+ *
+ *              - @b CCInputMapMouseCallback
+ */
+typedef void (*CCInputMapComponentCallback)();
+#pragma clang diagnostic pop
+
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);
     CCString action;
-    void (*callback)();
+    CCInputMapComponentCallback callback;
 } CCInputMapComponentClass, *CCInputMapComponentPrivate;
 
 void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg);
-void CCInputMapComponentRegisterCallback(CCString CC_COPY(Name), CCInputMapType Type, void (*Callback)());
+void CCInputMapComponentRegisterCallback(CCString CC_COPY(Name), CCInputMapType Type, CCInputMapComponentCallback Callback);
+
+static inline void CCInputMapComponentInitialize(CCComponent Component, CCComponentID id);
+static inline void CCInputMapComponentDeallocate(CCComponent Component);
+static inline CCString CCInputMapComponentGetAction(CCComponent Component);
+static inline void CCInputMapComponentSetAction(CCComponent Component, CCString Action);
+static inline CCInputMapComponentCallback CCInputMapComponentGetCallback(CCComponent Component);
+static inline void CCInputMapComponentSetCallback(CCComponent Component, CCInputMapComponentCallback Callback);
+
+
+#pragma mark -
 
 static inline void CCInputMapComponentInitialize(CCComponent Component, CCComponentID id)
 {
@@ -66,12 +89,12 @@ static inline void CCInputMapComponentSetAction(CCComponent Component, CCString 
     ((CCInputMapComponentPrivate)Component)->action = Action ? CCStringCopy(Action) : 0;
 }
 
-static inline void (*CCInputMapComponentGetCallback(CCComponent Component))()
+static inline CCInputMapComponentCallback CCInputMapComponentGetCallback(CCComponent Component)
 {
     return ((CCInputMapComponentPrivate)Component)->callback;
 }
 
-static inline void CCInputMapComponentSetCallback(CCComponent Component, void (*Callback)())
+static inline void CCInputMapComponentSetCallback(CCComponent Component, CCInputMapComponentCallback Callback)
 {
     ((CCInputMapComponentPrivate)Component)->callback = Callback;
 }
