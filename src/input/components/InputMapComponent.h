@@ -52,13 +52,65 @@ typedef struct {
 } CCInputMapComponentClass, *CCInputMapComponentPrivate;
 
 void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg);
+
+/*!
+ * @brief Expose a callback to the deserializer.
+ * @description This allows for deserialized expressions to reference the callback.
+ * @param Name The name of the atom to be used to reference this callback.
+ * @param Type The type the callback belongs to. The same name can be used for different
+ *        types.
+ *
+ * @param Callback The input map callback.
+ */
 void CCInputMapComponentRegisterCallback(CCString CC_COPY(Name), CCInputMapType Type, CCInputMapComponentCallback Callback);
 
+/*!
+ * @brief Initialize the input map component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
 static inline void CCInputMapComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map component.
+ * @param Component The component to be deallocated.
+ */
 static inline void CCInputMapComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the action name of the input map.
+ * @description The action name is used to identify the component in calls made to the
+ *              input system, such as @b CCInputSystemGetStateForAction.
+ *
+ * @param Component The input map component.
+ * @return The input map action name.
+ */
 static inline CCString CCInputMapComponentGetAction(CCComponent Component);
-static inline void CCInputMapComponentSetAction(CCComponent Component, CCString Action);
+
+/*!
+ * @brief Set the action name of the input map.
+ * @description The action name is used to identify the component in calls made to the
+ *              input system, such as @b CCInputSystemGetStateForAction.
+ *
+ * @param Component The input map component.
+ * @param Action The input map action name. Ownership is transferred to the component.
+ */
+static inline void CCInputMapComponentSetAction(CCComponent Component, CCString CC_OWN(Action));
+
+/*!
+ * @brief Get the callback for the input map.
+ * @description The callback is used by the input system as a trigger for input events.
+ * @param Component The input map component.
+ * @return The input map callback.
+ */
 static inline CCInputMapComponentCallback CCInputMapComponentGetCallback(CCComponent Component);
+
+/*!
+ * @brief Set the callback of the input map.
+ * @description The callback is used by the input system as a trigger for input events.
+ * @param Component The input map component.
+ * @param Callback The input map callback.
+ */
 static inline void CCInputMapComponentSetCallback(CCComponent Component, CCInputMapComponentCallback Callback);
 
 
