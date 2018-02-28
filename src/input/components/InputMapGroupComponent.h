@@ -45,6 +45,61 @@ void CCInputMapGroupComponentDeregister(void);
 void CCInputMapGroupComponentElementDestructor(CCCollection Collection, CCComponent *Element);
 void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg);
 
+/*!
+ * @brief Initialize the input map group component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapGroupComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map group component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapGroupComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the input maps that belong to this group.
+ * @description These are other children of input map components.
+ * @param Component The input map group component.
+ * @return The input maps apart of this group.
+ */
+static inline CCOrderedCollection CCInputMapGroupComponentGetInputMaps(CCComponent Component);
+
+/*!
+ * @brief Add an input map to the group.
+ * @param Component The input map component.
+ * @param InputMap The input map to be added to the group. Ownership is transferred to the component.
+ */
+static inline void CCInputMapGroupComponentAddInputMap(CCComponent Component, CCComponent CC_OWN(InputMap));
+
+/*!
+ * @brief Remove an input map from the group.
+ * @param Component The input map component.
+ * @param InputMap The input map to be removed from the group. The input map will be destroyed.
+ */
+static inline void CCInputMapGroupComponentRemoveInputMap(CCComponent Component, CCComponent CC_DESTROY(InputMap));
+
+/*!
+ * @brief Get whether all input maps in the group need to be active for the group to be
+ *        considered active.
+ *
+ * @param Component The input map group component.
+ * @return Whether all inputs maps need to be active.
+ */
+static inline _Bool CCInputMapGroupComponentGetWantsAllActive(CCComponent Component);
+
+/*!
+ * @brief Set whether all input maps in the group need to be active for the group to be
+ *        considered active.
+ *
+ * @param Component The input map component.
+ * @param WantsAllActive Whether all input maps need to be active.
+ */
+static inline void CCInputMapGroupComponentSetWantsAllActive(CCComponent Component, _Bool WantsAllActive);
+
+
+#pragma mark -
 
 static inline void CCInputMapGroupComponentInitialize(CCComponent Component, CCComponentID id)
 {
