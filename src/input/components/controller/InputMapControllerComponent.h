@@ -43,6 +43,62 @@ void CCInputMapControllerComponentRegister(void);
 void CCInputMapControllerComponentDeregister(void);
 void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg);
 
+/*!
+ * @brief Initialize the input map controller component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapControllerComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map controller component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapControllerComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the input map controller device name.
+ * @description The device name is the assigned name of the controller this component
+ *              should match with.
+ *
+ * @param Component The input map controller component.
+ * @return The input map controller device name.
+ */
+static inline CCString CCInputMapControllerComponentGetDevice(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller device name.
+ * @description The device name is the assigned name of the controller this component
+ *              should match with.
+ *
+ * @param Component The input map controller component.
+ * @param Connection The specific device name of the controller this component should
+ *        link with.
+ */
+static inline void CCInputMapControllerComponentSetDevice(CCComponent Component, CCString Device);
+
+/*!
+ * @brief Get the input map controller connection.
+ * @description The connection is the fixed index of the controller this component
+ *              links with.
+ *
+ * @param Component The input map controller component.
+ * @return The input map controller connection.
+ */
+static inline int8_t CCInputMapControllerComponentGetConnection(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller connection.
+ * @description The connection is the fixed index of the controller this component
+ *              links with.
+ *
+ * @param Component The input map controller component.
+ * @param Connection The index of a controller this component should link with.
+ */
+static inline void CCInputMapControllerComponentSetConnection(CCComponent Component, int8_t Connection);
+
+#pragma mark -
+
 
 static inline void CCInputMapControllerComponentInitialize(CCComponent Component, CCComponentID id)
 {
