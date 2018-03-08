@@ -72,7 +72,7 @@ static inline CCString CCInputMapControllerComponentGetDevice(CCComponent Compon
  *              should match with.
  *
  * @param Component The input map controller component.
- * @param Connection The specific device name of the controller this component should
+ * @param Device The specific device name of the controller this component should
  *        link with.
  */
 static inline void CCInputMapControllerComponentSetDevice(CCComponent Component, CCString Device);
