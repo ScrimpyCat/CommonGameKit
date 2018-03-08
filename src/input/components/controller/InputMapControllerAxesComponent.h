@@ -46,6 +46,235 @@ void CCInputMapControllerAxesComponentRegister(void);
 void CCInputMapControllerAxesComponentDeregister(void);
 void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpression Arg);
 
+/*!
+ * @brief Initialize the input map controller axes component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapControllerAxesComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map controller axes component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapControllerAxesComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the input map controller axes deadzone.
+ * @description The deadzone is the region of the control stick that will be mapped
+ *              to 0. This is useful to alleviate any noise due to the analog input.
+ *
+ * @param Component The input map controller axes component.
+ * @return The input map controller axes deadzone.
+ */
+static inline float CCInputMapControllerAxesComponentGetDeadzone(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller axes deadzone.
+ * @description The deadzone is the region of the control stick that will be mapped
+ *              to 0. This is useful to alleviate any noise due to the analog input.
+ *
+ * @param Component The input map controller axes component.
+ * @param Deadzone The size of the deadzone.
+ */
+static inline void CCInputMapControllerAxesComponentSetDeadzone(CCComponent Component, float Deadzone);
+
+/*!
+ * @brief Get the input map controller axes resolution.
+ * @description The resolution is the precision of the analog input. This is useful to
+ *              smooth out the values, so smaller movements end up being ignored.
+ *
+ * @param Component The input map controller axes component.
+ * @return The input map controller axes resolution.
+ */
+static inline uint8_t CCInputMapControllerAxesComponentGetResolution(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller axes resolution.
+ * @description The resolution is the precision of the analog input. This is useful to
+ *              smooth out the values, so smaller movements end up being ignored.
+ *
+ * @param Component The input map controller axes component.
+ * @param Resolution The input resolution.
+ */
+static inline void CCInputMapControllerAxesComponentSetResolution(CCComponent Component, uint8_t Resolution);
+
+/*!
+ * @brief Get the input map controller axes x-input mapping.
+ * @description The ID of the axes input from the controller to map to the x-axis.
+ * @param Component The input map controller axes component.
+ * @return The input map controller axes x-input mapping.
+ */
+static inline int32_t CCInputMapControllerAxesComponentGetX(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller axes x-input mapping.
+ * @description The ID of the axes input from the controller to map to the x-axis.
+ * @param Component The input map controller axes component.
+ * @param x The input to map to the x-axis.
+ */
+static inline void CCInputMapControllerAxesComponentSetX(CCComponent Component, int32_t x);
+
+/*!
+ * @brief Get the input map controller axes y-input mapping.
+ * @description The ID of the axes input from the controller to map to the y-axis.
+ * @param Component The input map controller axes component.
+ * @return The input map controller axes y-input mapping.
+ */
+static inline int32_t CCInputMapControllerAxesComponentGetY(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller axes y-input mapping.
+ * @description The ID of the axes input from the controller to map to the y-axis.
+ * @param Component The input map controller axes component.
+ * @param x The input to map to the y-axis.
+ */
+static inline void CCInputMapControllerAxesComponentSetY(CCComponent Component, int32_t y);
+
+/*!
+ * @brief Get the input map controller axes z-input mapping.
+ * @description The ID of the axes input from the controller to map to the z-axis.
+ * @param Component The input map controller axes component.
+ * @return The input map controller axes z-input mapping.
+ */
+static inline int32_t CCInputMapControllerAxesComponentGetZ(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller axes z-input mapping.
+ * @description The ID of the axes input from the controller to map to the z-axis.
+ * @param Component The input map controller axes component.
+ * @param x The input to map to the z-axis.
+ */
+static inline void CCInputMapControllerAxesComponentSetZ(CCComponent Component, int32_t z);
+
+/*!
+ * @brief Get whether input map controller axes x-input is one-sided.
+ * @description A one-sided input means it will only map the value range from 0 to +1,
+ *              instead of -1 to +1.
+ *
+ * @param Component The input map controller axes component.
+ * @return Whether input map controller axes x-input is one-sided.
+ */
+static inline _Bool CCInputMapControllerAxesComponentGetOneSidedX(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map controller axes x-input is one-sided.
+ * @description A one-sided input means it will only map the value range from 0 to +1,
+ *              instead of -1 to +1.
+ *
+ * @param Component The input map controller axes component.
+ * @param OneSided Whether the x-input is one-sided or not.
+ */
+static inline void CCInputMapControllerAxesComponentSetOneSidedX(CCComponent Component, _Bool OneSided);
+
+/*!
+ * @brief Get whether input map controller axes y-input is one-sided.
+ * @description A one-sided input means it will only map the value range from 0 to +1,
+ *              instead of -1 to +1.
+ *
+ * @param Component The input map controller axes component.
+ * @return Whether input map controller axes y-input is one-sided.
+ */
+static inline _Bool CCInputMapControllerAxesComponentGetOneSidedY(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map controller axes y-input is one-sided.
+ * @description A one-sided input means it will only map the value range from 0 to +1,
+ *              instead of -1 to +1.
+ *
+ * @param Component The input map controller axes component.
+ * @param OneSided Whether the y-input is one-sided or not.
+ */
+static inline void CCInputMapControllerAxesComponentSetOneSidedY(CCComponent Component, _Bool OneSided);
+
+/*!
+ * @brief Get whether input map controller axes z-input is one-sided.
+ * @description A one-sided input means it will only map the value range from 0 to +1,
+ *              instead of -1 to +1.
+ *
+ * @param Component The input map controller axes component.
+ * @return Whether input map controller axes z-input is one-sided.
+ */
+static inline _Bool CCInputMapControllerAxesComponentGetOneSidedZ(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map controller axes z-input is one-sided.
+ * @description A one-sided input means it will only map the value range from 0 to +1,
+ *              instead of -1 to +1.
+ *
+ * @param Component The input map controller axes component.
+ * @param OneSided Whether the z-input is one-sided or not.
+ */
+static inline void CCInputMapControllerAxesComponentSetOneSidedZ(CCComponent Component, _Bool OneSided);
+
+/*!
+ * @brief Get whether input map controller axes x-input is flipped.
+ * @description A flipped input means the value range is flipped in the opposite,
+ *              direction. Use this if you find the input range does not map in the
+ *              desired direction.
+ *
+ * @param Component The input map controller axes component.
+ * @return Whether input map controller axes x-input is flipped.
+ */
+static inline _Bool CCInputMapControllerAxesComponentGetFlipX(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map controller axes x-input is flipped.
+ * @description A flipped input means the value range is flipped in the opposite,
+ *              direction. Use this if you find the input range does not map in the
+ *              desired direction.
+ *
+ * @param Component The input map controller axes component.
+ * @param OneSided Whether the x-input is flipped or not.
+ */
+static inline void CCInputMapControllerAxesComponentSetFlipX(CCComponent Component, _Bool Flip);
+
+/*!
+ * @brief Get whether input map controller axes y-input is flipped.
+ * @description A flipped input means the value range is flipped in the opposite,
+ *              direction. Use this if you find the input range does not map in the
+ *              desired direction.
+ *
+ * @param Component The input map controller axes component.
+ * @return Whether input map controller axes y-input is flipped.
+ */
+static inline _Bool CCInputMapControllerAxesComponentGetFlipY(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map controller axes y-input is flipped.
+ * @description A flipped input means the value range is flipped in the opposite,
+ *              direction. Use this if you find the input range does not map in the
+ *              desired direction.
+ *
+ * @param Component The input map controller axes component.
+ * @param OneSided Whether the y-input is flipped or not.
+ */
+static inline void CCInputMapControllerAxesComponentSetFlipY(CCComponent Component, _Bool Flip);
+
+/*!
+ * @brief Get whether input map controller axes z-input is flipped.
+ * @description A flipped input means the value range is flipped in the opposite,
+ *              direction. Use this if you find the input range does not map in the
+ *              desired direction.
+ *
+ * @param Component The input map controller axes component.
+ * @return Whether input map controller axes z-input is flipped.
+ */
+static inline _Bool CCInputMapControllerAxesComponentGetFlipZ(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map controller axes z-input is flipped.
+ * @description A flipped input means the value range is flipped in the opposite,
+ *              direction. Use this if you find the input range does not map in the
+ *              desired direction.
+ *
+ * @param Component The input map controller axes component.
+ * @param OneSided Whether the z-input is flipped or not.
+ */
+static inline void CCInputMapControllerAxesComponentSetFlipZ(CCComponent Component, _Bool Flip);
+
+#pragma mark -
+
 
 static inline void CCInputMapControllerAxesComponentInitialize(CCComponent Component, CCComponentID id)
 {
