@@ -43,6 +43,53 @@ void CCInputMapControllerButtonComponentRegister(void);
 void CCInputMapControllerButtonComponentDeregister(void);
 void CCInputMapControllerButtonComponentDeserializer(CCComponent Component, CCExpression Arg);
 
+/*!
+ * @brief Initialize the input map controller button component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapControllerButtonComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map controller button component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapControllerButtonComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the input map controller button mapping.
+ * @description The ID of the button input from the controller to map.
+ * @param Component The input map controller button component.
+ * @return The input map controller button mapping.
+ */
+static inline int32_t CCInputMapControllerButtonComponentGetButton(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller button mapping.
+ * @description The ID of the button input from the controller to map.
+ * @param Component The input map controller button component.
+ * @param Button The input to map to the button.
+ */
+static inline void CCInputMapControllerButtonComponentSetButton(CCComponent Component, int32_t Button);
+
+/*!
+ * @brief Get the input map controller button input ramping.
+ * @description The ramping affects the speed of the build up/falloff per second.
+ * @param Component The input map controller button component.
+ * @return The input map controller button ramping value.
+ */
+static inline float CCInputMapControllerButtonComponentGetRamp(CCComponent Component);
+
+/*!
+ * @brief Set the input map controller button input ramping.
+ * @description The ramping affects the speed of the build up/falloff per second.
+ * @param Component The input map controller button component.
+ * @param Ramp The input map controller button ramping value.
+ */
+static inline void CCInputMapControllerButtonComponentSetRamp(CCComponent Component, float Ramp);
+
+#pragma mark -
+
 
 static inline void CCInputMapControllerButtonComponentInitialize(CCComponent Component, CCComponentID id)
 {
