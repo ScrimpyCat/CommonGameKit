@@ -47,6 +47,123 @@ void CCInputMapKeyboardComponentRegister(void);
 void CCInputMapKeyboardComponentDeregister(void);
 void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression Arg);
 
+/*!
+ * @brief Initialize the input map keyboard component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapKeyboardComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map keyboard component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapKeyboardComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the input map keyboard keycode to match.
+ * @param Component The input map keyboard component.
+ * @return The input map keyboard keycode.
+ */
+static inline CCKeyboardKeycode CCInputMapKeyboardComponentGetKeycode(CCComponent Component);
+
+/*!
+ * @brief Set the input map keyboard keycode to match.
+ * @param Component The input map keyboard component.
+ * @param Keycode The input map keyboard keycode.
+ */
+static inline void CCInputMapKeyboardComponentSetKeycode(CCComponent Component, CCKeyboardKeycode Keycode);
+
+/*!
+ * @brief Get the input map keyboard character to match.
+ * @param Component The input map keyboard component.
+ * @return The input map keyboard character.
+ */
+static inline CCChar CCInputMapKeyboardComponentGetCharacter(CCComponent Component);
+
+/*!
+ * @brief Set the input map keyboard character to match.
+ * @param Component The input map keyboard component.
+ * @param Character The input map keyboard character.
+ */
+static inline void CCInputMapKeyboardComponentSetCharacter(CCComponent Component, CCChar Character);
+
+/*!
+ * @brief Get the input map keyboard modifiers to match.
+ * @param Component The input map keyboard component.
+ * @return The input map keyboard modifiers.
+ */
+static inline CCKeyboardModifier CCInputMapKeyboardComponentGetFlags(CCComponent Component);
+
+/*!
+ * @brief Set the input map keyboard modifiers to match.
+ * @param Component The input map keyboard component.
+ * @param Flags The input map keyboard modifiers.
+ */
+static inline void CCInputMapKeyboardComponentSetFlags(CCComponent Component, CCKeyboardModifier Flags);
+
+/*!
+ * @brief Get the input map controller keyboard input ramping.
+ * @description The ramping affects the speed of the build up/falloff per second.
+ * @param Component The input map keyboard component.
+ * @return The input map keyboard ramping value.
+ */
+static inline float CCInputMapKeyboardComponentGetRamp(CCComponent Component);
+
+/*!
+ * @brief Set the input map keyboard input ramping.
+ * @description The ramping affects the speed of the build up/falloff per second.
+ * @param Component The input map keyboard component.
+ * @param Ramp The input map keyboard ramping value.
+ */
+static inline void CCInputMapKeyboardComponentSetRamp(CCComponent Component, float Ramp);
+
+/*!
+ * @brief Get whether the input map keyboard uses a keycode or character match.
+ * @param Component The input map keyboard component.
+ * @return Whether the input map keyboard uses a keycode.
+ */
+static inline _Bool CCInputMapKeyboardComponentGetIsKeycode(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map keyboard uses a keycode or character match.
+ * @param Component The input map keyboard component.
+ * @param IsKeycode Whether the input map keyboard uses a keycode.
+ */
+static inline void CCInputMapKeyboardComponentSetIsKeycode(CCComponent Component, _Bool IsKeycode);
+
+/*!
+ * @brief Get whether the input map keyboard ignores modifier flags when matching.
+ * @param Component The input map keyboard component.
+ * @return Whether the input map keyboard ignores modifiers.
+ */
+static inline _Bool CCInputMapKeyboardComponentGetIgnoreModifier(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map keyboard ignores modifier flags when matching.
+ * @param Component The input map keyboard component.
+ * @param IgnoreModifier Whether the input map keyboard ignores modifiers.
+ */
+static inline void CCInputMapKeyboardComponentSetIgnoreModifier(CCComponent Component, _Bool IgnoreModifier);
+
+/*!
+ * @brief Get whether the input map keyboard matches repeats.
+ * @description Repeated key presses are when a key is being held down.
+ * @param Component The input map keyboard component.
+ * @return Whether the input map keyboard matches repeats.
+ */
+static inline _Bool CCInputMapKeyboardComponentGetRepeats(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map keyboard matches repeats.
+ * @description Repeated key presses are when a key is being held down.
+ * @param Component The input map keyboard component.
+ * @param Repeats Whether the input map keyboard matches repeats.
+ */
+static inline void CCInputMapKeyboardComponentSetRepeats(CCComponent Component, _Bool Repeats);
+
+#pragma mark -
+
 
 static inline void CCInputMapKeyboardComponentInitialize(CCComponent Component, CCComponentID id)
 {
