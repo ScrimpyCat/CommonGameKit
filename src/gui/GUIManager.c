@@ -208,6 +208,17 @@ CCCollection GUIManagerGetObjects(void)
     return ObjectManager.active;
 }
 
+GUIObject GUIManagerFindObjectWithNamespace(CCString Namespace)
+{
+    CC_COLLECTION_FOREACH(GUIObject, UI, ObjectManager.active)
+    {
+        CCExpression Name = CCExpressionGetStateStrict(GUIObjectGetExpressionState(UI), CC_STRING("@namespace"));
+        if ((Name) && (CCExpressionGetType(Name) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), Namespace))) return UI;
+    }
+    
+    return NULL;
+}
+
 _Bool GUIManagerTryLock(void)
 {
     int err = mtx_trylock(&Lock);

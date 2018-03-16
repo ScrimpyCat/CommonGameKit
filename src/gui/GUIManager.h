@@ -80,6 +80,13 @@ void GUIManagerRemoveObject(GUIObject CC_DESTROY(Object));
 CCCollection GUIManagerGetObjects(void);
 
 /*!
+ * @brief Find the parent GUI object in the manager with the given namespace.
+ * @warning Should obtain locks to the GUI manager prior to calling this function.
+ * @return The GUI object with that namespace.
+ */
+GUIObject GUIManagerFindObjectWithNamespace(CCString Namespace);
+
+/*!
  * @brief Attempt to lock the GUI manager.
  * @return True if was able to lock the GUI manager, otherwise false.
  */
