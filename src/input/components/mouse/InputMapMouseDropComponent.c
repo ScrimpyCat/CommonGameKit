@@ -25,7 +25,7 @@
 
 #include "InputMapMouseDropComponent.h"
 
-const char * const CCInputMapMouseDropComponentName = "input_map_mouse_drop";
+const CCString CCInputMapMouseDropComponentName = CC_STRING("input_map_mouse_drop");
 
 void CCInputMapMouseDropComponentRegister(void)
 {

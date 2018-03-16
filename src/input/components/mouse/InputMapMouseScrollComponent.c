@@ -25,7 +25,7 @@
 
 #include "InputMapMouseScrollComponent.h"
 
-const char * const CCInputMapMouseScrollComponentName = "input_map_mouse_scroll";
+const CCString CCInputMapMouseScrollComponentName = CC_STRING("input_map_mouse_scroll");
 
 void CCInputMapMouseScrollComponentRegister(void)
 {

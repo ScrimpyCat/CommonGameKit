@@ -30,7 +30,7 @@
 
 #define CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID (CCInputMapTypeMouseDrop | CC_INPUT_COMPONENT_FLAG)
 
-extern const char * const CCInputMapMouseDropComponentName;
+extern const CCString CCInputMapMouseDropComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);
