@@ -82,7 +82,7 @@ CCCollection GUIManagerGetObjects(void);
 /*!
  * @brief Find the parent GUI object in the manager with the given namespace.
  * @warning Should obtain locks to the GUI manager prior to calling this function.
- * @return The GUI object with that namespace.
+ * @return The GUI object with that namespace, or NULL if there is none.
  */
 GUIObject GUIManagerFindObjectWithNamespace(CCString Namespace);
 
