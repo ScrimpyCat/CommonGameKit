@@ -25,7 +25,16 @@
 
 #include <CommonGameKit/CommonGameKit.h>
 
+#if CC_PLATFORM_APPLE || CC_PLATFORM_UNIX
+#define USE_READLINE 1
+#endif
+
+#if USE_READLINE
+#include <readline/readline.h>
+#else
 static char Buffer[16384];
+#endif
+
 int Repl(int argc, const char *argv[])
 {
     CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCString), CCStringDestructorForCollection);
@@ -35,9 +44,19 @@ int Repl(int argc, const char *argv[])
     _Bool IsString = FALSE, BackSlash = FALSE;
     while (TRUE)
     {
-        printf("%zu> ", Line++);
+        char Prompt[23];
+        sprintf(Prompt, "%zu> ", Line++);
         
+#if USE_READLINE
+        char *Buffer = readline(Prompt);
+        add_history(Buffer);
+#else
+        printf(Prompt);
+#endif
+        
+#if !USE_READLINE
         if (scanf("%16383[^\n]%*c", Buffer) == 1)
+#endif
         {
             size_t Length = strlen(Buffer);
             
@@ -84,13 +103,19 @@ int Repl(int argc, const char *argv[])
                 IsString = FALSE;
                 BackSlash = FALSE;
             }
+            
+#if USE_READLINE
+            free(Buffer);
+#endif
         }
-        
+
+#if !USE_READLINE
         else
         {
             scanf("%*[^\n]");
             scanf("%*c");
         }
+#endif
     }
     
     return 0;

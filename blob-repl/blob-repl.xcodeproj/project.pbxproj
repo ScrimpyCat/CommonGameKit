@@ -11,6 +11,7 @@
 		F38828531E9B295600E6D7A3 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F38828521E9B295600E6D7A3 /* CommonGameKit.framework */; };
 		F38828551E9B295A00E6D7A3 /* CommonC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F38828541E9B295A00E6D7A3 /* CommonC.framework */; };
 		F38828631E9B2AC600E6D7A3 /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F38828611E9B2AC600E6D7A3 /* tinycthread.c */; };
+		F3D7A046205DB22C00EDC5E9 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D7A045205DB22C00EDC5E9 /* libreadline.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +37,7 @@
 		F38828601E9B29F200E6D7A3 /* stdatomic_portable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdatomic_portable.h; sourceTree = "<group>"; };
 		F38828611E9B2AC600E6D7A3 /* tinycthread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tinycthread.c; path = ../tinycthread/source/tinycthread.c; sourceTree = "<group>"; };
 		F38828621E9B2AC600E6D7A3 /* tinycthread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinycthread.h; path = ../tinycthread/source/tinycthread.h; sourceTree = "<group>"; };
+		F3D7A045205DB22C00EDC5E9 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3D7A046205DB22C00EDC5E9 /* libreadline.tbd in Frameworks */,
 				F38828551E9B295A00E6D7A3 /* CommonC.framework in Frameworks */,
 				F38828531E9B295600E6D7A3 /* CommonGameKit.framework in Frameworks */,
 			);
@@ -57,6 +60,7 @@
 				F388285A1E9B297500E6D7A3 /* Dependencies */,
 				F38828261E9B291D00E6D7A3 /* blob-repl */,
 				F38828251E9B291D00E6D7A3 /* Products */,
+				F3D7A044205DB22B00EDC5E9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +113,14 @@
 			path = ../deps/stdatomic;
 			sourceTree = "<group>";
 		};
+		F3D7A044205DB22B00EDC5E9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F3D7A045205DB22C00EDC5E9 /* libreadline.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -135,7 +147,7 @@
 		F388281C1E9B291D00E6D7A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Stefan Johnson";
 				TargetAttributes = {
 					F38828231E9B291D00E6D7A3 = {
@@ -181,13 +193,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -224,13 +244,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
