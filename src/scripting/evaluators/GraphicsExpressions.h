@@ -42,6 +42,26 @@ typedef struct {
 } CCGraphicsExpressionValueDraw;
 
 
+/*!
+ * @brief Get the text options from the expression.
+ * @param Enumerator The pointer to the current expression enumerator.
+ * @param AttributedStrings An ordered collection to store the @b CCTextAttribute or
+ *        NULL if no attributed strings are needed.
+ *
+ * @param Offset A pointer to where the offset should be store, or NULL if this should
+ *        be ignored.
+ *
+ * @param Length A pointer to where the length should be store, or NULL if this should
+ *        be ignored.
+ *
+ * @param Alignment A pointer to where the alignment should be store, or NULL if this
+ *        should be ignored.
+ *
+ * @param Visibility A pointer to where the visibility should be store, or NULL if this
+ *        should be ignored.
+ */
+void CCGraphicsExpressionGetTextOptions(CCEnumerator *Enumerator, CCOrderedCollection AttributedStrings, size_t *Offset, size_t *Length, CCTextAlignment *Alignment, CCTextVisibility *Visibility);
+
 CC_EXPRESSION_EVALUATOR(render-rect) CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(render-text) CCExpression CCGraphicsExpressionRenderText(CCExpression Expression);
 
