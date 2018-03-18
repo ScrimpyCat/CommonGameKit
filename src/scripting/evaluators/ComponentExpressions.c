@@ -27,6 +27,8 @@
 #include "ComponentBase.h"
 #include "ComponentSystem.h"
 #include "ExpressionHelpers.h"
+#include "TextAttribute.h"
+#include "GraphicsExpressions.h"
 
 static CCExpression CCComponentExpressionWrapper(CCExpression Expression);
 
@@ -249,6 +251,9 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                         return TRUE;
                                     }
                                     break;
+                                    
+                                default:
+                                    break;
                             }
                         }
                         
@@ -287,6 +292,28 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                 default:
                                     break;
                             }
+                        }
+                        
+                        switch (Deserializer[Loop].setterType)
+                        {
+                            case CCComponentExpressionArgumentTypeTextAttribute:
+                                if (ArgType == CCExpressionValueTypeList)
+                                {
+                                    CCOrderedCollection AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+                                    
+                                    CCEnumerator Enumerator;
+                                    CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);
+                                    
+                                    CCCollectionEnumeratorNext(&Enumerator);
+                                    CCGraphicsExpressionGetTextOptions(&Enumerator, AttributedStrings, NULL, NULL, NULL, NULL);
+                                    
+                                    ((void(*)(CCComponent,CCOrderedCollection))Deserializer[Loop].setter)(Component, AttributedStrings);
+                                    return TRUE;
+                                }
+                                break;
+                                
+                            default:
+                                break;
                         }
                         
                         CC_LOG_ERROR_CUSTOM("Could not deserialize argument (%S) of component (%u)", Name, CCComponentGetID(Component));

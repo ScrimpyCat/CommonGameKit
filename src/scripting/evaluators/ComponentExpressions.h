@@ -85,7 +85,8 @@ typedef enum {
     CCComponentExpressionArgumentTypeVector4i,
     CCComponentExpressionArgumentTypeColour,
     CCComponentExpressionArgumentTypeString,
-    CCComponentExpressionArgumentTypeData
+    CCComponentExpressionArgumentTypeData,
+    CCComponentExpressionArgumentTypeTextAttribute
 } CCComponentExpressionArgumentSetterType;
 
 typedef struct {
