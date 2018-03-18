@@ -52,8 +52,10 @@ static CCExpression CCGraphicsExpressionCacheCreate(CCAllocatorType Allocator, C
     {
         CCMemorySetDestructor(Cache, (CCMemoryDestructorCallback)CCGraphicsExpressionCacheValueDestructor);
         
-        if (Drawer) Cache->drawer = Drawer;
-        if (Args) Cache->args = Args;
+        *Cache = (CCGraphicsExpressionCache){
+            .drawer = Drawer,
+            .args = Args
+        };
     }
     
     else CCFree(Cache);
