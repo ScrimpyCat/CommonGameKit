@@ -35,8 +35,37 @@
 static char Buffer[16384];
 #endif
 
+static void Setup(void)
+{
+    CCAssetManagerCreate();
+    CCEntityManagerCreate();
+    
+//    //Register Systems
+//    CCRenderSystemRegister();
+//    CCInputSystemRegister();
+//    CCAnimationSystemRegister();
+//
+//    //Register Components
+//    CCRenderComponentRegister();
+//    CCInputMapKeyboardComponentRegister();
+//    CCInputMapGroupComponentRegister();
+//    CCInputMapMousePositionComponentRegister();
+//    CCInputMapMouseButtonComponentRegister();
+//    CCInputMapMouseScrollComponentRegister();
+//    CCInputMapMouseDropComponentRegister();
+//    CCInputMapControllerAxesComponentRegister();
+//    CCInputMapControllerButtonComponentRegister();
+//    CCAnimationComponentRegister();
+//    CCAnimationKeyframeComponentRegister();
+//    CCAnimationInterpolateComponentRegister();
+//
+//    GUIManagerCreate();
+}
+
 int Repl(int argc, const char *argv[])
 {
+    Setup();
+    
     CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCString), CCStringDestructorForCollection);
     CCOrderedCollectionAppendElement(Strings, &(CCString){ CCStringCopy(CC_STRING("(begin")) });
         
