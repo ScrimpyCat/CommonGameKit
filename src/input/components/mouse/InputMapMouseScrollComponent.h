@@ -40,6 +40,21 @@ typedef struct {
 void CCInputMapMouseScrollComponentRegister(void);
 void CCInputMapMouseScrollComponentDeregister(void);
 
+/*!
+ * @brief Initialize the input map mouse scroll component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapMouseScrollComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map mouse scroll component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapMouseScrollComponentDeallocate(CCComponent Component);
+
+
+#pragma mark -
 
 static inline void CCInputMapMouseScrollComponentInitialize(CCComponent Component, CCComponentID id)
 {
