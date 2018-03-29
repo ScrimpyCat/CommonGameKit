@@ -33,6 +33,7 @@
 #define CC_COMPONENT_INHERIT(component) component __inherit
 #define CC_COMPONENT_ID_RESERVED_MASK ~((CCComponentID)-1 >> 1)
 #define CC_COMPONENT_SYSTEM_FLAG_MASK 0x7f000000
+#define CC_COMPONENT_SYSTEM_FLAG_INDEX 24
 
 /*!
  * @brief The unique ID of the component.

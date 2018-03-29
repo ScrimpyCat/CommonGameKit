@@ -27,9 +27,10 @@
 @import XCTest;
 #import "ComponentSystem.h"
 #import "ComponentBase.h"
+#import "SystemID.h"
 
 
-#define TEST_SYSTEM_ID 1
+#define TEST_SYSTEM_ID CCSystemIDAvailable
 
 @interface ComponentSystemTests : XCTestCase
 
