@@ -346,14 +346,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 592A077C6CE14B2686C09B00;
+			remoteGlobalIDString = 23CD14BB42F44E25B51854FD;
 			remoteInfo = zlibstatic;
 		};
 		F3897B9E1DCD7514008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 3652BA5CC94443C2BB60626E;
+			remoteGlobalIDString = E2E9C6EDD63140F2BD7B7E7D;
 			remoteInfo = png_static;
 		};
 		F3897BD51DCD7DB3008D6C1D /* PBXContainerItemProxy */ = {
@@ -724,7 +724,7 @@
 			children = (
 				F3897B601DCD7149008D6C1D /* example */,
 				F3897B621DCD7149008D6C1D /* minigzip */,
-				F3897B641DCD7149008D6C1D /* libz.1.2.8.dylib */,
+				F3897B641DCD7149008D6C1D /* libz.dylib */,
 				F3897B661DCD7149008D6C1D /* libz.a */,
 			);
 			name = Products;
@@ -733,7 +733,7 @@
 		F3897B681DCD715A008D6C1D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3897B7D1DCD715A008D6C1D /* libpng16d.16.22.0.dylib */,
+				F3897B7D1DCD715A008D6C1D /* libpng16.dylib */,
 				F3897B7F1DCD715A008D6C1D /* png-fix-itxt */,
 				F3897B811DCD715A008D6C1D /* libpng16d.a */,
 				F3897B831DCD715A008D6C1D /* pngfix */,
@@ -1526,7 +1526,7 @@
 		F3AF32701DCCD29000CAD472 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Stefan Johnson";
 				TargetAttributes = {
 					F3AF32781DCCD29000CAD472 = {
@@ -1595,10 +1595,11 @@
 			remoteRef = F3897B611DCD7149008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B641DCD7149008D6C1D /* libz.1.2.8.dylib */ = {
+		F3897B641DCD7149008D6C1D /* libz.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = libz.1.2.8.dylib;
+			name = libz.dylib;
+			path = libz.1.2.11.dylib;
 			remoteRef = F3897B631DCD7149008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1609,10 +1610,11 @@
 			remoteRef = F3897B651DCD7149008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B7D1DCD715A008D6C1D /* libpng16d.16.22.0.dylib */ = {
+		F3897B7D1DCD715A008D6C1D /* libpng16.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
-			path = libpng16d.16.22.0.dylib;
+			name = libpng16.dylib;
+			path = libpng16d.16.34.0.dylib;
 			remoteRef = F3897B7C1DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1882,13 +1884,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1928,13 +1938,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
