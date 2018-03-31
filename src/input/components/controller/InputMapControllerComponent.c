@@ -39,8 +39,8 @@ void CCInputMapControllerComponentDeregister(void)
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("connection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (void(*)())CCInputMapControllerComponentSetConnection },
-    { .name = CC_STRING("device:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (void(*)())CCInputMapControllerComponentSetDevice }
+    { .name = CC_STRING("connection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)CCInputMapControllerComponentSetConnection },
+    { .name = CC_STRING("device:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (CCComponentExpressionSetter)CCInputMapControllerComponentSetDevice }
 };
 
 void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg)

@@ -55,7 +55,7 @@ void CCInputMapGroupComponentElementDestructor(CCCollection Collection, CCCompon
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("all-active:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (void(*)())CCInputMapGroupComponentSetWantsAllActive }
+    { .name = CC_STRING("all-active:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)CCInputMapGroupComponentSetWantsAllActive }
 };
 
 void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg)

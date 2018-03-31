@@ -212,8 +212,8 @@ void CCInputMapKeyboardComponentDeregister(void)
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (void(*)())CCInputMapKeyboardComponentSetRamp },
-    { .name = CC_STRING("repeat:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (void(*)())CCInputMapKeyboardComponentSetRepeats },
+    { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCInputMapKeyboardComponentSetRamp },
+    { .name = CC_STRING("repeat:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)CCInputMapKeyboardComponentSetRepeats },
 };
 
 void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression Arg)

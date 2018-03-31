@@ -48,8 +48,8 @@ void CCInputMapControllerAxesComponentDeregister(void)
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("deadzone:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (void(*)())CCInputMapControllerAxesComponentSetDeadzone },
-    { .name = CC_STRING("resolution:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeUInt8, .setter = (void(*)())CCInputMapControllerAxesComponentSetResolution }
+    { .name = CC_STRING("deadzone:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCInputMapControllerAxesComponentSetDeadzone },
+    { .name = CC_STRING("resolution:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeUInt8, .setter = (CCComponentExpressionSetter)CCInputMapControllerAxesComponentSetResolution }
 };
 
 void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpression Arg)

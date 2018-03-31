@@ -89,6 +89,11 @@ typedef enum {
     CCComponentExpressionArgumentTypeTextAttribute
 } CCComponentExpressionArgumentSetterType;
 
+/*!
+ * @brief The component setter function.
+ */
+typedef void (*CCComponentExpressionSetter)();
+
 typedef struct {
     /// The name of the argument to be matched.
     CCString name;
@@ -97,7 +102,7 @@ typedef struct {
     /// The type of setter being used.
     CCComponentExpressionArgumentSetterType setterType;
     /// The component setter to be used for the given deserializer.
-    void (*setter)();
+    CCComponentExpressionSetter setter;
 } CCComponentExpressionArgumentDeserializer;
 
 /*!

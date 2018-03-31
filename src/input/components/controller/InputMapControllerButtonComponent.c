@@ -48,8 +48,8 @@ void CCInputMapControllerButtonComponentDeregister(void)
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("button:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (void(*)())CCInputMapControllerButtonComponentSetButton },
-    { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (void(*)())CCInputMapControllerButtonComponentSetRamp }
+    { .name = CC_STRING("button:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (CCComponentExpressionSetter)CCInputMapControllerButtonComponentSetButton },
+    { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCInputMapControllerButtonComponentSetRamp }
 };
 
 void CCInputMapControllerButtonComponentDeserializer(CCComponent Component, CCExpression Arg)
