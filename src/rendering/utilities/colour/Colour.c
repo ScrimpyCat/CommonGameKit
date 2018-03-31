@@ -365,9 +365,8 @@ static CCColour CCColourRGBConvertToHS(CCColour Colour, CCColourFormat ColourSpa
     const float m = fminf(fminf(r.f32, g.f32), b.f32);
     const float C = M - m;
     
-    float H;
-    if (C == 0.0f) H = 0.0f; //undefined
-    else if (M == r.f32) H = fmodf((g.f32 - b.f32) / C, 6.0f);
+    float H = 0.0f; //undefined if C == 0.0f
+    if (M == r.f32) H = fmodf((g.f32 - b.f32) / C, 6.0f);
     else if (M == g.f32) H = ((b.f32 - r.f32) / C) + 2.0f;
     else if (M == b.f32) H = ((r.f32 - g.f32) / C) + 4.0f;
     
