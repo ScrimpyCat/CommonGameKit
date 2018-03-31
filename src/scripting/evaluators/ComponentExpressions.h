@@ -89,10 +89,14 @@ typedef enum {
     CCComponentExpressionArgumentTypeTextAttribute
 } CCComponentExpressionArgumentSetterType;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
 /*!
  * @brief The component setter function.
+ * @description This should take the form of the @b CCComponentExpressionArgumentSetterType provided.
  */
 typedef void (*CCComponentExpressionSetter)();
+#pragma clang diagnostic pop
 
 typedef struct {
     /// The name of the argument to be matched.
