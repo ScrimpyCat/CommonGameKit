@@ -21,6 +21,18 @@
                 [{ "type": "string", "name": "name" }, { "type": "atom", "value": "linear" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }, { "type": "list", "value": [{ "type": "option", "value": "stream" }, { "type": "string", "name": "name" }] }],
                 [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }],
                 [{ "type": "string", "name": "name" }, { "type": "atom", "value": "nearest" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string", "name": "path" }] }, { "type": "list", "value": [{ "type": "option", "value": "stream" }, { "type": "string", "name": "name" }] }]
+            ],
+            "options": [
+                {
+                    "name": "dir",
+                    "description": "The path to the PNG texture file.",
+                    "args": [[{ "type": "string", "name": "path" }]]
+                },
+                {
+                    "name": "stream",
+                    "description": "The name of the texture stream.",
+                    "args": [[{ "type": "string", "name": "name" }]]
+                }
             ]
         },
         {
