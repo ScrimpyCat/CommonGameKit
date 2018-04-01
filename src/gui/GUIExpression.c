@@ -1001,7 +1001,7 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
                 CCExpression value;
             } Inputs[] = {
                 { CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.down) },
-                { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, (char*)(CCChar[2]){ Event->key.state.character, 0 }), FALSE) }, //TODO: Implement CCStringCreateCharacter() to safely handle multi-byte CCChar
+                { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithCharacter(CC_STD_ALLOCATOR, Event->key.state.character), FALSE) },
                 { CC_STRING("@keycode"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.keycode) },
                 { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) },
                 { CC_STRING("@flags"), Flags },
