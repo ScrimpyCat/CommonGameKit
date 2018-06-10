@@ -69,6 +69,8 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
                                     CCEntityAttachComponent(CCExpressionGetData(*Expr), ParentComponent);
                                     CCComponentSystemAddComponent(ParentComponent);
                                 }
+                                
+                                else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("children", "entity");
                             }
                         }
                     }
