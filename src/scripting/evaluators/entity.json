@@ -7,7 +7,14 @@
             "return": { "type": "custom:entity" },
             "args": [[
                 { "type": "string", "name": "name" }
-            ]]
+            ]],
+            "options": [
+                {
+                    "name": "children",
+                    "description": "The child entities of this parent entity.",
+                    "args": [[{ "type": "custom:entity" }]]
+                }
+            ]
         }
     ]
 }

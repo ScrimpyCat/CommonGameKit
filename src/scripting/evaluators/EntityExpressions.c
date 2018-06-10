@@ -27,6 +27,8 @@
 #include "ComponentExpressions.h"
 #include "Entity.h"
 #include "EntityManager.h"
+#include "RelationParentComponent.h"
+#include "ComponentSystem.h"
 
 CCExpression CCEntityExpressionEntity(CCExpression Expression)
 {
@@ -46,6 +48,30 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
                 {
                     CCExpressionChangeOwnership(Component, NULL, NULL);
                     CCEntityAttachComponent(Entity, CCExpressionGetData(Component));
+                }
+                
+                else if ((CCExpressionGetType(Component) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Component)) >= 2))
+                {
+                    CCEnumerator OptionEnumerator;
+                    CCCollectionGetEnumerator(CCExpressionGetList(Component), &OptionEnumerator);
+                    
+                    CCExpression Option = *(CCExpression*)CCCollectionEnumeratorNext(&OptionEnumerator);
+                    if (CCExpressionGetType(Option) == CCExpressionValueTypeAtom)
+                    {
+                        if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("children:")))
+                        {
+                            for (CCExpression *Expr = CCCollectionEnumeratorNext(&OptionEnumerator); Expr; Expr = CCCollectionEnumeratorNext(&OptionEnumerator))
+                            {
+                                if (CCExpressionGetType(*Expr) == CCEntityExpressionValueTypeEntity)
+                                {
+                                    CCComponent ParentComponent = CCComponentCreate(CC_RELATION_PARENT_COMPONENT_ID);
+                                    CCRelationParentComponentSetParent(ParentComponent, Entity);
+                                    CCEntityAttachComponent(CCExpressionGetData(*Expr), ParentComponent);
+                                    CCComponentSystemAddComponent(ParentComponent);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             
