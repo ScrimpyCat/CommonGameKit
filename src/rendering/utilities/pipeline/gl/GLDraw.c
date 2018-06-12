@@ -314,8 +314,9 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     CCAssertLog((GLint)Offset == Offset, "GL implementation cannot support offsets of that size");
     CCAssertLog((GLsizei)Count == Count, "GL implementation cannot support counts of that size");
     
-    CC_GL_VIEWPORT(Draw->viewport.bounds.x, Draw->viewport.bounds.y, Draw->viewport.bounds.width, Draw->viewport.bounds.height);
-    CC_GL_DEPTH_RANGE(Draw->viewport.bounds.minDepth, Draw->viewport.bounds.maxDepth);
+    const GFXViewport Viewport = GFXDrawGetViewport(Draw);
+    CC_GL_VIEWPORT(Viewport.x, Viewport.y, Viewport.width, Viewport.height);
+    CC_GL_DEPTH_RANGE(Viewport.minDepth, Viewport.maxDepth);
     
     CC_GL_USE_PROGRAM(((GLShader)Draw->shader)->program);
     GLDrawSetUniformState((GLShader)Draw->shader, Draw->buffers);

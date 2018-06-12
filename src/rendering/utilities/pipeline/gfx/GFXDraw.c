@@ -74,7 +74,7 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
                 .format = 0
             },
             .blending = GFXBlendOpaque,
-            .viewport = { .bounds = GFXViewport2D(0.0f, 0.0f, 0.0f, 0.0f), .useDefault = TRUE }
+            .viewport = { .bounds = GFXViewport2D(0.0f, 0.0f, 1.0f, 1.0f), .normalized = TRUE }
         };
         
         if (GFXMain->draw->optional.create) GFXMain->draw->optional.create(Allocator, Draw);
@@ -144,27 +144,8 @@ void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Inde
         .index = Index
     };
     
-    if ((Framebuffer) && (Draw->viewport.useDefault))
-    {
-        if (Framebuffer == GFXFramebufferDefault())
-        {
-            CCVector2Di FrameSize = CCWindowGetFrameSize();
-            Draw->viewport.bounds = GFXViewport2D(0.0f, 0.0f, FrameSize.x, FrameSize.y);
-        }
-        
-        else
-        {
-            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Framebuffer, Index);
-            if (Attachment)
-            {
-                size_t Width, Height;
-                GFXTextureGetSize(Attachment->texture, &Width, &Height, NULL);
-                Draw->viewport.bounds = GFXViewport2D(0.0f, 0.0f, (float)Width, (float)Height);
-            }
-        }
-    }
-    
     if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, &Draw->destination);
+    if (GFXMain->draw->optional.setViewport) GFXMain->draw->optional.setViewport(Draw, GFXDrawGetViewport(Draw));
 }
 
 void GFXDrawSetIndexBuffer(GFXDraw Draw, GFXBuffer Indexes, GFXBufferFormat Format)
@@ -280,7 +261,45 @@ void GFXDrawSetViewport(GFXDraw Draw, GFXViewport Viewport)
     CCAssertLog(Draw, "Draw must not be null");
     
     Draw->viewport.bounds = Viewport;
-    Draw->viewport.useDefault = FALSE;
+    Draw->viewport.normalized = FALSE;
     
     if (GFXMain->draw->optional.setViewport) GFXMain->draw->optional.setViewport(Draw, Viewport);
+}
+
+void GFXDrawSetNormalizedViewport(GFXDraw Draw, GFXViewport Viewport)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->viewport.bounds = Viewport;
+    Draw->viewport.normalized = TRUE;
+    
+    if (GFXMain->draw->optional.setViewport) GFXMain->draw->optional.setViewport(Draw, GFXDrawGetViewport(Draw));
+}
+
+GFXViewport GFXDrawGetViewport(GFXDraw Draw)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    GFXViewport Viewport = Draw->viewport.bounds;
+    if (Draw->viewport.normalized)
+    {
+        if (Draw->destination.framebuffer == GFXFramebufferDefault())
+        {
+            CCVector2Di FrameSize = CCWindowGetFrameSize();
+            Viewport = GFXViewport3D(FrameSize.x * Draw->viewport.bounds.x, FrameSize.y * Draw->viewport.bounds.y, FrameSize.x * Draw->viewport.bounds.width, FrameSize.y * Draw->viewport.bounds.height, Draw->viewport.bounds.minDepth, Draw->viewport.bounds.maxDepth);
+        }
+        
+        else
+        {
+            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
+            if (Attachment)
+            {
+                size_t Width, Height;
+                GFXTextureGetSize(Attachment->texture, &Width, &Height, NULL);
+                Viewport = GFXViewport3D((float)Width * Draw->viewport.bounds.x, (float)Height * Draw->viewport.bounds.y, (float)Width * Draw->viewport.bounds.width, (float)Height * Draw->viewport.bounds.height, Draw->viewport.bounds.minDepth, Draw->viewport.bounds.maxDepth);
+            }
+        }
+    }
+    
+    return Viewport;
 }

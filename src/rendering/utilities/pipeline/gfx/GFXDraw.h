@@ -87,7 +87,7 @@ typedef struct {
     GFXBlend blending;
     struct {
         GFXViewport bounds;
-        _Bool useDefault;
+        _Bool normalized;
     } viewport;
 } GFXDrawInfo;
 
@@ -207,5 +207,25 @@ void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask);
  * @param Viewport The viewport.
  */
 void GFXDrawSetViewport(GFXDraw Draw, GFXViewport Viewport);
+
+/*!
+ * @brief Set the normalized clipping viewport for the draw command.
+ * @description The default is equal to the bounds of the @b GFXDrawDestination and 0.0 -
+ *              1.0 for the depth range.
+ *
+ * @param Draw The draw operation.
+ * @param Viewport The normalized viewport.
+ */
+void GFXDrawSetNormalizedViewport(GFXDraw Draw, GFXViewport Viewport);
+
+/*!
+ * @brief Retrieve the clipping viewport for the draw command.
+ * @description If the viewport is normalized, it will return the real viewport based on the
+ *              current @b GFXDrawDestination.
+ *
+ * @param Draw The draw operation.
+ * @return The viewport.
+ */
+GFXViewport GFXDrawGetViewport(GFXDraw Draw);
 
 #endif
