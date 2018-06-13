@@ -91,13 +91,16 @@ typedef struct {
 
 static void CCMessageRouteComponentPoster(CCMessageRouter *Router, CCMessage *Message)
 {
-    CCComponentSystemID SystemID = CCComponentSystemHandlesComponentID(((CCMessageRouteComponent*)CCMessageRouterGetData(Router))->componentID);
-    CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(SystemID);
-    
-    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
-    CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
-    
-    CCConcurrentQueuePush(Mailbox, Node);
+    CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(((CCMessageRouteComponent*)CCMessageRouterGetData(Router))->componentID);
+    if (System)
+    {
+        CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(System->id); //TODO: update handle to include mailbox
+        
+        CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
+        CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
+        
+        CCConcurrentQueuePush(Mailbox, Node);
+    }
 }
 
 static void CCMessageRouteComponentDeliverer(CCMessage *Message, CCComponentSystemID SystemID)
@@ -128,13 +131,16 @@ typedef struct {
 
 static void CCMessageRouteComponentEntityPoster(CCMessageRouter *Router, CCMessage *Message)
 {
-    CCComponentSystemID SystemID = CCComponentSystemHandlesComponentID(((CCMessageRouteComponentEntity*)CCMessageRouterGetData(Router))->componentID);
-    CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(SystemID);
-    
-    CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
-    CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
-    
-    CCConcurrentQueuePush(Mailbox, Node);
+    CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(((CCMessageRouteComponentEntity*)CCMessageRouterGetData(Router))->componentID);
+    if (System)
+    {
+        CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(System->id); //TODO: update handle to include mailbox
+        
+        CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
+        CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
+        
+        CCConcurrentQueuePush(Mailbox, Node);
+    }
 }
 
 static CCComparisonResult CCMessageRouteComponentEntityFindComponent(const CCComponent *Component, const CCMessageRouteComponentEntity *Data)

@@ -183,18 +183,18 @@ static CCComparisonResult CCComponentSystemComponentIDComparator(CCComponentSyst
     return (System->handlesComponent) && (System->handlesComponent(&System->handle, *ComponentID)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentID)
+CCComponentSystemHandle *CCComponentSystemHandlesComponentID(CCComponentID ComponentID)
 {
     for (size_t Loop = 0; Loop < (CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask); Loop++)
     {
         if (Systems[Loop])
         {
             CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &ComponentID, (CCComparator)CCComponentSystemComponentIDComparator));
-            if (System) return System->handle.id;
+            if (System) return &System->handle;
         }
     }
     
-    return 0;
+    return NULL;
 }
 
 void CCComponentSystemAddComponent(CCComponent Component)

@@ -204,9 +204,9 @@ void CCComponentSystemRemoveComponent(CCComponent CC_DESTROY(Component));
 /*!
  * @brief Get the system ID of the system responsible for the component type.
  * @param ComponentID The component type to find the responsible system for.
- * @return The system ID of the responsible system.
+ * @return The handle to the responsible system.
  */
-CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentID);
+CCComponentSystemHandle *CCComponentSystemHandlesComponentID(CCComponentID ComponentID);
 
 /*!
  * @brief Get the mailbox for the system.
