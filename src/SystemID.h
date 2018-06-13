@@ -27,12 +27,15 @@
 #define CommonGameKit_SystemID_h
 
 #include <CommonGameKit/Component.h>
+#include <CommonGameKit/ComponentSystem.h>
 
 enum {
     CCRenderSystemID = 1,
     CCInputSystemID,
     CCAnimationSystemID,
     CCRelationSystemID,
+    CCScriptableInterfaceSystemID,
+    CCScriptableInterfaceSystemIDMax = CCScriptableInterfaceSystemID + (CCComponentSystemExecutionMax - 1),
     CCSystemIDAvailable
 };
 
@@ -47,5 +50,8 @@ enum {
 
 #define CC_RELATION_SYSTEM_ID CCRelationSystemID
 #define CC_RELATION_COMPONENT_FLAG (CC_RELATION_SYSTEM_ID << CC_COMPONENT_SYSTEM_FLAG_INDEX)
+
+#define CC_SCRIPTABLE_INTERFACE_SYSTEM_ID CCScriptableInterfaceSystemID
+#define CC_SCRIPTABLE_INTERFACE_COMPONENT_FLAG (CC_SCRIPTABLE_INTERFACE_SYSTEM_ID << CC_COMPONENT_SYSTEM_FLAG_INDEX)
 
 #endif
