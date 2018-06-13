@@ -69,16 +69,24 @@ typedef enum {
  */
 typedef uint32_t CCComponentSystemID;
 
+/*!
+ * @brief The handle to an instance of the system.
+ */
+typedef struct {
+    CCComponentSystemID id;
+    CCComponentSystemExecutionType executionType;
+} CCComponentSystemHandle;
+
 
 /*!
  * @brief Generic system update callback.
  */
-typedef void (*CCComponentSystemUpdateCallback)(void *Context, CCCollection Components);
+typedef void (*CCComponentSystemUpdateCallback)(CCComponentSystemHandle *Handle, void *Context, CCCollection Components);
 
 /*!
  * @brief Time based system update callback.
  */
-typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCCollection Components);
+typedef void (*CCComponentSystemTimedUpdateCallback)(CCComponentSystemHandle *Handle, double DeltaTime, CCCollection Components);
 
 
 /*!
@@ -88,14 +96,14 @@ typedef void (*CCComponentSystemTimedUpdateCallback)(double DeltaTime, CCCollect
  *
  * @param Message The message to be handled.
  */
-typedef void (*CCComponentSystemMessageHandlerCallback)(CCMessage *Message);
+typedef void (*CCComponentSystemMessageHandlerCallback)(CCComponentSystemHandle *Handle, CCMessage *Message);
 
 
 /*!
  * @brief Handles component callback.
  * @description Determine whether a system has ownership (manages) of a particular component type.
  */
-typedef _Bool (*CCComponentSystemHandlesComponentCallback)(CCComponentID id);
+typedef _Bool (*CCComponentSystemHandlesComponentCallback)(CCComponentSystemHandle *Handle, CCComponentID id);
 
 /*!
  * @brief Add component callback.
@@ -105,33 +113,33 @@ typedef _Bool (*CCComponentSystemHandlesComponentCallback)(CCComponentID id);
  * @performance This callback may be less efficient than CCComponentSystemGetAddedComponentsForSystem
  *              as this incurs a system lock each time a component is added.
  */
-typedef void (*CCComponentSystemAddingComponentCallback)(CCComponent Component);
+typedef void (*CCComponentSystemAddingComponentCallback)(CCComponentSystemHandle *Handle, CCComponent Component);
 
 /*!
  * @brief Remove component callback.
  * @description Called when a component has been removed from the system. If this is not implemented
  *              an explicit call to CCComponentSystemGetRemovedComponentsForSystem must be made.
  */
-typedef void (*CCComponentSystemRemovingComponentCallback)(CCComponent Component);
+typedef void (*CCComponentSystemRemovingComponentCallback)(CCComponentSystemHandle *Handle, CCComponent Component);
 
 
 /*!
  * @brief Try lock system callback.
  * @description Attempt to lock the system. It should be a recursive lock.
  */
-typedef _Bool (*CCComponentSystemTryLockCallback)(void);
+typedef _Bool (*CCComponentSystemTryLockCallback)(CCComponentSystemHandle *Handle);
 
 /*!
  * @brief Lock system callback.
  * @description Lock the system. It should be a recursive lock.
  */
-typedef void (*CCComponentSystemLockCallback)(void);
+typedef void (*CCComponentSystemLockCallback)(CCComponentSystemHandle *Handle);
 
 /*!
  * @brief Unlock system callback.
  * @description Unlock the system. It should be a recursive lock.
  */
-typedef void (*CCComponentSystemUnlockCallback)(void);
+typedef void (*CCComponentSystemUnlockCallback)(CCComponentSystemHandle *Handle);
 
 
 /*!

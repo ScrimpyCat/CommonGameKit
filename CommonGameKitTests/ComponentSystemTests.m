@@ -53,7 +53,7 @@
 }
 
 static _Bool TestSystemRegisteringUpdateCalled = FALSE;
-static void TestSystemRegisteringUpdate(void *Context, CCCollection Components)
+static void TestSystemRegisteringUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
 {
     TestSystemRegisteringUpdateCalled = TRUE;
 }
@@ -71,7 +71,7 @@ static void TestSystemRegisteringUpdate(void *Context, CCCollection Components)
 }
 
 static _Bool TestSystemAddingComponentNonCallbackHasActiveComponents, TestSystemAddingComponentNonCallbackHasAddedComponents, TestSystemAddingComponentNonCallbackHasRemovedComponents;
-static void TestSystemAddingComponentNonCallbackUpdate(void *Context, CCCollection Components)
+static void TestSystemAddingComponentNonCallbackUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
 {
     CCCollection Added = CCComponentSystemGetAddedComponentsForSystem(TEST_SYSTEM_ID), Removed = CCComponentSystemGetRemovedComponentsForSystem(TEST_SYSTEM_ID);
     TestSystemAddingComponentNonCallbackHasAddedComponents = CCCollectionGetCount(Added) != 0;
@@ -82,7 +82,7 @@ static void TestSystemAddingComponentNonCallbackUpdate(void *Context, CCCollecti
     CCCollectionDestroy(Removed);
 }
 
-static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID id)
+static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentSystemHandle *System, CCComponentID id)
 {
     return id == CC_COMPONENT_ID;
 }
@@ -125,17 +125,17 @@ static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentID 
 }
 
 static _Bool TestSystemAddingComponentCallbackHasActiveComponents;
-static void TestSystemAddingComponentCallbackUpdate(void *Context, CCCollection Components)
+static void TestSystemAddingComponentCallbackUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
 {
     TestSystemAddingComponentCallbackHasActiveComponents = CCCollectionGetCount(Components) != 0;
 }
 
-static void TestSystemAddingComponentCallbackAddingComponent(CCComponent Component)
+static void TestSystemAddingComponentCallbackAddingComponent(CCComponentSystemHandle *System, CCComponent Component)
 {
     
 }
 
-static void TestSystemAddingComponentCallbackRemovingComponent(CCComponent Component)
+static void TestSystemAddingComponentCallbackRemovingComponent(CCComponentSystemHandle *System, CCComponent Component)
 {
     
 }

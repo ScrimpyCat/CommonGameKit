@@ -30,11 +30,11 @@
 #include "AnimationKeyframeComponent.h"
 #include "AnimationInterpolateComponent.h"
 
-static _Bool CCAnimationSystemTryLock(void);
-static void CCAnimationSystemLock(void);
-static void CCAnimationSystemUnlock(void);
-static _Bool CCAnimationSystemHandlesComponent(CCComponentID id);
-static void CCAnimationSystemUpdate(double DeltaTime, CCCollection Components);
+static _Bool CCAnimationSystemTryLock(CCComponentSystemHandle *System);
+static void CCAnimationSystemLock(CCComponentSystemHandle *System);
+static void CCAnimationSystemUnlock(CCComponentSystemHandle *System);
+static _Bool CCAnimationSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
+static void CCAnimationSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components);
 
 static mtx_t Lock;
 void CCAnimationSystemRegister(void)
@@ -56,7 +56,7 @@ void CCAnimationSystemDeregister(void)
     CCComponentSystemDeregister(CC_ANIMATION_SYSTEM_ID, CCComponentSystemExecutionTypeRender);
 }
 
-static _Bool CCAnimationSystemTryLock(void)
+static _Bool CCAnimationSystemTryLock(CCComponentSystemHandle *System)
 {
     int err = mtx_trylock(&Lock);
     if ((err != thrd_success) && (err != thrd_busy))
@@ -67,7 +67,7 @@ static _Bool CCAnimationSystemTryLock(void)
     return err == thrd_success;
 }
 
-static void CCAnimationSystemLock(void)
+static void CCAnimationSystemLock(CCComponentSystemHandle *System)
 {
     int err;
     if ((err = mtx_lock(&Lock)) != thrd_success)
@@ -76,7 +76,7 @@ static void CCAnimationSystemLock(void)
     }
 }
 
-static void CCAnimationSystemUnlock(void)
+static void CCAnimationSystemUnlock(CCComponentSystemHandle *System)
 {
     int err;
     if ((err = mtx_unlock(&Lock)) != thrd_success)
@@ -85,12 +85,12 @@ static void CCAnimationSystemUnlock(void)
     }
 }
 
-static _Bool CCAnimationSystemHandlesComponent(CCComponentID id)
+static _Bool CCAnimationSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id)
 {
     return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_ANIMATION_COMPONENT_FLAG;
 }
 
-static void CCAnimationSystemUpdate(double DeltaTime, CCCollection Components)
+static void CCAnimationSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components)
 {
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_ANIMATION_SYSTEM_ID));
     

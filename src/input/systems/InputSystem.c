@@ -43,8 +43,8 @@ typedef struct {
     CCInputState active;
 } CCInputMapGroupState;
 
-static _Bool CCInputSystemHandlesComponent(CCComponentID id);
-static void CCInputSystemUpdate(void *Context, CCCollection Components);
+static _Bool CCInputSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
+static void CCInputSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components);
 static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent Component);
 static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component);
 static CCVector3D CCInputSystemGetSimulatedGroupPressure3(CCComponent Component);
@@ -280,12 +280,12 @@ void CCInputSystemWindowFocus(_Bool Focus)
     }
 }
 
-static _Bool CCInputSystemHandlesComponent(CCComponentID id)
+static _Bool CCInputSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id)
 {
     return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_INPUT_COMPONENT_FLAG;
 }
 
-static void CCInputSystemUpdate(void *Context, CCCollection Components)
+static void CCInputSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
 {
     CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(CC_INPUT_SYSTEM_ID));
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_INPUT_SYSTEM_ID));

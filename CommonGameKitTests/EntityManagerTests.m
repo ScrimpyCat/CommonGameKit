@@ -55,7 +55,7 @@ static inline int TestComponentGetValue(CCComponent Component)
     return ((TestComponentPrivate)Component)->value;
 }
 
-static void TestComponentSystemUpdateCallback(void *Context, CCCollection Components)
+static void TestComponentSystemUpdateCallback(CCComponentSystemHandle *System, void *Context, CCCollection Components)
 {
     CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(TEST_SYSTEM_ID));
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(TEST_SYSTEM_ID));
@@ -69,7 +69,7 @@ static void TestComponentSystemUpdateCallback(void *Context, CCCollection Compon
     }
 }
 
-static _Bool TestComponentSystemHandlesComponentCallback(CCComponentID id)
+static _Bool TestComponentSystemHandlesComponentCallback(CCComponentSystemHandle *System, CCComponentID id)
 {
     return id == TEST_COMPONENT_ID;
 };

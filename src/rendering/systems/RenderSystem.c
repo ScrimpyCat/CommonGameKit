@@ -28,11 +28,11 @@
 #include <CommonC/Common.h>
 #include "GFX.h"
 
-static _Bool CCRenderSystemTryLock(void);
-static void CCRenderSystemLock(void);
-static void CCRenderSystemUnlock(void);
-static _Bool CCRenderSystemHandlesComponent(CCComponentID id);
-static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components);
+static _Bool CCRenderSystemTryLock(CCComponentSystemHandle *System);
+static void CCRenderSystemLock(CCComponentSystemHandle *System);
+static void CCRenderSystemUnlock(CCComponentSystemHandle *System);
+static _Bool CCRenderSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
+static void CCRenderSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components);
 static void CCRenderSystemLoadResources(void);
 static void CCRenderSystemUnloadResources(void);
 
@@ -60,7 +60,7 @@ void CCRenderSystemDeregister(void)
     CCRenderSystemUnloadResources();
 }
 
-static _Bool CCRenderSystemTryLock(void)
+static _Bool CCRenderSystemTryLock(CCComponentSystemHandle *System)
 {
     int err = mtx_trylock(&Lock);
     if ((err != thrd_success) && (err != thrd_busy))
@@ -71,7 +71,7 @@ static _Bool CCRenderSystemTryLock(void)
     return err == thrd_success;
 }
 
-static void CCRenderSystemLock(void)
+static void CCRenderSystemLock(CCComponentSystemHandle *System)
 {
     int err;
     if ((err = mtx_lock(&Lock)) != thrd_success)
@@ -80,7 +80,7 @@ static void CCRenderSystemLock(void)
     }
 }
 
-static void CCRenderSystemUnlock(void)
+static void CCRenderSystemUnlock(CCComponentSystemHandle *System)
 {
     int err;
     if ((err = mtx_unlock(&Lock)) != thrd_success)
@@ -89,7 +89,7 @@ static void CCRenderSystemUnlock(void)
     }
 }
 
-static _Bool CCRenderSystemHandlesComponent(CCComponentID id)
+static _Bool CCRenderSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id)
 {
     return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_RENDER_COMPONENT_FLAG;
 }
@@ -111,7 +111,7 @@ static GFXShader DemoShader;
 static GFXBuffer VertBuffer;
 static GFXDraw Drawer;
 static GFXBuffer IBO;
-static void CCRenderSystemUpdate(double DeltaTime, CCCollection Components)
+static void CCRenderSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components)
 {
 //    printf("draw: %f\n", DeltaTime);
     

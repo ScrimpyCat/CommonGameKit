@@ -42,8 +42,7 @@
 
 
 typedef struct {
-    CCComponentSystemID id;
-    CCComponentSystemExecutionType executionType;
+    CCComponentSystemHandle handle;
     
     CCComponentSystemUpdateCallback update;
     
@@ -88,8 +87,7 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
     if (!Systems[ExecutionType]) Systems[ExecutionType] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintHeavyEnumerating, sizeof(CCComponentSystem), (CCCollectionElementDestructor)CCComponentSystemDestructor);
     
     CCOrderedCollectionAppendElement(Systems[ExecutionType], &(CCComponentSystem){
-        .id = id,
-        .executionType = ExecutionType,
+        .handle = { .id = id, .executionType = ExecutionType },
         .update = Update,
         .mailbox = CCConcurrentQueueCreate(CC_STD_ALLOCATOR, CCConcurrentGarbageCollectorCreate(CC_STD_ALLOCATOR, CCEpochGarbageCollector)),
         .messageHandler = MessageHandler,
@@ -112,7 +110,7 @@ void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutio
 
 static CCComparisonResult CCComponentSystemIDComparator(CCComponentSystem *System, CCComponentSystemID *id)
 {
-    return System->id == *id ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return System->handle.id == *id ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 void CCComponentSystemDeregister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType)
@@ -127,7 +125,7 @@ static void CCComponentSystemFlushMailbox(CCComponentSystem *System)
     for (CCConcurrentQueueNode *Node; (Node = CCConcurrentQueuePop(System->mailbox)); CCConcurrentQueueDestroyNode(Node))
     {
         CCMessage *Message = *(CCMessage**)CCConcurrentQueueGetNodeData(Node);
-        Message->router->deliver(Message, System->id);
+        Message->router->deliver(Message, System->handle.id);
     }
 }
 
@@ -152,18 +150,18 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
     {
         CCCollection ActiveComponents = System->components.active;
         
-        if (System->lock) System->lock();
+        if (System->lock) System->lock(&System->handle);
         CCComponentSystemFlushMailbox(System);
         
-        if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)System->update)(Delta, ActiveComponents);
-        else System->update(NULL, ActiveComponents);
-        if (System->unlock) System->unlock();
+        if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)System->update)(&System->handle, Delta, ActiveComponents);
+        else System->update(&System->handle, NULL, ActiveComponents);
+        if (System->unlock) System->unlock(&System->handle);
     }
 }
 
 static CCComparisonResult CCComponentSystemComponentComparator(CCComponentSystem *System, CCComponent *Component)
 {
-    return (System->handlesComponent) && (System->handlesComponent(CCComponentGetID(*Component))) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return (System->handlesComponent) && (System->handlesComponent(&System->handle, CCComponentGetID(*Component))) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 static CCComponentSystem *CCComponentSystemHandlesComponentFind(CCComponent Component)
@@ -182,7 +180,7 @@ static CCComponentSystem *CCComponentSystemHandlesComponentFind(CCComponent Comp
 
 static CCComparisonResult CCComponentSystemComponentIDComparator(CCComponentSystem *System, CCComponentID *ComponentID)
 {
-    return (System->handlesComponent) && (System->handlesComponent(*ComponentID)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+    return (System->handlesComponent) && (System->handlesComponent(&System->handle, *ComponentID)) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
 CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentID)
@@ -192,7 +190,7 @@ CCComponentSystemID CCComponentSystemHandlesComponentID(CCComponentID ComponentI
         if (Systems[Loop])
         {
             CCComponentSystem *System = CCCollectionGetElement(Systems[Loop], CCCollectionFindElement(Systems[Loop], &ComponentID, (CCComparator)CCComponentSystemComponentIDComparator));
-            if (System) return System->id;
+            if (System) return System->handle.id;
         }
     }
     
@@ -209,11 +207,11 @@ void CCComponentSystemAddComponent(CCComponent Component)
         CCComponentSetIsManaged(Component, TRUE);
         if (System->addingComponent)
         {
-            System->addingComponent(Component);
+            System->addingComponent(&System->handle, Component);
             
-            if (System->lock) System->lock();
+            if (System->lock) System->lock(&System->handle);
             CCCollectionInsertElement(System->components.active, &Component);
-            if (System->unlock) System->unlock();
+            if (System->unlock) System->unlock(&System->handle);
         }
         
         else
@@ -232,11 +230,11 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
     {
         if (System->removingComponent)
         {
-            System->removingComponent(Component);
+            System->removingComponent(&System->handle, Component);
             
-            if (System->lock) System->lock();
+            if (System->lock) System->lock(&System->handle);
             CCCollectionRemoveElement(System->components.active, CCCollectionFindElement(System->components.active, &Component, NULL));
-            if (System->unlock) System->unlock();
+            if (System->unlock) System->unlock(&System->handle);
             CCComponentSetIsManaged(Component, FALSE);
         }
         
@@ -270,7 +268,7 @@ void CCComponentSystemHandleMessage(CCComponentSystemID id, CCMessage *Message)
     CCComponentSystem *System = CCComponentSystemFind(id);
     if (System)
     {
-        if (System->messageHandler) System->messageHandler(Message);
+        if (System->messageHandler) System->messageHandler(&System->handle, Message);
     }
 }
 
@@ -338,7 +336,7 @@ _Bool CCComponentSystemTryLock(CCComponentSystemID id)
     CCComponentSystem *System = CCComponentSystemFind(id);
     
     _Bool Locked = TRUE;
-    if ((System) && (System->tryLock)) Locked = System->tryLock();
+    if ((System) && (System->tryLock)) Locked = System->tryLock(&System->handle);
     
     return Locked;
 }
@@ -346,11 +344,11 @@ _Bool CCComponentSystemTryLock(CCComponentSystemID id)
 void CCComponentSystemLock(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
-    if ((System) && (System->lock)) System->lock();
+    if ((System) && (System->lock)) System->lock(&System->handle);
 }
 
 void CCComponentSystemUnlock(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
-    if ((System) && (System->unlock)) System->unlock();
+    if ((System) && (System->unlock)) System->unlock(&System->handle);
 }
