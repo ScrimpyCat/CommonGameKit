@@ -151,7 +151,7 @@ static inline CCComponent CCScriptableInterfaceDynamicFieldComponentGetTarget(CC
 
 static inline void CCScriptableInterfaceDynamicFieldComponentSetTarget(CCComponent Component, CCComponent Target)
 {
-    if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target) CCComponentDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target);
+    CCAssertLog(!((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target, "Target should not be changed once set");
     
     ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target = CCRetain(Target);
 }
