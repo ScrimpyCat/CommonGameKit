@@ -86,6 +86,7 @@ typedef enum {
     CCComponentExpressionArgumentTypeColour,
     CCComponentExpressionArgumentTypeString,
     CCComponentExpressionArgumentTypeData,
+    CCComponentExpressionArgumentTypeExpression,
     CCComponentExpressionArgumentTypeTextAttribute,
     
     CCComponentExpressionArgumentTypeOwnershipMask = (1 << 31),

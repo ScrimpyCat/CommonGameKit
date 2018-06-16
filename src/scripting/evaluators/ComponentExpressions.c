@@ -256,6 +256,12 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     }
                                     break;
                                     
+                                case CCComponentExpressionArgumentTypeExpression:
+                                    if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(ArgExpr, CCExpressionGetCopy(ArgExpr), NULL);
+                                    
+                                    ((void(*)(CCComponent,CCExpression))Deserializer[Loop].setter)(Component, ArgExpr);
+                                    return TRUE;
+                                    
                                 default:
                                     break;
                             }
