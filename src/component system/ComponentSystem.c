@@ -83,10 +83,11 @@ static void CCComponentSystemDestructor(CCCollection Collection, CCComponentSyst
 
 void CCComponentSystemRegister(CCComponentSystemID id, CCComponentSystemExecutionType ExecutionType, CCComponentSystemUpdateCallback Update, CCComponentSystemMessageHandlerCallback MessageHandler, CCComponentSystemHandlesComponentCallback HandlesComponent, CCComponentSystemAddingComponentCallback AddingComponent, CCComponentSystemRemovingComponentCallback RemovingComponent, CCComponentSystemTryLockCallback SystemTryLock, CCComponentSystemLockCallback SystemLock, CCComponentSystemUnlockCallback SystemUnlock)
 {
-    ExecutionType &= CCComponentSystemExecutionTypeMask;
-    if (!Systems[ExecutionType]) Systems[ExecutionType] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintHeavyEnumerating, sizeof(CCComponentSystem), (CCCollectionElementDestructor)CCComponentSystemDestructor);
+    const size_t Index = ExecutionType & CCComponentSystemExecutionTypeMask;
     
-    CCOrderedCollectionAppendElement(Systems[ExecutionType], &(CCComponentSystem){
+    if (!Systems[Index]) Systems[Index] = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintSizeSmall | CCCollectionHintHeavyFinding | CCCollectionHintHeavyEnumerating, sizeof(CCComponentSystem), (CCCollectionElementDestructor)CCComponentSystemDestructor);
+    
+    CCOrderedCollectionAppendElement(Systems[Index], &(CCComponentSystem){
         .handle = { .id = id, .executionType = ExecutionType },
         .update = Update,
         .mailbox = CCConcurrentQueueCreate(CC_STD_ALLOCATOR, CCConcurrentGarbageCollectorCreate(CC_STD_ALLOCATOR, CCEpochGarbageCollector)),
@@ -153,7 +154,7 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
         if (System->lock) System->lock(&System->handle);
         CCComponentSystemFlushMailbox(System);
         
-        if (TimedUpdate) ((CCComponentSystemTimedUpdateCallback)System->update)(&System->handle, Delta, ActiveComponents);
+        if ((System->handle.executionType & CCComponentSystemExecutionOptionTimedUpdate)) ((CCComponentSystemTimedUpdateCallback)System->update)(&System->handle, Delta, ActiveComponents);
         else System->update(&System->handle, NULL, ActiveComponents);
         if (System->unlock) System->unlock(&System->handle);
     }
