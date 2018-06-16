@@ -118,7 +118,7 @@ static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetState(CC
  * @param Component The dynamic field component.
  * @param State The new state.
  */
-static inline void CCScriptableInterfaceDynamicFieldComponentSetState(CCComponent Component, CCExpression CC_RETAIN(State));
+static inline void CCScriptableInterfaceDynamicFieldComponentSetState(CCComponent Component, CCExpression CC_COPY(State));
 
 
 #pragma mark -
@@ -188,7 +188,7 @@ static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetState(CC
 
 static inline void CCScriptableInterfaceDynamicFieldComponentSetState(CCComponent Component, CCExpression State)
 {
-    CCExpression PrevState = atomic_exchange_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, CCExpressionRetain(State), memory_order_acq_rel);
+    CCExpression PrevState = atomic_exchange_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, CCExpressionCopy(State), memory_order_acq_rel);
     if (PrevState) CCExpressionDestroy(PrevState);
 }
 
