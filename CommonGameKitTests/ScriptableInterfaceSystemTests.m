@@ -135,11 +135,28 @@ static double Timestamp(void)
     CCComponentSystemAddComponent(DynamicFieldComponent);
     
     
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
     CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
     XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should have changed");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCExpressionSetState(State, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 3), FALSE);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(3, TestComponentGetValue(TargetComponent), @"should have changed");
     
     
     CCExpressionDestroy(State);
