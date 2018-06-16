@@ -188,10 +188,8 @@ static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetState(CC
 
 static inline void CCScriptableInterfaceDynamicFieldComponentSetState(CCComponent Component, CCExpression State)
 {
-    CCExpression PrevState = atomic_load_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, memory_order_acquire);
+    CCExpression PrevState = atomic_exchange_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, CCExpressionRetain(State), memory_order_acq_rel);
     if (PrevState) CCExpressionDestroy(PrevState);
-    
-    atomic_store_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, CCExpressionRetain(State), memory_order_release);
 }
 
 #endif
