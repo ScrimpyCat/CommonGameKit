@@ -327,6 +327,8 @@ void CCExpressionChangeOwnership(CCExpression Expression, CCExpressionValueCopy 
 static inline _Bool CCExpressionIsTagged(CCExpression Expression);
 CCExpressionValueType CCExpressionGetTaggedType(uintptr_t Expression);
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression);
+static inline CCExpressionValueCopy CCExpressionGetCopy(CCExpression Expression);
+static inline CCExpressionValueDestructor CCExpressionGetDestructor(CCExpression Expression);
 static inline CCExpression CCExpressionGetResult(CCExpression Expression);
 static inline CCString CCExpressionGetAtom(CCExpression Expression);
 #if CC_EXPRESSION_STRICT_NAMING_RULES
@@ -360,6 +362,16 @@ static inline _Bool CCExpressionIsTagged(CCExpression Expression)
 static inline CCExpression CCExpressionGetResult(CCExpression Expression)
 {
     return CCExpressionIsTagged(Expression) ? Expression : Expression->state.result;
+}
+
+static inline CCExpressionValueCopy CCExpressionGetCopy(CCExpression Expression)
+{
+    return CCExpressionIsTagged(Expression) ? NULL : Expression->copy;
+}
+
+static inline CCExpressionValueDestructor CCExpressionGetDestructor(CCExpression Expression)
+{
+    return CCExpressionIsTagged(Expression) ? NULL : Expression->destructor;
 }
 
 static inline CCExpressionValueType CCExpressionGetType(CCExpression Expression)
