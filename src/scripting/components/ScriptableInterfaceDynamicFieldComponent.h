@@ -86,9 +86,9 @@ static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetField(CC
 /*!
  * @brief Set the field expression of the dynamic field.
  * @param Component The dynamic field component.
- * @param Field The field expression.
+ * @param Field The field expression. Ownership is transferred to the component
  */
-static inline void CCScriptableInterfaceDynamicFieldComponentSetField(CCComponent Component, CCExpression CC_RETAIN(Field));
+static inline void CCScriptableInterfaceDynamicFieldComponentSetField(CCComponent Component, CCExpression CC_OWN(Field));
 
 /*!
  * @brief Get the reference state of the dynamic field.
@@ -165,7 +165,7 @@ static inline void CCScriptableInterfaceDynamicFieldComponentSetField(CCComponen
 {
     if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field) CCExpressionDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field);
     
-    ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field = CCExpressionRetain(Field);
+    ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field = Field;
 }
 
 static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetReferenceState(CCComponent Component)
