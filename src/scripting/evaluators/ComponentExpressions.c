@@ -90,7 +90,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         
                         if (ArgCount == 2)
                         {
-                            switch (Deserializer[Loop].setterType)
+                            switch (Deserializer[Loop].setterType & ~CCComponentExpressionArgumentTypeOwnershipMask)
                             {
                                 case CCComponentExpressionArgumentTypeBool:
                                     if (ArgType == CCExpressionValueTypeInteger)
@@ -239,6 +239,8 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                 case CCComponentExpressionArgumentTypeString:
                                     if (ArgType == CCExpressionValueTypeString)
                                     {
+                                        if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(ArgExpr, CCExpressionGetCopy(ArgExpr), NULL);
+                                        
                                         ((void(*)(CCComponent,CCString))Deserializer[Loop].setter)(Component, CCExpressionGetString(ArgExpr));
                                         return TRUE;
                                     }
@@ -247,6 +249,8 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                 case CCComponentExpressionArgumentTypeData:
                                     if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
                                     {
+                                        if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(ArgExpr, CCExpressionGetCopy(ArgExpr), NULL);
+                                        
                                         ((void(*)(CCComponent,void*))Deserializer[Loop].setter)(Component, CCExpressionGetData(ArgExpr));
                                         return TRUE;
                                     }
@@ -259,7 +263,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         
                         else
                         {
-                            switch (Deserializer[Loop].setterType)
+                            switch (Deserializer[Loop].setterType & ~CCComponentExpressionArgumentTypeOwnershipMask)
                             {
                                 case CCComponentExpressionArgumentTypeVector2:
                                     ((void(*)(CCComponent,CCVector2D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2(Arg));
@@ -294,7 +298,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                             }
                         }
                         
-                        switch (Deserializer[Loop].setterType)
+                        switch (Deserializer[Loop].setterType & ~CCComponentExpressionArgumentTypeOwnershipMask)
                         {
                             case CCComponentExpressionArgumentTypeTextAttribute:
                                 if (ArgType == CCExpressionValueTypeList)
@@ -308,6 +312,8 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     CCGraphicsExpressionGetTextOptions(&Enumerator, AttributedStrings, NULL, NULL, NULL, NULL);
                                     
                                     ((void(*)(CCComponent,CCOrderedCollection))Deserializer[Loop].setter)(Component, AttributedStrings);
+                                    
+                                    if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipRetain) CCCollectionDestroy(AttributedStrings);
                                     return TRUE;
                                 }
                                 break;

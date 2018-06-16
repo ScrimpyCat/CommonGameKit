@@ -86,7 +86,11 @@ typedef enum {
     CCComponentExpressionArgumentTypeColour,
     CCComponentExpressionArgumentTypeString,
     CCComponentExpressionArgumentTypeData,
-    CCComponentExpressionArgumentTypeTextAttribute
+    CCComponentExpressionArgumentTypeTextAttribute,
+    
+    CCComponentExpressionArgumentTypeOwnershipMask = (1 << 31),
+    CCComponentExpressionArgumentTypeOwnershipTransfer = (0 << 31),
+    CCComponentExpressionArgumentTypeOwnershipRetain = (1 << 31)
 } CCComponentExpressionArgumentSetterType;
 
 #pragma clang diagnostic push
