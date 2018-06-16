@@ -85,6 +85,9 @@
 #include <CommonGameKit/ExpressionEvaluator.h>
 #include <CommonGameKit/ExpressionHelpers.h>
 
+#include <CommonGameKit/ScriptableInterfaceDynamicFieldComponent.h>
+#include <CommonGameKit/ScriptableInterfaceSystem.h>
+
 //TODO: generate header for these
 #include <CommonGameKit/AssetExpressions.h>
 #include <CommonGameKit/BitwiseExpressions.h>

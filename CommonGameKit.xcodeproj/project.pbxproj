@@ -28,7 +28,7 @@
 		F3897B4F1DCD6D4F008D6C1D /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B4E1DCD6D4F008D6C1D /* threads.h */; };
 		F3897B521DCD6E12008D6C1D /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B501DCD6E12008D6C1D /* tinycthread.c */; };
 		F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B511DCD6E12008D6C1D /* tinycthread.h */; };
-		F3897B9A1DCD74C1008D6C1D /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
+		F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16.a */; };
 		F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B661DCD7149008D6C1D /* libz.a */; };
 		F3897BB71DCD764E008D6C1D /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BA01DCD764E008D6C1D /* ColourFormatTests.m */; };
 		F3897BB81DCD764E008D6C1D /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BA11DCD764E008D6C1D /* ComponentSystemTests.m */; };
@@ -238,8 +238,15 @@
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3E2742820D1669B00D6AFE1 /* ScriptableInterfaceSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */; };
+		F3E2742C20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E2742A20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3E2742D20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E2742B20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c */; };
+		F3E2743720D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */; };
 		F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E361961EF5758000FCE1A5 /* MessageExpressions.c */; };
 		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */; };
+		F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */; };
 		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
 /* End PBXBuildFile section */
 
@@ -346,14 +353,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 23CD14BB42F44E25B51854FD;
+			remoteGlobalIDString = 6A9B75F310234360A64E2990;
 			remoteInfo = zlibstatic;
 		};
 		F3897B9E1DCD7514008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E2E9C6EDD63140F2BD7B7E7D;
+			remoteGlobalIDString = 059653752DEA4C8BB1F3255D;
 			remoteInfo = png_static;
 		};
 		F3897BD51DCD7DB3008D6C1D /* PBXContainerItemProxy */ = {
@@ -650,8 +657,15 @@
 		F3AF34D91DCD014700CAD472 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
+		F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableInterfaceSystem.h; sourceTree = "<group>"; };
+		F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ScriptableInterfaceSystem.c; sourceTree = "<group>"; };
+		F3E2742A20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableInterfaceDynamicFieldComponent.h; sourceTree = "<group>"; };
+		F3E2742B20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ScriptableInterfaceDynamicFieldComponent.c; sourceTree = "<group>"; };
+		F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableInterfaceSystemTests.m; sourceTree = "<group>"; };
 		F3E361961EF5758000FCE1A5 /* MessageExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MessageExpressions.c; sourceTree = "<group>"; };
 		F3E361971EF5758000FCE1A5 /* MessageExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageExpressions.h; sourceTree = "<group>"; };
+		F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraComponent.h; sourceTree = "<group>"; };
+		F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderCameraComponent.c; sourceTree = "<group>"; };
 		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -661,7 +675,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */,
-				F3897B9A1DCD74C1008D6C1D /* libpng16d.a in Frameworks */,
+				F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */,
 				F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */,
 				F3AF34C81DCCF4FE00CAD472 /* CommonC.framework in Frameworks */,
 			);
@@ -735,7 +749,7 @@
 			children = (
 				F3897B7D1DCD715A008D6C1D /* libpng16.dylib */,
 				F3897B7F1DCD715A008D6C1D /* png-fix-itxt */,
-				F3897B811DCD715A008D6C1D /* libpng16d.a */,
+				F3897B811DCD715A008D6C1D /* libpng16.a */,
 				F3897B831DCD715A008D6C1D /* pngfix */,
 				F3897B851DCD715A008D6C1D /* pngimage */,
 				F3897B871DCD715A008D6C1D /* pngstest */,
@@ -788,6 +802,7 @@
 		F3897CFB1DD08042008D6C1D /* Scripting */ = {
 			isa = PBXGroup;
 			children = (
+				F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */,
 				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
 				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
 				F3897BA51DCD764E008D6C1D /* ExpressionControlFlowTests.m */,
@@ -1089,6 +1104,8 @@
 			children = (
 				F3AF32DC1DCCD4EB00CAD472 /* RenderComponent.c */,
 				F3AF32DD1DCCD4EB00CAD472 /* RenderComponent.h */,
+				F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */,
+				F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */,
 			);
 			name = Components;
 			path = components;
@@ -1279,6 +1296,8 @@
 				F3AF347C1DCCD5AF00CAD472 /* ExpressionEvaluator.h */,
 				F3AF347D1DCCD5AF00CAD472 /* ExpressionHelpers.c */,
 				F3AF347E1DCCD5AF00CAD472 /* ExpressionHelpers.h */,
+				F3E2742920D17B3F00D6AFE1 /* Components */,
+				F3E2740820D164CA00D6AFE1 /* Systems */,
 			);
 			name = Scripting;
 			path = scripting;
@@ -1354,6 +1373,26 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F3E2740820D164CA00D6AFE1 /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */,
+				F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */,
+			);
+			name = Systems;
+			path = systems;
+			sourceTree = "<group>";
+		};
+		F3E2742920D17B3F00D6AFE1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F3E2742B20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c */,
+				F3E2742A20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.h */,
+			);
+			name = Components;
+			path = components;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1378,6 +1417,7 @@
 				F3AF349B1DCCD5AF00CAD472 /* MacroExpressions.h in Headers */,
 				F3AF348F1DCCD5AF00CAD472 /* EqualityExpressions.h in Headers */,
 				F3AF34831DCCD5AF00CAD472 /* AssetExpressions.h in Headers */,
+				F3E2742C20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.h in Headers */,
 				F3AF33C41DCCD4EC00CAD472 /* PixelDataStatic.h in Headers */,
 				F3AF34381DCCD4EC00CAD472 /* AssetManager.h in Headers */,
 				F3AD06B01F66BEAE004AE159 /* RelationParentComponent.h in Headers */,
@@ -1392,6 +1432,7 @@
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
 				F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */,
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
+				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
 				F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */,
 				F3AF33E61DCCD4EC00CAD472 /* GLPortability.h in Headers */,
 				F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */,
@@ -1446,6 +1487,7 @@
 				F3AF33BC1DCCD4EC00CAD472 /* ColourFormatRGB.h in Headers */,
 				F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */,
 				F3AF33D81DCCD4EC00CAD472 /* GFXTexture.h in Headers */,
+				F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */,
 				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */,
 				F3AF33DE1DCCD4EC00CAD472 /* GLDebug.h in Headers */,
@@ -1625,9 +1667,10 @@
 			remoteRef = F3897B7E1DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B811DCD715A008D6C1D /* libpng16d.a */ = {
+		F3897B811DCD715A008D6C1D /* libpng16.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
+			name = libpng16.a;
 			path = libpng16d.a;
 			remoteRef = F3897B801DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1765,6 +1808,7 @@
 				F3AF34911DCCD5AF00CAD472 /* GraphicsExpressions.c in Sources */,
 				F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */,
 				F3AF33EA1DCCD4EC00CAD472 /* GLShaderLibrary.c in Sources */,
+				F3E2742D20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c in Sources */,
 				F3AF33B11DCCD4EC00CAD472 /* RenderComponent.c in Sources */,
 				F3AF34971DCCD5AF00CAD472 /* ListExpressions.c in Sources */,
 				F33CAF971E79286900792063 /* EntityExpressions.c in Sources */,
@@ -1781,6 +1825,7 @@
 				F3AF338C1DCCD4EC00CAD472 /* GUIContainer.c in Sources */,
 				F3AF33AD1DCCD4EC00CAD472 /* InputSystem.c in Sources */,
 				F3AF34B51DCCD5AF00CAD472 /* ExpressionHelpers.c in Sources */,
+				F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */,
 				F3AF33791DCCD4EC00CAD472 /* AnimationInterpolateComponent.c in Sources */,
 				F3AF33CE1DCCD4EC00CAD472 /* GFXFramebuffer.c in Sources */,
 				F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */,
@@ -1788,6 +1833,7 @@
 				F3AF34B31DCCD5AF00CAD472 /* ExpressionEvaluator.c in Sources */,
 				F3AF33EF1DCCD4EC00CAD472 /* GLTexture.c in Sources */,
 				F3AF33A11DCCD4EC00CAD472 /* InputMapMouseDropComponent.c in Sources */,
+				F3E2742820D1669B00D6AFE1 /* ScriptableInterfaceSystem.c in Sources */,
 				F3AF34941DCCD5AF00CAD472 /* IOExpressions.c in Sources */,
 				F3897B521DCD6E12008D6C1D /* tinycthread.c in Sources */,
 				F3AF33CC1DCCD4EC00CAD472 /* GFXDraw.c in Sources */,
@@ -1831,6 +1877,7 @@
 				F3897BB71DCD764E008D6C1D /* ColourFormatTests.m in Sources */,
 				F3897BBE1DCD764E008D6C1D /* ExpressionEvaluatorTests.m in Sources */,
 				F3897BC81DCD764E008D6C1D /* GLStateModernTests.m in Sources */,
+				F3E2743720D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m in Sources */,
 				F3897BDE1DCD8A00008D6C1D /* CCTestCase.m in Sources */,
 				F3897BCA1DCD764E008D6C1D /* PixelDataStaticTests.m in Sources */,
 				F3897BC11DCD764E008D6C1D /* ExpressionMathTests.m in Sources */,
