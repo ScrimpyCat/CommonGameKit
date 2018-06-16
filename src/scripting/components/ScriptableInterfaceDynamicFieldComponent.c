@@ -24,15 +24,41 @@
  */
 
 #include "ScriptableInterfaceDynamicFieldComponent.h"
+#include "ComponentExpressions.h"
 
 const CCString CCScriptableInterfaceDynamicFieldComponentName = CC_STRING("dynamic_field");
+
+static const CCComponentExpressionDescriptor CCScriptableInterfaceDynamicFieldComponentDescriptor = {
+    .id = CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCScriptableInterfaceDynamicFieldComponentDeserializer,
+    .serialize = NULL
+};
 
 void CCScriptableInterfaceDynamicFieldComponentRegister(void)
 {
     CCComponentRegister(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID, CCScriptableInterfaceDynamicFieldComponentName, CC_STD_ALLOCATOR, sizeof(CCScriptableInterfaceDynamicFieldComponentClass), CCScriptableInterfaceDynamicFieldComponentInitialize, NULL, CCScriptableInterfaceDynamicFieldComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("dynamic-field"), &CCScriptableInterfaceDynamicFieldComponentDescriptor, TRUE);
 }
 
 void CCScriptableInterfaceDynamicFieldComponentDeregister(void)
 {
     CCComponentDeregister(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+}
+
+static CCComponentExpressionArgumentDeserializer Arguments[] = {
+    { .name = CC_STRING("target:"), .serializedType = CCComponentExpressionValueTypeComponent, .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = CCScriptableInterfaceDynamicFieldComponentSetTarget },
+    { .name = CC_STRING("field:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeExpression, .setter = CCScriptableInterfaceDynamicFieldComponentSetField }
+};
+
+void CCScriptableInterfaceDynamicFieldComponentDeserializer(CCComponent Component, CCExpression Arg)
+{
+    if (!CCScriptableInterfaceDynamicFieldComponentGetReferenceState(Component))
+    {
+        CCExpression State = CCExpressionStateGetSuper(Arg);
+        if (State) CCScriptableInterfaceDynamicFieldComponentSetReferenceState(Component, State);
+    }
+    
+    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)));
 }
