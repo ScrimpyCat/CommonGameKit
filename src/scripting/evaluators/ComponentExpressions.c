@@ -333,6 +333,13 @@ const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForName(CC
     return Descriptor ? *Descriptor : NULL;
 }
 
+const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForID(CCComponentID id)
+{
+    const CCComponentExpressionDescriptor **Descriptor = CCDictionaryGetValue(ComponentDescriptorsID, &id);
+    
+    return Descriptor ? *Descriptor : NULL;
+}
+
 CCExpression CCComponentExpressionCreate(CCAllocatorType Allocator, CCComponent Component)
 {
     CCAssertLog(Component, "Component must not be null");

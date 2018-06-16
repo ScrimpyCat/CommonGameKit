@@ -135,6 +135,13 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
 const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForName(CCString Name);
 
 /*!
+ * @brief Get the component expression descriptor for the given component ID.
+ * @param id The ID of the component.
+ * @return The component expression descriptor for the name, or NULL if one was not found.
+ */
+const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForID(CCComponentID id);
+
+/*!
  * @brief Create a component expression for a given component.
  * @param Allocator The allocator to be used.
  * @param Component The component to be converted into an expression.
