@@ -1,0 +1,24 @@
+{
+    "functions": [
+        {
+            "name": "dynamic-field",
+            "description": "Bind a component field with a dynamic value.",
+            "examples": ["(dynamic-field\n\t(target: .target)\n\t(field: (quote (value: .value)))\n)"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "target",
+                    "description": "The target component whose field should dynamically change.",
+                    "args": [[{ "type": "custom:component" }]]
+                },
+                {
+                    "name": "field",
+                    "description": "The field to be set and value it should be set to.",
+                    "args": [
+                        [{ "type": "list", "value": [{ "type": "option", "name": "name" }, { "type": "expression" }] }]
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -4,6 +4,7 @@
         "src/gui/gui.json",
         "src/input/components/input.json",
         "src/relation/components/relation.json",
+        "src/scripting/components/scripting.json",
         "assets/ui/ui.json"
     ]
 }
