@@ -70,6 +70,12 @@ void CCScriptableInterfaceSystemDeregister(void)
     {
         mtx_destroy(&Lock[Loop]);
         
+        CCComponent Scriptable;
+        for (size_t Loop2 = 0; CCConcurrentIndexMapGetElementAtIndex(ReadableComponentReferences[Loop], Loop2, &Scriptable); Loop2++)
+        {
+            CCComponentDestroy(Scriptable);
+        }
+        
         CCConcurrentIndexMapDestroy(ReadableComponentReferences[Loop]);
         CCDictionaryDestroy(ReadableComponentIndexes[Loop]);
         CCQueueDestroy(AvailableIndexes[Loop]);
@@ -136,7 +142,7 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
                         {
                             CCConcurrentIndexMapReplaceElementAtIndex(ReadableComponentReferences[Instance], *Index, &(CCComponent){ NULL }, NULL);
                             
-                            CCQueuePush(AvailableIndexes[Instance], CCQueueCreateNode(CC_STD_ALLOCATOR, sizeof(size_t), Index));
+                            CCQueuePush(AvailableIndexes[Instance], CCQueueCreateNode(CC_DEBUG_ALLOCATOR, sizeof(size_t), &Index));
                             
                             CCConcurrentGarbageCollectorManage(GC, Scriptable, CCComponentDestroy);
                         }
