@@ -164,4 +164,31 @@ static double Timestamp(void)
     CCComponentDestroy(TargetComponent);
 }
 
+-(void) testDeserializing
+{
+    CCComponent TargetComponent = CCComponentCreate(TEST_COMPONENT_ID);
+    TestComponentSetValue(TargetComponent, 1);
+    CCComponentSystemAddComponent(TargetComponent);
+    
+    CCExpression Serialized = CCExpressionCreateFromSource("(begin (state! \".value\" 2) (dynamic-field (target: .target) (field: (quote (value: .value)))))");
+    CCExpressionCreateState(Serialized, CC_STRING(".target"), CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCComponentExpressionValueTypeComponent, CCRetain(TargetComponent), NULL, (CCExpressionValueDestructor)CCComponentDestroy), FALSE, NULL, FALSE);
+    
+    CCExpression DeserializedComponent = CCExpressionEvaluate(Serialized);
+    XCTAssertEqual(CCExpressionGetType(DeserializedComponent), CCComponentExpressionValueTypeComponent, @"should be a component");
+    
+    CCComponent DynamicFieldComponent = CCExpressionGetData(DeserializedComponent);
+    CCComponentSystemAddComponent(DynamicFieldComponent);
+    
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should have changed");
+    
+    
+    CCExpressionDestroy(Serialized);
+    CCComponentDestroy(TargetComponent);
+}
+
 @end
