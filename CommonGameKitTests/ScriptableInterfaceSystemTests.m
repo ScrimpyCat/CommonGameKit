@@ -164,6 +164,48 @@ static double Timestamp(void)
     CCComponentDestroy(TargetComponent);
 }
 
+-(void) testUpdatingLocalCopy
+{
+    CCComponent TargetComponent = CCComponentCreate(TEST_COMPONENT_ID);
+    TestComponentSetValue(TargetComponent, 1);
+    CCComponentSystemAddComponent(TargetComponent);
+    
+    CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+    CCScriptableInterfaceDynamicFieldComponentSetTarget(DynamicFieldComponent, TargetComponent);
+    CCScriptableInterfaceDynamicFieldComponentSetField(DynamicFieldComponent, CCExpressionCreateFromSource("(value: (.value! (+ .value 1)))"));
+    CCExpression State = CCExpressionCreateFromSource("(begin (state! \".value\" 0))");
+    CCExpressionEvaluate(State);
+    CCScriptableInterfaceDynamicFieldComponentSetReferenceState(DynamicFieldComponent, State);
+    CCComponentSystemAddComponent(DynamicFieldComponent);
+    
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    
+    CCExpressionDestroy(State);
+    CCComponentDestroy(DynamicFieldComponent);
+    CCComponentDestroy(TargetComponent);
+}
+
 -(void) testDeserializing
 {
     CCComponent TargetComponent = CCComponentCreate(TEST_COMPONENT_ID);
