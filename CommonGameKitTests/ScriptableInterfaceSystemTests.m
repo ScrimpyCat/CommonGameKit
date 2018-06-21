@@ -78,6 +78,8 @@ static const CCComponentExpressionDescriptor TestComponentDescriptor = {
 
 static void TestSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
 {
+    CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(TEST_SYSTEM_ID));
+    CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(TEST_SYSTEM_ID));
 }
 
 static _Bool TestSystemAddingComponentNonCallbackHandlesComponent(CCComponentSystemHandle *System, CCComponentID id)
@@ -157,6 +159,74 @@ static double Timestamp(void)
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertEqual(3, TestComponentGetValue(TargetComponent), @"should have changed");
+    
+    
+    CCExpressionDestroy(State);
+    CCComponentDestroy(DynamicFieldComponent);
+    CCComponentDestroy(TargetComponent);
+}
+
+-(void) testTargetLifetime
+{
+    CCComponent TargetComponent = CCComponentCreate(TEST_COMPONENT_ID);
+    TestComponentSetValue(TargetComponent, 1);
+    CCComponentSystemAddComponent(TargetComponent);
+    
+    CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+    CCScriptableInterfaceDynamicFieldComponentSetTarget(DynamicFieldComponent, TargetComponent);
+    CCScriptableInterfaceDynamicFieldComponentSetField(DynamicFieldComponent, CCExpressionCreateFromSource("(value: .value)"));
+    CCExpression State = CCExpressionCreateFromSource("(begin (state! \".value\" 2))");
+    CCExpressionEvaluate(State);
+    CCScriptableInterfaceDynamicFieldComponentSetReferenceState(DynamicFieldComponent, State);
+    CCComponentSystemAddComponent(DynamicFieldComponent);
+    
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCExpressionSetState(State, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 3), FALSE);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should have changed");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCExpressionSetState(State, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 4), FALSE);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(3, TestComponentGetValue(TargetComponent), @"should have changed");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(3, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCExpressionSetState(State, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 5), FALSE);
+    CCComponentSystemRemoveComponent(TargetComponent);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(4, TestComponentGetValue(TargetComponent), @"should have changed"); // Depends on system order (may be removed before or after update)
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(4, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCExpressionSetState(State, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 6), FALSE);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertNotEqual(5, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertNotEqual(5, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCExpressionSetState(State, CC_STRING(".value"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 7), FALSE);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertNotEqual(6, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertNotEqual(6, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     
     CCExpressionDestroy(State);

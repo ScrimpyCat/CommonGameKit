@@ -224,12 +224,15 @@ static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, voi
             
             if ((Target) && (Field) && (State))
             {
-                const CCComponentExpressionDescriptor *Descriptor = CCComponentExpressionDescriptorForID(CCComponentGetID(Target));
-                if (Descriptor)
+                if (CCComponentGetIsManaged(Target))
                 {
-                    CCExpressionStateSetSuper(Field, State);
-                    
-                    Descriptor->deserialize(Target, CCExpressionEvaluate(Field));
+                    const CCComponentExpressionDescriptor *Descriptor = CCComponentExpressionDescriptorForID(CCComponentGetID(Target));
+                    if (Descriptor)
+                    {
+                        CCExpressionStateSetSuper(Field, State);
+                        
+                        Descriptor->deserialize(Target, CCExpressionEvaluate(Field), FALSE);
+                    }
                 }
             }
         }
