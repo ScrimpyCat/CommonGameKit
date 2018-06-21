@@ -234,6 +234,8 @@ static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, voi
                         Descriptor->deserialize(Target, CCExpressionEvaluate(Field), FALSE);
                     }
                 }
+                
+                else if (CCRefCount(Target) == 1) CCComponentSystemRemoveComponent(Scriptable);
             }
         }
     }

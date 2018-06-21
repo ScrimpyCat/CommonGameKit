@@ -228,10 +228,25 @@ static double Timestamp(void)
     CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
     XCTAssertNotEqual(6, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
+    CCComponentDestroy(TargetComponent);
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertNotEqual(7, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertNotEqual(7, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemAddComponent(CCScriptableInterfaceDynamicFieldComponentGetTarget(DynamicFieldComponent));
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertNotEqual(7, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertNotEqual(7, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
     
     CCExpressionDestroy(State);
     CCComponentDestroy(DynamicFieldComponent);
-    CCComponentDestroy(TargetComponent);
 }
 
 -(void) testUpdatingLocalCopy
