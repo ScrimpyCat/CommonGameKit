@@ -293,12 +293,14 @@ CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id
     if (System)
     {
         while (!atomic_flag_test_and_set(&System->components.addedLock)) CC_SPIN_WAIT();
-        CCCollectionInsertCollection(System->components.active, System->components.added, NULL); //TODO: make a consumed insert or a retained list?
         
         Added = System->components.added;
         System->components.added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCComponent), NULL);
         
         atomic_flag_clear(&System->components.addedLock);
+        
+        
+        CCCollectionInsertCollection(System->components.active, Added, NULL); //TODO: make a consumed insert or a retained list?
     }
     
     return Added;
