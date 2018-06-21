@@ -53,7 +53,7 @@ static inline CCComponentID CCComponentGetID(CCComponent Component)
     return ((CCComponentPrivate)Component)->id & ~CC_COMPONENT_ID_RESERVED_MASK;
 }
 
-static inline void *CCComponentGetEntity(CCComponent Component)
+static inline CCEntity CCComponentGetEntity(CCComponent Component)
 {
     return ((CCComponentPrivate)Component)->entity;
 }
