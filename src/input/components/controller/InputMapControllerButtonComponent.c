@@ -52,10 +52,10 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCInputMapControllerButtonComponentSetRamp }
 };
 
-void CCInputMapControllerButtonComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCInputMapControllerButtonComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
-    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred))
     {
-        CCInputMapControllerComponentDeserializer(Component, Arg);
+        CCInputMapControllerComponentDeserializer(Component, Arg, Deferred);
     }
 }

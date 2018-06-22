@@ -48,7 +48,7 @@ typedef struct {
 
 void CCScriptableInterfaceDynamicFieldComponentRegister(void);
 void CCScriptableInterfaceDynamicFieldComponentDeregister(void);
-void CCScriptableInterfaceDynamicFieldComponentDeserializer(CCComponent Component, CCExpression Arg);
+void CCScriptableInterfaceDynamicFieldComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Initialize the dynamic field component.

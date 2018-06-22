@@ -31,7 +31,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
 };
 
 static CCDictionary Callbacks[CCInputMapTypeCount];
-void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
     {
@@ -57,13 +57,13 @@ void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
                                 CCInputMapComponentSetCallback(Component, *Callback);
                             }
                             
-                            else CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (callback:) is not a valid atom", CallbackName);
+                            else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (callback:) is not a valid atom", CallbackName);
                         }
                         
-                        else CC_LOG_ERROR("Expect value for argument (callback:) to be an atom");
+                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (callback:) to be an atom");
                     }
                     
-                    else CC_LOG_ERROR("Expect value for argument (callback:) to be an atom");
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (callback:) to be an atom");
                     
                     return;
                 }
@@ -71,7 +71,7 @@ void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg)
         }
     }
     
-    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)));
+    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred);
 }
 
 void CCInputMapComponentRegisterCallback(CCString Name, CCInputMapType Type, CCInputMapComponentCallback Callback)

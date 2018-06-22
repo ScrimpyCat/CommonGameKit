@@ -60,9 +60,9 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("value:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (CCComponentExpressionSetter)TestComponentSetValue }
 };
 
-static void TestComponentDeserializer(CCComponent Component, CCExpression Arg)
+static void TestComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
-    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)));
+    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred);
 }
 
 static const CCComponentExpressionDescriptor TestComponentDescriptor = {
@@ -309,6 +309,28 @@ static double Timestamp(void)
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
     XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should have changed");
+    
+    
+    CCExpressionDestroy(Serialized);
+    CCComponentDestroy(TargetComponent);
+}
+
+-(void) testDeferredFields
+{
+    CCExpression Serialized = CCExpressionCreateFromSource("(begin (state! \".value\" 2) (scripitable-interface-system-test-component (value: (quote .value)))");
+    
+    CCExpression DeserializedComponent = CCExpressionEvaluate(Serialized);
+    XCTAssertEqual(CCExpressionGetType(DeserializedComponent), CCComponentExpressionValueTypeComponent, @"should be a component");
+    
+    CCComponent TargetComponent = CCExpressionGetData(DeserializedComponent);
+    CCComponentSystemAddComponent(TargetComponent);
+    
+    
+    CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
+    XCTAssertEqual(0, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should have changed");

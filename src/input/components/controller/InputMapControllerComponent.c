@@ -43,10 +43,10 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("device:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (CCComponentExpressionSetter)CCInputMapControllerComponentSetDevice }
 };
 
-void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
-    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred))
     {
-        CCInputMapComponentDeserializer(Component, Arg);
+        CCInputMapComponentDeserializer(Component, Arg, Deferred);
     }
 }

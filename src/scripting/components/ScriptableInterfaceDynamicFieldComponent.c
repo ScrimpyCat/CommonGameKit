@@ -52,7 +52,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("field:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeExpression, .setter = CCScriptableInterfaceDynamicFieldComponentSetField }
 };
 
-void CCScriptableInterfaceDynamicFieldComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCScriptableInterfaceDynamicFieldComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if (!CCScriptableInterfaceDynamicFieldComponentGetReferenceState(Component))
     {
@@ -60,5 +60,5 @@ void CCScriptableInterfaceDynamicFieldComponentDeserializer(CCComponent Componen
         if (State) CCScriptableInterfaceDynamicFieldComponentSetReferenceState(Component, State);
     }
     
-    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)));
+    CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred);
 }

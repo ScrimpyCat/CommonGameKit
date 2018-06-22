@@ -29,7 +29,7 @@
 
 const CCString CCRelationParentComponentName = CC_STRING("parent");
 
-static void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg);
+static void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 static const CCComponentExpressionDescriptor CCRelationParentComponentDescriptor = {
     .id = CC_RELATION_PARENT_COMPONENT_ID,
@@ -50,7 +50,7 @@ void CCRelationParentComponentDeregister(void)
     CCComponentDeregister(CC_RELATION_PARENT_COMPONENT_ID);
 }
 
-void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
     {
@@ -71,10 +71,10 @@ void CCRelationParentComponentDeserializer(CCComponent Component, CCExpression A
                             CCRelationParentComponentSetParent(Component, CCExpressionGetData(Entity));
                         }
                         
-                        else CC_LOG_ERROR("Expect value for argument (entity:) to be an entity");
+                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (entity:) to be an entity");
                     }
                     
-                    else CC_LOG_ERROR("Expect value for argument (entity:) to be an entity");
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (entity:) to be an entity");
                 }
             }
         }

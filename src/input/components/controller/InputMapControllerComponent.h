@@ -41,7 +41,7 @@ typedef struct {
 
 void CCInputMapControllerComponentRegister(void);
 void CCInputMapControllerComponentDeregister(void);
-void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg);
+void CCInputMapControllerComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Initialize the input map controller component.

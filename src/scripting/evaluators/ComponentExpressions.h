@@ -47,8 +47,9 @@ typedef void (*CCComponentExpressionInitializer)(CCComponent Component);
  *
  * @param Component The component whose state is to be set.
  * @param Arg The expression of the argument, which takes the form of an option.
+ * @param Deferred Whether resolving value can be deferred or not.
  */
-typedef void (*CCComponentExpressionDeserializer)(CCComponent Component, CCExpression Arg);
+typedef void (*CCComponentExpressionDeserializer)(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Convert a component into an expression.
@@ -128,9 +129,19 @@ void CCComponentExpressionRegister(CCString CC_COPY(Name), const CCComponentExpr
  * @param Arg The expression argument to be deserialized.
  * @param Deserializer The argument deserializers.
  * @param Count The number of argument deserializers.
+ * @param Deferred Whether resolving value can be deferred or not.
  * @return TRUE if the argument was successfully deserialized, otherwise FALSE if it was not.
  */
-_Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count);
+_Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count, _Bool Deferred);
+
+/*!
+ * @brief Deserialize a deferred component argument.
+ * @param Component The component to be set.
+ * @param Arg The expression argument to be deferred deserialization.
+ * @param Deferred Whether resolving value can be deferred or not.
+ * @return TRUE if the argument was successfully deferred deserialization, otherwise FALSE if it was not.
+ */
+_Bool CCComponentExpressionDeserializeDeferredArgument(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Get the component expression descriptor for the given name it was registered under.

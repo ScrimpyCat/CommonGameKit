@@ -51,7 +51,7 @@ typedef struct {
     CCInputMapComponentCallback callback;
 } CCInputMapComponentClass, *CCInputMapComponentPrivate;
 
-void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg);
+void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Expose a callback to the deserializer.

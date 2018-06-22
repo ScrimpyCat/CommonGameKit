@@ -216,7 +216,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("repeat:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)CCInputMapKeyboardComponentSetRepeats },
 };
 
-void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     CCInputMapKeyboardComponentSetIgnoreModifier(Component, TRUE);
     
@@ -245,13 +245,13 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
                                 CCInputMapKeyboardComponentSetIsKeycode(Component, TRUE);
                             }
                             
-                            else CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (keycode:) is not a valid atom", Code);
+                            else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (keycode:) is not a valid atom", Code);
                         }
                         
-                        else CC_LOG_ERROR("Expect value for argument (keycode:) to be an atom");
+                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (keycode:) to be an atom");
                     }
                     
-                    else CC_LOG_ERROR("Expect value for argument (keycode:) to be an atom");
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (keycode:) to be an atom");
                     
                     return;
                 }
@@ -263,6 +263,7 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
                     CCEnumerator Enumerator;
                     CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);
                     
+                    _Bool FlagsValid = TRUE;
                     for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
                     {
                         if (CCExpressionGetType(*Expr) == CCExpressionValueTypeAtom)
@@ -270,7 +271,8 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
                             CCString Flag = CCExpressionGetAtom(*Expr);
                             CCKeyboardModifier *Value = CCDictionaryGetValue(Modifiers, &Flag);
                             if (Value) Flags |= *Value;
-                            else CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (flags:) is not a valid atom", Flag);
+                            else if (!Deferred) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (flags:) is not a valid atom", Flag);
+                            else FlagsValid = FALSE;
                         }
                         
                         else if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
@@ -282,11 +284,14 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
                                     CCString Flag = CCExpressionGetAtom(*Expr);
                                     CCKeyboardModifier *Value = CCDictionaryGetValue(Modifiers, &Flag);
                                     if (Value) Flags |= *Value;
-                                    else CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (flags:) is not a valid atom", Flag);
+                                    else if (!Deferred) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (flags:) is not a valid atom", Flag);
+                                    else FlagsValid = FALSE;
                                 }
                             }
                         }
                     }
+                    
+                    if (!FlagsValid) CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred);
                     
                     CCInputMapKeyboardComponentSetFlags(Component, Flags);
                     CCInputMapKeyboardComponentSetIgnoreModifier(Component, FALSE);
@@ -305,10 +310,10 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
                             CCInputMapKeyboardComponentSetIsKeycode(Component, FALSE);
                         }
                         
-                        else CC_LOG_ERROR("Expect value for argument (char:) to be a single character string");
+                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (char:) to be a single character string");
                     }
                     
-                    else CC_LOG_ERROR("Expect value for argument (char:) to be a single character string");
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (char:) to be a single character string");
                     
                     return;
                 }
@@ -316,8 +321,8 @@ void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression
         }
     }
     
-    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred))
     {
-        CCInputMapComponentDeserializer(Component, Arg);
+        CCInputMapComponentDeserializer(Component, Arg, Deferred);
     }
 }

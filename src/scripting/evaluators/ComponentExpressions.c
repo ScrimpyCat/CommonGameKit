@@ -29,6 +29,7 @@
 #include "ExpressionHelpers.h"
 #include "TextAttribute.h"
 #include "GraphicsExpressions.h"
+#include "ScriptableInterfaceDynamicFieldComponent.h"
 
 static CCExpression CCComponentExpressionWrapper(CCExpression Expression);
 
@@ -52,7 +53,7 @@ void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDes
     if (Wrapper) CCExpressionEvaluatorRegister(Name, CCComponentExpressionWrapper);
 }
 
-_Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count)
+_Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
     {
@@ -76,6 +77,8 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                             {
                                 if (ArgType != Deserializer[Loop].serializedType)
                                 {
+                                    if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                                    
                                     CC_LOG_ERROR_CUSTOM("Serialized type (%u) does not match type (%u) for argument (%S) of component (%u)", ArgType, Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
                                     return FALSE;
                                 }
@@ -83,6 +86,8 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                             
                             else
                             {
+                                if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                                
                                 CC_LOG_ERROR_CUSTOM("Expected serialized type (%u) for argument (%S) of component (%u) but arguments do not match", Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
                                 return FALSE;
                             }
@@ -328,6 +333,8 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                 break;
                         }
                         
+                        if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                        
                         CC_LOG_ERROR_CUSTOM("Could not deserialize argument (%S) of component (%u)", Name, CCComponentGetID(Component));
                     }
                 }
@@ -336,6 +343,22 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
     }
     
     return FALSE;
+}
+
+_Bool CCComponentExpressionDeserializeDeferredArgument(CCComponent Component, CCExpression Arg, _Bool Deferred)
+{
+    if (Deferred)
+    {
+        CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+        CCScriptableInterfaceDynamicFieldComponentSetTarget(DynamicFieldComponent, Component);
+        CCScriptableInterfaceDynamicFieldComponentSetField(DynamicFieldComponent, CCExpressionRetain(Arg));
+        CCScriptableInterfaceDynamicFieldComponentSetReferenceState(DynamicFieldComponent, CCExpressionStateGetSuper(Arg));
+        CCComponentSystemAddComponent(DynamicFieldComponent);
+        
+        CCComponentDestroy(DynamicFieldComponent);
+    }
+    
+    return Deferred;
 }
 
 const CCComponentExpressionDescriptor *CCComponentExpressionDescriptorForName(CCString Name)
@@ -380,7 +403,7 @@ static CCExpression CCComponentExpressionCreateComponent(CCString Name, CCEnumer
         
         for (CCExpression *Expr = CCCollectionEnumeratorNext(Enumerator); Expr; Expr = CCCollectionEnumeratorNext(Enumerator))
         {
-            (*Descriptor)->deserialize(Component, CCExpressionEvaluate(*Expr));
+            (*Descriptor)->deserialize(Component, CCExpressionEvaluate(*Expr), TRUE);
         }
         
         CCComponentSystemAddComponent(Component);

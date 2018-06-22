@@ -58,7 +58,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("all-active:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)CCInputMapGroupComponentSetWantsAllActive }
 };
 
-void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2))
     {
@@ -107,9 +107,9 @@ void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Ar
         }
     }
     
-    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred))
     {
-        CCInputMapComponentDeserializer(Component, Arg);
+        CCInputMapComponentDeserializer(Component, Arg, Deferred);
     }
 }
 

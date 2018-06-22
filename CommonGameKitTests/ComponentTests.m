@@ -131,7 +131,7 @@ static inline void TestComponentSetValue(CCComponent Component, int Value)
     CCComponentDeregister(TEST_COMPONENT_ID);
 }
 
-static void TestDeserializer(CCComponent Component, CCExpression Arg)
+static void TestDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if ((CCExpressionGetType(Arg) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Arg))))
     {

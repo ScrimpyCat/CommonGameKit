@@ -52,7 +52,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("resolution:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeUInt8, .setter = (CCComponentExpressionSetter)CCInputMapControllerAxesComponentSetResolution }
 };
 
-void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpression Arg)
+void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
     {
@@ -103,14 +103,14 @@ void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpr
                                     Axes[Axis].flip(Component, TRUE);
                                 }
                                 
-                                else CC_LOG_ERROR_CUSTOM("Flag (%S) for argument (%S) is not a valid atom", Flag, Name);
+                                else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Flag (%S) for argument (%S) is not a valid atom", Flag, Name);
                             }
                             
-                            else CC_LOG_ERROR_CUSTOM("Flag for argument (%S) is not an atom", Name);
+                            else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Flag for argument (%S) is not an atom", Name);
                         }
                     }
                     
-                    else CC_LOG_ERROR_CUSTOM("Identifier value for argument (%S) is not an integer", Name);
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Identifier value for argument (%S) is not an integer", Name);
                     
                     return;
                 }
@@ -118,8 +118,8 @@ void CCInputMapControllerAxesComponentDeserializer(CCComponent Component, CCExpr
         }
     }
     
-    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments))))
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred))
     {
-        CCInputMapControllerComponentDeserializer(Component, Arg);
+        CCInputMapControllerComponentDeserializer(Component, Arg, Deferred);
     }
 }
