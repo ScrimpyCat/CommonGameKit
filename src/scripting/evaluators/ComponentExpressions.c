@@ -349,7 +349,7 @@ _Bool CCComponentExpressionDeserializeDeferredArgument(CCComponent Component, CC
 {
     if (Deferred)
     {
-        CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+        CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID | CCScriptableInterfaceTypeTemporaryFlag);
         CCScriptableInterfaceDynamicFieldComponentSetTarget(DynamicFieldComponent, Component);
         CCScriptableInterfaceDynamicFieldComponentSetField(DynamicFieldComponent, CCExpressionRetain(Arg));
         CCScriptableInterfaceDynamicFieldComponentSetReferenceState(DynamicFieldComponent, CCExpressionStateGetSuper(Arg));

@@ -30,6 +30,7 @@
 #include <CommonGameKit/SystemID.h>
 
 typedef enum {
+    CCScriptableInterfaceTypeTemporaryFlag = 0x0100,
     CCScriptableInterfaceTypeMask = 0xff,
     CCScriptableInterfaceTypeDynamicField = 1,
 } CCScriptableInterfaceType;

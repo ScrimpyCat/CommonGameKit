@@ -125,7 +125,7 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
     CCCollection Removed = CCComponentSystemGetRemovedComponentsForSystem(System->id);
     CC_COLLECTION_FOREACH(CCComponent, Scriptable, Removed)
     {
-        if (CCComponentGetID(Scriptable) == CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID)
+        if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeMask) == CCScriptableInterfaceTypeDynamicField)
         {
             CCComponent Target = CCScriptableInterfaceDynamicFieldComponentGetTarget(Scriptable);
             if (Target)
@@ -160,7 +160,7 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
     CCCollection Added = CCComponentSystemGetAddedComponentsForSystem(System->id);
     CC_COLLECTION_FOREACH(CCComponent, Scriptable, Added)
     {
-        if (CCComponentGetID(Scriptable) == CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID)
+        if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeMask) == CCScriptableInterfaceTypeDynamicField)
         {
             CCComponent Target = CCScriptableInterfaceDynamicFieldComponentGetTarget(Scriptable);
             if (Target)
@@ -193,7 +193,7 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
     
     CC_COLLECTION_FOREACH(CCComponent, Scriptable, Components)
     {
-        if (CCComponentGetID(Scriptable) == CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID)
+        if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeMask) == CCScriptableInterfaceTypeDynamicField)
         {
             CCExpression ReferenceState = CCScriptableInterfaceDynamicFieldComponentGetReferenceState(Scriptable);
             if (ReferenceState)
@@ -235,7 +235,7 @@ static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, voi
                     }
                 }
                 
-                else if (CCRefCount(Target) == 1) CCComponentSystemRemoveComponent(Scriptable);
+                else if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeTemporaryFlag) && (CCRefCount(Target) == 1)) CCComponentSystemRemoveComponent(Scriptable);
             }
         }
     }

@@ -38,6 +38,7 @@ static const CCComponentExpressionDescriptor CCScriptableInterfaceDynamicFieldCo
 void CCScriptableInterfaceDynamicFieldComponentRegister(void)
 {
     CCComponentRegister(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID, CCScriptableInterfaceDynamicFieldComponentName, CC_STD_ALLOCATOR, sizeof(CCScriptableInterfaceDynamicFieldComponentClass), CCScriptableInterfaceDynamicFieldComponentInitialize, NULL, CCScriptableInterfaceDynamicFieldComponentDeallocate);
+    CCComponentRegister(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID | CCScriptableInterfaceTypeTemporaryFlag, (CCString)NULL, CC_STD_ALLOCATOR, sizeof(CCScriptableInterfaceDynamicFieldComponentClass), CCScriptableInterfaceDynamicFieldComponentInitialize, NULL, CCScriptableInterfaceDynamicFieldComponentDeallocate);
     
     CCComponentExpressionRegister(CC_STRING("dynamic-field"), &CCScriptableInterfaceDynamicFieldComponentDescriptor, TRUE);
 }
@@ -45,6 +46,7 @@ void CCScriptableInterfaceDynamicFieldComponentRegister(void)
 void CCScriptableInterfaceDynamicFieldComponentDeregister(void)
 {
     CCComponentDeregister(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+    CCComponentDeregister(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID | CCScriptableInterfaceTypeTemporaryFlag);
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
