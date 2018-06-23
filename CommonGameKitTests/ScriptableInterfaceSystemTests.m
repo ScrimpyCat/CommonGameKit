@@ -337,7 +337,6 @@ static double Timestamp(void)
     
     
     CCExpressionDestroy(Serialized);
-    CCComponentDestroy(TargetComponent);
 }
 
 @end

@@ -69,12 +69,23 @@ static double ElapsedTime[CCComponentSystemExecutionMax & CCComponentSystemExecu
 static void CCComponentElementDestructor(CCCollection Collection, CCComponent *Component)
 {
     CCComponentSetIsManaged(*Component, FALSE);
+    CCComponentDestroy(*Component);
 }
 
 static void CCComponentSystemDestructor(CCCollection Collection, CCComponentSystem *System)
 {
-    if (System->components.active) CCCollectionDestroy(System->components.active);
-    if (System->components.added) CCCollectionDestroy(System->components.added);
+    if (System->components.active)
+    {
+        CC_COLLECTION_FOREACH(CCComponent, Component, System->components.active) CCComponentDestroy(Component);
+        CCCollectionDestroy(System->components.active);
+    }
+    
+    if (System->components.added)
+    {
+        CC_COLLECTION_FOREACH(CCComponent, Component, System->components.added) CCComponentDestroy(Component);
+        CCCollectionDestroy(System->components.added);
+    }
+    
     if (System->components.removed) CCCollectionDestroy(System->components.removed);
     if (System->components.destroy) CCCollectionDestroy(System->components.destroy);
     
@@ -237,6 +248,7 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
             CCCollectionRemoveElement(System->components.active, CCCollectionFindElement(System->components.active, &Component, NULL));
             if (System->unlock) System->unlock(&System->handle);
             CCComponentSetIsManaged(Component, FALSE);
+            CCComponentDestroy(Component);
         }
         
         else
@@ -246,8 +258,6 @@ void CCComponentSystemRemoveComponent(CCComponent Component)
             atomic_flag_clear(&System->components.removedLock);
         }
     }
-    
-    CCComponentDestroy(Component);
 }
 
 static CCComponentSystem *CCComponentSystemFind(CCComponentSystemID id)
