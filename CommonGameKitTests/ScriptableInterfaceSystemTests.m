@@ -172,7 +172,7 @@ static double Timestamp(void)
     TestComponentSetValue(TargetComponent, 1);
     CCComponentSystemAddComponent(TargetComponent);
     
-    CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
+    CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID | CCScriptableInterfaceTypeTemporaryFlag);
     CCScriptableInterfaceDynamicFieldComponentSetTarget(DynamicFieldComponent, TargetComponent);
     CCScriptableInterfaceDynamicFieldComponentSetField(DynamicFieldComponent, CCExpressionCreateFromSource("(value: .value)"));
     CCExpression State = CCExpressionCreateFromSource("(begin (state! \".value\" 2))");
