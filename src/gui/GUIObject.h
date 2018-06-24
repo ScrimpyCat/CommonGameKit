@@ -206,6 +206,7 @@ CCExpression GUIObjectEvaluateExpression(GUIObject Object, CCExpression Expressi
 
 /*!
  * @brief Get the expression state of a GUI object.
+ * @warning Returned state should only be used during a GUIManager lock.
  * @param Object The GUI object to get the state from.
  * @return The resulting expression state.
  */

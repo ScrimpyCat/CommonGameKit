@@ -190,7 +190,7 @@ CCExpression GUIObjectGetExpressionState(GUIObject Object)
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    CCExpression Expr = Object->interface->state(Object); //TODO: should we copy? can't recall what use I thought this function would be might remove
+    CCExpression Expr = Object->interface->state(Object);
     mtx_unlock(&Object->lock);
     
     return Expr;

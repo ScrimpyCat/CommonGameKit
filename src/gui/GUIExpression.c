@@ -168,7 +168,7 @@ static void GUIExpressionDraw(CCExpression Render, GFXFramebuffer Framebuffer, s
 static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
 {
     GUIObject Parent = GUIObjectGetParent(Object);
-    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIObjectGetExpressionState(Parent) : Window;
     
     if (((GUIExpressionInfo*)Object->internal)->render)
     {
@@ -215,7 +215,7 @@ static void GUIExpressionEvent(GUIObject Object, GUIEvent Event)
      */
     
     GUIObject Parent = GUIObjectGetParent(Object);
-    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIObjectGetExpressionState(Parent) : Window;
     
     if (((GUIExpressionInfo*)Object->internal)->control)
     {
@@ -237,7 +237,7 @@ static void GUIExpressionEvent(GUIObject Object, GUIEvent Event)
 static CCRect GUIExpressionGetRect(GUIObject Object)
 {
     GUIObject Parent = GUIObjectGetParent(Object);
-    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIObjectGetExpressionState(Parent) : Window;
     
     CCExpression Rect = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrRect);
     if (Rect)
@@ -258,7 +258,7 @@ static void GUIExpressionSetRect(GUIObject Object, CCRect Rect)
 static _Bool GUIExpressionGetEnabled(GUIObject Object)
 {
     GUIObject Parent = GUIObjectGetParent(Object);
-    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIExpressionGetState(Parent) : Window;
+    ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIObjectGetExpressionState(Parent) : Window;
     
     CCExpression Enabled = CCExpressionGetState(((GUIExpressionInfo*)Object->internal)->data, StrEnabled);
     if (Enabled)
