@@ -36,7 +36,8 @@ GUIObject GUIObjectCreate(CCAllocatorType Allocator, const GUIObjectInterface *I
             .interface = Interface,
             .allocator = Allocator,
             .parent = NULL,
-            .internal = Interface->create(Allocator)
+            .internal = Interface->create(Allocator),
+            .changed = TRUE
         };
         
         if (!Object->internal)
@@ -80,6 +81,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
     
     mtx_lock(&Object->lock);
     if (GUIObjectGetEnabled(Object)) Object->interface->render(Object, Framebuffer, Index);
+    Object->changed = FALSE;
     mtx_unlock(&Object->lock);
 }
 
@@ -109,6 +111,7 @@ void GUIObjectSetRect(GUIObject Object, CCRect Rect)
     
     mtx_lock(&Object->lock);
     Object->interface->rect.set(Object, Rect);
+    Object->changed = TRUE;
     mtx_unlock(&Object->lock);
 }
 
@@ -147,6 +150,8 @@ void GUIObjectAddChild(GUIObject Object, GUIObject Child)
     mtx_lock(&Object->lock);
     Child->parent = Object;
     Object->interface->child.add(Object, Child);
+    Object->changed = TRUE;
+    Child->changed = TRUE;
     mtx_unlock(&Object->lock);
 }
 
@@ -159,6 +164,8 @@ void GUIObjectRemoveChild(GUIObject Object, GUIObject Child)
     mtx_lock(&Object->lock);
     Child->parent = NULL;
     Object->interface->child.remove(Object, Child);
+    Object->changed = TRUE;
+    Child->changed = TRUE;
     mtx_unlock(&Object->lock);
 }
 
@@ -167,7 +174,7 @@ _Bool GUIObjectHasChanged(GUIObject Object)
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    const _Bool HasChanged = Object->interface->changed(Object);
+    const _Bool HasChanged = Object->changed ? TRUE : Object->interface->changed(Object);
     mtx_unlock(&Object->lock);
     
     return HasChanged;

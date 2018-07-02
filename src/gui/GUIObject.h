@@ -95,6 +95,7 @@ typedef struct GUIObjectInfo {
     GUIObject parent;
     mtx_t lock; //Temporary until CCExpression becomes threadsafe and can handle it better/more efficiently
     void *internal;
+    _Bool changed;
 } GUIObjectInfo;
 
 
