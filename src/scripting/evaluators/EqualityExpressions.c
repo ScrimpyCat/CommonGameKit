@@ -27,6 +27,8 @@
 //TODO: Make an ulps option (ulps: integer) for the equals expression
 static _Bool CCEqualityExpressionCompare(CCExpression Left, CCExpression Right)
 {
+    if (Left == Right) return TRUE;
+    
     const CCExpressionValueType LeftType = CCExpressionGetType(Left), RightType = CCExpressionGetType(Right);
     switch (LeftType)
     {
