@@ -89,13 +89,31 @@ typedef struct {
     GUIObjectGetExpressionStateCallback state;
 } GUIObjectInterface;
 
+typedef enum {
+    GUIObjectCacheStrategyMask = 0xffff,
+    GUIObjectCacheStrategyNone = 0,
+    GUIObjectCacheStrategyInvalidateOnEvent = (1 << 0),
+    GUIObjectCacheStrategyInvalidateOnResize = (1 << 1),
+    GUIObjectCacheStrategyInvalidateOnMove = (1 << 2),
+    
+    GUIObjectCacheDirtyMask = (0xffff << 16),
+    GUIObjectCacheDirtyEvent = (GUIObjectCacheStrategyInvalidateOnEvent << 16),
+    GUIObjectCacheDirtyResize = (GUIObjectCacheStrategyInvalidateOnResize << 16),
+    GUIObjectCacheDirtyMove = (GUIObjectCacheStrategyInvalidateOnMove << 16),
+} GUIObjectCache;
+
 typedef struct GUIObjectInfo {
     const GUIObjectInterface *interface;
     CCAllocatorType allocator;
     GUIObject parent;
     mtx_t lock; //Temporary until CCExpression becomes threadsafe and can handle it better/more efficiently
     void *internal;
-    _Bool changed;
+    struct {
+        GUIObjectCache strategy;
+        CCRect rect;
+        GFXFramebuffer store;
+        _Bool changed;
+    } cache;
 } GUIObjectInfo;
 
 
@@ -163,6 +181,20 @@ _Bool GUIObjectGetEnabled(GUIObject Object);
  * @param Enabled The enabled flag.
  */
 void GUIObjectSetEnabled(GUIObject Object, _Bool Enabled);
+
+/*!
+ * @brief Get the cache strategy used by the GUI object.
+ * @param Object The GUI object to get the cache strategy of.
+ * @return The cache strategy.
+ */
+GUIObjectCache GUIObjectGetCacheStrategy(GUIObject Object);
+
+/*!
+ * @brief Set cache strategy of the GUI object.
+ * @param Object The GUI object to set the cache strategy of.
+ * @param Strategy The cache strategy.
+ */
+void GUIObjectSetCacheStrategy(GUIObject Object, GUIObjectCache Strategy);
 
 /*!
  * @brief Get the parent of the GUI object.
