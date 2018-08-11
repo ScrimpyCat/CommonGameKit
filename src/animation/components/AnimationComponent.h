@@ -29,6 +29,7 @@
 #include <CommonGameKit/AnimationSystem.h>
 #include <CommonGameKit/ComponentBase.h>
 #include <CommonC/Common.h>
+#include <CommonGameKit/Expression.h>
 
 
 #define CC_ANIMATION_COMPONENT_ID (CCAnimationTypeNone | CC_ANIMATION_COMPONENT_FLAG)
@@ -45,8 +46,7 @@ typedef struct {
 } CCAnimationComponentClass, *CCAnimationComponentPrivate;
 
 
-void CCAnimationComponentRegister(void);
-void CCAnimationComponentDeregister(void);
+void CCAnimationComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Initialize the animation component.
