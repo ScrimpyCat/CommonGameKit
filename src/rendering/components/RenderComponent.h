@@ -33,7 +33,7 @@
 //Note: Currently just a demo component
 
 
-#define CC_RENDER_COMPONENT_ID (1 | CC_RENDER_COMPONENT_FLAG)
+#define CC_RENDER_COMPONENT_ID (2 | CC_RENDER_COMPONENT_FLAG)
 
 extern const CCString CCRenderComponentName;
 

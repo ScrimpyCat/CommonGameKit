@@ -63,6 +63,62 @@ static inline void CCRenderCameraComponentInitialize(CCComponent Component, CCCo
  */
 static inline void CCRenderCameraComponentDeallocate(CCComponent Component);
 
+/*!
+ * @brief Get the project matrix of the camera.
+ * @param Component The camera component.
+ * @return The projection matrix.
+ */
+static inline CCMatrix4 CCRenderCameraComponentGetProjection(CCComponent Component);
+
+/*!
+ * @brief Set the projection matrix of the camera.
+ * @param Component The camera component.
+ * @param Projection The projection matrix.
+ */
+static inline void CCRenderCameraComponentSetProjection(CCComponent Component, CCMatrix4 Projection);
+
+/*!
+ * @brief Get the background colour of the camera.
+ * @param Component The camera component.
+ * @return The background colour.
+ */
+static inline CCColourRGBA CCRenderCameraComponentGetBackground(CCComponent Component);
+
+/*!
+ * @brief Set the background colour of the camera.
+ * @param Component The camera component.
+ * @param Colour The background colour.
+ */
+static inline void CCRenderCameraComponentSetBackground(CCComponent Component, CCColourRGBA Colour);
+
+/*!
+ * @brief Get the normalized viewport of the camera.
+ * @param Component The camera component.
+ * @return The viewport.
+ */
+static inline GFXViewport CCRenderCameraComponentGetViewport(CCComponent Component);
+
+/*!
+ * @brief Set the normalized viewport of the camera.
+ * @param Component The camera component.
+ * @param Viewport The viewport.
+ */
+static inline void CCRenderCameraComponentSetViewport(CCComponent Component, GFXViewport Viewport);
+
+/*!
+ * @brief Get the renderable filter of the camera.
+ * @param Component The camera component.
+ * @return The filter.
+ */
+static inline CCRenderCameraFilter CCRenderCameraComponentGetRenderableFilter(CCComponent Component);
+
+/*!
+ * @brief Set the renderable filter of the camera.
+ * @param Component The camera component.
+ * @param Filter The filter.
+ */
+static inline void CCRenderCameraComponentSetRenderableFilter(CCComponent Component, CCRenderCameraFilter Filter);
+
 
 #pragma mark -
 
