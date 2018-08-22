@@ -29,7 +29,10 @@
 #include <CommonGameKit/ComponentSystem.h>
 #include <CommonGameKit/SystemID.h>
 
-//Note: Currently just a demo system
+typedef enum {
+    CCRenderTypeMask = 0xff,
+    CCRenderTypeCamera = 1,
+} CCRenderType;
 
 void CCRenderSystemRegister(void);
 void CCRenderSystemDeregister(void);
