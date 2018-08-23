@@ -136,4 +136,44 @@ static inline void CCRenderCameraComponentDeallocate(CCComponent Component)
     CCComponentDeallocate(Component);
 }
 
+static inline CCMatrix4 CCRenderCameraComponentGetProjection(CCComponent Component)
+{
+    return ((CCRenderCameraComponentPrivate)Component)->projection;
+}
+
+static inline void CCRenderCameraComponentSetProjection(CCComponent Component, CCMatrix4 Projection)
+{
+    ((CCRenderCameraComponentPrivate)Component)->projection = Projection;
+}
+
+static inline CCColourRGBA CCRenderCameraComponentGetBackground(CCComponent Component)
+{
+    return ((CCRenderCameraComponentPrivate)Component)->background;
+}
+
+static inline void CCRenderCameraComponentSetBackground(CCComponent Component, CCColourRGBA Colour)
+{
+    ((CCRenderCameraComponentPrivate)Component)->background = Colour;
+}
+
+static inline GFXViewport CCRenderCameraComponentGetViewport(CCComponent Component)
+{
+    return ((CCRenderCameraComponentPrivate)Component)->viewport;
+}
+
+static inline void CCRenderCameraComponentSetViewport(CCComponent Component, GFXViewport Viewport)
+{
+    ((CCRenderCameraComponentPrivate)Component)->viewport = Viewport;
+}
+
+static inline CCRenderCameraFilter CCRenderCameraComponentGetRenderableFilter(CCComponent Component)
+{
+    return ((CCRenderCameraComponentPrivate)Component)->filter;
+}
+
+static inline void CCRenderCameraComponentSetRenderableFilter(CCComponent Component, CCRenderCameraFilter Filter)
+{
+    ((CCRenderCameraComponentPrivate)Component)->filter = Filter;
+}
+
 #endif
