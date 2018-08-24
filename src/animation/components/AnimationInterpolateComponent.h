@@ -45,6 +45,14 @@ void CCAnimationInterpolateComponentRegister(void);
 void CCAnimationInterpolateComponentDeregister(void);
 
 /*!
+ * @brief Expose a callback to the deserializer.
+ * @description This allows for deserialized expressions to reference the callback.
+ * @param Name The name of the atom to be used to reference this callback.
+ * @param Interpolator The animation interpolator callback.
+ */
+void CCAnimationInterpolateComponentRegisterCallback(CCString CC_COPY(Name), CCAnimationInterpolator Interpolator);
+
+/*!
  * @brief Initialize the interpolated animation component.
  * @param Component The component to be initialized.
  * @param id The component ID.

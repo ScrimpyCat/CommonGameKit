@@ -36,3 +36,18 @@ void CCAnimationInterpolateComponentDeregister(void)
 {
     CCComponentDeregister(CC_ANIMATION_INTERPOLATE_COMPONENT_ID);
 }
+
+static CCDictionary Interpolators;
+void CCAnimationInterpolateComponentRegisterCallback(CCString Name, CCAnimationInterpolator Interpolator)
+{
+    if (!Interpolators)
+    {
+        Interpolators = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(Interpolator), &(CCDictionaryCallbacks){
+            .keyDestructor = CCStringDestructorForDictionary,
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary
+        });
+    }
+    
+    CCDictionarySetValue(Interpolators, &(CCString){ CCStringCopy(Name) }, &Interpolator);
+}
