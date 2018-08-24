@@ -24,3 +24,15 @@
  */
 
 #include "RenderCameraComponent.h"
+
+const CCString CCRenderCameraComponentName = CC_STRING("camera");
+
+void CCRenderCameraComponentRegister(void)
+{
+    CCComponentRegister(CC_RENDER_CAMERA_COMPONENT_ID, CCRenderCameraComponentName, CC_STD_ALLOCATOR, sizeof(CCRenderCameraComponentClass), CCRenderCameraComponentInitialize, NULL, CCRenderCameraComponentDeallocate);
+}
+
+void CCRenderCameraComponentDeregister(void)
+{
+    CCComponentDeregister(CC_RENDER_CAMERA_COMPONENT_ID);
+}
