@@ -28,9 +28,18 @@
 
 const CCString CCAnimationInterpolateComponentName = CC_STRING("animation_interpolate");
 
+static const CCComponentExpressionDescriptor CCAnimationInterpolateComponentDescriptor = {
+    .id = CC_ANIMATION_INTERPOLATE_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCAnimationInterpolateComponentDeserializer,
+    .serialize = NULL
+};
+
 void CCAnimationInterpolateComponentRegister(void)
 {
     CCComponentRegister(CC_ANIMATION_INTERPOLATE_COMPONENT_ID, CCAnimationInterpolateComponentName, CC_STD_ALLOCATOR, sizeof(CCAnimationInterpolateComponentClass), CCAnimationInterpolateComponentInitialize, NULL, CCAnimationInterpolateComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("animation-interpolate"), &CCAnimationInterpolateComponentDescriptor, TRUE);
 }
 
 void CCAnimationInterpolateComponentDeregister(void)
