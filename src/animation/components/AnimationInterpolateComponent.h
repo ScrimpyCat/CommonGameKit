@@ -43,6 +43,7 @@ typedef struct {
 
 void CCAnimationInterpolateComponentRegister(void);
 void CCAnimationInterpolateComponentDeregister(void);
+void CCAnimationInterpolateComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Expose a callback to the deserializer.

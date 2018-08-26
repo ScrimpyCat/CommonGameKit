@@ -24,6 +24,7 @@
  */
 
 #include "AnimationInterpolateComponent.h"
+#include "ComponentExpressions.h"
 
 const CCString CCAnimationInterpolateComponentName = CC_STRING("animation_interpolate");
 
@@ -38,6 +39,49 @@ void CCAnimationInterpolateComponentDeregister(void)
 }
 
 static CCDictionary Interpolators;
+void CCAnimationInterpolateComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
+{
+    if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
+    {
+        const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Arg));
+        if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
+        {
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+            {
+                CCString Name = CCExpressionGetAtom(NameExpr);
+                if (CCStringEqual(Name, CC_STRING("interpolator:")))
+                {
+                    if (ArgCount == 2)
+                    {
+                        CCExpression InterpolatorNameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
+                        if (CCExpressionGetType(InterpolatorNameExpr) == CCExpressionValueTypeAtom)
+                        {
+                            CCString InterpolatorName = CCExpressionGetAtom(InterpolatorNameExpr);
+                            
+                            CCAnimationInterpolator *Interpolator = Interpolators ? CCDictionaryGetValue(Interpolators, &InterpolatorName) : NULL;
+                            if (Interpolator)
+                            {
+                                CCAnimationInterpolateComponentSetInterpolator(Component, *Interpolator);
+                            }
+                            
+                            else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (interpolator:) is not a valid atom", InterpolatorName);
+                        }
+                        
+                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (interpolator:) to be an atom");
+                    }
+                    
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (interpolator:) to be an atom");
+                    
+                    return;
+                }
+            }
+        }
+    }
+    
+    CCAnimationInterpolateComponentDeserializer(Component, Arg, Deferred);
+}
+
 void CCAnimationInterpolateComponentRegisterCallback(CCString Name, CCAnimationInterpolator Interpolator)
 {
     if (!Interpolators)
