@@ -1,0 +1,47 @@
+{
+    "functions": [
+        {
+            "name": "animation-interpolate",
+            "description": "Create an interpolated animation component.",
+            "examples": ["(animation-interpolate (name: \"name\") (callback: :linear))"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "name",
+                    "description": "The name of the animation.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "speed",
+                    "description": "The speed of the animation.",
+                    "args": [[{ "type": "float" }]]
+                },
+                {
+                    "name": "position",
+                    "description": "The position of the animation.",
+                    "args": [[{ "type": "float" }]]
+                },
+                {
+                    "name": "playing",
+                    "description": "Whether the animation is playing.",
+                    "args": [[{ "type": "boolean" }]]
+                },
+                {
+                    "name": "loop",
+                    "description": "The repitition type of the animation.",
+                    "args": [
+                        [{ "type": "atom", "name": "type" }],
+                        [{ "type": "atom", "value": "once" }],
+                        [{ "type": "atom", "value": "roll" }],
+                        [{ "type": "atom", "value": "flip" }]
+                    ]
+                },
+                {
+                    "name": "callback",
+                    "description": "The name of the callback.",
+                    "args": [[{ "type": "atom" }]]
+                }
+            ]
+        }
+    ]
+}
