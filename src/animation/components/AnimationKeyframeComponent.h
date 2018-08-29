@@ -57,6 +57,7 @@ typedef struct {
 
 void CCAnimationKeyframeComponentRegister(void);
 void CCAnimationKeyframeComponentDeregister(void);
+void CCAnimationKeyframeComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Initialize the keyframe animation component.

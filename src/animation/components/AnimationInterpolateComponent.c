@@ -88,7 +88,7 @@ void CCAnimationInterpolateComponentDeserializer(CCComponent Component, CCExpres
         }
     }
     
-    CCAnimationInterpolateComponentDeserializer(Component, Arg, Deferred);
+    CCAnimationKeyframeComponentDeserializer(Component, Arg, Deferred);
 }
 
 void CCAnimationInterpolateComponentRegisterCallback(CCString Name, CCAnimationInterpolator Interpolator)
