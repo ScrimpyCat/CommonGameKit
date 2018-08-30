@@ -95,7 +95,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         
                         if (ArgCount == 2)
                         {
-                            switch (Deserializer[Loop].setterType & ~CCComponentExpressionArgumentTypeOwnershipMask)
+                            switch (Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask)
                             {
                                 case CCComponentExpressionArgumentTypeBool:
                                     if (ArgType == CCExpressionValueTypeInteger)
@@ -274,7 +274,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         
                         else
                         {
-                            switch (Deserializer[Loop].setterType & ~CCComponentExpressionArgumentTypeOwnershipMask)
+                            switch (Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask)
                             {
                                 case CCComponentExpressionArgumentTypeVector2:
                                     ((void(*)(CCComponent,CCVector2D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2(Arg));
@@ -309,7 +309,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                             }
                         }
                         
-                        switch (Deserializer[Loop].setterType & ~CCComponentExpressionArgumentTypeOwnershipMask)
+                        switch (Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask)
                         {
                             case CCComponentExpressionArgumentTypeTextAttribute:
                                 if (ArgType == CCExpressionValueTypeList)
