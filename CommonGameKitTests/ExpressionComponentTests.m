@@ -50,6 +50,106 @@ static void KeyboardCallback()
     CCInputMapComponentRegisterCallback(CC_STRING(":test"), CCInputMapTypeKeyboard, KeyboardCallback);
 }
 
+static char Set[256];
+static void SetI8(CCComponent Component, int8_t Value){ snprintf(Set, sizeof(Set), "%d", Value); }
+static void SetI16(CCComponent Component, int16_t Value){ snprintf(Set, sizeof(Set), "%d", Value); }
+static void SetI32(CCComponent Component, int32_t Value){ snprintf(Set, sizeof(Set), "%d", Value); }
+static void SetI64(CCComponent Component, int64_t Value){ snprintf(Set, sizeof(Set), "%lld", Value); }
+static void SetU8(CCComponent Component, uint8_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
+static void SetU16(CCComponent Component, uint16_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
+static void SetU32(CCComponent Component, uint32_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
+static void SetU64(CCComponent Component, uint64_t Value){ snprintf(Set, sizeof(Set), "%llu", Value); }
+
+static CCComponentExpressionArgumentDeserializer Arguments[] = {
+    { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
+    { .name = CC_STRING("i16:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt16, .setter = (CCComponentExpressionSetter)SetI16 },
+    { .name = CC_STRING("i32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (CCComponentExpressionSetter)SetI32 },
+    { .name = CC_STRING("i64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt64, .setter = (CCComponentExpressionSetter)SetI64 },
+    { .name = CC_STRING("u8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetU8 },
+    { .name = CC_STRING("u16:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt16, .setter = (CCComponentExpressionSetter)SetU16 },
+    { .name = CC_STRING("u32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (CCComponentExpressionSetter)SetU32 },
+    { .name = CC_STRING("u64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt64, .setter = (CCComponentExpressionSetter)SetU64 },
+};
+
+-(void) testDeserialization
+{
+#define TEST_DESERIALIZE_SUCCESS(expression, result) \
+do { \
+    Set[0] = 0; \
+    CCExpression Arg = CCExpressionCreateFromSource(expression); \
+    XCTAssertTrue(CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), FALSE), @"Should deserialize"); \
+    XCTAssertTrue(!strcmp(Set, result), @"Should have the result (%s) got (%s)", result, Set); \
+    CCExpressionDestroy(Arg); \
+} while(0)
+#define TEST_DESERIALIZE_FAILURE(expression) \
+do { \
+    Set[0] = 0; \
+    CCExpression Arg = CCExpressionCreateFromSource(expression); \
+    XCTAssertFalse(CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), FALSE), @"Should not deserialize"); \
+    XCTAssertTrue(!strcmp(Set, "")); \
+    CCExpressionDestroy(Arg); \
+} while(0)
+    CCComponent Component = CCComponentCreate(CC_INPUT_MAP_GROUP_COMPONENT_ID);
+    
+    TEST_DESERIALIZE_FAILURE("(i8: :d)");
+    TEST_DESERIALIZE_SUCCESS("(i8: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(i8: -1)", "-1");
+    TEST_DESERIALIZE_SUCCESS("(i8: 127)", "127");
+    TEST_DESERIALIZE_SUCCESS("(i8: -128)", "-128");
+    TEST_DESERIALIZE_SUCCESS("(i8: 256)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(i16: :d)");
+    TEST_DESERIALIZE_SUCCESS("(i16: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(i16: -1)", "-1");
+    TEST_DESERIALIZE_SUCCESS("(i16: 32767)", "32767");
+    TEST_DESERIALIZE_SUCCESS("(i16: -32768)", "-32768");
+    TEST_DESERIALIZE_SUCCESS("(i16: 65536)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(i32: :d)");
+    TEST_DESERIALIZE_SUCCESS("(i32: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(i32: -1)", "-1");
+    TEST_DESERIALIZE_SUCCESS("(i32: 2147483647)", "2147483647");
+    TEST_DESERIALIZE_SUCCESS("(i32: -2147483648)", "-2147483648");
+    TEST_DESERIALIZE_SUCCESS("(i32: 4294967296)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(i64: :d)");
+    TEST_DESERIALIZE_SUCCESS("(i64: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(i64: -1)", "-1");
+    TEST_DESERIALIZE_SUCCESS("(i64: 2147483647)", "2147483647");
+    TEST_DESERIALIZE_SUCCESS("(i64: -2147483648)", "-2147483648");
+    TEST_DESERIALIZE_SUCCESS("(i64: 4294967296)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(u8: :d)");
+    TEST_DESERIALIZE_SUCCESS("(u8: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(u8: -1)", "255");
+    TEST_DESERIALIZE_SUCCESS("(u8: 127)", "127");
+    TEST_DESERIALIZE_SUCCESS("(u8: -128)", "128");
+    TEST_DESERIALIZE_SUCCESS("(u8: 256)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(u16: :d)");
+    TEST_DESERIALIZE_SUCCESS("(u16: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(u16: -1)", "65535");
+    TEST_DESERIALIZE_SUCCESS("(u16: 32767)", "32767");
+    TEST_DESERIALIZE_SUCCESS("(u16: -32768)", "32768");
+    TEST_DESERIALIZE_SUCCESS("(u16: 65536)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(u32: :d)");
+    TEST_DESERIALIZE_SUCCESS("(u32: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(u32: -1)", "4294967295");
+    TEST_DESERIALIZE_SUCCESS("(u32: 2147483647)", "2147483647");
+    TEST_DESERIALIZE_SUCCESS("(u32: -2147483648)", "2147483648");
+    TEST_DESERIALIZE_SUCCESS("(u32: 4294967296)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(u64: :d)");
+    TEST_DESERIALIZE_SUCCESS("(u64: 1)", "1");
+    TEST_DESERIALIZE_SUCCESS("(u64: -1)", "18446744073709551615");
+    TEST_DESERIALIZE_SUCCESS("(u64: 2147483647)", "2147483647");
+    TEST_DESERIALIZE_SUCCESS("(u64: -2147483648)", "18446744071562067968");
+    TEST_DESERIALIZE_SUCCESS("(u64: 4294967296)", "0");
+    
+    CCComponentDestroy(Component);
+}
+
 -(void) testInputMapGroup
 {
     CCExpression Expr = CCExpressionCreateFromSource("(input-group (action: \"test\") (input: (input-keyboard (keycode: :left)) (input-keyboard (keycode: :right))) (all-active: #t))");
