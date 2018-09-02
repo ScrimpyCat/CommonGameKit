@@ -59,6 +59,7 @@ static void SetU8(CCComponent Component, uint8_t Value){ snprintf(Set, sizeof(Se
 static void SetU16(CCComponent Component, uint16_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
 static void SetU32(CCComponent Component, uint32_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
 static void SetU64(CCComponent Component, uint64_t Value){ snprintf(Set, sizeof(Set), "%llu", Value); }
+static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER(Buffer, Value) snprintf(Set, sizeof(Set), "%s", Buffer); }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -69,6 +70,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("u16:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt16, .setter = (CCComponentExpressionSetter)SetU16 },
     { .name = CC_STRING("u32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (CCComponentExpressionSetter)SetU32 },
     { .name = CC_STRING("u64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt64, .setter = (CCComponentExpressionSetter)SetU64 },
+    { .name = CC_STRING("str:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (CCComponentExpressionSetter)SetStr },
 };
 
 -(void) testDeserialization
@@ -146,6 +148,12 @@ do { \
     TEST_DESERIALIZE_SUCCESS("(u64: 2147483647)", "2147483647");
     TEST_DESERIALIZE_SUCCESS("(u64: -2147483648)", "18446744071562067968");
     TEST_DESERIALIZE_SUCCESS("(u64: 4294967296)", "0");
+    
+    TEST_DESERIALIZE_FAILURE("(str: :d)");
+    TEST_DESERIALIZE_FAILURE("(str: 1)");
+    TEST_DESERIALIZE_SUCCESS("(str: \"foo\")", "foo");
+    TEST_DESERIALIZE_SUCCESS("(str: \"bar\")", "bar");
+    TEST_DESERIALIZE_SUCCESS("(str: \"\")", "");
     
     CCComponentDestroy(Component);
 }
