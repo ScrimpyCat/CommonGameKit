@@ -60,6 +60,7 @@ static void SetU16(CCComponent Component, uint16_t Value){ snprintf(Set, sizeof(
 static void SetU32(CCComponent Component, uint32_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
 static void SetU64(CCComponent Component, uint64_t Value){ snprintf(Set, sizeof(Set), "%llu", Value); }
 static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER(Buffer, Value) snprintf(Set, sizeof(Set), "%s", Buffer); }
+static void SetBool(CCComponent Component, CCString Value){ snprintf(Set, sizeof(Set), "%s", Value ? "true" : "false"); }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -71,6 +72,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("u32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt32, .setter = (CCComponentExpressionSetter)SetU32 },
     { .name = CC_STRING("u64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt64, .setter = (CCComponentExpressionSetter)SetU64 },
     { .name = CC_STRING("str:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (CCComponentExpressionSetter)SetStr },
+    { .name = CC_STRING("bool:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)SetBool },
 };
 
 -(void) testDeserialization
@@ -154,6 +156,14 @@ do { \
     TEST_DESERIALIZE_SUCCESS("(str: \"foo\")", "foo");
     TEST_DESERIALIZE_SUCCESS("(str: \"bar\")", "bar");
     TEST_DESERIALIZE_SUCCESS("(str: \"\")", "");
+    
+    TEST_DESERIALIZE_FAILURE("(bool: :d)");
+    TEST_DESERIALIZE_SUCCESS("(bool: 1)", "true");
+    TEST_DESERIALIZE_SUCCESS("(bool: #f)", "false");
+    TEST_DESERIALIZE_SUCCESS("(bool: #t)", "true");
+    TEST_DESERIALIZE_SUCCESS("(bool: 10)", "true");
+    TEST_DESERIALIZE_SUCCESS("(bool: 0)", "false");
+    TEST_DESERIALIZE_SUCCESS("(bool: -1)", "true");
     
     CCComponentDestroy(Component);
 }
