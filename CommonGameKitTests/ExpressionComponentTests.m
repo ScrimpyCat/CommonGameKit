@@ -62,6 +62,7 @@ static void SetU64(CCComponent Component, uint64_t Value){ snprintf(Set, sizeof(
 static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER(Buffer, Value) snprintf(Set, sizeof(Set), "%s", Buffer); }
 static void SetBool(CCComponent Component, _Bool Value){ snprintf(Set, sizeof(Set), "%s", Value ? "true" : "false"); }
 static void SetF32(CCComponent Component, float Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
+static void SetF64(CCComponent Component, double Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -75,6 +76,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("str:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = (CCComponentExpressionSetter)SetStr },
     { .name = CC_STRING("bool:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)SetBool },
     { .name = CC_STRING("f32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)SetF32 },
+    { .name = CC_STRING("f64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64, .setter = (CCComponentExpressionSetter)SetF64 },
 };
 
 -(void) testDeserialization
@@ -172,6 +174,12 @@ do { \
     TEST_DESERIALIZE_SUCCESS("(f32: -1.0)", "-1.00");
     TEST_DESERIALIZE_SUCCESS("(f32: 1.5)", "1.50");
     TEST_DESERIALIZE_SUCCESS("(f32: 50.12)", "50.12");
+    
+    TEST_DESERIALIZE_FAILURE("(f64: :d)");
+    TEST_DESERIALIZE_FAILURE("(f64: 1)");
+    TEST_DESERIALIZE_SUCCESS("(f64: -1.0)", "-1.00");
+    TEST_DESERIALIZE_SUCCESS("(f64: 1.5)", "1.50");
+    TEST_DESERIALIZE_SUCCESS("(f64: 50.12)", "50.12");
     
     CCComponentDestroy(Component);
 }
