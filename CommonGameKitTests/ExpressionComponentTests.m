@@ -63,6 +63,7 @@ static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER
 static void SetBool(CCComponent Component, _Bool Value){ snprintf(Set, sizeof(Set), "%s", Value ? "true" : "false"); }
 static void SetF32(CCComponent Component, float Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
 static void SetF64(CCComponent Component, double Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
+static void SetColour(CCComponent Component, CCColourRGBA Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.r, Value.g, Value.b, Value.a); }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -77,6 +78,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("bool:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)SetBool },
     { .name = CC_STRING("f32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)SetF32 },
     { .name = CC_STRING("f64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64, .setter = (CCComponentExpressionSetter)SetF64 },
+    { .name = CC_STRING("colour:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeColour, .setter = (CCComponentExpressionSetter)SetColour },
 };
 
 -(void) testDeserialization
@@ -180,6 +182,20 @@ do { \
     TEST_DESERIALIZE_SUCCESS("(f64: -1.0)", "-1.00");
     TEST_DESERIALIZE_SUCCESS("(f64: 1.5)", "1.50");
     TEST_DESERIALIZE_SUCCESS("(f64: 50.12)", "50.12");
+    
+    TEST_DESERIALIZE_FAILURE("(colour: :d)");
+    TEST_DESERIALIZE_FAILURE("(colour: 1)");
+    TEST_DESERIALIZE_FAILURE("(colour: 1.0)");
+    TEST_DESERIALIZE_SUCCESS("(colour: 255 255 255 255)", "1.00, 1.00, 1.00, 1.00");
+    TEST_DESERIALIZE_SUCCESS("(colour: 0 64 127 191)", "0.00, 0.25, 0.50, 0.75");
+    TEST_DESERIALIZE_SUCCESS("(colour: 0 64 127)", "0.00, 0.25, 0.50, 1.00");
+    TEST_DESERIALIZE_SUCCESS("(colour: 1.0 0.75 0.5 0.25)", "1.00, 0.75, 0.50, 0.25");
+    TEST_DESERIALIZE_SUCCESS("(colour: 1.0 0.75 0.5)", "1.00, 0.75, 0.50, 1.00");
+    TEST_DESERIALIZE_SUCCESS("(colour: (255 255 255 255))", "1.00, 1.00, 1.00, 1.00");
+    TEST_DESERIALIZE_SUCCESS("(colour: (0 64 127 191))", "0.00, 0.25, 0.50, 0.75");
+    TEST_DESERIALIZE_SUCCESS("(colour: (0 64 127))", "0.00, 0.25, 0.50, 1.00");
+    TEST_DESERIALIZE_SUCCESS("(colour: (1.0 0.75 0.5 0.25))", "1.00, 0.75, 0.50, 0.25");
+    TEST_DESERIALIZE_SUCCESS("(colour: (1.0 0.75 0.5))", "1.00, 0.75, 0.50, 1.00");
     
     CCComponentDestroy(Component);
 }
