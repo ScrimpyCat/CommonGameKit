@@ -59,7 +59,7 @@ static void SetU8(CCComponent Component, uint8_t Value){ snprintf(Set, sizeof(Se
 static void SetU16(CCComponent Component, uint16_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
 static void SetU32(CCComponent Component, uint32_t Value){ snprintf(Set, sizeof(Set), "%u", Value); }
 static void SetU64(CCComponent Component, uint64_t Value){ snprintf(Set, sizeof(Set), "%llu", Value); }
-static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER(Buffer, Value) snprintf(Set, sizeof(Set), "%s", Buffer); }
+static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER(Buffer, Value) snprintf(Set, sizeof(Set), "%s", Buffer); CCStringDestroy(Value); }
 static void SetBool(CCComponent Component, _Bool Value){ snprintf(Set, sizeof(Set), "%s", Value ? "true" : "false"); }
 static void SetF32(CCComponent Component, float Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
 static void SetF64(CCComponent Component, double Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
