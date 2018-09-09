@@ -65,6 +65,7 @@ static void SetF32(CCComponent Component, float Value){ snprintf(Set, sizeof(Set
 static void SetF64(CCComponent Component, double Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
 static void SetColour(CCComponent Component, CCColourRGBA Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.r, Value.g, Value.b, Value.a); }
 static void SetData(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "->%d", *Value); CCFree(Value); }
+static void SetDataRef(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "ref->%d", *Value); }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -80,7 +81,8 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("f32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)SetF32 },
     { .name = CC_STRING("f64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64, .setter = (CCComponentExpressionSetter)SetF64 },
     { .name = CC_STRING("colour:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeColour, .setter = (CCComponentExpressionSetter)SetColour },
-    { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData }
+    { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
+    { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef }
 };
 
 static size_t DestroyCount = 0;
@@ -232,6 +234,15 @@ do { \
     TEST_DESERIALIZE_FAILURE("(data: (test-data 1))");
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data: (test-data 1))", "->1");
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data: (test-data 2))", "->2");
+    XCTAssertEqual(DestroyCount, 2, @"Should have destroyed the data");
+    
+    DestroyCount = 0;
+    TEST_DESERIALIZE_FAILURE("(data-ref: :d)");
+    TEST_DESERIALIZE_FAILURE("(data-ref: 1)");
+    TEST_DESERIALIZE_FAILURE("(data-ref: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(data-ref: (test-data 1))");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref: (test-data 1))", "ref->1");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref: (test-data 2))", "ref->2");
     XCTAssertEqual(DestroyCount, 2, @"Should have destroyed the data");
     
     CCComponentDestroy(Component);
