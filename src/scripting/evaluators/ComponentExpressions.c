@@ -53,6 +53,236 @@ void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDes
     if (Wrapper) CCExpressionEvaluatorRegister(Name, CCComponentExpressionWrapper);
 }
 
+#define CC_COMPONENT_EXPRESSION_STORE_EXPR(type, expr) \
+type const Value = expr; \
+switch (ContainerType) \
+{ \
+    case CCComponentExpressionArgumentTypeContainerComponent: \
+        ((void(*)(CCComponent,type))Deserializer->setter)(Container, Value); \
+        break; \
+    case CCComponentExpressionArgumentTypeContainerArray: \
+        CCArrayAppendElement(Container, &Value); \
+        break; \
+    case CCComponentExpressionArgumentTypeContainerList: \
+        CCLinkedListAppend(Container, CCLinkedListCreateNode(CC_STD_ALLOCATOR, sizeof(type), &Value)); \
+        break; \
+    case CCComponentExpressionArgumentTypeContainerOrderedCollection: \
+        CCOrderedCollectionAppendElement(Container, &Value); \
+        break; \
+    default: \
+        return FALSE; \
+}
+
+static _Bool CCComponentExpressionDeserializeExpression(const CCComponentExpressionArgumentDeserializer *Deserializer, CCExpressionValueType ExprType, CCExpression Expr, void *Container)
+{
+    const CCComponentExpressionArgumentSetterType ContainerType = Deserializer->setterType & CCComponentExpressionArgumentTypeContainerMask;
+    switch (Deserializer->setterType & CCComponentExpressionArgumentTypeMask)
+    {
+        case CCComponentExpressionArgumentTypeBool:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(_Bool, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeUInt8:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint8_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeUInt16:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint16_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeUInt32:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint32_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeUInt64:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint64_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeInt8:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int8_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeInt16:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int16_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeInt32:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int32_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeInt64:
+            if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int64_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeFloat32:
+            if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(float, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeFloat64:
+            if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(double, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeVector2:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsVector2(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCVector2D, CCExpressionGetVector2(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeVector3:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsVector3(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCVector3D, CCExpressionGetVector3(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeVector4:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsVector4(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCVector4D, CCExpressionGetVector4(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeVector2i:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsVector2i(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCVector2Di, CCExpressionGetVector2i(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeVector3i:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsVector3i(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCVector3Di, CCExpressionGetVector3i(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeVector4i:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsVector4i(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCVector4Di, CCExpressionGetVector4i(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeColour:
+            if ((ExprType == CCExpressionValueTypeList) && (CCExpressionIsColour(Expr)))
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCColourRGBA, CCExpressionGetColour(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeString:
+            if (ExprType == CCExpressionValueTypeString)
+            {
+                if ((Deserializer->setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(Expr, CCExpressionGetCopy(Expr), NULL);
+                
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(CCString, CCExpressionGetString(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeData:
+            if (Deserializer->serializedType != CCExpressionValueTypeUnspecified)
+            {
+                if ((Deserializer->setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(Expr, CCExpressionGetCopy(Expr), NULL);
+                
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(void*, CCExpressionGetData(Expr));
+                return TRUE;
+            }
+            break;
+
+        case CCComponentExpressionArgumentTypeExpression:
+            if ((Deserializer->setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(Expr, CCExpressionGetCopy(Expr), NULL);
+            
+            CC_COMPONENT_EXPRESSION_STORE_EXPR(CCExpression, Expr);
+            return TRUE;
+
+        default:
+            break;
+    }
+
+    return FALSE;
+}
+
+static size_t CCComponentExpressionTypeSize[] = {
+    0,
+    sizeof(_Bool), //CCComponentExpressionArgumentTypeBool = 1,
+    sizeof(uint8_t), //CCComponentExpressionArgumentTypeUInt8,
+    sizeof(uint16_t), //CCComponentExpressionArgumentTypeUInt16,
+    sizeof(uint32_t), //CCComponentExpressionArgumentTypeUInt32,
+    sizeof(uint64_t), //CCComponentExpressionArgumentTypeUInt64,
+    sizeof(int8_t), //CCComponentExpressionArgumentTypeInt8,
+    sizeof(int16_t), //CCComponentExpressionArgumentTypeInt16,
+    sizeof(int32_t), //CCComponentExpressionArgumentTypeInt32,
+    sizeof(int64_t), //CCComponentExpressionArgumentTypeInt64,
+    sizeof(float), //CCComponentExpressionArgumentTypeFloat32,
+    sizeof(double), //CCComponentExpressionArgumentTypeFloat64,
+    sizeof(CCVector2D), //CCComponentExpressionArgumentTypeVector2,
+    sizeof(CCVector3D), //CCComponentExpressionArgumentTypeVector3,
+    sizeof(CCVector4D), //CCComponentExpressionArgumentTypeVector4,
+    sizeof(CCVector2Di), //CCComponentExpressionArgumentTypeVector2i,
+    sizeof(CCVector3Di), //CCComponentExpressionArgumentTypeVector3i,
+    sizeof(CCVector4Di), //CCComponentExpressionArgumentTypeVector4i,
+    sizeof(CCColourRGBA), //CCComponentExpressionArgumentTypeColour,
+    sizeof(CCString), //CCComponentExpressionArgumentTypeString,
+    sizeof(void*), //CCComponentExpressionArgumentTypeData,
+    sizeof(CCExpression), //CCComponentExpressionArgumentTypeExpression,
+    sizeof(CCOrderedCollection), //CCComponentExpressionArgumentTypeTextAttribute,
+};
+
+_Static_assert((sizeof(CCComponentExpressionTypeSize) / sizeof(size_t)) == CCComponentExpressionArgumentTypeMax, "Must add the missing type entries");
+
 _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpression Arg, const CCComponentExpressionArgumentDeserializer *Deserializer, size_t Count, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
@@ -95,181 +325,99 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         
                         if (ArgCount == 2)
                         {
-                            switch (Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask)
+                            const CCComponentExpressionArgumentSetterType ContainerType = Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeContainerMask;
+                            if (ContainerType != CCComponentExpressionArgumentTypeContainerComponent)
                             {
-                                case CCComponentExpressionArgumentTypeBool:
-                                    if (ArgType == CCExpressionValueTypeInteger)
-                                    {
-                                        ((void(*)(CCComponent,_Bool))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
+                                if (ArgType == CCExpressionValueTypeList)
+                                {
+                                    const CCComponentExpressionArgumentSetterType Type = Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask;
                                     
-                                case CCComponentExpressionArgumentTypeUInt8:
-                                    if (ArgType == CCExpressionValueTypeInteger)
+                                    void *Container = NULL, (*ContainerDestroy)(void*);
+                                    switch (Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeContainerMask)
                                     {
-                                        ((void(*)(CCComponent,uint8_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
+                                        case CCComponentExpressionArgumentTypeContainerOrderedCollection:
+                                        {
+                                            CCCollectionElementDestructor Destructor;
+                                            switch (Type)
+                                            {
+                                                case CCComponentExpressionArgumentTypeBool:
+                                                case CCComponentExpressionArgumentTypeUInt8:
+                                                case CCComponentExpressionArgumentTypeUInt16:
+                                                case CCComponentExpressionArgumentTypeUInt32:
+                                                case CCComponentExpressionArgumentTypeUInt64:
+                                                case CCComponentExpressionArgumentTypeInt8:
+                                                case CCComponentExpressionArgumentTypeInt16:
+                                                case CCComponentExpressionArgumentTypeInt32:
+                                                case CCComponentExpressionArgumentTypeInt64:
+                                                case CCComponentExpressionArgumentTypeFloat32:
+                                                case CCComponentExpressionArgumentTypeFloat64:
+                                                case CCComponentExpressionArgumentTypeVector2:
+                                                case CCComponentExpressionArgumentTypeVector3:
+                                                case CCComponentExpressionArgumentTypeVector4:
+                                                case CCComponentExpressionArgumentTypeVector2i:
+                                                case CCComponentExpressionArgumentTypeVector3i:
+                                                case CCComponentExpressionArgumentTypeVector4i:
+                                                case CCComponentExpressionArgumentTypeColour:
+                                                    Destructor = NULL;
+                                                    break;
+                                                    
+                                                case CCComponentExpressionArgumentTypeString:
+                                                    Destructor = CCStringDestructorForCollection;
+                                                    break;
+                                                    
+    //                                            case CCComponentExpressionArgumentTypeData:
+    //                                                Destructor = CCAllocDestructorForCollection;
+                                                    // Add CCFree variant destructor for collections
+    //                                                break;
+
+                                                default:
+                                                    CC_LOG_ERROR_CUSTOM("Cannot deserialize type (%u) for argument (%S) of component (%u). Containers of this type are not supported.", Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
+                                                    return FALSE;
+                                            }
+                                            
+                                            Container = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, CCComponentExpressionTypeSize[Type], Destructor);
+                                            ContainerDestroy = (void(*)(void*))CCCollectionDestroy;
+                                            break;
+                                        }
+                                            
+                                        default:
+                                            CC_LOG_ERROR_CUSTOM("Cannot deserialize type (%u) for argument (%S) of component (%u). Containers of this type are not supported.", Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
+                                            return FALSE;
                                     }
-                                    break;
                                     
-                                case CCComponentExpressionArgumentTypeUInt16:
-                                    if (ArgType == CCExpressionValueTypeInteger)
+                                    CCComponentExpressionArgumentDeserializer ContainerDeserializer = Deserializer[Loop];
+                                    ContainerDeserializer.setterType = (ContainerDeserializer.setterType & ~CCComponentExpressionArgumentTypeOwnershipMask) | CCComponentExpressionArgumentTypeOwnershipTransfer;
+                                    
+                                    _Bool Deserialized = TRUE;
+                                    CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
                                     {
-                                        ((void(*)(CCComponent,uint16_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
+                                        if (!CCComponentExpressionDeserializeExpression(&ContainerDeserializer, CCExpressionGetType(ElementExpr), ElementExpr, Container))
+                                        {
+                                            Deserialized = FALSE;
+                                            break;
+                                        }
                                     }
-                                    break;
                                     
-                                case CCComponentExpressionArgumentTypeUInt32:
-                                    if (ArgType == CCExpressionValueTypeInteger)
+                                    if (Deserialized)
                                     {
-                                        ((void(*)(CCComponent,uint32_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeUInt64:
-                                    if (ArgType == CCExpressionValueTypeInteger)
-                                    {
-                                        ((void(*)(CCComponent,uint64_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeInt8:
-                                    if (ArgType == CCExpressionValueTypeInteger)
-                                    {
-                                        ((void(*)(CCComponent,int8_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeInt16:
-                                    if (ArgType == CCExpressionValueTypeInteger)
-                                    {
-                                        ((void(*)(CCComponent,int16_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeInt32:
-                                    if (ArgType == CCExpressionValueTypeInteger)
-                                    {
-                                        ((void(*)(CCComponent,int32_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeInt64:
-                                    if (ArgType == CCExpressionValueTypeInteger)
-                                    {
-                                        ((void(*)(CCComponent,int64_t))Deserializer[Loop].setter)(Component, CCExpressionGetInteger(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeFloat32:
-                                    if (ArgType == CCExpressionValueTypeFloat)
-                                    {
-                                        ((void(*)(CCComponent,float))Deserializer[Loop].setter)(Component, CCExpressionGetFloat(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeFloat64:
-                                    if (ArgType == CCExpressionValueTypeFloat)
-                                    {
-                                        ((void(*)(CCComponent,double))Deserializer[Loop].setter)(Component, CCExpressionGetFloat(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeVector2:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCVector2D))Deserializer[Loop].setter)(Component, CCExpressionGetVector2(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeVector3:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCVector3D))Deserializer[Loop].setter)(Component, CCExpressionGetVector3(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeVector4:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCVector4D))Deserializer[Loop].setter)(Component, CCExpressionGetVector4(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeVector2i:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCVector2Di))Deserializer[Loop].setter)(Component, CCExpressionGetVector2i(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeVector3i:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCVector3Di))Deserializer[Loop].setter)(Component, CCExpressionGetVector3i(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeVector4i:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCVector4Di))Deserializer[Loop].setter)(Component, CCExpressionGetVector4i(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeColour:
-                                    if (ArgType == CCExpressionValueTypeList)
-                                    {
-                                        ((void(*)(CCComponent,CCColourRGBA))Deserializer[Loop].setter)(Component, CCExpressionGetColour(ArgExpr));
-                                        return TRUE;
-                                    }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeString:
-                                    if (ArgType == CCExpressionValueTypeString)
-                                    {
-                                        if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(ArgExpr, CCExpressionGetCopy(ArgExpr), NULL);
+                                         ((void(*)(CCComponent,void*))Deserializer[Loop].setter)(Component, Container);
                                         
-                                        ((void(*)(CCComponent,CCString))Deserializer[Loop].setter)(Component, CCExpressionGetString(ArgExpr));
+                                        if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipRetain) ContainerDestroy(Container);
                                         return TRUE;
                                     }
-                                    break;
                                     
-                                case CCComponentExpressionArgumentTypeData:
-                                    if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
+                                    else
                                     {
-                                        if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(ArgExpr, CCExpressionGetCopy(ArgExpr), NULL);
+                                        /*
+                                         Handle manual cleanup if the container does not have an element destructor
+                                         */
                                         
-                                        ((void(*)(CCComponent,void*))Deserializer[Loop].setter)(Component, CCExpressionGetData(ArgExpr));
-                                        return TRUE;
+                                        ContainerDestroy(Container);
                                     }
-                                    break;
-                                    
-                                case CCComponentExpressionArgumentTypeExpression:
-                                    if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipTransfer) CCExpressionChangeOwnership(ArgExpr, CCExpressionGetCopy(ArgExpr), NULL);
-                                    
-                                    ((void(*)(CCComponent,CCExpression))Deserializer[Loop].setter)(Component, ArgExpr);
-                                    return TRUE;
-                                    
-                                default:
-                                    break;
+                                }
                             }
+                            
+                            else if (CCComponentExpressionDeserializeExpression(&Deserializer[Loop], ArgType, ArgExpr, Component)) return TRUE;
                         }
                         
                         else

@@ -90,8 +90,10 @@ typedef enum {
     CCComponentExpressionArgumentTypeData,
     CCComponentExpressionArgumentTypeExpression,
     CCComponentExpressionArgumentTypeTextAttribute,
+    CCComponentExpressionArgumentTypeMax,
     
     CCComponentExpressionArgumentTypeContainerMask = (3 << 29),
+    CCComponentExpressionArgumentTypeContainerComponent = 0,
     CCComponentExpressionArgumentTypeContainerArray = (1 << 29),
     CCComponentExpressionArgumentTypeContainerList = (2 << 29),
     CCComponentExpressionArgumentTypeContainerOrderedCollection = (3 << 29),
