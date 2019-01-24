@@ -53,8 +53,8 @@ void CCAnimationComponentDeserializer(CCComponent Component, CCExpression Arg, _
                         {
                             CCString LoopType = CCExpressionGetAtom(LoopExpr);
                             if (CCStringEqual(LoopType, CC_STRING(":once"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopOnce);
-                            if (CCStringEqual(LoopType, CC_STRING(":roll"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopRepeatRoll);
-                            if (CCStringEqual(LoopType, CC_STRING(":flip"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopRepeatFlip);
+                            else if (CCStringEqual(LoopType, CC_STRING(":roll"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopRepeatRoll);
+                            else if (CCStringEqual(LoopType, CC_STRING(":flip"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopRepeatFlip);
                             else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (loop:) is not a valid atom", LoopType);
                         }
                         
