@@ -308,6 +308,21 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                             {
                                 if (ArgType == CCExpressionValueTypeList)
                                 {
+                                    if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
+                                    {
+                                        CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
+                                        {
+                                            const CCExpressionValueType ElementType = CCExpressionGetType(ElementExpr);
+                                            if (ElementType != Deserializer[Loop].serializedType)
+                                            {
+                                                if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                                                
+                                                CC_LOG_ERROR_CUSTOM("Serialized type (%u) does not match type (%u) for argument (%S) of component (%u)", ElementType, Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
+                                                return FALSE;
+                                            }
+                                        }
+                                    }
+                                    
                                     const CCComponentExpressionArgumentSetterType Type = Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask;
                                     
                                     void *Container = NULL, (*ContainerDestroy)(void*);
@@ -366,31 +381,12 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     ContainerDeserializer.setterType = (ContainerDeserializer.setterType & ~CCComponentExpressionArgumentTypeOwnershipMask) | CCComponentExpressionArgumentTypeOwnershipTransfer;
                                     
                                     _Bool Deserialized = TRUE;
-                                    if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
+                                    CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
                                     {
-                                        CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
+                                        if (!CCComponentExpressionDeserializeExpression(&ContainerDeserializer, CCExpressionGetType(ElementExpr), ElementExpr, Container))
                                         {
-                                            const CCExpressionValueType ElementType = CCExpressionGetType(ElementExpr);
-                                            if (ElementType != Deserializer[Loop].serializedType)
-                                            {
-                                                if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
-                                                
-                                                CC_LOG_ERROR_CUSTOM("Serialized type (%u) does not match type (%u) for argument (%S) of component (%u)", ElementType, Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
-                                                Deserialized = FALSE;
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    
-                                    if (Deserialized)
-                                    {
-                                        CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
-                                        {
-                                            if (!CCComponentExpressionDeserializeExpression(&ContainerDeserializer, CCExpressionGetType(ElementExpr), ElementExpr, Container))
-                                            {
-                                                Deserialized = FALSE;
-                                                break;
-                                            }
+                                            Deserialized = FALSE;
+                                            break;
                                         }
                                     }
                                     
