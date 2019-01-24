@@ -91,6 +91,16 @@ static void SetDataCollection(CCComponent Component, CCOrderedCollection Collect
     
     CCCollectionDestroy(Collection);
 }
+static void SetDataRefCollection(CCComponent Component, CCOrderedCollection Collection)
+{
+    size_t Written = 0;
+    CC_COLLECTION_FOREACH_PTR(int *, Value, Collection)
+    {
+        Written += snprintf(Set + Written, sizeof(Set) - Written, "->%d, ", **Value);
+    }
+    
+    Set[Written - 2] = 0;
+}
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -110,7 +120,8 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
     { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef },
     { .name = CC_STRING("i8-collection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetI8Collection },
-    { .name = CC_STRING("data-collection:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetDataCollection }
+    { .name = CC_STRING("data-collection:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetDataCollection },
+    { .name = CC_STRING("data-ref-collection:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetDataRefCollection }
 };
 
 static size_t DestroyCount = 0;
@@ -331,6 +342,19 @@ do { \
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-collection: ((test-data 1)))", "->1");
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-collection: ((test-data 1) (test-data 2)))", "->1, ->2");
     TEST_EVALUATE_DESERIALIZE_FAILURE("(data-collection: ((test-data 1) (test-data 2) :d))");
+    XCTAssertEqual(DestroyCount, 6, @"Should have destroyed the data");
+    
+    DestroyCount = 0;
+    TEST_DESERIALIZE_FAILURE("(data-ref-collection: :d)");
+    TEST_DESERIALIZE_FAILURE("(data-ref-collection: 1)");
+    TEST_DESERIALIZE_FAILURE("(data-ref-collection: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(data-ref-collection: (test-data 1))");
+    TEST_DESERIALIZE_FAILURE("(data-ref-collection: ((test-data 1)))");
+    TEST_EVALUATE_DESERIALIZE_FAILURE("(data-ref-collection: (test-data 1))");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref-collection: ())", "");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref-collection: ((test-data 1)))", "->1");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref-collection: ((test-data 1) (test-data 2)))", "->1, ->2");
+    TEST_EVALUATE_DESERIALIZE_FAILURE("(data-ref-collection: ((test-data 1) (test-data 2) :d))");
     XCTAssertEqual(DestroyCount, 6, @"Should have destroyed the data");
     
     CCComponentDestroy(Component);
