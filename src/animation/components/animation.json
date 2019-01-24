@@ -42,6 +42,73 @@
                     "args": [[{ "type": "atom" }]]
                 }
             ]
+        },
+        {
+            "name": "animation-keyframe",
+            "description": "Create a keyframe animation component.",
+            "examples": ["(animation-keyframe (name: \"name\") (frames: (0.5 1.0)))"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "name",
+                    "description": "The name of the animation.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "speed",
+                    "description": "The speed of the animation.",
+                    "args": [[{ "type": "float" }]]
+                },
+                {
+                    "name": "position",
+                    "description": "The position of the animation.",
+                    "args": [[{ "type": "float" }]]
+                },
+                {
+                    "name": "playing",
+                    "description": "Whether the animation is playing.",
+                    "args": [[{ "type": "boolean" }]]
+                },
+                {
+                    "name": "loop",
+                    "description": "The repitition type of the animation.",
+                    "args": [
+                        [{ "type": "atom", "name": "type" }],
+                        [{ "type": "atom", "value": "once" }],
+                        [{ "type": "atom", "value": "roll" }],
+                        [{ "type": "atom", "value": "flip" }]
+                    ]
+                },
+                {
+                    "name": "frame",
+                    "description": "The uniform frame time of the animation.",
+                    "args": [[{ "type": "integer", "name": "time" }]]
+                },
+                {
+                    "name": "frames",
+                    "description": "The frame time steps of the animation.",
+                    "args": [[{ "type": "list", "name": "times" }]]
+                },
+                {
+                    "name": "index",
+                    "description": "The index for the current frame in the animation.",
+                    "args": [[{ "type": "integer", "name": "frame" }]]
+                },
+                {
+                    "name": "data",
+                    "description": "The data associated with each frame from the animation.",
+                    "args": [[{ "type": "list", "name": "item" }]]
+                },
+                {
+                    "name": "direction",
+                    "description": "The direction of the animation.",
+                    "args": [
+                        [{ "type": "atom", "name": "type" }],
+                        [{ "type": "atom", "value": "forward" }],
+                        [{ "type": "atom", "value": "backward" }]
+                    ]
+                }
+            ]
         }
     ]
 }
