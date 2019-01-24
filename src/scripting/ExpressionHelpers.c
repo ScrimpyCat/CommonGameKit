@@ -322,12 +322,22 @@ float CCExpressionGetNamedFloat(CCExpression Value)
     return Result;
 }
 
+_Bool CCExpressionIsNamedVector2(CCExpression Vec)
+{
+    return CCExpressionGetFloatArray(Vec, (CCVector2D){}.v, 1, 2, NULL);
+}
+
 CCVector2D CCExpressionGetNamedVector2(CCExpression Vec)
 {
     CCVector2D Result;
     CCExpressionGetFloatArray(Vec, Result.v, 1, 2, "Vector2D should evaluate to a list of 2 numbers. (x:number y:number)");
     
     return Result;
+}
+
+_Bool CCExpressionIsNamedVector3(CCExpression Vec)
+{
+    return CCExpressionGetFloatArray(Vec, (CCVector3D){}.v, 1, 3, NULL);
 }
 
 CCVector3D CCExpressionGetNamedVector3(CCExpression Vec)
@@ -338,12 +348,22 @@ CCVector3D CCExpressionGetNamedVector3(CCExpression Vec)
     return Result;
 }
 
+_Bool CCExpressionIsNamedVector4(CCExpression Vec)
+{
+    return CCExpressionGetFloatArray(Vec, (CCVector4D){}.v, 1, 4, NULL);
+}
+
 CCVector4D CCExpressionGetNamedVector4(CCExpression Vec)
 {
     CCVector4D Result;
     CCExpressionGetFloatArray(Vec, Result.v, 1, 4, "Vector4D should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
     
     return Result;
+}
+
+_Bool CCExpressionIsNamedVector2i(CCExpression Vec)
+{
+    return CCExpressionGetIntegerArray(Vec, (CCVector2Di){}.v, 1, 2, NULL);
 }
 
 CCVector2Di CCExpressionGetNamedVector2i(CCExpression Vec)
@@ -354,12 +374,22 @@ CCVector2Di CCExpressionGetNamedVector2i(CCExpression Vec)
     return Result;
 }
 
+_Bool CCExpressionIsNamedVector3i(CCExpression Vec)
+{
+    return CCExpressionGetIntegerArray(Vec, (CCVector3Di){}.v, 1, 3, NULL);
+}
+
 CCVector3Di CCExpressionGetNamedVector3i(CCExpression Vec)
 {
     CCVector3Di Result;
     CCExpressionGetIntegerArray(Vec, Result.v, 1, 3, "Vector3Di should evaluate to a list of 3 numbers. (x:number y:number z:number)");
     
     return Result;
+}
+
+_Bool CCExpressionIsNamedVector4i(CCExpression Vec)
+{
+    return CCExpressionGetIntegerArray(Vec, (CCVector4Di){}.v, 1, 4, NULL);
 }
 
 CCVector4Di CCExpressionGetNamedVector4i(CCExpression Vec)
@@ -370,12 +400,22 @@ CCVector4Di CCExpressionGetNamedVector4i(CCExpression Vec)
     return Result;
 }
 
+_Bool CCExpressionIsNamedRect(CCExpression Rect)
+{
+    return CCExpressionIsNamedVector4(Rect);
+}
+
 CCRect CCExpressionGetNamedRect(CCExpression Rect)
 {
     CCVector4D Result;
     CCExpressionGetFloatArray(Rect, Result.v, 1, 4, "Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
     
     return (CCRect){ Result.v[0], Result.v[1], Result.v[2], Result.v[3] };
+}
+
+_Bool CCExpressionIsNamedColour(CCExpression Colour)
+{
+    return CCExpressionGetFloatMinArray(Colour, (CCVector4D){}.v, 0.003921568627f, 1, 3, 4, &(size_t){0}, NULL);
 }
 
 CCColourRGBA CCExpressionGetNamedColour(CCExpression Colour)
