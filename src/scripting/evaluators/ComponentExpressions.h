@@ -92,6 +92,12 @@ typedef enum {
     CCComponentExpressionArgumentTypeTextAttribute,
     CCComponentExpressionArgumentTypeMax,
     
+#if CC_HARDWARE_PTR_64
+    CCComponentExpressionArgumentTypeSize = CCComponentExpressionArgumentTypeUInt64,
+#elif CC_HARDWARE_PTR_32
+    CCComponentExpressionArgumentTypeSize = CCComponentExpressionArgumentTypeUInt32,
+#endif
+    
     CCComponentExpressionArgumentTypeContainerMask = (3 << 29),
     CCComponentExpressionArgumentTypeContainerComponent = 0,
     CCComponentExpressionArgumentTypeContainerArray = (1 << 29),

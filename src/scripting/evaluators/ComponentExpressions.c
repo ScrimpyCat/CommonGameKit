@@ -301,28 +301,6 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                         CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
                         const CCExpressionValueType ArgType = CCExpressionGetType(ArgExpr);
                         
-                        if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
-                        {
-                            if (ArgCount == 2)
-                            {
-                                if (ArgType != Deserializer[Loop].serializedType)
-                                {
-                                    if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
-                                    
-                                    CC_LOG_ERROR_CUSTOM("Serialized type (%u) does not match type (%u) for argument (%S) of component (%u)", ArgType, Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
-                                    return FALSE;
-                                }
-                            }
-                            
-                            else
-                            {
-                                if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
-                                
-                                CC_LOG_ERROR_CUSTOM("Expected serialized type (%u) for argument (%S) of component (%u) but arguments do not match", Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
-                                return FALSE;
-                            }
-                        }
-                        
                         if (ArgCount == 2)
                         {
                             const CCComponentExpressionArgumentSetterType ContainerType = Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeContainerMask;
@@ -365,10 +343,9 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                                     Destructor = CCStringDestructorForCollection;
                                                     break;
                                                     
-    //                                            case CCComponentExpressionArgumentTypeData:
-    //                                                Destructor = CCAllocDestructorForCollection;
-                                                    // Add CCFree variant destructor for collections
-    //                                                break;
+                                                case CCComponentExpressionArgumentTypeData:
+                                                    Destructor = CCGenericDestructorForCollection;
+                                                    break;
 
                                                 default:
                                                     CC_LOG_ERROR_CUSTOM("Cannot deserialize type (%u) for argument (%S) of component (%u). Containers of this type are not supported.", Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
@@ -389,12 +366,31 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     ContainerDeserializer.setterType = (ContainerDeserializer.setterType & ~CCComponentExpressionArgumentTypeOwnershipMask) | CCComponentExpressionArgumentTypeOwnershipTransfer;
                                     
                                     _Bool Deserialized = TRUE;
-                                    CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
+                                    if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
                                     {
-                                        if (!CCComponentExpressionDeserializeExpression(&ContainerDeserializer, CCExpressionGetType(ElementExpr), ElementExpr, Container))
+                                        CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
                                         {
-                                            Deserialized = FALSE;
-                                            break;
+                                            const CCExpressionValueType ElementType = CCExpressionGetType(ElementExpr);
+                                            if (ElementType != Deserializer[Loop].serializedType)
+                                            {
+                                                if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                                                
+                                                CC_LOG_ERROR_CUSTOM("Serialized type (%u) does not match type (%u) for argument (%S) of component (%u)", ElementType, Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
+                                                Deserialized = FALSE;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (Deserialized)
+                                    {
+                                        CC_COLLECTION_FOREACH(CCExpression, ElementExpr, CCExpressionGetList(ArgExpr))
+                                        {
+                                            if (!CCComponentExpressionDeserializeExpression(&ContainerDeserializer, CCExpressionGetType(ElementExpr), ElementExpr, Container))
+                                            {
+                                                Deserialized = FALSE;
+                                                break;
+                                            }
                                         }
                                     }
                                     
@@ -417,40 +413,90 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                 }
                             }
                             
-                            else if (CCComponentExpressionDeserializeExpression(&Deserializer[Loop], ArgType, ArgExpr, Component)) return TRUE;
+                            else
+                            {
+                                if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
+                                {
+                                    if (ArgType != Deserializer[Loop].serializedType)
+                                    {
+                                        if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                                        
+                                        CC_LOG_ERROR_CUSTOM("Serialized type (%u) does not match type (%u) for argument (%S) of component (%u)", ArgType, Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
+                                        return FALSE;
+                                    }
+                                }
+                                
+                                if (CCComponentExpressionDeserializeExpression(&Deserializer[Loop], ArgType, ArgExpr, Component)) return TRUE;
+                            }
                         }
                         
                         else
                         {
+                            if (Deserializer[Loop].serializedType != CCExpressionValueTypeUnspecified)
+                            {
+                                if (CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) return TRUE;
+                                
+                                CC_LOG_ERROR_CUSTOM("Expected serialized type (%u) for argument (%S) of component (%u) but arguments do not match", Deserializer[Loop].serializedType, Name, CCComponentGetID(Component));
+                                return FALSE;
+                            }
+                            
                             switch (Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeMask)
                             {
                                 case CCComponentExpressionArgumentTypeVector2:
-                                    ((void(*)(CCComponent,CCVector2D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedVector2(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCVector2D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeVector3:
-                                    ((void(*)(CCComponent,CCVector3D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector3(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedVector4(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCVector3D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector3(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeVector4:
-                                    ((void(*)(CCComponent,CCVector4D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector4(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedVector4(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCVector4D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector4(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeVector2i:
-                                    ((void(*)(CCComponent,CCVector2Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2i(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedVector2i(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCVector2Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector2i(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeVector3i:
-                                    ((void(*)(CCComponent,CCVector3Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector3i(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedVector3i(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCVector3Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector3i(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeVector4i:
-                                    ((void(*)(CCComponent,CCVector4Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector4i(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedVector4i(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCVector4Di))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector4i(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeColour:
-                                    ((void(*)(CCComponent,CCColourRGBA))Deserializer[Loop].setter)(Component, CCExpressionGetNamedColour(Arg));
-                                    return TRUE;
+                                    if (CCExpressionIsNamedColour(Arg))
+                                    {
+                                        ((void(*)(CCComponent,CCColourRGBA))Deserializer[Loop].setter)(Component, CCExpressionGetNamedColour(Arg));
+                                        return TRUE;
+                                    }
+                                    return FALSE;
                                     
                                 default:
                                     break;
