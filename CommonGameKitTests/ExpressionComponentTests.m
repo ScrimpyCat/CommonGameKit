@@ -67,6 +67,16 @@ static void SetVec4(CCComponent Component, CCVector4D Value){ snprintf(Set, size
 static void SetColour(CCComponent Component, CCColourRGBA Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.r, Value.g, Value.b, Value.a); }
 static void SetData(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "->%d", *Value); CCFree(Value); }
 static void SetDataRef(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "ref->%d", *Value); }
+static void SetI8Collection(CCComponent Component, CCOrderedCollection Collection)
+{
+    size_t Written = 0;
+    CC_COLLECTION_FOREACH(int8_t, Value, Collection)
+    {
+        Written += snprintf(Set + Written, sizeof(Set) - Written, "%d, ", Value);
+    }
+    
+    Set[Written - 2] = 0;
+}
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("i8:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8, .setter = (CCComponentExpressionSetter)SetI8 },
@@ -84,7 +94,8 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("vec4:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector4, .setter = (CCComponentExpressionSetter)SetVec4 },
     { .name = CC_STRING("colour:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeColour, .setter = (CCComponentExpressionSetter)SetColour },
     { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
-    { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef }
+    { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef },
+    { .name = CC_STRING("i8-collection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetI8Collection }
 };
 
 static size_t DestroyCount = 0;
@@ -274,6 +285,17 @@ do { \
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref: (test-data 1))", "ref->1");
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref: (test-data 2))", "ref->2");
     XCTAssertEqual(DestroyCount, 2, @"Should have destroyed the data");
+    
+    TEST_DESERIALIZE_FAILURE("(i8-collection: :d)");
+    TEST_DESERIALIZE_FAILURE("(i8-collection: 1)");
+    TEST_DESERIALIZE_FAILURE("(i8-collection: -1)");
+    TEST_DESERIALIZE_FAILURE("(i8-collection: 127)");
+    TEST_DESERIALIZE_FAILURE("(i8-collection: -128)");
+    TEST_DESERIALIZE_FAILURE("(i8-collection: 256)");
+    TEST_DESERIALIZE_SUCCESS("(i8-collection: ())", "");
+    TEST_DESERIALIZE_FAILURE("(i8-collection: (1 2 3 :d)");
+    TEST_DESERIALIZE_SUCCESS("(i8-collection: (256))", "0");
+    TEST_DESERIALIZE_SUCCESS("(i8-collection: (1 2 3 4))", "1, 2, 3, 4");
     
     CCComponentDestroy(Component);
 }
