@@ -76,6 +76,20 @@ static void SetI8Collection(CCComponent Component, CCOrderedCollection Collectio
     }
     
     Set[Written - 2] = 0;
+    
+    CCCollectionDestroy(Collection);
+}
+static void SetDataCollection(CCComponent Component, CCOrderedCollection Collection)
+{
+    size_t Written = 0;
+    CC_COLLECTION_FOREACH_PTR(int *, Value, Collection)
+    {
+        Written += snprintf(Set + Written, sizeof(Set) - Written, "->%d, ", **Value);
+    }
+    
+    Set[Written - 2] = 0;
+    
+    CCCollectionDestroy(Collection);
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
@@ -95,7 +109,8 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("colour:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeColour, .setter = (CCComponentExpressionSetter)SetColour },
     { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
     { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef },
-    { .name = CC_STRING("i8-collection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetI8Collection }
+    { .name = CC_STRING("i8-collection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetI8Collection },
+    { .name = CC_STRING("data-collection:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetDataCollection }
 };
 
 static size_t DestroyCount = 0;
@@ -139,6 +154,14 @@ do { \
     Set[0] = 0; \
     CCExpression Arg = CCExpressionCreateFromSource(expression); \
     XCTAssertFalse(CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), FALSE), @"Should not deserialize"); \
+    XCTAssertTrue(!strcmp(Set, "")); \
+    CCExpressionDestroy(Arg); \
+} while(0)
+#define TEST_EVALUATE_DESERIALIZE_FAILURE(expression) \
+do { \
+    Set[0] = 0; \
+    CCExpression Arg = CCExpressionCreateFromSource(expression); \
+    XCTAssertFalse(CCComponentExpressionDeserializeArgument(Component, CCExpressionEvaluate(Arg), Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), FALSE), @"Should not deserialize"); \
     XCTAssertTrue(!strcmp(Set, "")); \
     CCExpressionDestroy(Arg); \
 } while(0)
@@ -285,7 +308,7 @@ do { \
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref: (test-data 1))", "ref->1");
     TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-ref: (test-data 2))", "ref->2");
     XCTAssertEqual(DestroyCount, 2, @"Should have destroyed the data");
-    
+
     TEST_DESERIALIZE_FAILURE("(i8-collection: :d)");
     TEST_DESERIALIZE_FAILURE("(i8-collection: 1)");
     TEST_DESERIALIZE_FAILURE("(i8-collection: -1)");
@@ -296,6 +319,19 @@ do { \
     TEST_DESERIALIZE_FAILURE("(i8-collection: (1 2 3 :d)");
     TEST_DESERIALIZE_SUCCESS("(i8-collection: (256))", "0");
     TEST_DESERIALIZE_SUCCESS("(i8-collection: (1 2 3 4))", "1, 2, 3, 4");
+    
+    DestroyCount = 0;
+    TEST_DESERIALIZE_FAILURE("(data-collection: :d)");
+    TEST_DESERIALIZE_FAILURE("(data-collection: 1)");
+    TEST_DESERIALIZE_FAILURE("(data-collection: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(data-collection: (test-data 1))");
+    TEST_DESERIALIZE_FAILURE("(data-collection: ((test-data 1)))");
+    TEST_EVALUATE_DESERIALIZE_FAILURE("(data-collection: (test-data 1))");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-collection: ())", "");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-collection: ((test-data 1)))", "->1");
+    TEST_EVALUATE_DESERIALIZE_SUCCESS("(data-collection: ((test-data 1) (test-data 2)))", "->1, ->2");
+    TEST_EVALUATE_DESERIALIZE_FAILURE("(data-collection: ((test-data 1) (test-data 2) :d))");
+    XCTAssertEqual(DestroyCount, 6, @"Should have destroyed the data");
     
     CCComponentDestroy(Component);
 }
