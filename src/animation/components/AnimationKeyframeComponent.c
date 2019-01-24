@@ -48,10 +48,6 @@ void CCAnimationKeyframeComponentDeregister(void)
 }
 
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
-    { .name = CC_STRING("name:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = CCAnimationComponentSetName },
-    { .name = CC_STRING("speed:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCAnimationComponentSetSpeed },
-    { .name = CC_STRING("position:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64, .setter = (CCComponentExpressionSetter)CCAnimationComponentSetPosition },
-    { .name = CC_STRING("playing:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)CCAnimationComponentSetPlaying },
     { .name = CC_STRING("frame:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64, .setter = (CCComponentExpressionSetter)CCAnimationKeyframeComponentSetFrame },
     { .name = CC_STRING("frames:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)CCAnimationKeyframeComponentSetFrames },
     { .name = CC_STRING("index:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeSize, .setter = (CCComponentExpressionSetter)CCAnimationKeyframeComponentSetIndex },
@@ -69,29 +65,7 @@ void CCAnimationKeyframeComponentDeserializer(CCComponent Component, CCExpressio
             if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
             {
                 CCString Name = CCExpressionGetAtom(NameExpr);
-                if (CCStringEqual(Name, CC_STRING("loop:")))
-                {
-                    if (ArgCount == 2)
-                    {
-                        CCExpression LoopExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
-                        if (CCExpressionGetType(LoopExpr) == CCExpressionValueTypeAtom)
-                        {
-                            CCString LoopType = CCExpressionGetAtom(LoopExpr);
-                            if (CCStringEqual(LoopType, CC_STRING(":once"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopOnce);
-                            else if (CCStringEqual(LoopType, CC_STRING(":roll"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopRepeatRoll);
-                            else if (CCStringEqual(LoopType, CC_STRING(":flip"))) CCAnimationComponentSetLoop(Component, CCAnimationLoopRepeatFlip);
-                            else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (loop:) is not a valid atom", LoopType);
-                        }
-                        
-                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (loop:) to be an atom");
-                    }
-                    
-                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (loop:) to be an atom");
-                    
-                    return;
-                }
-                
-                else if (CCStringEqual(Name, CC_STRING("direction:")))
+                if (CCStringEqual(Name, CC_STRING("direction:")))
                 {
                     if (ArgCount == 2)
                     {
