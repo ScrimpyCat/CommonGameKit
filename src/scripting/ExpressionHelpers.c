@@ -118,7 +118,7 @@ static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float
             
             else
             {
-                CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
+                if (ErrMsg) CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
                 memset(Values, 0, Max);
                 *Count = Max;
                 
@@ -129,7 +129,7 @@ static _Bool CCExpressionGetFloatMinArray(CCExpression Vec, float *Values, float
         return TRUE;
     }
     
-    CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
+    if (ErrMsg) CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
     memset(Values, 0, Max);
     *Count = Max;
     
@@ -156,7 +156,7 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, f
             
             else
             {
-                CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
+                if (ErrMsg) CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
                 memset(Values, 0, Max);
                 *Count = Max;
                 
@@ -167,7 +167,7 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, f
         return TRUE;
     }
     
-    CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
+    if (ErrMsg) CC_EXPRESSION_EVALUATOR_LOG_ERROR(ErrMsg);
     memset(Values, 0, Max);
     *Count = Max;
     
@@ -184,12 +184,22 @@ static _Bool CCExpressionGetIntegerArray(CCExpression Vec, int32_t *Values, size
     return CCExpressionGetIntegerMinArray(Vec, Values, 1.0f, Start, Count, Count, &Count, ErrMsg);
 }
 
+_Bool CCExpressionIsVector2(CCExpression Vec)
+{
+    return CCExpressionGetFloatArray(Vec, (CCVector2D){}.v, 0, 2, NULL);
+}
+
 CCVector2D CCExpressionGetVector2(CCExpression Vec)
 {
     CCVector2D Result;
     CCExpressionGetFloatArray(Vec, Result.v, 0, 2, "Vector2D should evaluate to a list of 2 numbers. (x:number y:number)");
     
     return Result;
+}
+
+_Bool CCExpressionIsVector3(CCExpression Vec)
+{
+    return CCExpressionGetFloatArray(Vec, (CCVector3D){}.v, 0, 3, NULL);
 }
 
 CCVector3D CCExpressionGetVector3(CCExpression Vec)
@@ -200,12 +210,22 @@ CCVector3D CCExpressionGetVector3(CCExpression Vec)
     return Result;
 }
 
+_Bool CCExpressionIsVector4(CCExpression Vec)
+{
+    return CCExpressionGetFloatArray(Vec, (CCVector4D){}.v, 0, 4, NULL);
+}
+
 CCVector4D CCExpressionGetVector4(CCExpression Vec)
 {
     CCVector4D Result;
     CCExpressionGetFloatArray(Vec, Result.v, 0, 4, "Vector4D should evaluate to a list of 4 numbers. (x:number y:number z:number w:number)");
     
     return Result;
+}
+
+_Bool CCExpressionIsVector2i(CCExpression Vec)
+{
+    return CCExpressionGetIntegerArray(Vec, (CCVector2Di){}.v, 0, 2, NULL);
 }
 
 CCVector2Di CCExpressionGetVector2i(CCExpression Vec)
@@ -216,12 +236,22 @@ CCVector2Di CCExpressionGetVector2i(CCExpression Vec)
     return Result;
 }
 
+_Bool CCExpressionIsVector3i(CCExpression Vec)
+{
+    return CCExpressionGetIntegerArray(Vec, (CCVector3Di){}.v, 0, 3, NULL);
+}
+
 CCVector3Di CCExpressionGetVector3i(CCExpression Vec)
 {
     CCVector3Di Result;
     CCExpressionGetIntegerArray(Vec, Result.v, 0, 3, "Vector3Di should evaluate to a list of 3 numbers. (x:number y:number z:number)");
     
     return Result;
+}
+
+_Bool CCExpressionIsVector4i(CCExpression Vec)
+{
+    return CCExpressionGetIntegerArray(Vec, (CCVector4Di){}.v, 0, 4, NULL);
 }
 
 CCVector4Di CCExpressionGetVector4i(CCExpression Vec)
@@ -232,12 +262,22 @@ CCVector4Di CCExpressionGetVector4i(CCExpression Vec)
     return Result;
 }
 
+_Bool CCExpressionIsRect(CCExpression Rect)
+{
+    return CCExpressionIsVector4(Rect);
+}
+
 CCRect CCExpressionGetRect(CCExpression Rect)
 {
     CCVector4D Result;
     CCExpressionGetFloatArray(Rect, Result.v, 0, 4, "Rect should evaluate to a list of 4 numbers. (x:number y:number width:number height:number)");
     
     return (CCRect){ Result.v[0], Result.v[1], Result.v[2], Result.v[3] };
+}
+
+_Bool CCExpressionIsColour(CCExpression Colour)
+{
+    return CCExpressionGetFloatMinArray(Colour, (CCVector4D){}.v, 0.003921568627f, 0, 3, 4, &(size_t){0}, NULL);
 }
 
 CCColourRGBA CCExpressionGetColour(CCExpression Colour)

@@ -36,6 +36,15 @@ CC_NEW CCExpression CCExpressionCreateVector3i(CCAllocatorType Allocator, CCVect
 CC_NEW CCExpression CCExpressionCreateVector4i(CCAllocatorType Allocator, CCVector4Di v);
 CC_NEW CCExpression CCExpressionCreateRect(CCAllocatorType Allocator, CCRect r);
 
+_Bool CCExpressionIsVector2(CCExpression Vec);
+_Bool CCExpressionIsVector3(CCExpression Vec);
+_Bool CCExpressionIsVector4(CCExpression Vec);
+_Bool CCExpressionIsVector2i(CCExpression Vec);
+_Bool CCExpressionIsVector3i(CCExpression Vec);
+_Bool CCExpressionIsVector4i(CCExpression Vec);
+_Bool CCExpressionIsRect(CCExpression Rect);
+_Bool CCExpressionIsColour(CCExpression Colour);
+
 CCVector2D CCExpressionGetVector2(CCExpression Vec);
 CCVector3D CCExpressionGetVector3(CCExpression Vec);
 CCVector4D CCExpressionGetVector4(CCExpression Vec);
