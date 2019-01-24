@@ -87,7 +87,7 @@ static inline CCOrderedCollection CCAnimationKeyframeComponentGetData(CCComponen
  * @param Component The animation component.
  * @param Data The animation frame data.
  */
-static inline void CCAnimationKeyframeComponentSetData(CCComponent Component, CCOrderedCollection Data);
+static inline void CCAnimationKeyframeComponentSetData(CCComponent Component, CCOrderedCollection CC_OWN(Data));
 
 /*!
  * @brief Get the frame time steps for the animation.
@@ -104,7 +104,7 @@ static inline CCOrderedCollection CCAnimationKeyframeComponentGetFrames(CCCompon
  * @param Component The animation component.
  * @param Frames The times for each frame.
  */
-static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection Frames);
+static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection CC_OWN(Frames));
 
 /*!
  * @brief Get the frame time step for the animation.
