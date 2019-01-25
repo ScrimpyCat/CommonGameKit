@@ -35,7 +35,7 @@ typedef struct {
 
 static void *GUIExpressionConstructor(CCAllocatorType Allocator);
 static void GUIExpressionDestructor(GUIExpressionInfo *Internal);
-static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
+static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index, GFXBuffer Projection);
 static void GUIExpressionEvent(GUIObject Object, GUIEvent Event);
 static CCRect GUIExpressionGetRect(GUIObject Object);
 static void GUIExpressionSetRect(GUIObject Object, CCRect Rect);
@@ -123,7 +123,6 @@ static void GUIExpressionDestructor(GUIExpressionInfo *Internal)
 }
 
 #include "AssetManager.h"
-#include "Window.h"
 #include "AssetExpressions.h"
 #include "GraphicsExpressions.h"
 
@@ -165,7 +164,7 @@ static void GUIExpressionDraw(CCExpression Render, GFXFramebuffer Framebuffer, s
     }
 }
 
-static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
+static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index, GFXBuffer Projection)
 {
     GUIObject Parent = GUIObjectGetParent(Object);
     ((GUIExpressionInfo*)Object->internal)->data->state.super = Parent ? GUIObjectGetExpressionState(Parent) : Window;
@@ -177,26 +176,20 @@ static void GUIExpressionRender(GUIObject Object, GFXFramebuffer Framebuffer, si
         
         CCExpressionSetState(((GUIExpressionInfo*)Object->internal)->data, StrRectChanged, CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((CurrentRect.position.x != PrevRect.position.x) || (CurrentRect.position.y != PrevRect.position.y) || (CurrentRect.size.x != PrevRect.size.x) || (CurrentRect.size.y != PrevRect.size.y))), FALSE);
         
-        CCVector2Di Size = CCWindowGetFrameSize();
-        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Size.x, 0.0f, Size.y, 0.0f, 1.0f);
-        GFXBuffer Proj = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
-        
         CC_COLLECTION_FOREACH(CCExpression, Render, CCExpressionGetList(((GUIExpressionInfo*)Object->internal)->render))
         {
             Render->state.super = ((GUIExpressionInfo*)Object->internal)->render;
             Render = CCExpressionEvaluate(Render);
             
-            GUIExpressionDraw(Render, Framebuffer, Index, Proj);
+            GUIExpressionDraw(Render, Framebuffer, Index, Projection);
         }
-        
-        GFXBufferDestroy(Proj);
         
         CCExpressionStateSetPrivate(((GUIExpressionInfo*)Object->internal)->data, Rect);
     }
     
     CC_COLLECTION_FOREACH(GUIObject, Child, ((GUIExpressionInfo*)Object->internal)->children)
     {
-        GUIObjectRender(Child, Framebuffer, Index);
+        GUIObjectRender(Child, Framebuffer, Index, Projection);
     }
 }
 

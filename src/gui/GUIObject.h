@@ -55,7 +55,7 @@ typedef struct GUIObjectInfo *GUIObject;
 
 typedef void *(*GUIObjectConstructorCallback)(CCAllocatorType Allocator);
 typedef void (*GUIObjectDestructorCallback)(void *Internal);
-typedef void (*GUIObjectRenderCallback)(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
+typedef void (*GUIObjectRenderCallback)(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index, GFXBuffer Projection);
 typedef void (*GUIObjectEventCallback)(GUIObject Object, GUIEvent Event);
 typedef CCRect (*GUIObjectGetRectCallback)(GUIObject Object);
 typedef void (*GUIObjectSetRectCallback)(GUIObject Object, CCRect Rect);
@@ -143,8 +143,9 @@ void GUIObjectDestroy(GUIObject CC_DESTROY(Object));
  * @param Object The GUI object to be rendered.
  * @param Framebuffer The framebuffer to be used as the rendering destination.
  * @param Index The framebuffer attachment to be used as the target.
+ * @param Projection The projection matrix.
  */
-void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index);
+void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index, GFXBuffer Projection);
 
 /*!
  * @brief Handle an event.

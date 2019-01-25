@@ -24,6 +24,7 @@
  */
 
 #include "GUIManager.h"
+#include "Window.h"
 #include "Entity.h"
 #include "EntityManager.h"
 
@@ -175,9 +176,23 @@ void GUIManagerUpdate(void)
 
 void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index)
 {
+    static CCVector2Di CachedSize = CCVector2DiZero;
+    static GFXBuffer CachedProjection = NULL;
+    
+    const CCVector2Di Size = CCWindowGetFrameSize();
+    if ((Size.x != CachedSize.x) || (Size.y != CachedSize.y) || (!CachedProjection))
+    {
+        if (CachedProjection) GFXBufferDestroy(CachedProjection);
+        
+        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Size.x, 0.0f, Size.y, 0.0f, 1.0f);
+        CachedProjection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(CCMatrix4), &Ortho);
+        
+        CachedSize = Size;
+    }
+    
     CC_COLLECTION_FOREACH(GUIObject, Object, ObjectManager.active)
     {
-        GUIObjectRender(Object, Framebuffer, Index);
+        GUIObjectRender(Object, Framebuffer, Index, CachedProjection);
     }
 }
 

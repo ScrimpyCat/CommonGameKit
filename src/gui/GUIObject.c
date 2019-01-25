@@ -24,6 +24,7 @@
  */
 
 #include "GUIObject.h"
+#include "Window.h"
 
 GUIObject GUIObjectCreate(CCAllocatorType Allocator, const GUIObjectInterface *Interface)
 {
@@ -75,12 +76,12 @@ void GUIObjectDestroy(GUIObject Object)
     }
 }
 
-void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index)
+void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index, GFXBuffer Projection)
 {
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    if (GUIObjectGetEnabled(Object)) Object->interface->render(Object, Framebuffer, Index);
+    if (GUIObjectGetEnabled(Object)) Object->interface->render(Object, Framebuffer, Index, Projection);
     Object->changed = FALSE;
     mtx_unlock(&Object->lock);
 }
