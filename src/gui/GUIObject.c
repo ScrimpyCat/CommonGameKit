@@ -96,24 +96,27 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
                 Object->cache.store = NULL;
             }
             
-            GFXTexture Texture;
+            GFXFramebufferAttachment *CacheAttachment;
             const CCRect Rect = GUIObjectGetRect(Object);
             if (!Object->cache.store)
             {
                 //TODO: use frame bounds?
                 //TODO: Use texture streams?
-                Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, (size_t)Rect.size.x, (size_t)Rect.size.y, 1, NULL);
-                GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionFlagClearOnce | GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
+                GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, (size_t)Rect.size.x, (size_t)Rect.size.y, 1, NULL);
+                GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionClear | GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
                 Object->cache.store = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
+                
+                CacheAttachment = &Attachment;
             }
             
-            else Texture = GFXFramebufferGetAttachment(Object->cache.store, 0)->texture;
+            else CacheAttachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
             
             if (Object->cache.strategy & GUIObjectCacheDirtyMask)
             {
                 CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Rect.size.x, 0.0f, Rect.size.y, 0.0f, 1.0f);
                 Ortho = CCMatrix4Translate(Ortho, CCVector3DMake(Rect.position.x, Rect.position.y, 0.0f));
                 GFXBuffer CacheProjection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+                CacheAttachment->load |= GFXFramebufferAttachmentActionFlagClearOnce;
                 Object->interface->render(Object, Object->cache.store, 0, CacheProjection);
                 Object->cache.strategy &= GUIObjectCacheStrategyMask;
                 
@@ -141,7 +144,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
             GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), coord));
             GFXBufferDestroy(VertBuffer);
             
-            GFXDrawSetTexture(Drawer, CC_STRING("tex"), Texture);
+            GFXDrawSetTexture(Drawer, CC_STRING("tex"), CacheAttachment->texture);
             GFXDrawSetBlending(Drawer, GFXBlendTransparent);
             GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
             GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
