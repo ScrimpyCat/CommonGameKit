@@ -90,6 +90,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
     {
         if ((Object->cache.strategy & GUIObjectCacheStrategyMask) != GUIObjectCacheStrategyNone)
         {
+            _Bool Changed = GUIObjectHasChanged(Object);
             if ((Object->cache.store) && (Object->cache.strategy & GUIObjectCacheDirtyResize))
             {
                 GFXFramebufferDestroy(Object->cache.store);
@@ -107,11 +108,12 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
                 Object->cache.store = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
                 
                 CacheAttachment = &Attachment;
+                Changed = TRUE;
             }
             
             else CacheAttachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
             
-            if (Object->cache.strategy & GUIObjectCacheDirtyMask)
+            if (Changed)
             {
                 CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Rect.size.x, 0.0f, Rect.size.y, 0.0f, 1.0f);
                 Ortho = CCMatrix4Translate(Ortho, CCVector3DMake(Rect.position.x, Rect.position.y, 0.0f));
@@ -283,11 +285,11 @@ _Bool GUIObjectHasChanged(GUIObject Object)
     {
         if (Object->cache.strategy != GUIObjectCacheStrategyNone)
         {
-            if (Object->cache.strategy & (GUIObjectCacheStrategyInvalidateOnMove | GUIObjectCacheStrategyInvalidateOnResize))
+            if (!(Object->cache.strategy & GUIObjectCacheDirtyMask) && (Object->cache.strategy & (GUIObjectCacheStrategyInvalidateOnMove | GUIObjectCacheStrategyInvalidateOnResize)))
             {
                 const CCRect Rect = GUIObjectGetRect(Object);
                 
-                Object->cache.strategy |= (((Object->cache.strategy & GUIObjectCacheStrategyInvalidateOnMove) && (CCVector2Equal(Rect.position, Object->cache.rect.position))) ? GUIObjectCacheDirtyMove : 0) | (((Object->cache.strategy & GUIObjectCacheStrategyInvalidateOnResize) && (CCVector2Equal(Rect.size, Object->cache.rect.size))) ? GUIObjectCacheDirtyResize : 0);
+                Object->cache.strategy |= (((Object->cache.strategy & GUIObjectCacheStrategyInvalidateOnMove) && (!CCVector2Equal(Rect.position, Object->cache.rect.position))) ? GUIObjectCacheDirtyMove : 0) | (((Object->cache.strategy & GUIObjectCacheStrategyInvalidateOnResize) && (!CCVector2Equal(Rect.size, Object->cache.rect.size))) ? GUIObjectCacheDirtyResize : 0);
                 
                 Object->cache.rect = Rect;
             }
