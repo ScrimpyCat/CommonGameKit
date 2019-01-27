@@ -79,6 +79,18 @@ static void SetI8Collection(CCComponent Component, CCOrderedCollection Collectio
     
     CCCollectionDestroy(Collection);
 }
+static void SetI16Collection(CCComponent Component, CCOrderedCollection Collection)
+{
+    size_t Written = 0;
+    CC_COLLECTION_FOREACH(int16_t, Value, Collection)
+    {
+        Written += snprintf(Set + Written, sizeof(Set) - Written, "%d, ", Value);
+    }
+    
+    Set[Written - 2] = 0;
+    
+    CCCollectionDestroy(Collection);
+}
 static void SetDataCollection(CCComponent Component, CCOrderedCollection Collection)
 {
     size_t Written = 0;
@@ -120,6 +132,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
     { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef },
     { .name = CC_STRING("i8-collection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt8 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetI8Collection },
+    { .name = CC_STRING("i16-collection:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeInt16 | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetI16Collection },
     { .name = CC_STRING("data-collection:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetDataCollection },
     { .name = CC_STRING("data-ref-collection:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain | CCComponentExpressionArgumentTypeContainerOrderedCollection, .setter = (CCComponentExpressionSetter)SetDataRefCollection }
 };
@@ -330,6 +343,17 @@ do { \
     TEST_DESERIALIZE_FAILURE("(i8-collection: (1 2 3 :d)");
     TEST_DESERIALIZE_SUCCESS("(i8-collection: (256))", "0");
     TEST_DESERIALIZE_SUCCESS("(i8-collection: (1 2 3 4))", "1, 2, 3, 4");
+    
+    TEST_DESERIALIZE_FAILURE("(i16-collection: :d)");
+    TEST_DESERIALIZE_FAILURE("(i16-collection: 1)");
+    TEST_DESERIALIZE_FAILURE("(i16-collection: -1)");
+    TEST_DESERIALIZE_FAILURE("(i16-collection: 32767)");
+    TEST_DESERIALIZE_FAILURE("(i16-collection: -32768)");
+    TEST_DESERIALIZE_FAILURE("(i16-collection: 65536)");
+    TEST_DESERIALIZE_SUCCESS("(i16-collection: ())", "");
+    TEST_DESERIALIZE_FAILURE("(i16-collection: (1 2 3 :d)");
+    TEST_DESERIALIZE_SUCCESS("(i16-collection: (65536))", "0");
+    TEST_DESERIALIZE_SUCCESS("(i16-collection: (1 2 3 4))", "1, 2, 3, 4");
     
     DestroyCount = 0;
     TEST_DESERIALIZE_FAILURE("(data-collection: :d)");
