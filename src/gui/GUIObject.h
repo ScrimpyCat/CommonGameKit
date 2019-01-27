@@ -97,6 +97,7 @@ typedef enum {
     GUIObjectCacheStrategyInvalidateOnMove = (1 << 2),
     
     GUIObjectCacheDirtyMask = (0xffff << 16),
+    GUIObjectCacheDirtyIndex = 16,
     GUIObjectCacheDirtyEvent = (GUIObjectCacheStrategyInvalidateOnEvent << 16),
     GUIObjectCacheDirtyResize = (GUIObjectCacheStrategyInvalidateOnResize << 16),
     GUIObjectCacheDirtyMove = (GUIObjectCacheStrategyInvalidateOnMove << 16),

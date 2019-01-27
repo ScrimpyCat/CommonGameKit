@@ -91,39 +91,44 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
         if ((Object->cache.strategy & GUIObjectCacheStrategyMask) != GUIObjectCacheStrategyNone)
         {
             _Bool Changed = GUIObjectHasChanged(Object);
-            if ((Object->cache.store) && (Object->cache.strategy & GUIObjectCacheDirtyResize))
-            {
-                GFXFramebufferDestroy(Object->cache.store);
-                Object->cache.store = NULL;
-            }
-            
-            GFXFramebufferAttachment *CacheAttachment;
-            const CCRect Rect = GUIObjectGetRect(Object);
-            if (!Object->cache.store)
-            {
-                //TODO: use frame bounds?
-                //TODO: Use texture streams?
-                GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, (size_t)Rect.size.x, (size_t)Rect.size.y, 1, NULL);
-                GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionClear | GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
-                Object->cache.store = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
-                
-                CacheAttachment = &Attachment;
-                Changed = TRUE;
-            }
-            
-            else CacheAttachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
+            const CCRect Rect = Object->cache.rect;
+            GFXTexture Texture;
             
             if (Changed)
             {
+                if ((Object->cache.store) && (Object->cache.strategy & GUIObjectCacheDirtyResize))
+                {
+                    GFXFramebufferDestroy(Object->cache.store);
+                    Object->cache.store = NULL;
+                }
+                
+                if (!Object->cache.store)
+                {
+                    //TODO: use frame bounds?
+                    //TODO: Use texture streams?
+                    Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, (size_t)Rect.size.x, (size_t)Rect.size.y, 1, NULL);
+                    GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionClear | GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
+                    Object->cache.store = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
+                }
+                
+                else
+                {
+                    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
+                    Attachment->load |= GFXFramebufferAttachmentActionFlagClearOnce;
+                    Texture = Attachment->texture;
+                }
+                
                 CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Rect.size.x, 0.0f, Rect.size.y, 0.0f, 1.0f);
                 Ortho = CCMatrix4Translate(Ortho, CCVector3DMake(Rect.position.x, Rect.position.y, 0.0f));
                 GFXBuffer CacheProjection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
-                CacheAttachment->load |= GFXFramebufferAttachmentActionFlagClearOnce;
                 Object->interface->render(Object, Object->cache.store, 0, CacheProjection);
                 Object->cache.strategy &= GUIObjectCacheStrategyMask;
                 
                 GFXBufferDestroy(CacheProjection);
             }
+            
+            else Texture = GFXFramebufferGetAttachment(Object->cache.store, 0)->texture;
+            
             
             GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
             
@@ -146,7 +151,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
             GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), coord));
             GFXBufferDestroy(VertBuffer);
             
-            GFXDrawSetTexture(Drawer, CC_STRING("tex"), CacheAttachment->texture);
+            GFXDrawSetTexture(Drawer, CC_STRING("tex"), Texture);
             GFXDrawSetBlending(Drawer, GFXBlendTransparent);
             GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
             GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
@@ -280,25 +285,18 @@ _Bool GUIObjectHasChanged(GUIObject Object)
     CCAssertLog(Object, "GUI object must not be null");
     
     mtx_lock(&Object->lock);
-    _Bool Changed = Object->cache.changed;
-    if (!Changed)
+    if (Object->cache.strategy != GUIObjectCacheStrategyNone)
     {
-        if (Object->cache.strategy != GUIObjectCacheStrategyNone)
-        {
-            if (!(Object->cache.strategy & GUIObjectCacheDirtyMask) && (Object->cache.strategy & (GUIObjectCacheStrategyInvalidateOnMove | GUIObjectCacheStrategyInvalidateOnResize)))
-            {
-                const CCRect Rect = GUIObjectGetRect(Object);
-                
-                Object->cache.strategy |= (((Object->cache.strategy & GUIObjectCacheStrategyInvalidateOnMove) && (!CCVector2Equal(Rect.position, Object->cache.rect.position))) ? GUIObjectCacheDirtyMove : 0) | (((Object->cache.strategy & GUIObjectCacheStrategyInvalidateOnResize) && (!CCVector2Equal(Rect.size, Object->cache.rect.size))) ? GUIObjectCacheDirtyResize : 0);
-                
-                Object->cache.rect = Rect;
-            }
-            
-            if (Object->cache.strategy & GUIObjectCacheDirtyMask) Changed = TRUE;
-        }
+        const CCRect Rect = GUIObjectGetRect(Object);
         
-        if (!Changed) Changed = Object->interface->changed(Object);
+        Object->cache.strategy |= (CCVector2Equal(Rect.position, Object->cache.rect.position) ? 0 : GUIObjectCacheDirtyMove) | (CCVector2Equal(Rect.size, Object->cache.rect.size) ? 0 : GUIObjectCacheDirtyResize);
+        
+        Object->cache.rect = Rect;
+        
+        if ((Object->cache.strategy >> GUIObjectCacheDirtyIndex) & (Object->cache.strategy & GUIObjectCacheStrategyMask)) Object->cache.changed = TRUE;
     }
+    
+    _Bool Changed = Object->cache.changed || Object->interface->changed(Object);
     mtx_unlock(&Object->lock);
     
     return Changed;
