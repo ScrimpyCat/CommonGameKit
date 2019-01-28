@@ -108,6 +108,9 @@ GFXFramebufferAttachment *GFXFramebufferGetAttachment(GFXFramebuffer Framebuffer
 
 static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour)
 {
+    CCAssertLog((Load & ~GFXFramebufferAttachmentActionFlagClearOnce) != GFXFramebufferAttachmentActionStore, "Load can not perform a store action");
+    CCAssertLog((Store & ~GFXFramebufferAttachmentActionFlagClearOnce) != GFXFramebufferAttachmentActionLoad, "Store can not perform a load action");
+    
     return (GFXFramebufferAttachment){
         .type = GFXFramebufferAttachmentTypeColour,
         .texture = Texture,
