@@ -64,7 +64,12 @@ typedef enum {
     GFXBlendTransparent = (GFXBlendOperationAdd << GFXBlendComponentRGB)
                         | (GFXBlendOperationAdd << GFXBlendComponentAlpha)
                         | (((GFXBlendFactorSourceAlpha << GFXBlendComponentRGB) | (GFXBlendFactorSourceAlpha << GFXBlendComponentAlpha)) << GFXBlendSource)
-                        | (((GFXBlendFactorOneMinusSourceAlpha << GFXBlendComponentRGB) | (GFXBlendFactorOneMinusSourceAlpha << GFXBlendComponentAlpha)) << GFXBlendDestination)
+                        | (((GFXBlendFactorOneMinusSourceAlpha << GFXBlendComponentRGB) | (GFXBlendFactorOneMinusSourceAlpha << GFXBlendComponentAlpha)) << GFXBlendDestination),
+    
+    GFXBlendTransparentPremultiplied = (GFXBlendOperationAdd << GFXBlendComponentRGB)
+                                     | (GFXBlendOperationAdd << GFXBlendComponentAlpha)
+                                     | (((GFXBlendFactorOne << GFXBlendComponentRGB) | (GFXBlendFactorOne << GFXBlendComponentAlpha)) << GFXBlendSource)
+                                     | (((GFXBlendFactorOneMinusSourceAlpha << GFXBlendComponentRGB) | (GFXBlendFactorOneMinusSourceAlpha << GFXBlendComponentAlpha)) << GFXBlendDestination)
 } GFXBlend;
 
 /*!
@@ -82,7 +87,7 @@ typedef enum {
 static inline GFXBlend GFXBlendGetOperation(GFXBlend BlendMask, GFXBlend Component);
 
 /*!
- * @brief Get the operation mask for either the source or the destination.
+ * @brief Get the factor mask for either the source or the destination.
  * @param BlendMask The blend mask.
  * @param Component The component to get, either @b GFXBlendComponentRGB or @b GFXBlendComponentAlpha.
  * @param SrcOrDst The type to get, either @b GFXBlendSource or @b GFXBlendDestination.
