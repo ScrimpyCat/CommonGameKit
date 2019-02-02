@@ -450,6 +450,7 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
         if (CCExpressionGetType(SourceList) == CCExpressionValueTypeList)
         {
             GFXShaderLibrary Library = GFXShaderLibraryCreate(CC_STD_ALLOCATOR);
+            CCAssetManagerRegisterShaderLibrary(CCExpressionGetString(*LibName), Library);
             
             CC_COLLECTION_FOREACH(CCExpression, SourceArg, CCExpressionGetList(SourceList))
             {
@@ -533,6 +534,7 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
             
             CCAssetExpressionValueShaderLibrary *ShaderLibrary;
             CC_SAFE_Malloc(ShaderLibrary, sizeof(CCAssetExpressionValueShaderLibrary),
+                           CCAssetManagerDeregisterShaderLibrary(CCExpressionGetString(*LibName));
                            GFXShaderLibraryDestroy(Library);
                            CC_LOG_ERROR("Failed to create CCAssetExpressionValueShaderLibrary due to allocation failure. Allocation size (%zu)", sizeof(CCAssetExpressionValueShaderLibrary));
                            return Expression;
