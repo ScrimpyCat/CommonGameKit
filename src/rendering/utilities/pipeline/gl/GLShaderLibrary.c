@@ -105,7 +105,7 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
     return NULL;
 }
 
-void GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCArray SectionLengths)
+_Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCArray SectionLengths)
 {
     const char *CurSource = Source, *Segment = Source, Include[] = "#include <";
     enum {
@@ -124,17 +124,70 @@ void GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCArr
                     const char *End = strchr(CurSource, '>');
                     if (End)
                     {
-                        CCArrayAppendElement(Sections, &Segment);
-                        CCArrayAppendElement(SectionLengths, &(GLint){ (GLint)(CurSource - (Segment + sizeof(Include) - 1)) });
-                        Segment = End + 1;
+                        if (GFXShaderLibraryForName)
+                        {
+                            CCArrayAppendElement(Sections, &Segment);
+                            CCArrayAppendElement(SectionLengths, &(GLint){ (GLint)(CurSource - (Segment + sizeof(Include) - 1)) });
+                            Segment = End + 1;
+                            
+                            CCString Path = CCStringCreateWithSize(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, CurSource, End - CurSource);
+                            CCOrderedCollection Reference = CCStringCreateBySeparatingOccurrencesOfString(Path, CC_STRING("/"));
+                            CCStringDestroy(Path);
+                            
+                            CCEnumerator Enumerator;
+                            CCCollectionGetEnumerator(Reference, &Enumerator);
+                            
+                            _Bool Included = FALSE;
+                            CCString *Library = CCCollectionEnumeratorGetCurrent(&Enumerator);
+                            if (Library)
+                            {
+                                GLShaderLibrary Lib = (GLShaderLibrary)GFXShaderLibraryForName(*Library);
+                                if (Lib)
+                                {
+                                    CCString *Header = CCCollectionEnumeratorNext(&Enumerator);
+                                    if (Header)
+                                    {
+                                        GLShaderLibrarySource *Source = CCDictionaryGetValue(Lib, Header);
+                                        if (Source->type == GFXShaderSourceTypeHeader)
+                                        {
+                                            CCArrayAppendElement(Sections, &Source->source.header);
+                                            CCArrayAppendElement(SectionLengths, &(GLint){ -1 });
+                                            Included = TRUE;
+                                        }
+                                    }
+                                    
+                                    else
+                                    {
+                                        CC_DICTIONARY_FOREACH_VALUE_PTR(GLShaderLibrarySource, Source, Lib)
+                                        {
+                                            if (Source->type == GFXShaderSourceTypeHeader)
+                                            {
+                                                CCArrayAppendElement(Sections, &Source->source.header);
+                                                CCArrayAppendElement(SectionLengths, &(GLint){ -1 });
+                                            }
+                                        }
+                                        
+                                        Included = TRUE;
+                                    }
+                                }
+                            }
+                            
+                            CCCollectionDestroy(Reference);
+                            
+                            if (!Included)
+                            {
+                                CC_LOG_ERROR_CUSTOM("No header could be resolved for: #include <%S>", Path);
+                                return FALSE;
+                            }
+                            
+                            CurSource = End;
+                        }
                         
-                        CCString Path = CCStringCreateWithSize(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, CurSource, End - CurSource);
-                        CCOrderedCollection Header = CCStringCreateBySeparatingOccurrencesOfString(Path, CC_STRING("/"));
-                        CCStringDestroy(Path);
-                        
-                        CCCollectionDestroy(Header);
-                        
-                        CurSource = End;
+                        else
+                        {
+                            CC_LOG_ERROR("Cannot support #include unless a callback to GFXShaderLibraryForName is provided.");
+                            return FALSE;
+                        }
                     }
                     
                     IncludeChrCount = 0;
@@ -185,6 +238,8 @@ void GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCArr
     
     CCArrayAppendElement(Sections, &Segment);
     CCArrayAppendElement(SectionLengths, &(GLint){ (GLint)(CurSource - Segment) });
+    
+    return TRUE;
 }
 
 static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)
@@ -207,7 +262,15 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
     GLuint Shader = glCreateShader(GLShaderType(Type)); CC_GL_CHECK();
     
     CCArray Sections = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(char*), 4), SectionLengths = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(GLint), 4);
-    GLShaderLibraryPreprocessSource(Source, Sections, SectionLengths);
+    if (!GLShaderLibraryPreprocessSource(Source, Sections, SectionLengths))
+    {
+        CCArrayDestroy(Sections);
+        CCArrayDestroy(SectionLengths);
+        
+        CC_LOG_ERROR_CUSTOM("Failed to compile %s shader (%S). Unable to preprocess the source.", GLShaderTypeString(Type), Name);
+        return 0;
+    }
+    
     glShaderSource(Shader, 1, Sections->data, SectionLengths->data); CC_GL_CHECK();
     CCArrayDestroy(Sections);
     CCArrayDestroy(SectionLengths);
