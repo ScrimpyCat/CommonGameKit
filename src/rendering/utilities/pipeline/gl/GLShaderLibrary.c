@@ -105,6 +105,88 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
     return NULL;
 }
 
+void GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCArray SectionLengths)
+{
+    const char *CurSource = Source, *Segment = Source, Include[] = "#include <";
+    enum {
+        GLShaderLibrarySourceTokenNone,
+        GLShaderLibrarySourceTokenComment,
+        GLShaderLibrarySourceTokenMultilineComment,
+        GLShaderLibrarySourceTokenOther
+    } Token = GLShaderLibrarySourceTokenNone;
+    for (char Chr, PrevChr = 0, IncludeChrCount = 0; (Chr = *CurSource); CurSource++)
+    {
+        switch (Token)
+        {
+            case GLShaderLibrarySourceTokenNone:
+                if (IncludeChrCount == (sizeof(Include) - 1))
+                {
+                    const char *End = strchr(CurSource, '>');
+                    if (End)
+                    {
+                        CCArrayAppendElement(Sections, &Segment);
+                        CCArrayAppendElement(SectionLengths, &(GLint){ (GLint)(CurSource - (Segment + sizeof(Include) - 1)) });
+                        Segment = End + 1;
+                        
+                        CCString Path = CCStringCreateWithSize(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, CurSource, End - CurSource);
+                        CCOrderedCollection Header = CCStringCreateBySeparatingOccurrencesOfString(Path, CC_STRING("/"));
+                        CCStringDestroy(Path);
+                        
+                        CCCollectionDestroy(Header);
+                        
+                        CurSource = End;
+                    }
+                    
+                    IncludeChrCount = 0;
+                }
+                
+                else
+                {
+                    if (Include[IncludeChrCount] == Chr) IncludeChrCount++;
+                    else
+                    {
+                        IncludeChrCount = 0;
+                        
+                        if (!isspace(Chr)) Token = GLShaderLibrarySourceTokenOther;
+                    }
+                }
+                break;
+                
+            case GLShaderLibrarySourceTokenOther:
+                if ((PrevChr == '/') && (Chr == '/'))
+                {
+                    Token = GLShaderLibrarySourceTokenComment;
+                    PrevChr = 0;
+                    break;
+                }
+                
+                else if ((PrevChr == '/') && (Chr == '*'))
+                {
+                    Token = GLShaderLibrarySourceTokenMultilineComment;
+                    PrevChr = 0;
+                    break;
+                }
+            case GLShaderLibrarySourceTokenComment:
+                if (Chr == '\n') Token = GLShaderLibrarySourceTokenNone;
+                break;
+                
+            case GLShaderLibrarySourceTokenMultilineComment:
+                if ((PrevChr == '*') && (Chr == '/'))
+                {
+                    Token = GLShaderLibrarySourceTokenNone;
+                    PrevChr = 0;
+                    continue;
+                }
+                break;
+        }
+        
+        PrevChr = Chr;
+    }
+    
+    CCArrayAppendElement(Sections, &Segment);
+    CCArrayAppendElement(SectionLengths, &(GLint){ (GLint)(CurSource - Segment) });
+}
+
 static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)
 {
     if (Type == GFXShaderSourceTypeHeader)
@@ -114,6 +196,7 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
                        CC_LOG_ERROR_CUSTOM("Failed to store shader (%S). Due to allocation failure.", Name);
                        return 0;
                        );
+        
         strcpy(Shader.source.header, Source);
         
         return 0;
@@ -122,7 +205,13 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
     CC_GL_PUSH_GROUP_MARKER("Compile Shader");
     
     GLuint Shader = glCreateShader(GLShaderType(Type)); CC_GL_CHECK();
-    glShaderSource(Shader, 1, &Source, NULL); CC_GL_CHECK();
+    
+    CCArray Sections = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(char*), 4), SectionLengths = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(GLint), 4);
+    GLShaderLibraryPreprocessSource(Source, Sections, SectionLengths);
+    glShaderSource(Shader, 1, Sections->data, SectionLengths->data); CC_GL_CHECK();
+    CCArrayDestroy(Sections);
+    CCArrayDestroy(SectionLengths);
+    
     glCompileShader(Shader); CC_GL_CHECK();
     
     GLint Completed;
