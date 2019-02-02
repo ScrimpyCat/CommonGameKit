@@ -30,6 +30,14 @@ static void GLShaderLibraryDestructor(GLShaderLibrary Library);
 static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source);
 static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, CCString Name);
 
+typedef struct {
+    GFXShaderSourceType type;
+    union {
+        GLuint shader;
+        CCString header;
+    } source;
+} GLShaderLibrarySource;
+
 
 const GFXShaderLibraryInterface GLShaderLibraryInterface = {
     .create = (GFXShaderLibraryConstructorCallback)GLShaderLibraryConstructor,
@@ -39,14 +47,18 @@ const GFXShaderLibraryInterface GLShaderLibraryInterface = {
 };
 
 
-static void GLShaderLibraryElementDestructor(CCDictionary Dictionary, GLShaderSource Element)
+static void GLShaderLibraryElementDestructor(CCDictionary Dictionary, GLShaderLibrarySource *Element)
 {
-    glDeleteShader((GLuint)Element); CC_GL_CHECK();
+    if (Element->type == GFXShaderSourceTypeHeader) CCStringDestroy(Element->source.header);
+    else
+    {
+        glDeleteShader(Element->source.shader); CC_GL_CHECK();
+    }
 }
 
 static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator)
 {
-    return CCDictionaryCreate(Allocator, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(GLShaderSource), &(CCDictionaryCallbacks){
+    return CCDictionaryCreate(Allocator, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(GLShaderLibrarySource), &(CCDictionaryCallbacks){
         .getHash = CCStringHasherForDictionary,
         .compareKeys = CCStringComparatorForDictionary,
         .keyDestructor = CCStringDestructorForDictionary,
@@ -68,6 +80,9 @@ static inline GLenum GLShaderType(GFXShaderSourceType Type)
             
         case GFXShaderSourceTypeFragment:
             return GL_FRAGMENT_SHADER;
+            
+        default:
+            break;
     }
     
     CCAssertLog(0, "Invalid shader type");
@@ -82,6 +97,9 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
             
         case GFXShaderSourceTypeFragment:
             return "fragment";
+            
+        default:
+            break;
     }
     
     return NULL;
@@ -89,6 +107,13 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
 
 static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)
 {
+    if (Type == GFXShaderSourceTypeHeader)
+    {
+        CCDictionarySetValue(Library, &(CCString){ CCStringCopy(Name) }, &(GLShaderLibrarySource){ .type = Type, .source = { .header = CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Source) } });
+        
+        return 0;
+    }
+    
     CC_GL_PUSH_GROUP_MARKER("Compile Shader");
     
     GLuint Shader = glCreateShader(GLShaderType(Type)); CC_GL_CHECK();
@@ -123,7 +148,7 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
     
     CC_GL_POP_GROUP_MARKER();
     
-    CCDictionarySetValue(Library, &(CCString){ CCStringCopy(Name) }, &Shader);
+    CCDictionarySetValue(Library, &(CCString){ CCStringCopy(Name) }, &(GLShaderLibrarySource){ .type = Type, .source = { .shader = Shader } });
     
     return (GLShaderSource)Shader;
 }
