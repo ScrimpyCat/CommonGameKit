@@ -155,6 +155,6 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
 
 static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, CCString Name)
 {
-    GLuint *Source = CCDictionaryGetValue(Library, &Name);
-    return (GLShaderSource)(Source ? *Source : 0);
+    GLShaderLibrarySource *Source = CCDictionaryGetValue(Library, &Name);
+    return (GLShaderSource)((Source) && (Source->type != GFXShaderSourceTypeHeader) ? Source->source.shader : 0);
 }
