@@ -27,6 +27,8 @@
 #include <stddef.h>
 #include <CommonC/Common.h>
 #include "ExpressionSetup.h"
+#include "GFX.h"
+#include "AssetManager.h"
 
 #if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
 #include <CoreFoundation/CoreFoundation.h>
@@ -52,6 +54,8 @@ static CCStringMap Map31[31] = { //ASCII set 0, -, !, @, :, ., [a-y]
 
 int CCMain(CCEngineMain Main, int argc, const char *argv[])
 {
+    GFXShaderLibraryForName = CCAssetManagerCreateShaderLibrary;
+    
     CCStringRegisterMap(CCStringEncodingASCII, Map63, CCStringMapSet63);
     CCStringRegisterMap(CCStringEncodingASCII, Map31, CCStringMapSet31);
     
