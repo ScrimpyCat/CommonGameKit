@@ -45,6 +45,14 @@ typedef struct GFXShaderLibrary *GFXShaderLibrary;
  */
 typedef struct GFXShaderSource *GFXShaderSource;
 
+/*!
+ * @brief Set this to a function that will retrieve the shader library with a certain name.
+ * @description This is used by some implementations to allow for referencing of other shaders.
+ * @param Name The name of the library to retrieve.
+ * @result The shader library, or NULL if there is none.
+ */
+extern GFXShaderLibrary (*GFXShaderLibraryForName)(CCString Name);
+
 
 /*!
  * @brief Create a shader library.

@@ -26,6 +26,8 @@
 #include "GFXShaderLibrary.h"
 #include "GFXMain.h"
 
+GFXShaderLibrary (*GFXShaderLibraryForName)(CCString Name) = NULL;
+
 GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator)
 {
     return GFXMain->library->create(Allocator);
