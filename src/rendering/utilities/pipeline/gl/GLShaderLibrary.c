@@ -34,7 +34,7 @@ typedef struct {
     GFXShaderSourceType type;
     union {
         GLuint shader;
-        CCString header;
+        char *header;
     } source;
 } GLShaderLibrarySource;
 
@@ -49,7 +49,7 @@ const GFXShaderLibraryInterface GLShaderLibraryInterface = {
 
 static void GLShaderLibraryElementDestructor(CCDictionary Dictionary, GLShaderLibrarySource *Element)
 {
-    if (Element->type == GFXShaderSourceTypeHeader) CCStringDestroy(Element->source.header);
+    if (Element->type == GFXShaderSourceTypeHeader) CCFree(Element->source.header);
     else
     {
         glDeleteShader(Element->source.shader); CC_GL_CHECK();
@@ -109,7 +109,12 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
 {
     if (Type == GFXShaderSourceTypeHeader)
     {
-        CCDictionarySetValue(Library, &(CCString){ CCStringCopy(Name) }, &(GLShaderLibrarySource){ .type = Type, .source = { .header = CCStringCreate(CC_STD_ALLOCATOR, CCStringEncodingASCII | CCStringHintCopy, Source) } });
+        GLShaderLibrarySource Shader = { .type = Type };
+        CC_SAFE_Malloc(Shader.source.header, sizeof(char) * (strlen(Source) + 1),
+                       CC_LOG_ERROR_CUSTOM("Failed to store shader (%S). Due to allocation failure.", Name);
+                       return 0;
+                       );
+        strcpy(Shader.source.header, Source);
         
         return 0;
     }
