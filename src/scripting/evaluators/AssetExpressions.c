@@ -467,6 +467,7 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
                             GFXShaderSourceType ShaderType = GFXShaderSourceTypeVertex;
                             if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING(":vertex"))) ShaderType = GFXShaderSourceTypeVertex;
                             else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING(":fragment"))) ShaderType = GFXShaderSourceTypeFragment;
+                            else if (CCStringEqual(CCExpressionGetAtom(Type), CC_STRING(":header"))) ShaderType = GFXShaderSourceTypeHeader;
                             else
                             {
                                 CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid shader type: %S", CCExpressionGetAtom(Type));
