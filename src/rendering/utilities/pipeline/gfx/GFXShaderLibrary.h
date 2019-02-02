@@ -29,7 +29,7 @@
 #include <CommonC/Common.h>
 
 typedef enum {
-    //GFXShaderSourceTypeHeader, //TODO: add a header type
+    GFXShaderSourceTypeHeader,
     GFXShaderSourceTypeVertex,
     GFXShaderSourceTypeFragment
 } GFXShaderSourceType;
