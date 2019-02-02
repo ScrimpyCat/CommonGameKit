@@ -150,8 +150,7 @@ _Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCAr
                                         GLShaderLibrarySource *Source = CCDictionaryGetValue(Lib, Header);
                                         if (Source->type == GFXShaderSourceTypeHeader)
                                         {
-                                            CCArrayAppendElement(Sections, &Source->source.header);
-                                            CCArrayAppendElement(SectionLengths, &(GLint){ -1 });
+                                            GLShaderLibraryPreprocessSource(Source->source.header, Sections, SectionLengths);
                                             Included = TRUE;
                                         }
                                     }
@@ -162,8 +161,7 @@ _Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCAr
                                         {
                                             if (Source->type == GFXShaderSourceTypeHeader)
                                             {
-                                                CCArrayAppendElement(Sections, &Source->source.header);
-                                                CCArrayAppendElement(SectionLengths, &(GLint){ -1 });
+                                                GLShaderLibraryPreprocessSource(Source->source.header, Sections, SectionLengths);
                                             }
                                         }
                                         
