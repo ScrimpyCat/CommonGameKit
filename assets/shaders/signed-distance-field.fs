@@ -15,5 +15,5 @@ void main()
     float dist = 1.0 - texture(tex, texCoord).a;
     float a = 1.0 - smoothstep(width, width + edge, dist);
 
-    fragColour = premultiply(vec4(colour.rgb * colour.a * a, colour.a * a));
+    fragColour = premultiply(vec4(colour.rgb, colour.a * a));
 }
