@@ -254,6 +254,8 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         
         strcpy(Shader.source.header, Source);
         
+        CCDictionarySetValue(Library, &(CCString){ CCStringCopy(Name) }, &Shader);
+        
         return 0;
     }
     
