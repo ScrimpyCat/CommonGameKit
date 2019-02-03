@@ -119,7 +119,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
                 }
                 
                 CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Rect.size.x, 0.0f, Rect.size.y, 0.0f, 1.0f);
-                Ortho = CCMatrix4Translate(Ortho, CCVector3DMake(Rect.position.x, Rect.position.y, 0.0f));
+                Ortho = CCMatrix4Translate(Ortho, CCVector3DMake(-Rect.position.x, -Rect.position.y, 0.0f));
                 GFXBuffer CacheProjection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
                 Object->interface->render(Object, Object->cache.store, 0, CacheProjection);
                 Object->cache.strategy &= GUIObjectCacheStrategyMask;
