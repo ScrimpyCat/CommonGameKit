@@ -243,7 +243,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
                 
                 GFXBufferWriteBuffer(Args->radiusBuffer, 0, sizeof(float), &Radius);
                 
-                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(Result))->drawer, (Radius != 0.0f) || (Args->colour.a < 1.0f) | (Args->outlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
+                GFXDrawSetBlending(((CCGraphicsExpressionValueDraw*)CCExpressionGetData(Result))->drawer, (Radius != 0.0f) || (Args->colour.a < 1.0f) | (Args->outlineColour.a < 1.0f) ? GFXBlendTransparentPremultiplied : GFXBlendOpaque);
             }
             
             if ((Args->outline.x != Outline.x) || (Args->outline.y != Outline.y))
@@ -288,7 +288,7 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
             GFXDrawSetBuffer(Drawer, CC_STRING("scale"), ScaleBuffer);
             GFXDrawSetBuffer(Drawer, CC_STRING("radius"), RadiusBuffer);
             GFXDrawSetBuffer(Drawer, CC_STRING("outline"), OutlineBuffer);
-            GFXDrawSetBlending(Drawer, (Radius != 0.0f) || (Colour.a < 1.0f) || (OutlineColour.a < 1.0f) ? GFXBlendTransparent : GFXBlendOpaque);
+            GFXDrawSetBlending(Drawer, (Radius != 0.0f) || (Colour.a < 1.0f) || (OutlineColour.a < 1.0f) ? GFXBlendTransparentPremultiplied : GFXBlendOpaque);
             
             GFXShaderDestroy(Shader);
             

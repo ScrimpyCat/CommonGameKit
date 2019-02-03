@@ -1,4 +1,5 @@
 #version 330 core
+#include <core>
 
 uniform sampler2D tex;
 uniform float width;
@@ -14,5 +15,5 @@ void main()
     float dist = 1.0 - texture(tex, texCoord).a;
     float a = 1.0 - smoothstep(width, width + edge, dist);
 
-    fragColour = vec4(colour.rgb, colour.a * a);
+    fragColour = premultiply(vec4(colour.rgb * colour.a * a, colour.a * a));
 }

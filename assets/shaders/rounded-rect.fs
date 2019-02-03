@@ -1,4 +1,5 @@
 #version 330 core
+#include <core>
 
 uniform float radius;
 const vec2 circleCenter = vec2(0.5, 0.5);
@@ -26,5 +27,5 @@ void main()
     edgeDistance2 = smoothstep(1.0, 1.0, edgeDistance2 + 1.0);
 
     float edge = min(edgeDistance2 + edgeDistance, 1.0);
-    fragColour = vec4(colour.rgb, colour.a * edge);
+    fragColour = premultiply(vec4(colour.rgb, colour.a * edge));
 }

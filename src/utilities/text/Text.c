@@ -312,7 +312,7 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
                         GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(CCTextVertexData), offsetof(CCTextVertexData, texCoord));
                         GFXDrawSetBuffer(Drawer, CC_STRING("edge"), EdgeBuffer);
                         GFXDrawSetBuffer(Drawer, CC_STRING("width"), WidthBuffer);
-                        GFXDrawSetBlending(Drawer, GFXBlendTransparent);
+                        GFXDrawSetBlending(Drawer, GFXBlendTransparentPremultiplied);
                         GFXDrawSetIndexBuffer(Drawer, IBO, GFXBufferFormatUInt16);
                         
                         GFXBufferDestroy(EdgeBuffer);

@@ -152,7 +152,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
             GFXBufferDestroy(VertBuffer);
             
             GFXDrawSetTexture(Drawer, CC_STRING("tex"), Texture);
-            GFXDrawSetBlending(Drawer, GFXBlendTransparent);
+            GFXDrawSetBlending(Drawer, GFXBlendTransparentPremultiplied);
             GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
             GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
             GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
