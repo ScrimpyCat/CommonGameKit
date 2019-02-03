@@ -273,7 +273,7 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
         return 0;
     }
     
-    glShaderSource(Shader, 1, Sections->data, SectionLengths->data); CC_GL_CHECK();
+    glShaderSource(Shader, (GLsizei)CCArrayGetCount(Sections), Sections->data, SectionLengths->data); CC_GL_CHECK();
     CCArrayDestroy(Sections);
     CCArrayDestroy(SectionLengths);
     
