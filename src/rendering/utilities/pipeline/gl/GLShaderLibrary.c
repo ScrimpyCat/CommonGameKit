@@ -167,6 +167,8 @@ _Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCAr
                                         
                                         Included = TRUE;
                                     }
+                                    
+                                    GFXShaderLibraryDestroy((GFXShaderLibrary)Lib);
                                 }
                             }
                             
