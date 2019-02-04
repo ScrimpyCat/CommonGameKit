@@ -92,7 +92,7 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
         {
             _Bool Changed = GUIObjectHasChanged(Object);
             const CCRect Rect = Object->cache.rect;
-            GFXTexture Texture;
+            GFXFramebufferAttachment *CachedAttachment;
             
             if (Changed)
             {
@@ -106,17 +106,13 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
                 {
                     //TODO: use frame bounds?
                     //TODO: Use texture streams?
-                    Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, (size_t)Rect.size.x, (size_t)Rect.size.y, 1, NULL);
+                    GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeNearest << GFXTextureHintFilterMag), CCColourFormatRGB8Unorm, (size_t)Rect.size.x, (size_t)Rect.size.y, 1, NULL);
                     GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionFlagClearOnce | GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
                     Object->cache.store = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
                 }
                 
-                else
-                {
-                    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
-                    Attachment->load |= GFXFramebufferAttachmentActionFlagClearOnce;
-                    Texture = Attachment->texture;
-                }
+                CachedAttachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
+                CachedAttachment->load |= GFXFramebufferAttachmentActionFlagClearOnce;
                 
                 CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Rect.size.x, 0.0f, Rect.size.y, 0.0f, 1.0f);
                 Ortho = CCMatrix4Translate(Ortho, CCVector3DMake(-Rect.position.x, -Rect.position.y, 0.0f));
@@ -127,37 +123,40 @@ void GUIObjectRender(GUIObject Object, GFXFramebuffer Framebuffer, size_t Index,
                 GFXBufferDestroy(CacheProjection);
             }
             
-            else Texture = GFXFramebufferGetAttachment(Object->cache.store, 0)->texture;
+            else CachedAttachment = GFXFramebufferGetAttachment(Object->cache.store, 0);
             
             
-            GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
-            
-            GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("texture2d"));
-            GFXDrawSetShader(Drawer, Shader);
-            GFXShaderDestroy(Shader);
-            
-            struct {
-                CCVector2D position;
-                CCVector2D coord;
-            } VertData[4] = {
-                { .position = Rect.position, .coord = CCVector2DMake(0.0f, 0.0f) },
-                { .position = CCVector2DMake(Rect.position.x + Rect.size.x, Rect.position.y), .coord = CCVector2DMake(1.0f, 0.0f) },
-                { .position = CCVector2DMake(Rect.position.x, Rect.position.y + Rect.size.y), .coord = CCVector2DMake(0.0f, 1.0f) },
-                { .position = CCVector2DMake(Rect.position.x + Rect.size.x, Rect.position.y + Rect.size.y), .coord = CCVector2DMake(1.0f, 1.0f) }
-            };
-            
-            GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(VertData), &VertData);
-            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vPosition"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), position));
-            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), coord));
-            GFXBufferDestroy(VertBuffer);
-            
-            GFXDrawSetTexture(Drawer, CC_STRING("tex"), Texture);
-            GFXDrawSetBlending(Drawer, GFXBlendTransparentPremultiplied);
-            GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
-            GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
-            GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
-            
-            GFXDrawDestroy(Drawer);
+            if (!(CachedAttachment->load & GFXFramebufferAttachmentActionFlagClearOnce))
+            {
+                GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
+                
+                GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("texture2d"));
+                GFXDrawSetShader(Drawer, Shader);
+                GFXShaderDestroy(Shader);
+                
+                struct {
+                    CCVector2D position;
+                    CCVector2D coord;
+                } VertData[4] = {
+                    { .position = Rect.position, .coord = CCVector2DMake(0.0f, 0.0f) },
+                    { .position = CCVector2DMake(Rect.position.x + Rect.size.x, Rect.position.y), .coord = CCVector2DMake(1.0f, 0.0f) },
+                    { .position = CCVector2DMake(Rect.position.x, Rect.position.y + Rect.size.y), .coord = CCVector2DMake(0.0f, 1.0f) },
+                    { .position = CCVector2DMake(Rect.position.x + Rect.size.x, Rect.position.y + Rect.size.y), .coord = CCVector2DMake(1.0f, 1.0f) }
+                };
+                
+                GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(VertData), &VertData);
+                GFXDrawSetVertexBuffer(Drawer, CC_STRING("vPosition"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), position));
+                GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), coord));
+                GFXBufferDestroy(VertBuffer);
+                
+                GFXDrawSetTexture(Drawer, CC_STRING("tex"), CachedAttachment->texture);
+                GFXDrawSetBlending(Drawer, GFXBlendTransparentPremultiplied);
+                GFXDrawSetFramebuffer(Drawer, Framebuffer, Index);
+                GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
+                GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
+                
+                GFXDrawDestroy(Drawer);
+            }
         }
         
         else Object->interface->render(Object, Framebuffer, Index, Projection);
