@@ -324,6 +324,44 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testSeparate
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(= (\"1,2,3,4,5,6\") (separate () \"1,2,3,4,5,6\"))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"1\" \"2\" \"3\" \"4\" \"5\" \"6\") (separate (\",\") \"1,2,3,4,5,6\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"1\" \"2\" \"3\" \"\" \"\" \"5\" \"6\") (separate (\"4\" \",\") \"1,2,3,4,5,6\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"1,\" \",\" \",6\") (separate (\"2,3\" \"4,5\") \"1,2,3,4,5,6\"))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+}
+
 -(void) testFormat
 {
     CCExpression Expression = CCExpressionCreateFromSource("(format :bin 5)");
