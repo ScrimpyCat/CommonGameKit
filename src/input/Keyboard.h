@@ -170,7 +170,9 @@ typedef enum {
     CCKeyboardKeycodeMenu =               348,
     
     CCKeyboardKeycodeCount,
-    CCKeyboardKeycodeUnknown =            -1
+    CCKeyboardKeycodeUnknown =            -1,
+    
+    CCKeyboardKeycodeFunctionMask = 256
 } CCKeyboardKeycode;
 
 typedef struct {

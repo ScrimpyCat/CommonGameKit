@@ -64,7 +64,7 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
             TempKey.state.repeat = FALSE;
         }
         
-        if (!TempKey.state.down)
+        if ((!TempKey.state.down) || (TempKey.keycode & CCKeyboardKeycodeFunctionMask))
         {
             TempKey.character = 0;
             atomic_store(&KeyList[TempKey.keycode], TempKey);
