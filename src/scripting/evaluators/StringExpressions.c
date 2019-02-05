@@ -266,6 +266,55 @@ CCExpression CCStringExpressionChop(CCExpression Expression)
     return Expression;
 }
 
+CCExpression CCStringExpressionSeparate(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+    {
+        CCExpression OccurrencesExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression StringExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if ((CCExpressionGetType(OccurrencesExpr) == CCExpressionValueTypeList) && (CCExpressionGetType(StringExpr) == CCExpressionValueTypeString))
+        {
+            CCString *Occurrences;
+            CC_TEMP_Malloc(Occurrences, sizeof(CCString) * CCCollectionGetCount(CCExpressionGetList(OccurrencesExpr)),
+                           CC_EXPRESSION_EVALUATOR_LOG_ERROR("Failed to copy occurrences. Due to allocation failure (%zu)", sizeof(CCString) * CCCollectionGetCount(CCExpressionGetList(OccurrencesExpr)));
+                           return Expression;
+                           );
+            
+            size_t Index = 0;
+            CC_COLLECTION_FOREACH(CCExpression, Occurrence, CCExpressionGetList(OccurrencesExpr))
+            {
+                if (CCExpressionGetType(Occurrence) != CCExpressionValueTypeString)
+                {
+                    CC_TEMP_Free(Occurrences);
+                    
+                    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("separate", "occurrences:list string:string");
+                    
+                    return Expression;
+                }
+                    
+                Occurrences[Index++] = CCExpressionGetString(Occurrence);
+            }
+            
+            CCOrderedCollection Strings = CCStringCreateBySeparatingOccurrencesOfGroupedStrings(CCExpressionGetString(StringExpr), Occurrences, Index);
+            CC_TEMP_Free(Occurrences);
+            
+            CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            CC_COLLECTION_FOREACH(CCString, String, Strings)
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, String, TRUE) });
+            }
+            
+            CCCollectionDestroy(Strings);
+            
+            return Result;
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("separate", "occurrences:list string:string");
+    
+    return Expression;
+}
+
 typedef struct {
     CCString separator;
     CCString prefix;
