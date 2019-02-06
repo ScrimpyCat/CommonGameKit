@@ -90,6 +90,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("frame-changed?"), CCWindowExpressionFrameChanged);
     CCExpressionEvaluatorRegister(CC_STRING("begin"), CCControlFlowExpressionBegin);
     CCExpressionEvaluatorRegister(CC_STRING("if"), CCControlFlowExpressionBranch);
+    CCExpressionEvaluatorRegister(CC_STRING("cond"), CCControlFlowExpressionCond);
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);
     CCExpressionEvaluatorRegister(CC_STRING("repeat"), CCControlFlowExpressionRepeat);
     CCExpressionEvaluatorRegister(CC_STRING("any?"), CCControlFlowExpressionAny);
