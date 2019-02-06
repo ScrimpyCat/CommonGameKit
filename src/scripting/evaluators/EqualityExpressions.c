@@ -170,12 +170,13 @@ CCExpression CCEqualityExpressionEqual(CCExpression Expression)
                 
             case CCExpressionValueTypeList:
             {
+                CCExpression FirstResult = Result;
                 for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
                 {
                     Equal = FALSE;
                     
                     Result = CCExpressionEvaluate(*Expr);
-                    Equal = CCEqualityExpressionCompare(*FirstExpr, Result);
+                    Equal = CCEqualityExpressionCompare(FirstResult, Result);
                     
                     if (!Equal) break;
                 }
