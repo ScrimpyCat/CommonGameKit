@@ -70,6 +70,49 @@
     CCExpressionDestroy(Expression);
 }
 
+-(void) testConditions
+{
+    CCExpression Expression = CCExpressionCreateFromSource("(cond (if (= :one .x) 1) (if (= :two .x) 1) (if #t 3))");
+    
+    CCExpression Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 3, @"Should be initialized");
+    
+    CCExpressionCreateState(Expression, CC_STRING(".x"), CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":one"), TRUE), FALSE, NULL, NULL);
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 1, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (\"1\" \"2\") (begin (state! \".x\" \"12\") (cond (chop (0) .x) (split (0) .x))))");
+
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= ((1) (2)) (begin (state! \".x\" (1 2)) (cond (chop (0) .x) (split (0) .x))))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (quote (cond (chop (0) .x) (split (0) .x))) (begin (state! \".x\" :foo) (cond (chop (0) .x) (split (0) .x))))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertTrue(CCExpressionGetInteger(Result), @"Should be true");
+    
+    CCExpressionDestroy(Expression);
+}
+
 -(void) testLoop
 {
     CCExpression Expression = CCExpressionCreateFromSource("(loop \"@var\" (1 2 3) @var)");
