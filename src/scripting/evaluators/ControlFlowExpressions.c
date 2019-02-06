@@ -60,6 +60,21 @@ CCExpression CCControlFlowExpressionBranch(CCExpression Expression)
     return Expr;
 }
 
+CCExpression CCControlFlowExpressionCond(CCExpression Expression)
+{
+    CCEnumerator Enumerator;
+    CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+    
+    CCExpression Result = Expression;
+    for (CCExpression *Expr = NULL; (Expr = CCCollectionEnumeratorNext(&Enumerator)); )
+    {
+        Result = CCExpressionEvaluate(*Expr);
+        if (Result != *Expr) return Result ? CCExpressionRetain(Result) : Expression;
+    }
+    
+    return Expression;
+}
+
 CCExpression CCControlFlowExpressionLoop(CCExpression Expression)
 {
     const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
