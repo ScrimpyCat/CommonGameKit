@@ -68,6 +68,69 @@
     XCTAssertEqual(Result, Expression, @"Should not evaluate");
     
     CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(get -1 (10 20 30))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 30, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(get -2 (10 20 30))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 20, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(get -3 (10 20 30))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), 10, @"Should be initialized");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(get -4 (10 20 30))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeExpression, @"Should be an expression");
+    XCTAssertEqual(Result, Expression, @"Should not evaluate");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (10 10) (get (0 0) (10 20 30)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), TRUE, @"Should retrieve the elements");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (30 30 10 20) (get (2 -1 0 1) (10 20 30)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), TRUE, @"Should retrieve the elements");
+    
+    CCExpressionDestroy(Expression);
+    
+    
+    Expression = CCExpressionCreateFromSource("(= (quote (get (2 -1 3 1) (10 20 30))) (get (2 -1 3 1) (10 20 30)))");
+    
+    Result = CCExpressionEvaluate(Expression);
+    XCTAssertEqual(CCExpressionGetType(Result), CCExpressionValueTypeInteger, @"Should be an integer");
+    XCTAssertEqual(CCExpressionGetInteger(Result), TRUE, @"Should not retrieve the elements");
+    
+    CCExpressionDestroy(Expression);
 }
 
 -(void) testSetElement
