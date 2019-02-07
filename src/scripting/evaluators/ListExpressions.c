@@ -33,13 +33,13 @@ static _Bool CCListExpressionGetElement(CCCollection List, CCExpression IndexExp
         const size_t Count = CCCollectionGetCount(List);
         if (Index < Count)
         {
-            *Element = CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Index)));
+            *Element = CCExpressionRetain(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Index));
             return TRUE;
         }
         
         else if ((Index + Count) < Count)
         {
-            *Element = CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Index + Count)));
+            *Element = CCExpressionRetain(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Index + Count));
             return TRUE;
         }
     }
