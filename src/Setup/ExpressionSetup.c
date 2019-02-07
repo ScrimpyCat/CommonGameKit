@@ -97,6 +97,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("all?"), CCControlFlowExpressionAll);
     CCExpressionEvaluatorRegister(CC_STRING("get"), CCListExpressionGetter);
     CCExpressionEvaluatorRegister(CC_STRING("set"), CCListExpressionSetter);
+    CCExpressionEvaluatorRegister(CC_STRING("drop"), CCListExpressionDrop);
     CCExpressionEvaluatorRegister(CC_STRING("flatten"), CCListExpressionFlatten);
     CCExpressionEvaluatorRegister(CC_STRING("parts"), CCListExpressionParts);
     CCExpressionEvaluatorRegister(CC_STRING("split"), CCListExpressionSplit);
