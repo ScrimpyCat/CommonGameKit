@@ -68,6 +68,13 @@
             "args": [[{ "type": "list", "name": "indexes" }, { "type": "string" }]]
         },
         {
+            "name": "separate",
+            "description": "Separate the string into substrings at each occurrence.",
+            "examples": ["(separate (\",\") \"1,2,3,4\") ;(\"1\" \"2\" \"3\" \"4\")"],
+            "return": { "type": "list" },
+            "args": [[{ "type": "list", "name": "occurrences" }, { "type": "string" }]]
+        },
+        {
             "name": "format",
             "description": "Format expressions as string.",
             "examples": ["(format :bin 5) ;\"101\"", "(format :hex (1, 2, 3) (precision: 2) (compact: #f) (prefix: \"0x\") (separator: \",\")) ;\"0x01,0x02,0x03\""],

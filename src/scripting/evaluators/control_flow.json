@@ -21,6 +21,15 @@
             ]]
         },
         {
+            "name": "cond",
+            "description": "Resolve a series of conditions. Stops on the first condition to evaluate and returns its result.",
+            "examples": ["(cond (if (= .x 1) :one) (if (= .x 2) :two) (if #t :other)) ;:other (.x = 3)", "(cond (chop (0) .x) (split (0) .x)) ;((1) (2)) (.x = (1 2))"],
+            "return": { "type": "expression" },
+            "args": [
+                { "repeat": [{ "type": "expression", "optional": true }] }
+            ]
+        },
+        {
             "name": "loop",
             "description": "A loop statement. Iterates through the list, assigning the element to the given state variable, and evaluating the expression.",
             "examples": [
