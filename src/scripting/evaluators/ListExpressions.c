@@ -27,18 +27,24 @@
 
 CCExpression CCListExpressionGetter(CCExpression Expression)
 {
-    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     if (ArgCount == 2)
     {
         //TODO: Index could be a list of indices, which would return a new list
-        CCExpression Index = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression IndexExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
-        if ((CCExpressionGetType(Index) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+        if ((CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
         {
-            size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
-            if (CCExpressionGetInteger(Index) < Count)
+            const int32_t Index = CCExpressionGetInteger(IndexExpr);
+            const size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
+            if (Index < Count)
             {
-                return CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), CCExpressionGetInteger(Index))));
+                return CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), Index)));
+            }
+            
+            else if ((Index + Count) < Count)
+            {
+                return CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(List), Index + Count)));
             }
         }
         
@@ -52,7 +58,7 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
 
 CCExpression CCListExpressionSetter(CCExpression Expression)
 {
-    size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
     if (ArgCount == 3)
     {
         //TODO: Index could be a list of indices, which would set a list of elements
