@@ -114,6 +114,101 @@ CCExpression CCListExpressionSetter(CCExpression Expression)
     return Expression;
 }
 
+static int CCListExpressionIndexCompareAscending(const int32_t *Left, const int32_t *Right)
+{
+    if (*Left < *Right) return -1;
+    else if (*Left > *Right) return 1;
+    
+    return 0;
+}
+
+static CCExpression CCListExpressionDropCopy(CCCollection List, const int32_t *Indexes, size_t IndexCount)
+{
+    size_t Index = 0, SkipIndex = 0;
+    CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    CC_COLLECTION_FOREACH(CCExpression, Expr, List)
+    {
+        for ( ; (SkipIndex < IndexCount) && (Index > Indexes[SkipIndex]); SkipIndex++);
+        
+        if ((SkipIndex == IndexCount) || (Index != Indexes[SkipIndex])) CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(Expr) });
+        
+        Index++;
+    }
+    
+    return Result;
+}
+
+CCExpression CCListExpressionDrop(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    if (ArgCount == 2)
+    {
+        CCExpression IndexExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression ListExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        if (CCExpressionGetType(ListExpr) == CCExpressionValueTypeList)
+        {
+            CCCollection List = CCExpressionGetList(ListExpr);
+            size_t Count = CCCollectionGetCount(List);
+            
+            if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeList)
+            {
+                const size_t IndexCount = CCCollectionGetCount(CCExpressionGetList(IndexExpr));
+                if (IndexCount == 0) return CCExpressionRetain(ListExpr);
+                
+                int32_t *Indexes;
+                CC_SAFE_Malloc(Indexes, sizeof(int32_t) * IndexCount,
+                               CC_EXPRESSION_EVALUATOR_LOG_ERROR("Failed to allocate index list. Due to insufficient memory (%zu).", sizeof(int32_t) * IndexCount);
+                               return Expression;
+                               );
+                
+                int32_t *CurIndex = Indexes;
+                CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(IndexExpr))
+                {
+                    if (CCExpressionGetType(Expr) == CCExpressionValueTypeInteger)
+                    {
+                        const int32_t Index = CCExpressionGetInteger(Expr);
+                        if (Index < Count) *CurIndex++ = Index;
+                        else if ((Index + Count) < Count) *CurIndex++ = (int32_t)(Index + Count);
+                        else
+                        {
+                            CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of drop: indexes must be within bounds of list");
+                            
+                            CC_SAFE_Free(Indexes);
+                            
+                            return Expression;
+                        }
+                    }
+                }
+                
+                qsort(Indexes, IndexCount, sizeof(int32_t), (int(*)(const void*, const void*))CCListExpressionIndexCompareAscending);
+                
+                CCExpression Result = CCListExpressionDropCopy(List, Indexes, IndexCount);
+                
+                CC_SAFE_Free(Indexes);
+                
+                return Result;
+            }
+            
+            else if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger)
+            {
+                const int32_t Index = CCExpressionGetInteger(IndexExpr);
+                if (Index < Count) return CCListExpressionDropCopy(List, &Index, 1);
+                else if ((Index + Count) < Count) return CCListExpressionDropCopy(List, &(int32_t){ (int32_t)(Index + Count) }, 1);
+                else
+                {
+                    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of drop: indexes must be within bounds of list");
+                    
+                    return Expression;
+                }
+            }
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("drop", "index:integer|list list:list");
+    
+    return Expression;
+}
+
 CCExpression CCListExpressionFlatten(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
