@@ -93,23 +93,23 @@ CCExpression CCListExpressionSetter(CCExpression Expression)
     if (ArgCount == 3)
     {
         //TODO: Index could be a list of indices, which would set a list of elements
-        CCExpression Index = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression IndexExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
-        if ((CCExpressionGetType(Index) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
+        if ((CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger) && (CCExpressionGetType(List) == CCExpressionValueTypeList))
         {
             size_t Count = CCCollectionGetCount(CCExpressionGetList(List));
-            if (CCExpressionGetInteger(Index) < Count)
+            int32_t Index = CCExpressionGetInteger(IndexExpr);
+            
+            if ((Index < Count) || ((Index = (int32_t)(Index + Count)) < Count))
             {
                 List = CCExpressionCopy(List);
-                CCOrderedCollectionReplaceElementAtIndex(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3))) }, CCExpressionGetInteger(Index));
+                CCOrderedCollectionReplaceElementAtIndex(CCExpressionGetList(List), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3))) }, Index);
                 return List;
             }
         }
-        
-        else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("set", "index:integer list:list value:expr");
     }
     
-    else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("set", "index:integer list:list value:expr");
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("set", "index:integer list:list value:expr");
     
     return Expression;
 }
