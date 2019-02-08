@@ -13,9 +13,19 @@
         {
             "name": "set",
             "description": "Set an element in a list.",
-            "examples": ["(set 0 (1 2 3) :new) ;(:new 2 3)", "(set 2 (1 2 3) 9) ;(1 2 9)"],
+            "examples": ["(set 0 (1 2 3) :new) ;(:new 2 3)", "(set 2 (1 2 3) 9) ;(1 2 9)", "(set -1 (1 2 3) 9) ;(1 2 9)"],
             "return": { "type": "list" },
             "args": [[{ "type": "integer", "name": "index" }, { "type": "list" }, { "type": "expression", "name": "value" }]]
+        },
+        {
+            "name": "drop",
+            "description": "Remove the elements from a list.",
+            "examples": ["(drop 0 (1 2 3)) ;(2 3)", "(drop -1 (1 2 3)) ;(1 2)", "(drop (2 0) (1 2 3)) ;(2)"],
+            "return": { "type": "expression" },
+            "args": [
+                [{ "type": "integer", "name": "index" }, { "type": "list" }],
+                [{ "type": "list", "name": "indexes" }, { "type": "list" }]
+            ]
         },
         {
             "name": "flatten",
