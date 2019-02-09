@@ -604,7 +604,7 @@ CCExpression GUIExpressionPercentHeight(CCExpression Expression)
     return GUIExpressionPercentage(Expression, "percent-height", TRUE);
 }
 
-static _Bool GUIExpressionOnEventCursorPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+static _Bool GUIExpressionOnEventCursorPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate, _Bool RequiresState)
 {
     _Bool IsEvent = FALSE;
     if ((IsEvent = (Event->type == GUIEventTypeMouse)) && (ArgCount == 1))
@@ -616,18 +616,21 @@ static _Bool GUIExpressionOnEventCursorPredicate(GUIEvent Event, CCExpression Ar
             *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
                           (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
             
-            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+            if ((*Predicate) || (RequiresState))
             {
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
-            }
-            
-            else
-            {
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+                {
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+                }
+                
+                else
+                {
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                }
             }
         }
     }
@@ -635,7 +638,7 @@ static _Bool GUIExpressionOnEventCursorPredicate(GUIEvent Event, CCExpression Ar
     return IsEvent;
 }
 
-static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate, _Bool RequiresState)
 {
     _Bool IsEvent = FALSE;
     if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventButton)) && (ArgCount == 2))
@@ -643,16 +646,18 @@ static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Arg
         CCExpression Button = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
         if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
         {
+            CCString ButtonType = CCExpressionGetAtom(Button);
+            
             uint32_t Mods = 0;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("shift")) != SIZE_MAX) Mods |= CCKeyboardModifierShift;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= CCKeyboardModifierControl;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("alt")) != SIZE_MAX) Mods |= CCKeyboardModifierAlt;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= CCKeyboardModifierSuper;
+            if (CCStringFindSubstring(ButtonType, 0, CC_STRING("shift")) != SIZE_MAX) Mods |= CCKeyboardModifierShift;
+            if (CCStringFindSubstring(ButtonType, 0, CC_STRING("ctrl")) != SIZE_MAX) Mods |= CCKeyboardModifierControl;
+            if (CCStringFindSubstring(ButtonType, 0, CC_STRING("alt")) != SIZE_MAX) Mods |= CCKeyboardModifierAlt;
+            if (CCStringFindSubstring(ButtonType, 0, CC_STRING("cmd")) != SIZE_MAX) Mods |= CCKeyboardModifierSuper;
             
             uint32_t Key = CCMouseButtonUnknown;
-            if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("left")) != SIZE_MAX) Key = CCMouseButtonLeft;
-            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("right")) != SIZE_MAX) Key = CCMouseButtonRight;
-            else if (CCStringFindSubstring(CCExpressionGetAtom(Button), 0, CC_STRING("middle")) != SIZE_MAX) Key = CCMouseButtonMiddle;
+            if (CCStringFindSubstring(ButtonType, 0, CC_STRING("left")) != SIZE_MAX) Key = CCMouseButtonLeft;
+            else if (CCStringFindSubstring(ButtonType, 0, CC_STRING("right")) != SIZE_MAX) Key = CCMouseButtonRight;
+            else if (CCStringFindSubstring(ButtonType, 0, CC_STRING("middle")) != SIZE_MAX) Key = CCMouseButtonMiddle;
             
             if ((Event->mouse.state.button.button == Key) && (Event->mouse.state.button.flags == Mods))
             {
@@ -663,28 +668,31 @@ static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Arg
                     *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
                                   (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
                     
-                    if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@press")))
+                    if ((*Predicate) || (RequiresState))
                     {
-                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE);
-                    }
-                    
-                    else
-                    {
-                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE, NULL, FALSE);
-                    }
-                    
-                    if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
-                    {
-                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
-                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
-                        CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
-                    }
-                    
-                    else
-                    {
-                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
-                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
-                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                        if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@press")))
+                        {
+                            CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE);
+                        }
+                        
+                        else
+                        {
+                            CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->mouse.state.button.state.down), FALSE, NULL, FALSE);
+                        }
+                        
+                        if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+                        {
+                            CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                            CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                            CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+                        }
+                        
+                        else
+                        {
+                            CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                            CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                            CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                        }
                     }
                 }
             }
@@ -694,7 +702,7 @@ static _Bool GUIExpressionOnEventClickPredicate(GUIEvent Event, CCExpression Arg
     return IsEvent;
 }
 
-static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate, _Bool RequiresState)
 {
     _Bool IsEvent = FALSE;
     if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventScroll)) && (ArgCount == 1))
@@ -706,32 +714,35 @@ static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Ar
             *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
                           (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
             
-            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta")))
+            if ((*Predicate) || (RequiresState))
             {
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE);
-            }
-            
-            else
-            {
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE, NULL, FALSE);
-            }
-            
-            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
-            {
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
-            }
-            
-            else
-            {
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta")))
+                {
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE);
+                }
+                
+                else
+                {
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.x), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@scroll-delta-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.scroll.delta.y), FALSE, NULL, FALSE);
+                }
+                
+                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+                {
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+                }
+                
+                else
+                {
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                }
             }
         }
     }
@@ -739,7 +750,7 @@ static _Bool GUIExpressionOnEventScrollPredicate(GUIEvent Event, CCExpression Ar
     return IsEvent;
 }
 
-static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate, _Bool RequiresState)
 {
     _Bool IsEvent = FALSE;
     if ((Event->type == GUIEventTypeMouse) && (IsEvent = (Event->mouse.event == CCMouseEventDrop)) && (ArgCount == 1))
@@ -751,34 +762,37 @@ static _Bool GUIExpressionOnEventDropPredicate(GUIEvent Event, CCExpression Args
             *Predicate = ((Rect.position.x <= Event->mouse.state.position.x) && (Rect.position.x + Rect.size.x >= Event->mouse.state.position.x) &&
                           (Rect.position.y <= Event->mouse.state.position.y) && (Rect.position.y + Rect.size.y >= Event->mouse.state.position.y));
             
-            CCExpression Files = CCExpressionCreateList(CC_STD_ALLOCATOR);
-            CC_COLLECTION_FOREACH(CCString, Path, Event->mouse.state.drop.files)
+            if ((*Predicate) || (RequiresState))
             {
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Files), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, Path, TRUE) });
-            }
-            
-            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files")))
-            {
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE);
-            }
-            
-            else
-            {
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE, NULL, FALSE);
-            }
-            
-            if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
-            {
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
-                CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
-            }
-            
-            else
-            {
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
-                CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                CCExpression Files = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                CC_COLLECTION_FOREACH(CCString, Path, Event->mouse.state.drop.files)
+                {
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Files), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, Path, TRUE) });
+                }
+                
+                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files")))
+                {
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE);
+                }
+                
+                else
+                {
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@drop-files"), Files, FALSE, NULL, FALSE);
+                }
+                
+                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), CC_STRING("@pos")))
+                {
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE);
+                    CCExpressionSetState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE);
+                }
+                
+                else
+                {
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos"), CCExpressionCreateVector2(CC_STD_ALLOCATOR, Event->mouse.state.position), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-x"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.x), FALSE, NULL, FALSE);
+                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), CC_STRING("@pos-y"), CCExpressionCreateFloat(CC_STD_ALLOCATOR, Event->mouse.state.position.y), FALSE, NULL, FALSE);
+                }
             }
         }
     }
@@ -910,7 +924,7 @@ static CCString NamedKeys[CCKeyboardKeycodeCount] = {
     [347] = CC_STRING(":right-super"),
     [348] = CC_STRING(":menu")
 };
-static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate)
+static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate, _Bool RequiresState)
 {
     _Bool IsEvent = FALSE;
     if ((Event->type == GUIEventTypeKey) && ((ArgCount == 1) || (ArgCount == 2)))
@@ -935,43 +949,44 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
         CCExpression Mode = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
         if (CCExpressionGetType(Mode) == CCExpressionValueTypeAtom)
         {
-            if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":any")))
+            CCString Name = CCExpressionGetAtom(Mode);
+            if (CCStringEqual(Name, CC_STRING(":any")))
             {
                 IsEvent = TRUE;
                 *Predicate = TRUE;
             }
             
-            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":grapheme")))
+            else if (CCStringEqual(Name, CC_STRING(":grapheme")))
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.character != 0) && !(Event->key.state.flags & ~(CCKeyboardModifierShift | CCKeyboardModifierAlt));
             }
             
-            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":control")))
+            else if (CCStringEqual(Name, CC_STRING(":control")))
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.flags & (CCKeyboardModifierControl | CCKeyboardModifierSuper));
             }
             
-            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":delete")))
+            else if (CCStringEqual(Name, CC_STRING(":delete")))
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeBackspace);
             }
             
-            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":enter")))
+            else if (CCStringEqual(Name, CC_STRING(":enter")))
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeEnter);
             }
             
-            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":tab")))
+            else if (CCStringEqual(Name, CC_STRING(":tab")))
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeTab);
             }
             
-            else if (CCStringEqual(CCExpressionGetAtom(Mode), CC_STRING(":direction")))
+            else if (CCStringEqual(Name, CC_STRING(":direction")))
             {
                 IsEvent = TRUE;
                 *Predicate = (Event->key.state.keycode == CCKeyboardKeycodeLeft) || (Event->key.state.keycode == CCKeyboardKeycodeRight) || (Event->key.state.keycode == CCKeyboardKeycodeUp) || (Event->key.state.keycode == CCKeyboardKeycodeDown);
@@ -979,7 +994,7 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
         }
         
         
-        if (IsEvent)
+        if ((IsEvent) && ((*Predicate) || (RequiresState)))
         {
             CCString Key = (Event->key.state.keycode != CCKeyboardKeycodeUnknown ? NamedKeys[Event->key.state.keycode] : 0);
             
@@ -1044,7 +1059,7 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                     {
                         struct {
                             CCString name;
-                            _Bool (*predicate)(GUIEvent, CCExpression, size_t, _Bool *);
+                            _Bool (*predicate)(GUIEvent, CCExpression, size_t, _Bool *, _Bool);
                         } EventPredicates[] = {
                             { CC_STRING("cursor:"), GUIExpressionOnEventCursorPredicate },
                             { CC_STRING("click:"), GUIExpressionOnEventClickPredicate },
@@ -1058,7 +1073,7 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
                         {
                             if (CCStringEqual(CCExpressionGetAtom(Type), EventPredicates[Loop].name))
                             {
-                                IsEvent = EventPredicates[Loop].predicate(Event, Result, EventPredicateArgCount - 1, &Predicate);
+                                IsEvent = EventPredicates[Loop].predicate(Event, Result, EventPredicateArgCount - 1, &Predicate, ArgCount == 3);
                                 break;
                             }
                         }
