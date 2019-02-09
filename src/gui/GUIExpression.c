@@ -927,7 +927,7 @@ static CCString NamedKeys[CCKeyboardKeycodeCount] = {
 static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args, size_t ArgCount, _Bool *Predicate, _Bool RequiresState)
 {
     _Bool IsEvent = FALSE;
-    if ((Event->type == GUIEventTypeKey) && ((ArgCount == 1) || (ArgCount == 2)))
+    if ((Event->type == GUIEventTypeKey) && (ArgCount >= 1))
     {
         /*
          TODO: Workout option arguments
@@ -946,7 +946,10 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
          
          Default modifier matching behaviour will match any modifier combination.
          */
-        CCExpression Mode = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Args), 1);
+        CCEnumerator Enumerator;
+        CCCollectionGetEnumerator(CCExpressionGetList(Args), &Enumerator);
+        
+        CCExpression Mode = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
         if (CCExpressionGetType(Mode) == CCExpressionValueTypeAtom)
         {
             CCString Name = CCExpressionGetAtom(Mode);
@@ -994,38 +997,73 @@ static _Bool GUIExpressionOnEventKeyPredicate(GUIEvent Event, CCExpression Args,
         }
         
         
-        if ((IsEvent) && ((*Predicate) || (RequiresState)))
+        if (IsEvent)
         {
-            CCString Key = (Event->key.state.keycode != CCKeyboardKeycodeUnknown ? NamedKeys[Event->key.state.keycode] : 0);
-            
-            CCExpression Flags = CCExpressionCreateList(CC_STD_ALLOCATOR);
-            if (Event->key.state.flags & CCKeyboardModifierShift) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":shift"), TRUE) });
-            if (Event->key.state.flags & CCKeyboardModifierAlt) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":alt"), TRUE) });
-            if (Event->key.state.flags & CCKeyboardModifierControl) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":control"), TRUE) });
-            if (Event->key.state.flags & CCKeyboardModifierSuper) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":cmd"), TRUE) });
-            
-            struct {
-                CCString name;
-                CCExpression value;
-            } Inputs[] = {
-                { CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.down) },
-                { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithCharacter(CC_STD_ALLOCATOR, Event->key.state.character), FALSE) },
-                { CC_STRING("@keycode"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.keycode) },
-                { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) },
-                { CC_STRING("@flags"), Flags },
-                { CC_STRING("@key"), CCExpressionCreateString(CC_STD_ALLOCATOR, (Key ? Key : CC_STRING(":unknown")), TRUE) }
-            };
-            
-            for (size_t Loop = 0; Loop < sizeof(Inputs) / sizeof(typeof(*Inputs)); Loop++)
+            if ((ArgCount > 1) && (*Predicate))
             {
-                if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), Inputs[Loop].name))
+                for (CCExpression *Option; (Option = CCCollectionEnumeratorNext(&Enumerator)); )
                 {
-                    CCExpressionSetState(CCExpressionStateGetSuper(Args), Inputs[Loop].name, Inputs[Loop].value, FALSE);
+                    if ((CCExpressionGetType(*Option) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(*Option)) == 2))
+                    {
+                        CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Option), 0);
+                        if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                        {
+                            CCString Name = CCExpressionGetAtom(NameExpr);
+                            if (CCStringEqual(Name, CC_STRING("down:")))
+                            {
+                                CCExpression Down = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Option), 1);
+                                if (CCExpressionGetType(Down) == CCExpressionValueTypeInteger)
+                                {
+                                    if ((_Bool)CCExpressionGetInteger(Down) != Event->key.state.state.down) *Predicate = FALSE;
+                                }
+                            }
+                            
+                            else if (CCStringEqual(Name, CC_STRING("repeat:")))
+                            {
+                                CCExpression Repeat = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Option), 1);
+                                if (CCExpressionGetType(Repeat) == CCExpressionValueTypeInteger)
+                                {
+                                    if ((_Bool)CCExpressionGetInteger(Repeat) != Event->key.state.state.repeat) *Predicate = FALSE;
+                                }
+                            }
+                        }
+                    }
                 }
+            }
+            
+            if ((*Predicate) || (RequiresState))
+            {
+                CCString Key = (Event->key.state.keycode != CCKeyboardKeycodeUnknown ? NamedKeys[Event->key.state.keycode] : 0);
                 
-                else
+                CCExpression Flags = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                if (Event->key.state.flags & CCKeyboardModifierShift) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":shift"), TRUE) });
+                if (Event->key.state.flags & CCKeyboardModifierAlt) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":alt"), TRUE) });
+                if (Event->key.state.flags & CCKeyboardModifierControl) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":control"), TRUE) });
+                if (Event->key.state.flags & CCKeyboardModifierSuper) CCOrderedCollectionAppendElement(CCExpressionGetList(Flags), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":cmd"), TRUE) });
+                
+                struct {
+                    CCString name;
+                    CCExpression value;
+                } Inputs[] = {
+                    { CC_STRING("@press"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.down) },
+                    { CC_STRING("@char"), CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithCharacter(CC_STD_ALLOCATOR, Event->key.state.character), FALSE) },
+                    { CC_STRING("@keycode"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.keycode) },
+                    { CC_STRING("@repeat"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, Event->key.state.state.repeat) },
+                    { CC_STRING("@flags"), Flags },
+                    { CC_STRING("@key"), CCExpressionCreateString(CC_STD_ALLOCATOR, (Key ? Key : CC_STRING(":unknown")), TRUE) }
+                };
+                
+                for (size_t Loop = 0; Loop < sizeof(Inputs) / sizeof(typeof(*Inputs)); Loop++)
                 {
-                    CCExpressionCreateState(CCExpressionStateGetSuper(Args), Inputs[Loop].name, Inputs[Loop].value, FALSE, NULL, FALSE);
+                    if (CCExpressionGetStateStrict(CCExpressionStateGetSuper(Args), Inputs[Loop].name))
+                    {
+                        CCExpressionSetState(CCExpressionStateGetSuper(Args), Inputs[Loop].name, Inputs[Loop].value, FALSE);
+                    }
+                    
+                    else
+                    {
+                        CCExpressionCreateState(CCExpressionStateGetSuper(Args), Inputs[Loop].name, Inputs[Loop].value, FALSE, NULL, FALSE);
+                    }
                 }
             }
         }
