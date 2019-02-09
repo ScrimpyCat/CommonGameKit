@@ -145,7 +145,14 @@
                                 [{ "type": "atom", "value": "direction" }],
                                 [{ "type": "atom", "value": "delete" }],
                                 [{ "type": "atom", "value": "enter" }],
-                                [{ "type": "atom", "value": "tab" }]
+                                [{ "type": "atom", "value": "tab" }],
+                                [{ "type": "atom", "name": "key" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean" }] }, { "type": "list", "value": [{ "type": "option", "value": "repeat" }, { "type": "boolean" }] }],
+                                [{ "type": "atom", "value": "grapheme" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean", "value": "#t" }] }],
+                                [{ "type": "atom", "value": "control" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean", "value": "#t" }] }],
+                                [{ "type": "atom", "value": "direction" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean", "value": "#t" }] }],
+                                [{ "type": "atom", "value": "delete" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean", "value": "#t" }] }],
+                                [{ "type": "atom", "value": "enter" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean", "value": "#t" }] }],
+                                [{ "type": "atom", "value": "tab" }, { "type": "list", "value": [{ "type": "option", "value": "down" }, { "type": "boolean", "value": "#t" }] }]
                             ]
                         }
                     ]
