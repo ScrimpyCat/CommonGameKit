@@ -35,8 +35,34 @@
 static char Buffer[16384];
 #endif
 
+#if CC_PLATFORM_APPLE
+#include <mach/mach_time.h>
+
+double TimebaseSeconds;
+static double CurrentAbsoluteTime(void)
+{
+    return (double)mach_absolute_time() * TimebaseSeconds;
+}
+#endif
+
+static double AssertTime(void)
+{
+    CCAssertLog(0, "Implementation missing for CCTimestamp");
+    return 0.0;
+}
+
 static void Setup(void)
 {
+#if CC_PLATFORM_APPLE
+    static mach_timebase_info_data_t Timebase;
+    if (!mach_timebase_info(&Timebase)) {
+        TimebaseSeconds = 1e-9 * (double)Timebase.numer / (double)Timebase.denom;
+        CCTimestamp = CurrentAbsoluteTime;
+    }
+#endif
+    
+    if (!CCTimestamp) CCTimestamp = AssertTime;
+    
     CCAssetManagerCreate();
     CCEntityManagerCreate();
     
