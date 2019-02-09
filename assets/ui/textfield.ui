@@ -53,7 +53,7 @@
             (
                 (on (key: :grapheme (down: #t)) ((.string! (insert @char .string .cursor)) (.cursor! (+ .cursor 1))))
                 (on (key: :direction (down: #t))
-                    (
+                    (cond
                         (if (= @key :left) (.cursor! (max (- .cursor 1) 0)))
                         (if (= @key :right) (.cursor! (min (+ .cursor 1) (length .string))))
                     )
