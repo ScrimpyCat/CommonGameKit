@@ -3,6 +3,7 @@
     (line-height: 82)
     (base: 53)
     (texture "arial-57-font")
+    (letter: "\n" (glyph: 0 512 0 0) (offset: 0 0) (advance: 0))
     (letter: " " (glyph: 0 512 0 0) (offset: 0 53) (advance: 32))
     (letter: "!" (glyph: 112 320 23 59) (offset: -2 3) (advance: 33))
     (letter: "\"" (glyph: 397 62 33 33) (offset: -6 3) (advance: 36))
@@ -98,5 +99,4 @@
     (letter: "|" (glyph: 0 440 22 72) (offset: -3 3) (advance: 30))
     (letter: "}" (glyph: 92 442 35 70) (offset: -7 3) (advance: 35))
     (letter: "~" (glyph: 453 67 46 28) (offset: -6 19) (advance: 49))
-    (letter: "" (glyph: 445 148 47 54) (offset: -1 8) (advance: 59))
 )
