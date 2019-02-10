@@ -339,7 +339,7 @@ CCString CCExpressionGetNamedString(CCExpression String)
 int32_t CCExpressionGetNamedInteger(CCExpression Value)
 {
     int32_t Result;
-    CCExpressionGetIntegerArray(Value, &Result, 1, 1, "Integer should evaluate to a number.", TRUE);
+    CCExpressionGetIntegerArray(Value, &Result, 1, 1, "Integer should evaluate to a number.", FALSE);
     
     return Result;
 }
@@ -347,7 +347,7 @@ int32_t CCExpressionGetNamedInteger(CCExpression Value)
 float CCExpressionGetNamedFloat(CCExpression Value)
 {
     float Result;
-    CCExpressionGetFloatArray(Value, &Result, 1, 1, "Float should evaluate to a number.", TRUE);
+    CCExpressionGetFloatArray(Value, &Result, 1, 1, "Float should evaluate to a number.", FALSE);
     
     return Result;
 }
