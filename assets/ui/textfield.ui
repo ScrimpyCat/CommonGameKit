@@ -59,7 +59,20 @@
                     )
                 )
                 (on (key: :delete (down: #t))
-                    (if .cursor ((.string! (remove (- .cursor 1) 1 .string)) (.cursor! (- .cursor 1))))
+                    (cond
+                        (if (all? .cursor (= (:cmd) @flags))
+                            (begin
+                                (state! ".prev-length")
+                                (.prev-length! (length .string))
+                                (.string! (cat (flatten
+                                    (drop -1 (separate ("\n") (get 0 (chop ((- .cursor 1)) .string))))
+                                    (get -1 (set 0 (chop ((- .cursor 1)) .string) ""))
+                                ) "\n"))
+                                (.cursor! (- .cursor (- .prev-length (length .string))))
+                            )
+                        )
+                        (if .cursor ((.string! (remove (- .cursor 1) 1 .string)) (.cursor! (- .cursor 1))))
+                    )
                 )
             )
         )
