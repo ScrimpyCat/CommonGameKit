@@ -291,6 +291,11 @@
     CCArrayAppendElement(Glyphs, &(CCFontGlyph){
         .coord = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(0.0f) },
         .offset = CCVector2DFill(0.0f),
+        .advance = 0.0f
+    });
+    CCArrayAppendElement(Glyphs, &(CCFontGlyph){
+        .coord = (CCRect){ CCVector2DFill(0.0f), CCVector2DFill(0.0f) },
+        .offset = CCVector2DFill(0.0f),
         .advance = 5.0f
     });
     CCArrayAppendElement(Glyphs, &(CCFontGlyph){
@@ -316,6 +321,7 @@
     
     CCArray Letters = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCChar), 4);
     
+    CCArrayAppendElement(Letters, &(CCChar){ '\n' });
     CCArrayAppendElement(Letters, &(CCChar){ ' ' });
     CCArrayAppendElement(Letters, &(CCChar){ 'a' });
     CCArrayAppendElement(Letters, &(CCChar){ 'b' });
@@ -629,7 +635,7 @@
     XCTAssertEqual(CCCollectionGetCount(Lines), 3, @"Should produce 3 lines");
     XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0)), 2, @"Should contain 2 attributes");
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 0))->string, CC_STRING("a ")), @"Should be the correct string");
-    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 1))->string, CC_STRING("a")), @"Should be the correct string");
+    XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 0), 1))->string, CC_STRING("a\n")), @"Should be the correct string");
     XCTAssertEqual(CCCollectionGetCount(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1)), 2, @"Should contain 2 attributes");
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 0))->string, CC_STRING("ab")), @"Should be the correct string");
     XCTAssertTrue(CCStringEqual(((CCTextAttribute*)CCOrderedCollectionGetElementAtIndex(*(CCOrderedCollection*)CCOrderedCollectionGetElementAtIndex(Lines, 1), 1))->string, CC_STRING("b ")), @"Should be the correct string");
