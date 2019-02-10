@@ -884,6 +884,11 @@
                     "name": "dragged",
                     "description": "Whether the cursor is currently dragging the textfield. Typically do no set this.",
                     "return": { "type": "boolean" }
+                },
+                {
+                    "name": "enter",
+                    "description": "The action to be performed when an enter event occurs.",
+                    "return": { "type": "expression" }
                 }
             ]
         }
