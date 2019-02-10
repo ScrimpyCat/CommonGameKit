@@ -275,22 +275,10 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
             AttrLength++;
             Length++;
             
-            if (isspace(Letter))
+            if ((isspace(Letter)) && (Letter != '\n'))
             {
                 WordStart = Length;
                 WordAttributeCount = 1;
-                
-                if (Letter == '\n')
-                {
-                    WordStart = 0;
-                    
-                    CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length - 1) });
-                    
-                    Offset += Length;
-                    Length = 0;
-                    Cursor = CCVector2DFill(0.0f);
-                    continue;
-                }
             }
             
             const CCFontGlyph *Glyph = CCFontGetGlyph(Attribute->font, Letter);
@@ -392,6 +380,18 @@ CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrdered
                     
                     if (Visibility & CCTextVisibilitySingleLine) return Lines;
                     if (StartAgain) break;
+                }
+                
+                if (Letter == '\n')
+                {
+                    WordStart = 0;
+                    
+                    CCOrderedCollectionAppendElement(Lines, &(CCOrderedCollection){ CCTextAttributeGetSelection(Allocator, AttributedStrings, Offset, Length - 0) });
+                    
+                    Offset += Length;
+                    Length = 0;
+                    Cursor = CCVector2DFill(0.0f);
+                    continue;
                 }
             }
         }

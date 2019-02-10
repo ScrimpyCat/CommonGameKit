@@ -527,6 +527,7 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
             
             if (Length >= Offset)
             {
+                CCChar PrevLetter = 0;
                 CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attribute, Line)
                 {
                     const CCFontAttribute Options = CCTextAttributeGetFontAttribute(Attribute);
@@ -545,11 +546,19 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
                         {
                             Cursor = CCFontPositionGlyph(Attribute->font, Glyph, Options, Cursor, NULL, NULL);
                         }
+                        
+                        PrevLetter = Letter;
                     }
                 }
                 
                 if (Text->lines) CCCollectionDestroy(Text->lines);
                 Text->lines = Lines;
+                
+                if ((Length == Offset) && (PrevLetter == '\n'))
+                {
+                    Cursor.x = Text->frame.position.x;
+                    Cursor.y -= LineInfo->height;
+                }
                 
                 return Cursor;
             }
