@@ -231,7 +231,12 @@ static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, voi
                     {
                         CCExpressionStateSetSuper(Field, State);
                         
-                        Descriptor->deserialize(Target, CCExpressionEvaluate(Field), FALSE);
+                        CCExpression Result = CCExpressionEvaluate(Field);
+                        
+                        CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(CCComponentGetID(Target));
+                        CCComponentSystemLock(System->id);
+                        Descriptor->deserialize(Target, Result, FALSE);
+                        CCComponentSystemUnlock(System->id);
                     }
                 }
                 
