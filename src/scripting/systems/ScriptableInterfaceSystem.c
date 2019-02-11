@@ -73,7 +73,7 @@ void CCScriptableInterfaceSystemDeregister(void)
         CCComponent Scriptable;
         for (size_t Loop2 = 0; CCConcurrentIndexMapGetElementAtIndex(ReadableComponentReferences[Loop], Loop2, &Scriptable); Loop2++)
         {
-            CCComponentDestroy(Scriptable);
+            if (Scriptable) CCComponentDestroy(Scriptable);
         }
         
         CCConcurrentIndexMapDestroy(ReadableComponentReferences[Loop]);
