@@ -77,6 +77,10 @@
                     )
                 )
                 (on (key: :enter (down: #t)) (if .cursor .enter))
+                (on (drop: .rect) (.string! (insert (cat @drop-files " ") .string .cursor)))
+            )
+            (
+                (on (drop: .rect) ((.string! (cat @drop-files " ")) (.cursor! 0)))
             )
         )
     )
