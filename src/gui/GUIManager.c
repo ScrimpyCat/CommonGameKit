@@ -54,18 +54,22 @@ static GUIManager ObjectManager = {
 
 static void GUIManagerEventMouseCallback(CCComponent Component, CCMouseEvent Event, CCMouseMap State)
 {
+    GUIManagerLock();
     GUIManagerHandleEvent(&(GUIEventInfo){
         .type = GUIEventTypeMouse,
         .mouse = { .event = Event, .state = State }
     });
+    GUIManagerUnlock();
 }
 
 static void GUIManagerEventKeyboardCallback(CCComponent Component, CCKeyboardMap State)
 {
+    GUIManagerLock();
     GUIManagerHandleEvent(&(GUIEventInfo){
         .type = GUIEventTypeKey,
         .key = { .state = State }
     });
+    GUIManagerUnlock();
 }
 
 static void GUIObjectDestructor(CCCollection Collection, GUIObject *Object)

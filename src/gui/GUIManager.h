@@ -52,9 +52,9 @@ void GUIManagerUpdate(void);
  */
 void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index);
 
-//void GUIManagerResize(); //could be just an atomic swap?
 /*!
  * @brief Submit an event to the GUI manager.
+ * @warning This call must be made within a GUI manager lock.
  * @param Event The GUI event to be submitted.
  */
 void GUIManagerHandleEvent(GUIEvent Event);
