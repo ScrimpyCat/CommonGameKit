@@ -447,7 +447,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     return FALSE;
                                     
                                 case CCComponentExpressionArgumentTypeVector3:
-                                    if (CCExpressionIsNamedVector4(Arg))
+                                    if (CCExpressionIsNamedVector3(Arg))
                                     {
                                         ((void(*)(CCComponent,CCVector3D))Deserializer[Loop].setter)(Component, CCExpressionGetNamedVector3(Arg));
                                         return TRUE;
