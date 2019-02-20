@@ -63,6 +63,7 @@ static void SetStr(CCComponent Component, CCString Value){ CC_STRING_TEMP_BUFFER
 static void SetBool(CCComponent Component, _Bool Value){ snprintf(Set, sizeof(Set), "%s", Value ? "true" : "false"); }
 static void SetF32(CCComponent Component, float Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
 static void SetF64(CCComponent Component, double Value){ snprintf(Set, sizeof(Set), "%.2f", Value); }
+static void SetVec3(CCComponent Component, CCVector3D Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f", Value.x, Value.y, Value.z); }
 static void SetVec4(CCComponent Component, CCVector4D Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.x, Value.y, Value.z, Value.w); }
 static void SetColour(CCComponent Component, CCColourRGBA Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.r, Value.g, Value.b, Value.a); }
 static void SetData(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "->%d", *Value); CCFree(Value); }
@@ -127,6 +128,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("bool:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)SetBool },
     { .name = CC_STRING("f32:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)SetF32 },
     { .name = CC_STRING("f64:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat64, .setter = (CCComponentExpressionSetter)SetF64 },
+    { .name = CC_STRING("vec3:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector3, .setter = (CCComponentExpressionSetter)SetVec3 },
     { .name = CC_STRING("vec4:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector4, .setter = (CCComponentExpressionSetter)SetVec4 },
     { .name = CC_STRING("colour:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeColour, .setter = (CCComponentExpressionSetter)SetColour },
     { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
@@ -272,6 +274,30 @@ do { \
     TEST_DESERIALIZE_SUCCESS("(f64: -1.0)", "-1.00");
     TEST_DESERIALIZE_SUCCESS("(f64: 1.5)", "1.50");
     TEST_DESERIALIZE_SUCCESS("(f64: 50.12)", "50.12");
+    
+    TEST_DESERIALIZE_FAILURE("(vec3: :d)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 1)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 0 0 :d)");
+    TEST_DESERIALIZE_SUCCESS("(vec3: 255 255 255)", "255.00, 255.00, 255.00");
+    TEST_DESERIALIZE_SUCCESS("(vec3: 0 64 127)", "0.00, 64.00, 127.00");
+    TEST_DESERIALIZE_FAILURE("(vec3: 0)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 0 64)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 0 64 127 191)");
+    TEST_DESERIALIZE_SUCCESS("(vec3: 1.0 0.75 0.5)", "1.00, 0.75, 0.50");
+    TEST_DESERIALIZE_FAILURE("(vec3: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 1.0 0.75)");
+    TEST_DESERIALIZE_FAILURE("(vec3: 1.0 0.75 0.5 0.25)");
+    TEST_DESERIALIZE_FAILURE("(vec3: (0 0 :d))");
+    TEST_DESERIALIZE_SUCCESS("(vec3: (255 255 255))", "255.00, 255.00, 255.00");
+    TEST_DESERIALIZE_SUCCESS("(vec3: (0 64 127))", "0.00, 64.00, 127.00");
+    TEST_DESERIALIZE_FAILURE("(vec3: (0))");
+    TEST_DESERIALIZE_FAILURE("(vec3: (0 64))");
+    TEST_DESERIALIZE_FAILURE("(vec3: (0 64 127 191))");
+    TEST_DESERIALIZE_SUCCESS("(vec3: (1.0 0.75 0.5))", "1.00, 0.75, 0.50");
+    TEST_DESERIALIZE_FAILURE("(vec3: (1.0))");
+    TEST_DESERIALIZE_FAILURE("(vec3: (1.0 0.75))");
+    TEST_DESERIALIZE_FAILURE("(vec3: (1.0 0.75 0.5 0.25))");
 
     TEST_DESERIALIZE_FAILURE("(vec4: :d)");
     TEST_DESERIALIZE_FAILURE("(vec4: 1)");
