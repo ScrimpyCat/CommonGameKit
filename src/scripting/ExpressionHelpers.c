@@ -156,7 +156,7 @@ static _Bool CCExpressionGetIntegerMinArray(CCExpression Vec, int32_t *Values, f
         if ((NestedList) && (ItemCount == 1))
         {
             CCExpression Value = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Vec), Start);
-            if (CCExpressionGetType(Value) == CCExpressionValueTypeList) return CCExpressionGetFloatMinArray(Value, Values, Factor, 0, Min, Max, Count, ErrMsg, FALSE);
+            if (CCExpressionGetType(Value) == CCExpressionValueTypeList) return CCExpressionGetIntegerMinArray(Value, Values, Factor, 0, Min, Max, Count, ErrMsg, FALSE);
         }
         
         if ((ItemCount >= Min) && (ItemCount <= Max))
