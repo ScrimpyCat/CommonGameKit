@@ -68,6 +68,7 @@ static void SetVec2i(CCComponent Component, CCVector2Di Value){ snprintf(Set, si
 static void SetVec3(CCComponent Component, CCVector3D Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f", Value.x, Value.y, Value.z); }
 static void SetVec3i(CCComponent Component, CCVector3Di Value){ snprintf(Set, sizeof(Set), "%d, %d, %d", Value.x, Value.y, Value.z); }
 static void SetVec4(CCComponent Component, CCVector4D Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.x, Value.y, Value.z, Value.w); }
+static void SetVec4i(CCComponent Component, CCVector4Di Value){ snprintf(Set, sizeof(Set), "%d, %d, %d, %d", Value.x, Value.y, Value.z, Value.w); }
 static void SetColour(CCComponent Component, CCColourRGBA Value){ snprintf(Set, sizeof(Set), "%.2f, %.2f, %.2f, %.2f", Value.r, Value.g, Value.b, Value.a); }
 static void SetData(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "->%d", *Value); CCFree(Value); }
 static void SetDataRef(CCComponent Component, int *Value){ snprintf(Set, sizeof(Set), "ref->%d", *Value); }
@@ -136,6 +137,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("vec3:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector3, .setter = (CCComponentExpressionSetter)SetVec3 },
     { .name = CC_STRING("ivec3:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector3i, .setter = (CCComponentExpressionSetter)SetVec3i },
     { .name = CC_STRING("vec4:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector4, .setter = (CCComponentExpressionSetter)SetVec4 },
+    { .name = CC_STRING("ivec4:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeVector4i, .setter = (CCComponentExpressionSetter)SetVec4i },
     { .name = CC_STRING("colour:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeColour, .setter = (CCComponentExpressionSetter)SetColour },
     { .name = CC_STRING("data:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData, .setter = (CCComponentExpressionSetter)SetData },
     { .name = CC_STRING("data-ref:"), .serializedType = 'test', .setterType = CCComponentExpressionArgumentTypeData | CCComponentExpressionArgumentTypeOwnershipRetain, .setter = (CCComponentExpressionSetter)SetDataRef },
@@ -396,6 +398,34 @@ do { \
     TEST_DESERIALIZE_FAILURE("(vec4: (1.0 0.75))");
     TEST_DESERIALIZE_FAILURE("(vec4: (1.0 0.75 0.5))");
     TEST_DESERIALIZE_FAILURE("(vec4: (1.0 0.75 0.5 0.25 0.0))");
+    
+    TEST_DESERIALIZE_FAILURE("(ivec4: :d)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 1)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 0 0 0 :d)");
+    TEST_DESERIALIZE_SUCCESS("(ivec4: 255 255 255 255)", "255, 255, 255, 255");
+    TEST_DESERIALIZE_SUCCESS("(ivec4: 0 64 127 191)", "0, 64, 127, 191");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 0)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 0 64)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 0 64 127)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 0 64 127 191 255)");
+    TEST_DESERIALIZE_SUCCESS("(ivec4: 1.0 0.75 0.5 0.25)", "1, 0, 0, 0");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 1.0)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 1.0 0.75)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 1.0 0.75 0.5)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: 1.0 0.75 0.5 0.25 0.0)");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (0 0 0 :d))");
+    TEST_DESERIALIZE_SUCCESS("(ivec4: (255 255 255 255))", "255, 255, 255, 255");
+    TEST_DESERIALIZE_SUCCESS("(ivec4: (0 64 127 191))", "0, 64, 127, 191");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (0))");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (0 64))");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (0 64 127))");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (0 64 127 191 255))");
+    TEST_DESERIALIZE_SUCCESS("(ivec4: (1.0 0.75 0.5 0.25))", "1, 0, 0, 0");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (1.0))");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (1.0 0.75))");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (1.0 0.75 0.5))");
+    TEST_DESERIALIZE_FAILURE("(ivec4: (1.0 0.75 0.5 0.25 0.0))");
 
     TEST_DESERIALIZE_FAILURE("(colour: :d)");
     TEST_DESERIALIZE_FAILURE("(colour: 1)");
