@@ -235,7 +235,7 @@ static GLTexture GLTextureConstructor(CCAllocatorType Allocator, GFXTextureHint 
         const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat), InternalFormat = GLTextureInternalFormat(Format);
         
         _Bool FreePixels = FALSE;
-        const void *Pixels = Data ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
+        const void *Pixels = (Data) && (CCPixelDataGetPlaneCount(Data) == 1) ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
         if ((!Pixels) && (Data))
         {
             FreePixels = TRUE;
@@ -313,7 +313,7 @@ static GLTexture GLTextureSubConstructor(CCAllocatorType Allocator, GFXTexture R
             const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
             
             _Bool FreePixels = FALSE;
-            const void *Pixels = Data ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
+            const void *Pixels = (Data) && (CCPixelDataGetPlaneCount(Data) == 1) ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
             if (!Pixels)
             {
                 FreePixels = TRUE;
@@ -510,7 +510,7 @@ static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size
     const GLenum InputFormat = GLTextureInputFormat(PixelFormat), InputType = GLTextureInputFormatType(PixelFormat);
     
     _Bool FreePixels = FALSE;
-    const void *Pixels = CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0);
+    const void *Pixels = CCPixelDataGetPlaneCount(Data) == 1 ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
     if (!Pixels)
     {
         FreePixels = TRUE;
