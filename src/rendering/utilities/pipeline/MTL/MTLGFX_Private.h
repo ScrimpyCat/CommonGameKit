@@ -30,7 +30,7 @@
 @import Metal;
 
 typedef struct {
-    id <MTLDevice>device;
+    __unsafe_unretained id <MTLDevice>device;
 } MTLInternal;
 
 #endif
