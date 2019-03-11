@@ -38,7 +38,7 @@ GFXMainInfo * const MTLGFX = &MTLGFXInfo;
 
 void MTLGFXSetup(void)
 {
-    MTLInfo.device = MTLCreateSystemDefaultDevice(); // TODO: Setup notifications to manage devices
+    MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained void*)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
     
     GFXMain = MTLGFX;
 }
