@@ -68,7 +68,7 @@ static void TextureDestroy(MTLGFXTexture Texture)
 
 static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
 {
-    MTLGFXTexture Texture = (MTLGFXTexture)CCMalloc(Allocator, sizeof(MTLGFXTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    MTLGFXTexture Texture = CCMalloc(Allocator, sizeof(MTLGFXTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (Texture)
     {
         CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)TextureDestroy);
@@ -115,4 +115,70 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
     }
     
     return Texture;
+}
+
+static MTLGFXTexture TextureSubConstructor(CCAllocatorType Allocator, GFXTexture Root, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
+{
+    MTLGFXTexture Texture = CCMalloc(Allocator, sizeof(MTLGFXTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Texture)
+    {
+        CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)TextureDestroy);
+        
+        Texture->isRoot = FALSE;
+        Texture->sub.parent = Root;
+        Texture->sub.x = X;
+        Texture->sub.y = Y;
+        Texture->sub.z = Z;
+        Texture->stream = NULL;
+        Texture->data = Data;
+        Texture->width = Width;
+        Texture->height = Height;
+        Texture->depth = Depth;
+        
+        Texture->sub.internal.x = X;
+        Texture->sub.internal.y = Y;
+        Texture->sub.internal.z = Z;
+        
+        MTLGFXTexture Root = (MTLGFXTexture)Texture->sub.parent;
+        for (; !Root->isRoot; Root = (MTLGFXTexture)Root->sub.parent)
+        {
+            Texture->sub.internal.x += Root->sub.x;
+            Texture->sub.internal.y += Root->sub.y;
+            Texture->sub.internal.z += Root->sub.z;
+        }
+        
+        Texture->sub.internal.root = (GFXTexture)Root;
+        
+        if (Data)
+        {
+            _Bool FreePixels = FALSE;
+            const void *Pixels = (Data) && (Data->format == Root->root.format) && (CCPixelDataGetPlaneCount(Data) == 1) ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
+            if ((!Pixels) && (Data))
+            {
+                FreePixels = TRUE;
+                
+                const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Data->format, CCColourFormatChannelPlanarIndex0);
+                CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
+                               CC_LOG_ERROR("Failed to allocate memory for texture transfer. Allocation size (%zu)", SampleSize * Width * Height * Depth);
+                               return nil;
+                               );
+                
+                CCPixelDataGetPackedDataWithFormat(Data, Root->root.format, 0, 0, 0, Width, Height, Depth, (void*)Pixels);
+            }
+            
+            if (Pixels)
+            {
+                [Root->root.texture replaceRegion: MTLRegionMake3D(0, 0, 0, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width];
+                
+                if (FreePixels) CCFree((void*)Pixels);
+            }
+        }
+    }
+    
+    return Texture;
+}
+
+static void TextureDestructor(MTLGFXTexture Texture)
+{
+    CC_SAFE_Free(Texture);
 }
