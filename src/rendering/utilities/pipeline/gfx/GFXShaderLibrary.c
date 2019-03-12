@@ -33,7 +33,7 @@ GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator)
     return GFXMain->library->create(Allocator);
 }
 
-GFXShaderLibrary GFXShaderLibraryCreateFromPrecompiled(CCAllocatorType Allocator, const void *Data)
+GFXShaderLibrary GFXShaderLibraryCreateFromPrecompiled(CCAllocatorType Allocator, CCData Data)
 {
     return GFXMain->library->createPrecompiled(Allocator, Data);
 }

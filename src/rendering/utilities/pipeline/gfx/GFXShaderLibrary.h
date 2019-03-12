@@ -69,7 +69,7 @@ CC_NEW GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator);
  * @param Data The precompiled library.
  * @return The created shader library.
  */
-CC_NEW GFXShaderLibrary GFXShaderLibraryCreateFromPrecompiled(CCAllocatorType Allocator, const void *Data);
+CC_NEW GFXShaderLibrary GFXShaderLibraryCreateFromPrecompiled(CCAllocatorType Allocator, CCData Data);
 
 /*!
  * @brief Destroy a shader library.
