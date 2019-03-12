@@ -27,7 +27,8 @@
 
 
 static MTLInternal MTLInfo = {
-    .device = nil
+    .device = nil,
+    .samplers = {nil}
 };
 
 static GFXMainInfo MTLGFXInfo = {
@@ -36,10 +37,44 @@ static GFXMainInfo MTLGFXInfo = {
 
 GFXMainInfo * const MTLGFX = &MTLGFXInfo;
 
+static inline CC_CONSTANT_FUNCTION MTLSamplerMinMagFilter SamplerFilter(GFXTextureHint Hint, GFXTextureHint FilterType)
+{
+    return (MTLSamplerMinMagFilter[2]){
+        MTLSamplerMinMagFilterNearest,
+        MTLSamplerMinMagFilterLinear
+    }[(Hint >> FilterType) & GFXTextureHintFilterModeMask];
+}
+
+static inline CC_CONSTANT_FUNCTION MTLSamplerAddressMode SamplerAddressMode(GFXTextureHint Hint, GFXTextureHint Coordinate)
+{
+    return (MTLSamplerAddressMode[3]){
+        MTLSamplerAddressModeClampToEdge,
+        MTLSamplerAddressModeRepeat,
+        MTLSamplerAddressModeMirrorRepeat
+    }[(Hint >> Coordinate) & GFXTextureHintAddressModeMask];
+}
+
+_Static_assert(sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)) == (((GFXTextureHintFilterModeMask << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeMask << GFXTextureHintFilterMag) | (GFXTextureHintAddressModeMask << GFXTextureHintAddress_S) | (GFXTextureHintAddressModeMask << GFXTextureHintAddress_T) | (GFXTextureHintAddressModeMask << GFXTextureHintAddress_R)) >> 2), "Sampler count needs to be updated");
+_Static_assert(GFXTextureHintFilterMin == 2, "Smallest mask index was changed");
+
 void MTLGFXSetup(void)
 {
+    GFXMain = MTLGFX;
+    
     MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained CFTypeRef)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
     
-    GFXMain = MTLGFX;
+    //TODO: Add config to specify which samplers to cache
+    MTLSamplerDescriptor *SamplerDescriptor = [MTLSamplerDescriptor new];
+    for (size_t Loop = 0; Loop < sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)); Loop++)
+    {
+        GFXTextureHint Hint = (GFXTextureHint)(Loop << 2);
+        SamplerDescriptor.sAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_S);
+        SamplerDescriptor.tAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_T);
+        SamplerDescriptor.rAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_R);
+        SamplerDescriptor.minFilter = SamplerFilter(Hint, GFXTextureHintFilterMin);
+        SamplerDescriptor.magFilter = SamplerFilter(Hint, GFXTextureHintFilterMag);
+        
+        MTLInfo.samplers[Loop] = (__bridge id<MTLSamplerState>)((__bridge_retained CFTypeRef)[MTLInfo.device newSamplerStateWithDescriptor: SamplerDescriptor]);
+    }
 }
 

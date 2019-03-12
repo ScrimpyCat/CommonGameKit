@@ -31,6 +31,7 @@
 
 typedef struct {
     __unsafe_unretained id <MTLDevice>device;
+    __unsafe_unretained id <MTLSamplerState>samplers[255];
 } MTLInternal;
 
 #endif
