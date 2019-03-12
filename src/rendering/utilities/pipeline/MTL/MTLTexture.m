@@ -28,7 +28,6 @@
 #import <objc/objc.h>
 #import <objc/runtime.h>
 
-
 const GFXTextureInterface MTLTextureInterface = {
 };
 
@@ -58,15 +57,30 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
 
 static void TextureDestroy(MTLGFXTexture Texture)
 {
-    *Texture = nil;
+    if (Texture->data) CCPixelDataDestroy(Texture->data);
+    if (Texture->isRoot)
+    {
+        CFRelease((__bridge CFTypeRef)Texture->root.texture);
+    }
+    
+    else GFXTextureDestroy(Texture->sub.parent);
 }
 
 static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
 {
-    MTLGFXTexture Texture = (MTLGFXTexture)CCMalloc(Allocator, sizeof(MTLGFXTexture), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    MTLGFXTexture Texture = (MTLGFXTexture)CCMalloc(Allocator, sizeof(MTLGFXTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
     if (Texture)
     {
         CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)TextureDestroy);
+        
+        Texture->isRoot = TRUE;
+        Texture->root.hint = Hint;
+        Texture->stream = NULL;
+        Texture->data = Data;
+        Texture->root.format = Format;
+        Texture->width = Width;
+        Texture->height = Height;
+        Texture->depth = Depth;
         
         _Bool FreePixels = FALSE;
         const void *Pixels = (Data) && (Data->format == Format) && (CCPixelDataGetPlaneCount(Data) == 1) ? CCPixelDataGetBuffer(Data, CCColourFormatChannelPlanarIndex0) : NULL;
@@ -90,18 +104,14 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
         TextureDescriptor.height = Height;
         TextureDescriptor.depth = Depth;
         
-        *Texture = [((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor];
+        Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
         
         if (Pixels)
         {
-            [*Texture replaceRegion: MTLRegionMake3D(0, 0, 0, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width];
+            [Texture->root.texture replaceRegion: MTLRegionMake3D(0, 0, 0, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width];
             
             if (FreePixels) CCFree((void*)Pixels);
-            
-            CCPixelDataDestroy(Data);
         }
-        
-        objc_setAssociatedObject(*Texture, &MTLTextureInterface, [NSValue valueWithPointer: Texture], OBJC_ASSOCIATION_RETAIN);
     }
     
     return Texture;

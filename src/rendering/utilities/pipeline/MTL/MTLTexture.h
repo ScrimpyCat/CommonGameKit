@@ -29,7 +29,33 @@
 #include "MTLGFX_Private.h"
 
 
-typedef __strong id <MTLTexture> *MTLGFXTexture;
+typedef struct {
+    void *stream;
+    CCPixelData data;
+    size_t width;
+    size_t height;
+    size_t depth;
+    union {
+        struct {
+            GFXTextureHint hint;
+            CCColourFormat format;
+            __unsafe_unretained id <MTLTexture>texture;
+        } root;
+        struct {
+            size_t x;
+            size_t y;
+            size_t z;
+            struct {
+                size_t x;
+                size_t y;
+                size_t z;
+                GFXTexture root;
+            } internal;
+            GFXTexture parent;
+        } sub;
+    };
+    _Bool isRoot;
+} MTLGFXTextureInfo, *MTLGFXTexture;
 
 extern const GFXTextureInterface MTLTextureInterface;
 
