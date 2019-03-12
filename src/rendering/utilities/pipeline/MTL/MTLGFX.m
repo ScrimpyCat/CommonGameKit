@@ -63,7 +63,7 @@ id <MTLSamplerState>MTLGFXGetSampler(GFXTextureHint Hint)
     
     CCAssertLog(Index <= sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)), "Unsupported hint");
     
-    id <MTLSamplerState>Sampler = ((MTLInternal*)MTLGFX->internal)->samplers[Index];
+    id <MTLSamplerState>Sampler = MTLInfo.samplers[Index];
     
     CCAssertLog(Sampler, "No sampler for hint");
     
