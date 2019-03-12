@@ -26,6 +26,7 @@
 #include "GLShaderLibrary.h"
 
 static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator);
+static GLShaderLibrary GLShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, const void *Data);
 static void GLShaderLibraryDestructor(GLShaderLibrary Library);
 static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source);
 static const GLShaderSource GLShaderLibraryGetSource(GLShaderLibrary Library, CCString Name);
@@ -41,6 +42,7 @@ typedef struct {
 
 const GFXShaderLibraryInterface GLShaderLibraryInterface = {
     .create = (GFXShaderLibraryConstructorCallback)GLShaderLibraryConstructor,
+    .createPrecompiled = (GFXShaderLibraryPrecompiledConstructorCallback)GLShaderLibraryPrecompiledConstructor,
     .destroy = (GFXShaderLibraryDestructorCallback)GLShaderLibraryDestructor,
     .compile = (GFXShaderLibraryCompileCallback)GLShaderLibraryCompile,
     .source = (GFXShaderLibraryGetSourceCallback)GLShaderLibraryGetSource
@@ -64,6 +66,11 @@ static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator)
         .keyDestructor = CCStringDestructorForDictionary,
         .valueDestructor = (CCDictionaryElementDestructor)GLShaderLibraryElementDestructor
     });
+}
+
+static GLShaderLibrary GLShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, const void *Data)
+{
+    CCAssertLog(0, "Precompiled libraries are unsupported");
 }
 
 static void GLShaderLibraryDestructor(GLShaderLibrary Library)
