@@ -69,6 +69,7 @@ typedef GFXFramebufferAttachment *(*GFXFramebufferGetAttachmentCallback)(GFXFram
 
 #pragma mark Required Shader Library Callbacks
 typedef CC_NEW GFXShaderLibrary (*GFXShaderLibraryConstructorCallback)(CCAllocatorType Allocator);
+typedef CC_NEW GFXShaderLibrary (*GFXShaderLibraryPrecompiledConstructorCallback)(CCAllocatorType Allocator, const void *Data);
 typedef void (*GFXShaderLibraryDestructorCallback)(GFXShaderLibrary CC_DESTROY(Library));
 typedef const GFXShaderSource (*GFXShaderLibraryCompileCallback)(GFXShaderLibrary Library, GFXShaderSourceType Type, CCString CC_COPY(Name), const char *Source);
 typedef const GFXShaderSource (*GFXShaderLibraryGetSourceCallback)(GFXShaderLibrary Library, CCString Name);
@@ -165,6 +166,7 @@ typedef struct {
 
 typedef struct {
     GFXShaderLibraryConstructorCallback create;
+    GFXShaderLibraryPrecompiledConstructorCallback createPrecompiled;
     GFXShaderLibraryDestructorCallback destroy;
     GFXShaderLibraryCompileCallback compile;
     GFXShaderLibraryGetSourceCallback source;

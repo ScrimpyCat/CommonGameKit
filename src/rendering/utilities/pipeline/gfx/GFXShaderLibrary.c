@@ -33,6 +33,11 @@ GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator)
     return GFXMain->library->create(Allocator);
 }
 
+GFXShaderLibrary GFXShaderLibraryCreateFromPrecompiled(CCAllocatorType Allocator, const void *Data)
+{
+    return GFXMain->library->createPrecompiled(Allocator, Data);
+}
+
 void GFXShaderLibraryDestroy(GFXShaderLibrary Library)
 {
     CCAssertLog(Library, "Library must not be null");

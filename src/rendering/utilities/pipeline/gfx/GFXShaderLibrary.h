@@ -61,7 +61,15 @@ extern CC_NEW GFXShaderLibrary (*GFXShaderLibraryForName)(CCString Name);
  * @return The created shader library.
  */
 CC_NEW GFXShaderLibrary GFXShaderLibraryCreate(CCAllocatorType Allocator);
-//GFXShaderLibrary GFXShaderLibraryCreateFromProject(CCAllocatorType Allocator, FSPath Path);
+
+/*!
+ * @brief Create a shader library from a precompiled library.
+ * @description A library to lookup shader sources from to use to create shaders.
+ * @param Allocator The allocator to be used for the allocations.
+ * @param Data The precompiled library.
+ * @return The created shader library.
+ */
+CC_NEW GFXShaderLibrary GFXShaderLibraryCreateFromPrecompiled(CCAllocatorType Allocator, const void *Data);
 
 /*!
  * @brief Destroy a shader library.
