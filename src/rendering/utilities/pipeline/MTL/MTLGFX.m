@@ -57,6 +57,19 @@ static inline CC_CONSTANT_FUNCTION MTLSamplerAddressMode SamplerAddressMode(GFXT
 _Static_assert(sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)) == (((GFXTextureHintFilterModeMask << GFXTextureHintFilterMin) | (GFXTextureHintFilterModeMask << GFXTextureHintFilterMag) | (GFXTextureHintAddressModeMask << GFXTextureHintAddress_S) | (GFXTextureHintAddressModeMask << GFXTextureHintAddress_T) | (GFXTextureHintAddressModeMask << GFXTextureHintAddress_R)) >> 2), "Sampler count needs to be updated");
 _Static_assert(GFXTextureHintFilterMin == 2, "Smallest mask index was changed");
 
+id <MTLSamplerState>MTLGFXGetSampler(GFXTextureHint Hint)
+{
+    const size_t Index = Hint >> 2;
+    
+    CCAssertLog(Index <= sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)), "Unsupported hint");
+    
+    id <MTLSamplerState>Sampler = ((MTLInternal*)MTLGFX->internal)->samplers[Index];
+    
+    CCAssertLog(Sampler, "No sampler for hint");
+    
+    return Sampler;
+}
+
 void MTLGFXSetup(void)
 {
     GFXMain = MTLGFX;

@@ -34,5 +34,7 @@ typedef struct {
     __unsafe_unretained id <MTLSamplerState>samplers[255];
 } MTLInternal;
 
+id <MTLSamplerState>MTLGFXGetSampler(GFXTextureHint Hint);
+
 #endif
 
