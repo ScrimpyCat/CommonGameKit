@@ -62,6 +62,8 @@ static id <MTLLibrary>ShaderLibraryPrecompiledConstructor(CCAllocatorType Alloca
             dispatch_data_t NewBinary = dispatch_data_create_concat(Binary, Chunk);
             
             Binary = NewBinary;
+            
+            CCDataUnmapBuffer(Data, Map);
         }
     }
     
