@@ -47,10 +47,12 @@ static id <MTLLibrary>ShaderLibraryConstructor(CCAllocatorType Allocator)
 
 static id <MTLLibrary>ShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, CCData Data)
 {
-    //TODO: Update CCDataBuffer so you can change ownership of internal memory (and can use DISPATCH_DATA_DESTRUCTOR_FREE destructor)
     const size_t Size = CCDataGetSize(Data);
     const void *Buffer = CCDataGetBuffer(Data);
-    dispatch_data_t Binary = dispatch_data_create(Buffer, Size, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    dispatch_data_t Binary = dispatch_data_create(Buffer, Size, NULL, ^{
+        CCDataDestroy(Data);
+    });
+    
     if (!Buffer)
     {
         for (ptrdiff_t Offset = 0; Offset < Size; )
@@ -65,14 +67,14 @@ static id <MTLLibrary>ShaderLibraryPrecompiledConstructor(CCAllocatorType Alloca
             
             CCDataUnmapBuffer(Data, Map);
         }
+        
+        CCDataDestroy(Data);
     }
-    
-    CCDataDestroy(Data);
     
     NSError *Err;
     id <MTLLibrary>Library = [((MTLInternal*)MTLGFX->internal)->device newLibraryWithData: Binary error: &Err];
     
-    if (Err) CC_LOG_ERROR("Failed to use precompiled shader library: %@", Err); //TODO: Move commonobjc log specifier to commonc
+    if (Err) CC_LOG_ERROR(@"Failed to use precompiled shader library: %@", Err);
     
     return Library;
 }

@@ -26,7 +26,8 @@
 #ifndef CommonGameKit_MTLGFX_Private_h
 #define CommonGameKit_MTLGFX_Private_h
 
-#include "MTLGFX.h"
+#import "MTLGFX.h"
+#import <CommonObjc/Common.h>
 @import Metal;
 
 typedef struct {
