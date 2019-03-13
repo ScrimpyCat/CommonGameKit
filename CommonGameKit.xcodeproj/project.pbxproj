@@ -20,6 +20,8 @@
 		F342B62C223824B700B44319 /* MTLShaderLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B62A223824B700B44319 /* MTLShaderLibrary.m */; };
 		F342B65B2239147C00B44319 /* CommonObjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; };
 		F342B65C2239148800B44319 /* CommonObjc.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F342B65F223918D600B44319 /* MTLShader.h in Headers */ = {isa = PBXBuildFile; fileRef = F342B65D223918D600B44319 /* MTLShader.h */; };
+		F342B660223918D600B44319 /* MTLShader.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B65E223918D600B44319 /* MTLShader.m */; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -479,6 +481,8 @@
 		F342B629223824B700B44319 /* MTLShaderLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLShaderLibrary.h; sourceTree = "<group>"; };
 		F342B62A223824B700B44319 /* MTLShaderLibrary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLShaderLibrary.m; sourceTree = "<group>"; };
 		F342B6492239144B00B44319 /* CommonObjc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CommonObjc.xcodeproj; path = deps/Common/CommonObjc/CommonObjc.xcodeproj; sourceTree = "<group>"; };
+		F342B65D223918D600B44319 /* MTLShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLShader.h; sourceTree = "<group>"; };
+		F342B65E223918D600B44319 /* MTLShader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLShader.m; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -1474,6 +1478,8 @@
 				F3FA88162233876E0087A318 /* MTLGFX.m */,
 				F3FA8818223388290087A318 /* MTLGFX_Private.h */,
 				F3FA8815223383850087A318 /* MTLGFX.h */,
+				F342B65E223918D600B44319 /* MTLShader.m */,
+				F342B65D223918D600B44319 /* MTLShader.h */,
 				F342B62A223824B700B44319 /* MTLShaderLibrary.m */,
 				F342B629223824B700B44319 /* MTLShaderLibrary.h */,
 				F3FA881C2233C4AC0087A318 /* MTLTexture.m */,
@@ -1542,6 +1548,7 @@
 				F3AF33B41DCCD4EC00CAD472 /* RenderSystem.h in Headers */,
 				F3AF34D51DCCFBEC00CAD472 /* Default_Private.h in Headers */,
 				F3AF33AA1DCCD4EC00CAD472 /* Keyboard.h in Headers */,
+				F342B65F223918D600B44319 /* MTLShader.h in Headers */,
 				F3E069581F978174009F23E4 /* SystemID.h in Headers */,
 				F3AF349E1DCCD5AF00CAD472 /* MathExpressions.h in Headers */,
 				F3AF33CA1DCCD4EC00CAD472 /* GFXBuffer.h in Headers */,
@@ -1958,6 +1965,7 @@
 				F3AF33791DCCD4EC00CAD472 /* AnimationInterpolateComponent.c in Sources */,
 				F3AF33CE1DCCD4EC00CAD472 /* GFXFramebuffer.c in Sources */,
 				F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */,
+				F342B660223918D600B44319 /* MTLShader.m in Sources */,
 				F3AF338E1DCCD4EC00CAD472 /* GUIExpression.c in Sources */,
 				F3AF34B31DCCD5AF00CAD472 /* ExpressionEvaluator.c in Sources */,
 				F3AF33EF1DCCD4EC00CAD472 /* GLTexture.c in Sources */,
