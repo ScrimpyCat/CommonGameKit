@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "MTLShader.h"
+#import "MTLShader.h"
 
 static NSDictionary<NSString *, id <MTLFunction>> *ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment);
 static void ShaderDestructor(NSDictionary<NSString *, id <MTLFunction>> *Shader);
