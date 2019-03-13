@@ -16,6 +16,8 @@
 		F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */; };
 		F33CAF971E79286900792063 /* EntityExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F33CAF951E79286900792063 /* EntityExpressions.c */; };
 		F33CAF981E79286900792063 /* EntityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAF961E79286900792063 /* EntityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F342B62B223824B700B44319 /* MTLShaderLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = F342B629223824B700B44319 /* MTLShaderLibrary.h */; };
+		F342B62C223824B700B44319 /* MTLShaderLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B62A223824B700B44319 /* MTLShaderLibrary.m */; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -247,6 +249,11 @@
 		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */; };
 		F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */; };
+		F3FA88172233876E0087A318 /* MTLGFX.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FA88162233876E0087A318 /* MTLGFX.m */; };
+		F3FA8819223388740087A318 /* MTLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA8818223388290087A318 /* MTLGFX_Private.h */; };
+		F3FA881A2233887A0087A318 /* MTLGFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA8815223383850087A318 /* MTLGFX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA881B2233C4AC0087A318 /* MTLTexture.h */; };
+		F3FA881E2233C4AC0087A318 /* MTLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FA881C2233C4AC0087A318 /* MTLTexture.m */; };
 		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
 /* End PBXBuildFile section */
 
@@ -431,6 +438,8 @@
 		F332EB061EA1016300BCDAC7 /* ExpressionBitwiseTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionBitwiseTests.m; sourceTree = "<group>"; };
 		F33CAF951E79286900792063 /* EntityExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = EntityExpressions.c; sourceTree = "<group>"; };
 		F33CAF961E79286900792063 /* EntityExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityExpressions.h; sourceTree = "<group>"; };
+		F342B629223824B700B44319 /* MTLShaderLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLShaderLibrary.h; sourceTree = "<group>"; };
+		F342B62A223824B700B44319 /* MTLShaderLibrary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLShaderLibrary.m; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -666,6 +675,11 @@
 		F3E361971EF5758000FCE1A5 /* MessageExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageExpressions.h; sourceTree = "<group>"; };
 		F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraComponent.h; sourceTree = "<group>"; };
 		F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderCameraComponent.c; sourceTree = "<group>"; };
+		F3FA8815223383850087A318 /* MTLGFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLGFX.h; sourceTree = "<group>"; };
+		F3FA88162233876E0087A318 /* MTLGFX.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLGFX.m; sourceTree = "<group>"; };
+		F3FA8818223388290087A318 /* MTLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLGFX_Private.h; sourceTree = "<group>"; };
+		F3FA881B2233C4AC0087A318 /* MTLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLTexture.h; sourceTree = "<group>"; };
+		F3FA881C2233C4AC0087A318 /* MTLTexture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLTexture.m; sourceTree = "<group>"; };
 		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1169,6 +1183,7 @@
 			children = (
 				F3AF32F51DCCD4EB00CAD472 /* GFX */,
 				F3AF330A1DCCD4EB00CAD472 /* GL */,
+				F3FA87F82233835D0087A318 /* MTL */,
 				F3AF33241DCCD4EB00CAD472 /* Pipeline.h */,
 				F3AF33251DCCD4EB00CAD472 /* PipelineVersion.h */,
 			);
@@ -1393,6 +1408,20 @@
 			path = components;
 			sourceTree = "<group>";
 		};
+		F3FA87F82233835D0087A318 /* MTL */ = {
+			isa = PBXGroup;
+			children = (
+				F3FA88162233876E0087A318 /* MTLGFX.m */,
+				F3FA8818223388290087A318 /* MTLGFX_Private.h */,
+				F3FA8815223383850087A318 /* MTLGFX.h */,
+				F342B62A223824B700B44319 /* MTLShaderLibrary.m */,
+				F342B629223824B700B44319 /* MTLShaderLibrary.h */,
+				F3FA881C2233C4AC0087A318 /* MTLTexture.m */,
+				F3FA881B2233C4AC0087A318 /* MTLTexture.h */,
+			);
+			path = MTL;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1406,6 +1435,7 @@
 				F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */,
 				F3AF34A71DCCD5AF00CAD472 /* StringExpressions.h in Headers */,
 				F3AF33E51DCCD4EC00CAD472 /* GLGFX.h in Headers */,
+				F3FA8819223388740087A318 /* MTLGFX_Private.h in Headers */,
 				F3AF348C1DCCD5AF00CAD472 /* DebugExpressions.h in Headers */,
 				F3AF34321DCCD4EC00CAD472 /* GLSetup.h in Headers */,
 				F3AF33CF1DCCD4EC00CAD472 /* GFXFramebuffer.h in Headers */,
@@ -1472,6 +1502,7 @@
 				F3AF34DB1DCD014700CAD472 /* Window.h in Headers */,
 				F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */,
 				F3897B2F1DCD6B32008D6C1D /* stdatomic_clang.h in Headers */,
+				F342B62B223824B700B44319 /* MTLShaderLibrary.h in Headers */,
 				F3AF33DC1DCCD4EC00CAD472 /* GLBuffer.h in Headers */,
 				F3AF337C1DCCD4EC00CAD472 /* AnimationKeyframeComponent.h in Headers */,
 				F3AF33D01DCCD4EC00CAD472 /* GFXInterface.h in Headers */,
@@ -1491,6 +1522,7 @@
 				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */,
 				F3AF33DE1DCCD4EC00CAD472 /* GLDebug.h in Headers */,
+				F3FA881A2233887A0087A318 /* MTLGFX.h in Headers */,
 				F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */,
 				F3AF33C81DCCD4EC00CAD472 /* GFXBlit.h in Headers */,
 				F3AF33ED1DCCD4EC00CAD472 /* GLState.h in Headers */,
@@ -1513,6 +1545,7 @@
 				F3AF343E1DCCD4EC00CAD472 /* TextAttribute.h in Headers */,
 				F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */,
 				F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */,
+				F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */,
 				F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */,
 				F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */,
 				F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */,
@@ -1788,7 +1821,10 @@
 				F3AF33961DCCD4EC00CAD472 /* InputMapControllerButtonComponent.c in Sources */,
 				F3AF343B1DCCD4EC00CAD472 /* Text.c in Sources */,
 				F3AF33C71DCCD4EC00CAD472 /* GFXBlit.c in Sources */,
+				F342B62C223824B700B44319 /* MTLShaderLibrary.m in Sources */,
 				F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */,
+				F3FA881E2233C4AC0087A318 /* MTLTexture.m in Sources */,
+				F3FA88172233876E0087A318 /* MTLGFX.m in Sources */,
 				F3AF34391DCCD4EC00CAD472 /* Font.c in Sources */,
 				F3AF33C31DCCD4EC00CAD472 /* PixelDataStatic.c in Sources */,
 				F3AF33821DCCD4EC00CAD472 /* ComponentSystem.c in Sources */,
