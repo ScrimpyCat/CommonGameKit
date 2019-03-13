@@ -59,4 +59,12 @@ typedef struct {
 
 extern const GFXTextureInterface MTLTextureInterface;
 
+static inline id <MTLTexture>MTLGFXTextureGetTexture(MTLGFXTexture Texture);
+
+
+static inline id <MTLTexture>MTLGFXTextureGetTexture(MTLGFXTexture Texture)
+{
+    return Texture->isRoot ? Texture->root.texture : ((MTLGFXTexture)Texture->sub.internal.root)->root.texture;
+}
+
 #endif
