@@ -22,6 +22,8 @@
 		F342B65C2239148800B44319 /* CommonObjc.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F342B65F223918D600B44319 /* MTLShader.h in Headers */ = {isa = PBXBuildFile; fileRef = F342B65D223918D600B44319 /* MTLShader.h */; };
 		F342B660223918D600B44319 /* MTLShader.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B65E223918D600B44319 /* MTLShader.m */; };
+		F342B6A02239711B00B44319 /* MTLFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F342B69E2239711B00B44319 /* MTLFramebuffer.h */; };
+		F342B6A12239711B00B44319 /* MTLFramebuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B69F2239711B00B44319 /* MTLFramebuffer.m */; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -483,6 +485,8 @@
 		F342B6492239144B00B44319 /* CommonObjc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CommonObjc.xcodeproj; path = deps/Common/CommonObjc/CommonObjc.xcodeproj; sourceTree = "<group>"; };
 		F342B65D223918D600B44319 /* MTLShader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLShader.h; sourceTree = "<group>"; };
 		F342B65E223918D600B44319 /* MTLShader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLShader.m; sourceTree = "<group>"; };
+		F342B69E2239711B00B44319 /* MTLFramebuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLFramebuffer.h; sourceTree = "<group>"; };
+		F342B69F2239711B00B44319 /* MTLFramebuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLFramebuffer.m; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -1475,6 +1479,8 @@
 		F3FA87F82233835D0087A318 /* MTL */ = {
 			isa = PBXGroup;
 			children = (
+				F342B69F2239711B00B44319 /* MTLFramebuffer.m */,
+				F342B69E2239711B00B44319 /* MTLFramebuffer.h */,
 				F3FA88162233876E0087A318 /* MTLGFX.m */,
 				F3FA8818223388290087A318 /* MTLGFX_Private.h */,
 				F3FA8815223383850087A318 /* MTLGFX.h */,
@@ -1485,7 +1491,8 @@
 				F3FA881C2233C4AC0087A318 /* MTLTexture.m */,
 				F3FA881B2233C4AC0087A318 /* MTLTexture.h */,
 			);
-			path = MTL;
+			name = MTL;
+			path = mtl;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1543,6 +1550,7 @@
 				F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */,
 				F3AF33EB1DCCD4EC00CAD472 /* GLShaderLibrary.h in Headers */,
 				F3AF33E91DCCD4EC00CAD472 /* GLShader.h in Headers */,
+				F342B6A02239711B00B44319 /* MTLFramebuffer.h in Headers */,
 				F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */,
 				F3AF338F1DCCD4EC00CAD472 /* GUIExpression.h in Headers */,
 				F3AF33B41DCCD4EC00CAD472 /* RenderSystem.h in Headers */,
@@ -1989,6 +1997,7 @@
 				F3AF33D31DCCD4EC00CAD472 /* GFXShader.c in Sources */,
 				F3AF34AC1DCCD5AF00CAD472 /* TypeCastExpressions.c in Sources */,
 				F3AF33E81DCCD4EC00CAD472 /* GLShader.c in Sources */,
+				F342B6A12239711B00B44319 /* MTLFramebuffer.m in Sources */,
 				F3AF33841DCCD4EC00CAD472 /* Entity.c in Sources */,
 				F3AF34B11DCCD5AF00CAD472 /* Expression.c in Sources */,
 				F3AF33BF1DCCD4EC00CAD472 /* PixelDataFile.c in Sources */,
