@@ -18,6 +18,8 @@
 		F33CAF981E79286900792063 /* EntityExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F33CAF961E79286900792063 /* EntityExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F342B62B223824B700B44319 /* MTLShaderLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = F342B629223824B700B44319 /* MTLShaderLibrary.h */; };
 		F342B62C223824B700B44319 /* MTLShaderLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B62A223824B700B44319 /* MTLShaderLibrary.m */; };
+		F342B65B2239147C00B44319 /* CommonObjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; };
+		F342B65C2239148800B44319 /* CommonObjc.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -258,6 +260,41 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F342B6502239144C00B44319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F342B6492239144B00B44319 /* CommonObjc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F36202AA17AC404800153E85;
+			remoteInfo = CommonObjc;
+		};
+		F342B6522239144C00B44319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F342B6492239144B00B44319 /* CommonObjc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F36202C217AC404800153E85;
+			remoteInfo = CommonObjcTests;
+		};
+		F342B6542239144C00B44319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F342B6492239144B00B44319 /* CommonObjc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F30438071C62EC2000388C74;
+			remoteInfo = "CommonObjc-iOS";
+		};
+		F342B6562239144C00B44319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F342B6492239144B00B44319 /* CommonObjc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F30438101C62EC2000388C74;
+			remoteInfo = "CommonObjc-iOSTests";
+		};
+		F342B6582239147200B44319 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F342B6492239144B00B44319 /* CommonObjc.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F36202A917AC404800153E85;
+			remoteInfo = CommonObjc;
+		};
 		F38828351E9B293400E6D7A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */;
@@ -421,6 +458,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F342B65C2239148800B44319 /* CommonObjc.framework in Copy Frameworks */,
 				F3AF34CA1DCCF54A00CAD472 /* CommonC.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -440,6 +478,7 @@
 		F33CAF961E79286900792063 /* EntityExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityExpressions.h; sourceTree = "<group>"; };
 		F342B629223824B700B44319 /* MTLShaderLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLShaderLibrary.h; sourceTree = "<group>"; };
 		F342B62A223824B700B44319 /* MTLShaderLibrary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLShaderLibrary.m; sourceTree = "<group>"; };
+		F342B6492239144B00B44319 /* CommonObjc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CommonObjc.xcodeproj; path = deps/Common/CommonObjc/CommonObjc.xcodeproj; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
@@ -688,6 +727,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F342B65B2239147C00B44319 /* CommonObjc.framework in Frameworks */,
 				F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */,
 				F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */,
 				F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */,
@@ -715,6 +755,24 @@
 			);
 			name = Systems;
 			path = systems;
+			sourceTree = "<group>";
+		};
+		F342B64A2239144B00B44319 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F342B6512239144C00B44319 /* CommonObjc.framework */,
+				F342B6532239144C00B44319 /* CommonObjcTests.xctest */,
+				F342B6552239144C00B44319 /* CommonObjc.framework */,
+				F342B6572239144C00B44319 /* CommonObjc-iOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F342B65A2239147C00B44319 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		F38828321E9B293400E6D7A3 /* Products */ = {
@@ -899,6 +957,7 @@
 				F3AF32871DCCD29100CAD472 /* CommonGameKitTests */,
 				F3AF327A1DCCD29000CAD472 /* Products */,
 				F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */,
+				F342B65A2239147C00B44319 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1367,6 +1426,7 @@
 		F3AF34B81DCCD74100CAD472 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				F342B6492239144B00B44319 /* CommonObjc.xcodeproj */,
 				F3AF34D61DCCFC3E00CAD472 /* OpenGL.framework */,
 				F3897B671DCD715A008D6C1D /* libpng.xcodeproj */,
 				F3897B541DCD7149008D6C1D /* zlib.xcodeproj */,
@@ -1568,6 +1628,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F342B6592239147200B44319 /* PBXTargetDependency */,
 				F3897BD61DCD7DB3008D6C1D /* PBXTargetDependency */,
 				F3897B9F1DCD7514008D6C1D /* PBXTargetDependency */,
 				F3897B9D1DCD7510008D6C1D /* PBXTargetDependency */,
@@ -1632,6 +1693,10 @@
 					ProjectRef = F3AF34B91DCCF4EC00CAD472 /* CommonC.xcodeproj */;
 				},
 				{
+					ProductGroup = F342B64A2239144B00B44319 /* Products */;
+					ProjectRef = F342B6492239144B00B44319 /* CommonObjc.xcodeproj */;
+				},
+				{
 					ProductGroup = F3897B681DCD715A008D6C1D /* Products */;
 					ProjectRef = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 				},
@@ -1649,6 +1714,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F342B6512239144C00B44319 /* CommonObjc.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CommonObjc.framework;
+			remoteRef = F342B6502239144C00B44319 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F342B6532239144C00B44319 /* CommonObjcTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = CommonObjcTests.xctest;
+			remoteRef = F342B6522239144C00B44319 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F342B6552239144C00B44319 /* CommonObjc.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CommonObjc.framework;
+			remoteRef = F342B6542239144C00B44319 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F342B6572239144C00B44319 /* CommonObjc-iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "CommonObjc-iOSTests.xctest";
+			remoteRef = F342B6562239144C00B44319 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F38828361E9B293400E6D7A3 /* blob-repl */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -1936,6 +2029,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F342B6592239147200B44319 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CommonObjc;
+			targetProxy = F342B6582239147200B44319 /* PBXContainerItemProxy */;
+		};
 		F3897B9D1DCD7510008D6C1D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = zlibstatic;
