@@ -261,6 +261,8 @@
 		F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA881B2233C4AC0087A318 /* MTLTexture.h */; };
 		F3FA881E2233C4AC0087A318 /* MTLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FA881C2233C4AC0087A318 /* MTLTexture.m */; };
 		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
+		F3FE7453223AEAFF004D1386 /* MTLBlit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FE7451223AEAFF004D1386 /* MTLBlit.h */; };
+		F3FE7454223AEAFF004D1386 /* MTLBlit.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FE7452223AEAFF004D1386 /* MTLBlit.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -728,6 +730,8 @@
 		F3FA881B2233C4AC0087A318 /* MTLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLTexture.h; sourceTree = "<group>"; };
 		F3FA881C2233C4AC0087A318 /* MTLTexture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLTexture.m; sourceTree = "<group>"; };
 		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
+		F3FE7451223AEAFF004D1386 /* MTLBlit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLBlit.h; sourceTree = "<group>"; };
+		F3FE7452223AEAFF004D1386 /* MTLBlit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLBlit.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1479,6 +1483,8 @@
 		F3FA87F82233835D0087A318 /* MTL */ = {
 			isa = PBXGroup;
 			children = (
+				F3FE7452223AEAFF004D1386 /* MTLBlit.m */,
+				F3FE7451223AEAFF004D1386 /* MTLBlit.h */,
 				F342B69F2239711B00B44319 /* MTLFramebuffer.m */,
 				F342B69E2239711B00B44319 /* MTLFramebuffer.h */,
 				F3FA88162233876E0087A318 /* MTLGFX.m */,
@@ -1599,6 +1605,7 @@
 				F3AF33DE1DCCD4EC00CAD472 /* GLDebug.h in Headers */,
 				F3FA881A2233887A0087A318 /* MTLGFX.h in Headers */,
 				F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */,
+				F3FE7453223AEAFF004D1386 /* MTLBlit.h in Headers */,
 				F3AF33C81DCCD4EC00CAD472 /* GFXBlit.h in Headers */,
 				F3AF33ED1DCCD4EC00CAD472 /* GLState.h in Headers */,
 				F3AF34981DCCD5AF00CAD472 /* ListExpressions.h in Headers */,
@@ -1993,6 +2000,7 @@
 				F3AF33B91DCCD4EC00CAD472 /* ColourFormat.c in Sources */,
 				F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */,
 				F3AF33C11DCCD4EC00CAD472 /* PixelDataGenerator.c in Sources */,
+				F3FE7454223AEAFF004D1386 /* MTLBlit.m in Sources */,
 				F3AF33AB1DCCD4EC00CAD472 /* Mouse.c in Sources */,
 				F3AF33D31DCCD4EC00CAD472 /* GFXShader.c in Sources */,
 				F3AF34AC1DCCD5AF00CAD472 /* TypeCastExpressions.c in Sources */,
