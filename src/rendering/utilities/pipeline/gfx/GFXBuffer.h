@@ -63,7 +63,10 @@ typedef enum {
     GFXBufferHintGPUWriteNone = 0,
     GFXBufferHintGPUWriteOnce = (GFXBufferHintAccessOnce << GFXBufferHintGPUWrite),
     GFXBufferHintGPUWriteMany = (GFXBufferHintAccessMany << GFXBufferHintGPUWrite),
-
+    
+    /// Equivalent to not passing any access options, an unknown access leaves the interpretation completely up to the implementation.
+    GFXBufferHintAccessUnknown = GFXBufferHintCPUReadNone | GFXBufferHintCPUWriteNone | GFXBufferHintGPUReadNone | GFXBufferHintGPUWriteNone,
+    
     
     GFXBufferHintDataMask = 0xff,
     GFXBufferHintData = 0,
