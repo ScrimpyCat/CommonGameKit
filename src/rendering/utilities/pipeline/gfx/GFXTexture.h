@@ -48,7 +48,45 @@ typedef enum {
     GFXTextureHintFilterMag = 3,
     GFXTextureHintAddress_S = 4,
     GFXTextureHintAddress_T = 6,
-    GFXTextureHintAddress_R = 8
+    GFXTextureHintAddress_R = 8,
+    
+    
+    GFXTextureHintAccessMask = 3,
+    GFXTextureHintAccessNone = 0,
+    GFXTextureHintAccessOnce = 1,
+    GFXTextureHintAccessMany = 2,
+    GFXTextureHintCPURead = 16,   //000000xx 00000000 00000000
+    GFXTextureHintCPUWrite = 18, //0000xx00 00000000 00000000
+    GFXTextureHintGPURead = 20,  //00xx0000 00000000 00000000
+    GFXTextureHintGPUWrite = 22, //xx000000 00000000 00000000
+    /*
+     Access hints are shifted by the operation type.
+     e.g. (GFXTextureHintAccessOnce << GFXTextureHintCPUWrite) | (GFXTextureHintAccessMany << GFXTextureHintGPURead)
+     Will specify a texture usage where the CPU will write to the texture once, and the GPU will read from
+     the texture many times. And the CPU won't read from the texture, and the GPU won't write to the texture.
+     */
+    GFXTextureHintCPUReadMask = (GFXTextureHintAccessMask << GFXTextureHintCPURead),
+    GFXTextureHintCPUReadNone = 0,
+    GFXTextureHintCPUReadOnce = (GFXTextureHintAccessOnce << GFXTextureHintCPURead),
+    GFXTextureHintCPUReadMany = (GFXTextureHintAccessMany << GFXTextureHintCPURead),
+    
+    GFXTextureHintCPUWriteMask = (GFXTextureHintAccessMask << GFXTextureHintCPUWrite),
+    GFXTextureHintCPUWriteNone = 0,
+    GFXTextureHintCPUWriteOnce = (GFXTextureHintAccessOnce << GFXTextureHintCPUWrite),
+    GFXTextureHintCPUWriteMany = (GFXTextureHintAccessMany << GFXTextureHintCPUWrite),
+    
+    GFXTextureHintGPUReadMask = (GFXTextureHintAccessMask << GFXTextureHintGPURead),
+    GFXTextureHintGPUReadNone = 0,
+    GFXTextureHintGPUReadOnce = (GFXTextureHintAccessOnce << GFXTextureHintGPURead),
+    GFXTextureHintGPUReadMany = (GFXTextureHintAccessMany << GFXTextureHintGPURead),
+    
+    GFXTextureHintGPUWriteMask = (GFXTextureHintAccessMask << GFXTextureHintGPUWrite),
+    GFXTextureHintGPUWriteNone = 0,
+    GFXTextureHintGPUWriteOnce = (GFXTextureHintAccessOnce << GFXTextureHintGPUWrite),
+    GFXTextureHintGPUWriteMany = (GFXTextureHintAccessMany << GFXTextureHintGPUWrite),
+    
+    /// Equivalent to not passing any access options, an unknown access leaves the interpretation completely up to the implementation.
+    GFXTextureHintAccessUnknown = GFXTextureHintCPUReadNone | GFXTextureHintCPUWriteNone | GFXTextureHintGPUReadNone | GFXTextureHintGPUWriteNone,
 } GFXTextureHint;
 
 /*!
