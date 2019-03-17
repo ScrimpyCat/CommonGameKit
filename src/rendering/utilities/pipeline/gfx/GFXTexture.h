@@ -55,10 +55,10 @@ typedef enum {
     GFXTextureHintAccessNone = 0,
     GFXTextureHintAccessOnce = 1,
     GFXTextureHintAccessMany = 2,
-    GFXTextureHintCPURead = 16,   //000000xx 00000000 00000000
-    GFXTextureHintCPUWrite = 18, //0000xx00 00000000 00000000
-    GFXTextureHintGPURead = 20,  //00xx0000 00000000 00000000
-    GFXTextureHintGPUWrite = 22, //xx000000 00000000 00000000
+    GFXTextureHintCPURead = 10,   //00000000 0000xx00 00000000
+    GFXTextureHintCPUWrite = 12, //00000000 00xx0000 00000000
+    GFXTextureHintGPURead = 14,  //00000000 xx000000 00000000
+    GFXTextureHintGPUWrite = 16, //000000xx 00000000 00000000
     /*
      Access hints are shifted by the operation type.
      e.g. (GFXTextureHintAccessOnce << GFXTextureHintCPUWrite) | (GFXTextureHintAccessMany << GFXTextureHintGPURead)
@@ -87,6 +87,20 @@ typedef enum {
     
     /// Equivalent to not passing any access options, an unknown access leaves the interpretation completely up to the implementation.
     GFXTextureHintAccessUnknown = GFXTextureHintCPUReadNone | GFXTextureHintCPUWriteNone | GFXTextureHintGPUReadNone | GFXTextureHintGPUWriteNone,
+    
+    
+    GFXTextureHintUsageMask = (0x3ff << 18),
+    GFXTextureHintUsageGeneral = 0,
+    GFXTextureHintUsageShaderRead = (1 << 18),
+    GFXTextureHintUsageShaderWrite = (1 << 19),
+    GFXTextureHintUsageColourAttachmentRead = (1 << 20),
+    GFXTextureHintUsageColourAttachmentWrite = (1 << 21),
+    GFXTextureHintUsageDepthAttachmentRead = (1 << 22),
+    GFXTextureHintUsageDepthAttachmentWrite = (1 << 23),
+    GFXTextureHintUsageStencilAttachmentRead = (1 << 24),
+    GFXTextureHintUsageStencilAttachmentWrite = (1 << 25),
+    GFXTextureHintUsageTransferSource = (1 << 26),
+    GFXTextureHintUsageTransferDestination = (1 << 27)
 } GFXTextureHint;
 
 /*!
