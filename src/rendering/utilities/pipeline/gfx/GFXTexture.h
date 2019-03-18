@@ -100,7 +100,13 @@ typedef enum {
     GFXTextureHintUsageStencilAttachmentRead = (1 << 24),
     GFXTextureHintUsageStencilAttachmentWrite = (1 << 25),
     GFXTextureHintUsageTransferSource = (1 << 26),
-    GFXTextureHintUsageTransferDestination = (1 << 27)
+    GFXTextureHintUsageTransferDestination = (1 << 27),
+    GFXTextureHintUsageColourRenderTarget = GFXTextureHintUsageColourAttachmentRead | GFXTextureHintUsageColourAttachmentWrite,
+    GFXTextureHintUsageDepthRenderTarget = GFXTextureHintUsageDepthAttachmentRead | GFXTextureHintUsageDepthAttachmentWrite,
+    GFXTextureHintUsageStencilRenderTarget = GFXTextureHintUsageStencilAttachmentRead | GFXTextureHintUsageStencilAttachmentWrite,
+    GFXTextureHintUsageRenderTarget = GFXTextureHintUsageColourRenderTarget
+                                    | GFXTextureHintUsageDepthRenderTarget
+                                    | GFXTextureHintUsageStencilRenderTarget
 } GFXTextureHint;
 
 /*!
