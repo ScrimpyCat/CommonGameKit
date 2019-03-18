@@ -81,12 +81,22 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
     {
         case CCColourFormatRGBA8Unorm:
             return MTLPixelFormatRGBA8Unorm;
-
+            
         case CCColourFormatRGBA8Unorm_sRGB:
             return MTLPixelFormatRGBA8Unorm_sRGB;
     }
-
+    
     CCAssertLog(0, "Unsupported format");
+}
+
+static CC_CONSTANT_FUNCTION MTLTextureUsage TextureUsage(GFXTextureHint Hint)
+{
+    MTLTextureUsage Usage = (Hint & GFXTextureHintUsageShaderRead ? MTLTextureUsageShaderRead : 0) |
+                            (Hint & GFXTextureHintUsageShaderWrite ? MTLTextureUsageShaderWrite : 0) |
+                            (Hint & GFXTextureHintUsageRenderTarget ? MTLTextureUsageRenderTarget : 0) |
+                            (Hint & GFXTextureHintUsageShaderRead ? MTLTextureUsageShaderRead : 0);
+    
+    return Usage ? Usage : MTLTextureUsageUnknown;
 }
 
 static void TextureDestroy(MTLGFXTexture Texture)
@@ -137,6 +147,7 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
         TextureDescriptor.width = Width;
         TextureDescriptor.height = Height;
         TextureDescriptor.depth = Depth;
+        TextureDescriptor.usage = TextureUsage(Hint);
         
         Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
         
