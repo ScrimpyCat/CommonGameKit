@@ -99,6 +99,94 @@ static CC_CONSTANT_FUNCTION MTLTextureUsage TextureUsage(GFXTextureHint Hint)
     return Usage ? Usage : MTLTextureUsageUnknown;
 }
 
+static CC_CONSTANT_FUNCTION MTLStorageMode TextureStorage(GFXTextureHint Hint)
+{
+#if CC_PLATFORM_IOS
+#define MTL_GFX_STORAGE_DEFAULT MTLStorageModeShared
+#define MTL_GFX_STORAGE_WRITE_ONLY MTLStorageModeMemoryless
+#elif CC_PLATFORM_OS_X
+#define MTL_GFX_STORAGE_DEFAULT MTLStorageModeManaged
+#define MTL_GFX_STORAGE_WRITE_ONLY MTLStorageModePrivate
+#endif
+    
+    static const MTLStorageMode Storage[2][2][2][2] = {
+        // GFXTextureHintCPUReadNone
+        {
+            // GFXTextureHintCPUWriteNone
+            {
+                // GFXTextureHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_WRITE_ONLY  // GFXTextureHintGPUWrite*
+                },
+                // GFXTextureHintGPURead*
+                {
+                    MTLStorageModePrivate,      // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_WRITE_ONLY  // GFXTextureHintGPUWrite*
+                }
+            },
+            // GFXTextureHintCPUWrite*
+            {
+                // GFXTextureHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXTextureHintGPUWrite*
+                },
+                // GFXTextureHintGPURead*
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXTextureHintGPUWrite*
+                }
+            }
+        },
+        // GFXTextureHintCPURead*
+        {
+            // GFXTextureHintCPUWriteNone
+            {
+                // GFXTextureHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXTextureHintGPUWrite*
+                },
+                // GFXTextureHintGPURead*
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXTextureHintGPUWrite*
+                }
+            },
+            // GFXTextureHintCPUWrite*
+            {
+                // GFXTextureHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXTextureHintGPUWrite*
+                },
+                // GFXTextureHintGPURead*
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXTextureHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXTextureHintGPUWrite*
+                }
+            }
+        }
+    };
+    
+    const _Bool CPUWrite = (Hint >> GFXBufferHintCPUWrite) & GFXBufferHintAccessMask;
+    const _Bool GPUWrite = (Hint >> GFXBufferHintGPUWrite) & GFXBufferHintAccessMask;
+    const _Bool CPURead = (Hint >> GFXBufferHintCPURead) & GFXBufferHintAccessMask;
+    const _Bool GPURead = (Hint >> GFXBufferHintGPURead) & GFXBufferHintAccessMask;
+    
+    const MTLStorageMode Mode = Storage[CPURead][CPUWrite][GPURead][GPUWrite];
+    
+#if CC_PLATFORM_IOS
+    if (Mode == MTLStorageModeMemoryless)
+    {
+        if ((Hint & GFXTextureHintUsageMask) != GFXTextureHintUsageRenderTarget) return MTLStorageModePrivate;
+    }
+#endif
+    
+    return Mode;
+}
+
 static void TextureDestroy(MTLGFXTexture Texture)
 {
     if (Texture->data) CCPixelDataDestroy(Texture->data);
@@ -148,6 +236,7 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
         TextureDescriptor.height = Height;
         TextureDescriptor.depth = Depth;
         TextureDescriptor.usage = TextureUsage(Hint);
+        TextureDescriptor.storageMode = TextureStorage(Hint);
         
         Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
         
