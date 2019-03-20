@@ -23,12 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "MTLGFX_Private.h"
+#import "MTLGFX_Private.h"
+@import ObjectiveC;
 
+static MTLInternalSupport MTLGFXSupport = {};
 
 static MTLInternal MTLInfo = {
     .device = nil,
     .commandQueue = nil,
+    .support = &MTLGFXSupport,
     .samplers = {nil}
 };
 
@@ -71,12 +74,32 @@ id <MTLSamplerState>MTLGFXGetSampler(GFXTextureHint Hint)
     return Sampler;
 }
 
+static void MTLGFXGetFeatures(void)
+{
+#define MTL_GFX_FEATURE(classname, propname) { .cls = [classname class], .property = #propname, .enabled = (void*)&MTLGFXSupport + offsetof(MTLInternalSupport, classname) + offsetof(MTLInternalFeature ## classname, propname) }
+    
+    const struct {
+        Class cls;
+        const char *property;
+        _Bool *enabled;
+    } Features[] = {
+        MTL_GFX_FEATURE(MTLTextureDescriptor, allowGPUOptimizedContents)
+    };
+    
+    for (size_t Loop = 0; Loop < sizeof(Features) / sizeof(typeof(*Features)); Loop++)
+    {
+        *Features[Loop].enabled = (_Bool)class_getProperty([Features[Loop].cls class], Features[Loop].property);
+    }
+}
+
 void MTLGFXSetup(void)
 {
     GFXMain = MTLGFX;
     
     MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained CFTypeRef)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
     MTLInfo.commandQueue = (__bridge id<MTLCommandQueue>)((__bridge_retained CFTypeRef)[MTLInfo.device newCommandQueue]);
+    
+    MTLGFXGetFeatures();
     
     //TODO: Add config to specify which samplers to cache
     MTLSamplerDescriptor *SamplerDescriptor = [MTLSamplerDescriptor new];
