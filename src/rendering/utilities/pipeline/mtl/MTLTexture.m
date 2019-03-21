@@ -187,6 +187,14 @@ static CC_CONSTANT_FUNCTION MTLStorageMode TextureStorage(GFXTextureHint Hint)
     return Mode;
 }
 
+static CC_CONSTANT_FUNCTION BOOL TextureGPUOptimized(GFXTextureHint Hint)
+{
+    const size_t CPUUsage = ((Hint >> GFXTextureHintCPUWrite) & GFXTextureHintAccessMask) + ((Hint >> GFXTextureHintCPURead) & GFXTextureHintAccessMask);
+    const size_t GPUUsage = ((Hint >> GFXTextureHintGPUWrite) & GFXTextureHintAccessMask) + ((Hint >> GFXTextureHintGPURead) & GFXTextureHintAccessMask);
+    
+    return (CPUUsage <= GFXTextureHintAccessOnce) && (GPUUsage > GFXTextureHintAccessOnce);
+}
+
 static void TextureDestroy(MTLGFXTexture Texture)
 {
     if (Texture->data) CCPixelDataDestroy(Texture->data);
@@ -237,6 +245,10 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
         TextureDescriptor.depth = Depth;
         TextureDescriptor.usage = TextureUsage(Hint);
         TextureDescriptor.storageMode = TextureStorage(Hint);
+        
+#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_10_14, CC_PLATFORM_IOS_12_0)
+        if (((MTLInternal*)MTLGFX->internal)->support->MTLTextureDescriptor.allowGPUOptimizedContents) TextureDescriptor.allowGPUOptimizedContents = TextureGPUOptimized(Hint);
+#endif
         
         Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
         
