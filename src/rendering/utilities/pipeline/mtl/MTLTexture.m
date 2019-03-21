@@ -170,10 +170,10 @@ static CC_CONSTANT_FUNCTION MTLStorageMode TextureStorage(GFXTextureHint Hint)
         }
     };
     
-    const _Bool CPUWrite = (Hint >> GFXBufferHintCPUWrite) & GFXBufferHintAccessMask;
-    const _Bool GPUWrite = (Hint >> GFXBufferHintGPUWrite) & GFXBufferHintAccessMask;
-    const _Bool CPURead = (Hint >> GFXBufferHintCPURead) & GFXBufferHintAccessMask;
-    const _Bool GPURead = (Hint >> GFXBufferHintGPURead) & GFXBufferHintAccessMask;
+    const _Bool CPUWrite = (Hint >> GFXTextureHintCPUWrite) & GFXTextureHintAccessMask;
+    const _Bool GPUWrite = (Hint >> GFXTextureHintGPUWrite) & GFXTextureHintAccessMask;
+    const _Bool CPURead = (Hint >> GFXTextureHintCPURead) & GFXTextureHintAccessMask;
+    const _Bool GPURead = (Hint >> GFXTextureHintGPURead) & GFXTextureHintAccessMask;
     
     const MTLStorageMode Mode = Storage[CPURead][CPUWrite][GPURead][GPUWrite];
     
