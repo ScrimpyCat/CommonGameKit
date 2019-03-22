@@ -25,6 +25,7 @@
 
 #import "MTLFramebuffer.h"
 #import "MTLTexture.h"
+@import ObjectiveC;
 
 static MTLGFXFramebuffer FramebufferConstructor(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
 static void FramebufferDestructor(MTLGFXFramebuffer Framebuffer);
@@ -72,6 +73,23 @@ static void FramebufferDestructor(MTLGFXFramebuffer Framebuffer)
     
     CC_SAFE_Free(Framebuffer);
 }
+
+@interface DrawableTexture : NSProxy
+@end
+
+@implementation DrawableTexture
+
+-(NSMethodSignature*) methodSignatureForSelector: (SEL)sel
+{
+    return [NSMethodSignature signatureWithObjCTypes: method_getTypeEncoding(class_getInstanceMethod([((MTLInternal*)MTLGFX->internal)->drawableTexture class], sel))];
+}
+
+-(void) forwardInvocation: (NSInvocation*)invocation
+{
+    [invocation invokeWithTarget: ((MTLInternal*)MTLGFX->internal)->drawableTexture];
+}
+
+@end
 
 static MTLGFXFramebuffer FramebufferDefault(void)
 {
