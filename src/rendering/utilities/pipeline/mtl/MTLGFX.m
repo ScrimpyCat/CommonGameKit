@@ -24,7 +24,11 @@
  */
 
 #import "MTLGFX_Private.h"
+#import "MTLTexture.h"
 @import ObjectiveC;
+
+@interface GFXDrawableTexture : NSProxy
+@end
 
 static MTLInternalSupport MTLGFXSupport = {};
 
@@ -98,6 +102,7 @@ void MTLGFXSetup(void)
     
     MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained CFTypeRef)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
     MTLInfo.commandQueue = (__bridge id<MTLCommandQueue>)((__bridge_retained CFTypeRef)[MTLInfo.device newCommandQueue]);
+    MTLInfo.drawable = MTLGFXTextureCreate(CC_STD_ALLOCATOR, (id<MTLTexture>)[GFXDrawableTexture alloc]);
     
     MTLGFXGetFeatures();
     
@@ -116,3 +121,17 @@ void MTLGFXSetup(void)
     }
 }
 
+static id <MTLTexture>DrawableTexture; //TODO: Make threadsafe
+@implementation GFXDrawableTexture
+
+-(NSMethodSignature*) methodSignatureForSelector: (SEL)sel
+{
+    return [NSMethodSignature signatureWithObjCTypes: method_getTypeEncoding(class_getInstanceMethod([DrawableTexture class], sel))];
+}
+
+-(void) forwardInvocation: (NSInvocation*)invocation
+{
+    [invocation invokeWithTarget: DrawableTexture];
+}
+
+@end

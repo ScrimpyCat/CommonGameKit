@@ -59,6 +59,8 @@ typedef struct {
 
 extern const GFXTextureInterface MTLTextureInterface;
 
+CC_NEW GFXTexture MTLGFXTextureCreate(CCAllocatorType Allocator, id <MTLTexture>Data);
+
 static inline id <MTLTexture>MTLGFXTextureGetTexture(MTLGFXTexture Texture);
 
 

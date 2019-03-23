@@ -42,7 +42,7 @@ typedef struct {
     __unsafe_unretained id <MTLDevice>device;
     __unsafe_unretained id <MTLCommandQueue>commandQueue;
     __unsafe_unretained id <MTLCommandBuffer>commandBuffer; // TODO: Maybe let user assign buffer
-    __unsafe_unretained id <MTLTexture>drawableTexture; // TODO: Make threadsafe
+    GFXTexture drawable;
     MTLInternalSupport *support;
     __unsafe_unretained id <MTLSamplerState>samplers[255];
 } MTLInternal;

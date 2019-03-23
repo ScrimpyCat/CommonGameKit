@@ -66,13 +66,33 @@ const GFXTextureInterface MTLTextureInterface = {
 };
 
 
-CC_CONSTANT_FUNCTION MTLTextureType TextureType(GFXTextureHint Hint)
+static CC_CONSTANT_FUNCTION MTLTextureType TextureType(GFXTextureHint Hint)
 {
     return (MTLTextureType[3]){
         MTLTextureType1D,
         MTLTextureType2D,
         MTLTextureType3D
     }[(Hint & GFXTextureHintDimensionMask)];
+}
+
+static CC_CONSTANT_FUNCTION GFXTextureHint TextureTypeReverse(MTLTextureType Type)
+{
+    switch (Type)
+    {
+        case MTLTextureType1D:
+            return GFXTextureHintDimension1D;
+            
+        case MTLTextureType2D:
+            return GFXTextureHintDimension2D;
+            
+        case MTLTextureType3D:
+            return GFXTextureHintDimension3D;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported type");
 }
 
 static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat Format)
@@ -89,6 +109,23 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
     CCAssertLog(0, "Unsupported format");
 }
 
+static CC_CONSTANT_FUNCTION CCColourFormat TextureInternalFormatReverse(MTLPixelFormat Format)
+{
+    switch (Format)
+    {
+        case MTLPixelFormatRGBA8Unorm:
+            return CCColourFormatRGBA8Unorm;
+            
+        case MTLPixelFormatRGBA8Unorm_sRGB:
+            return CCColourFormatRGBA8Unorm_sRGB;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported format");
+}
+
 static CC_CONSTANT_FUNCTION MTLTextureUsage TextureUsage(GFXTextureHint Hint)
 {
     MTLTextureUsage Usage = (Hint & GFXTextureHintUsageShaderRead ? MTLTextureUsageShaderRead : 0) |
@@ -97,6 +134,16 @@ static CC_CONSTANT_FUNCTION MTLTextureUsage TextureUsage(GFXTextureHint Hint)
                             (Hint & GFXTextureHintUsageShaderRead ? MTLTextureUsageShaderRead : 0);
     
     return Usage ? Usage : MTLTextureUsageUnknown;
+}
+
+static CC_CONSTANT_FUNCTION GFXTextureHint TextureUsageReverse(MTLTextureUsage Usage)
+{
+    GFXTextureHint Hint = (Usage & MTLTextureUsageShaderRead ? GFXTextureHintUsageShaderRead : 0) |
+                          (Usage & MTLTextureUsageShaderWrite ? GFXTextureHintUsageShaderWrite : 0) |
+                          (Usage & MTLTextureUsageRenderTarget ? GFXTextureHintUsageRenderTarget : 0) |
+                          (Usage & MTLTextureUsageShaderRead ? GFXTextureHintUsageShaderRead : 0);
+    
+    return Hint ? Hint : GFXTextureHintUsageGeneral;
 }
 
 static CC_CONSTANT_FUNCTION MTLStorageMode TextureStorage(GFXTextureHint Hint)
@@ -204,6 +251,28 @@ static void TextureDestroy(MTLGFXTexture Texture)
     }
     
     else GFXTextureDestroy(Texture->sub.parent);
+}
+
+GFXTexture MTLGFXTextureCreate(CCAllocatorType Allocator, id <MTLTexture>Data)
+{
+    MTLGFXTexture Texture = CCMalloc(Allocator, sizeof(MTLGFXTextureInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Texture)
+    {
+        CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)TextureDestroy);
+        
+        Texture->isRoot = TRUE;
+        Texture->root.hint = TextureTypeReverse(Data.textureType) | TextureUsageReverse(Data.usage) | GFXTextureHintAccessUnknown;
+        Texture->stream = NULL;
+        Texture->data = NULL;
+        Texture->root.format = TextureInternalFormatReverse(Data.pixelFormat);
+        Texture->width = Data.width;
+        Texture->height = Data.height;
+        Texture->depth = Data.depth;
+        
+        Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)Data);
+    }
+    
+    return (GFXTexture)Texture;
 }
 
 static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHint Hint, CCColourFormat Format, size_t Width, size_t Height, size_t Depth, CCPixelData Data)

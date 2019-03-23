@@ -74,23 +74,6 @@ static void FramebufferDestructor(MTLGFXFramebuffer Framebuffer)
     CC_SAFE_Free(Framebuffer);
 }
 
-@interface DrawableTexture : NSProxy
-@end
-
-@implementation DrawableTexture
-
--(NSMethodSignature*) methodSignatureForSelector: (SEL)sel
-{
-    return [NSMethodSignature signatureWithObjCTypes: method_getTypeEncoding(class_getInstanceMethod([((MTLInternal*)MTLGFX->internal)->drawableTexture class], sel))];
-}
-
--(void) forwardInvocation: (NSInvocation*)invocation
-{
-    [invocation invokeWithTarget: ((MTLInternal*)MTLGFX->internal)->drawableTexture];
-}
-
-@end
-
 static MTLGFXFramebuffer FramebufferDefault(void)
 {
     static struct {
@@ -117,7 +100,13 @@ static MTLGFXFramebuffer FramebufferDefault(void)
             }
         }
     };
-
+    
+    if (!DefaultFramebuffer.init.attachmentCount) // TODO: make threadsafe
+    {
+        DefaultFramebuffer.init.attachments[0] = GFXFramebufferAttachmentCreateColour(((MTLInternal*)MTLGFX->internal)->drawable, GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
+        DefaultFramebuffer.init.attachmentCount = 1;
+    }
+    
     return &DefaultFramebuffer.info;
 }
 
