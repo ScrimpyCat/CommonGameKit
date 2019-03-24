@@ -35,4 +35,9 @@ extern GFXMainInfo * const MTLGFX;
  */
 void MTLGFXSetup(void);
 
+#if __OBJC__
+@import Metal;
+void MTLGFXSetDrawable(id <MTLTexture>Drawable);
+#endif
+
 #endif

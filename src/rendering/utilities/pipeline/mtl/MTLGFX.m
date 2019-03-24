@@ -122,6 +122,11 @@ void MTLGFXSetup(void)
 }
 
 static id <MTLTexture>DrawableTexture; //TODO: Make threadsafe
+void MTLGFXSetDrawable(id <MTLTexture>Drawable)
+{
+    DrawableTexture = Drawable;
+}
+
 @implementation GFXDrawableTexture
 
 -(NSMethodSignature*) methodSignatureForSelector: (SEL)sel
