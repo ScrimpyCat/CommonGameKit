@@ -25,23 +25,35 @@
 
 #import "MTLBuffer.h"
 
-static id <MTLBuffer>GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
-static void GLBufferDestructor(id <MTLBuffer>Buffer);
+static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
+static void BufferDestructor(MTLGFXBuffer Buffer);
 
 
 const GFXBufferInterface MTLBufferInterface = {
-    .create = (GFXBufferConstructorCallback)GLBufferConstructor,
-    .destroy = (GFXBufferDestructorCallback)GLBufferDestructor,
+    .create = (GFXBufferConstructorCallback)BufferConstructor,
+    .destroy = (GFXBufferDestructorCallback)BufferDestructor,
 };
 
-static id <MTLBuffer>GLBufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data)
+static void BufferDestroy(MTLGFXBuffer Buffer)
 {
-    id <MTLBuffer>Buffer = [((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: 0];
+    CFRelease((__bridge CFTypeRef)Buffer->buffer);
+}
+
+static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data)
+{
+    MTLGFXBuffer Buffer = CCMalloc(Allocator, sizeof(MTLGFXBufferInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Buffer)
+    {
+        CCMemorySetDestructor(Buffer, (CCMemoryDestructorCallback)BufferDestroy);
+        
+        Buffer->hint = Hint;
+        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: 0]);
+    }
     
     return Buffer;
 }
 
-static void GLBufferDestructor(id <MTLBuffer>Buffer)
+static void BufferDestructor(MTLGFXBuffer Buffer)
 {
-    CFRelease((__bridge CFTypeRef)Buffer);
+    CC_SAFE_Free(Buffer);
 }

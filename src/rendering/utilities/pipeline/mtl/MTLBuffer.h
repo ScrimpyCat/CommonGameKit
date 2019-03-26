@@ -29,6 +29,11 @@
 #include "MTLGFX_Private.h"
 
 
+typedef struct {
+    GFXBufferHint hint;
+    __unsafe_unretained id <MTLBuffer>buffer;
+} MTLGFXBufferInfo, *MTLGFXBuffer;
+
 extern const GFXBufferInterface MTLBufferInterface;
 
 #endif
