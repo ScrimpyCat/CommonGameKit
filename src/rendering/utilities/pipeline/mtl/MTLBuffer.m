@@ -28,14 +28,15 @@
 static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
 static void BufferDestructor(MTLGFXBuffer Buffer);
 static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer);
+static size_t BufferGetSize(MTLGFXBuffer Buffer);
 
 
 const GFXBufferInterface MTLBufferInterface = {
     .create = (GFXBufferConstructorCallback)BufferConstructor,
     .destroy = (GFXBufferDestructorCallback)BufferDestructor,
     .hints = (GFXBufferGetHintCallback)BufferGetHint,
+    .size = (GFXBufferGetSizeCallback)BufferGetSize,
 };
-
 
 static void BufferDestroy(MTLGFXBuffer Buffer)
 {
@@ -64,4 +65,9 @@ static void BufferDestructor(MTLGFXBuffer Buffer)
 static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer)
 {
     return Buffer->hint;
+}
+
+static size_t GLBufferGetSize(MTLGFXBuffer Buffer)
+{
+    return Buffer->buffer.length;
 }
