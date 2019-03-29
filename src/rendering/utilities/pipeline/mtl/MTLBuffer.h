@@ -32,6 +32,7 @@
 typedef struct {
     GFXBufferHint hint;
     __unsafe_unretained id <MTLBuffer>buffer;
+    size_t size;
 } MTLGFXBufferInfo, *MTLGFXBuffer;
 
 extern const GFXBufferInterface MTLBufferInterface;

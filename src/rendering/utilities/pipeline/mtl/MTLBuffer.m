@@ -130,6 +130,7 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
         CCMemorySetDestructor(Buffer, (CCMemoryDestructorCallback)BufferDestroy);
         
         Buffer->hint = Hint;
+        Buffer->size = Size;
         Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: BufferResourceOptions(Hint)]);
     }
     
@@ -148,5 +149,5 @@ static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer)
 
 static size_t BufferGetSize(MTLGFXBuffer Buffer)
 {
-    return Buffer->buffer.length;
+    return Buffer->size;
 }
