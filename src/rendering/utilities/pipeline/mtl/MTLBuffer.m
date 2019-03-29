@@ -30,6 +30,7 @@ static void BufferDestructor(MTLGFXBuffer Buffer);
 static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer);
 static size_t BufferGetSize(MTLGFXBuffer Buffer);
 static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size);
+static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data);
 
 
 const GFXBufferInterface MTLBufferInterface = {
@@ -38,6 +39,7 @@ const GFXBufferInterface MTLBufferInterface = {
     .hints = (GFXBufferGetHintCallback)BufferGetHint,
     .size = (GFXBufferGetSizeCallback)BufferGetSize,
     .resize = (GFXBufferResizeCallback)BufferResize,
+    .read = (GFXBufferReadBufferCallback)BufferReadBuffer,
 };
 
 static CC_CONSTANT_FUNCTION MTLResourceOptions BufferResourceOptions(GFXBufferHint Hint)
@@ -176,4 +178,12 @@ static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
     Buffer->size = Size;
     
     return TRUE;
+}
+
+static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data)
+{
+    const size_t ReadSize = Buffer->size > Size ? Size : Buffer->size;
+    memcpy(Data, Buffer->buffer.contents, ReadSize);
+    
+    return ReadSize;
 }
