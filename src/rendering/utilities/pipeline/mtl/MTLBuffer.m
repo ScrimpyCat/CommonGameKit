@@ -29,6 +29,7 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
 static void BufferDestructor(MTLGFXBuffer Buffer);
 static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer);
 static size_t BufferGetSize(MTLGFXBuffer Buffer);
+static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size);
 
 
 const GFXBufferInterface MTLBufferInterface = {
@@ -36,6 +37,7 @@ const GFXBufferInterface MTLBufferInterface = {
     .destroy = (GFXBufferDestructorCallback)BufferDestructor,
     .hints = (GFXBufferGetHintCallback)BufferGetHint,
     .size = (GFXBufferGetSizeCallback)BufferGetSize,
+    .resize = (GFXBufferResizeCallback)BufferResize,
 };
 
 static CC_CONSTANT_FUNCTION MTLResourceOptions BufferResourceOptions(GFXBufferHint Hint)
@@ -150,4 +152,28 @@ static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer)
 static size_t BufferGetSize(MTLGFXBuffer Buffer)
 {
     return Buffer->size;
+}
+
+static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
+{
+    if (Buffer->buffer.length < Size)
+    {
+        id <MTLBuffer>NewBuffer = [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: BufferResourceOptions(Buffer->hint)];
+        
+        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
+        [BlitEncoder copyFromBuffer: Buffer->buffer
+                       sourceOffset: 0
+                           toBuffer: NewBuffer
+                  destinationOffset: 0
+                               size: Buffer->size];
+        
+        [BlitEncoder endEncoding];
+        
+        CFRelease((__bridge CFTypeRef)Buffer->buffer);
+        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)NewBuffer);
+    }
+    
+    Buffer->size = Size;
+    
+    return TRUE;
 }
