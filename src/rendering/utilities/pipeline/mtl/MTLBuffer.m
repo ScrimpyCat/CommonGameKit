@@ -38,6 +38,85 @@ const GFXBufferInterface MTLBufferInterface = {
     .size = (GFXBufferGetSizeCallback)BufferGetSize,
 };
 
+static CC_CONSTANT_FUNCTION MTLResourceOptions BufferResourceOptions(GFXBufferHint Hint)
+{
+#if CC_PLATFORM_IOS
+#define MTL_GFX_STORAGE_DEFAULT MTLResourceStorageModeShared
+#define MTL_GFX_STORAGE_WRITE_ONLY MTLResourceStorageModeMemoryless
+#elif CC_PLATFORM_OS_X
+#define MTL_GFX_STORAGE_DEFAULT MTLResourceStorageModeManaged
+#define MTL_GFX_STORAGE_WRITE_ONLY MTLResourceStorageModePrivate
+#endif
+    
+    static const MTLResourceOptions Storage[2][2][2][2] = {
+        // GFXBufferHintCPUReadNone
+        {
+            // GFXBufferHintCPUWriteNone
+            {
+                // GFXBufferHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_WRITE_ONLY  // GFXBufferHintGPUWrite*
+                },
+                // GFXBufferHintGPURead*
+                {
+                    MTLResourceStorageModePrivate,      // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_WRITE_ONLY  // GFXBufferHintGPUWrite*
+                }
+            },
+            // GFXBufferHintCPUWrite*
+            {
+                // GFXBufferHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXBufferHintGPUWrite*
+                },
+                // GFXBufferHintGPURead*
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXBufferHintGPUWrite*
+                }
+            }
+        },
+        // GFXBufferHintCPURead*
+        {
+            // GFXBufferHintCPUWriteNone
+            {
+                // GFXBufferHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXBufferHintGPUWrite*
+                },
+                // GFXBufferHintGPURead*
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXBufferHintGPUWrite*
+                }
+            },
+            // GFXBufferHintCPUWrite*
+            {
+                // GFXBufferHintGPUReadNone
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXBufferHintGPUWrite*
+                },
+                // GFXBufferHintGPURead*
+                {
+                    MTL_GFX_STORAGE_DEFAULT,    // GFXBufferHintGPUWriteNone
+                    MTL_GFX_STORAGE_DEFAULT     // GFXBufferHintGPUWrite*
+                }
+            }
+        }
+    };
+    
+    const _Bool CPUWrite = (Hint >> GFXBufferHintCPUWrite) & GFXBufferHintAccessMask;
+    const _Bool GPUWrite = (Hint >> GFXBufferHintGPUWrite) & GFXBufferHintAccessMask;
+    const _Bool CPURead = (Hint >> GFXBufferHintCPURead) & GFXBufferHintAccessMask;
+    const _Bool GPURead = (Hint >> GFXBufferHintGPURead) & GFXBufferHintAccessMask;
+    
+    return Storage[CPURead][CPUWrite][GPURead][GPUWrite];
+}
+
 static void BufferDestroy(MTLGFXBuffer Buffer)
 {
     CFRelease((__bridge CFTypeRef)Buffer->buffer);
@@ -51,7 +130,7 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
         CCMemorySetDestructor(Buffer, (CCMemoryDestructorCallback)BufferDestroy);
         
         Buffer->hint = Hint;
-        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: 0]);
+        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: BufferResourceOptions(Hint)]);
     }
     
     return Buffer;
@@ -67,7 +146,7 @@ static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer)
     return Buffer->hint;
 }
 
-static size_t GLBufferGetSize(MTLGFXBuffer Buffer)
+static size_t BufferGetSize(MTLGFXBuffer Buffer)
 {
     return Buffer->buffer.length;
 }
