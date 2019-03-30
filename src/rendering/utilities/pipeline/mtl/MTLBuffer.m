@@ -182,8 +182,8 @@ static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
 
 static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data)
 {
-    const size_t ReadSize = Buffer->size > Size ? Size : Buffer->size;
-    memcpy(Data, Buffer->buffer.contents, ReadSize);
+    const size_t ReadSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+    memcpy(Data, Buffer->buffer.contents + Offset, ReadSize);
     
     return ReadSize;
 }
