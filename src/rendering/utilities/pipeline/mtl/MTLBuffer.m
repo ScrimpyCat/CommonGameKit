@@ -31,6 +31,7 @@ static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer);
 static size_t BufferGetSize(MTLGFXBuffer Buffer);
 static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size);
 static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data);
+static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data);
 
 
 const GFXBufferInterface MTLBufferInterface = {
@@ -40,6 +41,7 @@ const GFXBufferInterface MTLBufferInterface = {
     .size = (GFXBufferGetSizeCallback)BufferGetSize,
     .resize = (GFXBufferResizeCallback)BufferResize,
     .read = (GFXBufferReadBufferCallback)BufferReadBuffer,
+    .write = (GFXBufferWriteBufferCallback)BufferWriteBuffer,
 };
 
 static CC_CONSTANT_FUNCTION MTLResourceOptions BufferResourceOptions(GFXBufferHint Hint)
@@ -186,4 +188,14 @@ static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Siz
     memcpy(Data, Buffer->buffer.contents + Offset, ReadSize);
     
     return ReadSize;
+}
+
+static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data)
+{
+    const size_t WriteSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+    memcpy(Buffer->buffer.contents + Offset, Data, WriteSize);
+    
+    [Buffer->buffer didModifyRange: NSMakeRange(Offset, WriteSize)];
+    
+    return WriteSize;
 }
