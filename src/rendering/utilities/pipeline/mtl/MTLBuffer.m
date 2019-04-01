@@ -33,6 +33,7 @@ static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size);
 static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data);
 static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data);
 static size_t BufferCopyBuffer(MTLGFXBuffer SrcInternal, ptrdiff_t SrcOffset, size_t Size, MTLGFXBuffer DstInternal, ptrdiff_t DstOffset);
+static size_t BufferFillBuffer(MTLGFXBuffer Internal, ptrdiff_t Offset, size_t Size, uint8_t Fill);
 
 
 const GFXBufferInterface MTLBufferInterface = {
@@ -44,7 +45,8 @@ const GFXBufferInterface MTLBufferInterface = {
     .read = (GFXBufferReadBufferCallback)BufferReadBuffer,
     .write = (GFXBufferWriteBufferCallback)BufferWriteBuffer,
     .optional = {
-        .copy = (GFXBufferCopyBufferCallback)BufferCopyBuffer
+        .copy = (GFXBufferCopyBufferCallback)BufferCopyBuffer,
+        .fill = (GFXBufferFillBufferCallback)BufferFillBuffer
     }
 };
 
@@ -204,19 +206,31 @@ static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Si
     return WriteSize;
 }
 
-static size_t BufferCopyBuffer(MTLGFXBuffer SrcInternal, ptrdiff_t SrcOffset, size_t Size, MTLGFXBuffer DstInternal, ptrdiff_t DstOffset)
+static size_t BufferCopyBuffer(MTLGFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size_t Size, MTLGFXBuffer DstBuffer, ptrdiff_t DstOffset)
 {
-    size_t CopySize = SrcInternal->size < SrcOffset ? (SrcInternal->size - SrcOffset > Size ? Size : SrcInternal->size - SrcOffset) : 0;
-    CopySize = DstInternal->size < DstOffset ? (DstInternal->size - DstOffset > CopySize ? CopySize : DstInternal->size - DstOffset) : 0;
+    size_t CopySize = SrcBuffer->size < SrcOffset ? (SrcBuffer->size - SrcOffset > Size ? Size : SrcBuffer->size - SrcOffset) : 0;
+    CopySize = DstBuffer->size < DstOffset ? (DstBuffer->size - DstOffset > CopySize ? CopySize : DstBuffer->size - DstOffset) : 0;
     
     id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
-    [BlitEncoder copyFromBuffer: SrcInternal->buffer
+    [BlitEncoder copyFromBuffer: SrcBuffer->buffer
                    sourceOffset: SrcOffset
-                       toBuffer: DstInternal->buffer
+                       toBuffer: DstBuffer->buffer
               destinationOffset: DstOffset
                            size: CopySize];
     
     [BlitEncoder endEncoding];
     
     return CopySize;
+}
+
+static size_t BufferFillBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, uint8_t Fill)
+{
+    const size_t FillSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+    
+    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
+    [BlitEncoder fillBuffer: Buffer->buffer range: NSMakeRange(Offset, FillSize) value: Fill];
+    
+    [BlitEncoder endEncoding];
+    
+    return FillSize;
 }
