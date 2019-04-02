@@ -559,3 +559,10 @@ static void TextureSetStreamData(MTLGFXTexture Texture, void *Stream)
 {
     Texture->stream = Stream;
 }
+
+MTLPixelFormat MTLGFXTextureGetPixelFormat(MTLGFXTexture Texture)
+{
+    MTLGFXTexture Root = Texture->isRoot ? Texture : (MTLGFXTexture)Texture->sub.internal.root;
+    
+    return TextureInternalFormat(Root->root.format);
+}
