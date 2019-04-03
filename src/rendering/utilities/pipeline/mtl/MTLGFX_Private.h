@@ -35,7 +35,12 @@ typedef struct {
 } MTLInternalFeatureMTLTextureDescriptor;
 
 typedef struct {
+    _Bool inputPrimitiveTopology;
+} MTLInternalFeatureMTLRenderPipelineDescriptor;
+
+typedef struct {
     MTLInternalFeatureMTLTextureDescriptor MTLTextureDescriptor;
+    MTLInternalFeatureMTLRenderPipelineDescriptor MTLRenderPipelineDescriptor;
 } MTLInternalSupport;
 
 typedef struct {
