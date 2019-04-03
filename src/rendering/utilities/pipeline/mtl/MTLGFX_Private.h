@@ -36,6 +36,8 @@ typedef struct {
 
 typedef struct {
     _Bool inputPrimitiveTopology;
+    _Bool vertexBuffers;
+    _Bool fragmentBuffers;
 } MTLInternalFeatureMTLRenderPipelineDescriptor;
 
 typedef struct {

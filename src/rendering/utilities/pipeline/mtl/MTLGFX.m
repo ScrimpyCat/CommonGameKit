@@ -88,7 +88,9 @@ static void MTLGFXGetFeatures(void)
         _Bool *enabled;
     } Features[] = {
         MTL_GFX_FEATURE(MTLTextureDescriptor, allowGPUOptimizedContents),
-        MTL_GFX_FEATURE(MTLRenderPipelineDescriptor, inputPrimitiveTopology)
+        MTL_GFX_FEATURE(MTLRenderPipelineDescriptor, inputPrimitiveTopology),
+        MTL_GFX_FEATURE(MTLRenderPipelineDescriptor, vertexBuffers),
+        MTL_GFX_FEATURE(MTLRenderPipelineDescriptor, fragmentBuffers)
     };
     
     for (size_t Loop = 0; Loop < sizeof(Features) / sizeof(typeof(*Features)); Loop++)
