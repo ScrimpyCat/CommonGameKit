@@ -190,6 +190,8 @@ static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
 
 static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data)
 {
+    CCAssertLog(Buffer->buffer.contents, "Can only read from a buffer with CPU read access");
+    
     const size_t ReadSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
     memcpy(Data, Buffer->buffer.contents + Offset, ReadSize);
     
@@ -198,6 +200,8 @@ static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Siz
 
 static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data)
 {
+    CCAssertLog(Buffer->buffer.contents, "Can only write to a buffer with CPU write access");
+    
     const size_t WriteSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
     memcpy(Buffer->buffer.contents + Offset, Data, WriteSize);
     
