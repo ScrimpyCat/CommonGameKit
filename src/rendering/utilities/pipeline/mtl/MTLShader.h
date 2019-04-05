@@ -28,6 +28,8 @@
 
 #include "MTLGFX_Private.h"
 
+typedef NSDictionary<NSString *, id <MTLFunction>> *MTLGFXShader;
+
 extern NSString * const MTLGFXShaderVertexKey;
 extern NSString * const MTLGFXShaderFragmentKey;
 

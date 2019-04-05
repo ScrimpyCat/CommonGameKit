@@ -25,9 +25,9 @@
 
 #import "MTLShader.h"
 
-static NSDictionary<NSString *, id <MTLFunction>> *ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment);
-static void ShaderDestructor(NSDictionary<NSString *, id <MTLFunction>> *Shader);
-static void *ShaderGetInput(NSDictionary<NSString *, id <MTLFunction>> *Shader, CCString Name);
+static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment);
+static void ShaderDestructor(MTLGFXShader Shader);
+static void *ShaderGetInput(MTLGFXShader Shader, CCString Name);
 
 
 const GFXShaderInterface MTLShaderInterface = {
@@ -39,9 +39,9 @@ const GFXShaderInterface MTLShaderInterface = {
 NSString * const MTLGFXShaderVertexKey = @"vert";
 NSString * const MTLGFXShaderFragmentKey = @"frag";
 
-static NSDictionary<NSString *, id <MTLFunction>> *ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment)
+static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment)
 {
-    NSDictionary<NSString *, id <MTLFunction>> *Shader = @{
+    MTLGFXShader Shader = @{
         MTLGFXShaderVertexKey: Vertex,
         MTLGFXShaderFragmentKey: Fragment
     };
@@ -49,12 +49,12 @@ static NSDictionary<NSString *, id <MTLFunction>> *ShaderConstructor(CCAllocator
     return Shader;
 }
 
-static void ShaderDestructor(NSDictionary<NSString *, id <MTLFunction>> *Shader)
+static void ShaderDestructor(MTLGFXShader Shader)
 {
     CFRelease((__bridge CFTypeRef)Shader);
 }
 
-static void *ShaderGetInput(NSDictionary<NSString *, id <MTLFunction>> *Shader, CCString Name)
+static void *ShaderGetInput(MTLGFXShader Shader, CCString Name)
 {
     return NULL;
 }
