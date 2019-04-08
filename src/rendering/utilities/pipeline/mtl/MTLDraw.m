@@ -83,3 +83,29 @@ static CC_CONSTANT_FUNCTION MTLBlendFactor DrawBlendFactor(GFXBlend Factor)
     
     CCAssertLog(0, "Unsupported factor");
 }
+
+static CC_CONSTANT_FUNCTION MTLBlendOperation DrawBlendOperation(GFXBlend Operation)
+{
+    switch (Operation)
+    {
+        case GFXBlendOperationAdd:
+            return MTLBlendOperationAdd;
+            
+        case GFXBlendOperationSubtract:
+            return MTLBlendOperationSubtract;
+            
+        case GFXBlendOperationReverseSubtract:
+            return MTLBlendOperationReverseSubtract;
+            
+        case GFXBlendOperationMin:
+            return MTLBlendOperationMin;
+            
+        case GFXBlendOperationMax:
+            return MTLBlendOperationMax;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported operation");
+}
