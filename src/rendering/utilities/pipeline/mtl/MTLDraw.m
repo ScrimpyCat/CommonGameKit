@@ -266,3 +266,29 @@ static CC_CONSTANT_FUNCTION MTLVertexFormat DrawVertexFormat(GFXBufferFormat For
     
     CCAssertLog(0, "Unsupported format");
 }
+
+static CC_CONSTANT_FUNCTION MTLPrimitiveType DrawPrimitiveType(GFXPrimitiveType Primitive)
+{
+    switch (Primitive)
+    {
+        case GFXPrimitiveTypePoint:
+            return MTLPrimitiveTypePoint;
+            
+        case GFXPrimitiveTypeLine:
+            return MTLPrimitiveTypeLine;
+            
+        case GFXPrimitiveTypeLineStrip:
+            return MTLPrimitiveTypeLineStrip;
+            
+        case GFXPrimitiveTypeTriangle:
+            return MTLPrimitiveTypeTriangle;
+            
+        case GFXPrimitiveTypeTriangleStrip:
+            return MTLPrimitiveTypeTriangleStrip;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported primitive");
+}
