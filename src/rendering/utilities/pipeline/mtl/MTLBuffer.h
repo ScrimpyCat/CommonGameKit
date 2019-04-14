@@ -37,4 +37,12 @@ typedef struct {
 
 extern const GFXBufferInterface MTLBufferInterface;
 
+static inline id <MTLBuffer>MTLGFXBufferGetBuffer(MTLGFXBuffer Buffer);
+
+
+static inline id <MTLBuffer>MTLGFXBufferGetBuffer(MTLGFXBuffer Buffer)
+{
+    return Buffer->buffer;
+}
+
 #endif
