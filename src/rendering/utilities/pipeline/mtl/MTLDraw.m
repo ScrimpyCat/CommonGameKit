@@ -315,3 +315,25 @@ static CC_CONSTANT_FUNCTION MTLLoadAction DrawLoadAction(GFXFramebufferAttachmen
     
     CCAssertLog(0, "Unsupported load action");
 }
+
+static CC_CONSTANT_FUNCTION MTLStoreAction DrawStoreAction(GFXFramebufferAttachmentAction Action)
+{
+    switch (Action & ~GFXFramebufferAttachmentActionFlagClearOnce)
+    {
+        case GFXFramebufferAttachmentActionDontCare:
+            return MTLStoreActionDontCare;
+            
+        case GFXFramebufferAttachmentActionClear:
+            return MTLStoreActionDontCare;
+            
+        case GFXFramebufferAttachmentActionLoad:
+            return MTLStoreActionStore;
+            
+        default:
+            break;
+    }
+    
+    if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLStoreActionDontCare;
+    
+    CCAssertLog(0, "Unsupported load action");
+}
