@@ -26,6 +26,7 @@
 #import "MTLDraw.h"
 #import "MTLTexture.h"
 #import "MTLShader.h"
+#import "MTLBuffer.h"
 
 
 static CC_CONSTANT_FUNCTION MTLBlendFactor DrawBlendFactor(GFXBlend Factor)
@@ -291,4 +292,26 @@ static CC_CONSTANT_FUNCTION MTLPrimitiveType DrawPrimitiveType(GFXPrimitiveType 
     }
     
     CCAssertLog(0, "Unsupported primitive");
+}
+
+static CC_CONSTANT_FUNCTION MTLLoadAction DrawLoadAction(GFXFramebufferAttachmentAction Action)
+{
+    switch (Action & ~GFXFramebufferAttachmentActionFlagClearOnce)
+    {
+        case GFXFramebufferAttachmentActionDontCare:
+            return MTLLoadActionDontCare;
+            
+        case GFXFramebufferAttachmentActionClear:
+            return MTLLoadActionClear;
+            
+        case GFXFramebufferAttachmentActionLoad:
+            return MTLLoadActionLoad;
+            
+        default:
+            break;
+    }
+    
+    if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLLoadActionClear;
+    
+    CCAssertLog(0, "Unsupported load action");
 }
