@@ -80,6 +80,7 @@
 
 #include <CommonGameKit/GFX.h>
 #include <CommonGameKit/GLGFX.h>
+#include <CommonGameKit/MTLGFX.h>
 
 #include <CommonGameKit/Expression.h>
 #include <CommonGameKit/ExpressionEvaluator.h>
