@@ -41,7 +41,7 @@ const GFXBlitInterface MTLBlitInterface = {
 };
 
 
-static id <MTLRenderCommandEncoder>ClearEncoder(GFXFramebufferAttachment *Attachment)
+id <MTLRenderCommandEncoder>MTLGFXClearEncoder(GFXFramebufferAttachment *Attachment)
 {
     MTLRenderPassDescriptor *ClearDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
     ClearDescriptor.colorAttachments[0].texture = MTLGFXTextureGetTexture((MTLGFXTexture)Attachment->texture);
@@ -55,7 +55,7 @@ static _Bool ClearBuffer(GFXFramebufferAttachment *Attachment, GFXFramebufferAtt
 {
     if ((*Action == GFXFramebufferAttachmentActionClear) || (*Action & GFXFramebufferAttachmentActionFlagClearOnce))
     {
-        if (!Cleared) [ClearEncoder(Attachment) endEncoding];
+        if (!Cleared) [MTLGFXClearEncoder(Attachment) endEncoding];
         
         *Action &= ~GFXFramebufferAttachmentActionFlagClearOnce;
         return TRUE;

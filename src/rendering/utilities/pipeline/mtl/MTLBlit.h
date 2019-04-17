@@ -31,4 +31,7 @@
 
 extern const GFXBlitInterface MTLBlitInterface;
 
+
+id <MTLRenderCommandEncoder>MTLGFXClearEncoder(GFXFramebufferAttachment *Attachment);
+
 #endif
