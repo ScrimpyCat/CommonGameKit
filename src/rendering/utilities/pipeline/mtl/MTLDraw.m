@@ -27,6 +27,7 @@
 #import "MTLTexture.h"
 #import "MTLShader.h"
 #import "MTLBuffer.h"
+#import "MTLBlit.h"
 
 static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 
@@ -345,7 +346,7 @@ static CC_CONSTANT_FUNCTION MTLStoreAction DrawStoreAction(GFXFramebufferAttachm
         case GFXFramebufferAttachmentActionClear:
             return MTLStoreActionDontCare;
             
-        case GFXFramebufferAttachmentActionLoad:
+        case GFXFramebufferAttachmentActionStore:
             return MTLStoreActionStore;
             
         default:
@@ -354,7 +355,7 @@ static CC_CONSTANT_FUNCTION MTLStoreAction DrawStoreAction(GFXFramebufferAttachm
     
     if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLStoreActionDontCare;
     
-    CCAssertLog(0, "Unsupported load action");
+    CCAssertLog(0, "Unsupported store action");
 }
 
 static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDrawInput *right)
@@ -432,7 +433,8 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
     RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
     RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
-    //TODO: If store is a clear or clearOnce, then make sure to perform a blit after the draw to clear the framebuffer (as there is no store clear)
+    
+    const _Bool ClearStore = (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((Attachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
     Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
     Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
     
@@ -534,4 +536,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     
     [RenderCommand popDebugGroup];
     [RenderCommand endEncoding];
+    
+    
+    if (ClearStore) [MTLGFXClearEncoder(Attachment) endEncoding];
 }
