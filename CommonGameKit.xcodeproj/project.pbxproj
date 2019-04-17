@@ -244,6 +244,8 @@
 		F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF34D61DCCFC3E00CAD472 /* OpenGL.framework */; };
 		F3AF34DA1DCD014700CAD472 /* Window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34D81DCD014700CAD472 /* Window.c */; };
 		F3AF34DB1DCD014700CAD472 /* Window.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34D91DCD014700CAD472 /* Window.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3B34E352253448C00C2DEC1 /* MTLDraw.h in Headers */ = {isa = PBXBuildFile; fileRef = F3B34E332253448C00C2DEC1 /* MTLDraw.h */; };
+		F3B34E362253448C00C2DEC1 /* MTLDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = F3B34E342253448C00C2DEC1 /* MTLDraw.m */; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -253,6 +255,8 @@
 		F3E2743720D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */; };
 		F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E361961EF5758000FCE1A5 /* MessageExpressions.c */; };
 		F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E361971EF5758000FCE1A5 /* MessageExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3E855B92248CCC1008896E1 /* MTLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E855B72248CCC1008896E1 /* MTLBuffer.h */; };
+		F3E855BA2248CCC1008896E1 /* MTLBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F3E855B82248CCC1008896E1 /* MTLBuffer.m */; };
 		F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */; };
 		F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */; };
 		F3FA88172233876E0087A318 /* MTLGFX.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FA88162233876E0087A318 /* MTLGFX.m */; };
@@ -713,6 +717,8 @@
 		F3AF34D61DCCFC3E00CAD472 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F3AF34D81DCD014700CAD472 /* Window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Window.c; sourceTree = "<group>"; };
 		F3AF34D91DCD014700CAD472 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		F3B34E332253448C00C2DEC1 /* MTLDraw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLDraw.h; sourceTree = "<group>"; };
+		F3B34E342253448C00C2DEC1 /* MTLDraw.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLDraw.m; sourceTree = "<group>"; };
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
 		F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableInterfaceSystem.h; sourceTree = "<group>"; };
@@ -722,6 +728,8 @@
 		F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableInterfaceSystemTests.m; sourceTree = "<group>"; };
 		F3E361961EF5758000FCE1A5 /* MessageExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MessageExpressions.c; sourceTree = "<group>"; };
 		F3E361971EF5758000FCE1A5 /* MessageExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageExpressions.h; sourceTree = "<group>"; };
+		F3E855B72248CCC1008896E1 /* MTLBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLBuffer.h; sourceTree = "<group>"; };
+		F3E855B82248CCC1008896E1 /* MTLBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLBuffer.m; sourceTree = "<group>"; };
 		F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraComponent.h; sourceTree = "<group>"; };
 		F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderCameraComponent.c; sourceTree = "<group>"; };
 		F3FA8815223383850087A318 /* MTLGFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLGFX.h; sourceTree = "<group>"; };
@@ -1485,6 +1493,10 @@
 			children = (
 				F3FE7452223AEAFF004D1386 /* MTLBlit.m */,
 				F3FE7451223AEAFF004D1386 /* MTLBlit.h */,
+				F3E855B82248CCC1008896E1 /* MTLBuffer.m */,
+				F3E855B72248CCC1008896E1 /* MTLBuffer.h */,
+				F3B34E342253448C00C2DEC1 /* MTLDraw.m */,
+				F3B34E332253448C00C2DEC1 /* MTLDraw.h */,
 				F342B69F2239711B00B44319 /* MTLFramebuffer.m */,
 				F342B69E2239711B00B44319 /* MTLFramebuffer.h */,
 				F3FA88162233876E0087A318 /* MTLGFX.m */,
@@ -1544,6 +1556,7 @@
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
 				F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */,
 				F3AF33E61DCCD4EC00CAD472 /* GLPortability.h in Headers */,
+				F3E855B92248CCC1008896E1 /* MTLBuffer.h in Headers */,
 				F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */,
 				F3AF34B61DCCD5AF00CAD472 /* ExpressionHelpers.h in Headers */,
 				F3AF34891DCCD5AF00CAD472 /* ControlFlowExpressions.h in Headers */,
@@ -1572,6 +1585,7 @@
 				F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */,
 				F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */,
 				F32C1C081F6A071600C68B43 /* RelationSystem.h in Headers */,
+				F3B34E352253448C00C2DEC1 /* MTLDraw.h in Headers */,
 				F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */,
 				F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */,
 				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
@@ -1940,6 +1954,8 @@
 				F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */,
 				F3FA881E2233C4AC0087A318 /* MTLTexture.m in Sources */,
 				F3FA88172233876E0087A318 /* MTLGFX.m in Sources */,
+				F3E855BA2248CCC1008896E1 /* MTLBuffer.m in Sources */,
+				F3B34E362253448C00C2DEC1 /* MTLDraw.m in Sources */,
 				F3AF34391DCCD4EC00CAD472 /* Font.c in Sources */,
 				F3AF33C31DCCD4EC00CAD472 /* PixelDataStatic.c in Sources */,
 				F3AF33821DCCD4EC00CAD472 /* ComponentSystem.c in Sources */,
