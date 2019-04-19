@@ -254,31 +254,31 @@ static CC_CONSTANT_FUNCTION MTLVertexFormat DrawVertexFormat(GFXBufferFormat For
             
 #if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_10_13, CC_PLATFORM_IOS_11_0)
         case GFXBufferFormatUInt8:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatUChar;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatUChar;
             
         case GFXBufferFormatInt8:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatChar;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatChar;
             
         case GFXBufferFormatUInt8Normalized:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatUCharNormalized;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatUCharNormalized;
             
         case GFXBufferFormatInt8Normalized:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatCharNormalized;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatCharNormalized;
             
         case GFXBufferFormatUInt16:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatUShort;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatUShort;
             
         case GFXBufferFormatInt16:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatShort;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatShort;
             
         case GFXBufferFormatUInt16Normalized:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatUShortNormalized;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatUShortNormalized;
             
         case GFXBufferFormatInt16Normalized:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatShortNormalized;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatShortNormalized;
             
         case GFXBufferFormatFloat16:
-            if (@available(macOS 10.13, iOS 11, *)) return MTLVertexFormatHalf;
+            if (CC_AVAILABLE(macOS 10.13, iOS 11, *)) return MTLVertexFormatHalf;
 #endif
             
         default:
