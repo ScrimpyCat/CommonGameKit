@@ -134,7 +134,7 @@ void MTLGFXSetDrawable(id <MTLTexture>Drawable)
 
 -(NSMethodSignature*) methodSignatureForSelector: (SEL)sel
 {
-    return [NSMethodSignature signatureWithObjCTypes: method_getTypeEncoding(class_getInstanceMethod([DrawableTexture class], sel))];
+    return [NSMethodSignature signatureWithObjCTypes: DrawableTexture ? method_getTypeEncoding(class_getInstanceMethod([DrawableTexture class], sel)) : protocol_getMethodDescription(@protocol(MTLTexture), sel, YES, YES).types];
 }
 
 -(void) forwardInvocation: (NSInvocation*)invocation
