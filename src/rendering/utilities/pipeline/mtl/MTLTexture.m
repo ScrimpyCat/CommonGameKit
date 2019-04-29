@@ -264,7 +264,7 @@ GFXTexture MTLGFXTextureCreate(CCAllocatorType Allocator, id <MTLTexture>Data)
         Texture->root.hint = TextureTypeReverse(Data.textureType) | TextureUsageReverse(Data.usage) | GFXTextureHintAccessUnknown;
         Texture->stream = NULL;
         Texture->data = NULL;
-        Texture->root.format = TextureInternalFormatReverse(Data.pixelFormat);
+        Texture->root.format = Data.pixelFormat ? TextureInternalFormatReverse(Data.pixelFormat) : 0;
         Texture->width = Data.width;
         Texture->height = Data.height;
         Texture->depth = Data.depth;
