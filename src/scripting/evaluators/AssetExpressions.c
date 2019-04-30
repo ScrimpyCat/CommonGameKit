@@ -420,6 +420,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
 }
 
 #include "GLGFX.h"
+#include "MTLGFX.h"
 
 static CCExpression CCAssetExpressionValueShaderLibraryCopy(CCExpression Value)
 {
@@ -437,6 +438,7 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
     CCExpressionCreateState(Expression, CC_STRING("@source-list"), CCExpressionCreateList(CC_STD_ALLOCATOR), FALSE, NULL, FALSE);
     
     if (GFXMain == GLGFX) CCExpressionCreateState(Expression, CC_STRING("@opengl"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE, NULL, FALSE);
+    else if (GFXMain == MTLGFX) CCExpressionCreateState(Expression, CC_STRING("@metal"), CCExpressionCreateInteger(CC_STD_ALLOCATOR, 1), FALSE, NULL, FALSE);
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
