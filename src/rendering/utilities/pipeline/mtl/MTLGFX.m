@@ -24,7 +24,13 @@
  */
 
 #import "MTLGFX_Private.h"
+#import "MTLBuffer.h"
 #import "MTLTexture.h"
+#import "MTLFramebuffer.h"
+#import "MTLShaderLibrary.h"
+#import "MTLShader.h"
+#import "MTLDraw.h"
+#import "MTLBlit.h"
 @import ObjectiveC;
 
 @interface GFXDrawableTexture : NSProxy
@@ -41,6 +47,13 @@ static MTLInternal MTLInfo = {
 
 static GFXMainInfo MTLGFXInfo = {
     .internal = &MTLInfo,
+    .buffer = &MTLBufferInterface,
+    .texture = &MTLTextureInterface,
+    .framebuffer = &MTLFramebufferInterface,
+    .library = &MTLShaderLibraryInterface,
+    .shader = &MTLShaderInterface,
+    .draw = &MTLDrawInterface,
+    .blit = &MTLBlitInterface
 };
 
 GFXMainInfo * const MTLGFX = &MTLGFXInfo;
