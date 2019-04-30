@@ -55,10 +55,11 @@ static inline CC_CONSTANT_FUNCTION MTLSamplerMinMagFilter SamplerFilter(GFXTextu
 
 static inline CC_CONSTANT_FUNCTION MTLSamplerAddressMode SamplerAddressMode(GFXTextureHint Hint, GFXTextureHint Coordinate)
 {
-    return (MTLSamplerAddressMode[3]){
+    return (MTLSamplerAddressMode[4]){
         MTLSamplerAddressModeClampToEdge,
         MTLSamplerAddressModeRepeat,
-        MTLSamplerAddressModeMirrorRepeat
+        MTLSamplerAddressModeMirrorRepeat,
+        0
     }[(Hint >> Coordinate) & GFXTextureHintAddressModeMask];
 }
 
