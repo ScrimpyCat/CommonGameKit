@@ -454,7 +454,7 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
             if ((CCExpressionGetType(Result) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Result)) == 2))
             {
                 CCExpression Name = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0);
-                if ((CCExpressionGetType(Name) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CC_STRING("data:"))))
+                if ((CCExpressionGetType(Name) == CCExpressionValueTypeAtom) && (CCStringEqual(CCExpressionGetAtom(Name), CC_STRING("dir:"))))
                 {
                     CCExpression Path = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 1);
                     if (CCExpressionGetType(Path) == CCExpressionValueTypeString)
@@ -485,7 +485,7 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
                         }
                     }
                     
-                    else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("data", "path:string");
+                    else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("dir", "path:string");
                 }
             }
         }
