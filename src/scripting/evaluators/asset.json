@@ -81,7 +81,10 @@
             "description": "Creates a shader library with name.",
             "examples": ["(library \"mylib\"\n\t(if @opengl (\n\t\t(source: \"vert\" :vertex (dir: \"myshader.vs\"))\n\t\t(source: \"frag\" :fragment (dir: \"myshader.fs\"))\n\t))\n)"],
             "return": { "type": "list", "value": [{ "type": "string" }] },
-            "args": [[{ "type": "string", "name": "name" }]],
+            "args": [
+                [{ "type": "string", "name": "name" }],
+                [{ "type": "string", "name": "name" }, { "type": "list", "value": [{ "type": "option", "value": "dir" }, { "type": "string" }] }]
+            ],
             "functions": [
                 {
                     "name": "source",
