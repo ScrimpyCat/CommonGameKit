@@ -7,102 +7,102 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F3E746F8227C292A007690A2 /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3E746F7227C292A007690A2 /* shaders.metal */; };
+		F3E747F0227C930E007690A2 /* CoreShaderLibrary.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3E747EF227C930E007690A2 /* CoreShaderLibrary.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F3E746F4227C292A007690A2 /* shaders.metallib */ = {isa = PBXFileReference; explicitFileType = "archive.metal-library"; includeInIndex = 0; path = shaders.metallib; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3E746F7227C292A007690A2 /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
+		F3E747EC227C930E007690A2 /* CoreShaderLibrary.metallib */ = {isa = PBXFileReference; explicitFileType = "archive.metal-library"; includeInIndex = 0; path = CoreShaderLibrary.metallib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3E747EF227C930E007690A2 /* CoreShaderLibrary.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = CoreShaderLibrary.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		F3E746ED227C292A007690A2 = {
+		F3E747E5227C930E007690A2 = {
 			isa = PBXGroup;
 			children = (
-				F3E746F6227C292A007690A2 /* shaders */,
-				F3E746F5227C292A007690A2 /* Products */,
+				F3E747EE227C930E007690A2 /* CoreShaderLibrary */,
+				F3E747ED227C930E007690A2 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		F3E746F5227C292A007690A2 /* Products */ = {
+		F3E747ED227C930E007690A2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3E746F4227C292A007690A2 /* shaders.metallib */,
+				F3E747EC227C930E007690A2 /* CoreShaderLibrary.metallib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F3E746F6227C292A007690A2 /* shaders */ = {
+		F3E747EE227C930E007690A2 /* CoreShaderLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				F3E746F7227C292A007690A2 /* shaders.metal */,
+				F3E747EF227C930E007690A2 /* CoreShaderLibrary.metal */,
 			);
-			path = shaders;
+			path = CoreShaderLibrary;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F3E746F3227C292A007690A2 /* shaders */ = {
+		F3E747EB227C930E007690A2 /* CoreShaderLibrary */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F3E746FB227C292A007690A2 /* Build configuration list for PBXNativeTarget "shaders" */;
+			buildConfigurationList = F3E747F3227C930E007690A2 /* Build configuration list for PBXNativeTarget "CoreShaderLibrary" */;
 			buildPhases = (
-				F3E746F2227C292A007690A2 /* Sources */,
+				F3E747EA227C930E007690A2 /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = shaders;
-			productName = shaders;
-			productReference = F3E746F4227C292A007690A2 /* shaders.metallib */;
+			name = CoreShaderLibrary;
+			productName = CoreShaderLibrary;
+			productReference = F3E747EC227C930E007690A2 /* CoreShaderLibrary.metallib */;
 			productType = "com.apple.product-type.metal-library";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		F3E746EE227C292A007690A2 /* Project object */ = {
+		F3E747E6227C930E007690A2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Stefan Johnson";
 				TargetAttributes = {
-					F3E746F3227C292A007690A2 = {
+					F3E747EB227C930E007690A2 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
-			buildConfigurationList = F3E746F1227C292A007690A2 /* Build configuration list for PBXProject "shaders" */;
+			buildConfigurationList = F3E747E9227C930E007690A2 /* Build configuration list for PBXProject "CoreShaderLibrary" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = F3E746ED227C292A007690A2;
-			productRefGroup = F3E746F5227C292A007690A2 /* Products */;
+			mainGroup = F3E747E5227C930E007690A2;
+			productRefGroup = F3E747ED227C930E007690A2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F3E746F3227C292A007690A2 /* shaders */,
+				F3E747EB227C930E007690A2 /* CoreShaderLibrary */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		F3E746F2227C292A007690A2 /* Sources */ = {
+		F3E747EA227C930E007690A2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3E746F8227C292A007690A2 /* shaders.metal in Sources */,
+				F3E747F0227C930E007690A2 /* CoreShaderLibrary.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		F3E746F9227C292A007690A2 /* Debug */ = {
+		F3E747F1227C930E007690A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -112,7 +112,7 @@
 			};
 			name = Debug;
 		};
-		F3E746FA227C292A007690A2 /* Release */ = {
+		F3E747F2227C930E007690A2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
@@ -122,7 +122,7 @@
 			};
 			name = Release;
 		};
-		F3E746FC227C292A007690A2 /* Debug */ = {
+		F3E747F4227C930E007690A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -130,7 +130,7 @@
 			};
 			name = Debug;
 		};
-		F3E746FD227C292A007690A2 /* Release */ = {
+		F3E747F5227C930E007690A2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -141,25 +141,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F3E746F1227C292A007690A2 /* Build configuration list for PBXProject "shaders" */ = {
+		F3E747E9227C930E007690A2 /* Build configuration list for PBXProject "CoreShaderLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F3E746F9227C292A007690A2 /* Debug */,
-				F3E746FA227C292A007690A2 /* Release */,
+				F3E747F1227C930E007690A2 /* Debug */,
+				F3E747F2227C930E007690A2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F3E746FB227C292A007690A2 /* Build configuration list for PBXNativeTarget "shaders" */ = {
+		F3E747F3227C930E007690A2 /* Build configuration list for PBXNativeTarget "CoreShaderLibrary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F3E746FC227C292A007690A2 /* Debug */,
-				F3E746FD227C292A007690A2 /* Release */,
+				F3E747F4227C930E007690A2 /* Debug */,
+				F3E747F5227C930E007690A2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = F3E746EE227C292A007690A2 /* Project object */;
+	rootObject = F3E747E6227C930E007690A2 /* Project object */;
 }

@@ -1,6 +1,6 @@
 //
-//  shaders.metal
-//  shaders
+//  CoreShaderLibrary.metal
+//  CoreShaderLibrary
 //
 //  Created by Stefan Johnson on 3/5/19.
 //  Copyright © 2019 Stefan Johnson. All rights reserved.
