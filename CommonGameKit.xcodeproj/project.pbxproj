@@ -459,6 +459,13 @@
 			remoteGlobalIDString = F30437A41C62DFA200388C74;
 			remoteInfo = "CommonC-iOSTests";
 		};
+		F3E7471A227C292C007690A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3E746FE227C292A007690A2 /* shaders.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3E746F4227C292A007690A2;
+			remoteInfo = shaders;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -728,6 +735,7 @@
 		F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableInterfaceSystemTests.m; sourceTree = "<group>"; };
 		F3E361961EF5758000FCE1A5 /* MessageExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MessageExpressions.c; sourceTree = "<group>"; };
 		F3E361971EF5758000FCE1A5 /* MessageExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageExpressions.h; sourceTree = "<group>"; };
+		F3E746FE227C292A007690A2 /* shaders.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = shaders.xcodeproj; path = shaders/shaders.xcodeproj; sourceTree = "<group>"; };
 		F3E855B72248CCC1008896E1 /* MTLBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLBuffer.h; sourceTree = "<group>"; };
 		F3E855B82248CCC1008896E1 /* MTLBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLBuffer.m; sourceTree = "<group>"; };
 		F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraComponent.h; sourceTree = "<group>"; };
@@ -971,6 +979,7 @@
 		F3AF326F1DCCD29000CAD472 = {
 			isa = PBXGroup;
 			children = (
+				F3E746FE227C292A007690A2 /* shaders.xcodeproj */,
 				F3897C5B1DD04010008D6C1D /* assets */,
 				F3AF34B81DCCD74100CAD472 /* Dependencies */,
 				F3AF327B1DCCD29000CAD472 /* CommonGameKit */,
@@ -1488,6 +1497,14 @@
 			path = components;
 			sourceTree = "<group>";
 		};
+		F3E746FF227C292A007690A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3E7471B227C292C007690A2 /* shaders.metallib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3FA87F82233835D0087A318 /* MTL */ = {
 			isa = PBXGroup;
 			children = (
@@ -1737,6 +1754,10 @@
 					ProjectRef = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 				},
 				{
+					ProductGroup = F3E746FF227C292A007690A2 /* Products */;
+					ProjectRef = F3E746FE227C292A007690A2 /* shaders.xcodeproj */;
+				},
+				{
 					ProductGroup = F3897B551DCD7149008D6C1D /* Products */;
 					ProjectRef = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
 				},
@@ -1905,6 +1926,13 @@
 			fileType = wrapper.cfbundle;
 			path = "CommonC-iOSTests.xctest";
 			remoteRef = F3AF34C61DCCF4EC00CAD472 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3E7471B227C292C007690A2 /* shaders.metallib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "archive.metal-library";
+			path = shaders.metallib;
+			remoteRef = F3E7471A227C292C007690A2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
