@@ -99,9 +99,11 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
 {
     switch (Format)
     {
+        case CCColourFormatRGB8Unorm:
         case CCColourFormatRGBA8Unorm:
             return MTLPixelFormatRGBA8Unorm;
             
+        case CCColourFormatRGB8Unorm_sRGB:
         case CCColourFormatRGBA8Unorm_sRGB:
             return MTLPixelFormatRGBA8Unorm_sRGB;
     }
