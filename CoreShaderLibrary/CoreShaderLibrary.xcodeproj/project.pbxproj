@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		F344167F227DBFAF0034F169 /* FragmentColour.metal in Sources */ = {isa = PBXBuildFile; fileRef = F344167E227DBFAF0034F169 /* FragmentColour.metal */; };
 		F3A9F0C4227F39DD00F52287 /* VertexColour.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C3227F39DD00F52287 /* VertexColour.metal */; };
+		F3A9F0C6227F3B9300F52287 /* Texture2D.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C5227F3B9300F52287 /* Texture2D.metal */; };
 		F3E747F0227C930E007690A2 /* Core.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3E747EF227C930E007690A2 /* Core.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F344167E227DBFAF0034F169 /* FragmentColour.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = FragmentColour.metal; sourceTree = "<group>"; };
 		F3A9F0C3227F39DD00F52287 /* VertexColour.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VertexColour.metal; sourceTree = "<group>"; };
+		F3A9F0C5227F3B9300F52287 /* Texture2D.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Texture2D.metal; sourceTree = "<group>"; };
 		F3E747EC227C930E007690A2 /* CoreShaderLibrary.metallib */ = {isa = PBXFileReference; explicitFileType = "archive.metal-library"; includeInIndex = 0; path = CoreShaderLibrary.metallib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3E747EF227C930E007690A2 /* Core.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Core.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -42,6 +44,7 @@
 				F3E747EF227C930E007690A2 /* Core.metal */,
 				F344167E227DBFAF0034F169 /* FragmentColour.metal */,
 				F3A9F0C3227F39DD00F52287 /* VertexColour.metal */,
+				F3A9F0C5227F3B9300F52287 /* Texture2D.metal */,
 			);
 			path = CoreShaderLibrary;
 			sourceTree = "<group>";
@@ -104,6 +107,7 @@
 				F3E747F0227C930E007690A2 /* Core.metal in Sources */,
 				F344167F227DBFAF0034F169 /* FragmentColour.metal in Sources */,
 				F3A9F0C4227F39DD00F52287 /* VertexColour.metal in Sources */,
+				F3A9F0C6227F3B9300F52287 /* Texture2D.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
