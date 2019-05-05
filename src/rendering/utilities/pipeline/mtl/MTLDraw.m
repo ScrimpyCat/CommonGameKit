@@ -478,6 +478,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
                 if (Texture)
                 {
                     [RenderCommand setVertexTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
+                    [RenderCommand setVertexSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
                 }
                 
                 CCStringDestroy(Input);
@@ -519,6 +520,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
                 if (Texture)
                 {
                     [RenderCommand setFragmentTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
+                    [RenderCommand setFragmentSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
                 }
                 
                 CCStringDestroy(Input);
