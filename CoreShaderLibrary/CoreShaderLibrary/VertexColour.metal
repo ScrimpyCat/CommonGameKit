@@ -38,7 +38,7 @@ typedef struct {
     float4 colour;
 } VertexOut;
 
-vertex VertexOut fragment_colour_vs(VertexData Vertices [[stage_in]], constant float4x4 &ModelViewProjection [[buffer(1)]])
+vertex VertexOut vertex_colour_vs(VertexData Vertices [[stage_in]], constant float4x4 &ModelViewProjection [[buffer(1)]])
 {
     VertexOut out;
     out.position = ModelViewProjection * float4(Vertices.position, 0.0, 1.0);
@@ -46,7 +46,7 @@ vertex VertexOut fragment_colour_vs(VertexData Vertices [[stage_in]], constant f
     return out;
 }
 
-fragment float4 fragment_colour_fs(VertexOut in [[stage_in]])
+fragment float4 vertex_colour_fs(VertexOut in [[stage_in]])
 {
     return in.colour;
 }
