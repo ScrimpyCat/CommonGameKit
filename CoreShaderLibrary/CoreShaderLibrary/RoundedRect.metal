@@ -29,9 +29,9 @@
 using namespace metal;
 
 typedef struct {
-    float2 position [[attribute(0)]];
-    float4 colour [[attribute(1)]];
-    float2 coord [[attribute(2)]];
+    float2 vPosition [[attribute(0)]];
+    float4 vColour [[attribute(1)]];
+    float2 vCoord [[attribute(2)]];
 } VertexData;
 
 typedef struct {
@@ -40,30 +40,30 @@ typedef struct {
     float2 coord;
 } VertexOut;
 
-vertex VertexOut rounded_rect_vs(VertexData Vertices [[stage_in]], constant float4x4 &ModelViewProjection [[buffer(1)]])
+vertex VertexOut rounded_rect_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
-    out.position = ModelViewProjection * float4(Vertices.position, 0.0, 1.0);
-    out.colour = Vertices.colour;
-    out.coord = Vertices.coord;
+    out.position = modelViewProjectionMatrix * float4(in.vPosition, 0.0, 1.0);
+    out.colour = in.vColour;
+    out.coord = in.vCoord;
     return out;
 }
 
-fragment float4 rounded_rect_fs(VertexOut in [[stage_in]], constant float &Radius [[buffer(0)]], constant float2 &Scale [[buffer(1)]])
+fragment float4 rounded_rect_fs(VertexOut in [[stage_in]], constant float &radius [[buffer(0)]], constant float2 &scale [[buffer(1)]])
 {
     const float2 circleCenter = float2(0.5, 0.5);
     const float dist = 0.997;
     
-    const float2 shift = (1.0 - Scale) * Radius;
+    const float2 shift = (1.0 - scale) * radius;
     
-    float2 pos = abs(in.coord - 0.5) + Radius - (1.0 - dist);
-    float edgeDistance = distance(pos * Scale, circleCenter * Scale - shift) - Radius;
+    float2 pos = abs(in.coord - 0.5) + radius - (1.0 - dist);
+    float edgeDistance = distance(pos * scale, circleCenter * scale - shift) - radius;
     
     edgeDistance = smoothstep(dist, 1.0, edgeDistance + 1.0);
     edgeDistance = 1.0 - edgeDistance;
     
     pos = abs(in.coord - 0.5);
-    float edgeDistance2 = distance(pos * Scale, circleCenter * Scale) - Radius;
+    float edgeDistance2 = distance(pos * scale, circleCenter * scale) - radius;
     
     edgeDistance2 = smoothstep(1.0, 1.0, edgeDistance2 + 1.0);
     

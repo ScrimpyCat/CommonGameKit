@@ -29,21 +29,21 @@
 using namespace metal;
 
 typedef struct {
-    float2 position [[attribute(0)]];
+    float2 vPosition [[attribute(0)]];
 } VertexData;
 
 typedef struct {
     float4 position [[position]];
 } VertexOut;
 
-vertex VertexOut fragment_colour_vs(VertexData Vertices [[stage_in]], constant float4x4 &ModelViewProjection [[buffer(1)]])
+vertex VertexOut fragment_colour_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
-    out.position = ModelViewProjection * float4(Vertices.position, 0.0, 1.0);
+    out.position = modelViewProjectionMatrix * float4(in.vPosition, 0.0, 1.0);
     return out;
 }
 
-fragment float4 fragment_colour_fs(VertexOut in [[stage_in]], constant float4 &Colour [[buffer(0)]])
+fragment float4 fragment_colour_fs(VertexOut in [[stage_in]], constant float4 &colour [[buffer(0)]])
 {
-    return core::premultiply(Colour);
+    return core::premultiply(colour);
 }

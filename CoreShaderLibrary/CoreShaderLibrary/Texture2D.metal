@@ -29,8 +29,8 @@
 using namespace metal;
 
 typedef struct {
-    float2 position [[attribute(0)]];
-    float2 texCoord [[attribute(1)]];
+    float2 vPosition [[attribute(0)]];
+    float2 vTexCoord [[attribute(1)]];
 } VertexData;
 
 typedef struct {
@@ -38,15 +38,15 @@ typedef struct {
     float2 texCoord;
 } VertexOut;
 
-vertex VertexOut texture2d_vs(VertexData Vertices [[stage_in]], constant float4x4 &ModelViewProjection [[buffer(1)]])
+vertex VertexOut texture2d_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
-    out.position = ModelViewProjection * float4(Vertices.position, 0.0, 1.0);
-    out.texCoord = Vertices.texCoord;
+    out.position = modelViewProjectionMatrix * float4(in.vPosition, 0.0, 1.0);
+    out.texCoord = in.vTexCoord;
     return out;
 }
 
-fragment float4 texture2d_fs(VertexOut in [[stage_in]], texture2d<float> Texture [[texture(0)]], sampler Sampler [[sampler(0)]])
+fragment float4 texture2d_fs(VertexOut in [[stage_in]], texture2d<float> tex [[texture(0)]], sampler s [[sampler(0)]])
 {
-    return core::premultiply(Texture.sample(Sampler, in.texCoord));
+    return core::premultiply(tex.sample(s, in.texCoord));
 }
