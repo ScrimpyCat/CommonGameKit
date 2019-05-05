@@ -1,7 +1,7 @@
 (library "core"
     (if @opengl (
-        (loop "@item" (search (cat (@cd "/includes")) "*.hs") (source (replace "." "-" (filename @item)) :header (dir: @item)))
-        (loop "@item" (search @cd ("*.fs" "*.vs")) (source (replace "." "-" (filename @item)) (if (suffix "fs" @item) :fragment :vertex) (dir: @item)))
+        (loop "@item" (search (cat (@cd "/includes")) "*.hs") (source (replace "." "_" (replace "-" "_" (filename @item))) :header (dir: @item)))
+        (loop "@item" (search @cd ("*.fs" "*.vs")) (source (replace "." "_" (replace "-" "_" (filename @item))) (if (suffix "fs" @item) :fragment :vertex) (dir: @item)))
     ))
 
     ;(if @vulkan (
