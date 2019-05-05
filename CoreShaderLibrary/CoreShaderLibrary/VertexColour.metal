@@ -42,7 +42,7 @@ vertex VertexOut fragment_colour_vs(VertexData Vertices [[stage_in]], constant f
 {
     VertexOut out;
     out.position = ModelViewProjection * float4(Vertices.position, 0.0, 1.0);
-    out.colour =  core::premultiply(Vertices.colour);
+    out.colour = core::premultiply(Vertices.colour);
     return out;
 }
 
