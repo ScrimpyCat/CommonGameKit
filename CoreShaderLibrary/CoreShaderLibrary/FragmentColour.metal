@@ -34,7 +34,6 @@ typedef struct {
 
 typedef struct {
     float4 position [[position]];
-    float2 texCoord;
 } VertexOut;
 
 vertex VertexOut fragment_colour_vs(VertexData Vertices [[stage_in]], constant float4x4 &ModelViewProjection [[buffer(1)]])
