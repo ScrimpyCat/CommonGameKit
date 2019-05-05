@@ -485,6 +485,9 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
                 
                 break;
             }
+            
+            case MTLArgumentTypeSampler:
+                break;
                 
             default:
                 CCAssertLog(0, "Unsupported vertex argument type");
@@ -527,6 +530,9 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
                 
                 break;
             }
+            
+            case MTLArgumentTypeSampler:
+                break;
                 
             default:
                 CCAssertLog(0, "Unsupported fragment argument type");
