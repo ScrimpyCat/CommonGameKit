@@ -11,6 +11,8 @@
 		F3A9F0C4227F39DD00F52287 /* VertexColour.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C3227F39DD00F52287 /* VertexColour.metal */; };
 		F3A9F0C6227F3B9300F52287 /* Texture2D.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C5227F3B9300F52287 /* Texture2D.metal */; };
 		F3A9F0C8227F3E1500F52287 /* RoundedRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C7227F3E1500F52287 /* RoundedRect.metal */; };
+		F3A9F0CA227F40C600F52287 /* OutlineRoundedRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C9227F40C600F52287 /* OutlineRoundedRect.metal */; };
+		F3A9F0CC227F4F2B00F52287 /* glsl.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0CB227F4F2B00F52287 /* glsl.metal */; };
 		F3E747F0227C930E007690A2 /* Core.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3E747EF227C930E007690A2 /* Core.metal */; };
 /* End PBXBuildFile section */
 
@@ -19,6 +21,8 @@
 		F3A9F0C3227F39DD00F52287 /* VertexColour.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VertexColour.metal; sourceTree = "<group>"; };
 		F3A9F0C5227F3B9300F52287 /* Texture2D.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Texture2D.metal; sourceTree = "<group>"; };
 		F3A9F0C7227F3E1500F52287 /* RoundedRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RoundedRect.metal; sourceTree = "<group>"; };
+		F3A9F0C9227F40C600F52287 /* OutlineRoundedRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = OutlineRoundedRect.metal; sourceTree = "<group>"; };
+		F3A9F0CB227F4F2B00F52287 /* glsl.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = glsl.metal; sourceTree = "<group>"; };
 		F3E747EC227C930E007690A2 /* CoreShaderLibrary.metallib */ = {isa = PBXFileReference; explicitFileType = "archive.metal-library"; includeInIndex = 0; path = CoreShaderLibrary.metallib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3E747EF227C930E007690A2 /* Core.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Core.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -43,11 +47,13 @@
 		F3E747EE227C930E007690A2 /* CoreShaderLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				F3A9F0CB227F4F2B00F52287 /* glsl.metal */,
 				F3E747EF227C930E007690A2 /* Core.metal */,
 				F344167E227DBFAF0034F169 /* FragmentColour.metal */,
 				F3A9F0C3227F39DD00F52287 /* VertexColour.metal */,
 				F3A9F0C5227F3B9300F52287 /* Texture2D.metal */,
 				F3A9F0C7227F3E1500F52287 /* RoundedRect.metal */,
+				F3A9F0C9227F40C600F52287 /* OutlineRoundedRect.metal */,
 			);
 			path = CoreShaderLibrary;
 			sourceTree = "<group>";
@@ -111,6 +117,8 @@
 				F3A9F0C8227F3E1500F52287 /* RoundedRect.metal in Sources */,
 				F344167F227DBFAF0034F169 /* FragmentColour.metal in Sources */,
 				F3A9F0C4227F39DD00F52287 /* VertexColour.metal in Sources */,
+				F3A9F0CC227F4F2B00F52287 /* glsl.metal in Sources */,
+				F3A9F0CA227F40C600F52287 /* OutlineRoundedRect.metal in Sources */,
 				F3A9F0C6227F3B9300F52287 /* Texture2D.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -23,10 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <metal_stdlib>
 #include "Core.metal"
-
-using namespace metal;
 
 typedef struct {
     float2 vPosition [[attribute(0)]];

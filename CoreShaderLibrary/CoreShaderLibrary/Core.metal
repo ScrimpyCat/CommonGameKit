@@ -24,8 +24,10 @@
  */
 
 #include <metal_stdlib>
+#include "glsl.metal"
 
 using namespace metal;
+using namespace glsl;
 
 namespace core
 {
