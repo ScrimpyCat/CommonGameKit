@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef glsl_metal
+#define glsl_metal
+
 namespace glsl
 {
     template<typename T> inline T lessThan(T x, T y)
@@ -35,3 +38,5 @@ namespace glsl
         return T(x > y);
     }
 }
+
+#endif

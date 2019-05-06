@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Texture2D_metal
+#define Texture2D_metal
+
 #include "Core.metal"
 
 typedef struct {
@@ -47,3 +50,5 @@ fragment float4 texture2d_fs(VertexOut in [[stage_in]], texture2d<float> tex [[t
 {
     return core::premultiply(tex.sample(s, in.texCoord));
 }
+
+#endif

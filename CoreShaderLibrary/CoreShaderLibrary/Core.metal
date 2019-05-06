@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Core_metal
+#define Core_metal
+
 #include <metal_stdlib>
 #include "glsl.metal"
 
@@ -36,3 +39,5 @@ namespace core
         return T(colour.rgb * colour.a, colour.a);
     }
 }
+
+#endif

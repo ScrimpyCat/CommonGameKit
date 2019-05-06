@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef RoundedRect_metal
+#define RoundedRect_metal
+
 #include "Core.metal"
 
 typedef struct {
@@ -67,3 +70,5 @@ fragment float4 rounded_rect_fs(VertexOut in [[stage_in]], constant float &radiu
     float edge = min(edgeDistance2 + edgeDistance, 1.0);
     return core::premultiply(float4(in.colour.rgb, in.colour.a * edge));
 }
+
+#endif

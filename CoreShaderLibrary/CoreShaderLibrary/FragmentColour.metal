@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef FragmentColour_metal
+#define FragmentColour_metal
+
 #include "Core.metal"
 
 typedef struct {
@@ -44,3 +47,5 @@ fragment float4 fragment_colour_fs(VertexOut in [[stage_in]], constant float4 &c
 {
     return core::premultiply(colour);
 }
+
+#endif

@@ -23,11 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Texture2DColour_metal
+#define Texture2DColour_metal
+
 #include "Core.metal"
 
 typedef struct {
     float2 vPosition [[attribute(0)]];
-    float4 vColour [[attribute(1)]]
+    float4 vColour [[attribute(1)]];
     float2 vTexCoord [[attribute(2)]];
 } VertexData;
 
@@ -45,3 +48,5 @@ vertex VertexOut texture2d_colour_vs(VertexData in [[stage_in]], constant float4
     out.texCoord = in.vTexCoord;
     return out;
 }
+
+#endif

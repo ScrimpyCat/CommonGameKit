@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef OutlineRoundedRect_metal
+#define OutlineRoundedRect_metal
+
 #include "Core.metal"
 
 typedef struct {
@@ -82,3 +85,4 @@ fragment float4 outline_rounded_rect_fs(VertexOut in [[stage_in]], constant floa
     return core::premultiply(mix(float4(in.outlineColour.rgb, in.outlineColour.a * edge), float4(in.colour.rgb, in.colour.a * innerEdge), innerEdge));
 }
 
+#endif

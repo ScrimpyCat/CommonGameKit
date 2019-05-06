@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VertexColour_metal
+#define VertexColour_metal
+
 #include "Core.metal"
 
 typedef struct {
@@ -47,3 +50,5 @@ fragment float4 vertex_colour_fs(VertexOut in [[stage_in]])
 {
     return in.colour;
 }
+
+#endif
