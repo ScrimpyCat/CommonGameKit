@@ -38,6 +38,7 @@ typedef struct {
     float4 colour;
 } VertexOut;
 
+#ifndef VertexColour_header
 vertex VertexOut vertex_colour_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
@@ -50,5 +51,6 @@ fragment float4 vertex_colour_fs(VertexOut in [[stage_in]])
 {
     return in.colour;
 }
+#endif
 
 #endif

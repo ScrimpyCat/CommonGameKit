@@ -36,6 +36,7 @@ typedef struct {
     float4 position [[position]];
 } VertexOut;
 
+#ifndef FragmentColour_header
 vertex VertexOut fragment_colour_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
@@ -47,5 +48,6 @@ fragment float4 fragment_colour_fs(VertexOut in [[stage_in]], constant float4 &c
 {
     return core::premultiply(colour);
 }
+#endif
 
 #endif

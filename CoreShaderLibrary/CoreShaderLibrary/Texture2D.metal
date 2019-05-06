@@ -38,6 +38,7 @@ typedef struct {
     float2 texCoord;
 } VertexOut;
 
+#ifndef Texture2D_header
 vertex VertexOut texture2d_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
@@ -50,5 +51,6 @@ fragment float4 texture2d_fs(VertexOut in [[stage_in]], texture2d<float> tex [[t
 {
     return core::premultiply(tex.sample(s, in.texCoord));
 }
+#endif
 
 #endif

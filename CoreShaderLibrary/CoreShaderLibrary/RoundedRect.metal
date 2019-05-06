@@ -40,6 +40,7 @@ typedef struct {
     float2 coord;
 } VertexOut;
 
+#ifndef RoundedRect_header
 vertex VertexOut rounded_rect_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
@@ -70,5 +71,6 @@ fragment float4 rounded_rect_fs(VertexOut in [[stage_in]], constant float &radiu
     float edge = min(edgeDistance2 + edgeDistance, 1.0);
     return core::premultiply(float4(in.colour.rgb, in.colour.a * edge));
 }
+#endif
 
 #endif

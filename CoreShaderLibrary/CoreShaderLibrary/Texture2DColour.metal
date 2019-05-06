@@ -40,6 +40,7 @@ typedef struct {
     float2 texCoord;
 } VertexOut;
 
+#ifndef Texture2DColour_header
 vertex VertexOut texture2d_colour_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
@@ -48,5 +49,6 @@ vertex VertexOut texture2d_colour_vs(VertexData in [[stage_in]], constant float4
     out.texCoord = in.vTexCoord;
     return out;
 }
+#endif
 
 #endif

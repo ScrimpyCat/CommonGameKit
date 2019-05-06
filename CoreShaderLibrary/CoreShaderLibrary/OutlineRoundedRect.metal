@@ -42,6 +42,7 @@ typedef struct {
     float2 coord;
 } VertexOut;
 
+#ifndef OutlineRoundedRect_header
 vertex VertexOut outline_rounded_rect_vs(VertexData in [[stage_in]], constant float4x4 &modelViewProjectionMatrix [[buffer(1)]])
 {
     VertexOut out;
@@ -84,5 +85,6 @@ fragment float4 outline_rounded_rect_fs(VertexOut in [[stage_in]], constant floa
     float innerEdge = min(innerEdgeDistance2 + innerEdgeDistance, 1.0);
     return core::premultiply(mix(float4(in.outlineColour.rgb, in.outlineColour.a * edge), float4(in.colour.rgb, in.colour.a * innerEdge), innerEdge));
 }
+#endif
 
 #endif
