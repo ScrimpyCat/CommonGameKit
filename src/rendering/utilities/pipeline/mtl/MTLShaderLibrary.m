@@ -83,9 +83,9 @@ static MTLGFXShaderLibrary ShaderLibraryPrecompiledConstructor(CCAllocatorType A
                 
                 CCDataUnmapBuffer(Data, Map);
             }
-            
-            CCDataDestroy(Data);
         }
+        
+        else CCRetain(Data);
         
         NSError *Err;
         Library->library = (__bridge id<MTLLibrary>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newLibraryWithData: Binary error: &Err]);
