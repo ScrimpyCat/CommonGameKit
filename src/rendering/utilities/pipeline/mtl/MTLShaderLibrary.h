@@ -28,6 +28,10 @@
 
 #include "MTLGFX_Private.h"
 
+typedef struct {
+    __unsafe_unretained id <MTLLibrary>library;
+    CCDictionary sources;
+} MTLGFXShaderLibraryInfo, *MTLGFXShaderLibrary;
 
 extern const GFXShaderLibraryInterface MTLShaderLibraryInterface;
 

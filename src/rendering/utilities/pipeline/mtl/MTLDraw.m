@@ -377,7 +377,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     RenderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentRGB));
     RenderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentAlpha));
     
-    id <MTLFunction>Vert = [(__bridge MTLGFXShader)Draw->shader objectForKey: MTLGFXShaderVertexKey];
+    id <MTLFunction>Vert = ((MTLGFXShader)Draw->shader)->vert;
     RenderPipelineDescriptor.vertexFunction = Vert;
     
     MTLVertexDescriptor *VertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
@@ -423,7 +423,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
         RenderPipelineDescriptor.vertexDescriptor = VertexDescriptor;
     }
     
-    RenderPipelineDescriptor.fragmentFunction = [(__bridge MTLGFXShader)Draw->shader objectForKey: MTLGFXShaderFragmentKey];
+    RenderPipelineDescriptor.fragmentFunction = ((MTLGFXShader)Draw->shader)->frag;
     
     MTLAutoreleasedRenderPipelineReflection Reflection;
     id <MTLRenderPipelineState>RenderPipelineState = [((MTLInternal*)MTLGFX->internal)->device newRenderPipelineStateWithDescriptor: RenderPipelineDescriptor options: MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo reflection: &Reflection error: NULL];

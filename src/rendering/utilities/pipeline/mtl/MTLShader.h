@@ -28,10 +28,10 @@
 
 #include "MTLGFX_Private.h"
 
-typedef NSDictionary<NSString *, id <MTLFunction>> *MTLGFXShader;
-
-extern NSString * const MTLGFXShaderVertexKey;
-extern NSString * const MTLGFXShaderFragmentKey;
+typedef struct {
+    __unsafe_unretained id <MTLFunction>vert;
+    __unsafe_unretained id <MTLFunction>frag;
+} MTLGFXShaderInfo, *MTLGFXShader;
 
 extern const GFXShaderInterface MTLShaderInterface;
 

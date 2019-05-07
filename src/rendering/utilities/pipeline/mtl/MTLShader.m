@@ -25,7 +25,7 @@
 
 #import "MTLShader.h"
 
-static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment);
+static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, CFTypeRef Vertex, CFTypeRef Fragment);
 static void ShaderDestructor(MTLGFXShader Shader);
 static void *ShaderGetInput(MTLGFXShader Shader, CCString Name);
 
@@ -36,22 +36,29 @@ const GFXShaderInterface MTLShaderInterface = {
     .input = (GFXShaderGetInputCallback)ShaderGetInput
 };
 
-NSString * const MTLGFXShaderVertexKey = @"vert";
-NSString * const MTLGFXShaderFragmentKey = @"frag";
-
-static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, id <MTLFunction>Vertex, id <MTLFunction>Fragment)
+static void ShaderDestroy(MTLGFXShader Shader)
 {
-    MTLGFXShader Shader = @{
-        MTLGFXShaderVertexKey: Vertex,
-        MTLGFXShaderFragmentKey: Fragment
-    };
+    if (Shader->vert) CFRelease((__bridge CFTypeRef)Shader->vert);
+    if (Shader->frag) CFRelease((__bridge CFTypeRef)Shader->frag);
+}
+
+static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, CFTypeRef Vertex, CFTypeRef Fragment)
+{
+    MTLGFXShader Shader = CCMalloc(Allocator, sizeof(MTLGFXShaderInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Shader)
+    {
+        CCMemorySetDestructor(Shader, (CCMemoryDestructorCallback)ShaderDestroy);
+        
+        Shader->vert = (__bridge id<MTLFunction>)CFRetain(Vertex);
+        Shader->frag = (__bridge id<MTLFunction>)CFRetain(Fragment);
+    }
     
     return Shader;
 }
 
 static void ShaderDestructor(MTLGFXShader Shader)
 {
-    CFRelease((__bridge CFTypeRef)Shader);
+    CC_SAFE_Free(Shader);
 }
 
 static void *ShaderGetInput(MTLGFXShader Shader, CCString Name)

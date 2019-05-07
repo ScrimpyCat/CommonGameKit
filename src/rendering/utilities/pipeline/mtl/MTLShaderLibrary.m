@@ -25,11 +25,11 @@
 
 #import "MTLShaderLibrary.h"
 
-static id <MTLLibrary>ShaderLibraryConstructor(CCAllocatorType Allocator);
-static id <MTLLibrary>ShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, CCData Data);
-static void ShaderLibraryDestructor(id <MTLLibrary>Library);
-static id <MTLFunction>ShaderLibraryCompile(id <MTLLibrary>Library, GFXShaderSourceType Type, CCString Name, const char *Source);
-static id <MTLFunction>ShaderLibraryGetSource(id <MTLLibrary>Library, CCString Name);
+static MTLGFXShaderLibrary ShaderLibraryConstructor(CCAllocatorType Allocator);
+static MTLGFXShaderLibrary ShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, CCData Data);
+static void ShaderLibraryDestructor(MTLGFXShaderLibrary Library);
+static CFTypeRef ShaderLibraryCompile(MTLGFXShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source);
+static CFTypeRef ShaderLibraryGetSource(MTLGFXShaderLibrary Library, CCString Name);
 
 
 const GFXShaderLibraryInterface MTLShaderLibraryInterface = {
@@ -40,60 +40,95 @@ const GFXShaderLibraryInterface MTLShaderLibraryInterface = {
     .source = (GFXShaderLibraryGetSourceCallback)ShaderLibraryGetSource
 };
 
-static id <MTLLibrary>ShaderLibraryConstructor(CCAllocatorType Allocator)
+static MTLGFXShaderLibrary ShaderLibraryConstructor(CCAllocatorType Allocator)
 {
     CCAssertLog(0, "Runtime libraries are unsupported");
 }
 
-static id <MTLLibrary>ShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, CCData Data)
+static void ShaderLibraryDestroy(MTLGFXShaderLibrary Library)
 {
-    const size_t Size = CCDataGetSize(Data);
-    const void *Buffer = CCDataGetBuffer(Data);
-    dispatch_data_t Binary = dispatch_data_create(Buffer, Size, NULL, ^{
-        CCDataDestroy(Data);
-    });
-    
-    if (!Buffer)
+    if (Library->library) CFRelease((__bridge CFTypeRef)Library->library);
+    if (Library->sources) CCDictionaryDestroy(Library->sources);
+}
+
+void ShaderLibrarySourceElementDestructor(CCDictionary Dictionary, CFTypeRef *Element)
+{
+    CFRelease(*Element);
+}
+
+static MTLGFXShaderLibrary ShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, CCData Data)
+{
+    MTLGFXShaderLibrary Library = CCMalloc(Allocator, sizeof(MTLGFXShaderLibraryInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
+    if (Library)
     {
-        for (ptrdiff_t Offset = 0; Offset < Size; )
+        CCMemorySetDestructor(Library, (CCMemoryDestructorCallback)ShaderLibraryDestroy);
+        
+        const size_t Size = CCDataGetSize(Data);
+        const void *Buffer = CCDataGetBuffer(Data);
+        dispatch_data_t Binary = dispatch_data_create(Buffer, Size, NULL, ^{
+            CCDataDestroy(Data);
+        });
+        
+        if (!Buffer)
         {
-            CCBufferMap Map = CCDataMapBuffer(Data, Offset, Size, CCDataHintRead);
-            Offset += Map.size;
+            for (ptrdiff_t Offset = 0; Offset < Size; )
+            {
+                CCBufferMap Map = CCDataMapBuffer(Data, Offset, Size, CCDataHintRead);
+                Offset += Map.size;
+                
+                dispatch_data_t Chunk = dispatch_data_create(Map.ptr, Map.size, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+                dispatch_data_t NewBinary = dispatch_data_create_concat(Binary, Chunk);
+                
+                Binary = NewBinary;
+                
+                CCDataUnmapBuffer(Data, Map);
+            }
             
-            dispatch_data_t Chunk = dispatch_data_create(Map.ptr, Map.size, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
-            dispatch_data_t NewBinary = dispatch_data_create_concat(Binary, Chunk);
-            
-            Binary = NewBinary;
-            
-            CCDataUnmapBuffer(Data, Map);
+            CCDataDestroy(Data);
         }
         
-        CCDataDestroy(Data);
+        NSError *Err;
+        Library->library = (__bridge id<MTLLibrary>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newLibraryWithData: Binary error: &Err]);
+        
+        if (Err)
+        {
+            CC_LOG_ERROR(@"Failed to use precompiled shader library: %@", Err);
+            
+            ShaderLibraryDestructor(Library);
+            
+            return NULL;
+        }
+        
+        Library->sources = CCDictionaryCreate(Allocator, CCDictionaryHintSizeMedium | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CFTypeRef), &(CCDictionaryCallbacks){
+            .keyDestructor = CCStringDestructorForDictionary,
+            .valueDestructor = (CCDictionaryElementDestructor)ShaderLibrarySourceElementDestructor,
+            .getHash = CCStringHasherForDictionary,
+            .compareKeys = CCStringComparatorForDictionary
+        });
+        
+        for (NSString *Name in Library->library.functionNames)
+        {
+            CCString Key = CCStringCreate(Allocator, CCStringEncodingUTF8 | CCStringHintCopy, [Name UTF8String]);
+            CCDictionarySetValue(Library->sources, &Key, &(CFTypeRef){ (__bridge_retained CFTypeRef)[Library->library newFunctionWithName: Name] });
+        }
     }
-    
-    NSError *Err;
-    id <MTLLibrary>Library = [((MTLInternal*)MTLGFX->internal)->device newLibraryWithData: Binary error: &Err];
-    
-    if (Err) CC_LOG_ERROR(@"Failed to use precompiled shader library: %@", Err);
     
     return Library;
 }
 
-static void ShaderLibraryDestructor(id <MTLLibrary>Library)
+static void ShaderLibraryDestructor(MTLGFXShaderLibrary Library)
 {
-    CFRelease((__bridge CFTypeRef)Library);
+    CC_SAFE_Free(Library);
 }
 
-static id <MTLFunction>ShaderLibraryCompile(id <MTLLibrary>Library, GFXShaderSourceType Type, CCString Name, const char *Source)
+static CFTypeRef ShaderLibraryCompile(MTLGFXShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)
 {
     CCAssertLog(0, "Runtime libraries are unsupported");
 }
 
-static id <MTLFunction>ShaderLibraryGetSource(id <MTLLibrary>Library, CCString Name)
+static CFTypeRef ShaderLibraryGetSource(MTLGFXShaderLibrary Library, CCString Name)
 {
-    id <MTLFunction> Function = nil;
-    
-    CC_STRING_TEMP_BUFFER(Buffer, Name) Function = [Library newFunctionWithName: [NSString stringWithUTF8String: Buffer]];
-    
-    return Function;
+    CFTypeRef *Source = CCDictionaryGetValue(Library->sources, &Name);
+
+    return Source ? *Source : NULL;
 }
