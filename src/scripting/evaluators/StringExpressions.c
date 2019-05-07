@@ -210,11 +210,16 @@ CCExpression CCStringExpressionRemove(CCExpression Expression)
         CCExpression StringExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
         if ((CCExpressionGetType(OffsetExpr) == CCExpressionValueTypeInteger) && (CCExpressionGetType(LengthExpr) == CCExpressionValueTypeInteger) && (CCExpressionGetType(StringExpr) == CCExpressionValueTypeString))
         {
-            return CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithoutRange(CCExpressionGetString(StringExpr), CCExpressionGetInteger(OffsetExpr), CCExpressionGetInteger(LengthExpr)), FALSE);
+            CCString String = CCExpressionGetString(StringExpr);
+            
+            int32_t Offset = CCExpressionGetInteger(OffsetExpr);
+            if (Offset < 0) Offset = Offset + (int32_t)CCStringGetLength(String);
+            
+            return CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithoutRange(String, Offset, CCExpressionGetInteger(LengthExpr)), FALSE);
         }
     }
     
-    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("remove", "offset:integer length:integer offset:integer");
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("remove", "offset:integer length:integer string:string");
     
     return Expression;
 }
