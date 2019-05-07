@@ -1,6 +1,6 @@
 (library "core"
     (if @opengl (
-        (loop "@item" (search (cat (@cd "/includes")) "*.hs") (source (replace "." "_" (replace "-" "_" (filename @item))) :header (dir: @item)))
+        (loop "@item" (search (cat (@cd "includes/")) "*.hs") (source (replace "." "_" (replace "-" "_" (filename @item))) :header (dir: @item)))
         (loop "@item" (search @cd ("*.fs" "*.vs")) (source (replace "." "_" (replace "-" "_" (filename @item))) (if (suffix "fs" @item) :fragment :vertex) (dir: @item)))
     ))
 
@@ -9,5 +9,5 @@
     ;    (source "some-fs" :fragment (spir-v: (22 93 1 38 37 7 7 47 123 37 4 4 37 43 47 3)))
     ;))
 
-    (if @metal (dir: (cat (@cd "/CoreShaderLibrary.metallib"))))
+    (if @metal (dir: (cat (@cd "CoreShaderLibrary.metallib"))))
 )
