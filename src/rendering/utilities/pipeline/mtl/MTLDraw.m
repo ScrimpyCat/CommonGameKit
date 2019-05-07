@@ -394,9 +394,9 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
             VertexAttributeDescriptor.format = DrawVertexFormat(VertexBuffer->format);
             VertexAttributeDescriptor.offset = VertexBuffer->offset;
             VertexAttributeDescriptor.bufferIndex = 0;
-            [VertexDescriptor.attributes setObject: VertexAttributeDescriptor atIndexedSubscript: Index++];
+            [VertexDescriptor.attributes setObject: VertexAttributeDescriptor atIndexedSubscript: Index];
             
-            if (Index)
+            if (Index++)
             {
                 CCAssertLog(Stride == VertexBuffer->stride, "Strides must match");
                 CCAssertLog(SharedVertexBuffer == VertexBuffer->buffer, "Buffer must be the same");
