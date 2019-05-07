@@ -462,9 +462,6 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
                         CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(Path))
                         {
                             FSPath LibPath = FSPathCreate(Buffer);
-                            const size_t Size = FSManagerGetSize(LibPath);
-                            void *LibData;
-                            CC_SAFE_Malloc(LibData, Size);
                             
                             FSHandle Handle;
                             if (FSHandleOpen(LibPath, FSHandleTypeRead, &Handle) == FSOperationSuccess)
