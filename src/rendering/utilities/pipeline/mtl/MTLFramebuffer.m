@@ -88,16 +88,7 @@ static MTLGFXFramebuffer FramebufferDefault(void)
     } DefaultFramebuffer = {
         .allocator = -1,
         .init = {
-            .attachmentCount = 1,
-            .attachments = {
-                (GFXFramebufferAttachment){
-                    .type = GFXFramebufferAttachmentTypeColour,
-                    .texture = NULL,
-                    .load = GFXFramebufferAttachmentActionLoad,
-                    .store = GFXFramebufferAttachmentActionStore,
-                    .colour.clear = { 0.0f, 0.0f, 0.0f, 0.0f }
-                }
-            }
+            .attachmentCount = 0
         }
     };
     
