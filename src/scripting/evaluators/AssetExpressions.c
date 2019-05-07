@@ -578,6 +578,8 @@ CCExpression CCAssetExpressionLibrary(CCExpression Expression)
                 }
             }
             
+            else CCAssetManagerRegisterShaderLibrary(CCExpressionGetString(*LibName), Library);
+            
             
             CCAssetExpressionValueShaderLibrary *ShaderLibrary;
             CC_SAFE_Malloc(ShaderLibrary, sizeof(CCAssetExpressionValueShaderLibrary),
