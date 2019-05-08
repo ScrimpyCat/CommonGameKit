@@ -37,5 +37,6 @@
 #include <CommonGameKit/GFXViewport.h>
 #include <CommonGameKit/GFXDraw.h>
 #include <CommonGameKit/GFXBlit.h>
+#include <CommonGameKit/GFXCommandBuffer.h>
 
 #endif

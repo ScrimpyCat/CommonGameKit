@@ -35,6 +35,7 @@
 #include <CommonGameKit/GFXDraw.h>
 #include <CommonGameKit/GFXBlit.h>
 #include <CommonGameKit/GFXViewport.h>
+#include <CommonGameKit/GFXCommandBuffer.h>
 
 #pragma mark - Required Buffer Callbacks
 typedef CC_NEW GFXBuffer (*GFXBufferConstructorCallback)(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
@@ -85,6 +86,12 @@ typedef void (*GFXDrawSubmitIndexedCallback)(GFXDraw Draw, GFXPrimitiveType Prim
 
 #pragma mark Required Blit Callbacks
 typedef void (*GFXBlitSubmitCallback)(GFXBlit Blit);
+
+#pragma mark Required Command Buffer Callbacks
+typedef CC_NEW GFXCommandBuffer (*GFXCommandBufferConstructorCallback)(CCAllocatorType Allocator);
+typedef void (*GFXCommandBufferDestructorCallback)(GFXCommandBuffer CC_DESTROY(CommandBuffer));
+typedef void (*GFXCommandBufferSetPresentableCallback)(GFXCommandBuffer CommandBuffer, _Bool Presentable);
+typedef void (*GFXCommandBufferCommitCallback)(GFXCommandBuffer CommandBuffer);
 
 
 
@@ -205,5 +212,12 @@ typedef struct {
         GFXBlitSetFilterModeCallback setFilterMode;
     } optional;
 } GFXBlitInterface;
+
+typedef struct {
+    GFXCommandBufferConstructorCallback create;
+    GFXCommandBufferDestructorCallback destroy;
+    GFXCommandBufferSetPresentableCallback setPresentable;
+    GFXCommandBufferCommitCallback commit;
+} GFXCommandBufferInterface;
 
 #endif
