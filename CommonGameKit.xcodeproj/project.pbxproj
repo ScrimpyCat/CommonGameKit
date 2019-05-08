@@ -67,6 +67,8 @@
 		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
+		F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */; };
 		F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */; };
 		F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */; };
@@ -564,6 +566,8 @@
 		F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLGFX_Private.h; sourceTree = "<group>"; };
 		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXCommandBuffer.h; sourceTree = "<group>"; };
+		F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GFXCommandBuffer.c; sourceTree = "<group>"; };
 		F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SpatialTransformComponent.c; sourceTree = "<group>"; };
 		F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialTransformComponent.h; sourceTree = "<group>"; };
 		F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationParentComponent.c; sourceTree = "<group>"; };
@@ -1322,6 +1326,8 @@
 				F3AF33071DCCD4EB00CAD472 /* GFXShaderLibrary.h */,
 				F3AF33081DCCD4EB00CAD472 /* GFXTexture.c */,
 				F3AF33091DCCD4EB00CAD472 /* GFXTexture.h */,
+				F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */,
+				F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */,
 			);
 			name = GFX;
 			path = gfx;
@@ -1600,6 +1606,7 @@
 				F3AF33B21DCCD4EC00CAD472 /* RenderComponent.h in Headers */,
 				F3AF33E31DCCD4EC00CAD472 /* GLFramebuffer.h in Headers */,
 				F3AF33E71DCCD4EC00CAD472 /* GLSelectedState.h in Headers */,
+				F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */,
 				F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */,
 				F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */,
 				F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */,
@@ -2024,6 +2031,7 @@
 				F3AF34911DCCD5AF00CAD472 /* GraphicsExpressions.c in Sources */,
 				F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */,
 				F3AF33EA1DCCD4EC00CAD472 /* GLShaderLibrary.c in Sources */,
+				F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */,
 				F3E2742D20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c in Sources */,
 				F3AF33B11DCCD4EC00CAD472 /* RenderComponent.c in Sources */,
 				F3AF34971DCCD5AF00CAD472 /* ListExpressions.c in Sources */,
