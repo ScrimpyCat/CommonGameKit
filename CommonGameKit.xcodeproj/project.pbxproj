@@ -71,6 +71,8 @@
 		F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */; };
 		F3A9F0FF228444CD00F52287 /* GLCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */; };
 		F3A9F100228444CD00F52287 /* GLCommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0FE228444CD00F52287 /* GLCommandBuffer.c */; };
+		F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F10122844CFE00F52287 /* MTLCommandBuffer.h */; };
+		F3A9F10422844CFE00F52287 /* MTLCommandBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F10222844CFE00F52287 /* MTLCommandBuffer.m */; };
 		F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */; };
 		F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */; };
@@ -572,6 +574,8 @@
 		F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GFXCommandBuffer.c; sourceTree = "<group>"; };
 		F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLCommandBuffer.h; sourceTree = "<group>"; };
 		F3A9F0FE228444CD00F52287 /* GLCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GLCommandBuffer.c; sourceTree = "<group>"; };
+		F3A9F10122844CFE00F52287 /* MTLCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLCommandBuffer.h; sourceTree = "<group>"; };
+		F3A9F10222844CFE00F52287 /* MTLCommandBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLCommandBuffer.m; sourceTree = "<group>"; };
 		F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SpatialTransformComponent.c; sourceTree = "<group>"; };
 		F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialTransformComponent.h; sourceTree = "<group>"; };
 		F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationParentComponent.c; sourceTree = "<group>"; };
@@ -1556,6 +1560,8 @@
 				F342B629223824B700B44319 /* MTLShaderLibrary.h */,
 				F3FA881C2233C4AC0087A318 /* MTLTexture.m */,
 				F3FA881B2233C4AC0087A318 /* MTLTexture.h */,
+				F3A9F10222844CFE00F52287 /* MTLCommandBuffer.m */,
+				F3A9F10122844CFE00F52287 /* MTLCommandBuffer.h */,
 			);
 			name = MTL;
 			path = mtl;
@@ -1614,6 +1620,7 @@
 				F3AF33E31DCCD4EC00CAD472 /* GLFramebuffer.h in Headers */,
 				F3AF33E71DCCD4EC00CAD472 /* GLSelectedState.h in Headers */,
 				F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */,
+				F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */,
 				F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */,
 				F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */,
 				F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */,
@@ -2050,6 +2057,7 @@
 				F3AF33BD1DCCD4EC00CAD472 /* PixelData.c in Sources */,
 				F3AF348E1DCCD5AF00CAD472 /* EqualityExpressions.c in Sources */,
 				F3AF33DF1DCCD4EC00CAD472 /* GLDraw.c in Sources */,
+				F3A9F10422844CFE00F52287 /* MTLCommandBuffer.m in Sources */,
 				F3AF337F1DCCD4EC00CAD472 /* Component.c in Sources */,
 				F3AF34A31DCCD5AF00CAD472 /* StateExpressions.c in Sources */,
 				F3AF343D1DCCD4EC00CAD472 /* TextAttribute.c in Sources */,

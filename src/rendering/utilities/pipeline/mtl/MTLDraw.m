@@ -28,6 +28,7 @@
 #import "MTLShader.h"
 #import "MTLBuffer.h"
 #import "MTLBlit.h"
+#import "MTLCommandBuffer.h"
 
 static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 
@@ -438,7 +439,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
     Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
     
-    id <MTLRenderCommandEncoder>RenderCommand = [((MTLInternal*)MTLGFX->internal)->commandBuffer renderCommandEncoderWithDescriptor:  RenderPassDescriptor];
+    id <MTLRenderCommandEncoder>RenderCommand = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor:  RenderPassDescriptor];
     
     const GFXViewport Viewport = GFXDrawGetViewport(Draw);
     [RenderCommand setViewport: (MTLViewport){ Viewport.x, Viewport.y, Viewport.width, Viewport.height, Viewport.minDepth, Viewport.maxDepth }];

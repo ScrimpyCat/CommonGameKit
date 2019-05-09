@@ -24,6 +24,7 @@
  */
 
 #import "MTLBuffer.h"
+#import "MTLCommandBuffer.h"
 
 static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint Hint, size_t Size, const void *Data);
 static void BufferDestructor(MTLGFXBuffer Buffer);
@@ -170,7 +171,7 @@ static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
     {
         id <MTLBuffer>NewBuffer = [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: BufferResourceOptions(Buffer->hint)];
         
-        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
+        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
         [BlitEncoder copyFromBuffer: Buffer->buffer
                        sourceOffset: 0
                            toBuffer: NewBuffer
@@ -215,7 +216,7 @@ static size_t BufferCopyBuffer(MTLGFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size
     size_t CopySize = SrcBuffer->size < SrcOffset ? (SrcBuffer->size - SrcOffset > Size ? Size : SrcBuffer->size - SrcOffset) : 0;
     CopySize = DstBuffer->size < DstOffset ? (DstBuffer->size - DstOffset > CopySize ? CopySize : DstBuffer->size - DstOffset) : 0;
     
-    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
+    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
     [BlitEncoder copyFromBuffer: SrcBuffer->buffer
                    sourceOffset: SrcOffset
                        toBuffer: DstBuffer->buffer
@@ -231,7 +232,7 @@ static size_t BufferFillBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Siz
 {
     const size_t FillSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
     
-    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
+    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
     [BlitEncoder fillBuffer: Buffer->buffer range: NSMakeRange(Offset, FillSize) value: Fill];
     
     [BlitEncoder endEncoding];

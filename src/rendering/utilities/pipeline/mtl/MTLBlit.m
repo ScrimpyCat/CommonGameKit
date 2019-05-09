@@ -25,6 +25,7 @@
 
 #import "MTLBlit.h"
 #import "MTLTexture.h"
+#import "MTLCommandBuffer.h"
 
 static void BlitSubmit(GFXBlit Blit);
 
@@ -48,7 +49,7 @@ id <MTLRenderCommandEncoder>MTLGFXClearEncoder(GFXFramebufferAttachment *Attachm
     ClearDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
     ClearDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
     
-    return [((MTLInternal*)MTLGFX->internal)->commandBuffer renderCommandEncoderWithDescriptor: ClearDescriptor];
+    return [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor: ClearDescriptor];
 }
 
 static _Bool ClearBuffer(GFXFramebufferAttachment *Attachment, GFXFramebufferAttachmentAction *Action, _Bool Cleared)
@@ -76,7 +77,7 @@ static void BlitSubmit(GFXBlit Blit)
     
     if (!ClearBuffer(DstAttachment, &DstAttachment->store, DstCleared))
     {
-        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLInternal*)MTLGFX->internal)->commandBuffer blitCommandEncoder];
+        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
         [BlitEncoder copyFromTexture: MTLGFXTextureGetTexture((MTLGFXTexture)SrcAttachment->texture)
                          sourceSlice: 0
                          sourceLevel: 0

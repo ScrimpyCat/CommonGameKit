@@ -23,37 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CommonGameKit_MTLGFX_Private_h
-#define CommonGameKit_MTLGFX_Private_h
+#ifndef CommonGameKit_MTLCommandBuffer_h
+#define CommonGameKit_MTLCommandBuffer_h
 
-#import "MTLGFX.h"
-#import <CommonObjc/Common.h>
-@import Metal;
+#include "MTLGFX_Private.h"
 
-typedef struct {
-    _Bool allowGPUOptimizedContents;
-} MTLInternalFeatureMTLTextureDescriptor;
 
 typedef struct {
-    _Bool inputPrimitiveTopology;
-    _Bool vertexBuffers;
-    _Bool fragmentBuffers;
-} MTLInternalFeatureMTLRenderPipelineDescriptor;
+    __unsafe_unretained id <MTLCommandBuffer>commandBuffer;
+    _Bool presentable;
+} MTLGFXCommandBufferInfo, *MTLGFXCommandBuffer;
 
-typedef struct {
-    MTLInternalFeatureMTLTextureDescriptor MTLTextureDescriptor;
-    MTLInternalFeatureMTLRenderPipelineDescriptor MTLRenderPipelineDescriptor;
-} MTLInternalSupport;
-
-typedef struct {
-    __unsafe_unretained id <MTLDevice>device;
-    __unsafe_unretained id <MTLCommandQueue>commandQueue;
-    GFXTexture drawable;
-    MTLInternalSupport *support;
-    __unsafe_unretained id <MTLSamplerState>samplers[255];
-} MTLInternal;
-
-id <MTLSamplerState>MTLGFXGetSampler(GFXTextureHint Hint);
+extern const GFXCommandBufferInterface MTLCommandBufferInterface;
 
 #endif
 
