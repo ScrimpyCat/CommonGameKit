@@ -37,7 +37,9 @@ void MTLGFXSetup(void);
 
 #if __OBJC__
 @import Metal;
-void MTLGFXSetDrawable(id <MTLTexture>Drawable);
+void MTLGFXSetDrawable(id <MTLDrawable> Drawable, id <MTLTexture>Texture);
+id <MTLDrawable>MTLGFXGetDrawable(void);
+id <MTLTexture>MTLGFXGetDrawableTexture(void);
 #endif
 
 #endif

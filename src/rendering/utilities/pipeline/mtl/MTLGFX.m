@@ -31,6 +31,7 @@
 #import "MTLShader.h"
 #import "MTLDraw.h"
 #import "MTLBlit.h"
+#import <stdatomic.h>
 @import ObjectiveC;
 
 @interface GFXDrawableTexture : NSProxy
@@ -138,22 +139,59 @@ void MTLGFXSetup(void)
     }
 }
 
-static id <MTLTexture>DrawableTexture; //TODO: Make threadsafe
-void MTLGFXSetDrawable(id <MTLTexture>Drawable)
+typedef struct {
+    __unsafe_unretained id <MTLDrawable>drawable;
+    __unsafe_unretained id <MTLTexture>texture;
+} MTLGFXDrawable;
+
+static _Atomic(size_t) TargetReadLock = ATOMIC_VAR_INIT(0);
+static _Atomic(MTLGFXDrawable) Target = ATOMIC_VAR_INIT(((MTLGFXDrawable){ nil, nil }));
+void MTLGFXSetDrawable(id <MTLDrawable>Drawable, id <MTLTexture>Texture)
 {
-    DrawableTexture = Drawable;
+    MTLGFXDrawable NewTarget = {
+        .drawable = (__bridge id<MTLDrawable>)((__bridge_retained CFTypeRef)Drawable),
+        .texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)Texture),
+    };
+    
+    MTLGFXDrawable PrevTarget = atomic_exchange(&Target, NewTarget);
+    
+    while (atomic_load(&TargetReadLock)) CC_SPIN_WAIT();
+    
+    CFRelease((__bridge CFTypeRef)PrevTarget.drawable);
+    CFRelease((__bridge CFTypeRef)PrevTarget.texture);
+}
+
+id <MTLDrawable>MTLGFXGetDrawable(void)
+{
+    atomic_fetch_add(&TargetReadLock, 1);
+    MTLGFXDrawable CurrentTarget = atomic_load(&Target);
+    id <MTLDrawable>Drawable = CurrentTarget.drawable;
+    atomic_fetch_sub(&TargetReadLock, 1);
+    
+    return Drawable;
+}
+
+id <MTLTexture>MTLGFXGetDrawableTexture(void)
+{
+    atomic_fetch_add(&TargetReadLock, 1);
+    MTLGFXDrawable CurrentTarget = atomic_load(&Target);
+    id <MTLTexture>Texture = CurrentTarget.texture;
+    atomic_fetch_sub(&TargetReadLock, 1);
+    
+    return Texture;
 }
 
 @implementation GFXDrawableTexture
 
 -(NSMethodSignature*) methodSignatureForSelector: (SEL)sel
 {
+    id <MTLTexture>DrawableTexture = MTLGFXGetDrawableTexture();
     return [NSMethodSignature signatureWithObjCTypes: DrawableTexture ? method_getTypeEncoding(class_getInstanceMethod([DrawableTexture class], sel)) : protocol_getMethodDescription(@protocol(MTLTexture), sel, YES, YES).types];
 }
 
 -(void) forwardInvocation: (NSInvocation*)invocation
 {
-    [invocation invokeWithTarget: DrawableTexture];
+    [invocation invokeWithTarget: MTLGFXGetDrawableTexture()];
 }
 
 @end
