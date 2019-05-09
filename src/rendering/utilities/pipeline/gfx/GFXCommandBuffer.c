@@ -46,7 +46,7 @@ void GFXCommandBufferSetPresentable(GFXCommandBuffer CommandBuffer, _Bool Presen
     GFXMain->commandBuffer->setPresentable(CommandBuffer, Presentable);
 }
 
-static _Thread_local GFXCommandBuffer Recording;
+static _Thread_local GFXCommandBuffer Recording = NULL;
 
 void GFXCommandBufferRecord(GFXCommandBuffer CommandBuffer)
 {
