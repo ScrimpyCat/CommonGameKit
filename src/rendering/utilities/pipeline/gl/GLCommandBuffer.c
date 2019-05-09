@@ -27,13 +27,11 @@
 
 static void *GLCommandBufferConstructor(CCAllocatorType Allocator);
 static void GLCommandBufferDestructor(void *CommandBuffer);
-static void GLCommandBufferSetPresentable(void *CommandBuffer, _Bool Presentable);
-static void GLCommandBufferCommit(void *CommandBuffer);
+static void GLCommandBufferCommit(void *CommandBuffer, _Bool Present);
 
 const GFXCommandBufferInterface GLCommandBufferInterface = {
     .create = (GFXCommandBufferConstructorCallback)GLCommandBufferConstructor,
     .destroy = (GFXCommandBufferDestructorCallback)GLCommandBufferDestructor,
-    .setPresentable = (GFXCommandBufferSetPresentableCallback)GLCommandBufferSetPresentable,
     .commit = (GFXCommandBufferCommitCallback)GLCommandBufferCommit
 };
 
@@ -56,10 +54,6 @@ static void GLCommandBufferDestructor(void *CommandBuffer)
     CC_SAFE_Free(CommandBuffer);
 }
 
-static void GLCommandBufferSetPresentable(void *CommandBuffer, _Bool Presentable)
-{
-}
-
-static void GLCommandBufferCommit(void *CommandBuffer)
+static void GLCommandBufferCommit(void *CommandBuffer, _Bool Present)
 {
 }

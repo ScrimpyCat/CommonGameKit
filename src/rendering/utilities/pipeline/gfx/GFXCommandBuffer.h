@@ -49,13 +49,6 @@ CC_NEW GFXCommandBuffer GFXCommandBufferCreate(CCAllocatorType Allocator);
 void GFXCommandBufferDestroy(GFXCommandBuffer CC_DESTROY(CommandBuffer));
 
 /*!
- * @brief Set whether the command buffer should be presentable.
- * @param CommandBuffer The command buffer to present.
- * @param Presentable Whether the command buffer should be presented.
- */
-void GFXCommandBufferSetPresentable(GFXCommandBuffer CommandBuffer, _Bool Presentable);
-
-/*!
  * @brief Record all operations submitted on this thread to this command buffer.
  * @param CommandBuffer The command buffer to add the operations to. May be NULL.
  */
@@ -68,8 +61,9 @@ void GFXCommandBufferRecord(GFXCommandBuffer CC_RETAIN(CommandBuffer));
  *              it has completed.
  *
  * @param CommandBuffer The command buffer to commit.
+ * @param Present Whether the command buffer should be presented.
  */
-void GFXCommandBufferCommit(GFXCommandBuffer CC_DESTROY(CommandBuffer));
+void GFXCommandBufferCommit(GFXCommandBuffer CC_DESTROY(CommandBuffer), _Bool Present);
 
 /*!
  * @brief Get the a command buffer that is currently recording all submitted

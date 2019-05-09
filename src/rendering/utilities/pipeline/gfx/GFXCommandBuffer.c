@@ -39,13 +39,6 @@ void GFXCommandBufferDestroy(GFXCommandBuffer CommandBuffer)
     GFXMain->commandBuffer->destroy(CommandBuffer);
 }
 
-void GFXCommandBufferSetPresentable(GFXCommandBuffer CommandBuffer, _Bool Presentable)
-{
-    CCAssertLog(CommandBuffer, "CommandBuffer must not be null");
-    
-    GFXMain->commandBuffer->setPresentable(CommandBuffer, Presentable);
-}
-
 static _Thread_local GFXCommandBuffer Recording = NULL;
 
 void GFXCommandBufferRecord(GFXCommandBuffer CommandBuffer)
@@ -55,7 +48,7 @@ void GFXCommandBufferRecord(GFXCommandBuffer CommandBuffer)
     Recording = CCRetain(CommandBuffer);
 }
 
-void GFXCommandBufferCommit(GFXCommandBuffer CommandBuffer)
+void GFXCommandBufferCommit(GFXCommandBuffer CommandBuffer, _Bool Present)
 {
     CCAssertLog(CommandBuffer, "CommandBuffer must not be null");
     
@@ -65,7 +58,7 @@ void GFXCommandBufferCommit(GFXCommandBuffer CommandBuffer)
         Recording = NULL;
     }
     
-    GFXMain->commandBuffer->commit(CommandBuffer);
+    GFXMain->commandBuffer->commit(CommandBuffer, Present);
     
     GFXCommandBufferDestroy(CommandBuffer);
 }

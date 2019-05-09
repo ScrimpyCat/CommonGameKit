@@ -27,13 +27,11 @@
 
 static MTLGFXCommandBuffer MTLCommandBufferConstructor(CCAllocatorType Allocator);
 static void MTLCommandBufferDestructor(MTLGFXCommandBuffer CommandBuffer);
-static void MTLCommandBufferSetPresentable(MTLGFXCommandBuffer CommandBuffer, _Bool Presentable);
-static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer);
+static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer, _Bool Present);
 
 const GFXCommandBufferInterface MTLCommandBufferInterface = {
     .create = (GFXCommandBufferConstructorCallback)MTLCommandBufferConstructor,
     .destroy = (GFXCommandBufferDestructorCallback)MTLCommandBufferDestructor,
-    .setPresentable = (GFXCommandBufferSetPresentableCallback)MTLCommandBufferSetPresentable,
     .commit = (GFXCommandBufferCommitCallback)MTLCommandBufferCommit
 };
 
@@ -53,7 +51,6 @@ static MTLGFXCommandBuffer MTLCommandBufferConstructor(CCAllocatorType Allocator
     {
         CCMemorySetDestructor(CommandBuffer, (CCMemoryDestructorCallback)CommandBufferDestroy);
         
-        CommandBuffer->presentable = FALSE;
         CommandBuffer->commandBuffer = (__bridge id<MTLCommandBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->commandQueue commandBuffer]);
     }
     
@@ -65,14 +62,9 @@ static void MTLCommandBufferDestructor(MTLGFXCommandBuffer CommandBuffer)
     CC_SAFE_Free(CommandBuffer);
 }
 
-static void MTLCommandBufferSetPresentable(MTLGFXCommandBuffer CommandBuffer, _Bool Presentable)
+static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer, _Bool Present)
 {
-    CommandBuffer->presentable = Presentable;
-}
-
-static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer)
-{
-    if (CommandBuffer->presentable) [CommandBuffer->commandBuffer presentDrawable: MTLGFXGetDrawable()];
+    if (Present) [CommandBuffer->commandBuffer presentDrawable: MTLGFXGetDrawable()];
     
     [CommandBuffer->commandBuffer commit];
 }

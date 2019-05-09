@@ -31,7 +31,6 @@
 
 typedef struct {
     __unsafe_unretained id <MTLCommandBuffer>commandBuffer;
-    _Bool presentable;
 } MTLGFXCommandBufferInfo, *MTLGFXCommandBuffer;
 
 extern const GFXCommandBufferInterface MTLCommandBufferInterface;
