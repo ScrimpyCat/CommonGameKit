@@ -157,8 +157,8 @@ void MTLGFXSetDrawable(id <MTLDrawable>Drawable, id <MTLTexture>Texture)
     
     while (atomic_load(&TargetReadLock)) CC_SPIN_WAIT();
     
-    CFRelease((__bridge CFTypeRef)PrevTarget.drawable);
-    CFRelease((__bridge CFTypeRef)PrevTarget.texture);
+    if (PrevTarget.drawable) CFRelease((__bridge CFTypeRef)PrevTarget.drawable);
+    if (PrevTarget.texture) CFRelease((__bridge CFTypeRef)PrevTarget.texture);
 }
 
 id <MTLDrawable>MTLGFXGetDrawable(void)
