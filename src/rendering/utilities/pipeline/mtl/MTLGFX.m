@@ -31,6 +31,7 @@
 #import "MTLShader.h"
 #import "MTLDraw.h"
 #import "MTLBlit.h"
+#import "MTLCommandBuffer.h"
 #import <stdatomic.h>
 @import ObjectiveC;
 
@@ -54,7 +55,8 @@ static GFXMainInfo MTLGFXInfo = {
     .library = &MTLShaderLibraryInterface,
     .shader = &MTLShaderInterface,
     .draw = &MTLDrawInterface,
-    .blit = &MTLBlitInterface
+    .blit = &MTLBlitInterface,
+    .commandBuffer = &MTLCommandBufferInterface
 };
 
 GFXMainInfo * const MTLGFX = &MTLGFXInfo;
