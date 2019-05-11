@@ -25,6 +25,7 @@
 
 #import "MTLDraw.h"
 #import "MTLTexture.h"
+#import "MTLFramebuffer.h"
 #import "MTLShader.h"
 #import "MTLBuffer.h"
 #import "MTLBlit.h"
@@ -369,7 +370,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
     
     MTLRenderPipelineDescriptor *RenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
-    RenderPipelineDescriptor.colorAttachments[0].pixelFormat = MTLGFXTextureGetPixelFormat((MTLGFXTexture)Attachment->texture);
+    RenderPipelineDescriptor.colorAttachments[0].pixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
     RenderPipelineDescriptor.colorAttachments[0].blendingEnabled = Draw->blending != GFXBlendOpaque;
     RenderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendSource));
     RenderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendSource));
@@ -430,7 +431,7 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     id <MTLRenderPipelineState>RenderPipelineState = [((MTLInternal*)MTLGFX->internal)->device newRenderPipelineStateWithDescriptor: RenderPipelineDescriptor options: MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo reflection: &Reflection error: NULL];
     
     MTLRenderPassDescriptor *RenderPassDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-    RenderPassDescriptor.colorAttachments[0].texture = MTLGFXTextureGetTexture((MTLGFXTexture)Attachment->texture);
+    RenderPassDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
     RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
     RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
     RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
@@ -543,7 +544,6 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     
     [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count];
     
-    [RenderCommand popDebugGroup];
     [RenderCommand endEncoding];
     
     

@@ -25,6 +25,7 @@
 
 #import "MTLBlit.h"
 #import "MTLTexture.h"
+#import "MTLFramebuffer.h"
 #import "MTLCommandBuffer.h"
 
 static void BlitSubmit(GFXBlit Blit);
@@ -45,7 +46,7 @@ const GFXBlitInterface MTLBlitInterface = {
 id <MTLRenderCommandEncoder>MTLGFXClearEncoder(GFXFramebufferAttachment *Attachment)
 {
     MTLRenderPassDescriptor *ClearDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-    ClearDescriptor.colorAttachments[0].texture = MTLGFXTextureGetTexture((MTLGFXTexture)Attachment->texture);
+    ClearDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
     ClearDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
     ClearDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
     
@@ -78,12 +79,12 @@ static void BlitSubmit(GFXBlit Blit)
     if (!ClearBuffer(DstAttachment, &DstAttachment->store, DstCleared))
     {
         id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
-        [BlitEncoder copyFromTexture: MTLGFXTextureGetTexture((MTLGFXTexture)SrcAttachment->texture)
+        [BlitEncoder copyFromTexture: MTLGFXFramebufferAttachmentGetTexture(SrcAttachment)
                          sourceSlice: 0
                          sourceLevel: 0
                         sourceOrigin: MTLOriginMake(Blit->source.region.position.x, Blit->source.region.position.y, 0)
                           sourceSize: MTLSizeMake(Blit->source.region.size.x, Blit->source.region.size.y, 1)
-                           toTexture: MTLGFXTextureGetTexture((MTLGFXTexture)DstAttachment->texture)
+                           toTexture: MTLGFXFramebufferAttachmentGetTexture(DstAttachment)
                     destinationSlice: 0
                     destinationLevel: 0
                    destinationOrigin: MTLOriginMake(Blit->destination.region.position.x, Blit->destination.region.position.y, 0)];

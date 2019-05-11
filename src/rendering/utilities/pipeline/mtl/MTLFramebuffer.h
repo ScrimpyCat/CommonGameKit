@@ -27,6 +27,7 @@
 #define CommonGameKit_MTLFramebuffer_h
 
 #include "MTLGFX_Private.h"
+#include "MTLTexture.h"
 
 
 typedef struct {
@@ -35,5 +36,13 @@ typedef struct {
 } MTLGFXFramebufferInfo, *MTLGFXFramebuffer;
 
 extern const GFXFramebufferInterface MTLFramebufferInterface;
+
+static inline id <MTLTexture>MTLGFXFramebufferAttachmentGetTexture(GFXFramebufferAttachment *Attachment);
+
+
+static inline id <MTLTexture>MTLGFXFramebufferAttachmentGetTexture(GFXFramebufferAttachment *Attachment)
+{
+    return Attachment->texture ? MTLGFXTextureGetTexture((MTLGFXTexture)Attachment->texture) : (GFXFramebufferGetAttachment(GFXFramebufferDefault(), 0) == Attachment ? MTLGFXGetDrawableTexture() : nil);
+}
 
 #endif

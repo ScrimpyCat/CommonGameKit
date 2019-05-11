@@ -24,7 +24,6 @@
  */
 
 #import "MTLFramebuffer.h"
-#import "MTLTexture.h"
 @import ObjectiveC;
 
 static MTLGFXFramebuffer FramebufferConstructor(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
@@ -88,15 +87,18 @@ static MTLGFXFramebuffer FramebufferDefault(void)
     } DefaultFramebuffer = {
         .allocator = -1,
         .init = {
-            .attachmentCount = 0
+            .attachmentCount = 1,
+            .attachments = {
+                (GFXFramebufferAttachment){
+                    .type = GFXFramebufferAttachmentTypeColour,
+                    .texture = NULL,
+                    .load = GFXFramebufferAttachmentActionLoad,
+                    .store = GFXFramebufferAttachmentActionStore,
+                    .colour.clear = { 0.0f, 0.0f, 0.0f, 0.0f }
+                }
+            }
         }
     };
-    
-    if (!DefaultFramebuffer.init.attachmentCount) // TODO: make threadsafe
-    {
-        DefaultFramebuffer.init.attachments[0] = GFXFramebufferAttachmentCreateColour(((MTLInternal*)MTLGFX->internal)->drawable, GFXFramebufferAttachmentActionLoad, GFXFramebufferAttachmentActionStore, CCVector4DFill(0.0f));
-        DefaultFramebuffer.init.attachmentCount = 1;
-    }
     
     return &DefaultFramebuffer.info;
 }

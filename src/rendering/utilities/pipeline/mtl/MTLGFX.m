@@ -122,7 +122,7 @@ void MTLGFXSetup(void)
     
     MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained CFTypeRef)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
     MTLInfo.commandQueue = (__bridge id<MTLCommandQueue>)((__bridge_retained CFTypeRef)[MTLInfo.device newCommandQueue]);
-    MTLInfo.drawable = MTLGFXTextureCreate(CC_STD_ALLOCATOR, (id<MTLTexture>)[GFXDrawableTexture alloc]);
+//    MTLInfo.drawable = MTLGFXTextureCreate(CC_STD_ALLOCATOR, (id<MTLTexture>)[GFXDrawableTexture alloc]);
     
     MTLGFXGetFeatures();
     
