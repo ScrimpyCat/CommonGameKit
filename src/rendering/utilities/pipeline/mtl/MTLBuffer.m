@@ -144,7 +144,10 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
         
         Buffer->hint = Hint;
         Buffer->size = Size;
-        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: (Size ? Size : 1) options: BufferResourceOptions(Hint)]);
+        
+        const MTLResourceOptions ResourceOptions = BufferResourceOptions(Hint);
+        if (!Size) Size = 1;
+        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)(Data ? [((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: ResourceOptions] : [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: ResourceOptions]));
     }
     
     return Buffer;
