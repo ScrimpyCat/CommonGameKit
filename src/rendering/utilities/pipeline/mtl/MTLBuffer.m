@@ -144,7 +144,7 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
         
         Buffer->hint = Hint;
         Buffer->size = Size;
-        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: BufferResourceOptions(Hint)]);
+        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: (Size ? Size : 1) options: BufferResourceOptions(Hint)]);
     }
     
     return Buffer;
