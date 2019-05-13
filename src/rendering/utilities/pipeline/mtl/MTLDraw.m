@@ -367,97 +367,142 @@ static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDr
 
 static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
 {
-    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
-    
-    MTLRenderPipelineDescriptor *RenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
-    RenderPipelineDescriptor.colorAttachments[0].pixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
-    RenderPipelineDescriptor.colorAttachments[0].blendingEnabled = Draw->blending != GFXBlendOpaque;
-    RenderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendSource));
-    RenderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendSource));
-    RenderPipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendDestination));
-    RenderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendDestination));
-    RenderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentRGB));
-    RenderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentAlpha));
-    
-    id <MTLFunction>Vert = ((MTLGFXShader)Draw->shader)->vert;
-    RenderPipelineDescriptor.vertexFunction = Vert;
-    
-    MTLVertexDescriptor *VertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
-    NSUInteger Index = 0, Stride = 0;
-    GFXBuffer SharedVertexBuffer = NULL;
-    for (MTLVertexAttribute *Attribute in Vert.vertexAttributes)
-    {
-        CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Attribute.name UTF8String]);
-        GFXDrawInputVertexBuffer *VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionFindElement(Draw->vertexBuffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
+    @autoreleasepool {
+        GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
         
-        if (VertexBuffer)
+        MTLRenderPipelineDescriptor *RenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+        RenderPipelineDescriptor.colorAttachments[0].pixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
+        RenderPipelineDescriptor.colorAttachments[0].blendingEnabled = Draw->blending != GFXBlendOpaque;
+        RenderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendSource));
+        RenderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendSource));
+        RenderPipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendDestination));
+        RenderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendDestination));
+        RenderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentRGB));
+        RenderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentAlpha));
+        
+        id <MTLFunction>Vert = ((MTLGFXShader)Draw->shader)->vert;
+        RenderPipelineDescriptor.vertexFunction = Vert;
+        
+        MTLVertexDescriptor *VertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
+        NSUInteger Index = 0, Stride = 0;
+        GFXBuffer SharedVertexBuffer = NULL;
+        for (MTLVertexAttribute *Attribute in Vert.vertexAttributes)
         {
-            MTLVertexAttributeDescriptor *VertexAttributeDescriptor = [MTLVertexAttributeDescriptor new];
-            VertexAttributeDescriptor.format = DrawVertexFormat(VertexBuffer->format);
-            VertexAttributeDescriptor.offset = VertexBuffer->offset;
-            VertexAttributeDescriptor.bufferIndex = 0;
-            [VertexDescriptor.attributes setObject: VertexAttributeDescriptor atIndexedSubscript: Index];
+            CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Attribute.name UTF8String]);
+            GFXDrawInputVertexBuffer *VertexBuffer = CCCollectionGetElement(Draw->vertexBuffers, CCCollectionFindElement(Draw->vertexBuffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
             
-            if (Index++)
+            if (VertexBuffer)
             {
-                CCAssertLog(Stride == VertexBuffer->stride, "Strides must match");
-                CCAssertLog(SharedVertexBuffer == VertexBuffer->buffer, "Buffer must be the same");
-            }
-            
-            else
-            {
-                Stride = VertexBuffer->stride;
-                SharedVertexBuffer = VertexBuffer->buffer;
-            }
-        }
-        
-        CCStringDestroy(Input);
-    }
-    
-    if (Index)
-    {
-        MTLVertexBufferLayoutDescriptor *LayoutDescriptor = [MTLVertexBufferLayoutDescriptor new];
-        LayoutDescriptor.stride = Stride;
-        LayoutDescriptor.stepFunction = MTLVertexStepFunctionPerVertex;
-        LayoutDescriptor.stepRate = 1;
-        [VertexDescriptor.layouts setObject: LayoutDescriptor atIndexedSubscript: 0];
-        
-        RenderPipelineDescriptor.vertexDescriptor = VertexDescriptor;
-    }
-    
-    RenderPipelineDescriptor.fragmentFunction = ((MTLGFXShader)Draw->shader)->frag;
-    
-    MTLAutoreleasedRenderPipelineReflection Reflection;
-    id <MTLRenderPipelineState>RenderPipelineState = [((MTLInternal*)MTLGFX->internal)->device newRenderPipelineStateWithDescriptor: RenderPipelineDescriptor options: MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo reflection: &Reflection error: NULL];
-    
-    MTLRenderPassDescriptor *RenderPassDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-    RenderPassDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
-    RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-    RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
-    RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
-    
-    const _Bool ClearStore = (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((Attachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
-    Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
-    Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
-    
-    id <MTLRenderCommandEncoder>RenderCommand = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor:  RenderPassDescriptor];
-    
-    const GFXViewport Viewport = GFXDrawGetViewport(Draw);
-    [RenderCommand setViewport: (MTLViewport){ Viewport.x, Viewport.y, Viewport.width, Viewport.height, Viewport.minDepth, Viewport.maxDepth }];
-    [RenderCommand setRenderPipelineState: RenderPipelineState];
-    
-    for (MTLArgument *Arg in Reflection.vertexArguments)
-    {
-        switch (Arg.type)
-        {
-            case MTLArgumentTypeBuffer:
-                if ([Arg.name hasPrefix: @"vertexBuffer."])
+                MTLVertexAttributeDescriptor *VertexAttributeDescriptor = [MTLVertexAttributeDescriptor new];
+                VertexAttributeDescriptor.format = DrawVertexFormat(VertexBuffer->format);
+                VertexAttributeDescriptor.offset = VertexBuffer->offset;
+                VertexAttributeDescriptor.bufferIndex = 0;
+                [VertexDescriptor.attributes setObject: VertexAttributeDescriptor atIndexedSubscript: Index];
+                
+                if (Index++)
                 {
-                    CCAssertLog(SharedVertexBuffer, "Vertex buffer must not be null for stage_in");
-                    [RenderCommand setVertexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)SharedVertexBuffer) offset: 0 atIndex: Arg.index];
+                    CCAssertLog(Stride == VertexBuffer->stride, "Strides must match");
+                    CCAssertLog(SharedVertexBuffer == VertexBuffer->buffer, "Buffer must be the same");
                 }
                 
                 else
+                {
+                    Stride = VertexBuffer->stride;
+                    SharedVertexBuffer = VertexBuffer->buffer;
+                }
+            }
+            
+            CCStringDestroy(Input);
+        }
+        
+        if (Index)
+        {
+            MTLVertexBufferLayoutDescriptor *LayoutDescriptor = [MTLVertexBufferLayoutDescriptor new];
+            LayoutDescriptor.stride = Stride;
+            LayoutDescriptor.stepFunction = MTLVertexStepFunctionPerVertex;
+            LayoutDescriptor.stepRate = 1;
+            [VertexDescriptor.layouts setObject: LayoutDescriptor atIndexedSubscript: 0];
+            
+            RenderPipelineDescriptor.vertexDescriptor = VertexDescriptor;
+        }
+        
+        RenderPipelineDescriptor.fragmentFunction = ((MTLGFXShader)Draw->shader)->frag;
+        
+        MTLAutoreleasedRenderPipelineReflection Reflection;
+        id <MTLRenderPipelineState>RenderPipelineState = [((MTLInternal*)MTLGFX->internal)->device newRenderPipelineStateWithDescriptor: RenderPipelineDescriptor options: MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo reflection: &Reflection error: NULL];
+        
+        MTLRenderPassDescriptor *RenderPassDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+        RenderPassDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
+        RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+        RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
+        RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
+        
+        const _Bool ClearStore = (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((Attachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
+        Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        
+        id <MTLRenderCommandEncoder>RenderCommand = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor:  RenderPassDescriptor];
+        
+        const GFXViewport Viewport = GFXDrawGetViewport(Draw);
+        [RenderCommand setViewport: (MTLViewport){ Viewport.x, Viewport.y, Viewport.width, Viewport.height, Viewport.minDepth, Viewport.maxDepth }];
+        [RenderCommand setRenderPipelineState: RenderPipelineState];
+        
+        for (MTLArgument *Arg in Reflection.vertexArguments)
+        {
+            switch (Arg.type)
+            {
+                case MTLArgumentTypeBuffer:
+                    if ([Arg.name hasPrefix: @"vertexBuffer."])
+                    {
+                        CCAssertLog(SharedVertexBuffer, "Vertex buffer must not be null for stage_in");
+                        [RenderCommand setVertexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)SharedVertexBuffer) offset: 0 atIndex: Arg.index];
+                    }
+                    
+                    else
+                    {
+                        CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
+                        GFXDrawInputBuffer *Buffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
+                        
+                        if (Buffer)
+                        {
+                            
+                            [RenderCommand setVertexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Buffer->buffer) offset: 0 atIndex: Arg.index];
+                        }
+                        
+                        CCStringDestroy(Input);
+                    }
+                    break;
+                    
+                case MTLArgumentTypeTexture:
+                {
+                    CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
+                    GFXDrawInputTexture *Texture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
+                    
+                    if (Texture)
+                    {
+                        [RenderCommand setVertexTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
+                        [RenderCommand setVertexSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
+                    }
+                    
+                    CCStringDestroy(Input);
+                    
+                    break;
+                }
+                
+                case MTLArgumentTypeSampler:
+                    break;
+                    
+                default:
+                    CCAssertLog(0, "Unsupported vertex argument type");
+                    break;
+            }
+        }
+        
+        for (MTLArgument *Arg in Reflection.fragmentArguments)
+        {
+            switch (Arg.type)
+            {
+                case MTLArgumentTypeBuffer:
                 {
                     CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
                     GFXDrawInputBuffer *Buffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
@@ -465,87 +510,44 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
                     if (Buffer)
                     {
                         
-                        [RenderCommand setVertexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Buffer->buffer) offset: 0 atIndex: Arg.index];
+                        [RenderCommand setFragmentBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Buffer->buffer) offset: 0 atIndex: Arg.index];
                     }
                     
                     CCStringDestroy(Input);
-                }
-                break;
-                
-            case MTLArgumentTypeTexture:
-            {
-                CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
-                GFXDrawInputTexture *Texture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
-                
-                if (Texture)
-                {
-                    [RenderCommand setVertexTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
-                    [RenderCommand setVertexSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
-                }
-                
-                CCStringDestroy(Input);
-                
-                break;
-            }
-            
-            case MTLArgumentTypeSampler:
-                break;
-                
-            default:
-                CCAssertLog(0, "Unsupported vertex argument type");
-                break;
-        }
-    }
-    
-    for (MTLArgument *Arg in Reflection.fragmentArguments)
-    {
-        switch (Arg.type)
-        {
-            case MTLArgumentTypeBuffer:
-            {
-                CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
-                GFXDrawInputBuffer *Buffer = CCCollectionGetElement(Draw->buffers, CCCollectionFindElement(Draw->buffers, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
-                
-                if (Buffer)
-                {
                     
-                    [RenderCommand setFragmentBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Buffer->buffer) offset: 0 atIndex: Arg.index];
+                    break;
                 }
-                
-                CCStringDestroy(Input);
-                
-                break;
-            }
-                
-            case MTLArgumentTypeTexture:
-            {
-                CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
-                GFXDrawInputTexture *Texture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
-                
-                if (Texture)
+                    
+                case MTLArgumentTypeTexture:
                 {
-                    [RenderCommand setFragmentTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
-                    [RenderCommand setFragmentSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
+                    CCString Input = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Arg.name UTF8String]);
+                    GFXDrawInputTexture *Texture = CCCollectionGetElement(Draw->textures, CCCollectionFindElement(Draw->textures, &(GFXDrawInput){ .name = Input }, (CCComparator)GFXDrawFindInput));
+                    
+                    if (Texture)
+                    {
+                        [RenderCommand setFragmentTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
+                        [RenderCommand setFragmentSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
+                    }
+                    
+                    CCStringDestroy(Input);
+                    
+                    break;
                 }
                 
-                CCStringDestroy(Input);
-                
-                break;
+                case MTLArgumentTypeSampler:
+                    break;
+                    
+                default:
+                    CCAssertLog(0, "Unsupported fragment argument type");
+                    break;
             }
-            
-            case MTLArgumentTypeSampler:
-                break;
-                
-            default:
-                CCAssertLog(0, "Unsupported fragment argument type");
-                break;
         }
+        
+        [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count];
+        
+        [RenderCommand endEncoding];
+        
+        
+        if (ClearStore) [MTLGFXClearEncoder(Attachment) endEncoding];
     }
-    
-    [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count];
-    
-    [RenderCommand endEncoding];
-    
-    
-    if (ClearStore) [MTLGFXClearEncoder(Attachment) endEncoding];
 }

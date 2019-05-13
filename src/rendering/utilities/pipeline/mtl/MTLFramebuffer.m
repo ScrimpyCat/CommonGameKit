@@ -24,7 +24,6 @@
  */
 
 #import "MTLFramebuffer.h"
-@import ObjectiveC;
 
 static MTLGFXFramebuffer FramebufferConstructor(CCAllocatorType Allocator, GFXFramebufferAttachment *Attachments, size_t Count);
 static void FramebufferDestructor(MTLGFXFramebuffer Framebuffer);

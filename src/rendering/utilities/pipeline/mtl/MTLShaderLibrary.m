@@ -63,53 +63,55 @@ static MTLGFXShaderLibrary ShaderLibraryPrecompiledConstructor(CCAllocatorType A
     {
         CCMemorySetDestructor(Library, (CCMemoryDestructorCallback)ShaderLibraryDestroy);
         
-        const size_t Size = CCDataGetSize(Data);
-        const void *Buffer = CCDataGetBuffer(Data);
-        dispatch_data_t Binary = dispatch_data_create(Buffer, Size, NULL, ^{
-            CCDataDestroy(Data);
-        });
-        
-        if (!Buffer)
-        {
-            for (ptrdiff_t Offset = 0; Offset < Size; )
+        @autoreleasepool {
+            const size_t Size = CCDataGetSize(Data);
+            const void *Buffer = CCDataGetBuffer(Data);
+            dispatch_data_t Binary = dispatch_data_create(Buffer, Size, NULL, ^{
+                CCDataDestroy(Data);
+            });
+            
+            if (!Buffer)
             {
-                CCBufferMap Map = CCDataMapBuffer(Data, Offset, Size, CCDataHintRead);
-                Offset += Map.size;
-                
-                dispatch_data_t Chunk = dispatch_data_create(Map.ptr, Map.size, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
-                dispatch_data_t NewBinary = dispatch_data_create_concat(Binary, Chunk);
-                
-                Binary = NewBinary;
-                
-                CCDataUnmapBuffer(Data, Map);
+                for (ptrdiff_t Offset = 0; Offset < Size; )
+                {
+                    CCBufferMap Map = CCDataMapBuffer(Data, Offset, Size, CCDataHintRead);
+                    Offset += Map.size;
+                    
+                    dispatch_data_t Chunk = dispatch_data_create(Map.ptr, Map.size, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+                    dispatch_data_t NewBinary = dispatch_data_create_concat(Binary, Chunk);
+                    
+                    Binary = NewBinary;
+                    
+                    CCDataUnmapBuffer(Data, Map);
+                }
             }
-        }
-        
-        else CCRetain(Data);
-        
-        NSError *Err;
-        Library->library = (__bridge id<MTLLibrary>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newLibraryWithData: Binary error: &Err]);
-        
-        if (Err)
-        {
-            CC_LOG_ERROR(@"Failed to use precompiled shader library: %@", Err);
             
-            ShaderLibraryDestructor(Library);
+            else CCRetain(Data);
             
-            return NULL;
-        }
-        
-        Library->sources = CCDictionaryCreate(Allocator, CCDictionaryHintSizeMedium | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CFTypeRef), &(CCDictionaryCallbacks){
-            .keyDestructor = CCStringDestructorForDictionary,
-            .valueDestructor = (CCDictionaryElementDestructor)ShaderLibrarySourceElementDestructor,
-            .getHash = CCStringHasherForDictionary,
-            .compareKeys = CCStringComparatorForDictionary
-        });
-        
-        for (NSString *Name in Library->library.functionNames)
-        {
-            CCString Key = CCStringCreate(Allocator, CCStringEncodingUTF8 | CCStringHintCopy, [Name UTF8String]);
-            CCDictionarySetValue(Library->sources, &Key, &(CFTypeRef){ (__bridge_retained CFTypeRef)[Library->library newFunctionWithName: Name] });
+            NSError *Err;
+            Library->library = (__bridge id<MTLLibrary>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newLibraryWithData: Binary error: &Err]);
+            
+            if (Err)
+            {
+                CC_LOG_ERROR(@"Failed to use precompiled shader library: %@", Err);
+                
+                ShaderLibraryDestructor(Library);
+                
+                return NULL;
+            }
+            
+            Library->sources = CCDictionaryCreate(Allocator, CCDictionaryHintSizeMedium | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CFTypeRef), &(CCDictionaryCallbacks){
+                .keyDestructor = CCStringDestructorForDictionary,
+                .valueDestructor = (CCDictionaryElementDestructor)ShaderLibrarySourceElementDestructor,
+                .getHash = CCStringHasherForDictionary,
+                .compareKeys = CCStringComparatorForDictionary
+            });
+            
+            for (NSString *Name in Library->library.functionNames)
+            {
+                CCString Key = CCStringCreate(Allocator, CCStringEncodingUTF8 | CCStringHintCopy, [Name UTF8String]);
+                CCDictionarySetValue(Library->sources, &Key, &(CFTypeRef){ (__bridge_retained CFTypeRef)[Library->library newFunctionWithName: Name] });
+            }
         }
     }
     
@@ -118,7 +120,9 @@ static MTLGFXShaderLibrary ShaderLibraryPrecompiledConstructor(CCAllocatorType A
 
 static void ShaderLibraryDestructor(MTLGFXShaderLibrary Library)
 {
-    CC_SAFE_Free(Library);
+    @autoreleasepool {
+        CC_SAFE_Free(Library);
+    }
 }
 
 static CFTypeRef ShaderLibraryCompile(MTLGFXShaderLibrary Library, GFXShaderSourceType Type, CCString Name, const char *Source)

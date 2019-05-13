@@ -120,24 +120,26 @@ void MTLGFXSetup(void)
 {
     GFXMain = MTLGFX;
     
-    MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained CFTypeRef)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
-    MTLInfo.commandQueue = (__bridge id<MTLCommandQueue>)((__bridge_retained CFTypeRef)[MTLInfo.device newCommandQueue]);
-//    MTLInfo.drawable = MTLGFXTextureCreate(CC_STD_ALLOCATOR, (id<MTLTexture>)[GFXDrawableTexture alloc]);
-    
-    MTLGFXGetFeatures();
-    
-    //TODO: Add config to specify which samplers to cache
-    MTLSamplerDescriptor *SamplerDescriptor = [MTLSamplerDescriptor new];
-    for (size_t Loop = 0; Loop < sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)); Loop++)
-    {
-        GFXTextureHint Hint = (GFXTextureHint)(Loop << 2);
-        SamplerDescriptor.sAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_S);
-        SamplerDescriptor.tAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_T);
-        SamplerDescriptor.rAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_R);
-        SamplerDescriptor.minFilter = SamplerFilter(Hint, GFXTextureHintFilterMin);
-        SamplerDescriptor.magFilter = SamplerFilter(Hint, GFXTextureHintFilterMag);
+    @autoreleasepool {
+        MTLInfo.device = (__bridge id<MTLDevice>)((__bridge_retained CFTypeRef)MTLCreateSystemDefaultDevice()); // TODO: Setup notifications to manage devices
+        MTLInfo.commandQueue = (__bridge id<MTLCommandQueue>)((__bridge_retained CFTypeRef)[MTLInfo.device newCommandQueue]);
+    //    MTLInfo.drawable = MTLGFXTextureCreate(CC_STD_ALLOCATOR, (id<MTLTexture>)[GFXDrawableTexture alloc]);
         
-        MTLInfo.samplers[Loop] = (__bridge id<MTLSamplerState>)((__bridge_retained CFTypeRef)[MTLInfo.device newSamplerStateWithDescriptor: SamplerDescriptor]);
+        MTLGFXGetFeatures();
+        
+        //TODO: Add config to specify which samplers to cache
+        MTLSamplerDescriptor *SamplerDescriptor = [MTLSamplerDescriptor new];
+        for (size_t Loop = 0; Loop < sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)); Loop++)
+        {
+            GFXTextureHint Hint = (GFXTextureHint)(Loop << 2);
+            SamplerDescriptor.sAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_S);
+            SamplerDescriptor.tAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_T);
+            SamplerDescriptor.rAddressMode = SamplerAddressMode(Hint, GFXTextureHintAddress_R);
+            SamplerDescriptor.minFilter = SamplerFilter(Hint, GFXTextureHintFilterMin);
+            SamplerDescriptor.magFilter = SamplerFilter(Hint, GFXTextureHintFilterMag);
+            
+            MTLInfo.samplers[Loop] = (__bridge id<MTLSamplerState>)((__bridge_retained CFTypeRef)[MTLInfo.device newSamplerStateWithDescriptor: SamplerDescriptor]);
+        }
     }
 }
 

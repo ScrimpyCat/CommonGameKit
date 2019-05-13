@@ -145,9 +145,11 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
         Buffer->hint = Hint;
         Buffer->size = Size;
         
-        const MTLResourceOptions ResourceOptions = BufferResourceOptions(Hint);
-        if (!Size) Size = 1;
-        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)(Data ? [((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: ResourceOptions] : [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: ResourceOptions]));
+        @autoreleasepool {
+            const MTLResourceOptions ResourceOptions = BufferResourceOptions(Hint);
+            if (!Size) Size = 1;
+            Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)(Data ? [((MTLInternal*)MTLGFX->internal)->device newBufferWithBytes: Data length: Size options: ResourceOptions] : [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: ResourceOptions]));
+        }
     }
     
     return Buffer;
@@ -155,7 +157,9 @@ static MTLGFXBuffer BufferConstructor(CCAllocatorType Allocator, GFXBufferHint H
 
 static void BufferDestructor(MTLGFXBuffer Buffer)
 {
-    CC_SAFE_Free(Buffer);
+    @autoreleasepool {
+        CC_SAFE_Free(Buffer);
+    }
 }
 
 static GFXBufferHint BufferGetHint(MTLGFXBuffer Buffer)
@@ -170,21 +174,23 @@ static size_t BufferGetSize(MTLGFXBuffer Buffer)
 
 static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
 {
-    if (Buffer->buffer.length < Size)
-    {
-        id <MTLBuffer>NewBuffer = [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: BufferResourceOptions(Buffer->hint)];
-        
-        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
-        [BlitEncoder copyFromBuffer: Buffer->buffer
-                       sourceOffset: 0
-                           toBuffer: NewBuffer
-                  destinationOffset: 0
-                               size: Buffer->size];
-        
-        [BlitEncoder endEncoding];
-        
-        CFRelease((__bridge CFTypeRef)Buffer->buffer);
-        Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)NewBuffer);
+    @autoreleasepool {
+        if (Buffer->buffer.length < Size)
+        {
+            id <MTLBuffer>NewBuffer = [((MTLInternal*)MTLGFX->internal)->device newBufferWithLength: Size options: BufferResourceOptions(Buffer->hint)];
+            
+            id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
+            [BlitEncoder copyFromBuffer: Buffer->buffer
+                           sourceOffset: 0
+                               toBuffer: NewBuffer
+                      destinationOffset: 0
+                                   size: Buffer->size];
+            
+            [BlitEncoder endEncoding];
+            
+            CFRelease((__bridge CFTypeRef)Buffer->buffer);
+            Buffer->buffer = (__bridge id<MTLBuffer>)((__bridge_retained CFTypeRef)NewBuffer);
+        }
     }
     
     Buffer->size = Size;
@@ -194,51 +200,59 @@ static _Bool BufferResize(MTLGFXBuffer Buffer, size_t Size)
 
 static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, void *Data)
 {
-    CCAssertLog(Buffer->buffer.contents, "Can only read from a buffer with CPU read access");
-    
-    const size_t ReadSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
-    memcpy(Data, Buffer->buffer.contents + Offset, ReadSize);
-    
-    return ReadSize;
+    @autoreleasepool {
+        CCAssertLog(Buffer->buffer.contents, "Can only read from a buffer with CPU read access");
+        
+        const size_t ReadSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+        memcpy(Data, Buffer->buffer.contents + Offset, ReadSize);
+        
+        return ReadSize;
+    }
 }
 
 static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, const void *Data)
 {
-    CCAssertLog(Buffer->buffer.contents, "Can only write to a buffer with CPU write access");
-    
-    const size_t WriteSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
-    memcpy(Buffer->buffer.contents + Offset, Data, WriteSize);
-    
-    [Buffer->buffer didModifyRange: NSMakeRange(Offset, WriteSize)];
-    
-    return WriteSize;
+    @autoreleasepool {
+        CCAssertLog(Buffer->buffer.contents, "Can only write to a buffer with CPU write access");
+        
+        const size_t WriteSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+        memcpy(Buffer->buffer.contents + Offset, Data, WriteSize);
+        
+        [Buffer->buffer didModifyRange: NSMakeRange(Offset, WriteSize)];
+        
+        return WriteSize;
+    }
 }
 
 static size_t BufferCopyBuffer(MTLGFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size_t Size, MTLGFXBuffer DstBuffer, ptrdiff_t DstOffset)
 {
-    size_t CopySize = SrcBuffer->size < SrcOffset ? (SrcBuffer->size - SrcOffset > Size ? Size : SrcBuffer->size - SrcOffset) : 0;
-    CopySize = DstBuffer->size < DstOffset ? (DstBuffer->size - DstOffset > CopySize ? CopySize : DstBuffer->size - DstOffset) : 0;
-    
-    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
-    [BlitEncoder copyFromBuffer: SrcBuffer->buffer
-                   sourceOffset: SrcOffset
-                       toBuffer: DstBuffer->buffer
-              destinationOffset: DstOffset
-                           size: CopySize];
-    
-    [BlitEncoder endEncoding];
-    
-    return CopySize;
+    @autoreleasepool {
+        size_t CopySize = SrcBuffer->size < SrcOffset ? (SrcBuffer->size - SrcOffset > Size ? Size : SrcBuffer->size - SrcOffset) : 0;
+        CopySize = DstBuffer->size < DstOffset ? (DstBuffer->size - DstOffset > CopySize ? CopySize : DstBuffer->size - DstOffset) : 0;
+        
+        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
+        [BlitEncoder copyFromBuffer: SrcBuffer->buffer
+                       sourceOffset: SrcOffset
+                           toBuffer: DstBuffer->buffer
+                  destinationOffset: DstOffset
+                               size: CopySize];
+        
+        [BlitEncoder endEncoding];
+        
+        return CopySize;
+    }
 }
 
 static size_t BufferFillBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, uint8_t Fill)
 {
-    const size_t FillSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
-    
-    id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
-    [BlitEncoder fillBuffer: Buffer->buffer range: NSMakeRange(Offset, FillSize) value: Fill];
-    
-    [BlitEncoder endEncoding];
-    
-    return FillSize;
+    @autoreleasepool {
+        const size_t FillSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+        
+        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
+        [BlitEncoder fillBuffer: Buffer->buffer range: NSMakeRange(Offset, FillSize) value: Fill];
+        
+        [BlitEncoder endEncoding];
+        
+        return FillSize;
+    }
 }

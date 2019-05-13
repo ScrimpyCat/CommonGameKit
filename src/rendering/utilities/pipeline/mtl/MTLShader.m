@@ -49,8 +49,10 @@ static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, CFTypeRef Verte
     {
         CCMemorySetDestructor(Shader, (CCMemoryDestructorCallback)ShaderDestroy);
         
-        Shader->vert = (__bridge id<MTLFunction>)CFRetain(Vertex);
-        Shader->frag = (__bridge id<MTLFunction>)CFRetain(Fragment);
+        @autoreleasepool {
+            Shader->vert = (__bridge id<MTLFunction>)CFRetain(Vertex);
+            Shader->frag = (__bridge id<MTLFunction>)CFRetain(Fragment);
+        }
     }
     
     return Shader;
@@ -58,7 +60,9 @@ static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, CFTypeRef Verte
 
 static void ShaderDestructor(MTLGFXShader Shader)
 {
-    CC_SAFE_Free(Shader);
+    @autoreleasepool {
+        CC_SAFE_Free(Shader);
+    }
 }
 
 static void *ShaderGetInput(MTLGFXShader Shader, CCString Name)

@@ -51,7 +51,9 @@ static MTLGFXCommandBuffer MTLCommandBufferConstructor(CCAllocatorType Allocator
     {
         CCMemorySetDestructor(CommandBuffer, (CCMemoryDestructorCallback)CommandBufferDestroy);
         
-        CommandBuffer->commandBuffer = (__bridge id<MTLCommandBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->commandQueue commandBuffer]);
+        @autoreleasepool {
+            CommandBuffer->commandBuffer = (__bridge id<MTLCommandBuffer>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->commandQueue commandBuffer]);
+        }
     }
     
     return CommandBuffer;
@@ -59,13 +61,17 @@ static MTLGFXCommandBuffer MTLCommandBufferConstructor(CCAllocatorType Allocator
 
 static void MTLCommandBufferDestructor(MTLGFXCommandBuffer CommandBuffer)
 {
-    CC_SAFE_Free(CommandBuffer);
+    @autoreleasepool {
+        CC_SAFE_Free(CommandBuffer);
+    }
 }
 
 static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer, _Bool Present)
 {
-    if (Present) [CommandBuffer->commandBuffer presentDrawable: MTLGFXGetDrawable()];
-    
-    [CommandBuffer->commandBuffer commit];
+    @autoreleasepool {
+        if (Present) [CommandBuffer->commandBuffer presentDrawable: MTLGFXGetDrawable()];
+        
+        [CommandBuffer->commandBuffer commit];
+    }
 }
 

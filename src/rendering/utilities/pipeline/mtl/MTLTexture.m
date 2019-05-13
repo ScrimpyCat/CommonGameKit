@@ -276,16 +276,18 @@ GFXTexture MTLGFXTextureCreate(CCAllocatorType Allocator, id <MTLTexture>Data)
     {
         CCMemorySetDestructor(Texture, (CCMemoryDestructorCallback)TextureDestroy);
         
-        Texture->isRoot = TRUE;
-        Texture->root.hint = TextureTypeReverse(Data.textureType) | TextureUsageReverse(Data.usage) | GFXTextureHintAccessUnknown;
-        Texture->stream = NULL;
-        Texture->data = NULL;
-        Texture->root.format = Data.pixelFormat ? TextureInternalFormatReverse(Data.pixelFormat) : 0;
-        Texture->width = Data.width;
-        Texture->height = Data.height;
-        Texture->depth = Data.depth;
-        
-        Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)Data);
+        @autoreleasepool {
+            Texture->isRoot = TRUE;
+            Texture->root.hint = TextureTypeReverse(Data.textureType) | TextureUsageReverse(Data.usage) | GFXTextureHintAccessUnknown;
+            Texture->stream = NULL;
+            Texture->data = NULL;
+            Texture->root.format = Data.pixelFormat ? TextureInternalFormatReverse(Data.pixelFormat) : 0;
+            Texture->width = Data.width;
+            Texture->height = Data.height;
+            Texture->depth = Data.depth;
+            
+            Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)Data);
+        }
     }
     
     return (GFXTexture)Texture;
@@ -322,26 +324,28 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
             CCPixelDataGetPackedDataWithFormat(Data, Format, 0, 0, 0, Width, Height, Depth, (void*)Pixels);
         }
         
-        MTLTextureDescriptor *TextureDescriptor = [MTLTextureDescriptor new];
-        TextureDescriptor.textureType = TextureType(Hint);
-        TextureDescriptor.pixelFormat = TextureInternalFormat(Format);
-        TextureDescriptor.width = Width;
-        TextureDescriptor.height = Height;
-        TextureDescriptor.depth = Depth;
-        TextureDescriptor.usage = TextureUsage(Hint);
-        TextureDescriptor.storageMode = TextureStorage(Hint);
-        
-#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_10_14, CC_PLATFORM_IOS_12_0)
-        if (((MTLInternal*)MTLGFX->internal)->support->MTLTextureDescriptor.allowGPUOptimizedContents) TextureDescriptor.allowGPUOptimizedContents = TextureGPUOptimized(Hint);
-#endif
-        
-        Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
-        
-        if (Pixels)
-        {
-            [Texture->root.texture replaceRegion: MTLRegionMake3D(0, 0, 0, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width];
+        @autoreleasepool {
+            MTLTextureDescriptor *TextureDescriptor = [MTLTextureDescriptor new];
+            TextureDescriptor.textureType = TextureType(Hint);
+            TextureDescriptor.pixelFormat = TextureInternalFormat(Format);
+            TextureDescriptor.width = Width;
+            TextureDescriptor.height = Height;
+            TextureDescriptor.depth = Depth;
+            TextureDescriptor.usage = TextureUsage(Hint);
+            TextureDescriptor.storageMode = TextureStorage(Hint);
             
-            if (FreePixels) CCFree((void*)Pixels);
+#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_10_14, CC_PLATFORM_IOS_12_0)
+            if (((MTLInternal*)MTLGFX->internal)->support->MTLTextureDescriptor.allowGPUOptimizedContents) TextureDescriptor.allowGPUOptimizedContents = TextureGPUOptimized(Hint);
+#endif
+            
+            Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
+            
+            if (Pixels)
+            {
+                [Texture->root.texture replaceRegion: MTLRegionMake3D(0, 0, 0, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width];
+                
+                if (FreePixels) CCFree((void*)Pixels);
+            }
         }
     }
     
@@ -399,7 +403,9 @@ static MTLGFXTexture TextureSubConstructor(CCAllocatorType Allocator, GFXTexture
             
             if (Pixels)
             {
-                [Root->root.texture replaceRegion: MTLRegionMake3D(Texture->sub.internal.x, Texture->sub.internal.y, Texture->sub.internal.z, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width];
+                @autoreleasepool {
+                    [Root->root.texture replaceRegion: MTLRegionMake3D(Texture->sub.internal.x, Texture->sub.internal.y, Texture->sub.internal.z, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width];
+                }
                 
                 if (FreePixels) CCFree((void*)Pixels);
             }
@@ -411,7 +417,9 @@ static MTLGFXTexture TextureSubConstructor(CCAllocatorType Allocator, GFXTexture
 
 static void TextureDestructor(MTLGFXTexture Texture)
 {
-    CC_SAFE_Free(Texture);
+    @autoreleasepool {
+        CC_SAFE_Free(Texture);
+    }
 }
 
 static GFXTexture TextureGetParent(MTLGFXTexture Texture)
@@ -521,7 +529,9 @@ static CCPixelData TextureRead(MTLGFXTexture Texture, CCAllocatorType Allocator,
     size_t RealX = 0, RealY = 0, RealZ = 0;
     TextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
     
-    [Root->root.texture getBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width fromRegion: MTLRegionMake3D(RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth) mipmapLevel: 0];
+    @autoreleasepool {
+        [Root->root.texture getBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width fromRegion: MTLRegionMake3D(RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth) mipmapLevel: 0];
+    }
     
     CCPixelData CopiedData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataBufferHintFree, InternalSampleSize * Root->width * Root->height * Root->depth, Pixels, NULL, NULL), Root->root.format, Root->width, Root->height, Root->depth);
     
@@ -561,7 +571,9 @@ static void TextureWrite(MTLGFXTexture Texture, size_t X, size_t Y, size_t Z, si
     size_t RealX = 0, RealY = 0, RealZ = 0;
     TextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
     
-    [Root->root.texture replaceRegion: MTLRegionMake3D(RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width];
+    @autoreleasepool {
+        [Root->root.texture replaceRegion: MTLRegionMake3D(RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth) mipmapLevel: 0 withBytes: Pixels bytesPerRow: CCColourFormatSampleSizeForPlanar(Root->root.format, CCColourFormatChannelPlanarIndex0) * Width];
+    }
     
     if (FreePixels) CCFree((void*)Pixels);
 }
