@@ -107,7 +107,7 @@ static void BlitSubmit(GFXBlit Blit)
                 GFXDrawSetShader(Drawer, Shader);
                 GFXShaderDestroy(Shader);
                 
-                const CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Dst.width, 0.0f, Dst.height, 0.0f, 1.0f);
+                const CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Dst.width, 0.0f, Dst.height, -1.0f, 1.0f);
                 GFXBuffer Projection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
                 GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
                 GFXBufferDestroy(Projection);

@@ -188,7 +188,7 @@ void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index)
     {
         if (CachedProjection) GFXBufferDestroy(CachedProjection);
         
-        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Size.x, 0.0f, Size.y, 0.0f, 1.0f);
+        CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Size.x, 0.0f, Size.y, -1.0f, 1.0f);
         CachedProjection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadMany, sizeof(CCMatrix4), &Ortho);
         
         CachedSize = Size;
