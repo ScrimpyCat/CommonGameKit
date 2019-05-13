@@ -27,6 +27,7 @@
 #import "MTLTexture.h"
 #import "MTLFramebuffer.h"
 #import "MTLCommandBuffer.h"
+#import "AssetManager.h"
 
 static void BlitSubmit(GFXBlit Blit);
 
@@ -78,17 +79,60 @@ static void BlitSubmit(GFXBlit Blit)
     
     if (!ClearBuffer(DstAttachment, &DstAttachment->store, DstCleared))
     {
-        id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
-        [BlitEncoder copyFromTexture: MTLGFXFramebufferAttachmentGetTexture(SrcAttachment)
-                         sourceSlice: 0
-                         sourceLevel: 0
-                        sourceOrigin: MTLOriginMake(Blit->source.region.position.x, Blit->source.region.position.y, 0)
-                          sourceSize: MTLSizeMake(Blit->source.region.size.x, Blit->source.region.size.y, 1)
-                           toTexture: MTLGFXFramebufferAttachmentGetTexture(DstAttachment)
-                    destinationSlice: 0
-                    destinationLevel: 0
-                   destinationOrigin: MTLOriginMake(Blit->destination.region.position.x, Blit->destination.region.position.y, 0)];
+        id <MTLTexture>Src = MTLGFXFramebufferAttachmentGetTexture(SrcAttachment), Dst = MTLGFXFramebufferAttachmentGetTexture(DstAttachment);
+        if ((Src.pixelFormat == Dst.pixelFormat) && (CCVector2Equal(Blit->source.region.size, Blit->destination.region.size)))
+        {
+            id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
+            [BlitEncoder copyFromTexture: Src
+                             sourceSlice: 0
+                             sourceLevel: 0
+                            sourceOrigin: MTLOriginMake(Blit->source.region.position.x, Blit->source.region.position.y, 0)
+                              sourceSize: MTLSizeMake(Blit->source.region.size.x, Blit->source.region.size.y, 1)
+                               toTexture: Dst
+                        destinationSlice: 0
+                        destinationLevel: 0
+                       destinationOrigin: MTLOriginMake(Blit->destination.region.position.x, Blit->destination.region.position.y, 0)];
+            
+            [BlitEncoder endEncoding];
+        }
         
-        [BlitEncoder endEncoding];
+        else
+        {
+            CCAssertLog(CCVector2Equal(Blit->source.region.size, Blit->destination.region.size) || ((Blit->filter & GFXTextureHintFilterModeMask) == (GFXTextureGetHints(SrcAttachment->texture) & GFXTextureHintFilterModeMask)), "Blit filter mode must be the same as the source texture");
+            
+            GFXDraw Drawer = GFXDrawCreate(CC_STD_ALLOCATOR);
+            
+            GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("texture2d"));
+            GFXDrawSetShader(Drawer, Shader);
+            GFXShaderDestroy(Shader);
+            
+            const CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Dst.width, 0.0f, Dst.height, 0.0f, 1.0f);
+            GFXBuffer Projection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+            GFXDrawSetBuffer(Drawer, CC_STRING("modelViewProjectionMatrix"), Projection);
+            GFXBufferDestroy(Projection);
+            
+            const CCVector2D SrcSize = CCVector2DMake(Src.width, Src.height);
+            const CCRect DstRect = Blit->destination.region, SrcRect = { .position = CCVector2Div(Blit->source.region.position, SrcSize), .size = CCVector2Div(Blit->source.region.size, SrcSize) };
+            struct {
+                CCVector2D position;
+                CCVector2D coord;
+            } VertData[4] = {
+                { .position = DstRect.position, .coord = SrcRect.position },
+                { .position = CCVector2DMake(DstRect.position.x + DstRect.size.x, DstRect.position.y), .coord = CCVector2DMake(SrcRect.position.x + SrcRect.size.x, SrcRect.position.y) },
+                { .position = CCVector2DMake(DstRect.position.x, DstRect.position.y + DstRect.size.y), .coord = CCVector2DMake(SrcRect.position.x, SrcRect.position.y + SrcRect.size.y) },
+                { .position = CCVector2DMake(DstRect.position.x + DstRect.size.x, DstRect.position.y + DstRect.size.y), .coord = CCVector2DMake(SrcRect.position.x + SrcRect.size.x, SrcRect.position.y + SrcRect.size.y) }
+            };
+            
+            GFXBuffer VertBuffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(VertData), &VertData);
+            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vPosition"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), position));
+            GFXDrawSetVertexBuffer(Drawer, CC_STRING("vTexCoord"), VertBuffer, GFXBufferFormatFloat32x2, sizeof(typeof(*VertData)), offsetof(typeof(*VertData), coord));
+            GFXBufferDestroy(VertBuffer);
+            
+            GFXDrawSetTexture(Drawer, CC_STRING("tex"), SrcAttachment->texture);
+            GFXDrawSetFramebuffer(Drawer, Blit->destination.framebuffer, Blit->destination.index);
+            GFXDrawSubmit(Drawer, GFXPrimitiveTypeTriangleStrip, 0, 4);
+            
+            GFXDrawDestroy(Drawer);
+        }
     }
 }
