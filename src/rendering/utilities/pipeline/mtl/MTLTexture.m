@@ -106,6 +106,14 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
         case CCColourFormatRGB8Unorm_sRGB:
         case CCColourFormatRGBA8Unorm_sRGB:
             return MTLPixelFormatRGBA8Unorm_sRGB;
+            
+        case CCColourFormatBGR8Unorm:
+        case CCColourFormatBGRA8Unorm:
+            return MTLPixelFormatBGRA8Unorm;
+            
+        case CCColourFormatBGR8Unorm_sRGB:
+        case CCColourFormatBGRA8Unorm_sRGB:
+            return MTLPixelFormatBGRA8Unorm_sRGB;
     }
     
     CCAssertLog(0, "Unsupported format");
@@ -120,6 +128,12 @@ static CC_CONSTANT_FUNCTION CCColourFormat TextureInternalFormatReverse(MTLPixel
             
         case MTLPixelFormatRGBA8Unorm_sRGB:
             return CCColourFormatRGBA8Unorm_sRGB;
+            
+        case MTLPixelFormatBGRA8Unorm:
+            return CCColourFormatBGRA8Unorm;
+            
+        case MTLPixelFormatBGRA8Unorm_sRGB:
+            return CCColourFormatBGRA8Unorm_sRGB;
             
         default:
             break;
