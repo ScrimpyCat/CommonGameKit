@@ -40,10 +40,10 @@ const GFXCommandBufferInterface GLCommandBufferInterface = {
 static void *GLCommandBufferConstructor(CCAllocatorType Allocator)
 {
     static struct {
-        int allocator;
+        CCAllocatorHeader header;
         int nop;
     } CommandBuffer = {
-        .allocator = -1
+        .header = { .allocator = -1 }
     };
     
     return &CommandBuffer.nop;

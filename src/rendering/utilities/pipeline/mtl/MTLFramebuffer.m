@@ -76,7 +76,7 @@ static void FramebufferDestructor(MTLGFXFramebuffer Framebuffer)
 static MTLGFXFramebuffer FramebufferDefault(void)
 {
     static struct {
-        int allocator;
+        CCAllocatorHeader header;
         union {
             MTLGFXFramebufferInfo info;
             struct {
@@ -85,7 +85,7 @@ static MTLGFXFramebuffer FramebufferDefault(void)
             } init;
         };
     } DefaultFramebuffer = {
-        .allocator = -1,
+        .header = { .allocator = -1 },
         .init = {
             .attachmentCount = 1,
             .attachments = {

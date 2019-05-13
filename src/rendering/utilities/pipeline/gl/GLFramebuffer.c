@@ -203,7 +203,7 @@ static GLFramebuffer GLFramebufferDefault(void)
     };
     
     static struct {
-        int allocator;
+        CCAllocatorHeader header;
         union {
             GLFramebufferInfo info;
             struct {
@@ -212,7 +212,7 @@ static GLFramebuffer GLFramebufferDefault(void)
             } init;
         };
     } DefaultFramebuffer = {
-        .allocator = -1,
+        .header = { .allocator = -1 },
         .init = {
             .fboCount = 1,
             .framebuffers = { &DefaultFBO }
