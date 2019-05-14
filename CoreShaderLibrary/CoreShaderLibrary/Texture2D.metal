@@ -43,7 +43,7 @@ vertex VertexOut texture2d_vs(VertexData in [[stage_in]], constant float4x4 &mod
 {
     VertexOut out;
     out.position = modelViewProjectionMatrix * float4(in.vPosition, 0.0, 1.0);
-    out.texCoord = in.vTexCoord;
+    out.texCoord = core::flip(in.vTexCoord, core::axis::y);
     return out;
 }
 

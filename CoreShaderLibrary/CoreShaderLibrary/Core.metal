@@ -34,9 +34,33 @@ using namespace glsl;
 
 namespace core
 {
+    enum axis
+    {
+        x = 0,
+        y = 1,
+        z = 2,
+        w = 3,
+        
+        r = 0,
+        g = 1,
+        b = 2,
+        a = 3,
+        
+        s = 0,
+        t = 1,
+        u = 2,
+        v = 3
+    };
+    
     template<typename T> inline T premultiply(T colour)
     {
         return T(colour.rgb * colour.a, colour.a);
+    }
+    
+    template<typename T> inline T flip(T value, int index, typename make_scalar<T>::type range = 1)
+    {
+        value[index] = range - value[index];
+        return value;
     }
 }
 
