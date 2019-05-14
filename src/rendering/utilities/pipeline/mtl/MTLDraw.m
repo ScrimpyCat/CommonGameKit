@@ -32,10 +32,12 @@
 #import "MTLCommandBuffer.h"
 
 static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 
 
 const GFXDrawInterface MTLDrawInterface = {
     .submit = DrawSubmit,
+    .indexedSubmit = DrawSubmitIndexed,
     .optional = {
         .create = NULL,
         .destroy = NULL,
@@ -360,12 +362,29 @@ static CC_CONSTANT_FUNCTION MTLStoreAction DrawStoreAction(GFXFramebufferAttachm
     CCAssertLog(0, "Unsupported store action");
 }
 
+static MTLIndexType IndexTypeTypeFromBufferFormat(GFXBufferFormat Format)
+{
+    if ((GFXBufferFormatIsInteger(Format)) && (GFXBufferFormatIsUnsigned(Format)))
+    {
+        switch (GFXBufferFormatGetBitSize(Format))
+        {
+            case 16:
+                return MTLIndexTypeUInt16;
+                
+            case 32:
+                return MTLIndexTypeUInt32;
+        }
+    }
+    
+    CCAssertLog(0, "Unsupported index format %d", Format);
+}
+
 static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDrawInput *right)
 {
     return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, _Bool Indexed)
 {
     @autoreleasepool {
         GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
@@ -543,11 +562,29 @@ static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
             }
         }
         
-        [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count];
+        if (Indexed)
+        {
+            [RenderCommand drawIndexedPrimitives: DrawPrimitiveType(Primitive) indexCount: Count indexType: IndexTypeTypeFromBufferFormat(Draw->index.format) indexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Draw->index.buffer) indexBufferOffset: Offset];
+        }
+        
+        else
+        {
+            [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count];
+        }
         
         [RenderCommand endEncoding];
         
         
         if (ClearStore) [MTLGFXClearEncoder(Attachment) endEncoding];
     }
+}
+
+static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+{
+    MTLGFXDraw(Draw, Primitive, Offset, Count, FALSE);
+}
+
+static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+{
+    MTLGFXDraw(Draw, Primitive, Offset, Count, TRUE);
 }
