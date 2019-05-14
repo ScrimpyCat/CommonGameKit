@@ -318,7 +318,9 @@ static CC_CONSTANT_FUNCTION MTLPrimitiveType DrawPrimitiveType(GFXPrimitiveType 
 
 static CC_CONSTANT_FUNCTION MTLLoadAction DrawLoadAction(GFXFramebufferAttachmentAction Action)
 {
-    switch (Action & ~GFXFramebufferAttachmentActionFlagClearOnce)
+    if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLLoadActionClear;
+    
+    switch (Action)
     {
         case GFXFramebufferAttachmentActionDontCare:
             return MTLLoadActionDontCare;
@@ -333,14 +335,14 @@ static CC_CONSTANT_FUNCTION MTLLoadAction DrawLoadAction(GFXFramebufferAttachmen
             break;
     }
     
-    if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLLoadActionClear;
-    
     CCAssertLog(0, "Unsupported load action");
 }
 
 static CC_CONSTANT_FUNCTION MTLStoreAction DrawStoreAction(GFXFramebufferAttachmentAction Action)
 {
-    switch (Action & ~GFXFramebufferAttachmentActionFlagClearOnce)
+    if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLStoreActionDontCare;
+    
+    switch (Action)
     {
         case GFXFramebufferAttachmentActionDontCare:
             return MTLStoreActionDontCare;
@@ -354,8 +356,6 @@ static CC_CONSTANT_FUNCTION MTLStoreAction DrawStoreAction(GFXFramebufferAttachm
         default:
             break;
     }
-    
-    if (Action & GFXFramebufferAttachmentActionFlagClearOnce) return MTLStoreActionDontCare;
     
     CCAssertLog(0, "Unsupported store action");
 }
