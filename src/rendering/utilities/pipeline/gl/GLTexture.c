@@ -475,7 +475,7 @@ static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, C
     void *Pixels;
     const size_t InternalSampleSize = CCColourFormatSampleSizeForPlanar(PixelFormat, CCColourFormatChannelPlanarIndex0);
     CC_SAFE_Malloc(Pixels, InternalSampleSize * Root->width * Root->height * Root->depth,
-                   CC_LOG_ERROR("Failed to allocate memory for texture receive. Allocation size (%zu)", InternalSampleSize * Width * Height * Depth);
+                   CC_LOG_ERROR("Failed to allocate memory for texture receive. Allocation size (%zu)", InternalSampleSize * Root->width * Root->height * Root->depth);
                    return NULL;
                    );
     
@@ -487,12 +487,11 @@ static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, C
     GLTextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
     
     const size_t SampleSize = CCColourFormatSampleSizeForPlanar(PixelFormat, CCColourFormatChannelPlanarIndex0);
-    if (!(Pixels = CCMalloc(Allocator, SampleSize * Width * Height * Depth, NULL, CC_DEFAULT_ERROR_CALLBACK)))
-    {
-        CC_LOG_ERROR("Failed to allocate memory for texture receive. Allocation size (%zu)", SampleSize * Width * Height * Depth);
-        CCPixelDataDestroy(CopiedData);
-        return NULL;
-    }
+    CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
+                   CC_LOG_ERROR("Failed to allocate memory for texture receive. Allocation size (%zu)", SampleSize * Width * Height * Depth);
+                   CCPixelDataDestroy(CopiedData);
+                   return NULL;
+                   );
     
     CCPixelDataGetPackedDataWithFormat(CopiedData, Format, RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth, Pixels);
     CCPixelDataDestroy(CopiedData);
