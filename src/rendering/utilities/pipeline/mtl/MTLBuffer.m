@@ -203,7 +203,7 @@ static size_t BufferReadBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Siz
     @autoreleasepool {
         CCAssertLog(Buffer->buffer.contents, "Can only read from a buffer with CPU read access");
         
-        const size_t ReadSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+        const size_t ReadSize = Offset < Buffer->size ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
         memcpy(Data, Buffer->buffer.contents + Offset, ReadSize);
         
         return ReadSize;
@@ -215,7 +215,7 @@ static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Si
     @autoreleasepool {
         CCAssertLog(Buffer->buffer.contents, "Can only write to a buffer with CPU write access");
         
-        const size_t WriteSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+        const size_t WriteSize = Offset < Buffer->size ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
         memcpy(Buffer->buffer.contents + Offset, Data, WriteSize);
         
         [Buffer->buffer didModifyRange: NSMakeRange(Offset, WriteSize)];
@@ -227,8 +227,8 @@ static size_t BufferWriteBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Si
 static size_t BufferCopyBuffer(MTLGFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size_t Size, MTLGFXBuffer DstBuffer, ptrdiff_t DstOffset)
 {
     @autoreleasepool {
-        size_t CopySize = SrcBuffer->size < SrcOffset ? (SrcBuffer->size - SrcOffset > Size ? Size : SrcBuffer->size - SrcOffset) : 0;
-        CopySize = DstBuffer->size < DstOffset ? (DstBuffer->size - DstOffset > CopySize ? CopySize : DstBuffer->size - DstOffset) : 0;
+        size_t CopySize = SrcOffset < SrcBuffer->size ? (SrcBuffer->size - SrcOffset > Size ? Size : SrcBuffer->size - SrcOffset) : 0;
+        CopySize = DstOffset < DstBuffer->size ? (DstBuffer->size - DstOffset > CopySize ? CopySize : DstBuffer->size - DstOffset) : 0;
         
         id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
         [BlitEncoder copyFromBuffer: SrcBuffer->buffer
@@ -246,7 +246,7 @@ static size_t BufferCopyBuffer(MTLGFXBuffer SrcBuffer, ptrdiff_t SrcOffset, size
 static size_t BufferFillBuffer(MTLGFXBuffer Buffer, ptrdiff_t Offset, size_t Size, uint8_t Fill)
 {
     @autoreleasepool {
-        const size_t FillSize = Buffer->size < Offset ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
+        const size_t FillSize = Offset < Buffer->size ? (Buffer->size - Offset > Size ? Size : Buffer->size - Offset) : 0;
         
         id <MTLBlitCommandEncoder>BlitEncoder = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer blitCommandEncoder];
         [BlitEncoder fillBuffer: Buffer->buffer range: NSMakeRange(Offset, FillSize) value: Fill];
