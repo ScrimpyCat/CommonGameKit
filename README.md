@@ -11,5 +11,6 @@ CommonGameKit is a collection of utilities to aid in the creation of games. Whil
 * GUI
 * Rendering abstraction interface (GFX)
 	* OpenGL support
+	* Metal support
 * Asset manager
 * Text rendering/manipulation
