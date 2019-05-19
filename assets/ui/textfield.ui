@@ -83,6 +83,14 @@
                                 (.cursor! (- .cursor (- .prev-length (length .string))))
                             )
                         )
+                        (if (all? .cursor (= (:alt) @flags))
+                            (begin
+                                (state! ".word-length")
+                                (.word-length! (max 1 (length (get -1 (separate ("\n" " " "\t" "," "[" "]" "+" "-" "/" "\\" ":" "(" ")" "\"") (get 0 (chop ((- .cursor 1)) .string))))))) ; TODO: add a reverse separate and maybe make the separation list configurable
+                                (.string! (remove (- .cursor .word-length) .word-length .string))
+                                (.cursor! (- .cursor .word-length))
+                            )
+                        )
                         (if .cursor ((.string! (remove (- .cursor 1) 1 .string)) (.cursor! (- .cursor 1))))
                     )
                 )
