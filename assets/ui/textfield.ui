@@ -80,11 +80,17 @@
                         )
                         (if (= @key :up)
                             (cond
+                                (if (all? .cursor (= (:cmd) @flags))
+                                    (.cursor! 0)
+                                )
                                 (.cursor! (max 0 (- .cursor 1 (length (get -1 (separate ("\n") (get 0 (chop ((- .cursor 1)) .string))))))))
                             )
                         )
                         (if (= @key :down)
                             (cond
+                                (if (all? .cursor (= (:cmd) @flags))
+                                    (.cursor! (length .string))
+                                )
                                 (.cursor! (min (+ .cursor 1 (length (get 0 (separate ("\n") (get 1 (flatten (chop ((- .cursor 1)) .string) "")))))) (length .string)))
                             )
                         )
