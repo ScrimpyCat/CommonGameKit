@@ -57,14 +57,24 @@
                 (on (key: :direction (down: #t))
                     (cond
                         (if (= @key :left)
-                            (if (all? .cursor (= (:cmd) @flags))
-                                (.cursor! (- .cursor (length (get -1 (separate ("\n") (get 0 (chop ((- .cursor 1)) .string)))))))
+                            (cond
+                                (if (all? .cursor (= (:cmd) @flags))
+                                    (.cursor! (- .cursor (length (get -1 (separate ("\n") (get 0 (chop ((- .cursor 1)) .string)))))))
+                                )
+                                (if (all? .cursor (= (:alt) @flags))
+                                    (.cursor! (- .cursor (max 1 (length (get -1 (separate ("\n" " " "\t" "," "[" "]" "+" "-" "/" "\\" ":") (get 0 (chop ((- .cursor 1)) .string)))))))) ; TODO: add a reverse separate
+                                )
                                 (.cursor! (max (- .cursor 1) 0))
                             )
                         )
                         (if (= @key :right)
-                            (if (all? .cursor (= (:cmd) @flags))
-                                (.cursor! (+ .cursor (length (get 0 (separate ("\n") (get 1 (flatten (chop ((- .cursor 1)) .string) "")))))))
+                            (cond
+                                (if (all? .cursor (= (:cmd) @flags))
+                                    (.cursor! (+ .cursor (length (get 0 (separate ("\n") (get 1 (flatten (chop ((- .cursor 1)) .string) "")))))))
+                                )
+                                (if (all? .cursor (= (:alt) @flags))
+                                    (.cursor! (min (+ .cursor (max 1 (length (get 0 (separate ("\n" " " "\t" "," "[" "]" "+" "-" "/" "\\" ":") (get 1 (flatten (chop ((- .cursor 1)) .string) ""))))))) (length .string))) ; TODO: add a reverse separate
+                                )
                                 (.cursor! (min (+ .cursor 1) (length .string)))
                             )
                         )
