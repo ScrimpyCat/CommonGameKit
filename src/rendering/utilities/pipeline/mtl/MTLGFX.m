@@ -157,9 +157,11 @@ void MTLGFXSetDrawable(id <MTLDrawable>Drawable, id <MTLTexture>Texture)
         .texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)Texture),
     };
     
-    MTLGFXDrawable PrevTarget = atomic_exchange(&Target, NewTarget);
+    MTLGFXDrawable PrevTarget = atomic_exchange_explicit(&Target, NewTarget, memory_order_release);
     
-    while (atomic_load(&TargetReadLock)) CC_SPIN_WAIT();
+    while (atomic_load_explicit(&TargetReadLock, memory_order_relaxed)) CC_SPIN_WAIT();
+    
+    atomic_thread_fence(memory_order_acq_rel);
     
     if (PrevTarget.drawable) CFRelease((__bridge CFTypeRef)PrevTarget.drawable);
     if (PrevTarget.texture) CFRelease((__bridge CFTypeRef)PrevTarget.texture);
@@ -167,20 +169,20 @@ void MTLGFXSetDrawable(id <MTLDrawable>Drawable, id <MTLTexture>Texture)
 
 id <MTLDrawable>MTLGFXGetDrawable(void)
 {
-    atomic_fetch_add(&TargetReadLock, 1);
-    MTLGFXDrawable CurrentTarget = atomic_load(&Target);
+    atomic_fetch_add_explicit(&TargetReadLock, 1, memory_order_acquire);
+    MTLGFXDrawable CurrentTarget = atomic_load_explicit(&Target, memory_order_relaxed);
     id <MTLDrawable>Drawable = CurrentTarget.drawable;
-    atomic_fetch_sub(&TargetReadLock, 1);
+    atomic_fetch_sub_explicit(&TargetReadLock, 1, memory_order_release);
     
     return Drawable;
 }
 
 id <MTLTexture>MTLGFXGetDrawableTexture(void)
 {
-    atomic_fetch_add(&TargetReadLock, 1);
-    MTLGFXDrawable CurrentTarget = atomic_load(&Target);
+    atomic_fetch_add_explicit(&TargetReadLock, 1, memory_order_acquire);
+    MTLGFXDrawable CurrentTarget = atomic_load_explicit(&Target, memory_order_relaxed);
     id <MTLTexture>Texture = CurrentTarget.texture;
-    atomic_fetch_sub(&TargetReadLock, 1);
+    atomic_fetch_sub_explicit(&TargetReadLock, 1, memory_order_release);
     
     return Texture;
 }
