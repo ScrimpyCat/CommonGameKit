@@ -341,6 +341,7 @@ static inline CCString CCExpressionGetString(CCExpression Expression);
 static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression);
 static inline void *CCExpressionGetData(CCExpression Expression);
 
+static inline CCExpression CCExpressionStateGetSuperRoot(CCExpression Expression);
 static inline CCExpression CCExpressionStateGetSuper(CCExpression Expression);
 static inline void CCExpressionStateSetSuper(CCExpression Expression, CCExpression Super);
 static inline CCExpression CCExpressionStateGetResult(CCExpression Expression);
@@ -435,6 +436,14 @@ static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression)
 static inline void *CCExpressionGetData(CCExpression Expression)
 {
     return Expression->data;
+}
+
+static inline CCExpression CCExpressionStateGetSuperRoot(CCExpression Expression)
+{
+    CCExpression Root = Expression;
+    for (CCExpression Super = Expression; (Super = CCExpressionStateGetSuper(Super)); Root = Super);
+    
+    return Root;
 }
 
 static inline CCExpression CCExpressionStateGetSuper(CCExpression Expression)
