@@ -218,6 +218,14 @@ CC_NEW CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionVa
 CC_NEW CCExpression CCExpressionCopy(CCExpression Expression);
 
 /*!
+ * @brief Create a new copy of the expression and its super and siblings.
+ * @param Expression The expression to be copied.
+ * @return The created expression. This must be destroyed by obtaining the super root
+ *         and destroying that (not the child expression returned by this function).
+ */
+CC_NEW CCExpression CCExpressionDeepCopy(CCExpression Expression);
+
+/*!
  * @brief Retain the expression.
  * @param Expression The expression to be retained.
  * @return The retained expression.

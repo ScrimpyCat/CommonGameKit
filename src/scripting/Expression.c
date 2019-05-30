@@ -49,9 +49,13 @@ static CCExpression CCExpressionValueListCopy(CCExpression Value)
 {
     CCExpression Copy = CCExpressionCreateList(Value->allocator);
     
+    CCOrderedCollection List = CCExpressionGetList(Copy);
     CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Value))
     {
-        CCOrderedCollectionAppendElement(CCExpressionGetList(Copy), &(CCExpression){ CCExpressionCopy(Element) });
+        CCExpression CopiedElement = CCExpressionCopy(Element);
+        CCExpressionStateSetSuper(CopiedElement, Copy);
+        
+        CCOrderedCollectionAppendElement(List, &CopiedElement);
     }
     
     return Copy;
@@ -379,6 +383,30 @@ CCExpression CCExpressionCopy(CCExpression Expression)
     }
     
     return Copy;
+}
+
+static CCExpression CCExpressionDeepFindEquivalentExpression(CCExpression Root, CCExpression Expression)
+{
+    CCExpression Super = CCExpressionStateGetSuper(Expression);
+    if (!Super) return Root;
+    
+    Root = CCExpressionDeepFindEquivalentExpression(Root, Super);
+    
+    CCOrderedCollection List = CCExpressionGetList(Super);
+    const size_t Index = CCOrderedCollectionGetIndex(List, CCCollectionFindElement(List, &Expression, NULL));
+    
+    return *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Root), Index);
+}
+
+CCExpression CCExpressionDeepCopy(CCExpression Expression)
+{
+    CCAssertLog(Expression, "Expression must not be NULL");
+    
+    if (CCExpressionIsTagged(Expression)) return Expression;
+    
+    CCExpression Root = CCExpressionCopy(CCExpressionStateGetSuperRoot(Expression));
+    
+    return CCExpressionDeepFindEquivalentExpression(Root, Expression);
 }
 
 CCExpression CCExpressionRetain(CCExpression Expression)
