@@ -195,13 +195,18 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
     {
         if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeMask) == CCScriptableInterfaceTypeDynamicField)
         {
+            CCComponent Target = CCScriptableInterfaceDynamicFieldComponentGetTarget(Scriptable);
+            CCExpression Field = CCScriptableInterfaceDynamicFieldComponentGetField(Scriptable);
             CCExpression ReferenceState = CCScriptableInterfaceDynamicFieldComponentGetReferenceState(Scriptable);
-            if (ReferenceState)
+            if ((Target) && (Field) && (ReferenceState))
             {
-                CCScriptableInterfaceDynamicFieldComponentSetState(Scriptable, ReferenceState);
+                CCExpressionStateSetSuper(Field, ReferenceState);
+                CCScriptableInterfaceDynamicFieldComponentSetState(Scriptable, CCExpressionEvaluate(Field));
             }
         }
     }
+    
+    CCScriptableInterfaceSystemRead(System, Context, Components);
 }
 
 static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, void *Context, CCCollection Components)
@@ -219,24 +224,24 @@ static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, voi
         if (Scriptable)
         {
             CCComponent Target = CCScriptableInterfaceDynamicFieldComponentGetTarget(Scriptable);
-            CCExpression Field = CCScriptableInterfaceDynamicFieldComponentGetField(Scriptable);
-            CCExpression State = CCScriptableInterfaceDynamicFieldComponentGetState(Scriptable);
             
-            if ((Target) && (Field) && (State))
+            if (Target)
             {
                 if (CCComponentGetIsManaged(Target))
                 {
                     const CCComponentExpressionDescriptor *Descriptor = CCComponentExpressionDescriptorForID(CCComponentGetID(Target));
                     if (Descriptor)
                     {
-                        CCExpressionStateSetSuper(Field, State);
-                        
-                        CCExpression Result = CCExpressionEvaluate(Field);
-                        
-                        CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(CCComponentGetID(Target));
-                        CCComponentSystemLock(System->id);
-                        Descriptor->deserialize(Target, Result, FALSE);
-                        CCComponentSystemUnlock(System->id);
+                        CCExpression State = CCScriptableInterfaceDynamicFieldComponentGetState(Scriptable);
+                        if (State)
+                        {
+                            CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(CCComponentGetID(Target));
+                            CCComponentSystemLock(System->id);
+                            Descriptor->deserialize(Target, State, FALSE);
+                            CCComponentSystemUnlock(System->id);
+                            
+                            CCExpressionDestroy(State);
+                        }
                     }
                 }
                 

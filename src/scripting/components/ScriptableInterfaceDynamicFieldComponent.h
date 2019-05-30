@@ -42,6 +42,7 @@ typedef struct {
     CCComponent target;
     CCExpression field;
     CCExpression refState;
+    CCExpression refRoot;
     _Atomic(CCExpression) state;
 } CCScriptableInterfaceDynamicFieldComponentClass, *CCScriptableInterfaceDynamicFieldComponentPrivate;
 
@@ -92,6 +93,13 @@ static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetField(CC
 static inline void CCScriptableInterfaceDynamicFieldComponentSetField(CCComponent Component, CCExpression CC_OWN(Field));
 
 /*!
+ * @brief Get the reference root of the dynamic field.
+ * @param Component The dynamic field component.
+ * @return The reference root.
+ */
+static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetReferenceRoot(CCComponent Component);
+
+/*!
  * @brief Get the reference state of the dynamic field.
  * @param Component The dynamic field component.
  * @return The reference state.
@@ -109,9 +117,9 @@ static inline void CCScriptableInterfaceDynamicFieldComponentSetReferenceState(C
  * @brief Get the new state of the dynamic field.
  * @note This operation is atomic.
  * @param Component The dynamic field component.
- * @return The new state.
+ * @return The new state. This must be destroyed.
  */
-static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetState(CCComponent Component);
+static inline CC_NEW CCExpression CCScriptableInterfaceDynamicFieldComponentGetState(CCComponent Component);
 
 /*!
  * @brief Set the new state of the dynamic field.
@@ -130,6 +138,7 @@ static inline void CCScriptableInterfaceDynamicFieldComponentInitialize(CCCompon
     ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target = NULL;
     ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field = NULL;
     ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState = NULL;
+    ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot = NULL;
     atomic_init(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, NULL);
 }
 
@@ -138,6 +147,7 @@ static inline void CCScriptableInterfaceDynamicFieldComponentDeallocate(CCCompon
     if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target) CCComponentDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->target);
     if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field) CCExpressionDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field);
     if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState) CCExpressionDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState);
+    if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot) CCExpressionDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot);
     
     CCExpression State = atomic_load_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, memory_order_acquire);
     if (State) CCExpressionDestroy(State);
@@ -169,6 +179,11 @@ static inline void CCScriptableInterfaceDynamicFieldComponentSetField(CCComponen
     ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->field = Field;
 }
 
+static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetReferenceRoot(CCComponent Component)
+{
+    return ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot;
+}
+
 static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetReferenceState(CCComponent Component)
 {
     return ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState;
@@ -177,19 +192,20 @@ static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetReferenc
 static inline void CCScriptableInterfaceDynamicFieldComponentSetReferenceState(CCComponent Component, CCExpression State)
 {
     if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState) CCExpressionDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState);
+    if (((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot) CCExpressionDestroy(((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot);
     
-    ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState = CCExpressionRetain(State);
+    ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refRoot = State ? CCExpressionRetain(CCExpressionStateGetSuperRoot(State)) : NULL;
+    ((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->refState = State ? CCExpressionRetain(State) : NULL;
 }
 
 static inline CCExpression CCScriptableInterfaceDynamicFieldComponentGetState(CCComponent Component)
 {
-    CCExpression State = atomic_load_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, memory_order_relaxed);
-    return State;
+    return atomic_exchange_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, NULL, memory_order_relaxed);
 }
 
 static inline void CCScriptableInterfaceDynamicFieldComponentSetState(CCComponent Component, CCExpression State)
 {
-    CCExpression PrevState = atomic_exchange_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, CCExpressionCopy(State), memory_order_acq_rel);
+    CCExpression PrevState = atomic_exchange_explicit(&((CCScriptableInterfaceDynamicFieldComponentPrivate)Component)->state, (State ? CCExpressionCopy(State) : NULL), memory_order_acq_rel);
     if (PrevState) CCExpressionDestroy(PrevState);
 }
 

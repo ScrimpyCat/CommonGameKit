@@ -252,7 +252,7 @@ static double Timestamp(void)
 -(void) testUpdatingLocalCopy
 {
     CCComponent TargetComponent = CCComponentCreate(TEST_COMPONENT_ID);
-    TestComponentSetValue(TargetComponent, 1);
+    TestComponentSetValue(TargetComponent, -1);
     CCComponentSystemAddComponent(TargetComponent);
     
     CCComponent DynamicFieldComponent = CCComponentCreate(CC_SCRIPTABLE_INTERFACE_DYNAMIC_FIELD_COMPONENT_ID);
@@ -265,10 +265,10 @@ static double Timestamp(void)
     
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
-    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    XCTAssertEqual(-1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
-    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    XCTAssertEqual(-1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
@@ -277,13 +277,13 @@ static double Timestamp(void)
     XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
-    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeUpdate);
-    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    XCTAssertEqual(2, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
-    XCTAssertEqual(1, TestComponentGetValue(TargetComponent), @"should remain unchanged");
+    XCTAssertEqual(3, TestComponentGetValue(TargetComponent), @"should remain unchanged");
     
     
     CCExpressionDestroy(State);
