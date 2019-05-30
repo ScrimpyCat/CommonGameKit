@@ -92,12 +92,24 @@ static _Bool CCComponentExpressionDeserializeExpression(const CCComponentExpress
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(uint8_t, CCExpressionGetInteger(Expr));
                 return TRUE;
             }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint8_t, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
             break;
 
         case CCComponentExpressionArgumentTypeUInt16:
             if (ExprType == CCExpressionValueTypeInteger)
             {
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(uint16_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint16_t, CCExpressionGetFloat(Expr));
                 return TRUE;
             }
             break;
@@ -108,12 +120,24 @@ static _Bool CCComponentExpressionDeserializeExpression(const CCComponentExpress
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(uint32_t, CCExpressionGetInteger(Expr));
                 return TRUE;
             }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint32_t, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
             break;
 
         case CCComponentExpressionArgumentTypeUInt64:
             if (ExprType == CCExpressionValueTypeInteger)
             {
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(uint64_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(uint64_t, CCExpressionGetFloat(Expr));
                 return TRUE;
             }
             break;
@@ -124,12 +148,24 @@ static _Bool CCComponentExpressionDeserializeExpression(const CCComponentExpress
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(int8_t, CCExpressionGetInteger(Expr));
                 return TRUE;
             }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int8_t, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
             break;
 
         case CCComponentExpressionArgumentTypeInt16:
             if (ExprType == CCExpressionValueTypeInteger)
             {
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(int16_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int16_t, CCExpressionGetFloat(Expr));
                 return TRUE;
             }
             break;
@@ -140,12 +176,24 @@ static _Bool CCComponentExpressionDeserializeExpression(const CCComponentExpress
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(int32_t, CCExpressionGetInteger(Expr));
                 return TRUE;
             }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int32_t, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
             break;
 
         case CCComponentExpressionArgumentTypeInt64:
             if (ExprType == CCExpressionValueTypeInteger)
             {
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(int64_t, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
+            
+            else if (ExprType == CCExpressionValueTypeFloat)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(int64_t, CCExpressionGetFloat(Expr));
                 return TRUE;
             }
             break;
@@ -156,12 +204,24 @@ static _Bool CCComponentExpressionDeserializeExpression(const CCComponentExpress
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(float, CCExpressionGetFloat(Expr));
                 return TRUE;
             }
+            
+            else if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(float, CCExpressionGetInteger(Expr));
+                return TRUE;
+            }
             break;
 
         case CCComponentExpressionArgumentTypeFloat64:
             if (ExprType == CCExpressionValueTypeFloat)
             {
                 CC_COMPONENT_EXPRESSION_STORE_EXPR(double, CCExpressionGetFloat(Expr));
+                return TRUE;
+            }
+            
+            else if (ExprType == CCExpressionValueTypeInteger)
+            {
+                CC_COMPONENT_EXPRESSION_STORE_EXPR(double, CCExpressionGetInteger(Expr));
                 return TRUE;
             }
             break;
