@@ -30,6 +30,50 @@
 #include "RelationParentComponent.h"
 #include "ComponentSystem.h"
 
+static void CCEntityExpressionEntityAddChildren(CCEntity Entity, CCEnumerator *Enumerator)
+{
+    for (CCExpression *Expr = CCCollectionEnumeratorGetCurrent(Enumerator); Expr; Expr = CCCollectionEnumeratorNext(Enumerator))
+    {
+        if (CCExpressionGetType(*Expr) == CCEntityExpressionValueTypeEntity)
+        {
+            CCComponent ParentComponent = CCComponentCreate(CC_RELATION_PARENT_COMPONENT_ID);
+            CCRelationParentComponentSetParent(ParentComponent, Entity);
+            CCEntityAttachComponent(CCExpressionGetData(*Expr), ParentComponent);
+            CCComponentSystemAddComponent(ParentComponent);
+        }
+        
+        else if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+        {
+            CCEnumerator InnerEnumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(*Expr), &InnerEnumerator);
+            
+            CCEntityExpressionEntityAddChildren(Entity, &InnerEnumerator);
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("children", "entity");
+    }
+}
+
+static void CCEntityExpressionEntityAddNestedComponents(CCEntity Entity, CCEnumerator *Enumerator)
+{
+    for (CCExpression *Expr = CCCollectionEnumeratorGetCurrent(Enumerator); Expr; Expr = CCCollectionEnumeratorNext(Enumerator))
+    {
+        if (CCExpressionGetType(*Expr) == CCComponentExpressionValueTypeComponent)
+        {
+            CCExpressionChangeOwnership(*Expr, NULL, NULL);
+            CCEntityAttachComponent(Entity, CCExpressionGetData(*Expr));
+        }
+        
+        else if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+        {
+            CCEnumerator InnerEnumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(*Expr), &InnerEnumerator);
+            
+            CCEntityExpressionEntityAddNestedComponents(Entity, &InnerEnumerator);
+        }
+    }
+}
+
 CCExpression CCEntityExpressionEntity(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 2)
@@ -50,29 +94,24 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
                     CCEntityAttachComponent(Entity, CCExpressionGetData(Component));
                 }
                 
-                else if ((CCExpressionGetType(Component) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Component)) >= 2))
+                else if ((CCExpressionGetType(Component) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Component))))
                 {
                     CCEnumerator OptionEnumerator;
                     CCCollectionGetEnumerator(CCExpressionGetList(Component), &OptionEnumerator);
                     
-                    CCExpression Option = *(CCExpression*)CCCollectionEnumeratorNext(&OptionEnumerator);
+                    CCExpression Option = *(CCExpression*)CCCollectionEnumeratorGetCurrent(&OptionEnumerator);
                     if (CCExpressionGetType(Option) == CCExpressionValueTypeAtom)
                     {
                         if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("children:")))
                         {
-                            for (CCExpression *Expr = CCCollectionEnumeratorNext(&OptionEnumerator); Expr; Expr = CCCollectionEnumeratorNext(&OptionEnumerator))
-                            {
-                                if (CCExpressionGetType(*Expr) == CCEntityExpressionValueTypeEntity)
-                                {
-                                    CCComponent ParentComponent = CCComponentCreate(CC_RELATION_PARENT_COMPONENT_ID);
-                                    CCRelationParentComponentSetParent(ParentComponent, Entity);
-                                    CCEntityAttachComponent(CCExpressionGetData(*Expr), ParentComponent);
-                                    CCComponentSystemAddComponent(ParentComponent);
-                                }
-                                
-                                else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("children", "entity");
-                            }
+                            CCCollectionEnumeratorNext(&OptionEnumerator);
+                            CCEntityExpressionEntityAddChildren(Entity, &OptionEnumerator);
                         }
+                    }
+                    
+                    else
+                    {
+                        CCEntityExpressionEntityAddNestedComponents(Entity, &OptionEnumerator);
                     }
                 }
             }
