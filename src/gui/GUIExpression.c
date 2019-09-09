@@ -335,10 +335,13 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
     
     if (Initializer)
     {
+        CCExpression Init = CCExpressionCopy(*Initializer); CCExpressionStateSetSuper(Init, CCExpressionStateGetSuper(*Initializer));
+        
         size_t RenderIndex = 0, ControlIndex = 0;
         CCExpression BaseRender = NULL, BaseControl = NULL;
         CCOrderedCollection Children = NULL;
         
+        CCExpressionStateSetPrivate(Expression, Init);
         CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrY, CCExpressionCreateFromSource("(get 1 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
         CCExpressionCreateState(Expression, StrWidth, CCExpressionCreateFromSource("(get 2 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
@@ -347,7 +350,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         CCExpressionCreateState(Expression, StrRectChanged, CCExpressionCreateInteger(CC_STD_ALLOCATOR, TRUE), FALSE, NULL, FALSE);
         CCExpressionCreateState(Expression, StrEnabled, CCExpressionCreateInteger(CC_STD_ALLOCATOR, TRUE), FALSE, NULL, FALSE);
         
-        CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(*Initializer))
+        CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(Init))
         {
             CCExpressionStateSetSuper(InitExpr, Expression);
             
