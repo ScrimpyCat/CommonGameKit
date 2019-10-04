@@ -28,6 +28,7 @@
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3750F892347B94500DFE104 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = F3750F882347B94500DFE104 /* Base.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
 		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
@@ -529,6 +530,7 @@
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
+		F3750F882347B94500DFE104 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "blob-repl.xcodeproj"; path = "blob-repl/blob-repl.xcodeproj"; sourceTree = "<group>"; };
 		F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Callbacks.c; sourceTree = "<group>"; };
 		F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callbacks.h; sourceTree = "<group>"; };
@@ -1034,6 +1036,7 @@
 			isa = PBXGroup;
 			children = (
 				F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */,
+				F3750F882347B94500DFE104 /* Base.h */,
 				F3E0693B1F978114009F23E4 /* SystemID.h */,
 				F3AF34D81DCD014700CAD472 /* Window.c */,
 				F3AF34D91DCD014700CAD472 /* Window.h */,
@@ -1574,6 +1577,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3750F892347B94500DFE104 /* Base.h in Headers */,
 				F3AF33F11DCCD4EC00CAD472 /* GLVersionMacro.h in Headers */,
 				F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */,
 				F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */,
@@ -2317,6 +2321,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = "CC_QUICK_COMPILE=1";
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/deps/stdatomic,
 					$PROJECT_DIR/deps/tinycthread/source,
@@ -2343,6 +2348,11 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"CC_QUICK_COMPILE=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/deps/threads,
 					$PROJECT_DIR/deps/stdatomic,
@@ -2362,6 +2372,7 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "CC_QUICK_COMPILE=1";
 				HEADER_SEARCH_PATHS = (
 					$PROJECT_DIR/deps/threads,
 					$PROJECT_DIR/deps/stdatomic,
