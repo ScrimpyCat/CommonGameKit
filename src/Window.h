@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_Window_h
 #define CommonGameKit_Window_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 /*!
  * @brief Increment the window frame.

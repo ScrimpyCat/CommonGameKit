@@ -26,8 +26,7 @@
 #ifndef CommonGameKit_Component_h
 #define CommonGameKit_Component_h
 
-#include <stdint.h>
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/MessageType.h>
 
 #define CC_COMPONENT_INHERIT(component) component __inherit

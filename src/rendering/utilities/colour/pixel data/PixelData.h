@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_PixelData_h
 #define CommonGameKit_PixelData_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/Colour.h>
-#include <CommonC/Common.h>
 
 
 /*!

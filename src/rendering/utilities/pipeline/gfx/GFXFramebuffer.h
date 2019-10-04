@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_GFXFramebuffer_h
 #define CommonGameKit_GFXFramebuffer_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFXTexture.h>
-#include <CommonC/Common.h>
 
 typedef enum {
     GFXFramebufferAttachmentActionDontCare,

@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_Controller_h
 #define CommonGameKit_Controller_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/Component.h>
-#include <CommonC/Common.h>
 
 typedef enum {
     CCControllerEventAxes,

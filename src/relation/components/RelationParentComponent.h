@@ -26,9 +26,9 @@
 #ifndef CommonGameKit_RelationParentComponent_h
 #define CommonGameKit_RelationParentComponent_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/ComponentBase.h>
 #include <CommonGameKit/Entity.h>
-#include <CommonC/Common.h>
 
 
 #define CC_RELATION_PARENT_COMPONENT_ID 2

@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GUIObject_h
 #define CommonGameKit_GUIObject_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFX.h>
 #include <CommonGameKit/InputSystem.h>
 #include <CommonGameKit/Expression.h>

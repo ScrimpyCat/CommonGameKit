@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_SpatialTransformComponent_h
 #define CommonGameKit_SpatialTransformComponent_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/ComponentBase.h>
-#include <CommonC/Common.h>
 
 
 #define CC_SPATIAL_TRANSFORM_COMPONENT_ID 1

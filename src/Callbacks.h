@@ -30,7 +30,7 @@
 #ifndef CommonGameKit_Callbacks_h
 #define CommonGameKit_Callbacks_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 typedef int (*CCEngineMain)(int argc, const char *argv[]);
 

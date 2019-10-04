@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLSetup_h
 #define CommonGameKit_GLSetup_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 #if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
 #include "Default_Private.h"

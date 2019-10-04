@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GFXBuffer_h
 #define CommonGameKit_GFXBuffer_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFXBufferFormat.h>
 
 typedef enum {

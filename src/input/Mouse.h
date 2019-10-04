@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_Mouse_h
 #define CommonGameKit_Mouse_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/Component.h>
-#include <CommonC/Common.h>
 #include <CommonGameKit/Keyboard.h>
 
 /// The button input for the mouse input event. This is compatible with GLFW mouse buttons.

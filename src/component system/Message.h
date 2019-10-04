@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_Message_h
 #define CommonGameKit_Message_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/MessageType.h>
 #include <CommonGameKit/ComponentSystem.h>
 #include <CommonGameKit/Entity.h>

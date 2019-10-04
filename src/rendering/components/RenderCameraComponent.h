@@ -26,10 +26,10 @@
 #ifndef CommonGameKit_RenderCameraComponent_h
 #define CommonGameKit_RenderCameraComponent_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/RenderSystem.h>
 #include <CommonGameKit/ComponentBase.h>
 #include <CommonGameKit/GFXViewport.h>
-#include <CommonC/Common.h>
 
 
 #define CC_RENDER_CAMERA_COMPONENT_ID (CCRenderTypeCamera | CC_RENDER_COMPONENT_FLAG)

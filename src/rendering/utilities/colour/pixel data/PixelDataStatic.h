@@ -27,7 +27,6 @@
 #define CommonGameKit_PixelDataStatic_h
 
 #include <CommonGameKit/PixelData.h>
-#include <CommonC/Common.h>
 
 extern const CCPixelDataInterface * const CCPixelDataStatic;
 

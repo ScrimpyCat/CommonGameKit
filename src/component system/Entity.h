@@ -26,8 +26,7 @@
 #ifndef CommonGameKit_Entity_h
 #define CommonGameKit_Entity_h
 
-#include <stdint.h>
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/Component.h>
 
 /*!

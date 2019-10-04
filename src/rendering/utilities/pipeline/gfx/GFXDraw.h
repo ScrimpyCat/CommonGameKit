@@ -26,13 +26,13 @@
 #ifndef CommonGameKit_GFXDraw_h
 #define CommonGameKit_GFXDraw_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFXBuffer.h>
 #include <CommonGameKit/GFXShader.h>
 #include <CommonGameKit/GFXTexture.h>
 #include <CommonGameKit/GFXFramebuffer.h>
 #include <CommonGameKit/GFXBlend.h>
 #include <CommonGameKit/GFXViewport.h>
-#include <CommonC/Common.h>
 
 
 typedef enum {

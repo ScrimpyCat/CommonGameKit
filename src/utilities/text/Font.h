@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_Font_h
 #define CommonGameKit_Font_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFX.h>
 
 typedef enum {

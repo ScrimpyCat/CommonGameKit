@@ -34,4 +34,7 @@ typedef enum {
     CCRelationTypeParent = 1
 } CCRelationType;
 
+void CCRelationSystemRegister(void);
+void CCRelationSystemDeregister(void);
+
 #endif

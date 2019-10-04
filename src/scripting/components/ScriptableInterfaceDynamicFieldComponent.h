@@ -26,10 +26,10 @@
 #ifndef CommonGameKit_ScriptableInterfaceDynamicFieldComponent_h
 #define CommonGameKit_ScriptableInterfaceDynamicFieldComponent_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/ScriptableInterfaceSystem.h>
 #include <CommonGameKit/ComponentBase.h>
 #include <CommonGameKit/Expression.h>
-#include <CommonC/Common.h>
 #include <stdatomic.h>
 
 

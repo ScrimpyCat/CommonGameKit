@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_CommonGameKit_h
 #define CommonGameKit_CommonGameKit_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 #include <CommonGameKit/Callbacks.h>
 #include <CommonGameKit/Window.h>

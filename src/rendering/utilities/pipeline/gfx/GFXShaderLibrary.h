@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GFXShaderLibrary_h
 #define CommonGameKit_GFXShaderLibrary_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 typedef enum {
     GFXShaderSourceTypeHeader,

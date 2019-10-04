@@ -26,8 +26,8 @@
 #ifndef CommonGameKit_GFXShader_h
 #define CommonGameKit_GFXShader_h
 
+#include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFXShaderLibrary.h>
-#include <CommonC/Common.h>
 
 /*!
  * @brief The graphics shader input.

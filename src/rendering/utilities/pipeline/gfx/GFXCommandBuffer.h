@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GFXCommandBuffer_h
 #define CommonGameKit_GFXCommandBuffer_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 /*!
  * @brief The graphics command buffer.

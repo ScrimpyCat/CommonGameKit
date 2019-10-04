@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_Expression_h
 #define CommonGameKit_Expression_h
 
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 /*
  Enables the tagged expression optimization. Generally leave it enabled, though disabling it can
