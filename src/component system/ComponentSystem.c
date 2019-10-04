@@ -32,8 +32,8 @@
     * Easily find which systems manage which components, access all systems, systems
       belonging to a particular thread, etc.
  */
+#define CC_QUICK_COMPILE
 #include "ComponentSystem.h"
-#include <CommonC/Common.h>
 #include <stdatomic.h>
 #include "GLSetup.h"
 #include "ComponentBase.h"

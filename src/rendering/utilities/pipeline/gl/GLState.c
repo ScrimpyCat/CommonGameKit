@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "GLSetup.h"
 #include "GLState.h"
 //#include "GLDebug.h"
 #include "GLPortability.h"
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 
 CCGLState *CCGLCurrentState;

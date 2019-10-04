@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "Callbacks.h"
 #include <stddef.h>
-#include <CommonC/Common.h>
 #include "ExpressionSetup.h"
 #include "GFX.h"
 #include "AssetManager.h"

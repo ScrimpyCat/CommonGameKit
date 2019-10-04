@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "EntityManager.h"
 #include "Entity.h"
 #include "ComponentBase.h"
 #include "ComponentSystem.h"
-#include <CommonC/Common.h>
 #include <threads.h>
 #include <stdatomic.h>
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "PixelDataStatic.h"
-#include <CommonC/Common.h>
 
 typedef struct {
     CCData buffer[4];

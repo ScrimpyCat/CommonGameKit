@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "AnimationSystem.h"
 #include <threads.h>
-#include <CommonC/Common.h>
 #include "AnimationComponent.h"
 #include "AnimationKeyframeComponent.h"
 #include "AnimationInterpolateComponent.h"

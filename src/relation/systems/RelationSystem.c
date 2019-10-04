@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "RelationSystem.h"
 #include <threads.h>
-#include <CommonC/Common.h>
 #include "RelationParentComponent.h"
+

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "EqualityExpressions.h"
 //TODO: Make an ulps option (ulps: integer) for the equals expression
 static _Bool CCEqualityExpressionCompare(CCExpression Left, CCExpression Right)

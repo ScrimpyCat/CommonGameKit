@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "PixelData.h"
-#include <CommonC/Common.h>
 
 static void CCPixelDataDestructor(CCPixelData Pixels)
 {

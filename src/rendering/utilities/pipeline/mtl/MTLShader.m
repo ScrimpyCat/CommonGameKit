@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #import "MTLShader.h"
 
 static MTLGFXShader ShaderConstructor(CCAllocatorType Allocator, CFTypeRef Vertex, CFTypeRef Fragment);

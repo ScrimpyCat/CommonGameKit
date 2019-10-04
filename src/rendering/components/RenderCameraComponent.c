@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "RenderCameraComponent.h"
 
 const CCString CCRenderCameraComponentName = CC_STRING("camera");

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #import "MTLCommandBuffer.h"
 
 static MTLGFXCommandBuffer MTLCommandBufferConstructor(CCAllocatorType Allocator);

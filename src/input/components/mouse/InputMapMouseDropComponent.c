@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "InputMapMouseDropComponent.h"
 
 const CCString CCInputMapMouseDropComponentName = CC_STRING("input_map_mouse_drop");

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #import "GLSetup.h"
 #import <CommonC/Platform.h>
 #import <CommonC/Types.h>

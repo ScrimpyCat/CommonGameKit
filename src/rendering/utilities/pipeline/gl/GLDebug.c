@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "GLSetup.h"
 #include "GLDebug.h"
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 static const char * const ErrorString[] = {
     "GL_INVALID_ENUM",

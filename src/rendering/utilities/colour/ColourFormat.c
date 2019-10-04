@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "ColourFormat.h"
-#include <CommonC/Common.h>
+#include <CommonGameKit/Base.h>
 
 //Retrieves channels for the specified plane, and restructures the channel offsets so they're ordered in the plane
 size_t CCColourFormatChannelsInPlanar(CCColourFormat ColourFormat, CCColourFormat PlanarIndex, CCColourFormat Channels[4])

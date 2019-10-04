@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "RelationParentComponent.h"
 #include "ComponentExpressions.h"
 #include "EntityExpressions.h"

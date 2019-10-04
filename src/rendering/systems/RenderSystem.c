@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "RenderSystem.h"
 #include <threads.h>
-#include <CommonC/Common.h>
 #include "GFX.h"
 
 static _Bool CCRenderSystemTryLock(CCComponentSystemHandle *System);

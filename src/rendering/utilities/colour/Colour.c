@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "Colour.h"
-#include <CommonC/Common.h>
 
 
 static CCColourComponent CCColourRGBGetComponent(CCColour Colour, CCColourFormat Index, CCColourFormat Type, int Precision);
