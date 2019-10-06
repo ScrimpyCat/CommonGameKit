@@ -108,7 +108,9 @@ func(__VA_ARGS__, CCTextAlignment); \
 func(__VA_ARGS__, CCTextDrawable); \
 func(__VA_ARGS__, CCText); \
 func(__VA_ARGS__, CCTextVisibility); \
-func(__VA_ARGS__, CCTextAttribute);
+func(__VA_ARGS__, CCTextAttribute); \
+func(__VA_ARGS__, CC_CONTAINER(CCOrderedCollection, CCTextAttribute)); \
+func(__VA_ARGS__, CC_CONTAINER(CCCollection, CCTextAttribute));
 
 #define CC_CUSTOM_COMMON_GAME_KIT_TYPES_(func, ...) \
 func(__VA_ARGS__, CCAnimationType); \
@@ -192,7 +194,9 @@ func(__VA_ARGS__, CCTextAlignment); \
 func(__VA_ARGS__, CCTextDrawable); \
 func(__VA_ARGS__, CCText); \
 func(__VA_ARGS__, CCTextVisibility); \
-func(__VA_ARGS__, CCTextAttribute);
+func(__VA_ARGS__, CCTextAttribute); \
+func(__VA_ARGS__, CC_CONTAINER(CCOrderedCollection, CCTextAttribute)); \
+func(__VA_ARGS__, CC_CONTAINER(CCCollection, CCTextAttribute));
 
 #ifndef CC_CUSTOM_TYPES
 #define CC_CUSTOM_TYPES CC_CUSTOM_COMMON_GAME_KIT_TYPES
