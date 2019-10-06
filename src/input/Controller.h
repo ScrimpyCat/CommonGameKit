@@ -61,7 +61,7 @@ typedef CC_NEW CCString (*CCControllerGetNameCallback)(size_t Index);
  * @param Axes The list of controller axes. Axes must be of type @b float. The collection will either be
  *        empty or populated with the previous axes' values.
  */
-typedef void (*CCControllerUpdateAxesCallback)(size_t Index, CCOrderedCollection Axes);
+typedef void (*CCControllerUpdateAxesCallback)(size_t Index, CCOrderedCollection(float) Axes);
 
 /*!
  * @brief A callback to update the buttons of a controller.
@@ -70,7 +70,7 @@ typedef void (*CCControllerUpdateAxesCallback)(size_t Index, CCOrderedCollection
  *        a down state and FALSE represents an up state. The collection will either be empty or populated
  *        with the previous buttons' values.
  */
-typedef void (*CCControllerUpdateButtonsCallback)(size_t Index, CCOrderedCollection Buttons);
+typedef void (*CCControllerUpdateButtonsCallback)(size_t Index, CCOrderedCollection(_Bool) Buttons);
 
 /*!
  * @brief Setup the controller manager.

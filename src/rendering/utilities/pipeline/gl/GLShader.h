@@ -29,6 +29,8 @@
 #include "GLGFX_Private.h"
 #include "GLSetup.h"
 
+CC_DICTIONARY_DECLARE(CCString, GLShaderAttributeInfo);
+CC_DICTIONARY_DECLARE(CCString, GLShaderUniformInfo);
 
 typedef struct {
     enum {
@@ -54,8 +56,8 @@ typedef struct {
 
 typedef struct {
     GLuint program;
-    CCDictionary attributes;
-    CCDictionary uniforms;
+    CCDictionary(CCString, GLShaderAttributeInfo) attributes;
+    CCDictionary(CCString, GLShaderUniformInfo) uniforms;
 } GLShaderInfo, *GLShader;
 
 extern const GFXShaderInterface GLShaderInterface;

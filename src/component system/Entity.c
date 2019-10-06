@@ -32,10 +32,10 @@
 
 typedef struct CCEntityInfo {
     CCString id;
-    CCCollection components;
+    CCCollection(CCComponent) components;
 } CCEntityInfo;
 
-static void CCEntityComponentDestructor(CCCollection Collection, CCComponent *Component)
+static void CCEntityComponentDestructor(CCCollection(CCComponent) Collection, CCComponent *Component)
 {
     CCComponentSetEntity(*Component, NULL);
     CCComponentDestroy(*Component);
@@ -89,7 +89,7 @@ void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
     CCCollectionRemoveElement(Entity->components, CCCollectionFindElement(Entity->components, &Component, NULL)); //TODO: will components be attached/detached from multiple threads?
 }
 
-CCCollection CCEntityGetComponents(CCEntity Entity)
+CCCollection(CCComponent) CCEntityGetComponents(CCEntity Entity)
 {
     return Entity->components; //TODO: will components be attached/detached from multiple threads?
 }

@@ -27,6 +27,8 @@
 #include "AnimationInterpolateComponent.h"
 #include "ComponentExpressions.h"
 
+CC_DICTIONARY_DECLARE(CCString, CCAnimationInterpolator);
+
 const CCString CCAnimationInterpolateComponentName = CC_STRING("animation_interpolate");
 
 static const CCComponentExpressionDescriptor CCAnimationInterpolateComponentDescriptor = {
@@ -48,7 +50,7 @@ void CCAnimationInterpolateComponentDeregister(void)
     CCComponentDeregister(CC_ANIMATION_INTERPOLATE_COMPONENT_ID);
 }
 
-static CCDictionary Interpolators;
+static CCDictionary(CCString, CCAnimationInterpolator) Interpolators;
 void CCAnimationInterpolateComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)

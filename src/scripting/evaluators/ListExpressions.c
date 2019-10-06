@@ -26,7 +26,7 @@
 #define CC_QUICK_COMPILE
 #include "ListExpressions.h"
 
-static _Bool CCListExpressionGetElement(CCCollection List, CCExpression IndexExpr, CCExpression *Element)
+static _Bool CCListExpressionGetElement(CCCollection(CCExpression) List, CCExpression IndexExpr, CCExpression *Element)
 {
     if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger)
     {
@@ -57,7 +57,7 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
         CCExpression ListExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
         if (CCExpressionGetType(ListExpr) == CCExpressionValueTypeList)
         {
-            CCCollection List = CCExpressionGetList(ListExpr);
+            CCCollection(CCExpression) List = CCExpressionGetList(ListExpr);
             CCExpression Element;
             if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeList)
             {
@@ -123,7 +123,7 @@ static int CCListExpressionIndexCompareAscending(const int32_t *Left, const int3
     return 0;
 }
 
-static CCExpression CCListExpressionDropCopy(CCCollection List, const int32_t *Indexes, size_t IndexCount)
+static CCExpression CCListExpressionDropCopy(CCCollection(CCExpression) List, const int32_t *Indexes, size_t IndexCount)
 {
     size_t Index = 0, SkipIndex = 0;
     CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -148,7 +148,7 @@ CCExpression CCListExpressionDrop(CCExpression Expression)
         CCExpression ListExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
         if (CCExpressionGetType(ListExpr) == CCExpressionValueTypeList)
         {
-            CCCollection List = CCExpressionGetList(ListExpr);
+            CCCollection(CCExpression) List = CCExpressionGetList(ListExpr);
             size_t Count = CCCollectionGetCount(List);
             
             if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeList)

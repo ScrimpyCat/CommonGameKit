@@ -36,7 +36,7 @@ typedef enum {
 
 typedef union {
     ///Array of @b CCChar
-    CCArray letters;
+    CCArray(CCChar) letters;
     size_t offset;
 } CCFontCharMap;
 
@@ -72,7 +72,7 @@ typedef struct CCFontInfo *CCFont;
  * @param Texture The texture.
  * @return The font. Must be destroyed.
  */
-CC_NEW CCFont CCFontCreate(CCAllocatorType Allocator, CCString CC_COPY(Name), CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap CC_RETAIN(Map), CCArray CC_RETAIN(Glyphs), GFXTexture CC_RETAIN(Texture));
+CC_NEW CCFont CCFontCreate(CCAllocatorType Allocator, CCString CC_COPY(Name), CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap CC_RETAIN(Map), CCArray(CCFontGlyph) CC_RETAIN(Glyphs), GFXTexture CC_RETAIN(Texture));
 
 /*!
  * @brief Destroy the font.

@@ -39,13 +39,13 @@ static struct {
     _Atomic(CCMouseButtonMap) buttons[CCMouseButtonCount];
 } Mouse;
 
-void CCMouseDropInput(CCCollection Files)
+void CCMouseDropInput(CCCollection(CCString) Files)
 {
     CCAssertLog(Files, "Files must not be null");
     
     CCMouseMap State = { .position = atomic_load(&Mouse.position), .drop = { .files = Files } };
     
-    CCCollection InputFileDrops = CCInputSystemGetComponents(CCInputMapTypeMouseDrop);
+    CCCollection(CCComponent) InputFileDrops = CCInputSystemGetComponents(CCInputMapTypeMouseDrop);
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(InputFileDrops, &Enumerator);
@@ -63,7 +63,7 @@ void CCMouseScrollInput(CCVector2D ScrollDelta)
 {
     CCMouseMap State = { .position = atomic_load(&Mouse.position), .scroll = { .delta = ScrollDelta } };
     
-    CCCollection InputScrolls = CCInputSystemGetComponents(CCInputMapTypeMouseScroll);
+    CCCollection(CCComponent) InputScrolls = CCInputSystemGetComponents(CCInputMapTypeMouseScroll);
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(InputScrolls, &Enumerator);
@@ -88,7 +88,7 @@ void CCMouseButtonInput(CCMouseButton Button, CCKeyboardAction Action, CCKeyboar
         
         CCMouseMap State = { .position = atomic_load(&Mouse.position), .button = ButtonMap };
         
-        CCCollection InputButtons = CCInputSystemGetComponents(CCInputMapTypeMouseButton);
+        CCCollection(CCComponent) InputButtons = CCInputSystemGetComponents(CCInputMapTypeMouseButton);
         
         CCEnumerator Enumerator;
         CCCollectionGetEnumerator(InputButtons, &Enumerator);
@@ -117,7 +117,7 @@ void CCMousePositionInput(CCVector2D Position)
     
     CCMouseMap State = { .position = atomic_load(&Mouse.position), .move = { .delta = Delta } };
     
-    CCCollection InputPositions = CCInputSystemGetComponents(CCInputMapTypeMousePosition);
+    CCCollection(CCComponent) InputPositions = CCInputSystemGetComponents(CCInputMapTypeMousePosition);
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(InputPositions, &Enumerator);

@@ -81,12 +81,12 @@ typedef struct {
 /*!
  * @brief Generic system update callback.
  */
-typedef void (*CCComponentSystemUpdateCallback)(CCComponentSystemHandle *Handle, void *Context, CCCollection Components);
+typedef void (*CCComponentSystemUpdateCallback)(CCComponentSystemHandle *Handle, void *Context, CCCollection(CCComponent) Components);
 
 /*!
  * @brief Time based system update callback.
  */
-typedef void (*CCComponentSystemTimedUpdateCallback)(CCComponentSystemHandle *Handle, double DeltaTime, CCCollection Components);
+typedef void (*CCComponentSystemTimedUpdateCallback)(CCComponentSystemHandle *Handle, double DeltaTime, CCCollection(CCComponent) Components);
 
 
 /*!
@@ -208,12 +208,14 @@ void CCComponentSystemRemoveComponent(CCComponent CC_DESTROY(Component));
  */
 CCComponentSystemHandle *CCComponentSystemHandlesComponentID(CCComponentID ComponentID);
 
+#define CC_CONTAINER_TYPE_DISABLE
 /*!
  * @brief Get the mailbox for the system.
  * @param id The unique ID of the system.
  * @return The mailbox for the system.
  */
-CCConcurrentQueue CCComponentSystemGetMailbox(CCComponentSystemID id);
+CCConcurrentQueue(CCMessage *) CCComponentSystemGetMailbox(CCComponentSystemID id);
+#undef CC_CONTAINER_TYPE_DISABLE
 
 /*!
  * @brief Get the current components for the system.
@@ -221,7 +223,7 @@ CCConcurrentQueue CCComponentSystemGetMailbox(CCComponentSystemID id);
  * @param id The unique ID of the system.
  * @return The current component list.
  */
-CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
+CCCollection(CCComponent) CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Get the current added components for the system.
@@ -233,7 +235,7 @@ CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id);
  * @param id The unique ID of the system.
  * @return The list of the added components. Note: This collection must be destroyed.
  */
-CC_NEW CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id);
+CC_NEW CCCollection(CCComponent) CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Get the current removed components for the system.
@@ -245,7 +247,7 @@ CC_NEW CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSyst
  * @param id The unique ID of the system.
  * @return The component list of the removed components. Note: This collection must be destroyed.
  */
-CC_NEW CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id);
+CC_NEW CCCollection(CCComponent) CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id);
 
 /*!
  * @brief Attempt to lock the system.

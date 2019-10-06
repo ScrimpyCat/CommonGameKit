@@ -176,7 +176,7 @@ static const struct {
     { .modifier = CC_STRING(":super"), .flag = CCKeyboardModifierSuper }
 };
 
-static CCDictionary Keycodes = NULL, Modifiers = NULL;
+static CCDictionary(CCString, CCKeyboardKeycode) Keycodes = NULL, Modifiers = NULL;
 
 void CCInputMapKeyboardComponentRegister(void)
 {

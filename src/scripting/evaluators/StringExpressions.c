@@ -124,7 +124,7 @@ CCExpression CCStringExpressionConcatenate(CCExpression Expression)
         CCExpression StringsExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         if (CCExpressionGetType(StringsExpr) == CCExpressionValueTypeList)
         {
-            CCOrderedCollection Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCString), NULL);
+            CCOrderedCollection(CCString) Strings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered, sizeof(CCString), NULL);
             CC_COLLECTION_FOREACH(CCExpression, String, CCExpressionGetList(StringsExpr))
             {
                 if (CCExpressionGetType(String) == CCExpressionValueTypeString)
@@ -301,7 +301,7 @@ CCExpression CCStringExpressionSeparate(CCExpression Expression)
                 Occurrences[Index++] = CCExpressionGetString(Occurrence);
             }
             
-            CCOrderedCollection Strings = CCStringCreateBySeparatingOccurrencesOfGroupedStrings(CCExpressionGetString(StringExpr), Occurrences, Index);
+            CCOrderedCollection(CCString) Strings = CCStringCreateBySeparatingOccurrencesOfGroupedStrings(CCExpressionGetString(StringExpr), Occurrences, Index);
             CC_TEMP_Free(Occurrences);
             
             CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);

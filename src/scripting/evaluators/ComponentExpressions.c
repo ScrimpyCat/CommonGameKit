@@ -34,7 +34,10 @@
 
 static CCExpression CCComponentExpressionWrapper(CCExpression Expression);
 
-static CCDictionary ComponentDescriptorsName = NULL, ComponentDescriptorsID = NULL;
+#define CC_CONTAINER_TYPE_DISABLE
+static CCDictionary(CCString, CCComponentExpressionDescriptor *) ComponentDescriptorsName = NULL;
+static CCDictionary(CCComponentID, CCComponentExpressionDescriptor *) ComponentDescriptorsID = NULL;
+#undef CC_CONTAINER_TYPE_DISABLE
 void CCComponentExpressionRegister(CCString Name, const CCComponentExpressionDescriptor *Descriptor, _Bool Wrapper)
 {
     if (!ComponentDescriptorsName)
@@ -565,7 +568,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                             case CCComponentExpressionArgumentTypeTextAttribute:
                                 if (ArgType == CCExpressionValueTypeList)
                                 {
-                                    CCOrderedCollection AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+                                    CCOrderedCollection(CCTextAttribute) AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
                                     
                                     CCEnumerator Enumerator;
                                     CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);
@@ -573,7 +576,7 @@ _Bool CCComponentExpressionDeserializeArgument(CCComponent Component, CCExpressi
                                     CCCollectionEnumeratorNext(&Enumerator);
                                     CCGraphicsExpressionGetTextOptions(&Enumerator, AttributedStrings, NULL, NULL, NULL, NULL);
                                     
-                                    ((void(*)(CCComponent,CCOrderedCollection))Deserializer[Loop].setter)(Component, AttributedStrings);
+                                    ((void(*)(CCComponent,CCOrderedCollection(CCTextAttribute)))Deserializer[Loop].setter)(Component, AttributedStrings);
                                     
                                     if ((Deserializer[Loop].setterType & CCComponentExpressionArgumentTypeOwnershipMask) == CCComponentExpressionArgumentTypeOwnershipRetain) CCCollectionDestroy(AttributedStrings);
                                     return TRUE;

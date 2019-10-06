@@ -36,7 +36,7 @@ static CCExpression CCExpressionRetainValueCopy(CCExpression Value);
 const CCExpressionValueCopy CCExpressionRetainedValueCopy = CCExpressionRetainValueCopy;
 
 
-static void CCExpressionElementDestructor(CCCollection Collection, CCExpression *Element)
+static void CCExpressionElementDestructor(CCCollection(CCExpression) Collection, CCExpression *Element)
 {
     CCExpressionDestroy(*Element);
 }
@@ -50,7 +50,7 @@ static CCExpression CCExpressionValueListCopy(CCExpression Value)
 {
     CCExpression Copy = CCExpressionCreateList(Value->allocator);
     
-    CCOrderedCollection List = CCExpressionGetList(Copy);
+    CCOrderedCollection(CCExpression) List = CCExpressionGetList(Copy);
     CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Value))
     {
         CCExpression CopiedElement = CCExpressionCopy(Element);
@@ -393,7 +393,7 @@ static CCExpression CCExpressionDeepFindEquivalentExpression(CCExpression Root, 
     
     Root = CCExpressionDeepFindEquivalentExpression(Root, Super);
     
-    CCOrderedCollection List = CCExpressionGetList(Super);
+    CCOrderedCollection(CCExpression) List = CCExpressionGetList(Super);
     const size_t Index = CCOrderedCollectionGetIndex(List, CCCollectionFindElement(List, &Expression, NULL));
     
     return *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Root), Index);
@@ -863,6 +863,8 @@ typedef struct {
     CCExpression invalidate;
 } CCExpressionStateValue;
 
+CC_DICTIONARY_DECLARE(CCString, CCExpressionStateValue);
+
 static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression, CCString Name)
 {
     if (!Expression) return NULL;
@@ -880,7 +882,7 @@ static CCExpressionStateValue *CCExpressionGetStateValue(CCExpression Expression
     return CCExpressionGetStateValue(Expression->state.super, Name);
 }
 
-static void CCExpressionStateValueElementDestructor(CCDictionary Dictionary, CCExpressionStateValue *Element)
+static void CCExpressionStateValueElementDestructor(CCDictionary(CCString, CCExpressionStateValue) Dictionary, CCExpressionStateValue *Element)
 {
     if (Element->value) CCExpressionDestroy(Element->value);
     if (Element->invalidate) CCExpressionDestroy(Element->invalidate);

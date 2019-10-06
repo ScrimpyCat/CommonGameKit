@@ -83,7 +83,7 @@ CCExpression CCIOExpressionSearch(CCExpression Expression)
         return Expression;
     }
     
-    CCCollection Matches = NULL;
+    CCCollection(FSPath) Matches = NULL;
     CCExpression *MatchArg = CCCollectionEnumeratorNext(&Enumerator);
     if (MatchArg)
     {
@@ -124,7 +124,7 @@ CCExpression CCIOExpressionSearch(CCExpression Expression)
     FSPath Path = NULL;
     CC_STRING_TEMP_BUFFER(Buffer, CCExpressionGetString(CurrentDir)) Path = FSPathCreate(Buffer);
     
-    CCOrderedCollection Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSearchRecursively);
+    CCOrderedCollection(FSPath) Paths = FSManagerGetContentsAtPath(Path, Matches, FSMatchSkipHidden | FSMatchSearchRecursively);
     
     FSPathDestroy(Path);
     

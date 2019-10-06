@@ -42,12 +42,14 @@ typedef struct {
     //TODO: Dependencies
 } CCComponentInfo;
 
-static void CCComponentListElementDestructor(CCCollection Collection, CCComponentInfo *Element)
+CC_COLLECTION_DECLARE(CCComponentInfo);
+
+static void CCComponentListElementDestructor(CCCollection(CCComponentInfo) Collection, CCComponentInfo *Element)
 {
     if (Element->name) CCStringDestroy(Element->name);
 }
 
-static CCCollection ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
+static CCCollection(CCComponentInfo) ComponentList = NULL; //TODO: Probably more optimal if it is a hashmap
 void CCComponentRegister(CCComponentID id, CCString Name, CCAllocatorType Allocator, size_t Size, CCComponentInitializer Initializer, CCComponentMessageHandler MessageHandler, CCComponentDestructor Destructor)
 {
     if (!ComponentList) ComponentList = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyFinding, sizeof(CCComponentInfo), (CCCollectionElementDestructor)CCComponentListElementDestructor);

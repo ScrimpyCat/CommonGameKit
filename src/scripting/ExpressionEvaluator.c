@@ -27,9 +27,10 @@
 #include "ExpressionEvaluator.h"
 #include <inttypes.h>
 
+CC_ARRAY_DECLARE(CCExpressionEvaluator);
 
-static CCArray Evaluators = NULL;
-static CCDictionary EvaluatorList = NULL;
+static CCArray(CCExpressionEvaluator) Evaluators = NULL;
+static CCDictionary(CCString, size_t) EvaluatorList = NULL;
 void CCExpressionEvaluatorRegister(CCString Name, CCExpressionEvaluator Evaluator)
 {
     if (!EvaluatorList)

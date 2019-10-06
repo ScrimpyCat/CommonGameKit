@@ -33,6 +33,8 @@ typedef struct {
     _Bool isInteger;
 } CCMathExpressionValue;
 
+CC_ARRAY_DECLARE(CCMathExpressionValue);
+
 CCExpression CCMathExpressionAddition(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
@@ -47,7 +49,7 @@ CCExpression CCMathExpressionAddition(CCExpression Expression)
     float SumF = 0.0f;
     
     _Bool IsInteger = TRUE;
-    CCArray Vector = NULL;
+    CCArray(CCMathExpressionValue) Vector = NULL;
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
@@ -194,7 +196,7 @@ CCExpression CCMathExpressionSubtract(CCExpression Expression)
     
     int32_t FirstI = 0, SumI = 0;
     float FirstF = 0.0f, SumF = 0.0f;
-    CCArray FirstVector = NULL, Vector = NULL;
+    CCArray(CCMathExpressionValue) FirstVector = NULL, Vector = NULL;
     
     _Bool IsInteger = TRUE;
     
@@ -453,7 +455,7 @@ CCExpression CCMathExpressionMultiply(CCExpression Expression)
     
     int32_t ProdI = 1;
     float ProdF = 1.0f;
-    CCArray FirstVector = NULL, Vector = NULL;
+    CCArray(CCMathExpressionValue) FirstVector = NULL, Vector = NULL;
     
     _Bool IsInteger = TRUE;
     
@@ -712,7 +714,7 @@ CCExpression CCMathExpressionDivide(CCExpression Expression)
     
     int32_t FirstI = 0, ProdI = 1;
     float FirstF = 0.0f, ProdF = 1.0f;
-    CCArray FirstVector = NULL, Vector = NULL;
+    CCArray(CCMathExpressionValue) FirstVector = NULL, Vector = NULL;
     
     _Bool IsInteger = TRUE;
     

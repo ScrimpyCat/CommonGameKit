@@ -144,7 +144,7 @@ typedef struct CCExpressionState {
     CCDictionary values;
     CCExpression super;
     CCExpression result;
-    CCCollection remove;
+    CCCollection(CCCollectionEntry) remove;
     CCExpression private;
 } CCExpressionState;
 
@@ -164,11 +164,11 @@ typedef struct CCExpressionValue {
         CCString string;
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
         struct {
-            CCOrderedCollection items;
+            CCOrderedCollection(CCExpression) items;
             _Bool constant;
         } list;
 #else
-        CCOrderedCollection list;
+        CCOrderedCollection(CCExpression) list;
 #endif
         void *data;
     };
@@ -346,7 +346,7 @@ static inline CCExpressionAtomType CCExpressionGetAtomType(CCExpression Expressi
 static inline int32_t CCExpressionGetInteger(CCExpression Expression);
 static inline float CCExpressionGetFloat(CCExpression Expression);
 static inline CCString CCExpressionGetString(CCExpression Expression);
-static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression);
+static inline CCOrderedCollection(CCExpression) CCExpressionGetList(CCExpression Expression);
 static inline void *CCExpressionGetData(CCExpression Expression);
 
 static inline CCExpression CCExpressionStateGetSuperRoot(CCExpression Expression);
@@ -432,7 +432,7 @@ static inline CCString CCExpressionGetString(CCExpression Expression)
     return CCExpressionIsTagged(Expression) ? (CCString)Expression : Expression->string;
 }
 
-static inline CCOrderedCollection CCExpressionGetList(CCExpression Expression)
+static inline CCOrderedCollection(CCExpression) CCExpressionGetList(CCExpression Expression)
 {
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
     return Expression->list.items;

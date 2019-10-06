@@ -69,14 +69,14 @@ void CCTextDestroy(CCText CC_DESTROY(Text));
  * @return The list of draw operation. Submit them or make changes to them.
  *         Note: Must destroy the collection.
  */
-CC_NEW CCOrderedCollection CCTextGetDrawables(CCText Text);
+CC_NEW CCOrderedCollection(CCTextDrawable) CCTextGetDrawables(CCText Text);
 
 /*!
  * @brief Set the string to be rendered.
  * @param Text The text.
  * @param AttributedStrings The collection of @b CCTextAttribute
  */
-void CCTextSetString(CCText Text, CCOrderedCollection CC_RETAIN(AttributedStrings));
+void CCTextSetString(CCText Text, CCOrderedCollection(CCTextAttribute) CC_RETAIN(AttributedStrings));
 
 /*!
  * @brief Set alignment of the text.

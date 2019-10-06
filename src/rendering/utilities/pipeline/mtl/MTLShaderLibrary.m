@@ -52,7 +52,7 @@ static void ShaderLibraryDestroy(MTLGFXShaderLibrary Library)
     if (Library->sources) CCDictionaryDestroy(Library->sources);
 }
 
-void ShaderLibrarySourceElementDestructor(CCDictionary Dictionary, CFTypeRef *Element)
+void ShaderLibrarySourceElementDestructor(CCDictionary(CCString, CFTypeRef) Dictionary, CFTypeRef *Element)
 {
     CFRelease(*Element);
 }

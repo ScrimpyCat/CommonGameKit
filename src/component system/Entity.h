@@ -72,6 +72,6 @@ void CCEntityDetachComponent(CCEntity Entity, CCComponent CC_DESTROY(Component))
 * @brief Get the current components for the entity.
 * @return The current component list.
 */
-CCCollection CCEntityGetComponents(CCEntity Entity);
+CCCollection(CCComponent) CCEntityGetComponents(CCEntity Entity);
 
 #endif

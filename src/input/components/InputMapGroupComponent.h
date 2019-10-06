@@ -35,14 +35,14 @@ extern const CCString CCInputMapGroupComponentName;
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCInputMapComponentClass);
-    CCOrderedCollection inputMaps;
+    CCOrderedCollection(CCComponent) inputMaps;
     _Bool wantsAllActive;
 } CCInputMapGroupComponentClass, *CCInputMapGroupComponentPrivate;
 
 
 void CCInputMapGroupComponentRegister(void);
 void CCInputMapGroupComponentDeregister(void);
-void CCInputMapGroupComponentElementDestructor(CCCollection Collection, CCComponent *Element);
+void CCInputMapGroupComponentElementDestructor(CCCollection(CCComponent) Collection, CCComponent *Element);
 void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
@@ -64,7 +64,7 @@ static inline void CCInputMapGroupComponentDeallocate(CCComponent Component);
  * @param Component The input map group component.
  * @return The input maps apart of this group.
  */
-static inline CCOrderedCollection CCInputMapGroupComponentGetInputMaps(CCComponent Component);
+static inline CCOrderedCollection(CCComponent) CCInputMapGroupComponentGetInputMaps(CCComponent Component);
 
 /*!
  * @brief Add an input map to the group.
@@ -114,7 +114,7 @@ static inline void CCInputMapGroupComponentDeallocate(CCComponent Component)
     CCInputMapComponentDeallocate(Component);
 }
 
-static inline CCOrderedCollection CCInputMapGroupComponentGetInputMaps(CCComponent Component)
+static inline CCOrderedCollection(CCComponent) CCInputMapGroupComponentGetInputMaps(CCComponent Component)
 {
     return ((CCInputMapGroupComponentPrivate)Component)->inputMaps;
 }

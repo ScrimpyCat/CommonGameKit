@@ -50,7 +50,7 @@ void CCInputMapGroupComponentDeregister(void)
     CCComponentDeregister(CC_INPUT_MAP_GROUP_COMPONENT_ID);
 }
 
-void CCInputMapGroupComponentElementDestructor(CCCollection Collection, CCComponent *Element)
+void CCInputMapGroupComponentElementDestructor(CCCollection(CCComponent) Collection, CCComponent *Element)
 {
     CCComponentDestroy(*Element);
 }

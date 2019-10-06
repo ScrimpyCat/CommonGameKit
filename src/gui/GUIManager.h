@@ -77,7 +77,7 @@ void GUIManagerRemoveObject(GUIObject CC_DESTROY(Object));
  * @warning Should obtain locks to the GUI manager prior to calling this function.
  * @return The current GUI object list.
  */
-CCCollection GUIManagerGetObjects(void);
+CCCollection(GUIObject) GUIManagerGetObjects(void);
 
 /*!
  * @brief Find the parent GUI object in the manager with the given namespace.

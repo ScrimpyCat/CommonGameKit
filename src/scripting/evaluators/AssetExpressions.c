@@ -277,7 +277,7 @@ CCExpression CCAssetExpressionFont(CCExpression Expression)
         int32_t LineHeight = 0, Base = 0;
         GFXTexture Texture = NULL;
         CCFontStyle FontStyle = 0;
-        CCArray Glyphs = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCFontGlyph), 1), Letters = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCChar), 1);
+        CCArray(CCFontGlyph) Glyphs = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCFontGlyph), 1), Letters = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCChar), 1);
         size_t Offset = 0;
         CCChar PrevChr = 0;
         

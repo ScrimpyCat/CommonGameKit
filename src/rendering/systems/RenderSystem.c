@@ -32,7 +32,7 @@ static _Bool CCRenderSystemTryLock(CCComponentSystemHandle *System);
 static void CCRenderSystemLock(CCComponentSystemHandle *System);
 static void CCRenderSystemUnlock(CCComponentSystemHandle *System);
 static _Bool CCRenderSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
-static void CCRenderSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components);
+static void CCRenderSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection(CCComponent) Components);
 static void CCRenderSystemLoadResources(void);
 static void CCRenderSystemUnloadResources(void);
 
@@ -111,7 +111,7 @@ static GFXShader DemoShader;
 static GFXBuffer VertBuffer;
 static GFXDraw Drawer;
 static GFXBuffer IBO;
-static void CCRenderSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components)
+static void CCRenderSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection(CCComponent) Components)
 {
 //    printf("draw: %f\n", DeltaTime);
     

@@ -62,7 +62,7 @@ void CCEntityManagerRemoveEntity(CCEntity CC_DESTROY(Entity));
  * @warning Should obtain locks to the entity manager prior to calling this function.
  * @return The current entity list.
  */
-CCCollection CCEntityManagerGetEntities(void);
+CCCollection(CCEntity) CCEntityManagerGetEntities(void);
 
 /*!
  * @brief Attempt to lock the entity manager.

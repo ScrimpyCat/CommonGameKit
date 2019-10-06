@@ -36,8 +36,8 @@
 typedef struct {
     CCString name;
     double timestamp;
-    CCOrderedCollection axes;
-    CCOrderedCollection buttons;
+    CCOrderedCollection(float) axes;
+    CCOrderedCollection(_Bool) buttons;
     _Bool connected;
     atomic_flag lock;
 } CCController;

@@ -37,7 +37,7 @@ typedef struct {
     int32_t base;
     GFXTexture texture;
     CCFontCharMap map;
-    CCArray glyphs;
+    CCArray(CCFontGlyph) glyphs;
 } CCFontCharset;
 
 typedef struct CCFontInfo {
@@ -56,7 +56,7 @@ static void CCFontDestructor(CCFont Font)
     if ((!(Font->charset.type & CCFontCharsetTypeOffsetMap)) && (Font->charset.map.letters)) CCArrayDestroy(Font->charset.map.letters);
 }
 
-CCFont CCFontCreate(CCAllocatorType Allocator, CCString Name, CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray Glyphs, GFXTexture Texture)
+CCFont CCFontCreate(CCAllocatorType Allocator, CCString Name, CCFontStyle Style, uint32_t Size, int32_t LineHeight, int32_t Base, _Bool IsUnicode, _Bool SequentialMap, CCFontCharMap Map, CCArray(CCFontGlyph) Glyphs, GFXTexture Texture)
 {
     CCAssertLog(Name, "Must have a name");
     

@@ -44,7 +44,7 @@
 
 typedef struct {
     CCEntity entity;
-    CCCollection active, added, removed;
+    CCCollection(GUIObject) active, added, removed;
     atomic_flag addedLock, removedLock;
 } GUIManager;
 
@@ -73,7 +73,7 @@ static void GUIManagerEventKeyboardCallback(CCComponent Component, CCKeyboardMap
     GUIManagerUnlock();
 }
 
-static void GUIObjectDestructor(CCCollection Collection, GUIObject *Object)
+static void GUIObjectDestructor(CCCollection(GUIObject) Collection, GUIObject *Object)
 {
     GUIObjectDestroy(*Object);
 }
@@ -171,7 +171,7 @@ void GUIManagerUpdate(void)
     
     //Remove from active
     while (!atomic_flag_test_and_set(&ObjectManager.removedLock)) CC_SPIN_WAIT();
-    CCCollection Entries = CCCollectionFindCollection(ObjectManager.active, ObjectManager.removed, NULL);
+    CCCollection(CCCollectionEntry) Entries = CCCollectionFindCollection(ObjectManager.active, ObjectManager.removed, NULL);
     CCCollectionRemoveCollection(ObjectManager.active, Entries);
     CCCollectionDestroy(Entries);
     
@@ -223,7 +223,7 @@ void GUIManagerRemoveObject(GUIObject Object)
     atomic_flag_clear(&ObjectManager.removedLock);
 }
 
-CCCollection GUIManagerGetObjects(void)
+CCCollection(GUIObject) GUIManagerGetObjects(void)
 {
     return ObjectManager.active;
 }

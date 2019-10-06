@@ -39,7 +39,7 @@ CCExpression CCBitwiseExpressionAnd(CCExpression Expression)
     
     uint32_t SumI = UINT32_MAX;
     
-    CCArray Vector = NULL;
+    CCArray(uint32_t) Vector = NULL;
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
@@ -155,7 +155,7 @@ CCExpression CCBitwiseExpressionOr(CCExpression Expression)
     
     uint32_t SumI = 0;
     
-    CCArray Vector = NULL;
+    CCArray(uint32_t) Vector = NULL;
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
@@ -271,7 +271,7 @@ CCExpression CCBitwiseExpressionXor(CCExpression Expression)
     
     uint32_t SumI = 0;
     
-    CCArray Vector = NULL;
+    CCArray(uint32_t) Vector = NULL;
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);

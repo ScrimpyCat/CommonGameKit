@@ -43,7 +43,7 @@ typedef struct {
     CC_COMPONENT_INHERIT(CCAnimationComponentClass);
     CCOrderedCollection data;
     union {
-        CCOrderedCollection frames; //collection of doubles specifying how long each frame should last
+        CCOrderedCollection(double) frames; //collection of doubles specifying how long each frame should last
         double frame;
     };
     struct {
@@ -97,14 +97,14 @@ static inline void CCAnimationKeyframeComponentSetData(CCComponent Component, CC
  * @param Component The animation component.
  * @return The time steps.
  */
-static inline CCOrderedCollection CCAnimationKeyframeComponentGetFrames(CCComponent Component);
+static inline CCOrderedCollection(double) CCAnimationKeyframeComponentGetFrames(CCComponent Component);
 
 /*!
  * @brief Set the frame time steps for the animation.
  * @param Component The animation component.
  * @param Frames The times for each frame.
  */
-static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection CC_OWN(Frames));
+static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection(double) CC_OWN(Frames));
 
 /*!
  * @brief Get the frame time step for the animation.
@@ -229,12 +229,12 @@ static inline void CCAnimationKeyframeComponentSetData(CCComponent Component, CC
     ((CCAnimationKeyframeComponentPrivate)Component)->data = Data;
 }
 
-static inline CCOrderedCollection CCAnimationKeyframeComponentGetFrames(CCComponent Component)
+static inline CCOrderedCollection(double) CCAnimationKeyframeComponentGetFrames(CCComponent Component)
 {
     return ((CCAnimationKeyframeComponentPrivate)Component)->multipleFrames ? ((CCAnimationKeyframeComponentPrivate)Component)->frames : NULL;
 }
 
-static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection Frames)
+static inline void CCAnimationKeyframeComponentSetFrames(CCComponent Component, CCOrderedCollection(double) Frames)
 {
     if ((((CCAnimationKeyframeComponentPrivate)Component)->multipleFrames) && (((CCAnimationKeyframeComponentPrivate)Component)->frames)) CCCollectionDestroy(((CCAnimationKeyframeComponentPrivate)Component)->frames);
     

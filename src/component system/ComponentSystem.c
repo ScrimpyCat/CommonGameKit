@@ -46,7 +46,9 @@ typedef struct {
     
     CCComponentSystemUpdateCallback update;
     
-    CCConcurrentQueue mailbox;
+#define CC_CONTAINER_TYPE_DISABLE
+    CCConcurrentQueue(CCMessage *) mailbox;
+#undef CC_CONTAINER_TYPE_DISABLE
     CCComponentSystemMessageHandlerCallback messageHandler;
     
     CCComponentSystemHandlesComponentCallback handlesComponent;
@@ -58,21 +60,24 @@ typedef struct {
     CCComponentSystemUnlockCallback unlock;
     
     struct {
-        CCCollection active, added, removed, destroy;
+        CCCollection(CCComponent) active, added, removed, destroy;
         atomic_flag addedLock, removedLock;
     } components;
 } CCComponentSystem;
 
-static CCOrderedCollection Systems[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
+CC_COLLECTION_DECLARE(CCComponentSystem);
+CC_ORDERED_COLLECTION_DECLARE(CCComponentSystem);
+
+static CCOrderedCollection(CCComponentSystem) Systems[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 static double ElapsedTime[CCComponentSystemExecutionMax & CCComponentSystemExecutionTypeMask];
 
-static void CCComponentElementDestructor(CCCollection Collection, CCComponent *Component)
+static void CCComponentElementDestructor(CCCollection(CCComponent) Collection, CCComponent *Component)
 {
     CCComponentSetIsManaged(*Component, FALSE);
     CCComponentDestroy(*Component);
 }
 
-static void CCComponentSystemDestructor(CCCollection Collection, CCComponentSystem *System)
+static void CCComponentSystemDestructor(CCCollection(CCComponentSystem) Collection, CCComponentSystem *System)
 {
     if (System->components.active)
     {
@@ -160,7 +165,7 @@ void CCComponentSystemRun(CCComponentSystemExecutionType ExecutionType)
     CCCollectionGetEnumerator(Systems[ExecutionType], &Enumerator);
     for (CCComponentSystem *System = CCCollectionEnumeratorGetCurrent(&Enumerator); System; System = CCCollectionEnumeratorNext(&Enumerator))
     {
-        CCCollection ActiveComponents = System->components.active;
+        CCCollection(CCComponent) ActiveComponents = System->components.active;
         
         if (System->lock) System->lock(&System->handle);
         CCComponentSystemFlushMailbox(System);
@@ -283,23 +288,25 @@ void CCComponentSystemHandleMessage(CCComponentSystemID id, CCMessage *Message)
     }
 }
 
-CCConcurrentQueue CCComponentSystemGetMailbox(CCComponentSystemID id)
+#define CC_CONTAINER_TYPE_DISABLE
+CCConcurrentQueue(CCMessage *) CCComponentSystemGetMailbox(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
     return System->mailbox;
 }
+#undef CC_CONTAINER_TYPE_DISABLE
 
-CCCollection CCComponentSystemGetComponentsForSystem(CCComponentSystemID id)
+CCCollection(CCComponent) CCComponentSystemGetComponentsForSystem(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
     return System->components.active;
 }
 
-CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id)
+CCCollection(CCComponent) CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
     
-    CCCollection Added = NULL;
+    CCCollection(CCComponent) Added = NULL;
     if (System)
     {
         while (!atomic_flag_test_and_set(&System->components.addedLock)) CC_SPIN_WAIT();
@@ -316,11 +323,11 @@ CCCollection CCComponentSystemGetAddedComponentsForSystem(CCComponentSystemID id
     return Added;
 }
 
-CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id)
+CCCollection(CCComponent) CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID id)
 {
     CCComponentSystem *System = CCComponentSystemFind(id);
     
-    CCCollection Removed = NULL;
+    CCCollection(CCComponent) Removed = NULL;
     if (System)
     {
         CCCollectionDestroy(System->components.destroy);
@@ -333,7 +340,7 @@ CCCollection CCComponentSystemGetRemovedComponentsForSystem(CCComponentSystemID 
         atomic_flag_clear(&System->components.removedLock);
         
         
-        CCCollection Entries = CCCollectionFindCollection(System->components.active, System->components.destroy, NULL);
+        CCCollection(CCCollectionEntry) Entries = CCCollectionFindCollection(System->components.active, System->components.destroy, NULL);
         CCCollectionRemoveCollection(System->components.active, Entries);
         CCCollectionDestroy(Entries);
         

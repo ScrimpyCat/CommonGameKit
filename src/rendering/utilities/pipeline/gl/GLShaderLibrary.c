@@ -26,6 +26,8 @@
 #define CC_QUICK_COMPILE
 #include "GLShaderLibrary.h"
 
+CC_ARRAY_DECLARE(GLint);
+
 static GLShaderLibrary GLShaderLibraryConstructor(CCAllocatorType Allocator);
 static GLShaderLibrary GLShaderLibraryPrecompiledConstructor(CCAllocatorType Allocator, CCData Data);
 static void GLShaderLibraryDestructor(GLShaderLibrary Library);
@@ -50,7 +52,7 @@ const GFXShaderLibraryInterface GLShaderLibraryInterface = {
 };
 
 
-static void GLShaderLibraryElementDestructor(CCDictionary Dictionary, GLShaderLibrarySource *Element)
+static void GLShaderLibraryElementDestructor(CCDictionary(CCString, GLShaderLibrarySource) Dictionary, GLShaderLibrarySource *Element)
 {
     if (Element->type == GFXShaderSourceTypeHeader) CCFree(Element->source.header);
     else
@@ -113,8 +115,10 @@ static inline const char *GLShaderTypeString(GFXShaderSourceType Type)
     return NULL;
 }
 
-_Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCArray SectionLengths)
+#define CC_CONTAINER_TYPE_DISABLE
+_Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray(char *) Sections, CCArray(GLint) SectionLengths)
 {
+#undef CC_CONTAINER_TYPE_DISABLE
     const char *CurSource = Source, *Segment = Source, Include[] = "#include <";
     enum {
         GLShaderLibrarySourceTokenNone,
@@ -139,7 +143,7 @@ _Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray Sections, CCAr
                             Segment = End + 1;
                             
                             CCString Path = CCStringCreateWithSize(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, CurSource, End - CurSource);
-                            CCOrderedCollection Reference = CCStringCreateBySeparatingOccurrencesOfString(Path, CC_STRING("/"));
+                            CCOrderedCollection(CCString) Reference = CCStringCreateBySeparatingOccurrencesOfString(Path, CC_STRING("/"));
                             CCStringDestroy(Path);
                             
                             CCEnumerator Enumerator;
@@ -271,7 +275,10 @@ static const GLShaderSource GLShaderLibraryCompile(GLShaderLibrary Library, GFXS
     
     GLuint Shader = glCreateShader(GLShaderType(Type)); CC_GL_CHECK();
     
-    CCArray Sections = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(char*), 4), SectionLengths = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(GLint), 4);
+#define CC_CONTAINER_TYPE_DISABLE
+    CCArray(char *) Sections = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(char*), 4);
+#undef CC_CONTAINER_TYPE_DISABLE
+    CCArray(GLint) SectionLengths = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(GLint), 4);
     if (!GLShaderLibraryPreprocessSource(Source, Sections, SectionLengths))
     {
         CCArrayDestroy(Sections);

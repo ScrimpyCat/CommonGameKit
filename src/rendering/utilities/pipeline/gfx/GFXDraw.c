@@ -28,13 +28,13 @@
 #include "GFXMain.h"
 #include "Window.h"
 
-static void GFXDrawInputBufferElementDestructor(CCCollection Collection, GFXDrawInputBuffer *Element)
+static void GFXDrawInputBufferElementDestructor(CCCollection(GFXDrawInputBuffer) Collection, GFXDrawInputBuffer *Element)
 {
     GFXBufferDestroy(Element->buffer);
     CCStringDestroy(Element->input.name);
 }
 
-static void GFXDrawInputTextureElementDestructor(CCCollection Collection, GFXDrawInputTexture *Element)
+static void GFXDrawInputTextureElementDestructor(CCCollection(GFXDrawInputTexture) Collection, GFXDrawInputTexture *Element)
 {
     GFXTextureDestroy(Element->texture);
     CCStringDestroy(Element->input.name);
@@ -107,7 +107,7 @@ void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offse
     GFXMain->draw->indexedSubmit(Draw, Primitive, Offset, Count);
 }
 
-static void GFXDrawCacheShaderInputs(CCCollection Collection, GFXShader Shader)
+static void GFXDrawCacheShaderInputs(CCCollection(GFXDrawInput) Collection, GFXShader Shader)
 {
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(Collection, &Enumerator);

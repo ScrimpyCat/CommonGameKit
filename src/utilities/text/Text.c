@@ -27,14 +27,17 @@
 #include "Text.h"
 #include "AssetManager.h"
 
+CC_ARRAY_DECLARE(CCTextLineInfo);
+CC_ARRAY_DECLARE(CCTextCharInfo);
+
 typedef struct CCTextInfo {
     CCAllocatorType allocator;
-    CCOrderedCollection drawers;
-    CCOrderedCollection strings;
-    CCOrderedCollection selection;
-    CCOrderedCollection lines;
-    CCArray lineInfo;
-    CCArray charInfo;
+    CCOrderedCollection(CCTextDrawable) drawers;
+    CCOrderedCollection(CCTextAttribute) strings;
+    CCOrderedCollection(CCTextAttribute) selection;
+    CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) lines;
+    CCArray(CCTextLineInfo) lineInfo;
+    CCArray(CCTextCharInfo) charInfo;
     CCTextAlignment alignment;
     CCRect frame;
     struct {
@@ -131,12 +134,12 @@ typedef struct {
     //width
 } CCTextVertexData;
 
-static void CCTextDrawableElementDestructor(CCCollection Collection, CCTextDrawable *Drawable)
+static void CCTextDrawableElementDestructor(CCCollection(CCTextDrawable) Collection, CCTextDrawable *Drawable)
 {
     GFXDrawDestroy(Drawable->drawer);
 }
 
-CCOrderedCollection CCTextGetDrawables(CCText Text)
+CCOrderedCollection(CCTextDrawable) CCTextGetDrawables(CCText Text)
 {
     CCAssertLog(Text, "Text must not be null");
     
@@ -147,13 +150,13 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
      - The CCTextAttribute functions are not designed for optimal usage, later combine their operations.
      - The drawables should be ordered into groups that can be drawn together in a single call.
      */
-    CCOrderedCollection Drawables = CCCollectionCreate(Text->allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextDrawable), (CCCollectionElementDestructor)CCTextDrawableElementDestructor);
+    CCOrderedCollection(CCTextDrawable) Drawables = CCCollectionCreate(Text->allocator, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextDrawable), (CCCollectionElementDestructor)CCTextDrawableElementDestructor);
     
     Text->visible.length = 0;
     if (Text->strings)
     {
-        CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
-        CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
+        CCOrderedCollection(CCTextAttribute) Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
+        CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
         
         if (Text->selection) CCCollectionDestroy(Text->selection);
         Text->selection = Selection;
@@ -341,12 +344,12 @@ CCOrderedCollection CCTextGetDrawables(CCText Text)
     return CCRetain((Text->drawers = Drawables));
 }
 
-void CCTextSetString(CCText Text, CCOrderedCollection AttributedStrings)
+void CCTextSetString(CCText Text, CCOrderedCollection(CCTextAttribute) AttributedStrings)
 {
     CCAssertLog(Text, "Text must not be null");
     
     size_t Length = 0;
-    CCOrderedCollection Strings = NULL;
+    CCOrderedCollection(CCTextAttribute) Strings = NULL;
     if (AttributedStrings)
     {
         Strings = CCTextAttributeMerge(Text->allocator, AttributedStrings);
@@ -491,8 +494,8 @@ CCVector2D CCTextGetCursorPosition(CCText Text, size_t Offset)
         
         else if (Offset < CCArrayGetCount(Text->charInfo)) return ((CCTextCharInfo*)CCArrayGetElementAtIndex(Text->charInfo, Offset))->cursor;
         
-        CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
-        CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
+        CCOrderedCollection(CCTextAttribute) Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
+        CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
         
         if (Text->selection) CCCollectionDestroy(Text->selection);
         Text->selection = Selection;
@@ -586,8 +589,8 @@ size_t CCTextGetCursorOffset(CCText Text, CCVector2D Position)
             CCArrayRemoveAllElements(Text->charInfo);
         }
         
-        CCOrderedCollection Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
-        CCOrderedCollection Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
+        CCOrderedCollection(CCTextAttribute) Selection = (Text->selection && !(Text->changed & CCTextChangedSelection) ? CCRetain(Text->selection) : CCTextAttributeGetSelection(Text->allocator, Text->strings, Text->visible.controls.offset, Text->visible.controls.length));
+        CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) Lines = (Text->lines && !(Text->changed & CCTextChangedLines) ? CCRetain(Text->lines) : CCTextAttributeGetLines(Text->allocator, Selection, Text->visible.controls.options, Text->frame.size.x));
         
         if (Text->selection) CCCollectionDestroy(Text->selection);
         Text->selection = Selection;

@@ -42,7 +42,9 @@ typedef struct {
     //FSPath reference
 } CCAssetInfo;
 
-static CCDictionary Assets[CCAssetTypeCount] = {NULL};
+CC_DICTIONARY_DECLARE(CCString, CCAssetInfo);
+
+static CCDictionary(CCString, CCAssetInfo) Assets[CCAssetTypeCount] = {NULL};
 
 static void CCAssetElementDestructor(CCDictionary Dictionary, CCAssetInfo *Element)
 {

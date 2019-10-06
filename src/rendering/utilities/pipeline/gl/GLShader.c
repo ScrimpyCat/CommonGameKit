@@ -39,11 +39,11 @@ const GFXShaderInterface GLShaderInterface = {
 };
 
 
-static void GLShaderAttributeElementDestructor(CCDictionary Dictionary, GLShaderAttributeInfo *Element)
+static void GLShaderAttributeElementDestructor(CCDictionary(CCString, GLShaderAttributeInfo) Dictionary, GLShaderAttributeInfo *Element)
 {
 }
 
-static void GLShaderUniformElementDestructor(CCDictionary Dictionary, GLShaderUniformInfo *Element)
+static void GLShaderUniformElementDestructor(CCDictionary(CCString, GLShaderUniformInfo) Dictionary, GLShaderUniformInfo *Element)
 {
     CC_SAFE_Free(Element->value);
 }
@@ -268,7 +268,7 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
     GLenum Type;
     glGetProgramiv(Program, GL_ACTIVE_ATTRIBUTES, &Active); CC_GL_CHECK();
     
-    CCDictionary Attributes = CCDictionaryCreate(Allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(GLShaderAttributeInfo), &(CCDictionaryCallbacks){
+    CCDictionary(CCString, GLShaderAttributeInfo) Attributes = CCDictionaryCreate(Allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(GLShaderAttributeInfo), &(CCDictionaryCallbacks){
         .getHash = CCStringHasherForDictionary,
         .compareKeys = CCStringComparatorForDictionary,
         .keyDestructor = CCStringDestructorForDictionary,
@@ -305,7 +305,7 @@ static GLShader GLShaderConstructor(CCAllocatorType Allocator, GLShaderSource Ve
     
     glGetProgramiv(Program, GL_ACTIVE_UNIFORMS, &Active); CC_GL_CHECK();
     
-    CCDictionary Uniforms = CCDictionaryCreate(Allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(GLShaderUniformInfo), &(CCDictionaryCallbacks){
+    CCDictionary(CCString, GLShaderUniformInfo) Uniforms = CCDictionaryCreate(Allocator, CCDictionaryHintSizeSmall | CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(GLShaderUniformInfo), &(CCDictionaryCallbacks){
         .getHash = CCStringHasherForDictionary,
         .compareKeys = CCStringComparatorForDictionary,
         .keyDestructor = CCStringDestructorForDictionary,

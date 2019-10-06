@@ -387,7 +387,7 @@ static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression Str
     return Attribute;
 }
 
-void CCGraphicsExpressionGetTextOptions(CCEnumerator *Enumerator, CCOrderedCollection AttributedStrings, size_t *Offset, size_t *Length, CCTextAlignment *Alignment, CCTextVisibility *Visibility)
+void CCGraphicsExpressionGetTextOptions(CCEnumerator *Enumerator, CCOrderedCollection(CCTextAttribute) AttributedStrings, size_t *Offset, size_t *Length, CCTextAlignment *Alignment, CCTextVisibility *Visibility)
 {
     for (CCExpression *Arg = CCCollectionEnumeratorGetCurrent(Enumerator); Arg; Arg = CCCollectionEnumeratorNext(Enumerator))
     {
@@ -508,7 +508,7 @@ CCExpression CCGraphicsExpressionRenderText(CCExpression Expression)
         size_t Offset = 0, Length = SIZE_MAX;
         CCTextAlignment Alignment = CCTextAlignmentLeft;
         CCTextVisibility Visibility = CCTextVisibilityMultiLine | CCTextVisibilityWord;
-        CCOrderedCollection AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+        CCOrderedCollection(CCTextAttribute) AttributedStrings = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
         
         CCCollectionEnumeratorNext(&Enumerator);
         CCGraphicsExpressionGetTextOptions(&Enumerator, AttributedStrings, &Offset, &Length, &Alignment, &Visibility);

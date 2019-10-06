@@ -72,7 +72,7 @@ typedef struct {
 } CCMouseMoveMap, CCMouseScrollMap;
 
 typedef struct {
-    CCCollection files;
+    CCCollection(CCString) files;
 } CCMouseDropItemsMap;
 
 typedef struct {
@@ -89,7 +89,7 @@ typedef struct {
  * @brief Register a mouse drop event.
  * @param Files The list of files dropped.
  */
-void CCMouseDropInput(CCCollection Files);
+void CCMouseDropInput(CCCollection(CCString) Files);
 
 /*!
  * @brief Register a mouse scroll event.

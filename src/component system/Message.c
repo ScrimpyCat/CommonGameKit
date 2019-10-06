@@ -95,7 +95,9 @@ static void CCMessageRouteComponentPoster(CCMessageRouter *Router, CCMessage *Me
     CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(((CCMessageRouteComponent*)CCMessageRouterGetData(Router))->componentID);
     if (System)
     {
-        CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(System->id); //TODO: update handle to include mailbox
+#define CC_CONTAINER_TYPE_DISABLE
+        CCConcurrentQueue(CCMessage *) Mailbox = CCComponentSystemGetMailbox(System->id); //TODO: update handle to include mailbox
+#undef CC_CONTAINER_TYPE_DISABLE
         
         CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
         CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
@@ -106,7 +108,7 @@ static void CCMessageRouteComponentPoster(CCMessageRouter *Router, CCMessage *Me
 
 static void CCMessageRouteComponentDeliverer(CCMessage *Message, CCComponentSystemID SystemID)
 {
-    CCCollection Components = CCComponentSystemGetComponentsForSystem(SystemID);
+    CCCollection(CCComponent) Components = CCComponentSystemGetComponentsForSystem(SystemID);
     CC_COLLECTION_FOREACH(CCComponent, Component, Components)
     {
         if (CCComponentGetID(Component) == ((CCMessageRouteComponent*)CCMessageRouterGetData(Message->router))->componentID)
@@ -135,7 +137,9 @@ static void CCMessageRouteComponentEntityPoster(CCMessageRouter *Router, CCMessa
     CCComponentSystemHandle *System = CCComponentSystemHandlesComponentID(((CCMessageRouteComponentEntity*)CCMessageRouterGetData(Router))->componentID);
     if (System)
     {
-        CCConcurrentQueue Mailbox = CCComponentSystemGetMailbox(System->id); //TODO: update handle to include mailbox
+#define CC_CONTAINER_TYPE_DISABLE
+        CCConcurrentQueue(CCMessage *) Mailbox = CCComponentSystemGetMailbox(System->id); //TODO: update handle to include mailbox
+#undef CC_CONTAINER_TYPE_DISABLE
         
         CCConcurrentQueueNode *Node = CCConcurrentQueueCreateNode(CC_STD_ALLOCATOR, sizeof(CCMessage*), &(CCMessage*){ CCRetain(Message) });
         CCMemorySetDestructor(Node, (CCMemoryDestructorCallback)CCMessageNodeDataDestructor);
@@ -153,7 +157,7 @@ static CCComparisonResult CCMessageRouteComponentEntityFindComponent(const CCCom
 
 static void CCMessageRouteComponentEntityDeliverer(CCMessage *Message, CCComponentSystemID SystemID)
 {
-    CCCollection Components = CCComponentSystemGetComponentsForSystem(SystemID); //Or can we safely CCEntityGetComponents?
+    CCCollection(CCComponent) Components = CCComponentSystemGetComponentsForSystem(SystemID); //Or can we safely CCEntityGetComponents?
     CCComponent *Component = CCCollectionGetElement(Components, CCCollectionFindElement(Components, CCMessageRouterGetData(Message->router), (CCComparator)CCMessageRouteComponentEntityFindComponent));
     
     if (Component)

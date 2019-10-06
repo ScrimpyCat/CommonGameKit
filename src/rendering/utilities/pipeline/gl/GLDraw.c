@@ -101,7 +101,7 @@ static GLenum GLDrawPrimitive(GFXPrimitiveType Primitive)
     CCAssertLog(0, "Unsupported primitive");
 }
 
-static void GLDrawSetUniformState(GLShader Shader, CCCollection Buffers)
+static void GLDrawSetUniformState(GLShader Shader, CCCollection(GFXDrawInputBuffer) Buffers)
 {
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(Buffers, &Enumerator);
@@ -120,7 +120,7 @@ static void GLDrawSetUniformState(GLShader Shader, CCCollection Buffers)
     }
 }
 
-static void GLDrawSetUniformTextureState(GLShader Shader, CCCollection Textures)
+static void GLDrawSetUniformTextureState(GLShader Shader, CCCollection(GFXDrawInputTexture) Textures)
 {
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(Textures, &Enumerator);
@@ -182,7 +182,7 @@ static GLenum GLDrawTypeFromBufferFormat(GFXBufferFormat Format)
     CCAssertLog(0, "Unsupported format %d", Format);
 }
 
-static void GLDrawSetVertexBufferState(CCCollection VertexBuffers)
+static void GLDrawSetVertexBufferState(CCCollection(GFXDrawInputVertexBuffer) VertexBuffers)
 {
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(VertexBuffers, &Enumerator);

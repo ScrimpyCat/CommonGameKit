@@ -34,7 +34,7 @@ static _Bool CCAnimationSystemTryLock(CCComponentSystemHandle *System);
 static void CCAnimationSystemLock(CCComponentSystemHandle *System);
 static void CCAnimationSystemUnlock(CCComponentSystemHandle *System);
 static _Bool CCAnimationSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
-static void CCAnimationSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components);
+static void CCAnimationSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection(CCComponent) Components);
 
 static mtx_t Lock;
 void CCAnimationSystemRegister(void)
@@ -90,7 +90,7 @@ static _Bool CCAnimationSystemHandlesComponent(CCComponentSystemHandle *System, 
     return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_ANIMATION_COMPONENT_FLAG;
 }
 
-static void CCAnimationSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection Components)
+static void CCAnimationSystemUpdate(CCComponentSystemHandle *System, double DeltaTime, CCCollection(CCComponent) Components)
 {
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_ANIMATION_SYSTEM_ID));
     

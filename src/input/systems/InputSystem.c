@@ -45,7 +45,7 @@ typedef struct {
 } CCInputMapGroupState;
 
 static _Bool CCInputSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
-static void CCInputSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components);
+static void CCInputSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection(CCComponent) Components);
 static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent Component);
 static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component);
 static CCVector3D CCInputSystemGetSimulatedGroupPressure3(CCComponent Component);
@@ -62,7 +62,7 @@ void CCInputSystemDeregister(void)
     CCComponentSystemDeregister(CC_INPUT_SYSTEM_ID, CCComponentSystemExecutionTypeInput);
 }
 
-static CCCollection CCInputSystemGetComponentsInCollection(CCCollection Group, CCInputMapType InputType)
+static CCCollection(CCComponent) CCInputSystemGetComponentsInCollection(CCCollection(CCComponent) Group, CCInputMapType InputType)
 {
     /*
      TODO: Types could be cleaned up, and possibly incorporate base components for the different types of inputs
@@ -95,7 +95,7 @@ static CCCollection CCInputSystemGetComponentsInCollection(CCCollection Group, C
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(Group, &Enumerator);
     
-    CCCollection InputComponents = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating | CCCollectionHintHeavyInserting, sizeof(CCComponent), NULL);
+    CCCollection(CCComponent) InputComponents = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating | CCCollectionHintHeavyInserting, sizeof(CCComponent), NULL);
     for (CCComponent *Component = CCCollectionEnumeratorGetCurrent(&Enumerator); Component; Component = CCCollectionEnumeratorNext(&Enumerator))
     {
         CCComponentID id = CCComponentGetID(*Component);
@@ -106,7 +106,7 @@ static CCCollection CCInputSystemGetComponentsInCollection(CCCollection Group, C
         
         else if ((id & CCInputMapTypeMask) == CCInputMapTypeGroup) //TODO: Should we retrieve nested groups if asking for groups? (e.g. remove the 'else')
         {
-            CCCollection Children = CCInputSystemGetComponentsInCollection(CCInputMapGroupComponentGetInputMaps(*Component), InputType);
+            CCCollection(CCComponent) Children = CCInputSystemGetComponentsInCollection(CCInputMapGroupComponentGetInputMaps(*Component), InputType);
             CCCollectionInsertCollection(InputComponents, Children, NULL); //TODO: consume insert
             CCCollectionDestroy(Children);
         }
@@ -115,12 +115,12 @@ static CCCollection CCInputSystemGetComponentsInCollection(CCCollection Group, C
     return InputComponents;
 }
 
-CCCollection CCInputSystemGetComponents(CCInputMapType InputType)
+CCCollection(CCComponent) CCInputSystemGetComponents(CCInputMapType InputType)
 {
     return CCInputSystemGetComponentsInCollection(CCComponentSystemGetComponentsForSystem(CC_INPUT_SYSTEM_ID), InputType);
 }
 
-static CCComponent CCInputSystemFindComponentForActionInCollection(CCCollection Group, CCString Action)
+static CCComponent CCInputSystemFindComponentForActionInCollection(CCCollection(CCComponent) Group, CCString Action)
 {
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(Group, &Enumerator);
@@ -286,7 +286,7 @@ static _Bool CCInputSystemHandlesComponent(CCComponentSystemHandle *System, CCCo
     return (id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_INPUT_COMPONENT_FLAG;
 }
 
-static void CCInputSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
+static void CCInputSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection(CCComponent) Components)
 {
     CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(CC_INPUT_SYSTEM_ID));
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(CC_INPUT_SYSTEM_ID));
@@ -388,7 +388,7 @@ static CCInputMapGroupState CCInputSystemGetGroupStateForComponent(CCComponent C
 
 static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component)
 {
-    CCOrderedCollection Inputs = CCInputMapGroupComponentGetInputMaps(Component);
+    CCOrderedCollection(CCComponent) Inputs = CCInputMapGroupComponentGetInputMaps(Component);
     const size_t Count = CCCollectionGetCount(Inputs);
     
     CCAssertLog(Count == 2 || Count == 4, "To correctly simulate a 2 axis input device, there must either be 2 or 4 single axis inputs");
@@ -434,7 +434,7 @@ static CCVector2D CCInputSystemGetSimulatedGroupPressure2(CCComponent Component)
 
 static CCVector3D CCInputSystemGetSimulatedGroupPressure3(CCComponent Component)
 {
-    CCOrderedCollection Inputs = CCInputMapGroupComponentGetInputMaps(Component);
+    CCOrderedCollection(CCComponent) Inputs = CCInputMapGroupComponentGetInputMaps(Component);
     const size_t Count = CCCollectionGetCount(Inputs);
     
     CCAssertLog(Count == 3 || Count == 6, "To correctly simulate a 3 axis input device, there must either be 3 or 6 single axis inputs");

@@ -73,7 +73,7 @@ CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute);
  * @param AttributedStrings The attributed strings to get the length of.
  * @return The length of the attributed strings.
  */
-size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings);
+size_t CCTextAttributeGetLength(CCOrderedCollection(CCTextAttribute) AttributedStrings);
 
 /*!
  * @brief Get the width of the line of attributed strings.
@@ -82,7 +82,7 @@ size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings);
  * @param TrailingWidth Store the width of trailing whitespace.
  * @return The line width of the attributed strings.
  */
-float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, float *LeadingWidth, float *TrailingWidth);
+float CCTextAttributeGetLineWidth(CCOrderedCollection(CCTextAttribute) AttributedStrings, float *LeadingWidth, float *TrailingWidth);
 
 /*!
  * @brief Get the height of the line of attributed strings.
@@ -92,7 +92,7 @@ float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, float *
  *
  * @return The line height of the attributed strings.
  */
-float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool IgnoreWhitespace);
+float CCTextAttributeGetLineHeight(CCOrderedCollection(CCTextAttribute) AttributedStrings, _Bool IgnoreWhitespace);
 
 /*!
  * @brief Merge any attributed strings that are mergeable.
@@ -100,7 +100,7 @@ float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool 
  * @param AttributedStrings The attributed strings to merge.
  * @return The merged attributed strings. Note: Must destroy the list.
  */
-CC_NEW CCOrderedCollection CCTextAttributeMerge(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings);
+CC_NEW CCOrderedCollection(CCTextAttribute) CCTextAttributeMerge(CCAllocatorType Allocator, CCOrderedCollection(CCTextAttribute) AttributedStrings);
 
 /*!
  * @brief Get the attributed strings in selection.
@@ -111,7 +111,7 @@ CC_NEW CCOrderedCollection CCTextAttributeMerge(CCAllocatorType Allocator, CCOrd
  * @param Length The length of characters to select.
  * @return The selected attributed strings. Note: Must destroy the list.
  */
-CC_NEW CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, size_t Offset, size_t Length);
+CC_NEW CCOrderedCollection(CCTextAttribute) CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrderedCollection(CCTextAttribute) AttributedStrings, size_t Offset, size_t Length);
 
 /*!
  * @brief Get the lines of attributed strings that fit within the line width.
@@ -124,6 +124,6 @@ CC_NEW CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator
  * @param LineWidth The maximum width of a line.
  * @return The lines of attributed strings. Note: Must destroy the list.
  */
-CC_NEW CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, CCTextVisibility Visibility, float LineWidth);
+CC_NEW CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection(CCTextAttribute) AttributedStrings, CCTextVisibility Visibility, float LineWidth);
 
 #endif

@@ -70,7 +70,7 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
             TempKey.character = 0;
             atomic_store(&KeyList[TempKey.keycode], TempKey);
             
-            CCCollection InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
+            CCCollection(CCComponent) InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
             
             CCEnumerator Enumerator;
             CCCollectionGetEnumerator(InputKeys, &Enumerator);
@@ -101,7 +101,7 @@ void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods)
         atomic_store(&KeyList[TempKey.keycode], TempKey);
         
         
-        CCCollection InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
+        CCCollection(CCComponent) InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
         
         CCEnumerator Enumerator;
         CCCollectionGetEnumerator(InputKeys, &Enumerator);

@@ -79,9 +79,9 @@ typedef struct {
 typedef struct {
     void *internal;
     GFXShader shader;
-    CCCollection vertexBuffers;
-    CCCollection buffers;
-    CCCollection textures;
+    CCCollection(GFXDrawInputVertexBuffer) vertexBuffers;
+    CCCollection(GFXDrawInputBuffer) buffers;
+    CCCollection(GFXDrawInputTexture) textures;
     GFXDrawDestination destination;
     GFXDrawIndexBuffer index;
     GFXBlend blending;

@@ -69,7 +69,7 @@ void CCInputSystemWindowFocus(_Bool Focus);
  * @param InputType The type of components to retrieve.
  * @return The list of components. Note: This collection must be destroyed.
  */
-CCCollection CCInputSystemGetComponents(CCInputMapType InputType);
+CCCollection(CCComponent) CCInputSystemGetComponents(CCInputMapType InputType);
 
 /*!
  * @brief Gets the state of the action belonging to the entity.

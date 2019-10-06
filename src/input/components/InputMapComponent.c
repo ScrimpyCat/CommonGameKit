@@ -27,11 +27,13 @@
 #include "InputMapComponent.h"
 #include "ComponentExpressions.h"
 
+CC_DICTIONARY_DECLARE(CCString, CCInputMapComponentCallback);
+
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("action:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeString, .setter = CCInputMapComponentSetAction }
 };
 
-static CCDictionary Callbacks[CCInputMapTypeCount];
+static CCDictionary(CCString, CCInputMapComponentCallback) Callbacks[CCInputMapTypeCount];
 void CCInputMapComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)

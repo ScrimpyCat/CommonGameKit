@@ -26,11 +26,11 @@
 #define CC_QUICK_COMPILE
 #include "TextAttribute.h"
 
-static void CCTextAttributeElementDestructor(CCCollection Collection, CCTextAttribute *Element);
+static void CCTextAttributeElementDestructor(CCCollection(CCTextAttribute) Collection, CCTextAttribute *Element);
 
 const CCCollectionElementDestructor CCTextAttributeDestructorForCollection = (CCCollectionElementDestructor)CCTextAttributeElementDestructor;
 
-static void CCTextAttributeElementDestructor(CCCollection Collection, CCTextAttribute *Element)
+static void CCTextAttributeElementDestructor(CCCollection(CCTextAttribute) Collection, CCTextAttribute *Element)
 {
     if (Element->string) CCStringDestroy(Element->string);
     if (Element->font) CCFontDestroy(Element->font);
@@ -41,7 +41,7 @@ CCFontAttribute CCTextAttributeGetFontAttribute(CCTextAttribute *Attribute)
     return CCFontAttributeAdjustSpacing(CCFontAttributeAdjustScaling(CCFontAttributeDefault(), Attribute->scale), Attribute->space);
 }
 
-size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings)
+size_t CCTextAttributeGetLength(CCOrderedCollection(CCTextAttribute) AttributedStrings)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
@@ -54,7 +54,7 @@ size_t CCTextAttributeGetLength(CCOrderedCollection AttributedStrings)
     return Length;
 }
 
-float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, float *LeadingWidth, float *TrailingWidth)
+float CCTextAttributeGetLineWidth(CCOrderedCollection(CCTextAttribute) AttributedStrings, float *LeadingWidth, float *TrailingWidth)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
@@ -97,7 +97,7 @@ float CCTextAttributeGetLineWidth(CCOrderedCollection AttributedStrings, float *
     return Cursor.x;
 }
 
-float CCTextAttributeGetLineHeight(CCOrderedCollection AttributedStrings, _Bool IgnoreWhitespace)
+float CCTextAttributeGetLineHeight(CCOrderedCollection(CCTextAttribute) AttributedStrings, _Bool IgnoreWhitespace)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
@@ -132,11 +132,11 @@ static _Bool CCTextAttributeMergeable(const CCTextAttribute *Attr1, const CCText
     return !memcmp(&Attr1->font, &Attr2->font, sizeof(CCTextAttribute) - offsetof(CCTextAttribute, font));
 }
 
-CCOrderedCollection CCTextAttributeMerge(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings)
+CCOrderedCollection(CCTextAttribute) CCTextAttributeMerge(CCAllocatorType Allocator, CCOrderedCollection(CCTextAttribute) AttributedStrings)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
-    CCOrderedCollection Strings = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+    CCOrderedCollection(CCTextAttribute) Strings = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
     
     CCTextAttribute Attribute = { .string = 0 };
     CC_COLLECTION_FOREACH_PTR(CCTextAttribute, Attr, AttributedStrings)
@@ -179,11 +179,11 @@ CCOrderedCollection CCTextAttributeMerge(CCAllocatorType Allocator, CCOrderedCol
     return Strings;
 }
 
-CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, size_t ChrOffset, size_t ChrLength)
+CCOrderedCollection(CCTextAttribute) CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrderedCollection(CCTextAttribute) AttributedStrings, size_t ChrOffset, size_t ChrLength)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
-    CCOrderedCollection Attributes = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
+    CCOrderedCollection(CCTextAttribute) Attributes = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCTextAttribute), CCTextAttributeDestructorForCollection);
     
     if (ChrLength)
     {
@@ -230,16 +230,16 @@ CCOrderedCollection CCTextAttributeGetSelection(CCAllocatorType Allocator, CCOrd
     return Attributes;
 }
 
-static void CCTextAttributeCollectionElementDestructor(CCCollection Collection, CCCollection *Element)
+static void CCTextAttributeCollectionElementDestructor(CCCollection(CCCollection(CCTextAttribute)) Collection, CCCollection(CCTextAttribute) *Element)
 {
     CCCollectionDestroy(*Element);
 }
 
-CCOrderedCollection CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection AttributedStrings, CCTextVisibility Visibility, float LineWidth)
+CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) CCTextAttributeGetLines(CCAllocatorType Allocator, CCOrderedCollection(CCTextAttribute) AttributedStrings, CCTextVisibility Visibility, float LineWidth)
 {
     CCAssertLog(AttributedStrings, "AttributedStrings must not be null");
     
-    CCOrderedCollection Lines = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCOrderedCollection), (CCCollectionElementDestructor)CCTextAttributeCollectionElementDestructor);
+    CCOrderedCollection(CCOrderedCollection(CCTextAttribute)) Lines = CCCollectionCreate(Allocator, CCCollectionHintHeavyEnumerating, sizeof(CCOrderedCollection), (CCCollectionElementDestructor)CCTextAttributeCollectionElementDestructor);
     
     size_t Offset = 0, Length = 0, WordStart = 0, WordAttributeCount = 0, Skip = 0;
     CCVector2D Cursor = CCVector2DFill(0.0f);

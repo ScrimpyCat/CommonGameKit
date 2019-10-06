@@ -29,7 +29,7 @@
 
 typedef struct {
     CCExpression data;
-    CCOrderedCollection children;
+    CCOrderedCollection(GUIObject) children;
     CCExpression render;
     CCExpression control;
 } GUIExpressionInfo;
@@ -74,7 +74,7 @@ const GUIObjectInterface GUIExpressionInterface = {
 const GUIObjectInterface * const GUIExpression = &GUIExpressionInterface;
 
 
-static void GUIExpressionChildrenElementDestructor(CCCollection Collection, GUIObject *Element)
+static void GUIExpressionChildrenElementDestructor(CCCollection(GUIObject) Collection, GUIObject *Element)
 {
     (*Element)->parent = NULL;
     GUIObjectDestroy(*Element);
@@ -142,7 +142,7 @@ static void GUIExpressionDraw(CCExpression Render, GFXFramebuffer Framebuffer, s
             
         case CCGraphicsExpressionValueTypeText:
         {
-            CCOrderedCollection Drawables = CCTextGetDrawables(CCExpressionGetData(Render));
+            CCOrderedCollection(CCTextDrawable) Drawables = CCTextGetDrawables(CCExpressionGetData(Render));
             CC_COLLECTION_FOREACH_PTR(CCTextDrawable, Drawable, Drawables)
             {
                 GFXDrawSetFramebuffer(Drawable->drawer, Framebuffer, Index);
@@ -315,7 +315,7 @@ static CCExpression GUIExpressionGetState(GUIObject Object)
     return ((GUIExpressionInfo*)Object->internal)->data;
 }
 
-void GUIExpressionInitializerElementDestructor(CCCollection Collection, CCExpression *Element)
+void GUIExpressionInitializerElementDestructor(CCCollection(CCExpression) Collection, CCExpression *Element)
 {
     CCExpressionDestroy(*Element);
 }
@@ -325,7 +325,7 @@ static CCComparisonResult GUIExpressionInitializerElementFind(const CCExpression
     return CCStringEqual(CCExpressionGetString(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Initializer), 1)), Name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static CCCollection GUIExpressionInitializers = NULL;
+static CCCollection(CCExpression) GUIExpressionInitializers = NULL;
 CCExpression GUIExpressionCreateObject(CCExpression Expression)
 {
     CCEnumerator Enumerator;
@@ -340,7 +340,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         
         size_t RenderIndex = 0, ControlIndex = 0;
         CCExpression BaseRender = NULL, BaseControl = NULL;
-        CCOrderedCollection Children = NULL;
+        CCOrderedCollection(GUIObject) Children = NULL;
         
         CCExpressionStateSetPrivate(Expression, Init);
         CCExpressionCreateState(Expression, StrX, CCExpressionCreateFromSource("(get 0 .rect)"), FALSE, CCExpressionCreateFromSource("(frame-changed?)"), FALSE);
@@ -1088,7 +1088,7 @@ CCExpression GUIExpressionOnEvent(CCExpression Expression)
         _Bool Predicate = FALSE, IsEvent = FALSE;
         if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
         {
-            CCOrderedCollection EventPredicate = CCExpressionGetList(Result);
+            CCOrderedCollection(CCExpression) EventPredicate = CCExpressionGetList(Result);
             const size_t EventPredicateArgCount = CCCollectionGetCount(EventPredicate);
             
             if (EventPredicateArgCount)

@@ -29,12 +29,13 @@
 #include "GLGFX_Private.h"
 #include "GLSetup.h"
 
+CC_DICTIONARY_DECLARE(CCString, GLShaderLibrarySource);
 
 typedef uintptr_t GLShaderSource;
 
 _Static_assert(sizeof(GLShaderSource) >= sizeof(GLuint), "Must be larger than an OpenGL object id");
 
-typedef CCDictionary GLShaderLibrary;
+typedef CCDictionary(CCString, GLShaderLibrarySource) GLShaderLibrary;
 
 extern const GFXShaderLibraryInterface GLShaderLibraryInterface;
 

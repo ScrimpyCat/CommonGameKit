@@ -33,7 +33,7 @@
 
 
 typedef struct {
-    CCCollection active, added, removed, destroy;
+    CCCollection(CCEntity) active, added, removed, destroy;
     atomic_flag addedLock, removedLock;
 } CCEntityManager;
 
@@ -42,7 +42,7 @@ static CCEntityManager EntityManager = {
     .removedLock = ATOMIC_FLAG_INIT
 };
 
-static void CCEntityDestructor(CCCollection Collection, CCEntity *Entity)
+static void CCEntityDestructor(CCCollection(CCEntity) Collection, CCEntity *Entity)
 {
     CCEntityDestroy(*Entity);
 }
@@ -90,7 +90,7 @@ void CCEntityManagerUpdate(void)
     
     //Remove from active
     while (!atomic_flag_test_and_set(&EntityManager.removedLock)) CC_SPIN_WAIT();
-    CCCollection Entries = CCCollectionFindCollection(EntityManager.active, EntityManager.removed, NULL);
+    CCCollection(CCCollectionEntry) Entries = CCCollectionFindCollection(EntityManager.active, EntityManager.removed, NULL);
     CCCollectionRemoveCollection(EntityManager.active, Entries);
     CCCollectionDestroy(Entries);
     
@@ -100,7 +100,7 @@ void CCEntityManagerUpdate(void)
     atomic_flag_clear(&EntityManager.removedLock);
     
     
-    CCCollection DestroyableEntries = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting, sizeof(CCCollectionEntry), NULL);
+    CCCollection(CCCollectionEntry) DestroyableEntries = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting, sizeof(CCCollectionEntry), NULL);
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(EntityManager.destroy, &Enumerator);
@@ -140,7 +140,7 @@ void CCEntityManagerRemoveEntity(CCEntity Entity)
     atomic_flag_clear(&EntityManager.removedLock);
 }
 
-CCCollection CCEntityManagerGetEntities(void)
+CCCollection(CCEntity) CCEntityManagerGetEntities(void)
 {
     return EntityManager.active;
 }

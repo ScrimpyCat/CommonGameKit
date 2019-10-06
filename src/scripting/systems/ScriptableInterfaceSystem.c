@@ -33,13 +33,13 @@ static _Bool CCScriptableInterfaceSystemTryLock(CCComponentSystemHandle *System)
 static void CCScriptableInterfaceSystemLock(CCComponentSystemHandle *System);
 static void CCScriptableInterfaceSystemUnlock(CCComponentSystemHandle *System);
 static _Bool CCScriptableInterfaceSystemHandlesComponent(CCComponentSystemHandle *System, CCComponentID id);
-static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components);
-static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, void *Context, CCCollection Components);
+static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection(CCComponent) Components);
+static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, void *Context, CCCollection(CCComponent) Components);
 
 static mtx_t Lock[CCComponentSystemExecutionMax];
-static CCConcurrentIndexMap ReadableComponentReferences[CCComponentSystemExecutionMax];
-static CCDictionary ReadableComponentIndexes[CCComponentSystemExecutionMax];
-static CCQueue AvailableIndexes[CCComponentSystemExecutionMax];
+static CCConcurrentIndexMap(CCComponent) ReadableComponentReferences[CCComponentSystemExecutionMax];
+static CCDictionary(CCComponent, size_t) ReadableComponentIndexes[CCComponentSystemExecutionMax];
+static CCQueue(size_t) AvailableIndexes[CCComponentSystemExecutionMax];
 static CCConcurrentGarbageCollector GC;
 void CCScriptableInterfaceSystemRegister(void)
 {
@@ -118,11 +118,11 @@ static _Bool CCScriptableInterfaceSystemHandlesComponent(CCComponentSystemHandle
     return ((id & CC_COMPONENT_SYSTEM_FLAG_MASK) == CC_SCRIPTABLE_INTERFACE_COMPONENT_FLAG) && ((System->executionType & CCComponentSystemExecutionTypeMask) == (CCComponentSystemExecutionTypeUpdate & CCComponentSystemExecutionTypeMask));
 }
 
-static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection Components)
+static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, void *Context, CCCollection(CCComponent) Components)
 {
     CCConcurrentGarbageCollectorBegin(GC);
     
-    CCCollection Removed = CCComponentSystemGetRemovedComponentsForSystem(System->id);
+    CCCollection(CCComponent) Removed = CCComponentSystemGetRemovedComponentsForSystem(System->id);
     CC_COLLECTION_FOREACH(CCComponent, Scriptable, Removed)
     {
         if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeMask) == CCScriptableInterfaceTypeDynamicField)
@@ -157,7 +157,7 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
     
     CCConcurrentGarbageCollectorEnd(GC);
     
-    CCCollection Added = CCComponentSystemGetAddedComponentsForSystem(System->id);
+    CCCollection(CCComponent) Added = CCComponentSystemGetAddedComponentsForSystem(System->id);
     CC_COLLECTION_FOREACH(CCComponent, Scriptable, Added)
     {
         if ((CCComponentGetID(Scriptable) & CCScriptableInterfaceTypeMask) == CCScriptableInterfaceTypeDynamicField)
@@ -209,7 +209,7 @@ static void CCScriptableInterfaceSystemUpdate(CCComponentSystemHandle *System, v
     CCScriptableInterfaceSystemRead(System, Context, Components);
 }
 
-static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, void *Context, CCCollection Components)
+static void CCScriptableInterfaceSystemRead(CCComponentSystemHandle *System, void *Context, CCCollection(CCComponent) Components)
 {
     CCCollectionDestroy(CCComponentSystemGetRemovedComponentsForSystem(System->id));
     CCCollectionDestroy(CCComponentSystemGetAddedComponentsForSystem(System->id));
