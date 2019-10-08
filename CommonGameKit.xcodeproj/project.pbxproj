@@ -29,6 +29,7 @@
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3750F892347B94500DFE104 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = F3750F882347B94500DFE104 /* Base.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F378DAFD234D5278000600CC /* ContainerTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
 		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
@@ -531,6 +532,7 @@
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 		F3750F882347B94500DFE104 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
+		F378DAFD234D5278000600CC /* ContainerTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerTypes.h; sourceTree = "<group>"; };
 		F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "blob-repl.xcodeproj"; path = "blob-repl/blob-repl.xcodeproj"; sourceTree = "<group>"; };
 		F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Callbacks.c; sourceTree = "<group>"; };
 		F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callbacks.h; sourceTree = "<group>"; };
@@ -1042,6 +1044,7 @@
 				F3AF34D91DCD014700CAD472 /* Window.h */,
 				F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */,
 				F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */,
+				F378DAFD234D5278000600CC /* ContainerTypes.h */,
 				F3AF32931DCCD4EB00CAD472 /* Animation */,
 				F3AF329E1DCCD4EB00CAD472 /* Component System */,
 				F3AF32AB1DCCD4EB00CAD472 /* GUI */,
@@ -1661,6 +1664,7 @@
 				F342B62B223824B700B44319 /* MTLShaderLibrary.h in Headers */,
 				F3AF33DC1DCCD4EC00CAD472 /* GLBuffer.h in Headers */,
 				F3AF337C1DCCD4EC00CAD472 /* AnimationKeyframeComponent.h in Headers */,
+				F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */,
 				F3AF33D01DCCD4EC00CAD472 /* GFXInterface.h in Headers */,
 				F3AF33C51DCCD4EC00CAD472 /* GFX.h in Headers */,
 				F3AF33E01DCCD4EC00CAD472 /* GLDraw.h in Headers */,
