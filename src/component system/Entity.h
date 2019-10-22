@@ -41,11 +41,11 @@ typedef struct CCEntityInfo *CCEntity;
  * @performance Suggested usage is to use one allocator for static entities and another allocator(s)
  *              for dynamic entities.
  *
- * @param id The id to identify this entity. May be NULL, if the entity should not be identifiable.
+ * @param Name The name to identify this entity. May be NULL, if the entity should not be identifiable.
  * @param Allocator The allocator to be used to allocate the entity with.
  * @return The created entity.
  */
-CC_NEW CCEntity CCEntityCreate(CCString CC_COPY(id), CCAllocatorType Allocator);
+CC_NEW CCEntity CCEntityCreate(CCString CC_COPY(Name), CCAllocatorType Allocator);
 
 /*!
  * @brief Destroy an entity.

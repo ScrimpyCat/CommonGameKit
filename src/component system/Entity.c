@@ -31,7 +31,7 @@
 
 
 typedef struct CCEntityInfo {
-    CCString id;
+    CCString name;
     CCCollection(CCComponent) components;
 } CCEntityInfo;
 
@@ -43,17 +43,18 @@ static void CCEntityComponentDestructor(CCCollection(CCComponent) Collection, CC
 
 static void CCEntityDestructor(CCEntity Entity)
 {
+    if (Entity->name) CCStringDestroy(Entity->name);
     CCCollectionDestroy(Entity->components);
 }
 
-CCEntity CCEntityCreate(CCString id, CCAllocatorType Allocator)
+CCEntity CCEntityCreate(CCString name, CCAllocatorType Allocator)
 {
     CCEntity Entity = CCMalloc(Allocator, sizeof(CCEntityInfo), NULL, CC_DEFAULT_ERROR_CALLBACK);
 
     if (Entity)
     {
         *Entity = (CCEntityInfo){
-            .id = CCStringCopy(id),
+            .name = name ? CCStringCopy(name) : 0,
             .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), (CCCollectionElementDestructor)CCEntityComponentDestructor)
         };
         
@@ -62,7 +63,7 @@ CCEntity CCEntityCreate(CCString id, CCAllocatorType Allocator)
     
     else
     {
-        CC_LOG_ERROR_CUSTOM("Failed to create entity (%S)", id);
+        CC_LOG_ERROR_CUSTOM("Failed to create entity (%S)", name);
     }
     
     return Entity;
