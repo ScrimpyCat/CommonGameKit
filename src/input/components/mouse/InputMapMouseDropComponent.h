@@ -39,6 +39,7 @@ typedef struct {
 
 void CCInputMapMouseDropComponentRegister(void);
 void CCInputMapMouseDropComponentDeregister(void);
+void CCInputMapMouseDropComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Initialize the input map mouse drop component.

@@ -25,15 +25,30 @@
 
 #define CC_QUICK_COMPILE
 #include "InputMapMouseDropComponent.h"
+#include "ComponentExpressions.h"
 
 const CCString CCInputMapMouseDropComponentName = CC_STRING("input_map_mouse_drop");
+
+static const CCComponentExpressionDescriptor CCInputMapMouseDropComponentDescriptor = {
+    .id = CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCInputMapMouseDropComponentDeserializer,
+    .serialize = NULL
+};
 
 void CCInputMapMouseDropComponentRegister(void)
 {
     CCComponentRegister(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID, CCInputMapMouseDropComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapMouseDropComponentClass), CCInputMapMouseDropComponentInitialize, NULL, CCInputMapMouseDropComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("input-mouse-drop"), &CCInputMapMouseDropComponentDescriptor, TRUE);
 }
 
 void CCInputMapMouseDropComponentDeregister(void)
 {
     CCComponentDeregister(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID);
+}
+
+void CCInputMapMouseDropComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
+{
+    CCInputMapComponentDeserializer(Component, Arg, Deferred);
 }
