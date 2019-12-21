@@ -69,6 +69,25 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent CC_OWN(Component));
 void CCEntityDetachComponent(CCEntity Entity, CCComponent CC_DESTROY(Component));
 
 /*!
+ * @brief Get the unique ID of the entity.
+ * @return The unique identifier.
+ */
+CCString CCEntityGetID(CCEntity Entity);
+
+/*!
+ * @brief Set the unique ID of the entity.
+ * @warning This should not be called directly.
+ * @return The unique identifier.
+ */
+void CCEntitySetID(CCEntity Entity, CCString CC_COPY(ID));
+
+/*!
+ * @brief Get the name of the entity.
+ * @return The name.
+ */
+CCString CCEntityGetName(CCEntity Entity);
+
+/*!
 * @brief Get the current components for the entity.
 * @return The current component list.
 */

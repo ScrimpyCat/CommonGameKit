@@ -33,6 +33,7 @@
 
 
 typedef struct {
+    CCBigInt globalID;
     CCCollection(CCEntity) active, added, removed, destroy;
     atomic_flag addedLock, removedLock;
 } CCEntityManager;
@@ -58,6 +59,7 @@ void CCEntityManagerCreate(void)
     }
     
     EntityManager = (CCEntityManager){
+        .globalID = CCBigIntCreate(CC_STD_ALLOCATOR),
         .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
         .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
         .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
@@ -71,6 +73,7 @@ void CCEntityManagerDestroy(void)
 {
     mtx_destroy(&Lock);
     
+    if (EntityManager.globalID) CCBigIntDestroy(EntityManager.globalID);
     if (EntityManager.active) CCCollectionDestroy(EntityManager.active);
     if (EntityManager.added) CCCollectionDestroy(EntityManager.added);
     if (EntityManager.removed) CCCollectionDestroy(EntityManager.removed);
@@ -129,8 +132,29 @@ void CCEntityManagerUpdate(void)
 void CCEntityManagerAddEntity(CCEntity Entity)
 {
     while (!atomic_flag_test_and_set(&EntityManager.addedLock)) CC_SPIN_WAIT();
+    CCEntitySetID(Entity, CCBigIntGetString(EntityManager.globalID));
+    CCBigIntAdd(EntityManager.globalID, 1);
     CCCollectionInsertElement(EntityManager.added, &Entity);
     atomic_flag_clear(&EntityManager.addedLock);
+}
+
+void CCEntityManagerAddEntityWithID(CCEntity Entity, CCString ID)
+{
+    CCBigInt PrevID, CurID = CCBigIntCreate(CC_STD_ALLOCATOR);
+    CCBigIntSet(CurID, ID);
+    CCBigIntAdd(CurID, 1);
+    
+    CCEntitySetID(Entity, ID);
+    
+    while (!atomic_flag_test_and_set(&EntityManager.addedLock)) CC_SPIN_WAIT();
+    PrevID = EntityManager.globalID;
+    EntityManager.globalID = CurID;
+    CCCollectionInsertElement(EntityManager.added, &Entity);
+    atomic_flag_clear(&EntityManager.addedLock);
+    
+    CCAssertLog(CCBigIntCompareLessThanEqual(PrevID, CurID), "ID must be larger or equal to the current global ID");
+    
+    CCBigIntDestroy(PrevID);
 }
 
 void CCEntityManagerRemoveEntity(CCEntity Entity)

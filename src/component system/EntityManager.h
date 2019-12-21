@@ -46,9 +46,18 @@ void CCEntityManagerUpdate(void);
 
 /*!
  * @brief Adds an entity to be managed by the global entity manager.
+ * @description Assigns the entity a unique ID.
  * @param Entity The entity to be managed.
  */
 void CCEntityManagerAddEntity(CCEntity CC_OWN(Entity));
+
+/*!
+ * @brief Adds an entity to be managed by the global entity manager.
+ * @param Entity The entity to be managed.
+ * @param ID The unique id to assign to the entity. This should only be an ID that is
+ *        retrieved from @b CCEntityGetID.
+ */
+void CCEntityManagerAddEntityWithID(CCEntity CC_OWN(Entity), CCString ID);
 
 /*!
  * @brief Removes an entity from being managed by the global entity manager.

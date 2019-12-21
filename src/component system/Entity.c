@@ -31,6 +31,7 @@
 
 
 typedef struct CCEntityInfo {
+    CCString id;
     CCString name;
     CCCollection(CCComponent) components;
 } CCEntityInfo;
@@ -43,6 +44,7 @@ static void CCEntityComponentDestructor(CCCollection(CCComponent) Collection, CC
 
 static void CCEntityDestructor(CCEntity Entity)
 {
+    if (Entity->id) CCStringDestroy(Entity->id);
     if (Entity->name) CCStringDestroy(Entity->name);
     CCCollectionDestroy(Entity->components);
 }
@@ -54,6 +56,7 @@ CCEntity CCEntityCreate(CCString name, CCAllocatorType Allocator)
     if (Entity)
     {
         *Entity = (CCEntityInfo){
+            .id = 0,
             .name = name ? CCStringCopy(name) : 0,
             .components = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(CCComponent), (CCCollectionElementDestructor)CCEntityComponentDestructor)
         };
@@ -71,11 +74,14 @@ CCEntity CCEntityCreate(CCString name, CCAllocatorType Allocator)
 
 void CCEntityDestroy(CCEntity Entity)
 {
+    CCAssertLog(Entity, "Entity must not be null");
+    
     CCFree(Entity);
 }
 
 void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
 {
+    CCAssertLog(Entity, "Entity must not be null");
     CCAssertLog(CCComponentGetEntity(Component) == NULL, "Component must not be attached to another entity");
     
     CCComponentSetEntity(Component, Entity);
@@ -84,13 +90,37 @@ void CCEntityAttachComponent(CCEntity Entity, CCComponent Component)
 
 void CCEntityDetachComponent(CCEntity Entity, CCComponent Component)
 {
+    CCAssertLog(Entity, "Entity must not be null");
     CCAssertLog(CCComponentGetEntity(Component) == Entity, "Component must be attached to this entity");
     
     CCComponentSetEntity(Component, NULL);
     CCCollectionRemoveElement(Entity->components, CCCollectionFindElement(Entity->components, &Component, NULL)); //TODO: will components be attached/detached from multiple threads?
 }
 
+CCString CCEntityGetID(CCEntity Entity)
+{
+    CCAssertLog(Entity, "Entity must not be null");
+    
+    return Entity->id;
+}
+
+void CCEntitySetID(CCEntity Entity, CCString ID)
+{
+    CCAssertLog(Entity, "Entity must not be null");
+    
+    Entity->id = CCStringCopy(ID);
+}
+
+CCString CCEntityGetName(CCEntity Entity)
+{
+    CCAssertLog(Entity, "Entity must not be null");
+    
+    return Entity->name;
+}
+
 CCCollection(CCComponent) CCEntityGetComponents(CCEntity Entity)
 {
+    CCAssertLog(Entity, "Entity must not be null");
+    
     return Entity->components; //TODO: will components be attached/detached from multiple threads?
 }
