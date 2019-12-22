@@ -169,6 +169,19 @@ CCCollection(CCEntity) CCEntityManagerGetEntities(void)
     return EntityManager.active;
 }
 
+static CCComparisonResult CCEntityManagerIDComparator(const CCEntity *left, const CCString right)
+{
+    return CCStringEqual(CCEntityGetID(*left), right) ? CCComparisonResultEqual : CCComparisonResultInvalid;
+}
+
+CCEntity CCEntityManagerGetEntity(CCString ID)
+{
+    // TODO: Lookup entities from a dictionary
+    CCEntity *Entity = CCCollectionGetElement(EntityManager.active, CCCollectionFindElement(EntityManager.active, (void*)ID, (CCComparator)CCEntityManagerIDComparator));
+    
+    return Entity ? *Entity : NULL;
+}
+
 _Bool CCEntityManagerTryLock(void)
 {
     int err = mtx_trylock(&Lock);

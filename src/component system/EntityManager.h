@@ -74,6 +74,13 @@ void CCEntityManagerRemoveEntity(CCEntity CC_DESTROY(Entity));
 CCCollection(CCEntity) CCEntityManagerGetEntities(void);
 
 /*!
+ * @brief Get the entity with ID from the manager.
+ * @warning Should obtain locks to the entity manager prior to calling this function.
+ * @return The entity with the given ID.
+ */
+CCEntity CCEntityManagerGetEntity(CCString ID);
+
+/*!
  * @brief Attempt to lock the entity manager.
  * @return True if was able to lock the entity manager, otherwise false.
  */
