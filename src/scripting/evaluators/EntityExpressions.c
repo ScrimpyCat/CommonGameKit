@@ -85,6 +85,8 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
         CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCCollectionEnumeratorNext(&Enumerator));
         if (CCExpressionGetType(Name) == CCExpressionValueTypeString)
         {
+            CCString ID = 0;
+            
             CCEntity Entity = CCEntityCreate(CCExpressionGetString(Name), CC_STD_ALLOCATOR);
             for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
             {
@@ -108,6 +110,21 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
                             CCCollectionEnumeratorNext(&OptionEnumerator);
                             CCEntityExpressionEntityAddChildren(Entity, &OptionEnumerator);
                         }
+                        
+                        else if (CCStringEqual(CCExpressionGetAtom(Option), CC_STRING("id:")))
+                        {
+                            if (CCCollectionGetCount(CCExpressionGetList(Component)) == 2)
+                            {
+                                CCExpression IDExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Component), 1);
+                                
+                                if (CCExpressionGetType(IDExpr) == CCExpressionValueTypeString)
+                                {
+                                    ID = CCExpressionGetString(IDExpr);
+                                }
+                            }
+                            
+                            else CC_EXPRESSION_EVALUATOR_LOG_OPTION_ERROR("id", "string");
+                        }
                     }
                     
                     else
@@ -117,7 +134,8 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
                 }
             }
             
-            CCEntityManagerAddEntity(Entity);
+            if (ID) CCEntityManagerAddEntityWithID(Entity, ID);
+            else CCEntityManagerAddEntity(Entity);
             
             return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCEntityExpressionValueTypeEntity, Entity, NULL, NULL);
         }
