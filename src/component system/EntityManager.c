@@ -182,6 +182,17 @@ CCEntity CCEntityManagerGetEntity(CCString ID)
     return Entity ? *Entity : NULL;
 }
 
+CCString CCEntityManagerGetNextID(void)
+{
+    CCString ID;
+    
+    while (!atomic_flag_test_and_set(&EntityManager.addedLock)) CC_SPIN_WAIT();
+    ID = CCBigIntGetString(EntityManager.globalID);
+    atomic_flag_clear(&EntityManager.addedLock);
+    
+    return ID;
+}
+
 _Bool CCEntityManagerTryLock(void)
 {
     int err = mtx_trylock(&Lock);

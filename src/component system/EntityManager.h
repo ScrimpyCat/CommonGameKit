@@ -81,6 +81,12 @@ CCCollection(CCEntity) CCEntityManagerGetEntities(void);
 CCEntity CCEntityManagerGetEntity(CCString ID);
 
 /*!
+ * @brief Get the next ID that will be assigned by the manager.
+ * @return The next unique ID. This must be destroyed.
+ */
+CC_NEW CCString CCEntityManagerGetNextID(void);
+
+/*!
  * @brief Attempt to lock the entity manager.
  * @return True if was able to lock the entity manager, otherwise false.
  */
