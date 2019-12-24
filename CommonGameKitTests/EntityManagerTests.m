@@ -102,7 +102,7 @@ static _Bool TestComponentSystemHandlesComponentCallback(CCComponentSystemHandle
 
 -(void) testAddingEntities
 {
-    CCEntity Entity = CCEntityCreate(1, CC_STD_ALLOCATOR);
+    CCEntity Entity = CCEntityCreate(0, CC_STD_ALLOCATOR);
     CCComponent Component = CCComponentCreate(TEST_COMPONENT_ID);
     
     CCEntityAttachComponent(Entity, Component);
@@ -112,6 +112,7 @@ static _Bool TestComponentSystemHandlesComponentCallback(CCComponentSystemHandle
     CCEntityManagerUpdate();
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
     
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity), CC_STRING("0x0000000000000000")), @"Should have assigned a unique ID");
     
     CCEnumerator Enumerator;
     CCCollectionGetEnumerator(CCEntityGetComponents(Entity), &Enumerator);
@@ -126,6 +127,63 @@ static _Bool TestComponentSystemHandlesComponentCallback(CCComponentSystemHandle
     
     CCEntityManagerUpdate();
     CCComponentSystemRun(CCComponentSystemExecutionTypeManual);
+}
+
+-(void) testAssigningEntityID
+{
+    CCEntity Entity[5] = {
+        CCEntityCreate(CC_STRING("a"), CC_STD_ALLOCATOR),
+        CCEntityCreate(CC_STRING("b"), CC_STD_ALLOCATOR),
+        CCEntityCreate(CC_STRING("c"), CC_STD_ALLOCATOR),
+        CCEntityCreate(CC_STRING("d"), CC_STD_ALLOCATOR),
+        CCEntityCreate(CC_STRING("e"), CC_STD_ALLOCATOR)
+    };
+    
+    CCString NextID = CCEntityManagerGetNextID();
+    XCTAssertTrue(CCStringEqual(NextID, CC_STRING("0x0000000000000000")), @"Should have the correct next ID");
+    CCStringDestroy(NextID);
+    
+    CCEntityManagerAddEntity(Entity[0]);
+    CCEntityManagerAddEntity(Entity[1]);
+    CCEntityManagerAddEntityWithID(Entity[2], CC_STRING("0x10"));
+    CCEntityManagerAddEntity(Entity[3]);
+    
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[0]), CC_STRING("0x0000000000000000")), @"Should have assigned a unique ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[1]), CC_STRING("0x0000000000000001")), @"Should have assigned a unique ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[2]), CC_STRING("0x10")), @"Should have assigned a unique ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[3]), CC_STRING("0x0000000000000011")), @"Should have assigned a unique ID");
+    XCTAssertEqual(CCEntityGetID(Entity[4]), 0, @"Should not have assigned a unique ID");
+    
+    NextID = CCEntityManagerGetNextID();
+    XCTAssertTrue(CCStringEqual(NextID, CC_STRING("0x0000000000000012")), @"Should have the correct next ID");
+    CCStringDestroy(NextID);
+    
+    CCEntityManagerLock();
+    XCTAssertEqual(CCEntityManagerGetEntity(CC_STRING("0x0000000000000000")), NULL, @"Should not find an active entity with this ID");
+    CCEntityManagerUpdate();
+    XCTAssertNotEqual(CCEntityManagerGetEntity(CC_STRING("0x0000000000000000")), NULL, @"Should find an active entity with this ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetName(CCEntityManagerGetEntity(CC_STRING("0x0000000000000000"))), CC_STRING("a")), @"Should find an active entity with this ID");
+    CCEntityManagerUnlock();
+    
+    CCEntityManagerRemoveEntity(Entity[0]);
+    CCEntityManagerAddEntity(Entity[4]);
+    
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[1]), CC_STRING("0x0000000000000001")), @"Should have assigned a unique ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[2]), CC_STRING("0x10")), @"Should have assigned a unique ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[3]), CC_STRING("0x0000000000000011")), @"Should have assigned a unique ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetID(Entity[4]), CC_STRING("0x0000000000000012")), @"Should have assigned a unique ID");
+    
+    CCEntityManagerLock();
+    XCTAssertNotEqual(CCEntityManagerGetEntity(CC_STRING("0x0000000000000000")), NULL, @"Should find an active entity with this ID");
+    CCEntityManagerUpdate();
+    XCTAssertEqual(CCEntityManagerGetEntity(CC_STRING("0x0000000000000000")), NULL, @"Should not find an active entity with this ID");
+    XCTAssertNotEqual(CCEntityManagerGetEntity(CC_STRING("0x0000000000000012")), NULL, @"Should find an active entity with this ID");
+    XCTAssertTrue(CCStringEqual(CCEntityGetName(CCEntityManagerGetEntity(CC_STRING("0x0000000000000012"))), CC_STRING("e")), @"Should find an active entity with this ID");
+    CCEntityManagerUnlock();
+    
+    NextID = CCEntityManagerGetNextID();
+    XCTAssertTrue(CCStringEqual(NextID, CC_STRING("0x0000000000000013")), @"Should have the correct next ID");
+    CCStringDestroy(NextID);
 }
 
 @end
