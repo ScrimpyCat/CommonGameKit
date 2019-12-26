@@ -13,6 +13,11 @@
                     "name": "children",
                     "description": "The child entities of this parent entity.",
                     "args": [[{ "type": "custom:entity" }]]
+                },
+                {
+                    "name": "id",
+                    "description": "The unique id of the entity.",
+                    "args": [[{ "type": "string" }]]
                 }
             ]
         }
