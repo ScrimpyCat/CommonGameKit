@@ -145,3 +145,29 @@ CCExpression CCEntityExpressionEntity(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression CCEntityExpressionEntityLookup(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression IDExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
+        if (CCExpressionGetType(IDExpr) == CCExpressionValueTypeString)
+        {
+            CCString ID = CCExpressionGetString(IDExpr);
+            CCEntity Entity = CCEntityManagerGetEntity(ID);
+            
+            if (!Entity)
+            {
+                CC_EXPRESSION_EVALUATOR_LOG_ERROR("No entity exists for id (%S)", ID);
+                
+                return CCExpressionCreateNull(CC_STD_ALLOCATOR);
+            }
+            
+            return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCEntityExpressionValueTypeEntity, Entity, NULL, NULL);
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-lookup", "id:string");
+    
+    return Expression;
+}

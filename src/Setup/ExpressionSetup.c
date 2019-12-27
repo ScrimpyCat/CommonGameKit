@@ -29,6 +29,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("quote"), CCMacroExpressionQuote);
     CCExpressionEvaluatorRegister(CC_STRING("unquote"), CCMacroExpressionUnquote);
     CCExpressionEvaluatorRegister(CC_STRING("entity"), CCEntityExpressionEntity);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-lookup"), CCEntityExpressionEntityLookup);
     CCExpressionEvaluatorRegister(CC_STRING("print"), CCIOExpressionPrint);
     CCExpressionEvaluatorRegister(CC_STRING("search"), CCIOExpressionSearch);
     CCExpressionEvaluatorRegister(CC_STRING("eval"), CCIOExpressionEval);

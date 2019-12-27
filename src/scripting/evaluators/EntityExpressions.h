@@ -34,5 +34,6 @@ typedef enum {
 
 
 CC_EXPRESSION_EVALUATOR(entity) CCExpression CCEntityExpressionEntity(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-lookup) CCExpression CCEntityExpressionEntityLookup(CCExpression Expression);
 
 #endif
