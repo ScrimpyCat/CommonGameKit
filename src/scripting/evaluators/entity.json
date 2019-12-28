@@ -20,6 +20,13 @@
                     "args": [[{ "type": "string" }]]
                 }
             ]
+        },
+        {
+            "name": "entity-lookup",
+            "description": "Lookup an entity with the specified ID.",
+            "examples": ["(entity-lookup \"0x0000000000000001\")"],
+            "return": { "type": "custom:entity" },
+            "args": [[{ "type": "string", "name": "id" }]]
         }
     ]
 }
