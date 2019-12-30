@@ -176,7 +176,8 @@ static const struct {
     { .modifier = CC_STRING(":super"), .flag = CCKeyboardModifierSuper }
 };
 
-static CCDictionary(CCString, CCKeyboardKeycode) Keycodes = NULL, Modifiers = NULL;
+static CCDictionary(CCString, CCKeyboardKeycode) Keycodes = NULL;
+static CCDictionary(CCString, CCKeyboardModifier) Modifiers = NULL;
 
 void CCInputMapKeyboardComponentRegister(void)
 {
@@ -196,7 +197,7 @@ void CCInputMapKeyboardComponentRegister(void)
     }
     
     
-    Modifiers = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCKeyboardKeycode), &(CCDictionaryCallbacks){
+    Modifiers = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCKeyboardModifier), &(CCDictionaryCallbacks){
         .getHash = CCStringHasherForDictionary,
         .compareKeys = CCStringComparatorForDictionary
     });
