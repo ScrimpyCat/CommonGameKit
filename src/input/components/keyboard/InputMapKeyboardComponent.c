@@ -179,6 +179,9 @@ static const struct {
 static CCDictionary(CCString, CCKeyboardKeycode) Keycodes = NULL;
 static CCDictionary(CCString, CCKeyboardModifier) Modifiers = NULL;
 
+const CCDictionary(CCString, CCKeyboardKeycode) * const CCInputMapKeyboardComponentKeycodeAtoms = &Keycodes;
+const CCDictionary(CCString, CCKeyboardModifier) * const CCInputMapKeyboardComponentModifierAtoms = &Modifiers;
+
 void CCInputMapKeyboardComponentRegister(void)
 {
     CCComponentRegister(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID, CCInputMapKeyboardComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapKeyboardComponentClass), CCInputMapKeyboardComponentInitialize, NULL, CCInputMapKeyboardComponentDeallocate);

@@ -43,6 +43,9 @@ typedef struct {
 } CCInputMapKeyboardComponentClass, *CCInputMapKeyboardComponentPrivate;
 
 
+extern const CCDictionary(CCString, CCKeyboardKeycode) * const CCInputMapKeyboardComponentKeycodeAtoms;
+extern const CCDictionary(CCString, CCKeyboardModifier) * const CCInputMapKeyboardComponentModifierAtoms;
+
 void CCInputMapKeyboardComponentRegister(void);
 void CCInputMapKeyboardComponentDeregister(void);
 void CCInputMapKeyboardComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
