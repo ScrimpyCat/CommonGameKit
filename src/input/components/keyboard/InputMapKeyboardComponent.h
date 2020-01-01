@@ -106,7 +106,7 @@ static inline CCKeyboardModifier CCInputMapKeyboardComponentGetFlags(CCComponent
 static inline void CCInputMapKeyboardComponentSetFlags(CCComponent Component, CCKeyboardModifier Flags);
 
 /*!
- * @brief Get the input map controller keyboard input ramping.
+ * @brief Get the input map keyboard input ramping.
  * @description The ramping affects the speed of the build up/falloff per second.
  * @param Component The input map keyboard component.
  * @return The input map keyboard ramping value.
