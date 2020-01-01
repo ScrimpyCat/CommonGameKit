@@ -44,6 +44,79 @@ typedef struct {
 void CCInputMapMouseButtonComponentRegister(void);
 void CCInputMapMouseButtonComponentDeregister(void);
 
+/*!
+ * @brief Initialize the input map mouse button component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCInputMapMouseButtonComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the input map mouse button component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCInputMapMouseButtonComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the input map mouse button to match.
+ * @param Component The input map mouse button component.
+ * @return The input map mouse button.
+ */
+static inline CCMouseButton CCInputMapMouseButtonComponentGetButton(CCComponent Component);
+
+/*!
+ * @brief Set the input map mouse button to match.
+ * @param Component The input map mouse button component.
+ * @param Keycode The input map mouse button.
+ */
+static inline void CCInputMapMouseButtonComponentSetButton(CCComponent Component, CCMouseButton Button);
+
+/*!
+ * @brief Get the input map mouse button modifiers to match.
+ * @param Component The input map mouse button component.
+ * @return The input map mouse button modifiers.
+ */
+static inline CCKeyboardModifier CCInputMapMouseButtonComponentGetFlags(CCComponent Component);
+
+/*!
+ * @brief Set the input map mouse button modifiers to match.
+ * @param Component The input map mouse button component.
+ * @param Flags The input map mouse button modifiers.
+ */
+static inline void CCInputMapMouseButtonComponentSetFlags(CCComponent Component, CCKeyboardModifier Flags);
+
+/*!
+ * @brief Get the input map mouse button input ramping.
+ * @description The ramping affects the speed of the build up/falloff per second.
+ * @param Component The input map mouse button component.
+ * @return The input map mouse button ramping value.
+ */
+static inline float CCInputMapMouseButtonComponentGetRamp(CCComponent Component);
+
+/*!
+ * @brief Set the input map mouse button input ramping.
+ * @description The ramping affects the speed of the build up/falloff per second.
+ * @param Component The input map mouse button component.
+ * @param Ramp The input map mouse button ramping value.
+ */
+static inline void CCInputMapMouseButtonComponentSetRamp(CCComponent Component, float Ramp);
+
+/*!
+ * @brief Get whether the input map mouse button ignores modifier flags when matching.
+ * @param Component The input map mouse button component.
+ * @return Whether the input map mouse button ignores modifiers.
+ */
+static inline _Bool CCInputMapMouseButtonComponentGetIgnoreModifier(CCComponent Component);
+
+/*!
+ * @brief Set whether the input map mouse button ignores modifier flags when matching.
+ * @param Component The input map mouse button component.
+ * @param IgnoreModifier Whether the input map mouse button ignores modifiers.
+ */
+static inline void CCInputMapMouseButtonComponentSetIgnoreModifier(CCComponent Component, _Bool IgnoreModifier);
+
+#pragma mark -
+
 
 static inline void CCInputMapMouseButtonComponentInitialize(CCComponent Component, CCComponentID id)
 {
