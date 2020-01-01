@@ -25,15 +25,156 @@
 
 #define CC_QUICK_COMPILE
 #include "InputMapMouseButtonComponent.h"
+#include "ComponentExpressions.h"
+#include "InputMapKeyboardComponent.h"
 
 const CCString CCInputMapMouseButtonComponentName = CC_STRING("input_map_mouse_button");
+
+const CCMouseButton CCInputMapMouseButtonComponentButtonAny = CCMouseButtonUnknown;
+
+static const CCComponentExpressionDescriptor CCInputMapMouseButtonComponentDescriptor = {
+    .id = CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID,
+    .initialize = NULL,
+    .deserialize = CCInputMapMouseButtonComponentDeserializer,
+    .serialize = NULL
+};
+
+static const struct {
+    CCString name;
+    CCMouseButton button;
+} NamedButtons[] = {
+    { .name = CC_STRING(":left"), .button = CCMouseButtonLeft },
+    { .name = CC_STRING(":right"), .button = CCMouseButtonRight },
+    { .name = CC_STRING(":middle"), .button = CCMouseButtonMiddle },
+    { .name = CC_STRING(":btn-1"), .button = CCMouseButton1 },
+    { .name = CC_STRING(":btn-2"), .button = CCMouseButton2 },
+    { .name = CC_STRING(":btn-3"), .button = CCMouseButton3 },
+    { .name = CC_STRING(":btn-4"), .button = CCMouseButton4 },
+    { .name = CC_STRING(":btn-5"), .button = CCMouseButton5 },
+    { .name = CC_STRING(":btn-6"), .button = CCMouseButton6 },
+    { .name = CC_STRING(":btn-7"), .button = CCMouseButton7 },
+    { .name = CC_STRING(":btn-8"), .button = CCMouseButton8 },
+    { .name = CC_STRING(":any"), .button = CCInputMapMouseButtonComponentButtonAny }
+};
+
+static CCDictionary(CCString, CCMouseButton) Buttons = NULL;
+
+const CCDictionary(CCString, CCMouseButton) * const CCInputMapMouseButtonComponentButtonAtoms = &Buttons;
 
 void CCInputMapMouseButtonComponentRegister(void)
 {
     CCComponentRegister(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID, CCInputMapMouseButtonComponentName, CC_STD_ALLOCATOR, sizeof(CCInputMapMouseButtonComponentClass), CCInputMapMouseButtonComponentInitialize, NULL, CCInputMapMouseButtonComponentDeallocate);
+    
+    CCComponentExpressionRegister(CC_STRING("input-mouse-button"), &CCInputMapMouseButtonComponentDescriptor, TRUE);
+    
+    
+    Buttons = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCMouseButton), &(CCDictionaryCallbacks){
+        .getHash = CCStringHasherForDictionary,
+        .compareKeys = CCStringComparatorForDictionary
+    });
+    
+    for (size_t Loop = 0; Loop < sizeof(NamedButtons) / sizeof(typeof(*NamedButtons)); Loop++)
+    {
+        CCDictionarySetValue(Buttons, &NamedButtons[Loop].name, &NamedButtons[Loop].button);
+    }
 }
 
 void CCInputMapMouseButtonComponentDeregister(void)
 {
     CCComponentDeregister(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+}
+
+static CCComponentExpressionArgumentDeserializer Arguments[] = {
+    { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCInputMapMouseButtonComponentSetRamp }
+};
+
+void CCInputMapMouseDropComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
+{
+    CCInputMapMouseButtonComponentSetIgnoreModifier(Component, TRUE);
+    
+    if (CCExpressionGetType(Arg) == CCExpressionValueTypeList)
+    {
+        const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Arg));
+        if (CCCollectionGetCount(CCExpressionGetList(Arg)) >= 2)
+        {
+            CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 0);
+            if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+            {
+                CCString Name = CCExpressionGetAtom(NameExpr);
+                if (CCStringEqual(Name, CC_STRING("button:")))
+                {
+                    if (ArgCount == 2)
+                    {
+                        CCExpression Button = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Arg), 1);
+                        if (CCExpressionGetType(Button) == CCExpressionValueTypeAtom)
+                        {
+                            CCString Code = CCExpressionGetAtom(Button);
+                            
+                            CCMouseButton *Value = CCDictionaryGetValue(Buttons, &Code);
+                            if (Value)
+                            {
+                                CCInputMapMouseButtonComponentSetButton(Component, *Value);
+                            }
+                            
+                            else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (button:) is not a valid atom", Code);
+                        }
+                        
+                        else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (button:) to be an atom");
+                    }
+                    
+                    else if (!CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred)) CC_LOG_ERROR("Expect value for argument (button:) to be an atom");
+                    
+                    return;
+                }
+                
+                else if (CCStringEqual(Name, CC_STRING("flags:")))
+                {
+                    CCKeyboardModifier Flags = 0;
+                    
+                    CCEnumerator Enumerator;
+                    CCCollectionGetEnumerator(CCExpressionGetList(Arg), &Enumerator);
+                    
+                    _Bool FlagsValid = TRUE;
+                    for (CCExpression *Expr = CCCollectionEnumeratorNext(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+                    {
+                        if (CCExpressionGetType(*Expr) == CCExpressionValueTypeAtom)
+                        {
+                            CCString Flag = CCExpressionGetAtom(*Expr);
+                            CCKeyboardModifier *Value = CCDictionaryGetValue(*CCInputMapKeyboardComponentModifierAtoms, &Flag);
+                            if (Value) Flags |= *Value;
+                            else if (!Deferred) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (flags:) is not a valid atom", Flag);
+                            else FlagsValid = FALSE;
+                        }
+                        
+                        else if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+                        {
+                            CC_COLLECTION_FOREACH(CCExpression, MapExpr, CCExpressionGetList(*Expr))
+                            {
+                                if (CCExpressionGetType(MapExpr) == CCExpressionValueTypeAtom)
+                                {
+                                    CCString Flag = CCExpressionGetAtom(*Expr);
+                                    CCKeyboardModifier *Value = CCDictionaryGetValue(*CCInputMapKeyboardComponentModifierAtoms, &Flag);
+                                    if (Value) Flags |= *Value;
+                                    else if (!Deferred) CC_LOG_ERROR_CUSTOM("Value (:%S) for argument (flags:) is not a valid atom", Flag);
+                                    else FlagsValid = FALSE;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (!FlagsValid) CCComponentExpressionDeserializeDeferredArgument(Component, Arg, Deferred);
+                    
+                    CCInputMapMouseButtonComponentSetFlags(Component, Flags);
+                    CCInputMapMouseButtonComponentSetIgnoreModifier(Component, FALSE);
+                    
+                    return;
+                }
+            }
+        }
+    }
+    
+    if (!CCComponentExpressionDeserializeArgument(Component, Arg, Arguments, sizeof(Arguments) / sizeof(typeof(*Arguments)), Deferred))
+    {
+        CCInputMapComponentDeserializer(Component, Arg, Deferred);
+    }
 }

@@ -41,8 +41,11 @@ typedef struct {
 } CCInputMapMouseButtonComponentClass, *CCInputMapMouseButtonComponentPrivate;
 
 
+extern const CCDictionary(CCString, CCMouseButton) * const CCInputMapMouseButtonComponentButtonAtoms;
+
 void CCInputMapMouseButtonComponentRegister(void);
 void CCInputMapMouseButtonComponentDeregister(void);
+void CCInputMapMouseButtonComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
  * @brief Initialize the input map mouse button component.
