@@ -63,7 +63,7 @@ static inline CCEntity CCRelationParentComponentGetParent(CCComponent Component)
 
 static inline void CCRelationParentComponentSetParent(CCComponent Component, CCEntity Parent)
 {
-    if (((CCRelationParentComponentPrivate)Component)->parent) CCEntityDestroy(((CCRelationParentComponentPrivate)Component)->parent);
+    CCAssertLog(!((CCRelationParentComponentPrivate)Component)->parent, "Parent should not be changed once set");
     
     ((CCRelationParentComponentPrivate)Component)->parent = CCRetain(Parent);
 }
