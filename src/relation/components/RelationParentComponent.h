@@ -42,6 +42,35 @@ typedef struct {
 void CCRelationParentComponentRegister(void);
 void CCRelationParentComponentDeregister(void);
 
+/*!
+ * @brief Initialize the relation parent component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCRelationParentComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the relation parent component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCRelationParentComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the parent entity.
+ * @param Component The relation parent component.
+ * @return The parent entity.
+ */
+static inline CCEntity CCRelationParentComponentGetParent(CCComponent Component);
+
+/*!
+ * @brief Set the parent entity.
+ * @param Component The relation parent component.
+ * @param Parent The parent entity.
+ */
+static inline void CCRelationParentComponentSetParent(CCComponent Component, CCEntity Parent);
+
+
+#pragma mark -
 
 static inline void CCRelationParentComponentInitialize(CCComponent Component, CCComponentID id)
 {
