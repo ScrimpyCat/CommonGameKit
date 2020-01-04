@@ -304,6 +304,60 @@
                     "args": [[{ "type": "number", "name": "speed" }]]
                 }
             ]
+        },
+        {
+            "name": "input-mouse-button",
+            "description": "Create an input map mouse button component.",
+            "examples": ["(input-mouse-button (action: \"action\") (button: :left))"],
+            "return": { "type": "custom:component" },
+            "options": [
+                {
+                    "name": "action",
+                    "description": "The name of the action.",
+                    "args": [[{ "type": "string" }]]
+                },
+                {
+                    "name": "callback",
+                    "description": "The name of the callback.",
+                    "args": [[{ "type": "atom" }]]
+                },
+                {
+                    "name": "button",
+                    "description": "The button to be mapped.",
+                    "args": [
+                        [{ "type": "atom", "name": "button" }],
+                        [{ "type": "atom", "value": "any" }],
+                        [{ "type": "atom", "value": "left" }],
+                        [{ "type": "atom", "value": "right" }],
+                        [{ "type": "atom", "value": "middle" }],
+                        [{ "type": "atom", "value": "btn-1" }],
+                        [{ "type": "atom", "value": "btn-2" }],
+                        [{ "type": "atom", "value": "btn-3" }],
+                        [{ "type": "atom", "value": "btn-4" }],
+                        [{ "type": "atom", "value": "btn-5" }],
+                        [{ "type": "atom", "value": "btn-6" }],
+                        [{ "type": "atom", "value": "btn-7" }],
+                        [{ "type": "atom", "value": "btn-8" }]
+                    ]
+                },
+                {
+                    "name": "flags",
+                    "description": "The modifier flags to be mapped.",
+                    "args": [
+                        [{ "type": "atom", "name": "key" }],
+                        [{ "type": "atom", "value": "none" }],
+                        [{ "type": "atom", "value": "shift" }],
+                        [{ "type": "atom", "value": "control" }],
+                        [{ "type": "atom", "value": "alt" }],
+                        [{ "type": "atom", "value": "super" }]
+                    ]
+                },
+                {
+                    "name": "ramp",
+                    "description": "The ramping applied when retrieving pressure states. The value effects the speed of the build up/falloff per second.",
+                    "args": [[{ "type": "number", "name": "speed" }]]
+                }
+            ]
         }
     ]
 }
