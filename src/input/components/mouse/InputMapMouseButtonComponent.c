@@ -88,7 +88,7 @@ static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("ramp:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeFloat32, .setter = (CCComponentExpressionSetter)CCInputMapMouseButtonComponentSetRamp }
 };
 
-void CCInputMapMouseDropComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
+void CCInputMapMouseButtonComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred)
 {
     CCInputMapMouseButtonComponentSetIgnoreModifier(Component, TRUE);
     
