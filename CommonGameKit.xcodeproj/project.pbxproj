@@ -255,6 +255,8 @@
 		F3B34E352253448C00C2DEC1 /* MTLDraw.h in Headers */ = {isa = PBXBuildFile; fileRef = F3B34E332253448C00C2DEC1 /* MTLDraw.h */; };
 		F3B34E362253448C00C2DEC1 /* MTLDraw.m in Sources */ = {isa = PBXBuildFile; fileRef = F3B34E342253448C00C2DEC1 /* MTLDraw.m */; };
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
+		F3BEC1BF23C1131500014B5B /* TypeCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3BEC1C023C1131500014B5B /* TypeCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E2742820D1669B00D6AFE1 /* ScriptableInterfaceSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */; };
@@ -762,6 +764,8 @@
 		F3B34E332253448C00C2DEC1 /* MTLDraw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLDraw.h; sourceTree = "<group>"; };
 		F3B34E342253448C00C2DEC1 /* MTLDraw.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLDraw.m; sourceTree = "<group>"; };
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
+		F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeCallbacks.h; sourceTree = "<group>"; };
+		F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TypeCallbacks.c; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
 		F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableInterfaceSystem.h; sourceTree = "<group>"; };
 		F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ScriptableInterfaceSystem.c; sourceTree = "<group>"; };
@@ -1045,6 +1049,8 @@
 				F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */,
 				F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */,
 				F378DAFD234D5278000600CC /* ContainerTypes.h */,
+				F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */,
+				F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */,
 				F3AF32931DCCD4EB00CAD472 /* Animation */,
 				F3AF329E1DCCD4EB00CAD472 /* Component System */,
 				F3AF32AB1DCCD4EB00CAD472 /* GUI */,
@@ -1645,6 +1651,7 @@
 				F3AF33CA1DCCD4EC00CAD472 /* GFXBuffer.h in Headers */,
 				F3897B301DCD6B32008D6C1D /* stdatomic_portable.h in Headers */,
 				F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */,
+				F3BEC1BF23C1131500014B5B /* TypeCallbacks.h in Headers */,
 				F3AF33F01DCCD4EC00CAD472 /* GLTexture.h in Headers */,
 				F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */,
 				F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */,
@@ -2052,6 +2059,7 @@
 				F3AF349A1DCCD5AF00CAD472 /* MacroExpressions.c in Sources */,
 				F3AF34911DCCD5AF00CAD472 /* GraphicsExpressions.c in Sources */,
 				F3897BE21DCDFFBA008D6C1D /* ExpressionSetup.c in Sources */,
+				F3BEC1C023C1131500014B5B /* TypeCallbacks.c in Sources */,
 				F3AF33EA1DCCD4EC00CAD472 /* GLShaderLibrary.c in Sources */,
 				F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */,
 				F3E2742D20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c in Sources */,
