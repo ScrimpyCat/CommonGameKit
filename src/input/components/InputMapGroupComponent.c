@@ -50,11 +50,6 @@ void CCInputMapGroupComponentDeregister(void)
     CCComponentDeregister(CC_INPUT_MAP_GROUP_COMPONENT_ID);
 }
 
-void CCInputMapGroupComponentElementDestructor(CCCollection(CCComponent) Collection, CCComponent *Element)
-{
-    CCComponentDestroy(*Element);
-}
-
 static CCComponentExpressionArgumentDeserializer Arguments[] = {
     { .name = CC_STRING("all-active:"), .serializedType = CCExpressionValueTypeUnspecified, .setterType = CCComponentExpressionArgumentTypeBool, .setter = (CCComponentExpressionSetter)CCInputMapGroupComponentSetWantsAllActive }
 };

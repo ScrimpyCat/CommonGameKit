@@ -28,6 +28,7 @@
 #include "Entity.h"
 #include "ComponentBase.h"
 #include "ComponentSystem.h"
+#include "TypeCallbacks.h"
 #include <threads.h>
 #include <stdatomic.h>
 
@@ -42,11 +43,6 @@ static CCEntityManager EntityManager = {
     .addedLock = ATOMIC_FLAG_INIT,
     .removedLock = ATOMIC_FLAG_INIT
 };
-
-static void CCEntityDestructor(CCCollection(CCEntity) Collection, CCEntity *Entity)
-{
-    CCEntityDestroy(*Entity);
-}
 
 static mtx_t Lock;
 void CCEntityManagerCreate(void)
@@ -63,7 +59,7 @@ void CCEntityManagerCreate(void)
         .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
         .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
         .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), NULL),
-        .destroy = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), (CCCollectionElementDestructor)CCEntityDestructor),
+        .destroy = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(CCEntity), CCEntityDestructorForCollection),
         .addedLock = ATOMIC_FLAG_INIT,
         .removedLock = ATOMIC_FLAG_INIT
     };

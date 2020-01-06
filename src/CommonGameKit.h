@@ -28,6 +28,8 @@
 
 #include <CommonGameKit/Base.h>
 
+#include <CommonGameKit/TypeCallbacks.h>
+
 #include <CommonGameKit/Callbacks.h>
 #include <CommonGameKit/Window.h>
 

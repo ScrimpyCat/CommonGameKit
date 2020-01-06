@@ -28,6 +28,7 @@
 #include "Window.h"
 #include "Entity.h"
 #include "EntityManager.h"
+#include "TypeCallbacks.h"
 
 #include "InputSystem.h"
 #include "InputMapKeyboardComponent.h"
@@ -73,11 +74,6 @@ static void GUIManagerEventKeyboardCallback(CCComponent Component, CCKeyboardMap
     GUIManagerUnlock();
 }
 
-static void GUIObjectDestructor(CCCollection(GUIObject) Collection, GUIObject *Object)
-{
-    GUIObjectDestroy(*Object);
-}
-
 static mtx_t Lock;
 void GUIManagerCreate(void)
 {
@@ -92,7 +88,7 @@ void GUIManagerCreate(void)
         .entity = CCEntityCreate(GUI_MANAGER_ENTITY_ID, CC_STD_ALLOCATOR),
         .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating, sizeof(GUIObject), NULL),
         .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), NULL),
-        .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), (CCCollectionElementDestructor)GUIObjectDestructor),
+        .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), GUIObjectDestructorForCollection),
         .addedLock = ATOMIC_FLAG_INIT,
         .removedLock = ATOMIC_FLAG_INIT
     };

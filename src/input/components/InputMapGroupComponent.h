@@ -28,6 +28,7 @@
 
 #include <CommonGameKit/Base.h>
 #include <CommonGameKit/InputMapComponent.h>
+#include <CommonGameKit/TypeCallbacks.h>
 
 #define CC_INPUT_MAP_GROUP_COMPONENT_ID (CCInputMapTypeGroup | CC_INPUT_COMPONENT_FLAG)
 
@@ -42,7 +43,6 @@ typedef struct {
 
 void CCInputMapGroupComponentRegister(void);
 void CCInputMapGroupComponentDeregister(void);
-void CCInputMapGroupComponentElementDestructor(CCCollection(CCComponent) Collection, CCComponent *Element);
 void CCInputMapGroupComponentDeserializer(CCComponent Component, CCExpression Arg, _Bool Deferred);
 
 /*!
@@ -104,7 +104,7 @@ static inline void CCInputMapGroupComponentSetWantsAllActive(CCComponent Compone
 static inline void CCInputMapGroupComponentInitialize(CCComponent Component, CCComponentID id)
 {
     CCInputMapComponentInitialize(Component, id);
-    ((CCInputMapGroupComponentPrivate)Component)->inputMaps = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating | CCCollectionHintSizeSmall, sizeof(CCComponent), (CCCollectionElementDestructor)CCInputMapGroupComponentElementDestructor);
+    ((CCInputMapGroupComponentPrivate)Component)->inputMaps = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintOrdered | CCCollectionHintHeavyEnumerating | CCCollectionHintSizeSmall, sizeof(CCComponent), CCComponentDestructorForCollection);
     ((CCInputMapGroupComponentPrivate)Component)->wantsAllActive = FALSE;
 }
 

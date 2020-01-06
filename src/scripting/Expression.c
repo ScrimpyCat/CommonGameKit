@@ -27,6 +27,7 @@
 #include "Expression.h"
 #include <inttypes.h>
 #include "ExpressionEvaluator.h"
+#include "TypeCallbacks.h"
 
 
 static CCExpressionValue *CCExpressionValueCreateFromString(CCAllocatorType Allocator, const char *Input, size_t Length);
@@ -35,11 +36,6 @@ static CCExpression CCExpressionRetainValueCopy(CCExpression Value);
 
 const CCExpressionValueCopy CCExpressionRetainedValueCopy = CCExpressionRetainValueCopy;
 
-
-static void CCExpressionElementDestructor(CCCollection(CCExpression) Collection, CCExpression *Element)
-{
-    CCExpressionDestroy(*Element);
-}
 
 static CCExpression CCExpressionValueAtomOrStringCopy(CCExpression Value)
 {
@@ -97,10 +93,10 @@ CCExpression CCExpressionCreate(CCAllocatorType Allocator, CCExpressionValueType
             
         case CCExpressionValueTypeList:
 #if CC_EXPRESSION_ENABLE_CONSTANT_LISTS
-            Expression->list.items = CCCollectionCreateWithImplementation(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor, CCCollectionFastArray);
+            Expression->list.items = CCCollectionCreateWithImplementation(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), CCExpressionDestructorForCollection, CCCollectionFastArray);
             Expression->list.constant = FALSE;
 #else
-            Expression->list = CCCollectionCreateWithImplementation(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), (CCCollectionElementDestructor)CCExpressionElementDestructor, CCCollectionFastArray);
+            Expression->list = CCCollectionCreateWithImplementation(Allocator, CCCollectionHintOrdered | CCCollectionHintSizeSmall, sizeof(CCExpression), CCExpressionDestructorForCollection, CCCollectionFastArray);
 #endif
             Expression->destructor = (CCExpressionValueDestructor)CCCollectionDestroy;
             Expression->copy = CCExpressionValueListCopy;
