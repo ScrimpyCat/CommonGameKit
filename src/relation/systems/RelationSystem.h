@@ -28,6 +28,7 @@
 
 #include <CommonGameKit/ComponentSystem.h>
 #include <CommonGameKit/SystemID.h>
+#include <CommonGameKit/Entity.h>
 
 typedef enum {
     CCRelationTypeMask = 0xff,
@@ -36,5 +37,12 @@ typedef enum {
 
 void CCRelationSystemRegister(void);
 void CCRelationSystemDeregister(void);
+
+/*!
+ * @brief Get the children belonging to an entity.
+ * @param Entity The entity to get the children of.
+ * @return The list of children. This must be destroyed.
+ */
+CC_NEW CCCollection(CCEntity) CCRelationSystemGetChildren(CCEntity Entity);
 
 #endif
