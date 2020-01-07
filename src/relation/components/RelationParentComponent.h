@@ -27,11 +27,12 @@
 #define CommonGameKit_RelationParentComponent_h
 
 #include <CommonGameKit/Base.h>
+#include <CommonGameKit/RelationSystem.h>
 #include <CommonGameKit/ComponentBase.h>
 #include <CommonGameKit/Entity.h>
 
 
-#define CC_RELATION_PARENT_COMPONENT_ID 2
+#define CC_RELATION_PARENT_COMPONENT_ID (CCRelationTypeParent | CC_RELATION_COMPONENT_FLAG)
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCComponentClass);
