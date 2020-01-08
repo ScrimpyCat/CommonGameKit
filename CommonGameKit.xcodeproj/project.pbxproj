@@ -257,6 +257,7 @@
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 		F3BEC1BF23C1131500014B5B /* TypeCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BEC1C023C1131500014B5B /* TypeCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */; };
+		F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E2742820D1669B00D6AFE1 /* ScriptableInterfaceSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */; };
@@ -766,6 +767,7 @@
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
 		F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeCallbacks.h; sourceTree = "<group>"; };
 		F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TypeCallbacks.c; sourceTree = "<group>"; };
+		F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelationSystemTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
 		F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableInterfaceSystem.h; sourceTree = "<group>"; };
 		F3E2742620D1669B00D6AFE1 /* ScriptableInterfaceSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ScriptableInterfaceSystem.c; sourceTree = "<group>"; };
@@ -1072,6 +1074,7 @@
 			children = (
 				F3897BDB1DCD88A4008D6C1D /* CCTestCase.h */,
 				F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */,
+				F3DB295D23C4B4DE00D0D68E /* Relation */,
 				F3897CFC1DD08074008D6C1D /* Utilities */,
 				F3897CFB1DD08042008D6C1D /* Scripting */,
 				F3897CF81DD07FDD008D6C1D /* GL */,
@@ -1522,6 +1525,14 @@
 				F3AF34C71DCCF4EC00CAD472 /* CommonC-iOSTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F3DB295D23C4B4DE00D0D68E /* Relation */ = {
+			isa = PBXGroup;
+			children = (
+				F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */,
+			);
+			name = Relation;
 			sourceTree = "<group>";
 		};
 		F3E2740820D164CA00D6AFE1 /* Systems */ = {
@@ -2152,6 +2163,7 @@
 				F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */,
 				F3897BB91DCD764E008D6C1D /* ComponentTests.m in Sources */,
 				F3897BC71DCD764E008D6C1D /* GLDebugTests.m in Sources */,
+				F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */,
 				F3897BBC1DCD764E008D6C1D /* ExpressionControlFlowTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
