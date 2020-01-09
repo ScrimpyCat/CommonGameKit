@@ -33,7 +33,7 @@ CC_CONTAINER_DECLARE(CCConcurrentIndexMap, CCComponent);
 
 #define CC_CONTAINER_DECLARE_PRESET_CCDictionary() \
 CC_CONTAINER_DECLARE(CCDictionary, CCComponent, size_t); \
-CC_CONTAINER_DECLARE(CCDictionary, CCEntity, CC_CONTAINER(CCCollection, CCEntity)); \
+CC_CONTAINER_DECLARE(CCDictionary, CCEntity, CC_CONTAINER(CCCollection, CCComponent)); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CCAnimationInterpolator); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CCInputMapComponentCallback); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CCKeyboardKeycode); \
