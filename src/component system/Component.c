@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include "ComponentBase.h"
 #include "Message.h"
+#include "TypeCallbacks.h"
 
 
 typedef struct {
@@ -153,4 +154,18 @@ void CCComponentHandleMessage(CCComponent Component, CCMessage *Message)
     {
         if (Info->messageHandler) Info->messageHandler(Component, Message);
     }
+}
+
+CCCollection(CCEntity) CCComponentGetEntities(CCCollection(CCComponent) Components)
+{
+    const CCCollectionInterface *Interface = CCCollectionGetInterface(Components);
+    CCCollection(CCEntity) Entities = CCCollectionCreateWithImplementation(CC_STD_ALLOCATOR, CCCollectionHintHeavyEnumerating, sizeof(CCEntity), CCEntityDestructorForCollection, Interface);
+    
+    CCCollectionEntry (*Insert)(CCCollection, const void *) = Interface->optional.ordered ? CCOrderedCollectionAppendElement : CCCollectionInsertElement;
+    CC_COLLECTION_FOREACH(CCComponent, Component, Components)
+    {
+        Insert(Entities, &(CCEntity){ CCRetain(CCComponentGetEntity(Component)) });
+    }
+    
+    return Entities;
 }
