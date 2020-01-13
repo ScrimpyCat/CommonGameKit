@@ -36,8 +36,69 @@ typedef struct {
     CCEntity entity;
 } CCComponentClass, *CCComponentPrivate;
 
+/*!
+ * @brief Get the entities for the list of components.
+ * @description If the component list is an ordered list, the entity list will be ordered too.
+ * @param Components The list of components.
+ * @return The list of entities. This must be destroyed.
+ */
+CC_NEW CCCollection(CCEntity) CCComponentGetEntities(CCCollection(CCComponent) Components);
 
 #pragma mark - Base Component Functions
+/*!
+ * @brief Initialize the component.
+ * @param Component The component to be initialized.
+ * @param id The component ID.
+ */
+static inline void CCComponentInitialize(CCComponent Component, CCComponentID id);
+
+/*!
+ * @brief Deallocate the component.
+ * @param Component The component to be deallocated.
+ */
+static inline void CCComponentDeallocate(CCComponent Component);
+
+/*!
+ * @brief Get the type ID of the component.
+ * @param Component The component.
+ * @return The component ID.
+ */
+static inline CCComponentID CCComponentGetID(CCComponent Component);
+
+/*!
+ * @brief Get the entity the component belongs to.
+ * @param Component The component.
+ * @return The entity of the component.
+ */
+static inline CCEntity CCComponentGetEntity(CCComponent Component);
+
+/*!
+ * @brief Set the entity the component belongs to.
+ * @note Should typically use @b CCEntityAttachComponent and @b CCEntityDetachComponent instead.
+ * @param Component The component.
+ * @param Entity The entity this component will belong to.
+ */
+static inline void CCComponentSetEntity(CCComponent Component, CCEntity Entity);
+
+/*!
+ * @brief Set whether this component is managed by a system.
+ * @note Should typically use @b CCComponentSystemAddComponent and @b CCComponentSystemRemoveComponent
+ *       instead.
+ *
+ * @param Component The component.
+ * @param Managed Whether the entity is being managed or not.
+ */
+static inline void CCComponentSetIsManaged(CCComponent Component, _Bool Managed);
+
+/*!
+ * @brief Check whether this component is managed by a system.
+ * @param Component The component.
+ * @return Whether the component is managed or not.
+ */
+static inline _Bool CCComponentGetIsManaged(CCComponent Component);
+
+
+#pragma mark -
 static inline void CCComponentInitialize(CCComponent Component, CCComponentID id)
 {
     CCAssertLog(!(id & CC_COMPONENT_ID_RESERVED_MASK), "Component ID must not include any reserved bits");
