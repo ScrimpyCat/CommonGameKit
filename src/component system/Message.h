@@ -50,6 +50,7 @@ typedef void (*CCMessageRouterDeliver)(CCMessage *Message, CCComponentSystemID S
 struct CCMessageRouter {
     CCMessageRouterPost post;
     CCMessageRouterDeliver deliver;
+    CCMemoryDestructorCallback destructor;
 };
 
 typedef struct {
@@ -60,6 +61,7 @@ typedef struct {
 struct CCMessage {
     CCMessageID id;
     CCMessageRouter *router;
+    CCMemoryDestructorCallback destructor;
 };
 
 typedef struct {
@@ -76,9 +78,10 @@ typedef struct {
  * @param Deliver The deliver callback.
  * @param Size The size of the data.
  * @param Data The data to initialize the router with. May be NULL.
+ * @param Destructor The data destructor. May be NULL.
  * @return A pointer to the created router, or NULL on failure. Must be destroyed to free the memory.
  */
-CC_NEW CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data);
+CC_NEW CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data, CCMemoryDestructorCallback Destructor);
 
 /*!
  * @brief Destroy a router.
@@ -116,8 +119,9 @@ static inline void *CCMessageGetData(CCMessage *Message);
  * @param Router The destination of the message.
  * @param Size The size of the data attached to the message.
  * @param Data The data to attach to the message.
+ * @param Destructor The data destructor. May be NULL.
  */
-void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *CC_OWN(Router), size_t Size, const void *Data);
+void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *CC_OWN(Router), size_t Size, const void *Data, CCMemoryDestructorCallback Destructor);
 
 #pragma mark - Routers
 

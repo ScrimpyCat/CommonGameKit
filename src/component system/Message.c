@@ -28,7 +28,12 @@
 #include "ComponentBase.h"
 
 
-CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data)
+static void CCMessageRouterDestructor(CCMessageRouter *Router)
+{
+    if (Router->destructor) Router->destructor(CCMessageRouterGetData(Router));
+}
+
+CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data, CCMemoryDestructorCallback Destructor)
 {
     CCMessageRouter *Router = CCMalloc(Allocator, sizeof(CCMessageRouter) + Size, NULL, CC_DEFAULT_ERROR_CALLBACK);
     
@@ -36,7 +41,11 @@ CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRoute
     {
         Router->post = Post;
         Router->deliver = Deliver;
+        Router->destructor = Destructor;
+        
         if (Data) memcpy(((CCMessageRouterData*)Router)->data, Data, Size);
+        
+        CCMemorySetDestructor(Router, (CCMemoryDestructorCallback)CCMessageRouterDestructor);
     }
     
     return Router;
@@ -56,12 +65,14 @@ void CCMessageDestroy(CCMessage *Message)
     CCFree(Message);
 }
 
-void CCMessageDestructor(CCMessage *Message)
+static void CCMessageDestructor(CCMessage *Message)
 {
-    CCFree(Message->router);
+    CCMessageRouterDestroy(Message->router);
+    
+    if (Message->destructor) Message->destructor(CCMessageGetData(Message));
 }
 
-void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *Router, size_t Size, const void *Data)
+void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *Router, size_t Size, const void *Data, CCMemoryDestructorCallback Destructor)
 {
     CCAssertLog(Router, "Router must not be null");
     
@@ -73,6 +84,9 @@ void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *R
         
         Message->id = id;
         Message->router = Router;
+        Message->destructor = Destructor;
+        
+        CCMemorySetDestructor(Message, (CCMemoryDestructorCallback)CCMessageDestructor);
         
         Router->post(Router, Message);
         CCMessageDestroy(Message);
@@ -122,7 +136,7 @@ CCMessageRouter *CCMessageDeliverToComponent(CCComponentID ComponentID)
 {
     return CCMessageRouterCreate(CC_STD_ALLOCATOR, CCMessageRouteComponentPoster, CCMessageRouteComponentDeliverer, sizeof(CCMessageRouteComponent), &(CCMessageRouteComponent){
         .componentID = ComponentID
-    });
+    }, NULL);
 }
 
 #pragma mark - Component Belonging To Entity
@@ -171,5 +185,5 @@ CCMessageRouter *CCMessageDeliverToComponentBelongingToEntity(CCComponentID Comp
     return CCMessageRouterCreate(CC_STD_ALLOCATOR, CCMessageRouteComponentEntityPoster, CCMessageRouteComponentEntityDeliverer, sizeof(CCMessageRouteComponentEntity), &(CCMessageRouteComponentEntity){
         .componentID = ComponentID,
         .entity = Entity
-    });
+    }, NULL);
 }
