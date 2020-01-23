@@ -60,8 +60,16 @@ int CCMain(CCEngineMain Main, int argc, const char *argv[])
     CCStringRegisterMap(CCStringEncodingASCII, Map31, CCStringMapSet31);
     
     char Path[] = __FILE__;
-    Path[sizeof(__FILE__) - sizeof("CommonGameKit/src/Callbacks.c")] = 0;
-    CCFileFilterInputAddPath(Path);
+    if ((sizeof(__FILE__) > sizeof("CommonGameKit/src/Callbacks.c")) && (!strcmp(Path + (sizeof(__FILE__) - sizeof("CommonGameKit/src/Callbacks.c")), "CommonGameKit/src/Callbacks.c")))
+    {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warray-bounds"
+        Path[sizeof(__FILE__) - sizeof("CommonGameKit/src/Callbacks.c")] = 0;
+#pragma clang diagnostic pop
+        
+        CCFileFilterInputAddPath(Path);
+    }
+    
     CCLogAddFilter(CCLogFilterInput, CCFileFilterInput);
     CCLogAddFilter(CCLogFilterSpecifier, CCBinaryFormatSpecifier);
     CCLogAddFilter(CCLogFilterSpecifier, CCArrayFormatSpecifier);
