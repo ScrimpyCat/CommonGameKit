@@ -120,13 +120,15 @@ _Bool GLShaderLibraryPreprocessSource(const char *Source, CCArray(char *) Sectio
 {
 #undef CC_CONTAINER_TYPE_DISABLE
     const char *CurSource = Source, *Segment = Source, Include[] = "#include <";
+    size_t IncludeChrCount = 0;
     enum {
         GLShaderLibrarySourceTokenNone,
         GLShaderLibrarySourceTokenComment,
         GLShaderLibrarySourceTokenMultilineComment,
         GLShaderLibrarySourceTokenOther
     } Token = GLShaderLibrarySourceTokenNone;
-    for (char Chr, PrevChr = 0, IncludeChrCount = 0; (Chr = *CurSource); CurSource++)
+
+    for (char Chr, PrevChr = 0; (Chr = *CurSource); CurSource++)
     {
         switch (Token)
         {
