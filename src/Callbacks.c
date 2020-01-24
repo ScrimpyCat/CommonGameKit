@@ -81,24 +81,46 @@ int CCMain(CCEngineMain Main, int argc, const char *argv[])
     
 #if CC_PLATFORM_OS_X || CC_PLATFORM_IOS
     CFBundleRef Bundle = CFBundleGetBundleWithIdentifier(CFSTR("io.scrimpycat.CommonGameKit"));
-    CFURLRef ResourceURL = CFBundleCopyResourcesDirectoryURL(Bundle);
-    char ResourcePath[PATH_MAX];
-    
-    if ((!ResourceURL) || (!CFURLGetFileSystemRepresentation(ResourceURL, TRUE, (UInt8*)ResourcePath, sizeof(ResourcePath))))
+    if (Bundle)
     {
-        CC_LOG_ERROR("Could not find asset path");
-        return EXIT_FAILURE;
+        CFURLRef ResourceURL = CFBundleCopyResourcesDirectoryURL(Bundle);
+        char ResourcePath[PATH_MAX];
+        
+        if ((!ResourceURL) || (!CFURLGetFileSystemRepresentation(ResourceURL, TRUE, (UInt8*)ResourcePath, sizeof(ResourcePath))))
+        {
+            CC_LOG_ERROR("Could not find asset path");
+            return EXIT_FAILURE;
+        }
+        
+        CFRelease(ResourceURL);
+        
+        CCAssetPath = FSPathCreateFromSystemPath(ResourcePath);
+        FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "assets"));
     }
     
-    CFRelease(ResourceURL);
-    
-    CCAssetPath = FSPathCreateFromSystemPath(ResourcePath);
-    FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "assets"));
-#else
-    CCAssetPath = FSPathCreateFromSystemPath(Path);
-    FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "CommonGameKit"));
-    FSPathAppendComponent(CCAssetPath, FSPathComponentCreate(FSPathComponentTypeDirectory, "assets"));
+    else
 #endif
+    {
+        CCOrderedCollection(FSPathComponent) Path = FSPathConvertSystemPathToComponents(argv[0], TRUE);
+        CCOrderedCollectionRemoveLastElement(Path);
+        FSPath ProjectFolder = FSPathCreateFromComponents(Path);
+        
+        CCCollection(FSPath) Paths = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall, sizeof(FSPath), FSPathDestructorForCollection);
+        CCCollectionInsertElement(Paths, &(FSPath){ FSPathCreate("CommonGameKit/assets/") });
+        CCOrderedCollection(FSPath) Matches = FSManagerGetContentsAtPath(ProjectFolder, Paths, FSMatchSearchRecursively);
+        CCCollectionDestroy(Paths);
+        FSPathDestroy(ProjectFolder);
+        
+        if (CCCollectionGetCount(Matches) != 1)
+        {
+            CCCollectionDestroy(Matches);
+            CC_LOG_ERROR("Could not find asset path");
+            return EXIT_FAILURE;
+        }
+        
+        CCAssetPath = CCRetain(*(FSPath*)CCOrderedCollectionGetElementAtIndex(Matches, 0));
+        CCCollectionDestroy(Matches);
+    }
     
     if (!FSManagerExists(CCAssetPath))
     {
