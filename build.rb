@@ -89,9 +89,11 @@ OptionParser.new do |opts|
     }
 end.parse!
 
+build_dir = ENV['BUILD_DIR'] || 'build'
+parent_dir = build_dir.gsub(/[^\/]+/, '..')
 project = File.basename(Dir.pwd)
-target = 'build/' + project
-target_headers = FileUtils.mkdir_p('build/private')
+target = build_dir + '/' + project
+target_headers = FileUtils.mkdir_p(build_dir + '/private')
 target_headers = FileUtils.mkdir_p(target + '/' + project) if not options[:executable]
 target_assets = FileUtils.mkdir_p(target + '/assets')
 
@@ -101,7 +103,7 @@ public_headers = Dir["src/**/*.h"].reject { |file| file.end_with? '_Private.h' }
 FileUtils.cp(public_headers, target_headers)
 
 private_headers = Dir["src/**/*_Private.h"]
-FileUtils.cp(private_headers, 'build/private')
+FileUtils.cp(private_headers, build_dir + '/private')
 
 options[:framework].each { |framework| FileUtils.cp_r(framework, target) }
 
@@ -111,7 +113,7 @@ sources += options[:library].map { |source, headers| Dir["#{source}/*.#{ext}"] }
 
 compile = sources.map { |file|
 """
-build #{file.gsub(/[\/ ]/, '_')}.o: cc ../#{file.gsub(' ', '$ ')}
+build #{file.gsub(/[\/ ]/, '_')}.o: cc #{parent_dir}/#{file.gsub(' ', '$ ')}
     flags = $flags #{file.start_with?('src/') && file.end_with?('.m') && os() == 'mac' ? '-fobjc-arc' : ''}
     headers = $headers
     libs = $libs
@@ -123,15 +125,15 @@ objects = sources.map { |file| file.gsub(/[\/ ]/, '_') + '.o' }
 output = options[:executable] ? project : "#{project}.dylib"
 
 deps_headers = [
-    options[:dylib].map { |lib, headers| "-I../#{headers}" },
-    options[:static].map { |lib, headers| "-I../#{headers}" },
-    options[:library].map { |source, headers| "-I../#{headers}" },
-    options[:header].map { |headers| "-I../#{headers}" }
+    options[:dylib].map { |lib, headers| "-I#{parent_dir}/#{headers}".gsub(' ', '\$ ') },
+    options[:static].map { |lib, headers| "-I#{parent_dir}/#{headers}".gsub(' ', '\$ ') },
+    options[:library].map { |source, headers| "-I#{parent_dir}/#{headers}".gsub(' ', '\$ ') },
+    options[:header].map { |headers| "-I#{parent_dir}/#{headers}".gsub(' ', '\$ ') }
 ].join(' ')
 
 deps_libs = [
-    options[:dylib].map { |lib, headers| '../' + lib },
-    options[:static].map { |lib, headers| '../' + lib },
+    options[:dylib].map { |lib, headers| "#{parent_dir}/#{lib}".gsub(' ', '\$ ') },
+    options[:static].map { |lib, headers| "#{parent_dir}/#{lib}".gsub(' ', '\$ ') },
     options[:system]
 ].join(' ')
 
@@ -180,4 +182,4 @@ else
     build += "    args = -shared #{os() == 'mac' ? "-install_name @rpath/#{output}" : ''}\n"
 end
 
-File.write('build/build.ninja', build)
+File.write(build_dir + '/build.ninja', build)
