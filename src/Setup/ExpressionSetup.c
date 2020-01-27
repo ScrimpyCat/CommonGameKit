@@ -34,6 +34,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("search"), CCIOExpressionSearch);
     CCExpressionEvaluatorRegister(CC_STRING("eval"), CCIOExpressionEval);
     CCExpressionEvaluatorRegister(CC_STRING("component-router"), CCMessageExpressionComponentRouter);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-component-router"), CCMessageExpressionEntityComponentRouter);
     CCExpressionEvaluatorRegister(CC_STRING("message"), CCMessageExpressionMessage);
     CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeCastExpressionIntegerToFloat);
     CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeCastExpressionFloatToInteger);

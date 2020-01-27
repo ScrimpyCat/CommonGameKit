@@ -27,6 +27,7 @@
 #include "MessageExpressions.h"
 #include "ComponentExpressions.h"
 #include "Message.h"
+#include "EntityExpressions.h"
 
 static CCDictionary MessageDescriptors = NULL;
 void CCMessageExpressionRegister(CCString Name, const CCMessageExpressionDescriptor *Descriptor)
@@ -78,6 +79,34 @@ CCExpression CCMessageExpressionComponentRouter(CCExpression Expression)
     }
     
     CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("component-router", "name:atom");
+    
+    return Expression;
+}
+
+CCExpression CCMessageExpressionEntityComponentRouter(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+    {
+        CCExpression Entity = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        CCExpression Name = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        
+        if ((CCExpressionGetType(Entity) == CCEntityExpressionValueTypeEntity) && (CCExpressionGetType(Name) == CCExpressionValueTypeAtom))
+        {
+            const CCComponentExpressionDescriptor *Descriptor = CCComponentExpressionDescriptorForName(CCExpressionGetAtom(Name));
+            if (Descriptor)
+            {
+                CCMessageRouter *Router = CCMessageDeliverToComponentBelongingToEntity(Descriptor->id, CCExpressionGetData(Entity));
+                
+                return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, CCMessageExpressionValueTypeRouter, Router, CCExpressionRetainedValueCopy, (CCExpressionValueDestructor)CCMessageRouterDestroy);
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_ERROR("entity-component-router: No component exists for name (%S)", CCExpressionGetAtom(Name));
+            
+            return Expression;
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-component-router", "entity:entity name:atom");
     
     return Expression;
 }

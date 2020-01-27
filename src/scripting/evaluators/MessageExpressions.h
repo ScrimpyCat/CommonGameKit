@@ -66,6 +66,7 @@ void CCMessageExpressionRegister(CCString CC_COPY(Name), const CCMessageExpressi
 _Bool CCMessageExpressionBasicPoster(CCMessageRouter *CC_OWN(Router), CCMessageID id, CCExpression Args);
 
 CC_EXPRESSION_EVALUATOR(component-router) CCExpression CCMessageExpressionComponentRouter(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-component-router) CCExpression CCMessageExpressionEntityComponentRouter(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(message) CCExpression CCMessageExpressionMessage(CCExpression Expression);
 
 #endif
