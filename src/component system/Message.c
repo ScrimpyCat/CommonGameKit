@@ -30,10 +30,10 @@
 
 static void CCMessageRouterDestructor(CCMessageRouter *Router)
 {
-    if (Router->destructor) Router->destructor(CCMessageRouterGetData(Router));
+    if (Router->destructor) Router->destructor(Router);
 }
 
-CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data, CCMemoryDestructorCallback Destructor)
+CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data, CCMessageRouterDestructor Destructor)
 {
     CCMessageRouter *Router = CCMalloc(Allocator, sizeof(CCMessageRouter) + Size, NULL, CC_DEFAULT_ERROR_CALLBACK);
     
@@ -67,12 +67,12 @@ void CCMessageDestroy(CCMessage *Message)
 
 static void CCMessageDestructor(CCMessage *Message)
 {
-    CCMessageRouterDestroy(Message->router);
+    if (Message->destructor) Message->destructor(Message);
     
-    if (Message->destructor) Message->destructor(CCMessageGetData(Message));
+    CCMessageRouterDestroy(Message->router);
 }
 
-void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *Router, size_t Size, const void *Data, CCMemoryDestructorCallback Destructor)
+void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *Router, size_t Size, const void *Data, CCMessageDestructor Destructor)
 {
     CCAssertLog(Router, "Router must not be null");
     
@@ -180,10 +180,17 @@ static void CCMessageRouteComponentEntityDeliverer(CCMessage *Message, CCCompone
     }
 }
 
+static void CCMessageRouteComponentEntityDestructor(CCMessageRouter *Router)
+{
+    CCEntityDestroy(((CCMessageRouteComponentEntity*)CCMessageRouterGetData(Router))->entity);
+}
+
 CCMessageRouter *CCMessageDeliverToComponentBelongingToEntity(CCComponentID ComponentID, CCEntity Entity)
 {
+    CCAssertLog(Entity, "Entity must not be null");
+    
     return CCMessageRouterCreate(CC_STD_ALLOCATOR, CCMessageRouteComponentEntityPoster, CCMessageRouteComponentEntityDeliverer, sizeof(CCMessageRouteComponentEntity), &(CCMessageRouteComponentEntity){
         .componentID = ComponentID,
-        .entity = Entity
-    }, NULL);
+        .entity = CCRetain(Entity)
+    }, CCMessageRouteComponentEntityDestructor);
 }

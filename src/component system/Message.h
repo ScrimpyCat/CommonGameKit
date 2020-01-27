@@ -47,10 +47,22 @@ typedef void (*CCMessageRouterPost)(CCMessageRouter *Router, CCMessage *Message)
  */
 typedef void (*CCMessageRouterDeliver)(CCMessage *Message, CCComponentSystemID SystemID);
 
+/*!
+ * @brief A callback to handle custom destruction of a message router.
+ * @param Router The message router being destroyed.
+ */
+typedef void (*CCMessageRouterDestructor)(CCMessageRouter *Router);
+
+/*!
+ * @brief A callback to handle custom destruction of a message.
+ * @param Message The message being destroyed.
+ */
+typedef void (*CCMessageDestructor)(CCMessage *Message);
+
 struct CCMessageRouter {
     CCMessageRouterPost post;
     CCMessageRouterDeliver deliver;
-    CCMemoryDestructorCallback destructor;
+    CCMessageRouterDestructor destructor;
 };
 
 typedef struct {
@@ -61,7 +73,7 @@ typedef struct {
 struct CCMessage {
     CCMessageID id;
     CCMessageRouter *router;
-    CCMemoryDestructorCallback destructor;
+    CCMessageDestructor destructor;
 };
 
 typedef struct {
@@ -78,10 +90,10 @@ typedef struct {
  * @param Deliver The deliver callback.
  * @param Size The size of the data.
  * @param Data The data to initialize the router with. May be NULL.
- * @param Destructor The data destructor. May be NULL.
+ * @param Destructor The router destructor. May be NULL.
  * @return A pointer to the created router, or NULL on failure. Must be destroyed to free the memory.
  */
-CC_NEW CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data, CCMemoryDestructorCallback Destructor);
+CC_NEW CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRouterPost Post, CCMessageRouterDeliver Deliver, size_t Size, const void *Data, CCMessageRouterDestructor Destructor);
 
 /*!
  * @brief Destroy a router.
@@ -119,9 +131,9 @@ static inline void *CCMessageGetData(CCMessage *Message);
  * @param Router The destination of the message.
  * @param Size The size of the data attached to the message.
  * @param Data The data to attach to the message.
- * @param Destructor The data destructor. May be NULL.
+ * @param Destructor The message destructor. May be NULL.
  */
-void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *CC_OWN(Router), size_t Size, const void *Data, CCMemoryDestructorCallback Destructor);
+void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *CC_OWN(Router), size_t Size, const void *Data, CCMessageDestructor Destructor);
 
 #pragma mark - Routers
 
@@ -138,7 +150,7 @@ CC_NEW CCMessageRouter *CCMessageDeliverToComponent(CCComponentID ComponentID);
  * @param Entity The target entity.
  * @param The message router. Must be destroyed to free memory.
  */
-CC_NEW CCMessageRouter *CCMessageDeliverToComponentBelongingToEntity(CCComponentID ComponentID, CCEntity Entity);
+CC_NEW CCMessageRouter *CCMessageDeliverToComponentBelongingToEntity(CCComponentID ComponentID, CCEntity CC_RETAIN(Entity));
 
 
 #pragma mark -
