@@ -10,6 +10,15 @@
             ]
         },
         {
+            "name": "entity-component-router",
+            "description": "Creates a router to route messages to a specific component belonging to a specific entity.",
+            "examples": ["(entity-component-router (entity \"foo\" (input-keyboard)) :input-keyboard)"],
+            "return": { "type": "custom:router" },
+            "args": [
+                [{ "type": "custom:entity" }, { "type": "atom", "name": "component" }]
+            ]
+        },
+        {
             "name": "message",
             "description": "Post a message.",
             "examples": ["(message (component-router :input-keyboard) :foo)"],
