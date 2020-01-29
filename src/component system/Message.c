@@ -28,7 +28,7 @@
 #include "ComponentBase.h"
 
 
-static void CCMessageRouterDestructor(CCMessageRouter *Router)
+static void MessageRouterDestructor(CCMessageRouter *Router)
 {
     if (Router->destructor) Router->destructor(Router);
 }
@@ -45,7 +45,7 @@ CCMessageRouter *CCMessageRouterCreate(CCAllocatorType Allocator, CCMessageRoute
         
         if (Data) memcpy(((CCMessageRouterData*)Router)->data, Data, Size);
         
-        CCMemorySetDestructor(Router, (CCMemoryDestructorCallback)CCMessageRouterDestructor);
+        CCMemorySetDestructor(Router, (CCMemoryDestructorCallback)MessageRouterDestructor);
     }
     
     return Router;
@@ -65,7 +65,7 @@ void CCMessageDestroy(CCMessage *Message)
     CCFree(Message);
 }
 
-static void CCMessageDestructor(CCMessage *Message)
+static void MessageDestructor(CCMessage *Message)
 {
     if (Message->destructor) Message->destructor(Message);
     
@@ -86,7 +86,7 @@ void CCMessagePost(CCAllocatorType Allocator, CCMessageID id, CCMessageRouter *R
         Message->router = Router;
         Message->destructor = Destructor;
         
-        CCMemorySetDestructor(Message, (CCMemoryDestructorCallback)CCMessageDestructor);
+        CCMemorySetDestructor(Message, (CCMemoryDestructorCallback)MessageDestructor);
         
         Router->post(Router, Message);
         CCMessageDestroy(Message);
