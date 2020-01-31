@@ -95,12 +95,14 @@ typedef enum {
     GUIObjectCacheStrategyInvalidateOnEvent = (1 << 0),
     GUIObjectCacheStrategyInvalidateOnResize = (1 << 1),
     GUIObjectCacheStrategyInvalidateOnMove = (1 << 2),
+    GUIObjectCacheStrategyInvalidateOnRequest = (1 << 3),
     
     GUIObjectCacheDirtyMask = (0xffff << 16),
     GUIObjectCacheDirtyIndex = 16,
     GUIObjectCacheDirtyEvent = (GUIObjectCacheStrategyInvalidateOnEvent << 16),
     GUIObjectCacheDirtyResize = (GUIObjectCacheStrategyInvalidateOnResize << 16),
     GUIObjectCacheDirtyMove = (GUIObjectCacheStrategyInvalidateOnMove << 16),
+    GUIObjectCacheDirtyRequest = (GUIObjectCacheStrategyInvalidateOnRequest << 16)
 } GUIObjectCache;
 
 typedef struct GUIObjectInfo {
@@ -197,6 +199,15 @@ GUIObjectCache GUIObjectGetCacheStrategy(GUIObject Object);
  * @param Strategy The cache strategy.
  */
 void GUIObjectSetCacheStrategy(GUIObject Object, GUIObjectCache Strategy);
+
+/*!
+ * @brief Request the cache of the GUI object to become invalidated.
+ * @description Needs to support the @b GUIObjectCacheStrategyInvalidateOnRequest
+ *              cache invalidation strategy.
+ *
+ * @param Object The GUI object to have its cache invalidated.
+ */
+void GUIObjectInvalidateCache(GUIObject Object);
 
 /*!
  * @brief Get the parent of the GUI object.

@@ -253,6 +253,15 @@ void GUIObjectSetCacheStrategy(GUIObject Object, GUIObjectCache Strategy)
     mtx_unlock(&Object->lock);
 }
 
+void GUIObjectInvalidateCache(GUIObject Object)
+{
+    CCAssertLog(Object, "GUI object must not be null");
+    
+    mtx_lock(&Object->lock);
+    Object->cache.strategy |= GUIObjectCacheDirtyRequest;
+    mtx_unlock(&Object->lock);
+}
+
 void GUIObjectAddChild(GUIObject Object, GUIObject Child)
 {
     CCAssertLog(Object, "GUI object must not be null");
