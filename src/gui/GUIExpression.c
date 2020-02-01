@@ -353,6 +353,7 @@ CCExpression GUIExpressionCreateObject(CCExpression Expression)
         
         CC_COLLECTION_FOREACH(CCExpression, InitExpr, CCExpressionGetList(Init))
         {
+            CCExpressionCopyState(Init, InitExpr);
             CCExpressionStateSetSuper(InitExpr, Expression);
             
             if ((CCExpressionGetType(InitExpr) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(InitExpr))))
