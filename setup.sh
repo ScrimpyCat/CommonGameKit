@@ -1,22 +1,46 @@
-git submodule update
+#!/bin/bash
+
+usage() { echo "Usage: $0 [-h] [-s] [-p]" 1>&2; exit 1; }
+
+while getopts "hsp" opt; do
+    case "${opt}" in
+        s)
+            shallow=1
+            ;;
+        p)
+            preserve=1
+            ;;
+        h|*)
+            usage
+            ;;
+    esac
+done
 
 build=${BUILD_DIR:-build}
-parent=$(echo $build | sed s/[^\/]*/../g)
 
-cd deps/zlib
-rm -rf "$build"
-mkdir -p "$build" && cd "$build"
-cmake -G Ninja "$parent"
-ninja
+if [ -z "${shallow}" ]; then
+    if [ -z "${preserve}" ]; then
+        git submodule update
+    fi
 
-cd "$parent/../libpng"
-cp scripts/pnglibconf.h.prebuilt pnglibconf.h
-rm -rf "$build"
-mkdir -p "$build" && cd "$build"
-cmake -DPNG_SHARED=OFF -DPNG_TESTS=OFF -DPNG_BUILD_ZLIB=ON -DZLIB_INCLUDE_DIR="$parent/zlib" -G Ninja "$parent"
-ninja
+    parent=$(echo $build | sed s/[^\/]*/../g)
 
-cd "$parent/../../"
+    cd deps/zlib
+    rm -rf "$build"
+    mkdir -p "$build" && cd "$build"
+    cmake -G Ninja "$parent"
+    ninja
+    cd "$parent/../../"
+
+    cd deps/libpng
+    cp scripts/pnglibconf.h.prebuilt pnglibconf.h
+    rm -rf "$build"
+    mkdir -p "$build" && cd "$build"
+    cmake -DPNG_SHARED=OFF -DPNG_TESTS=OFF -DPNG_BUILD_ZLIB=ON -DZLIB_INCLUDE_DIR="$parent/zlib" -G Ninja "$parent"
+    ninja
+    cd "$parent/../../"
+fi
+
 rm -rf "$build"
 ruby build.rb \
 --library=deps/CommonC/CommonC,deps/CommonC \
