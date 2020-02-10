@@ -2,7 +2,7 @@
 
 usage() { echo "Usage: $0 [-h] [-s] [-p] [-i]" 1>&2; exit 1; }
 
-while getopts "hsp" opt; do
+while getopts "hspi" opt; do
     case "${opt}" in
         s)
             shallow=1
