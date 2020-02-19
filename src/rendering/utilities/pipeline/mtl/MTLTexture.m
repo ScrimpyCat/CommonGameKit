@@ -321,7 +321,10 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
             TextureDescriptor.storageMode = TextureStorage(Hint);
             
 #if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_10_14, CC_PLATFORM_IOS_12_0)
-            if (((MTLInternal*)MTLGFX->internal)->support->MTLTextureDescriptor.allowGPUOptimizedContents) TextureDescriptor.allowGPUOptimizedContents = TextureGPUOptimized(Hint);
+            if (CC_AVAILABLE(macOS 10.14, iOS 12, *))
+            {
+                if (((MTLInternal*)MTLGFX->internal)->support->MTLTextureDescriptor.allowGPUOptimizedContents) TextureDescriptor.allowGPUOptimizedContents = TextureGPUOptimized(Hint);
+            }
 #endif
             
             Texture->root.texture = (__bridge id<MTLTexture>)((__bridge_retained CFTypeRef)[((MTLInternal*)MTLGFX->internal)->device newTextureWithDescriptor: TextureDescriptor]);
