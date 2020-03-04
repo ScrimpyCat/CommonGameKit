@@ -26,93 +26,91 @@
 #define CC_QUICK_COMPILE
 #include "AssetManager.h"
 
-typedef enum {
-    CCAssetTypeUndefined,
-    CCAssetTypeShaderLibrary,
-    CCAssetTypeShader,
-    CCAssetTypeTexture,
-    CCAssetTypeTextureStream,
-    CCAssetTypeFont,
-    CCAssetTypeCount
-} CCAssetType;
-
 typedef struct {
-    CCAssetType type;
     void *asset;
-    //FSPath reference
+    FSPath reference;
 } CCAssetInfo;
 
-CC_DICTIONARY_DECLARE(CCString, CCAssetInfo);
-
-static CCDictionary(CCString, CCAssetInfo) Assets[CCAssetTypeCount] = {NULL};
+const CCAssetManagerInterface CCAssetManagerNamedInterface = {
+    .identifier = {
+        .destructor = &CCStringDestructorForDictionary,
+        .hasher = &CCStringHasherForDictionary,
+        .comparator = &CCStringComparatorForDictionary,
+        .size = sizeof(CCString)
+    }
+};
 
 static void CCAssetElementDestructor(CCDictionary Dictionary, CCAssetInfo *Element)
 {
-    switch (Element->type)
-    {
-        case CCAssetTypeShaderLibrary:
-            GFXShaderLibraryDestroy(Element->asset);
-            break;
-            
-        case CCAssetTypeShader:
-            GFXShaderDestroy(Element->asset);
-            break;
-            
-        case CCAssetTypeTexture:
-            GFXTextureDestroy(Element->asset);
-            break;
-            
-        case CCAssetTypeTextureStream:
-            GFXTextureStreamDestroy(Element->asset);
-            break;
-            
-        case CCAssetTypeFont:
-            CCFontDestroy(Element->asset);
-            break;
-            
-        default:
-            break;
-    }
+    CCFree(Element->asset);
+    
+    if (Element->reference) FSPathDestroy(Element->reference);
 }
 
-void CCAssetManagerCreate(void)
+static void CCAssetManagerRegisterAsset(CCAssetManager *Manager, const void *Identifier, CCAssetInfo *Asset)
 {
-    for (size_t Loop = 0; Loop < CCAssetTypeCount; Loop++)
+    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    
+    if (!Manager->assets)
     {
-        Assets[Loop] =  CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, sizeof(CCString), sizeof(CCAssetInfo), &(CCDictionaryCallbacks){
-            .getHash = CCStringHasherForDictionary,
-            .compareKeys = CCStringComparatorForDictionary,
-            .keyDestructor = CCStringDestructorForDictionary,
+        Manager->assets = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, Manager->interface->identifier.size, sizeof(CCAssetInfo), &(CCDictionaryCallbacks){
+            .getHash = *Manager->interface->identifier.hasher,
+            .compareKeys = *Manager->interface->identifier.comparator,
+            .keyDestructor = *Manager->interface->identifier.destructor,
             .valueDestructor = (CCDictionaryElementDestructor)CCAssetElementDestructor
         });
     }
+    
+    CCDictionarySetValue(Manager->assets, Identifier, Asset);
+    
+    atomic_flag_clear(&Manager->lock);
 }
 
-void CCAssetManagerDestroy(void)
+void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *Asset)
 {
-    for (size_t Loop = 0; Loop < CCAssetTypeCount; Loop++)
+    CCAssetManagerRegisterAsset(Manager, Identifier, &(CCAssetInfo){
+        .asset = CCRetain(Asset),
+        .reference = NULL
+    });
+}
+
+void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier)
+{
+    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    
+    if (Manager->assets)
     {
-        CCDictionaryDestroy(Assets[Loop]);
+        CCDictionaryRemoveValue(Manager->assets, Identifier);
     }
+    
+    atomic_flag_clear(&Manager->lock);
+}
+
+void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
+{
+    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    CCAssetInfo *Asset = Manager->assets ? CCDictionaryGetValue(Manager->assets, Identifier) : NULL;
+    atomic_flag_clear(&Manager->lock);
+    
+    return CCRetain(Asset->asset);
 }
 
 #pragma mark - Shader Library
+static CCAssetManager ShaderLibraryManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamedInterface);
+
 void CCAssetManagerRegisterShaderLibrary(CCString Name, GFXShaderLibrary Library)
 {
-    CCDictionarySetValue(Assets[CCAssetTypeShaderLibrary], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
-        .type = CCAssetTypeShaderLibrary,
-        .asset = CCRetain(Library)
-    });
+    CCAssetManagerRegister(&ShaderLibraryManager, &(CCString){ CCStringCopy(Name) }, Library);
 }
 
 void CCAssetManagerDeregisterShaderLibrary(CCString Name)
 {
-    CCDictionaryRemoveValue(Assets[CCAssetTypeShaderLibrary], &Name);
+    CCAssetManagerDeregister(&ShaderLibraryManager, &Name);
 }
 
 GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
 {
-    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeShaderLibrary], &Name);
+    void *Asset = CCAssetManagerCreate(&ShaderLibraryManager, &Name);
     
     if (!Asset)
     {
@@ -120,26 +118,25 @@ GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
         return NULL;
     }
     
-    return CCRetain(Asset->asset);
+    return Asset;
 }
 
 #pragma mark - Shader
+static CCAssetManager ShaderManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamedInterface);
+
 void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader)
 {
-    CCDictionarySetValue(Assets[CCAssetTypeShader], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
-        .type = CCAssetTypeShader,
-        .asset = CCRetain(Shader)
-    });
+    CCAssetManagerRegister(&ShaderManager, &(CCString){ CCStringCopy(Name) }, Shader);
 }
 
 void CCAssetManagerDeregisterShader(CCString Name)
 {
-    CCDictionaryRemoveValue(Assets[CCAssetTypeShader], &Name);
+    CCAssetManagerDeregister(&ShaderManager, &Name);
 }
 
 GFXShader CCAssetManagerCreateShader(CCString Name)
 {
-    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeShader], &Name);
+    void *Asset = CCAssetManagerCreate(&ShaderManager, &Name);
     
     if (!Asset)
     {
@@ -147,26 +144,25 @@ GFXShader CCAssetManagerCreateShader(CCString Name)
         return NULL;
     }
     
-    return CCRetain(Asset->asset);
+    return Asset;
 }
 
 #pragma mark - Texture
+static CCAssetManager TextureManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamedInterface);
+
 void CCAssetManagerRegisterTexture(CCString Name, GFXTexture Texture)
 {
-    CCDictionarySetValue(Assets[CCAssetTypeTexture], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
-        .type = CCAssetTypeTexture,
-        .asset = CCRetain(Texture)
-    });
+    CCAssetManagerRegister(&TextureManager, &(CCString){ CCStringCopy(Name) }, Texture);
 }
 
 void CCAssetManagerDeregisterTexture(CCString Name)
 {
-    CCDictionaryRemoveValue(Assets[CCAssetTypeTexture], &Name);
+    CCAssetManagerDeregister(&TextureManager, &Name);
 }
 
 GFXTexture CCAssetManagerCreateTexture(CCString Name)
 {
-    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeTexture], &Name);
+    void *Asset = CCAssetManagerCreate(&TextureManager, &Name);
     
     if (!Asset)
     {
@@ -174,26 +170,25 @@ GFXTexture CCAssetManagerCreateTexture(CCString Name)
         return NULL;
     }
     
-    return CCRetain(Asset->asset);
+    return Asset;
 }
 
 #pragma mark - Texture Stream
+static CCAssetManager TextureStreamManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamedInterface);
+
 void CCAssetManagerRegisterTextureStream(CCString Name, GFXTextureStream Stream)
 {
-    CCDictionarySetValue(Assets[CCAssetTypeTextureStream], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
-        .type = CCAssetTypeTextureStream,
-        .asset = CCRetain(Stream)
-    });
+    CCAssetManagerRegister(&TextureStreamManager, &(CCString){ CCStringCopy(Name) }, Stream);
 }
 
 void CCAssetManagerDeregisterTextureStream(CCString Name)
 {
-    CCDictionaryRemoveValue(Assets[CCAssetTypeTextureStream], &Name);
+    CCAssetManagerDeregister(&TextureStreamManager, &Name);
 }
 
 GFXTextureStream CCAssetManagerCreateTextureStream(CCString Name)
 {
-    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeTextureStream], &Name);
+    void *Asset = CCAssetManagerCreate(&TextureStreamManager, &Name);
     
     if (!Asset)
     {
@@ -201,27 +196,25 @@ GFXTextureStream CCAssetManagerCreateTextureStream(CCString Name)
         return NULL;
     }
     
-    return CCRetain(Asset->asset);
+    return Asset;
 }
 
 #pragma mark - Font
+static CCAssetManager FontManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamedInterface);
 //TODO: Fix so it groups them into families (so we can have two arial fonts but they may differ by style or size)
 void CCAssetManagerRegisterFont(CCString Name, CCFont Font)
 {
-    CCDictionarySetValue(Assets[CCAssetTypeFont], &(CCString){ CCStringCopy(Name) }, &(CCAssetInfo){
-        .type = CCAssetTypeFont,
-        .asset = CCRetain(Font)
-    });
+    CCAssetManagerRegister(&FontManager, &(CCString){ CCStringCopy(Name) }, Font);
 }
 
 void CCAssetManagerDeregisterFont(CCString Name)
 {
-    CCDictionaryRemoveValue(Assets[CCAssetTypeFont], &Name);
+    CCAssetManagerDeregister(&FontManager, &Name);
 }
 
 CCFont CCAssetManagerCreateFont(CCString Name)
 {
-    CCAssetInfo *Asset = CCDictionaryGetValue(Assets[CCAssetTypeFont], &Name);
+    void *Asset = CCAssetManagerCreate(&FontManager, &Name);
     
     if (!Asset)
     {
@@ -229,5 +222,5 @@ CCFont CCAssetManagerCreateFont(CCString Name)
         return NULL;
     }
     
-    return CCRetain(Asset->asset);
+    return Asset;
 }

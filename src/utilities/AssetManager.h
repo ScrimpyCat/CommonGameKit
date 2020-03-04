@@ -29,15 +29,57 @@
 #include <CommonGameKit/GFX.h>
 #include <CommonGameKit/Font.h>
 
-/*!
- * @brief Creates the global asset manager.
- */
-void CCAssetManagerCreate(void);
+typedef struct {
+    struct {
+        const CCDictionaryElementDestructor *destructor;
+        const CCDictionaryKeyHasher *hasher;
+        const CCComparator *comparator;
+        size_t size;
+    } identifier;
+} CCAssetManagerInterface;
+
+typedef struct {
+    const CCAssetManagerInterface *interface;
+    CCDictionary assets;
+    atomic_flag lock;
+} CCAssetManager;
+
+#define CC_ASSET_MANAGER_INIT(interface_) \
+{ \
+    .interface = interface_, \
+    .assets = NULL, \
+    .lock = ATOMIC_FLAG_INIT \
+}
 
 /*!
- * @brief Destroys the global asset manager.
+ * @brief Generic interface for assets to be identified by string names.
  */
-void CCAssetManagerDestroy(void);
+extern const CCAssetManagerInterface CCAssetManagerNamedInterface;
+
+/*!
+ * @brief Registers the asset with the asset manager.
+ * @note This should usually be wrapped by a simpler interface.
+ * @param Identifier The pointer to the lookup identifier for the asset entry.
+ * @param Asset The asset to be managed. Retains a reference to the asset.
+ */
+void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *CC_RETAIN(Asset));
+
+/*!
+ * @brief Deregisters the asset from the asset manager.
+ * @note This should usually be wrapped by a simpler interface.
+ * @param Identifier The pointer to the lookup identifier for the asset entry.
+ */
+void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier);
+
+/*!
+ * @brief Creates the registered asset.
+ * @note This should usually be wrapped by a simpler interface.
+ * @param Identifier The pointer to the lookup identifier for the asset entry.
+ * @return The asset. Must be destroyed.
+ */
+CC_NEW void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier);
+
+#pragma mark -
 
 /*!
  * @brief Registers the shader library with the asset manager.
