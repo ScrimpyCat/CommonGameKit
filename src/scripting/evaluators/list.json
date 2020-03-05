@@ -7,7 +7,9 @@
             "return": { "type": "expression" },
             "args": [
                 [{ "type": "integer", "name": "index" }, { "type": "list" }],
-                [{ "type": "list", "name": "indexes" }, { "type": "list" }]
+                [{ "type": "list", "name": "indexes" }, { "type": "list" }],
+                [{ "type": "integer", "name": "index" }, { "type": "list" }, { "type": "expression", "name": "default" }],
+                [{ "type": "list", "name": "indexes" }, { "type": "list" }, { "type": "expression", "name": "default" }]
             ]
         },
         {
