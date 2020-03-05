@@ -26,7 +26,7 @@
 #define CC_QUICK_COMPILE
 #include "ListExpressions.h"
 
-static _Bool CCListExpressionGetElement(CCCollection(CCExpression) List, CCExpression IndexExpr, CCExpression *Element)
+static _Bool CCListExpressionGetElement(CCCollection(CCExpression) List, CCExpression IndexExpr, CCExpression *Element, CCExpression DefaultExpr)
 {
     if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger)
     {
@@ -43,6 +43,12 @@ static _Bool CCListExpressionGetElement(CCCollection(CCExpression) List, CCExpre
             *Element = CCExpressionRetain(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Index + Count));
             return TRUE;
         }
+        
+        else if (DefaultExpr)
+        {
+            *Element = CCExpressionRetain(DefaultExpr);
+            return TRUE;
+        }
     }
     
     return FALSE;
@@ -51,10 +57,11 @@ static _Bool CCListExpressionGetElement(CCCollection(CCExpression) List, CCExpre
 CCExpression CCListExpressionGetter(CCExpression Expression)
 {
     const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
-    if (ArgCount == 2)
+    if ((ArgCount == 2) || (ArgCount == 3))
     {
         CCExpression IndexExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
         CCExpression ListExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+        CCExpression DefaultExpr = ArgCount == 3 ? CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3)) : NULL;
         if (CCExpressionGetType(ListExpr) == CCExpressionValueTypeList)
         {
             CCCollection(CCExpression) List = CCExpressionGetList(ListExpr);
@@ -64,7 +71,7 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
                 CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(IndexExpr))
                 {
-                    if (!CCListExpressionGetElement(List, Expr, &Element))
+                    if (!CCListExpressionGetElement(List, Expr, &Element, DefaultExpr))
                     {
                         CC_EXPRESSION_EVALUATOR_LOG_ERROR("Index should be a list of integers.");
                         
@@ -79,11 +86,11 @@ CCExpression CCListExpressionGetter(CCExpression Expression)
                 if (Result) return Result;
             }
             
-            else if (CCListExpressionGetElement(List, IndexExpr, &Element)) return Element;
+            else if (CCListExpressionGetElement(List, IndexExpr, &Element, DefaultExpr)) return Element;
         }
     }
     
-    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("get", "index:integer|list list:list");
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("get", "index:integer|list list:list [default:expr]");
     
     return Expression;
 }
