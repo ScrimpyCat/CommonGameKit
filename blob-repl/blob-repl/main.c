@@ -63,7 +63,6 @@ static void Setup(void)
     
     if (!CCTimestamp) CCTimestamp = AssertTime;
     
-    CCAssetManagerCreate();
     CCEntityManagerCreate();
     
 //    //Register Systems
