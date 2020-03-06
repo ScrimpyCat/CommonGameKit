@@ -34,7 +34,7 @@
         "evaluators/state.json",
         "evaluators/string.json",
         "evaluators/text.json",
-        "evaluators/type_cast.json",
+        "evaluators/type.json",
         "evaluators/window.json"
     ]
 }

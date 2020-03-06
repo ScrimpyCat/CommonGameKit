@@ -1,6 +1,13 @@
 {
     "functions": [
         {
+            "name": "type",
+            "description": "Get the type.",
+            "examples": ["(type 50) ;integer"],
+            "return": { "type": "atom" },
+            "args": [[{ "type": "expression" }]]
+        },
+        {
             "name": "integer->float",
             "description": "Convert an integer to a float.",
             "examples": ["(integer->float 50) ;50.0"],
