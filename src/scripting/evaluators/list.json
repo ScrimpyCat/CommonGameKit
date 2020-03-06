@@ -3,12 +3,14 @@
         {
             "name": "get",
             "description": "Get an element from a list.",
-            "examples": ["(get 0 (1 2 3)) ;1", "(get 2 (1 2 3)) ;3", "(get -1 (1 2 3)) ;3"],
+            "examples": ["(get 0 (1 2 3)) ;1", "(get 2 (1 2 3)) ;3", "(get -1 (1 2 3)) ;3", "(get foo: ((foo: 1) (bar: 2))) ;(foo: 1)"],
             "return": { "type": "expression" },
             "args": [
                 [{ "type": "integer", "name": "index" }, { "type": "list" }],
+                [{ "type": "atom", "name": "tag" }, { "type": "list" }],
                 [{ "type": "list", "name": "indexes" }, { "type": "list" }],
                 [{ "type": "integer", "name": "index" }, { "type": "list" }, { "type": "expression", "name": "default" }],
+                [{ "type": "atom", "name": "tag" }, { "type": "list" }, { "type": "expression", "name": "default" }],
                 [{ "type": "list", "name": "indexes" }, { "type": "list" }, { "type": "expression", "name": "default" }]
             ]
         },
