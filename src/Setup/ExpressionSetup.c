@@ -5,9 +5,9 @@
 
 #include "MacroExpressions.h"
 #include "EntityExpressions.h"
+#include "TypeExpressions.h"
 #include "IOExpressions.h"
 #include "MessageExpressions.h"
-#include "TypeCastExpressions.h"
 #include "MathExpressions.h"
 #include "StringExpressions.h"
 #include "EqualityExpressions.h"
@@ -30,14 +30,15 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("unquote"), CCMacroExpressionUnquote);
     CCExpressionEvaluatorRegister(CC_STRING("entity"), CCEntityExpressionEntity);
     CCExpressionEvaluatorRegister(CC_STRING("entity-lookup"), CCEntityExpressionEntityLookup);
+    CCExpressionEvaluatorRegister(CC_STRING("type"), CCTypeExpressionGetType);
+    CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeExpressionIntegerToFloat);
+    CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeExpressionFloatToInteger);
     CCExpressionEvaluatorRegister(CC_STRING("print"), CCIOExpressionPrint);
     CCExpressionEvaluatorRegister(CC_STRING("search"), CCIOExpressionSearch);
     CCExpressionEvaluatorRegister(CC_STRING("eval"), CCIOExpressionEval);
     CCExpressionEvaluatorRegister(CC_STRING("component-router"), CCMessageExpressionComponentRouter);
     CCExpressionEvaluatorRegister(CC_STRING("entity-component-router"), CCMessageExpressionEntityComponentRouter);
     CCExpressionEvaluatorRegister(CC_STRING("message"), CCMessageExpressionMessage);
-    CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeCastExpressionIntegerToFloat);
-    CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeCastExpressionFloatToInteger);
     CCExpressionEvaluatorRegister(CC_STRING("+"), CCMathExpressionAddition);
     CCExpressionEvaluatorRegister(CC_STRING("-"), CCMathExpressionSubtract);
     CCExpressionEvaluatorRegister(CC_STRING("*"), CCMathExpressionMultiply);

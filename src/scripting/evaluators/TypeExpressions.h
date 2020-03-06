@@ -23,37 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define CC_QUICK_COMPILE
-#include "TypeCastExpressions.h"
+#ifndef CommonGameKit_TypeExpressions_h
+#define CommonGameKit_TypeExpressions_h
 
-CCExpression CCTypeCastExpressionIntegerToFloat(CCExpression Expression)
-{
-    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
-    {
-        CCExpression Arg = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
-        if (CCExpressionGetType(Arg) == CCExpressionValueTypeInteger)
-        {
-            return CCExpressionCreateFloat(CC_STD_ALLOCATOR, CCExpressionGetInteger(Arg));
-        }
-    }
-    
-    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("integer->float", "value:integer");
-    
-    return Expression;
-}
+#include <CommonGameKit/ExpressionEvaluator.h>
 
-CCExpression CCTypeCastExpressionFloatToInteger(CCExpression Expression)
-{
-    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
-    {
-        CCExpression Arg = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
-        if (CCExpressionGetType(Arg) == CCExpressionValueTypeFloat)
-        {
-            return CCExpressionCreateInteger(CC_STD_ALLOCATOR, CCExpressionGetFloat(Arg));
-        }
-    }
-    
-    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("float->integer", "value:float");
-    
-    return Expression;
-}
+
+CC_EXPRESSION_EVALUATOR(type) CCExpression CCTypeExpressionGetType(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(integer->float) CCExpression CCTypeExpressionIntegerToFloat(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(float->integer) CCExpression CCTypeExpressionFloatToInteger(CCExpression Expression);
+
+#endif

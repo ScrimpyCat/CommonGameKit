@@ -109,7 +109,7 @@
 #include <CommonGameKit/StateExpressions.h>
 #include <CommonGameKit/StringExpressions.h>
 #include <CommonGameKit/TextExpressions.h>
-#include <CommonGameKit/TypeCastExpressions.h>
+#include <CommonGameKit/TypeExpressions.h>
 #include <CommonGameKit/WindowExpressions.h>
 
 #include <CommonGameKit/AssetManager.h>
