@@ -51,6 +51,34 @@ static _Bool CCListExpressionGetElement(CCCollection(CCExpression) List, CCExpre
         }
     }
     
+    else if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeAtom)
+    {
+        CC_COLLECTION_FOREACH(CCExpression, Item, List)
+        {
+            if (CCExpressionGetType(Item) == CCExpressionValueTypeList)
+            {
+                if (CCCollectionGetCount(CCExpressionGetList(Item)) >= 2)
+                {
+                    CCExpression Tag = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Item), 0);
+                    if (CCExpressionGetType(Tag) == CCExpressionValueTypeAtom)
+                    {
+                       if (CCStringEqual(CCExpressionGetAtom(IndexExpr), CCExpressionGetAtom(Tag)))
+                       {
+                           *Element = CCExpressionRetain(Item);
+                           return TRUE;
+                       }
+                    }
+                }
+            }
+        }
+        
+        if (DefaultExpr)
+        {
+            *Element = CCExpressionRetain(DefaultExpr);
+            return TRUE;
+        }
+    }
+    
     return FALSE;
 }
 
