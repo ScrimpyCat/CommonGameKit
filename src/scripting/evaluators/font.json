@@ -1,0 +1,26 @@
+{
+    "functions": [
+        {
+            "name": "font-line-height",
+            "description": "Get the line height for the font.",
+            "args": [
+                {
+                    "set": [{ "type": "custom:font", "name": "font", "optional": true }],
+                    "repeat": [{ "type": "expression", "name": "options", "optional": true }]
+                }
+            ],
+            "options": [
+                {
+                    "name": "scale",
+                    "description": "The scale of the font.",
+                    "args": [[{ "type": "number", "name": "x" }, { "type": "number", "name": "y" }]]
+                },
+                {
+                    "name": "space",
+                    "description": "The character spacing of the font.",
+                    "args": [[{ "type": "number", "name": "spacing" }]]
+                }
+            ]
+        }
+    ]
+}

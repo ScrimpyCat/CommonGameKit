@@ -24,6 +24,7 @@
         "evaluators/control_flow.json",
         "evaluators/debug.json",
         "evaluators/entity.json",
+        "evaluators/font.json",
         "evaluators/equality.json",
         "evaluators/graphics.json",
         "evaluators/io.json",
