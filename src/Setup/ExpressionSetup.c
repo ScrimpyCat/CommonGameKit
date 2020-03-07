@@ -19,6 +19,7 @@
 #include "BitwiseExpressions.h"
 #include "WindowExpressions.h"
 #include "ControlFlowExpressions.h"
+#include "FontExpressions.h"
 #include "ListExpressions.h"
 #include "ComponentExpressions.h"
 #include "TextExpressions.h"
@@ -101,6 +102,7 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("repeat!"), CCControlFlowExpressionRepeatPersist);
     CCExpressionEvaluatorRegister(CC_STRING("any?"), CCControlFlowExpressionAny);
     CCExpressionEvaluatorRegister(CC_STRING("all?"), CCControlFlowExpressionAll);
+    CCExpressionEvaluatorRegister(CC_STRING("font-line-height"), CCFontExpressionGetLineHeight);
     CCExpressionEvaluatorRegister(CC_STRING("get"), CCListExpressionGetter);
     CCExpressionEvaluatorRegister(CC_STRING("set"), CCListExpressionSetter);
     CCExpressionEvaluatorRegister(CC_STRING("drop"), CCListExpressionDrop);

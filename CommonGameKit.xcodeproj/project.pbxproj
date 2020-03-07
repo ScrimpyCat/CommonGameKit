@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F30730B52410E7D10078AEC4 /* FontExpressions.h */; };
+		F30730B82410E7D10078AEC4 /* FontExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F30730B62410E7D10078AEC4 /* FontExpressions.c */; };
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F32C1C071F6A071600C68B43 /* RelationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F32C1C051F6A071600C68B43 /* RelationSystem.c */; };
@@ -235,8 +237,8 @@
 		F3AF34A71DCCD5AF00CAD472 /* StringExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF346F1DCCD5AF00CAD472 /* StringExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34A91DCCD5AF00CAD472 /* TextExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34711DCCD5AF00CAD472 /* TextExpressions.c */; };
 		F3AF34AA1DCCD5AF00CAD472 /* TextExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34721DCCD5AF00CAD472 /* TextExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF34AC1DCCD5AF00CAD472 /* TypeCastExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34741DCCD5AF00CAD472 /* TypeCastExpressions.c */; };
-		F3AF34AD1DCCD5AF00CAD472 /* TypeCastExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34751DCCD5AF00CAD472 /* TypeCastExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AF34AC1DCCD5AF00CAD472 /* TypeExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34741DCCD5AF00CAD472 /* TypeExpressions.c */; };
+		F3AF34AD1DCCD5AF00CAD472 /* TypeExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34751DCCD5AF00CAD472 /* TypeExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34AF1DCCD5AF00CAD472 /* WindowExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34771DCCD5AF00CAD472 /* WindowExpressions.c */; };
 		F3AF34B01DCCD5AF00CAD472 /* WindowExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF34781DCCD5AF00CAD472 /* WindowExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF34B11DCCD5AF00CAD472 /* Expression.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF34791DCCD5AF00CAD472 /* Expression.c */; };
@@ -419,14 +421,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6A9B75F310234360A64E2990;
+			remoteGlobalIDString = A7F8DA0DE9C34004A8212000;
 			remoteInfo = zlibstatic;
 		};
 		F3897B9E1DCD7514008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 059653752DEA4C8BB1F3255D;
+			remoteGlobalIDString = F78E195B78B940E38005031F;
 			remoteInfo = png_static;
 		};
 		F3897BD51DCD7DB3008D6C1D /* PBXContainerItemProxy */ = {
@@ -514,6 +516,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F30730B52410E7D10078AEC4 /* FontExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FontExpressions.h; sourceTree = "<group>"; };
+		F30730B62410E7D10078AEC4 /* FontExpressions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FontExpressions.c; sourceTree = "<group>"; };
 		F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentExpressions.c; sourceTree = "<group>"; };
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
 		F32C1C051F6A071600C68B43 /* RelationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationSystem.c; sourceTree = "<group>"; };
@@ -746,8 +750,8 @@
 		F3AF346F1DCCD5AF00CAD472 /* StringExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringExpressions.h; sourceTree = "<group>"; };
 		F3AF34711DCCD5AF00CAD472 /* TextExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TextExpressions.c; sourceTree = "<group>"; };
 		F3AF34721DCCD5AF00CAD472 /* TextExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextExpressions.h; sourceTree = "<group>"; };
-		F3AF34741DCCD5AF00CAD472 /* TypeCastExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TypeCastExpressions.c; sourceTree = "<group>"; };
-		F3AF34751DCCD5AF00CAD472 /* TypeCastExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastExpressions.h; sourceTree = "<group>"; };
+		F3AF34741DCCD5AF00CAD472 /* TypeExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TypeExpressions.c; sourceTree = "<group>"; };
+		F3AF34751DCCD5AF00CAD472 /* TypeExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeExpressions.h; sourceTree = "<group>"; };
 		F3AF34771DCCD5AF00CAD472 /* WindowExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = WindowExpressions.c; sourceTree = "<group>"; };
 		F3AF34781DCCD5AF00CAD472 /* WindowExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowExpressions.h; sourceTree = "<group>"; };
 		F3AF34791DCCD5AF00CAD472 /* Expression.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Expression.c; sourceTree = "<group>"; };
@@ -1475,6 +1479,8 @@
 				F33CAF961E79286900792063 /* EntityExpressions.h */,
 				F3AF34561DCCD5AF00CAD472 /* EqualityExpressions.c */,
 				F3AF34571DCCD5AF00CAD472 /* EqualityExpressions.h */,
+				F30730B62410E7D10078AEC4 /* FontExpressions.c */,
+				F30730B52410E7D10078AEC4 /* FontExpressions.h */,
 				F3AF34591DCCD5AF00CAD472 /* GraphicsExpressions.c */,
 				F3AF345A1DCCD5AF00CAD472 /* GraphicsExpressions.h */,
 				F3AF345C1DCCD5AF00CAD472 /* IOExpressions.c */,
@@ -1493,8 +1499,8 @@
 				F3AF346F1DCCD5AF00CAD472 /* StringExpressions.h */,
 				F3AF34711DCCD5AF00CAD472 /* TextExpressions.c */,
 				F3AF34721DCCD5AF00CAD472 /* TextExpressions.h */,
-				F3AF34741DCCD5AF00CAD472 /* TypeCastExpressions.c */,
-				F3AF34751DCCD5AF00CAD472 /* TypeCastExpressions.h */,
+				F3AF34741DCCD5AF00CAD472 /* TypeExpressions.c */,
+				F3AF34751DCCD5AF00CAD472 /* TypeExpressions.h */,
 				F3AF34771DCCD5AF00CAD472 /* WindowExpressions.c */,
 				F3AF34781DCCD5AF00CAD472 /* WindowExpressions.h */,
 			);
@@ -1630,6 +1636,7 @@
 				F3AF337E1DCCD4EC00CAD472 /* AnimationSystem.h in Headers */,
 				F3AF33C21DCCD4EC00CAD472 /* PixelDataGenerator.h in Headers */,
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
+				F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */,
 				F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */,
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
@@ -1715,7 +1722,7 @@
 				F3AF33A41DCCD4EC00CAD472 /* InputMapMousePositionComponent.h in Headers */,
 				F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */,
 				F3AF33831DCCD4EC00CAD472 /* ComponentSystem.h in Headers */,
-				F3AF34AD1DCCD5AF00CAD472 /* TypeCastExpressions.h in Headers */,
+				F3AF34AD1DCCD5AF00CAD472 /* TypeExpressions.h in Headers */,
 				F3AF34B01DCCD5AF00CAD472 /* WindowExpressions.h in Headers */,
 				F3AF33851DCCD4EC00CAD472 /* Entity.h in Headers */,
 				F3AF33931DCCD4EC00CAD472 /* GUIObject.h in Headers */,
@@ -2095,6 +2102,7 @@
 				F3AF33791DCCD4EC00CAD472 /* AnimationInterpolateComponent.c in Sources */,
 				F3AF33CE1DCCD4EC00CAD472 /* GFXFramebuffer.c in Sources */,
 				F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */,
+				F30730B82410E7D10078AEC4 /* FontExpressions.c in Sources */,
 				F342B660223918D600B44319 /* MTLShader.m in Sources */,
 				F3AF338E1DCCD4EC00CAD472 /* GUIExpression.c in Sources */,
 				F3AF34B31DCCD5AF00CAD472 /* ExpressionEvaluator.c in Sources */,
@@ -2119,7 +2127,7 @@
 				F3FE7454223AEAFF004D1386 /* MTLBlit.m in Sources */,
 				F3AF33AB1DCCD4EC00CAD472 /* Mouse.c in Sources */,
 				F3AF33D31DCCD4EC00CAD472 /* GFXShader.c in Sources */,
-				F3AF34AC1DCCD5AF00CAD472 /* TypeCastExpressions.c in Sources */,
+				F3AF34AC1DCCD5AF00CAD472 /* TypeExpressions.c in Sources */,
 				F3AF33E81DCCD4EC00CAD472 /* GLShader.c in Sources */,
 				F342B6A12239711B00B44319 /* MTLFramebuffer.m in Sources */,
 				F3AF33841DCCD4EC00CAD472 /* Entity.c in Sources */,
