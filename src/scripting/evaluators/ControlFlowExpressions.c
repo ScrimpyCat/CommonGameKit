@@ -154,6 +154,80 @@ CCExpression CCControlFlowExpressionRepeat(CCExpression Expression)
     return Expression;
 }
 
+CCExpression CCControlFlowExpressionLoopPersist(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if (ArgCount == 3)
+    {
+        CCExpression Var = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Var) == CCExpressionValueTypeString)
+        {
+            CCExpression List = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+            CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3);
+            
+            if (CCExpressionGetType(List) == CCExpressionValueTypeList)
+            {
+                if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
+                {
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), CCExpressionCreateNull(CC_STD_ALLOCATOR), FALSE, NULL, FALSE);
+                }
+                
+                CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                CC_COLLECTION_FOREACH(CCExpression, Item, CCExpressionGetList(List))
+                {
+                    CCExpressionSetState(Expression, CCExpressionGetString(Var), Item, TRUE);
+                    
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(Expr)) });
+                }
+                
+                return Result;
+            }
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("loop!", "var:string list:list iteration:expr");
+    
+    return Expression;
+}
+
+CCExpression CCControlFlowExpressionRepeatPersist(CCExpression Expression)
+{
+    const size_t ArgCount = CCCollectionGetCount(CCExpressionGetList(Expression)) - 1;
+    
+    if (ArgCount == 3)
+    {
+        CCExpression Var = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+        if (CCExpressionGetType(Var) == CCExpressionValueTypeString)
+        {
+            CCExpression CountExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+            CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3);
+            
+            if (CCExpressionGetType(CountExpr) == CCExpressionValueTypeInteger)
+            {
+                if (!CCExpressionGetStateStrict(Expression, CCExpressionGetString(Var)))
+                {
+                    CCExpressionCreateState(Expression, CCExpressionGetString(Var), CCExpressionCreateNull(CC_STD_ALLOCATOR), FALSE, NULL, FALSE);
+                }
+                
+                CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                for (size_t Loop = 0, Count = CCExpressionGetInteger(CountExpr); Loop < Count; Loop++)
+                {
+                    CCExpressionSetState(Expression, CCExpressionGetString(Var), CCExpressionCreateInteger(CC_STD_ALLOCATOR, (int32_t)Loop), FALSE);
+                    
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionRetain(CCExpressionEvaluate(Expr)) });
+                }
+                
+                return Result;
+            }
+        }
+    }
+    
+    CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("repeat!", "var:string count:integer iteration:expr");
+    
+    return Expression;
+}
+
 CCExpression CCControlFlowExpressionAny(CCExpression Expression)
 {
     if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)

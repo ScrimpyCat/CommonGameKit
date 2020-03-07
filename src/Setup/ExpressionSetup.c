@@ -97,6 +97,8 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("cond"), CCControlFlowExpressionCond);
     CCExpressionEvaluatorRegister(CC_STRING("loop"), CCControlFlowExpressionLoop);
     CCExpressionEvaluatorRegister(CC_STRING("repeat"), CCControlFlowExpressionRepeat);
+    CCExpressionEvaluatorRegister(CC_STRING("loop!"), CCControlFlowExpressionLoopPersist);
+    CCExpressionEvaluatorRegister(CC_STRING("repeat!"), CCControlFlowExpressionRepeatPersist);
     CCExpressionEvaluatorRegister(CC_STRING("any?"), CCControlFlowExpressionAny);
     CCExpressionEvaluatorRegister(CC_STRING("all?"), CCControlFlowExpressionAll);
     CCExpressionEvaluatorRegister(CC_STRING("get"), CCListExpressionGetter);

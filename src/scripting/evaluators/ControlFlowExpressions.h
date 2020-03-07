@@ -34,6 +34,8 @@ CC_EXPRESSION_EVALUATOR(if) CCExpression CCControlFlowExpressionBranch(CCExpress
 CC_EXPRESSION_EVALUATOR(cond) CCExpression CCControlFlowExpressionCond(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(loop) CCExpression CCControlFlowExpressionLoop(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(repeat) CCExpression CCControlFlowExpressionRepeat(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(loop!) CCExpression CCControlFlowExpressionLoopPersist(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(repeat!) CCExpression CCControlFlowExpressionRepeatPersist(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(any?) CCExpression CCControlFlowExpressionAny(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(all?) CCExpression CCControlFlowExpressionAll(CCExpression Expression);
 
