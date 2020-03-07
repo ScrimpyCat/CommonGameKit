@@ -100,6 +100,7 @@
 #include <CommonGameKit/DebugExpressions.h>
 #include <CommonGameKit/EntityExpressions.h>
 #include <CommonGameKit/EqualityExpressions.h>
+#include <CommonGameKit/FontExpressions.h>
 #include <CommonGameKit/GraphicsExpressions.h>
 #include <CommonGameKit/IOExpressions.h>
 #include <CommonGameKit/ListExpressions.h>

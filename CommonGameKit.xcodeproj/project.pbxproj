@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F30730B52410E7D10078AEC4 /* FontExpressions.h */; };
+		F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F30730B52410E7D10078AEC4 /* FontExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F30730B82410E7D10078AEC4 /* FontExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F30730B62410E7D10078AEC4 /* FontExpressions.c */; };
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
