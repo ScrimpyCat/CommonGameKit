@@ -28,12 +28,13 @@
 #include "AssetExpressions.h"
 #include "ExpressionHelpers.h"
 #include "AssetManager.h"
+#include "GraphicsExpressions.h"
 
 static CCFontAttribute CCFontExpressionLoadAttribute(CCFont *Font, CCEnumerator *Enumerator)
 {
     CCFontAttribute Attribute = {
-        .scale = CCVector2DFill(1.0f),
-        .space = 0.0f
+        .scale = CCGraphicsExpressionDefaultTextAttribute.scale,
+        .space = CCGraphicsExpressionDefaultTextAttribute.space
     };
     
     for (CCExpression *Element = CCCollectionEnumeratorNext(Enumerator); Element; Element = CCCollectionEnumeratorNext(Enumerator))

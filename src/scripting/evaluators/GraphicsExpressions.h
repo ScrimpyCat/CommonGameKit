@@ -62,6 +62,17 @@ typedef struct {
  */
 void CCGraphicsExpressionGetTextOptions(CCEnumerator *Enumerator, CCOrderedCollection(CCTextAttribute) AttributedStrings, size_t *Offset, size_t *Length, CCTextAlignment *Alignment, CCTextVisibility *Visibility);
 
+/*!
+ * @brief Get the default font used by graphics expressions.
+ * @return The default font. Must be destroyed.
+ */
+CC_NEW CCFont CCGraphicsExpressionDefaultFont(void);
+
+/*!
+ * @brief The default text attributes used by graphics expressions.
+ */
+extern const CCTextAttribute CCGraphicsExpressionDefaultTextAttribute;
+
 CC_EXPRESSION_EVALUATOR(render-rect) CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(render-text) CCExpression CCGraphicsExpressionRenderText(CCExpression Expression);
 

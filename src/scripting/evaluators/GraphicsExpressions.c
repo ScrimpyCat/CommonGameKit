@@ -343,17 +343,26 @@ CCExpression CCGraphicsExpressionRenderRect(CCExpression Expression)
     return Result;
 }
 
+const CCTextAttribute CCGraphicsExpressionDefaultTextAttribute = {
+    .string = 0,
+    .font = NULL,
+    .colour = CCVector4DMake(0.309f, 0.247f, 0.239f, 1.0f),
+    .scale = CCVector2DFill(-0.77f),
+    .space = -0.25f,
+    .softness = 0.3f,
+    .thickness = 0.45f
+};
+
+CCFont CCGraphicsExpressionDefaultFont(void)
+{
+    return CCAssetManagerCreateFont(CC_STRING("Arial"));
+}
+
 static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression String, CCEnumerator *Enumerator)
 {
-    CCTextAttribute Attribute = {
-        .string = CCStringCopy(CCExpressionGetString(String)),
-        .font = NULL,
-        .colour = CCVector4DMake(0.309f, 0.247f, 0.239f, 1.0f),
-        .scale = CCVector2DFill(-0.77f),
-        .space = -0.25f,
-        .softness = 0.3f,
-        .thickness = 0.45f
-    };
+    CCTextAttribute Attribute = CCGraphicsExpressionDefaultTextAttribute;
+    
+    Attribute.string = CCStringCopy(CCExpressionGetString(String));
     
     for (CCExpression *Arg = CCCollectionEnumeratorNext(Enumerator); Arg; Arg = CCCollectionEnumeratorNext(Enumerator))
     {
@@ -382,7 +391,7 @@ static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression Str
         }
     }
     
-    if (!Attribute.font) Attribute.font = CCAssetManagerCreateFont(CC_STRING("Arial"));
+    if (!Attribute.font) Attribute.font = CCGraphicsExpressionGetDefaultFont();
     
     return Attribute;
 }
