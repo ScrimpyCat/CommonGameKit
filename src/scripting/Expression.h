@@ -32,19 +32,32 @@
  Enables the tagged expression optimization. Generally leave it enabled, though disabling it can
  be helpful when debugging.
  */
+#ifndef CC_EXPRESSION_ENABLE_TAGGED_TYPES
 #define CC_EXPRESSION_ENABLE_TAGGED_TYPES 1
+#endif
 
 /*
  Enables the strict naming rules. This allows for some added optimizations to be applied, but will
  cause code that does not abide them to work differently.
  */
+#ifndef CC_EXPRESSION_STRICT_NAMING_RULES
 #define CC_EXPRESSION_STRICT_NAMING_RULES 1
+#endif
 
 /*
  Enables the constant lists optimization. Generally leave it enabled, unless under certain use cases
  where it may break things.
  */
+#ifndef CC_EXPRESSION_ENABLE_CONSTANT_LISTS
 #define CC_EXPRESSION_ENABLE_CONSTANT_LISTS 1
+#endif
+
+/*
+ Enables statistics gathering. Usually disable it on production builds.
+ */
+#ifndef CC_EXPRESSION_STATS
+#define CC_EXPRESSION_STATS 1
+#endif
 
 enum {
     CCExpressionValueTypeNull,
@@ -181,6 +194,10 @@ typedef struct CCExpressionValue {
 
 extern const CCExpressionValueCopy CCExpressionRetainedValueCopy;
 
+#if CC_EXPRESSION_STATS
+extern _Thread_local size_t CCExpressionEvalCount;
+extern _Thread_local size_t CCExpressionEvalCost;
+#endif
 
 /*!
  * @brief Create an expression from a source file.

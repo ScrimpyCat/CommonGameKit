@@ -117,12 +117,24 @@ CCExpression CCDebugExpressionMeasure(CCExpression Expression)
         return Expression;
     }
     
+#if CC_EXPRESSION_STATS
+    const size_t PrevCount = CCExpressionEvalCount, PrevCost = CCExpressionEvalCost;
+    CCExpressionEvalCount = 0;
+    CCExpressionEvalCost = 0;
+#endif
+    
     CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1);
     CCExpressionStateSetSuper(Expr, CCExpressionStateGetSuper(Expression));
     
     double Start = CCTimestamp();
     CCExpression Result = CCExpressionEvaluate(Expr);
     double End = CCTimestamp();
+    
+#if CC_EXPRESSION_STATS
+    const size_t EvalCount = CCExpressionEvalCount, EvalCost = CCExpressionEvalCost;
+    CCExpressionEvalCount += PrevCount;
+    CCExpressionEvalCost += PrevCost;
+#endif
     
     CCExpression State = CCExpressionStateGetPrivate(Expression);
     if (!State)
@@ -152,7 +164,11 @@ CCExpression CCDebugExpressionMeasure(CCExpression Expression)
     
     Avg /= Count;
     
+#if CC_EXPRESSION_STATS
+    CC_EXPRESSION_EVALUATOR_LOG("((exec: %f) (avg: %f) (eval-count: %zu) (eval-cost: %zu))", CurrentTime, Avg, EvalCount, EvalCost);
+#else
     CC_EXPRESSION_EVALUATOR_LOG("((exec: %f) (avg: %f))", CurrentTime, Avg);
+#endif
     
     return Result ? CCExpressionRetain(Result) : Result;
 }

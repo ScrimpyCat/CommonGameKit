@@ -712,9 +712,18 @@ void CCExpressionPrint(CCExpression Expression)
     CCExpressionPrintStatement(Expression); printf("\n");
 }
 
+#if CC_EXPRESSION_STATS
+_Thread_local size_t CCExpressionEvalCount = 0;
+_Thread_local size_t CCExpressionEvalCost = 0;
+#endif
+
 CCExpression CCExpressionEvaluate(CCExpression Expression)
 {
     CCAssertLog(Expression, "Expression must not be NULL");
+    
+#if CC_EXPRESSION_STATS
+    CCExpressionEvalCount++;
+#endif
     
     if (CCExpressionIsTagged(Expression)) return Expression;
     
@@ -850,6 +859,10 @@ CCExpression CCExpressionEvaluate(CCExpression Expression)
     }
     
     if (Expression->state.result) CCExpressionStateSetSuper(Expression->state.result, Expression->state.super);
+    
+#if CC_EXPRESSION_STATS
+    CCExpressionEvalCost++;
+#endif
     
     return Expression->state.result;
 }
