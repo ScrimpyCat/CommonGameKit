@@ -1,5 +1,5 @@
 (asset
-    (loop "@item" (search @cd "*.ui")
+    (loop! "@item" (search @cd "*.ui")
         (eval @item) ; TODO: later load it with the asset manager so we can handle live reloading
     )
 )

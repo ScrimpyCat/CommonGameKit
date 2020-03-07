@@ -1,8 +1,8 @@
 (asset
-    (loop "@item" (search @cd "*.png")
+    (loop! "@item" (search @cd "*.png")
         (texture (remove -4 4 (filename @item)) :linear (dir: @item))
     )
-    (loop "@item" (search @cd "*.font")
+    (loop! "@item" (search @cd "*.font")
         (eval @item) ; TODO: later load it with the asset manager so we can handle live reloading
     )
 )
