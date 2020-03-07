@@ -391,7 +391,7 @@ static CCTextAttribute CCGraphicsExpressionLoadAttributedString(CCExpression Str
         }
     }
     
-    if (!Attribute.font) Attribute.font = CCGraphicsExpressionGetDefaultFont();
+    if (!Attribute.font) Attribute.font = CCGraphicsExpressionDefaultFont();
     
     return Attribute;
 }

@@ -61,7 +61,7 @@ static CCFontAttribute CCFontExpressionLoadAttribute(CCFont *Font, CCEnumerator 
         }
     }
     
-    if (!*Font) *Font = CCAssetManagerCreateFont(CC_STRING("Arial"));
+    if (!*Font) *Font = CCGraphicsExpressionDefaultFont();
     
     return Attribute;
 }
