@@ -3,6 +3,7 @@
         {
             "name": "font-line-height",
             "description": "Get the line height for the font.",
+            "return": { "type": "float" },
             "args": [
                 {
                     "set": [{ "type": "custom:font", "name": "font", "optional": true }],
