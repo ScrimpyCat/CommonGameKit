@@ -75,7 +75,7 @@ CCExpression CCFontExpressionGetLineHeight(CCExpression Expression)
         
         CCFont Font;
         const CCFontAttribute Attribute = CCFontExpressionLoadAttribute(&Font, &Enumerator);
-        const float Height = CCFontGetLineHeight(Font, Attribute);
+        const float Height = CCFontGetLineHeight(Font, CCFontAttributeAdjustSpacing(CCFontAttributeAdjustScaling(CCFontAttributeDefault(), Attribute.scale), Attribute.space));
         CCFontDestroy(Font);
         
         return CCExpressionCreateFloat(CC_STD_ALLOCATOR, Height);
