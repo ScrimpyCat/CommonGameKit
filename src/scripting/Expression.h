@@ -59,7 +59,7 @@
 #define CC_EXPRESSION_STATS 1
 #endif
 
-enum {
+typedef CC_EXTENSIBLE_ENUM(CCExpressionValueType, int32_t) {
     CCExpressionValueTypeNull,
     CCExpressionValueTypeAtom,
     CCExpressionValueTypeInteger,
@@ -71,8 +71,6 @@ enum {
     
     CCExpressionValueTypeReservedCount = 255
 };
-
-typedef int32_t CCExpressionValueType;
 
 enum {
     /*
@@ -116,7 +114,7 @@ enum {
     CCExpressionTaggedFunctionIndexMask = ~((CCExpressionTaggedAtomTypeMask << CCExpressionTaggedAtomTaggedBits) | CCExpressionTaggedMask) >> CCExpressionTaggedFunctionIndexBits
 };
 
-typedef enum {
+typedef CC_FLAG_ENUM(CCExpressionAtomType, uint8_t) {
     CCExpressionAtomTypeKindMask = 1,
     CCExpressionAtomTypeKindSymbol = (0 << 0),
     CCExpressionAtomTypeKindLookup = (1 << 0),
@@ -132,7 +130,7 @@ typedef enum {
     CCExpressionAtomTypeOperationMask = (1 << 2),
     CCExpressionAtomTypeOperationGet = (0 << 2),
     CCExpressionAtomTypeOperationSet = (1 << 2)
-} CCExpressionAtomType;
+};
 
 /*!
  * @brief An expression.

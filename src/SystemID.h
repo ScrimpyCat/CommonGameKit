@@ -29,7 +29,7 @@
 #include <CommonGameKit/Component.h>
 #include <CommonGameKit/ComponentSystem.h>
 
-enum {
+CC_ENUM(CCComponentSystemID) {
     CCRenderSystemID = 1,
     CCInputSystemID,
     CCAnimationSystemID,

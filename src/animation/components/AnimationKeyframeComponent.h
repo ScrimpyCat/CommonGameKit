@@ -33,11 +33,11 @@
 
 extern const CCString CCAnimationKeyframeComponentName;
 
-typedef enum {
+typedef CC_ENUM(CCAnimationKeyframeDirection, int8_t) {
     CCAnimationKeyframeDirectionForward = 1,
     CCAnimationKeyframeDirectionBackward = -1,
     CCAnimationKeyframeDirectionReverse = CCAnimationKeyframeDirectionBackward
-} CCAnimationKeyframeDirection;
+};
 
 typedef struct {
     CC_COMPONENT_INHERIT(CCAnimationComponentClass);

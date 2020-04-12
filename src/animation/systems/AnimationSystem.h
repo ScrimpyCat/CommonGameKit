@@ -29,18 +29,18 @@
 #include <CommonGameKit/ComponentSystem.h>
 #include <CommonGameKit/SystemID.h>
 
-typedef enum {
+typedef CC_ENUM(CCAnimationType, uint8_t) {
     CCAnimationTypeMask = 0xff,
     CCAnimationTypeNone = 1,
     CCAnimationTypeKeyframe,
     CCAnimationTypeInterpolate
-} CCAnimationType;
+};
 
-typedef enum {
+typedef CC_ENUM(CCAnimationLoop, uint8_t) {
     CCAnimationLoopOnce,
     CCAnimationLoopRepeatRoll,
     CCAnimationLoopRepeatFlip
-} CCAnimationLoop;
+};
 
 void CCAnimationSystemRegister(void);
 void CCAnimationSystemDeregister(void);

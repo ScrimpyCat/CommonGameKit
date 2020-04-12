@@ -63,8 +63,7 @@
 #define CC_COLOUR_FORMAT_CHANNEL(channel, size, offset) CC_COLOUR_FORMAT_CHANNEL_PLANAR(channel, size, offset, CCColourFormatChannelPlanarIndex0)
 
 
-typedef uint64_t CCColourFormat;
-enum {
+typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
     //Type
     CCColourFormatTypeMask = (3 << 0),
     CCColourFormatTypeUnsignedInteger = (0 << 0),

@@ -89,21 +89,23 @@ typedef struct {
     GUIObjectGetExpressionStateCallback state;
 } GUIObjectInterface;
 
-typedef enum {
+typedef CC_FLAG_ENUM(GUIObjectCache, uint32_t) {
     GUIObjectCacheStrategyMask = 0xffff,
     GUIObjectCacheStrategyNone = 0,
     GUIObjectCacheStrategyInvalidateOnEvent = (1 << 0),
     GUIObjectCacheStrategyInvalidateOnResize = (1 << 1),
     GUIObjectCacheStrategyInvalidateOnMove = (1 << 2),
     GUIObjectCacheStrategyInvalidateOnRequest = (1 << 3),
+    CC_RESERVED_BITS(GUIObjectCacheStrategy, 4, 12),
     
     GUIObjectCacheDirtyMask = (0xffff << 16),
     GUIObjectCacheDirtyIndex = 16,
     GUIObjectCacheDirtyEvent = (GUIObjectCacheStrategyInvalidateOnEvent << 16),
     GUIObjectCacheDirtyResize = (GUIObjectCacheStrategyInvalidateOnResize << 16),
     GUIObjectCacheDirtyMove = (GUIObjectCacheStrategyInvalidateOnMove << 16),
-    GUIObjectCacheDirtyRequest = (GUIObjectCacheStrategyInvalidateOnRequest << 16)
-} GUIObjectCache;
+    GUIObjectCacheDirtyRequest = (GUIObjectCacheStrategyInvalidateOnRequest << 16),
+    CC_RESERVED_BITS(GUIObjectCacheDirty, 20, 12)
+};
 
 typedef struct GUIObjectInfo {
     const GUIObjectInterface *interface;

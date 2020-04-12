@@ -41,7 +41,7 @@
  * @constant CCComponentSystemExecutionTypeIO Runs on the IO thread (CCComponentSystemUpdateCallback).
  * @constant CCComponentSystemExecutionMax The maximum amount of execution types.
  */
-typedef enum {
+typedef CC_EXTENSIBLE_FLAG_ENUM(CCComponentSystemExecutionType, uint32_t) {
     ///The options mask.
     CCComponentSystemExecutionOptionMask = 0xff000000,
     ///The execution type uses the timed update.
@@ -62,7 +62,7 @@ typedef enum {
     CCComponentSystemExecutionTypeIO = 5,
     ///The maximum amount of execution types.
     CCComponentSystemExecutionMax
-} CCComponentSystemExecutionType;
+};
 
 /*!
  * @brief The unique ID of the system.
