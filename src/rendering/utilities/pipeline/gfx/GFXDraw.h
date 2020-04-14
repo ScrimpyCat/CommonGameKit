@@ -125,6 +125,16 @@ void GFXDrawDestroy(GFXDraw CC_DESTROY(Draw));
 void GFXDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
 
 /*!
+ * @brief Submit the draw command.
+ * @param Draw The draw operation.
+ * @param Primitive The primitive type to be rendered.
+ * @param Offset The offset of the first vertex.
+ * @param Count The number of vertices to be drawn.
+ * @param Instances The number of instances to be drawn.
+ */
+void GFXDrawSubmitInstances(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
+
+/*!
  * @brief Submit the draw command using an index buffer to draw.
  * @param Draw The draw operation.
  * @param Primitive The primitive type to be rendered.
@@ -132,6 +142,16 @@ void GFXDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
  * @param Count The number of indices to be used.
  */
 void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+
+/*!
+ * @brief Submit the draw command using an index buffer to draw.
+ * @param Draw The draw operation.
+ * @param Primitive The primitive type to be rendered.
+ * @param Offset The offset to start drawing from.
+ * @param Count The number of indices to be used.
+ * @param Instances The number of instances to be drawn.
+ */
+void GFXDrawSubmitIndexedInstances(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
 
 /*!
  * @brief Set the shader to be used for the draw command.
