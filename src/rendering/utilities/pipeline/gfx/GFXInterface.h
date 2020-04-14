@@ -81,10 +81,8 @@ typedef void (*GFXShaderDestructorCallback)(GFXShader CC_DESTROY(Shader));
 typedef GFXShaderInput (*GFXShaderGetInputCallback)(GFXShader Shader, CCString Name);
 
 #pragma mark Required Draw Callbacks
-typedef void (*GFXDrawSubmitCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
-typedef void (*GFXDrawSubmitInstancesCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
-typedef void (*GFXDrawSubmitIndexedCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
-typedef void (*GFXDrawSubmitIndexedInstancesCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
+typedef void (*GFXDrawSubmitCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
+typedef void (*GFXDrawSubmitIndexedCallback)(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
 
 #pragma mark Required Blit Callbacks
 typedef void (*GFXBlitSubmitCallback)(GFXBlit Blit);
@@ -188,9 +186,7 @@ typedef struct {
 
 typedef struct {
     GFXDrawSubmitCallback submit;
-    GFXDrawSubmitInstancesCallback submitInstances;
     GFXDrawSubmitIndexedCallback indexedSubmit;
-    GFXDrawSubmitIndexedInstancesCallback indexedSubmitInstances;
     struct {
         GFXDrawConstructorCallback create;
         GFXDrawDestructorCallback destroy;

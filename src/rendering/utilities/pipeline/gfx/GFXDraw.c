@@ -95,30 +95,26 @@ void GFXDrawDestroy(GFXDraw Draw)
 
 void GFXDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
 {
-    CCAssertLog(Draw, "Draw must not be null");
-    
-    GFXMain->draw->submit(Draw, Primitive, Offset, Count);
+    GFXDrawSubmitInstances(Draw, Primitive, Offset, Count, 1);
 }
 
 void GFXDrawSubmitInstances(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    GFXMain->draw->submitInstances(Draw, Primitive, Offset, Count, Instances);
+    GFXMain->draw->submit(Draw, Primitive, Offset, Count, Instances);
 }
 
 void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
-{
-    CCAssertLog(Draw, "Draw must not be null");
-    
-    GFXMain->draw->indexedSubmit(Draw, Primitive, Offset, Count);
+{    
+    GFXDrawSubmitIndexedInstances(Draw, Primitive, Offset, Count, 1);
 }
 
 void GFXDrawSubmitIndexedInstances(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    GFXMain->draw->indexedSubmitInstances(Draw, Primitive, Offset, Count, Instances);
+    GFXMain->draw->indexedSubmit(Draw, Primitive, Offset, Count, Instances);
 }
 
 static void GFXDrawCacheShaderInputs(CCCollection(GFXDrawInput) Collection, GFXShader Shader)
