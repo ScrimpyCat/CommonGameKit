@@ -32,8 +32,8 @@
 #import "MTLBlit.h"
 #import "MTLCommandBuffer.h"
 
-static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
-static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
+static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
 
 
 const GFXDrawInterface MTLDrawInterface = {
@@ -385,7 +385,7 @@ static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDr
     return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }
 
-static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, _Bool Indexed)
+static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances, _Bool Indexed)
 {
     @autoreleasepool {
         GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
@@ -565,12 +565,12 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
         
         if (Indexed)
         {
-            [RenderCommand drawIndexedPrimitives: DrawPrimitiveType(Primitive) indexCount: Count indexType: IndexTypeTypeFromBufferFormat(Draw->index.format) indexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Draw->index.buffer) indexBufferOffset: Offset];
+            [RenderCommand drawIndexedPrimitives: DrawPrimitiveType(Primitive) indexCount: Count indexType: IndexTypeTypeFromBufferFormat(Draw->index.format) indexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Draw->index.buffer) indexBufferOffset: Offset instanceCount: Instances];
         }
         
         else
         {
-            [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count];
+            [RenderCommand drawPrimitives: DrawPrimitiveType(Primitive) vertexStart: Offset vertexCount: Count instanceCount: Instances];
         }
         
         [RenderCommand endEncoding];
@@ -580,12 +580,12 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
     }
 }
 
-static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances)
 {
-    MTLGFXDraw(Draw, Primitive, Offset, Count, FALSE);
+    MTLGFXDraw(Draw, Primitive, Offset, Count, Instances, FALSE);
 }
 
-static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances)
 {
-    MTLGFXDraw(Draw, Primitive, Offset, Count, TRUE);
+    MTLGFXDraw(Draw, Primitive, Offset, Count, Instances, TRUE);
 }
