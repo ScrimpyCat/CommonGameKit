@@ -30,8 +30,8 @@
 #include "GLFramebuffer.h"
 #include "GLShader.h"
 
-static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
-static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count);
+static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
+static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
 static void GLDrawConstructor(CCAllocatorType Allocator, GFXDraw Draw);
 static void GLDrawDestructor(GFXDraw Draw);
 static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
@@ -309,11 +309,12 @@ static void GLDrawSetBlendingState(GFXBlend BlendMask)
     }
 }
 
-static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, _Bool Indexed)
+static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances, _Bool Indexed)
 {
     CCAssertLog(Draw->internal, "GL implementation must not be null"); //TODO: handle if it is?
     CCAssertLog((GLint)Offset == Offset, "GL implementation cannot support offsets of that size");
     CCAssertLog((GLsizei)Count == Count, "GL implementation cannot support counts of that size");
+    CCAssertLog((GLsizei)Instances == Instances, "GL implementation cannot support instances of that size");
     
     const GFXViewport Viewport = GFXDrawGetViewport(Draw);
     CC_GL_VIEWPORT(Viewport.x, Viewport.y, Viewport.width, Viewport.height);
@@ -354,12 +355,12 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     
     if (Indexed)
     {
-        glDrawElementsBaseVertex(GLDrawPrimitive(Primitive), (GLsizei)Count, GLDrawTypeFromBufferFormat(Draw->index.format), NULL, (GLint)Offset); CC_GL_CHECK();
+        glDrawElementsInstancedBaseVertex(GLDrawPrimitive(Primitive), (GLsizei)Count, GLDrawTypeFromBufferFormat(Draw->index.format), NULL, (GLsizei)Instances, (GLint)Offset); CC_GL_CHECK();
     }
     
     else
     {
-        glDrawArrays(GLDrawPrimitive(Primitive), (GLint)Offset, (GLsizei)Count); CC_GL_CHECK();
+        glDrawArraysInstanced(GLDrawPrimitive(Primitive), (GLint)Offset, (GLsizei)Count, (GLsizei)Instances); CC_GL_CHECK();
     }
     
     
@@ -374,14 +375,14 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     CC_GL_BIND_VERTEX_ARRAY(0);
 }
 
-static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+static void GLDrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances)
 {
-    GLDraw(Draw, Primitive, Offset, Count, FALSE);
+    GLDraw(Draw, Primitive, Offset, Count, Instances, FALSE);
 }
 
-static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
+static void GLDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances)
 {
-    GLDraw(Draw, Primitive, Offset, Count, TRUE);
+    GLDraw(Draw, Primitive, Offset, Count, Instances, TRUE);
 }
 
 static void GLDrawSetIndexBuffer(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer)
