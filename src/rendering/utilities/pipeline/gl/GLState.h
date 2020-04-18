@@ -399,9 +399,9 @@ void CCGLStateDestroy(CCGLState *CC_DESTROY(State));
 void CCGLStateInitializeWithDefault(CCGLState *State);
 void CCGLStateInitializeWithCurrent(CCGLState *State);
 
-#define CC_GL_CAPABILITY(state, cap) CC_GENERIC_EVALUATE(State->caps._##cap, \
+#define CC_GL_CAPABILITY(state, cap) CC_GENERIC_EVALUATE(state->caps._##cap, \
 GLint: CCGLCapi, \
-GLfloat: CCGLCapf)(cap, &State->caps._##cap)
+GLfloat: CCGLCapf)(cap, &state->caps._##cap)
 
 static CC_FORCE_INLINE GLint CCGLCapi(GLint Cap, GLint *Value);
 static CC_FORCE_INLINE GLfloat CCGLCapf(GLint Cap, GLfloat *Value);
