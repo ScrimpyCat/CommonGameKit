@@ -30,7 +30,6 @@
 #include "GLPortability.h"
 #include <CommonGameKit/Base.h>
 
-
 CCGLState *CCGLCurrentState;
 
 CCGLState *CCGLStateCreate(void)
@@ -40,29 +39,25 @@ CCGLState *CCGLStateCreate(void)
                    return NULL;
                    );
     
+    memset(&State->caps, -1, sizeof(typeof(State->caps)));
+    
 #if CC_GL_STATE_ENABLED
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
-        GLint MaxClipDistances;
-        glGetIntegerv(GL_MAX_CLIP_DISTANCES, &MaxClipDistances); CC_GL_CHECK();
-        CC_SAFE_Malloc(State->enabled.clipDistance, MaxClipDistances * sizeof(typeof(State->enabled.clipDistance)));
+        CC_SAFE_Malloc(State->enabled.clipDistance, CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES) * sizeof(typeof(State->enabled.clipDistance)));
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
-        GLint MaxClipPlanes;
-        glGetIntegerv(GL_MAX_CLIP_PLANES, &MaxClipPlanes); CC_GL_CHECK();
-        CC_SAFE_Malloc(State->enabled.clipPlane, MaxClipPlanes * sizeof(typeof(State->enabled.clipPlane)));
+        CC_SAFE_Malloc(State->enabled.clipPlane, CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES) * sizeof(typeof(State->enabled.clipPlane)));
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
-        GLint MaxLights;
-        glGetIntegerv(GL_MAX_LIGHTS, &MaxLights); CC_GL_CHECK();
-        CC_SAFE_Malloc(State->enabled.light, MaxLights * sizeof(typeof(State->enabled.light)));
+        CC_SAFE_Malloc(State->enabled.light, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(State->enabled.light)));
     );
 #endif
     
 #if CC_GL_STATE_TEXTURE && !CC_GL_STATE_TEXTURE_MAX
     CC_GL_VERSION_ACTIVE(1_1, NA, 1_0, NA,
         GLint MaxTextures;
-        CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, glGetIntegerv(GL_MAX_TEXTURE_UNITS, &MaxTextures); CC_GL_CHECK());
-        CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &MaxTextures); CC_GL_CHECK());
+        CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, MaxTextures = CC_GL_CAPABILITY(State, GL_MAX_TEXTURE_UNITS));
+        CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, MaxTextures = CC_GL_CAPABILITY(State, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
         
         CC_SAFE_Malloc(State->bindTexture, MaxTextures * sizeof(typeof(*State->bindTexture)));
     );
@@ -138,27 +133,21 @@ void CCGLStateInitializeWithDefault(CCGLState *State)
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
         if (State->enabled.clipDistance)
         {
-            GLint MaxClipDistances;
-            glGetIntegerv(GL_MAX_CLIP_DISTANCES, &MaxClipDistances); CC_GL_CHECK();
-            memset(State->enabled.clipDistance, 0, MaxClipDistances * sizeof(typeof(State->enabled.clipDistance)));
+            memset(State->enabled.clipDistance, 0, CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES) * sizeof(typeof(State->enabled.clipDistance)));
         }
         void * const ClipDistance = State->enabled.clipDistance;
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         if (State->enabled.clipPlane)
         {
-            GLint MaxClipPlanes;
-            glGetIntegerv(GL_MAX_CLIP_PLANES, &MaxClipPlanes); CC_GL_CHECK();
-            memset(State->enabled.clipPlane, 0, MaxClipPlanes * sizeof(typeof(State->enabled.clipPlane)));
+            memset(State->enabled.clipPlane, 0, CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES) * sizeof(typeof(State->enabled.clipPlane)));
         }
         void * const ClipPlane = State->enabled.clipPlane;
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         if (State->enabled.light)
         {
-            GLint MaxLights;
-            glGetIntegerv(GL_MAX_LIGHTS, &MaxLights); CC_GL_CHECK();
-            memset(State->enabled.light, 0, MaxLights * sizeof(typeof(State->enabled.light)));
+            memset(State->enabled.light, 0, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(State->enabled.light)));
         }
         void * const Light = State->enabled.light;
     );
@@ -215,8 +204,8 @@ void CCGLStateInitializeWithDefault(CCGLState *State)
         if (State->bindTexture)
         {
             GLint Count;
-            CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, glGetIntegerv(GL_MAX_TEXTURE_UNITS, &Count); CC_GL_CHECK());
-            CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &Count); CC_GL_CHECK());
+            CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, Count = CC_GL_CAPABILITY(State, GL_MAX_TEXTURE_UNITS));
+            CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, Count = CC_GL_CAPABILITY(State, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
 #endif
         
         memset(State->bindTexture, 0, Count * sizeof(typeof(*State->bindTexture)));
@@ -328,9 +317,7 @@ void CCGLStateInitializeWithCurrent(CCGLState *State)
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
         if (State->enabled.clipDistance)
         {
-            GLint MaxClipDistances;
-            glGetIntegerv(GL_MAX_CLIP_DISTANCES, &MaxClipDistances); CC_GL_CHECK();
-            for (GLint Loop = 0; Loop < MaxClipDistances; Loop++)
+            for (GLint Loop = 0, MaxClipDistances = CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES); Loop < MaxClipDistances; Loop++)
             {
                 State->enabled.clipDistance[Loop] = glIsEnabled(GL_CLIP_DISTANCE0 + Loop); CC_GL_CHECK();
             }
@@ -339,9 +326,7 @@ void CCGLStateInitializeWithCurrent(CCGLState *State)
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         if (State->enabled.clipPlane)
         {
-            GLint MaxClipPlanes;
-            glGetIntegerv(GL_MAX_CLIP_PLANES, &MaxClipPlanes); CC_GL_CHECK();
-            for (GLint Loop = 0; Loop < MaxClipPlanes; Loop++)
+            for (GLint Loop = 0, MaxClipPlanes = CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES); Loop < MaxClipPlanes; Loop++)
             {
                 State->enabled.clipPlane[Loop] = glIsEnabled(GL_CLIP_PLANE0 + Loop); CC_GL_CHECK();
             }
@@ -350,9 +335,7 @@ void CCGLStateInitializeWithCurrent(CCGLState *State)
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         if (State->enabled.light)
         {
-            GLint MaxLights;
-            glGetIntegerv(GL_MAX_LIGHTS, &MaxLights); CC_GL_CHECK();
-            for (GLint Loop = 0; Loop < MaxLights; Loop++)
+            for (GLint Loop = 0, MaxLights = CC_GL_CAPABILITY(State, GL_MAX_LIGHTS); Loop < MaxLights; Loop++)
             {
                 State->enabled.light[Loop] = glIsEnabled(GL_LIGHT0 + Loop); CC_GL_CHECK();
             }
@@ -535,8 +518,8 @@ void CCGLStateInitializeWithCurrent(CCGLState *State)
         if (State->bindTexture)
         {
             GLint Count;
-            CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, glGetIntegerv(GL_MAX_TEXTURE_UNITS, &Count); CC_GL_CHECK());
-            CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &Count); CC_GL_CHECK());
+            CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, Count = CC_GL_CAPABILITY(State, GL_MAX_TEXTURE_UNITS));
+            CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, Count = CC_GL_CAPABILITY(State, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS));
 #endif
         
         for (GLint Loop = 0; Loop < Count; Loop++)
