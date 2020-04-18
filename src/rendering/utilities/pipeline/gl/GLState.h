@@ -29,6 +29,7 @@
 #include "Pipeline.h"
 #include "PipelineVersion.h"
 #include "GLPortability.h"
+#include "GLDebug.h"
 #include <CommonC/Types.h>
 
 
@@ -85,6 +86,15 @@
 
 
 typedef struct {
+    struct {
+        CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, GLint _GL_MAX_CLIP_DISTANCES);
+        CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, GLint _GL_MAX_CLIP_PLANES);
+        CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, GLint _GL_MAX_LIGHTS);
+        CC_GL_VERSION_ACTIVE(1_0, NA, 1_0, NA, GLint _GL_MAX_DRAW_BUFFERS);
+        CC_GL_VERSION_ACTIVE(1_1, 1_5, 1_0, 1_1, GLint _GL_MAX_TEXTURE_UNITS);
+        CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, GLint _GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+    } caps;
+    
 #if CC_GL_STATE_BLEND
     CC_GL_VERSION_ACTIVE(1_0, 1_3, 1_0, 1_1, struct {
         GLenum src, dst;
@@ -388,5 +398,34 @@ CC_NEW CCGLState *CCGLStateCreate(void);
 void CCGLStateDestroy(CCGLState *CC_DESTROY(State));
 void CCGLStateInitializeWithDefault(CCGLState *State);
 void CCGLStateInitializeWithCurrent(CCGLState *State);
+
+#define CC_GL_CAPABILITY(state, cap) CC_GENERIC_EVALUATE(State->caps._##cap, \
+GLint: CCGLCapi, \
+GLfloat: CCGLCapf)(cap, &State->caps._##cap)
+
+static CC_FORCE_INLINE GLint CCGLCapi(GLint Cap, GLint *Value);
+static CC_FORCE_INLINE GLfloat CCGLCapf(GLint Cap, GLfloat *Value);
+
+#pragma mark -
+
+static CC_FORCE_INLINE GLint CCGLCapi(GLint Cap, GLint *Value)
+{
+    if (*Value == -1)
+    {
+        glGetIntegerv(Cap, Value); CC_GL_CHECK();
+    }
+    
+    return *Value;
+}
+
+static CC_FORCE_INLINE GLfloat CCGLCapf(GLint Cap, GLfloat *Value)
+{
+    if (isnan(*Value))
+    {
+        glGetFloatv(Cap, Value); CC_GL_CHECK();
+    }
+    
+    return *Value;
+}
 
 #endif
