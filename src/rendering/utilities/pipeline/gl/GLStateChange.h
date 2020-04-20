@@ -302,19 +302,138 @@ if ((CC_GL_CURRENT_STATE->depthRange.near != (n)) || \
 
 
 #if CC_GL_STATE_ENABLED
-#define CC_GL_ENABLE(type) \
-if (!CC_GL_CURRENT_STATE->enabled._##type) \
+#define CC_GL_SET(op, value, type) \
+if (CC_GL_CURRENT_STATE->enabled._##type == !value) \
 { \
-    CC_GL_CURRENT_STATE->enabled._##type = TRUE; \
-    glEnable(type); CC_GL_CHECK(); \
+    CC_GL_CURRENT_STATE->enabled._##type = value; \
+    gl##op(type); CC_GL_CHECK(); \
 }
 
-#define CC_GL_DISABLE(type) \
-if (CC_GL_CURRENT_STATE->enabled._##type) \
+#define CC_GL_SET_INDEX(op, value, type, index, state, max) \
+CCAssertLog(index <= max, "index must not exceed maximum range"); \
+if (CC_GL_CURRENT_STATE->enabled.##state[index] == !value) \
 { \
-    CC_GL_CURRENT_STATE->enabled._##type = FALSE; \
-    glDisable(type); CC_GL_CHECK(); \
+    CC_GL_CURRENT_STATE->enabled.##state[index] = value; \
+    gl##op(type + index); CC_GL_CHECK(); \
 }
+
+#define CC_GL_SET_ALL(op, value, type, state, max) \
+for (size_t Loop = 0, Count = max; Loop < Count; Loop++) \
+{ \
+    if (CC_GL_CURRENT_STATE->enabled.state[Loop] == !value) \
+    { \
+        while (Loop < Count) CC_GL_CURRENT_STATE->enabled.state[Loop++] = value; \
+        gl##op(type); CC_GL_CHECK(); \
+    } \
+}
+
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE0(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 0, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE1(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 1, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE2(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 2, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE3(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 3, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE4(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 4, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE5(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 5, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE6(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 6, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE7(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 7, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
+#define CC_GL_ENABLED_OP_GL_CLIP_PLANE0(op, value)      CC_GL_SET_INDEX(op, value, GL_CLIP_PLANE0, 0, clipPlane, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_PLANES))
+#define CC_GL_ENABLED_OP_GL_CLIP_PLANE1(op, value)      CC_GL_SET_INDEX(op, value, GL_CLIP_PLANE0, 1, clipPlane, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_PLANES))
+#define CC_GL_ENABLED_OP_GL_CLIP_PLANE2(op, value)      CC_GL_SET_INDEX(op, value, GL_CLIP_PLANE0, 2, clipPlane, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_PLANES))
+#define CC_GL_ENABLED_OP_GL_CLIP_PLANE3(op, value)      CC_GL_SET_INDEX(op, value, GL_CLIP_PLANE0, 3, clipPlane, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_PLANES))
+#define CC_GL_ENABLED_OP_GL_CLIP_PLANE4(op, value)      CC_GL_SET_INDEX(op, value, GL_CLIP_PLANE0, 4, clipPlane, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_PLANES))
+#define CC_GL_ENABLED_OP_GL_CLIP_PLANE5(op, value)      CC_GL_SET_INDEX(op, value, GL_CLIP_PLANE0, 5, clipPlane, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_PLANES))
+#define CC_GL_ENABLED_OP_GL_LIGHT0(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 0, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT1(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 1, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT2(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 2, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT3(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 3, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT4(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 4, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT5(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 5, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT6(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 6, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+#define CC_GL_ENABLED_OP_GL_LIGHT7(op, value)           CC_GL_SET_INDEX(op, value, GL_LIGHT0, 7, light, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_LIGHTS))
+
+#define CC_GL_ENABLED_OP_GL_BLEND(op, value) \
+CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, CC_GL_SET_ALL(op, value, GL_BLEND, blend, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS))) \
+CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, NA, CC_GL_SET(op, value, GL_BLEND))
+
+#define CC_GL_ENABLED_OP_GL_ALPHA_TEST(op, value)                         CC_GL_SET(op, value, GL_ALPHA_TEST)
+#define CC_GL_ENABLED_OP_GL_AUTO_NORMAL(op, value)                        CC_GL_SET(op, value, GL_AUTO_NORMAL)
+#define CC_GL_ENABLED_OP_GL_COLOR_LOGIC_OP(op, value)                     CC_GL_SET(op, value, GL_COLOR_LOGIC_OP)
+#define CC_GL_ENABLED_OP_GL_COLOR_MATERIAL(op, value)                     CC_GL_SET(op, value, GL_COLOR_MATERIAL)
+#define CC_GL_ENABLED_OP_GL_COLOR_SUM(op, value)                          CC_GL_SET(op, value, GL_COLOR_SUM)
+#define CC_GL_ENABLED_OP_GL_CULL_FACE(op, value)                          CC_GL_SET(op, value, GL_CULL_FACE)
+#define CC_GL_ENABLED_OP_GL_DEBUG_OUTPUT(op, value)                       CC_GL_SET(op, value, GL_DEBUG_OUTPUT)
+#define CC_GL_ENABLED_OP_GL_DEBUG_OUTPUT_SYNCHRONOUS(op, value)           CC_GL_SET(op, value, GL_DEBUG_OUTPUT_SYNCHRONOUS)
+#define CC_GL_ENABLED_OP_GL_DEPTH_CLAMP(op, value)                        CC_GL_SET(op, value, GL_DEPTH_CLAMP)
+#define CC_GL_ENABLED_OP_GL_DEPTH_TEST(op, value)                         CC_GL_SET(op, value, GL_DEPTH_TEST)
+#define CC_GL_ENABLED_OP_GL_DITHER(op, value)                             CC_GL_SET(op, value, GL_DITHER)
+#define CC_GL_ENABLED_OP_GL_FOG(op, value)                                CC_GL_SET(op, value, GL_FOG)
+#define CC_GL_ENABLED_OP_GL_FRAMEBUFFER_SRGB(op, value)                   CC_GL_SET(op, value, GL_FRAMEBUFFER_SRGB)
+#define CC_GL_ENABLED_OP_GL_INDEX_LOGIC_OP(op, value)                     CC_GL_SET(op, value, GL_INDEX_LOGIC_OP)
+#define CC_GL_ENABLED_OP_GL_LIGHTING(op, value)                           CC_GL_SET(op, value, GL_LIGHTING)
+#define CC_GL_ENABLED_OP_GL_LINE_SMOOTH(op, value)                        CC_GL_SET(op, value, GL_LINE_SMOOTH)
+#define CC_GL_ENABLED_OP_GL_LINE_STIPPLE(op, value)                       CC_GL_SET(op, value, GL_LINE_STIPPLE)
+#define CC_GL_ENABLED_OP_GL_MAP1_COLOR_4(op, value)                       CC_GL_SET(op, value, GL_MAP1_COLOR_4)
+#define CC_GL_ENABLED_OP_GL_MAP1_INDEX(op, value)                         CC_GL_SET(op, value, GL_MAP1_INDEX)
+#define CC_GL_ENABLED_OP_GL_MAP1_NORMAL(op, value)                        CC_GL_SET(op, value, GL_MAP1_NORMAL)
+#define CC_GL_ENABLED_OP_GL_MAP1_TEXTURE_COORD_1(op, value)               CC_GL_SET(op, value, GL_MAP1_TEXTURE_COORD_1)
+#define CC_GL_ENABLED_OP_GL_MAP1_TEXTURE_COORD_2(op, value)               CC_GL_SET(op, value, GL_MAP1_TEXTURE_COORD_2)
+#define CC_GL_ENABLED_OP_GL_MAP1_TEXTURE_COORD_3(op, value)               CC_GL_SET(op, value, GL_MAP1_TEXTURE_COORD_3)
+#define CC_GL_ENABLED_OP_GL_MAP1_TEXTURE_COORD_4(op, value)               CC_GL_SET(op, value, GL_MAP1_TEXTURE_COORD_4)
+#define CC_GL_ENABLED_OP_GL_MAP1_VERTEX_3(op, value)                      CC_GL_SET(op, value, GL_MAP1_VERTEX_3)
+#define CC_GL_ENABLED_OP_GL_MAP1_VERTEX_4(op, value)                      CC_GL_SET(op, value, GL_MAP1_VERTEX_4)
+#define CC_GL_ENABLED_OP_GL_MAP2_COLOR_4(op, value)                       CC_GL_SET(op, value, GL_MAP2_COLOR_4)
+#define CC_GL_ENABLED_OP_GL_MAP2_INDEX(op, value)                         CC_GL_SET(op, value, GL_MAP2_INDEX)
+#define CC_GL_ENABLED_OP_GL_MAP2_NORMAL(op, value)                        CC_GL_SET(op, value, GL_MAP2_NORMAL)
+#define CC_GL_ENABLED_OP_GL_MAP2_TEXTURE_COORD_1(op, value)               CC_GL_SET(op, value, GL_MAP2_TEXTURE_COORD_1)
+#define CC_GL_ENABLED_OP_GL_MAP2_TEXTURE_COORD_2(op, value)               CC_GL_SET(op, value, GL_MAP2_TEXTURE_COORD_2)
+#define CC_GL_ENABLED_OP_GL_MAP2_TEXTURE_COORD_3(op, value)               CC_GL_SET(op, value, GL_MAP2_TEXTURE_COORD_3)
+#define CC_GL_ENABLED_OP_GL_MAP2_TEXTURE_COORD_4(op, value)               CC_GL_SET(op, value, GL_MAP2_TEXTURE_COORD_4)
+#define CC_GL_ENABLED_OP_GL_MAP2_VERTEX_3(op, value)                      CC_GL_SET(op, value, GL_MAP2_VERTEX_3)
+#define CC_GL_ENABLED_OP_GL_MAP2_VERTEX_4(op, value)                      CC_GL_SET(op, value, GL_MAP2_VERTEX_4)
+#define CC_GL_ENABLED_OP_GL_MULTISAMPLE(op, value)                        CC_GL_SET(op, value, GL_MULTISAMPLE)
+#define CC_GL_ENABLED_OP_GL_NORMALIZE(op, value)                          CC_GL_SET(op, value, GL_NORMALIZE)
+#define CC_GL_ENABLED_OP_GL_POINT_SMOOTH(op, value)                       CC_GL_SET(op, value, GL_POINT_SMOOTH)
+#define CC_GL_ENABLED_OP_GL_POINT_SPRITE(op, value)                       CC_GL_SET(op, value, GL_POINT_SPRITE)
+#define CC_GL_ENABLED_OP_GL_POINT_SPRITE_OES(op, value)                   CC_GL_SET(op, value, GL_POINT_SPRITE_OES)
+#define CC_GL_ENABLED_OP_GL_POLYGON_OFFSET_FILL(op, value)                CC_GL_SET(op, value, GL_POLYGON_OFFSET_FILL)
+#define CC_GL_ENABLED_OP_GL_POLYGON_OFFSET_LINE(op, value)                CC_GL_SET(op, value, GL_POLYGON_OFFSET_LINE)
+#define CC_GL_ENABLED_OP_GL_POLYGON_OFFSET_POINT(op, value)               CC_GL_SET(op, value, GL_POLYGON_OFFSET_POINT)
+#define CC_GL_ENABLED_OP_GL_POLYGON_SMOOTH(op, value)                     CC_GL_SET(op, value, GL_POLYGON_SMOOTH)
+#define CC_GL_ENABLED_OP_GL_POLYGON_STIPPLE(op, value)                    CC_GL_SET(op, value, GL_POLYGON_STIPPLE)
+#define CC_GL_ENABLED_OP_GL_PRIMITIVE_RESTART(op, value)                  CC_GL_SET(op, value, GL_PRIMITIVE_RESTART)
+#define CC_GL_ENABLED_OP_GL_PRIMITIVE_RESTART_FIXED_INDEX(op, value)      CC_GL_SET(op, value, GL_PRIMITIVE_RESTART_FIXED_INDEX)
+#define CC_GL_ENABLED_OP_GL_PROGRAM_POINT_SIZE(op, value)                 CC_GL_SET(op, value, GL_PROGRAM_POINT_SIZE)
+#define CC_GL_ENABLED_OP_GL_RASTERIZER_DISCARD(op, value)                 CC_GL_SET(op, value, GL_RASTERIZER_DISCARD)
+#define CC_GL_ENABLED_OP_GL_RESCALE_NORMAL(op, value)                     CC_GL_SET(op, value, GL_RESCALE_NORMAL)
+#define CC_GL_ENABLED_OP_GL_SAMPLE_ALPHA_TO_COVERAGE(op, value)           CC_GL_SET(op, value, GL_SAMPLE_ALPHA_TO_COVERAGE)
+#define CC_GL_ENABLED_OP_GL_SAMPLE_ALPHA_TO_ONE(op, value)                CC_GL_SET(op, value, GL_SAMPLE_ALPHA_TO_ONE)
+#define CC_GL_ENABLED_OP_GL_SAMPLE_COVERAGE(op, value)                    CC_GL_SET(op, value, GL_SAMPLE_COVERAGE)
+#define CC_GL_ENABLED_OP_GL_SAMPLE_SHADING(op, value)                     CC_GL_SET(op, value, GL_SAMPLE_SHADING)
+#define CC_GL_ENABLED_OP_GL_SAMPLE_MASK(op, value)                        CC_GL_SET(op, value, GL_SAMPLE_MASK)
+#define CC_GL_ENABLED_OP_GL_SCISSOR_TEST(op, value)                       CC_GL_SET(op, value, GL_SCISSOR_TEST)
+#define CC_GL_ENABLED_OP_GL_STENCIL_TEST(op, value)                       CC_GL_SET(op, value, GL_STENCIL_TEST)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_1D(op, value)                         CC_GL_SET(op, value, GL_TEXTURE_1D)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_2D(op, value)                         CC_GL_SET(op, value, GL_TEXTURE_2D)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_3D(op, value)                         CC_GL_SET(op, value, GL_TEXTURE_3D)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_CUBE_MAP(op, value)                   CC_GL_SET(op, value, GL_TEXTURE_CUBE_MAP)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_CUBE_MAP_SEAMLESS(op, value)          CC_GL_SET(op, value, GL_TEXTURE_CUBE_MAP_SEAMLESS)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_GEN_Q(op, value)                      CC_GL_SET(op, value, GL_TEXTURE_GEN_Q)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_GEN_R(op, value)                      CC_GL_SET(op, value, GL_TEXTURE_GEN_R)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_GEN_S(op, value)                      CC_GL_SET(op, value, GL_TEXTURE_GEN_S)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_GEN_T(op, value)                      CC_GL_SET(op, value, GL_TEXTURE_GEN_T)
+#define CC_GL_ENABLED_OP_GL_VERTEX_PROGRAM_POINT_SIZE(op, value)          CC_GL_SET(op, value, GL_VERTEX_PROGRAM_POINT_SIZE)
+#define CC_GL_ENABLED_OP_GL_VERTEX_PROGRAM_TWO_SIDE(op, value)            CC_GL_SET(op, value, GL_VERTEX_PROGRAM_TWO_SIDE)
+#define CC_GL_ENABLED_OP_GL_COLOR_TABLE(op, value)                        CC_GL_SET(op, value, GL_COLOR_TABLE)
+#define CC_GL_ENABLED_OP_GL_CONVOLUTION_1D(op, value)                     CC_GL_SET(op, value, GL_CONVOLUTION_1D)
+#define CC_GL_ENABLED_OP_GL_CONVOLUTION_2D(op, value)                     CC_GL_SET(op, value, GL_CONVOLUTION_2D)
+#define CC_GL_ENABLED_OP_GL_HISTOGRAM(op, value)                          CC_GL_SET(op, value, GL_HISTOGRAM)
+#define CC_GL_ENABLED_OP_GL_MINMAX(op, value)                             CC_GL_SET(op, value, GL_MINMAX)
+#define CC_GL_ENABLED_OP_GL_POST_COLOR_MATRIX_COLOR_TABLE(op, value)      CC_GL_SET(op, value, GL_POST_COLOR_MATRIX_COLOR_TABLE)
+#define CC_GL_ENABLED_OP_GL_POST_CONVOLUTION_COLOR_TABLE(op, value)       CC_GL_SET(op, value, GL_POST_CONVOLUTION_COLOR_TABLE)
+#define CC_GL_ENABLED_OP_GL_SEPARABLE_2D(op, value)                       CC_GL_SET(op, value, GL_SEPARABLE_2D)
+#define CC_GL_ENABLED_OP_GL_TEXTURE_RECTANGLE_ARB(op, value)              CC_GL_SET(op, value, GL_TEXTURE_RECTANGLE_ARB)
+
+#define CC_GL_ENABLE(type) CC_GL_ENABLED_OP_##type(Enable, TRUE)
+#define CC_GL_DISABLE(type) CC_GL_ENABLED_OP_##type(Disable, FALSE)
 #else
 #define CC_GL_ENABLE(type) glEnable(type); CC_GL_CHECK()
 #define CC_GL_DISABLE(type) glDisable(type); CC_GL_CHECK()
