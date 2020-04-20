@@ -51,6 +51,9 @@ CCGLState *CCGLStateCreate(void)
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         CC_SAFE_Malloc(State->enabled.light, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(State->enabled.light)));
     );
+    CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
+        CC_SAFE_Malloc(State->enabled.blend, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(State->enabled.blend)));
+    );
 #endif
     
 #if CC_GL_STATE_TEXTURE && !CC_GL_STATE_TEXTURE_MAX
@@ -72,6 +75,7 @@ void CCGLStateDestroy(CCGLState *State)
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, CC_SAFE_Free(State->enabled.clipDistance));
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, CC_SAFE_Free(State->enabled.clipPlane));
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, CC_SAFE_Free(State->enabled.light));
+    CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, CC_SAFE_Free(State->enabled.blend));
 #endif
     
 #if CC_GL_STATE_TEXTURE && !CC_GL_STATE_TEXTURE_MAX
@@ -151,6 +155,13 @@ void CCGLStateInitializeWithDefault(CCGLState *State)
         }
         void * const Light = State->enabled.light;
     );
+    CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
+        if (State->enabled.blend)
+        {
+            memset(State->enabled.blend, 0, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(State->enabled.blend)));
+        }
+        void * const Blend = State->enabled.blend;
+    );
     
     memset(&State->enabled, 0, sizeof(typeof(State->enabled)));
     CC_GL_VERSION_ACTIVE(1_0, NA, 1_0, NA, State->enabled._GL_DITHER = TRUE);
@@ -159,6 +170,7 @@ void CCGLStateInitializeWithDefault(CCGLState *State)
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, State->enabled.clipDistance = ClipDistance);
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, State->enabled.clipPlane = ClipPlane);
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, State->enabled.light = Light);
+    CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, State->enabled.blend = Blend);
 #endif
     
 #if CC_GL_STATE_FRAMEBUFFER
@@ -341,10 +353,19 @@ void CCGLStateInitializeWithCurrent(CCGLState *State)
             }
         }
     );
+    CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
+        if (State->enabled.blend)
+        {
+            for (GLint Loop = 0, MaxDrawBuffers = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < MaxDrawBuffers; Loop++)
+            {
+                State->enabled.blend[Loop] = glIsEnabledi(GL_BLEND, Loop); CC_GL_CHECK();
+            }
+        }
+    );
     
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, State->enabled._GL_ALPHA_TEST = glIsEnabled(GL_ALPHA_TEST); CC_GL_CHECK());
     CC_GL_VERSION_ACTIVE(1_0, 2_1, NA, NA, State->enabled._GL_AUTO_NORMAL = glIsEnabled(GL_AUTO_NORMAL); CC_GL_CHECK());
-    CC_GL_VERSION_ACTIVE(1_0, NA, 1_0, NA, State->enabled._GL_BLEND = glIsEnabled(GL_BLEND); CC_GL_CHECK());
+    CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, NA, State->enabled._GL_BLEND = glIsEnabled(GL_BLEND); CC_GL_CHECK());
     CC_GL_VERSION_ACTIVE(1_1, NA, 1_0, 1_1, State->enabled._GL_COLOR_LOGIC_OP = glIsEnabled(GL_COLOR_LOGIC_OP); CC_GL_CHECK());
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, State->enabled._GL_COLOR_MATERIAL = glIsEnabled(GL_COLOR_MATERIAL); CC_GL_CHECK());
     CC_GL_VERSION_ACTIVE(1_0, 2_1, NA, NA, State->enabled._GL_COLOR_SUM = glIsEnabled(GL_COLOR_SUM); CC_GL_CHECK());
