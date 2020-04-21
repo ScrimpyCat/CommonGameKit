@@ -1123,7 +1123,13 @@ XCTAssertFalse(State->enabled._##cap, @#cap " should be disabled");
 #if CC_GL_STATE_ENABLED
     CCGLState *State = CCGLCurrentState;
     
-    TEST_GL_ENABLE(GL_BLEND);
+    glEnable(GL_BLEND); CC_GL_CHECK();
+    CCGLStateInitializeWithCurrent(State);
+    for (size_t Loop = 0, Count = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertTrue(State->enabled.blend[Loop], @"GL_BLEND should be enabled");
+    }
+    
     TEST_GL_ENABLE(GL_COLOR_LOGIC_OP);
     TEST_GL_ENABLE(GL_CULL_FACE);
     TEST_GL_ENABLE(GL_DEPTH_CLAMP);
@@ -1155,7 +1161,13 @@ XCTAssertFalse(State->enabled._##cap, @#cap " should be disabled");
 #if CC_GL_STATE_ENABLED
     CCGLState *State = CCGLCurrentState;
     
-    TEST_GL_DISABLE(GL_BLEND);
+    glDisable(GL_BLEND); CC_GL_CHECK();
+    CCGLStateInitializeWithCurrent(State);
+    for (size_t Loop = 0, Count = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertFalse(State->enabled.blend[Loop], @"GL_BLEND should be disabled");
+    }
+    
     TEST_GL_DISABLE(GL_COLOR_LOGIC_OP);
     TEST_GL_DISABLE(GL_CULL_FACE);
     TEST_GL_DISABLE(GL_DEPTH_CLAMP);
@@ -1194,7 +1206,10 @@ XCTAssertFalse(State->enabled._##cap, @#cap " should be disabled");
     CC_GL_ENABLE(GL_DEPTH_TEST);
     
     XCTAssertTrue(glIsEnabled(GL_BLEND), @"GL_BLEND should be enabled"); CC_GL_CHECK();
-    XCTAssertTrue(CC_GL_CURRENT_STATE->enabled._GL_BLEND, @"GL_BLEND state should be true");
+    for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertTrue(CC_GL_CURRENT_STATE->enabled.blend[Loop], @"GL_BLEND should be true");
+    }
     XCTAssertFalse(glIsEnabled(GL_DEPTH_TEST), @"GL_DEPTH_TEST should stay disabled"); CC_GL_CHECK();
     XCTAssertTrue(CC_GL_CURRENT_STATE->enabled._GL_DEPTH_TEST, @"GL_DEPTH_TEST state should be true");
     
@@ -1205,7 +1220,10 @@ XCTAssertFalse(State->enabled._##cap, @#cap " should be disabled");
     CC_GL_DISABLE(GL_DEPTH_TEST);
     
     XCTAssertFalse(glIsEnabled(GL_BLEND), @"GL_BLEND should be disabled"); CC_GL_CHECK();
-    XCTAssertFalse(CC_GL_CURRENT_STATE->enabled._GL_BLEND, @"GL_BLEND state should be false");
+    for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertFalse(CC_GL_CURRENT_STATE->enabled.blend[Loop], @"GL_BLEND should be false");
+    }
     XCTAssertTrue(glIsEnabled(GL_DEPTH_TEST), @"GL_DEPTH_TEST should stay enabled"); CC_GL_CHECK();
     XCTAssertFalse(CC_GL_CURRENT_STATE->enabled._GL_DEPTH_TEST, @"GL_DEPTH_TEST state should be false");
 #endif
