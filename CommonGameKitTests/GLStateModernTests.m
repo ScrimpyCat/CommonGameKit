@@ -1229,6 +1229,30 @@ XCTAssertFalse(State->enabled._##cap, @#cap " should be disabled");
 #endif
 }
 
+-(void) testEnabledIndexed
+{
+#if CC_GL_STATE_ENABLED
+    CCGLState *State = CCGLCurrentState;
+    
+    if (CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) > 1)
+    {
+        glEnablei(GL_BLEND, 0); CC_GL_CHECK();
+        glDisablei(GL_BLEND, 1); CC_GL_CHECK();
+        CCGLStateInitializeWithCurrent(State);
+        XCTAssertTrue(State->enabled.blend[0], @"GL_BLEND should be enabled");
+        XCTAssertFalse(State->enabled.blend[1], @"GL_BLEND should be disabled");
+        
+        CC_GL_ENABLE(GL_BLEND);
+        XCTAssertTrue(State->enabled.blend[0], @"GL_BLEND should be enabled");
+        XCTAssertTrue(State->enabled.blend[1], @"GL_BLEND should be enabled");
+        
+        CC_GL_DISABLEi(GL_BLEND, 0);
+        XCTAssertFalse(State->enabled.blend[0], @"GL_BLEND should be disabled");
+        XCTAssertTrue(State->enabled.blend[1], @"GL_BLEND should be enabled");
+    }
+#endif
+}
+
 -(void) testFramebufferState
 {
 #if CC_GL_STATE_FRAMEBUFFER
