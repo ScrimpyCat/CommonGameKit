@@ -311,9 +311,9 @@ if (CC_GL_CURRENT_STATE->enabled._##type == !value) \
 
 #define CC_GL_SET_INDEX(op, value, type, index, state, max) \
 CCAssertLog(index <= max, "index must not exceed maximum range"); \
-if (CC_GL_CURRENT_STATE->enabled.##state[index] == !value) \
+if (CC_GL_CURRENT_STATE->enabled.state[index] == !value) \
 { \
-    CC_GL_CURRENT_STATE->enabled.##state[index] = value; \
+    CC_GL_CURRENT_STATE->enabled.state[index] = value; \
     gl##op(type + index); CC_GL_CHECK(); \
 }
 
@@ -325,6 +325,14 @@ for (size_t Loop = 0, Count = max; Loop < Count; Loop++) \
         while (Loop < Count) CC_GL_CURRENT_STATE->enabled.state[Loop++] = value; \
         gl##op(type); CC_GL_CHECK(); \
     } \
+}
+
+#define CC_GL_SET_INDEXED(op, value, type, state, index, max) \
+CCAssertLog(index <= max, "index must not exceed maximum range"); \
+if (CC_GL_CURRENT_STATE->enabled.state[index] == !value) \
+{ \
+    CC_GL_CURRENT_STATE->enabled.state[index] = value; \
+    gl##op##i(type, index); CC_GL_CHECK(); \
 }
 
 #define CC_GL_ENABLED_OP_GL_CLIP_DISTANCE0(op, value)   CC_GL_SET_INDEX(op, value, GL_CLIP_DISTANCE0, 0, clipDistance, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_CLIP_DISTANCES))
@@ -353,6 +361,10 @@ for (size_t Loop = 0, Count = max; Loop < Count; Loop++) \
 #define CC_GL_ENABLED_OP_GL_BLEND(op, value) \
 CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, CC_GL_SET_ALL(op, value, GL_BLEND, blend, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS))) \
 CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, NA, CC_GL_SET(op, value, GL_BLEND))
+
+#define CC_GL_ENABLED_INDEXED_OP_GL_BLEND(op, value, index) \
+CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, CC_GL_SET_INDEXED(op, value, GL_BLEND, blend, index, CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS))) \
+CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, NA, _Static_assert(0, "glEnablei/glDisablei is not supported on this version"))
 
 #define CC_GL_ENABLED_OP_GL_ALPHA_TEST(op, value)                         CC_GL_SET(op, value, GL_ALPHA_TEST)
 #define CC_GL_ENABLED_OP_GL_AUTO_NORMAL(op, value)                        CC_GL_SET(op, value, GL_AUTO_NORMAL)
@@ -434,9 +446,13 @@ CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, NA, CC_GL_SET(op, value, GL_BLEND))
 
 #define CC_GL_ENABLE(type) CC_GL_ENABLED_OP_##type(Enable, TRUE)
 #define CC_GL_DISABLE(type) CC_GL_ENABLED_OP_##type(Disable, FALSE)
+#define CC_GL_ENABLEi(type, index) CC_GL_ENABLED_INDEXED_OP_##type(Enable, TRUE, index)
+#define CC_GL_DISABLEi(type, index) CC_GL_ENABLED_INDEXED_OP_##type(Disable, FALSE, index)
 #else
 #define CC_GL_ENABLE(type) glEnable(type); CC_GL_CHECK()
 #define CC_GL_DISABLE(type) glDisable(type); CC_GL_CHECK()
+#define CC_GL_ENABLEi(type) glEnablei(type, index); CC_GL_CHECK()
+#define CC_GL_DISABLEi(type) glDisablei(type, index); CC_GL_CHECK()
 #endif
 
 
