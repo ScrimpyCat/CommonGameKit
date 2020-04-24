@@ -43,7 +43,7 @@ if ((CC_GL_CURRENT_STATE->blendFunc.src != (sfactor)) || \
     glBlendFunc((sfactor), (dfactor)); CC_GL_CHECK(); \
 }
 
-#elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_1_4, CC_OPENGL_ES_VERSION_2_0) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+#elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_1_4, CC_OPENGL_ES_VERSION_2_0) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_3_3, CC_OPENGL_ES_VERSION_NA)
 #define CC_GL_BLEND_FUNC(sfactor, dfactor) \
 if ((CC_GL_CURRENT_STATE->blendFunc.rgb.src != (sfactor)) || \
     (CC_GL_CURRENT_STATE->blendFunc.rgb.dst != (dfactor)) || \
@@ -69,6 +69,44 @@ if ((CC_GL_CURRENT_STATE->blendFunc.rgb.src != (srcRGB)) || \
     CC_GL_CURRENT_STATE->blendFunc.alpha.dst = (dstAlpha); \
     glBlendFuncSeparate((srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK(); \
 }
+#elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+#define CC_GL_BLEND_FUNC(sfactor, dfactor) \
+for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++) \
+{ \
+    if ((CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src != (sfactor)) || \
+        (CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst != (dfactor)) || \
+        (CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src != (sfactor)) || \
+        (CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst != (dfactor))) \
+    { \
+        for ( ; Loop < Count; Loop++) \
+        { \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src = (sfactor); \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst = (dfactor); \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src = (sfactor); \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst = (dfactor); \
+        } \
+        glBlendFunc((sfactor), (dfactor)); CC_GL_CHECK(); \
+    } \
+}
+
+#define CC_GL_BLEND_FUNC_SEPARATE(srcRGB, dstRGB, srcAlpha, dstAlpha) \
+for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++) \
+{ \
+    if ((CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src != (srcRGB)) || \
+        (CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst != (dstRGB)) || \
+        (CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src != (srcAlpha)) || \
+        (CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst != (dstAlpha))) \
+    { \
+        for ( ; Loop < Count; Loop++) \
+        { \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src = (srcRGB); \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst = (dstRGB); \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src = (srcAlpha); \
+            CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst = (dstAlpha); \
+        } \
+        glBlendFuncSeparate((srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK(); \
+    } \
+}
 #endif
 
 
@@ -80,7 +118,7 @@ if (CC_GL_CURRENT_STATE->blendEquation.mode != (eq)) \
     glBlendEquation(eq); CC_GL_CHECK(); \
 }
 
-#elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_2_0, CC_OPENGL_ES_VERSION_2_0) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+#elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_2_0, CC_OPENGL_ES_VERSION_2_0) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_3_3, CC_OPENGL_ES_VERSION_NA)
 #define CC_GL_BLEND_EQUATION(eq) \
 if ((CC_GL_CURRENT_STATE->blendEquation.rgb.mode != (eq)) || \
     (CC_GL_CURRENT_STATE->blendEquation.alpha.mode != (eq))) \
@@ -99,6 +137,36 @@ if ((CC_GL_CURRENT_STATE->blendEquation.rgb.mode != (modeRGB)) || \
     glBlendEquationSeparate((modeRGB), (modeAlpha)); CC_GL_CHECK(); \
 }
 
+#elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+#define CC_GL_BLEND_EQUATION(eq) \
+for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++) \
+{ \
+    if ((CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode != (eq)) || \
+        (CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode != (eq))) \
+    { \
+        for ( ; Loop < Count; Loop++) \
+        { \
+            CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode = (eq); \
+            CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode = (eq); \
+        } \
+        glBlendEquation(eq); CC_GL_CHECK(); \
+    } \
+}
+
+#define CC_GL_BLEND_EQUATION_SEPARATE(modeRGB, modeAlpha) \
+for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++) \
+{ \
+    if ((CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode != (modeRGB)) || \
+        (CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode != (modeAlpha))) \
+    { \
+        for ( ; Loop < Count; Loop++) \
+        { \
+            CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode = (modeRGB); \
+            CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode = (modeAlpha); \
+        } \
+        glBlendEquationSeparate((modeRGB), (modeAlpha)); CC_GL_CHECK(); \
+    } \
+}
 #endif
 
 #else

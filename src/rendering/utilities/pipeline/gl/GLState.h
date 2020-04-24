@@ -99,16 +99,22 @@ typedef struct {
     CC_GL_VERSION_ACTIVE(1_0, 1_3, 1_0, 1_1, struct {
         GLenum src, dst;
     } blendFunc); //glBlendFunc
-    CC_GL_VERSION_ACTIVE(1_4, NA, 2_0, NA, struct {
+    CC_GL_VERSION_ACTIVE(1_4, 3_3, 2_0, NA, struct {
         struct { GLenum src, dst; } rgb, alpha;
     } blendFunc); //glBlendFunc + glBlendFuncSeparate
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA, struct {
+        struct { GLenum src, dst; } rgb, alpha;
+    } *blendFunc); //glBlendFunc + glBlendFuncSeparate [GL_MAX_DRAW_BUFFERS]
     
     CC_GL_VERSION_ACTIVE(1_0, 1_5, NA, NA, struct {
         GLenum mode;
     } blendEquation); //glBlendEquation
-    CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, struct {
+    CC_GL_VERSION_ACTIVE(2_0, 3_3, 2_0, NA, struct {
         struct { GLenum mode; } rgb, alpha;
     } blendEquation); //glBlendEquation + glBlendEquationSeparate
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA, struct {
+        struct { GLenum mode; } rgb, alpha;
+    } *blendEquation); //glBlendEquation + glBlendEquationSeparate [GL_MAX_DRAW_BUFFERS]
 #endif
     
 #if CC_GL_STATE_BUFFER

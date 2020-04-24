@@ -41,18 +41,27 @@ CCGLState *CCGLStateCreate(void)
     
     memset(&State->caps, -1, sizeof(typeof(State->caps)));
     
+#if CC_GL_STATE_BLEND
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA,
+        CC_SAFE_Malloc(State->blendFunc, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(*State->blendFunc)));
+    );
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA,
+        CC_SAFE_Malloc(State->blendEquation, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(*State->blendEquation)));
+    );
+#endif
+    
 #if CC_GL_STATE_ENABLED
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
-        CC_SAFE_Malloc(State->enabled.clipDistance, CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES) * sizeof(typeof(State->enabled.clipDistance)));
+        CC_SAFE_Malloc(State->enabled.clipDistance, CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES) * sizeof(typeof(*State->enabled.clipDistance)));
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
-        CC_SAFE_Malloc(State->enabled.clipPlane, CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES) * sizeof(typeof(State->enabled.clipPlane)));
+        CC_SAFE_Malloc(State->enabled.clipPlane, CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES) * sizeof(typeof(*State->enabled.clipPlane)));
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
-        CC_SAFE_Malloc(State->enabled.light, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(State->enabled.light)));
+        CC_SAFE_Malloc(State->enabled.light, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(*State->enabled.light)));
     );
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
-        CC_SAFE_Malloc(State->enabled.blend, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(State->enabled.blend)));
+        CC_SAFE_Malloc(State->enabled.blend, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(*State->enabled.blend)));
     );
 #endif
     
@@ -71,6 +80,11 @@ CCGLState *CCGLStateCreate(void)
 
 void CCGLStateDestroy(CCGLState *State)
 {
+#if CC_GL_STATE_BLEND
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA, CC_SAFE_Free(State->blendFunc));
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA, CC_SAFE_Free(State->blendEquation));
+#endif
+    
 #if CC_GL_STATE_ENABLED
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA, CC_SAFE_Free(State->enabled.clipDistance));
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1, CC_SAFE_Free(State->enabled.clipPlane));
@@ -89,10 +103,22 @@ void CCGLStateInitializeWithDefault(CCGLState *State)
 {
 #if CC_GL_STATE_BLEND
     CC_GL_VERSION_ACTIVE(1_0, 1_3, 1_0, 1_1, State->blendFunc = (typeof(State->blendFunc)){ .src = GL_ONE, .dst = GL_ZERO });
-    CC_GL_VERSION_ACTIVE(1_4, NA, 2_0, NA, State->blendFunc = (typeof(State->blendFunc)){ .rgb = { .src = GL_ONE, .dst = GL_ZERO }, .alpha = { .src = GL_ONE, .dst = GL_ZERO } });
+    CC_GL_VERSION_ACTIVE(1_4, 3_3, 2_0, NA, State->blendFunc = (typeof(State->blendFunc)){ .rgb = { .src = GL_ONE, .dst = GL_ZERO }, .alpha = { .src = GL_ONE, .dst = GL_ZERO } });
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA,
+        for (GLint Loop = 0, MaxDrawBuffers = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < MaxDrawBuffers; Loop++)
+        {
+            State->blendFunc[Loop] = (typeof(*State->blendFunc)){ .rgb = { .src = GL_ONE, .dst = GL_ZERO }, .alpha = { .src = GL_ONE, .dst = GL_ZERO } };
+        }
+    );
     
     CC_GL_VERSION_ACTIVE(1_0, 1_5, NA, NA, State->blendEquation = (typeof(State->blendEquation)){ .mode = GL_FUNC_ADD });
-    CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA, State->blendEquation = (typeof(State->blendEquation)){ .rgb = { .mode = GL_FUNC_ADD }, .alpha = { .mode = GL_FUNC_ADD } });
+    CC_GL_VERSION_ACTIVE(2_0, 3_3, 2_0, NA, State->blendEquation = (typeof(State->blendEquation)){ .rgb = { .mode = GL_FUNC_ADD }, .alpha = { .mode = GL_FUNC_ADD } });
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA,
+        for (GLint Loop = 0, MaxDrawBuffers = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < MaxDrawBuffers; Loop++)
+        {
+            State->blendEquation[Loop] = (typeof(*State->blendEquation)){ .rgb = { .mode = GL_FUNC_ADD }, .alpha = { .mode = GL_FUNC_ADD } };
+        }
+    );
 #endif
     
 #if CC_GL_STATE_BUFFER
@@ -137,28 +163,28 @@ void CCGLStateInitializeWithDefault(CCGLState *State)
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
         if (State->enabled.clipDistance)
         {
-            memset(State->enabled.clipDistance, 0, CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES) * sizeof(typeof(State->enabled.clipDistance)));
+            memset(State->enabled.clipDistance, 0, CC_GL_CAPABILITY(State, GL_MAX_CLIP_DISTANCES) * sizeof(typeof(*State->enabled.clipDistance)));
         }
         void * const ClipDistance = State->enabled.clipDistance;
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         if (State->enabled.clipPlane)
         {
-            memset(State->enabled.clipPlane, 0, CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES) * sizeof(typeof(State->enabled.clipPlane)));
+            memset(State->enabled.clipPlane, 0, CC_GL_CAPABILITY(State, GL_MAX_CLIP_PLANES) * sizeof(typeof(*State->enabled.clipPlane)));
         }
         void * const ClipPlane = State->enabled.clipPlane;
     );
     CC_GL_VERSION_ACTIVE(1_0, 2_1, 1_0, 1_1,
         if (State->enabled.light)
         {
-            memset(State->enabled.light, 0, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(State->enabled.light)));
+            memset(State->enabled.light, 0, CC_GL_CAPABILITY(State, GL_MAX_LIGHTS) * sizeof(typeof(*State->enabled.light)));
         }
         void * const Light = State->enabled.light;
     );
     CC_GL_VERSION_ACTIVE(3_0, NA, NA, NA,
         if (State->enabled.blend)
         {
-            memset(State->enabled.blend, 0, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(State->enabled.blend)));
+            memset(State->enabled.blend, 0, CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) * sizeof(typeof(*State->enabled.blend)));
         }
         void * const Blend = State->enabled.blend;
     );
@@ -252,17 +278,33 @@ void CCGLStateInitializeWithCurrent(CCGLState *State)
         glGetIntegerv(GL_BLEND_SRC, (GLint*)&State->blendFunc.src); CC_GL_CHECK();
         glGetIntegerv(GL_BLEND_DST, (GLint*)&State->blendFunc.dst); CC_GL_CHECK();
     );
-    CC_GL_VERSION_ACTIVE(1_4, NA, 2_0, NA,
+    CC_GL_VERSION_ACTIVE(1_4, 3_3, 2_0, NA,
         glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&State->blendFunc.rgb.src); CC_GL_CHECK();
         glGetIntegerv(GL_BLEND_SRC_ALPHA, (GLint*)&State->blendFunc.alpha.src); CC_GL_CHECK();
         glGetIntegerv(GL_BLEND_DST_RGB, (GLint*)&State->blendFunc.rgb.dst); CC_GL_CHECK();
         glGetIntegerv(GL_BLEND_DST_ALPHA, (GLint*)&State->blendFunc.alpha.dst); CC_GL_CHECK();
     );
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA,
+        for (GLint Loop = 0, MaxDrawBuffers = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < MaxDrawBuffers; Loop++)
+        {
+            glGetIntegeri_v(GL_BLEND_SRC_RGB, Loop, (GLint*)&State->blendFunc[Loop].rgb.src); CC_GL_CHECK();
+            glGetIntegeri_v(GL_BLEND_SRC_ALPHA, Loop, (GLint*)&State->blendFunc[Loop].alpha.src); CC_GL_CHECK();
+            glGetIntegeri_v(GL_BLEND_DST_RGB, Loop, (GLint*)&State->blendFunc[Loop].rgb.dst); CC_GL_CHECK();
+            glGetIntegeri_v(GL_BLEND_DST_ALPHA, Loop, (GLint*)&State->blendFunc[Loop].alpha.dst); CC_GL_CHECK();
+        }
+    );
     
     CC_GL_VERSION_ACTIVE(1_0, 1_5, NA, NA, glGetIntegerv(GL_BLEND_EQUATION, (GLint*)&State->blendEquation.mode); CC_GL_CHECK());
-    CC_GL_VERSION_ACTIVE(2_0, NA, 2_0, NA,
+    CC_GL_VERSION_ACTIVE(2_0, 3_3, 2_0, NA,
         glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&State->blendEquation.rgb.mode); CC_GL_CHECK();
         glGetIntegerv(GL_BLEND_EQUATION_ALPHA, (GLint*)&State->blendEquation.alpha.mode); CC_GL_CHECK();
+    );
+    CC_GL_VERSION_ACTIVE(4_0, NA, NA, NA,
+        for (GLint Loop = 0, MaxDrawBuffers = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < MaxDrawBuffers; Loop++)
+        {
+            glGetIntegeri_v(GL_BLEND_EQUATION_RGB, Loop, (GLint*)&State->blendEquation[Loop].rgb.mode); CC_GL_CHECK();
+            glGetIntegeri_v(GL_BLEND_EQUATION_ALPHA, Loop, (GLint*)&State->blendEquation[Loop].alpha.mode); CC_GL_CHECK();
+        }
     );
 #endif
     
