@@ -43,6 +43,10 @@ if ((CC_GL_CURRENT_STATE->blendFunc.src != (sfactor)) || \
     glBlendFunc((sfactor), (dfactor)); CC_GL_CHECK(); \
 }
 
+#define CC_GL_BLEND_FUNC_SEPARATE(srcRGB, dstRGB, srcAlpha, dstAlpha) _Static_assert(0, "glBlendFuncSeparate is not supported on this version")
+#define CC_GL_BLEND_FUNCi(index, sfactor, dfactor) _Static_assert(0, "glBlendFunci is not supported on this version")
+#define CC_GL_BLEND_FUNC_SEPARATEi(index, srcRGB, dstRGB, srcAlpha, dstAlpha) _Static_assert(0, "glBlendFuncSeparatei is not supported on this version")
+
 #elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_1_4, CC_OPENGL_ES_VERSION_2_0) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_3_3, CC_OPENGL_ES_VERSION_NA)
 #define CC_GL_BLEND_FUNC(sfactor, dfactor) \
 if ((CC_GL_CURRENT_STATE->blendFunc.rgb.src != (sfactor)) || \
@@ -69,6 +73,10 @@ if ((CC_GL_CURRENT_STATE->blendFunc.rgb.src != (srcRGB)) || \
     CC_GL_CURRENT_STATE->blendFunc.alpha.dst = (dstAlpha); \
     glBlendFuncSeparate((srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK(); \
 }
+
+#define CC_GL_BLEND_FUNCi(index, sfactor, dfactor) _Static_assert(0, "glBlendFunci is not supported on this version")
+#define CC_GL_BLEND_FUNC_SEPARATEi(index, srcRGB, dstRGB, srcAlpha, dstAlpha) _Static_assert(0, "glBlendFuncSeparatei is not supported on this version")
+
 #elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
 #define CC_GL_BLEND_FUNC(sfactor, dfactor) \
 for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++) \
@@ -107,6 +115,32 @@ for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_
         glBlendFuncSeparate((srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK(); \
     } \
 }
+
+#define CC_GL_BLEND_FUNCi(index, sfactor, dfactor) \
+if ((CC_GL_CURRENT_STATE->blendFunc[index].rgb.src != (sfactor)) || \
+    (CC_GL_CURRENT_STATE->blendFunc[index].rgb.dst != (dfactor)) || \
+    (CC_GL_CURRENT_STATE->blendFunc[index].alpha.src != (sfactor)) || \
+    (CC_GL_CURRENT_STATE->blendFunc[index].alpha.dst != (dfactor))) \
+{ \
+    CC_GL_CURRENT_STATE->blendFunc[index].rgb.src = (sfactor); \
+    CC_GL_CURRENT_STATE->blendFunc[index].rgb.dst = (dfactor); \
+    CC_GL_CURRENT_STATE->blendFunc[index].alpha.src = (sfactor); \
+    CC_GL_CURRENT_STATE->blendFunc[index].alpha.dst = (dfactor); \
+    glBlendFunci((index), (sfactor), (dfactor)); CC_GL_CHECK(); \
+}
+
+#define CC_GL_BLEND_FUNC_SEPARATEi(index, srcRGB, dstRGB, srcAlpha, dstAlpha) \
+if ((CC_GL_CURRENT_STATE->blendFunc[index].rgb.src != (srcRGB)) || \
+    (CC_GL_CURRENT_STATE->blendFunc[index].rgb.dst != (dstRGB)) || \
+    (CC_GL_CURRENT_STATE->blendFunc[index].alpha.src != (srcAlpha)) || \
+    (CC_GL_CURRENT_STATE->blendFunc[index].alpha.dst != (dstAlpha))) \
+{ \
+    CC_GL_CURRENT_STATE->blendFunc[index].rgb.src = (srcRGB); \
+    CC_GL_CURRENT_STATE->blendFunc[index].rgb.dst = (dstRGB); \
+    CC_GL_CURRENT_STATE->blendFunc[index].alpha.src = (srcAlpha); \
+    CC_GL_CURRENT_STATE->blendFunc[index].alpha.dst = (dstAlpha); \
+    glBlendFuncSeparatei((index), (srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK(); \
+}
 #endif
 
 
@@ -117,6 +151,10 @@ if (CC_GL_CURRENT_STATE->blendEquation.mode != (eq)) \
     CC_GL_CURRENT_STATE->blendEquation.mode = (eq); \
     glBlendEquation(eq); CC_GL_CHECK(); \
 }
+
+#define CC_GL_BLEND_EQUATION_SEPARATE(modeRGB, modeAlpha) _Static_assert(0, "glBlendEquationSeparate is not supported on this version")
+#define CC_GL_BLEND_EQUATIONi(index, eq) _Static_assert(0, "glBlendEquationi is not supported on this version")
+#define CC_GL_BLEND_EQUATION_SEPARATEi(index, modeRGB, modeAlpha) _Static_assert(0, "glBlendEquationSeparatei is not supported on this version")
 
 #elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_2_0, CC_OPENGL_ES_VERSION_2_0) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_3_3, CC_OPENGL_ES_VERSION_NA)
 #define CC_GL_BLEND_EQUATION(eq) \
@@ -136,6 +174,9 @@ if ((CC_GL_CURRENT_STATE->blendEquation.rgb.mode != (modeRGB)) || \
     CC_GL_CURRENT_STATE->blendEquation.alpha.mode = (modeAlpha); \
     glBlendEquationSeparate((modeRGB), (modeAlpha)); CC_GL_CHECK(); \
 }
+
+#define CC_GL_BLEND_EQUATIONi(index, eq) _Static_assert(0, "glBlendEquationi is not supported on this version")
+#define CC_GL_BLEND_EQUATION_SEPARATEi(index, modeRGB, modeAlpha) _Static_assert(0, "glBlendEquationSeparatei is not supported on this version")
 
 #elif CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
 #define CC_GL_BLEND_EQUATION(eq) \
@@ -167,6 +208,24 @@ for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_
         glBlendEquationSeparate((modeRGB), (modeAlpha)); CC_GL_CHECK(); \
     } \
 }
+
+#define CC_GL_BLEND_EQUATIONi(index, eq) \
+if ((CC_GL_CURRENT_STATE->blendEquation[index].rgb.mode != (eq)) || \
+    (CC_GL_CURRENT_STATE->blendEquation[index].alpha.mode != (eq))) \
+{ \
+    CC_GL_CURRENT_STATE->blendEquation[index].rgb.mode = (eq); \
+    CC_GL_CURRENT_STATE->blendEquation[index].alpha.mode = (eq); \
+    glBlendEquationi((index), (eq)); CC_GL_CHECK(); \
+}
+
+#define CC_GL_BLEND_EQUATION_SEPARATEi(index, modeRGB, modeAlpha) \
+if ((CC_GL_CURRENT_STATE->blendEquation[index].rgb.mode != (modeRGB)) || \
+    (CC_GL_CURRENT_STATE->blendEquation[index].alpha.mode != (modeAlpha))) \
+{ \
+    CC_GL_CURRENT_STATE->blendEquation[index].rgb.mode = (modeRGB); \
+    CC_GL_CURRENT_STATE->blendEquation[index].alpha.mode = (modeAlpha); \
+    glBlendEquationSeparatei((index), (modeRGB), (modeAlpha)); CC_GL_CHECK(); \
+}
 #endif
 
 #else
@@ -174,6 +233,10 @@ for (size_t Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_
 #define CC_GL_BLEND_FUNC_SEPARATE(srcRGB, dstRGB, srcAlpha, dstAlpha) glBlendFuncSeparate((srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK()
 #define CC_GL_BLEND_EQUATION(mode) glBlendEquation(mode); CC_GL_CHECK()
 #define CC_GL_BLEND_EQUATION_SEPARATE(modeRGB, modeAlpha) glBlendEquationSeparate((modeRGB), (modeAlpha)); CC_GL_CHECK()
+#define CC_GL_BLEND_FUNCi(index, src, dst) glBlendFunci((index), (src), (dst)); CC_GL_CHECK()
+#define CC_GL_BLEND_FUNC_SEPARATEi(index, srcRGB, dstRGB, srcAlpha, dstAlpha) glBlendFuncSeparatei((index), (srcRGB), (dstRGB), (srcAlpha), (dstAlpha)); CC_GL_CHECK()
+#define CC_GL_BLEND_EQUATIONi(index, mode) glBlendEquationi((index), (mode)); CC_GL_CHECK()
+#define CC_GL_BLEND_EQUATION_SEPARATEi(index, modeRGB, modeAlpha) glBlendEquationSeparatei((index), (modeRGB), (modeAlpha)); CC_GL_CHECK()
 #endif
 
 
