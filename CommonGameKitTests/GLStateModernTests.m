@@ -82,6 +82,18 @@
     
     CCGLStateInitializeWithCurrent(State);
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(State->blendFunc[Loop].rgb.src, GL_ONE, @"RGB blend func src should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[Loop].rgb.dst, GL_ONE, @"RGB blend func dst should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[Loop].alpha.src, GL_ONE, @"alpha blend func src should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[Loop].alpha.dst, GL_ONE, @"alpha blend func dst should be GL_ONE");
+        
+        XCTAssertEqual(State->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"RGB blend equation should be GL_FUNC_ADD");
+        XCTAssertEqual(State->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"alpha blend equation should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(State->blendFunc.rgb.src, GL_ONE, @"RGB blend func src should be GL_ONE");
     XCTAssertEqual(State->blendFunc.rgb.dst, GL_ONE, @"RGB blend func dst should be GL_ONE");
     XCTAssertEqual(State->blendFunc.alpha.src, GL_ONE, @"alpha blend func src should be GL_ONE");
@@ -89,6 +101,7 @@
     
     XCTAssertEqual(State->blendEquation.rgb.mode, GL_FUNC_ADD, @"RGB blend equation should be GL_FUNC_ADD");
     XCTAssertEqual(State->blendEquation.alpha.mode, GL_FUNC_ADD, @"alpha blend equation should be GL_FUNC_ADD");
+#endif
     
     
     glBlendFunc(GL_ZERO, GL_ZERO); CC_GL_CHECK();
@@ -96,6 +109,18 @@
     
     CCGLStateInitializeWithCurrent(State);
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(State->blendFunc[Loop].rgb.src, GL_ZERO, @"RGB blend func src should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[Loop].rgb.dst, GL_ZERO, @"RGB blend func dst should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[Loop].alpha.src, GL_ZERO, @"alpha blend func src should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[Loop].alpha.dst, GL_ZERO, @"alpha blend func dst should be GL_ZERO");
+        
+        XCTAssertEqual(State->blendEquation[Loop].rgb.mode, GL_FUNC_SUBTRACT, @"RGB blend equation should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(State->blendEquation[Loop].alpha.mode, GL_FUNC_SUBTRACT, @"alpha blend equation should be GL_FUNC_SUBTRACT");
+    }
+#else
     XCTAssertEqual(State->blendFunc.rgb.src, GL_ZERO, @"RGB blend func src should be GL_ZERO");
     XCTAssertEqual(State->blendFunc.rgb.dst, GL_ZERO, @"RGB blend func dst should be GL_ZERO");
     XCTAssertEqual(State->blendFunc.alpha.src, GL_ZERO, @"alpha blend func src should be GL_ZERO");
@@ -103,6 +128,7 @@
     
     XCTAssertEqual(State->blendEquation.rgb.mode, GL_FUNC_SUBTRACT, @"RGB blend equation should be GL_FUNC_SUBTRACT");
     XCTAssertEqual(State->blendEquation.alpha.mode, GL_FUNC_SUBTRACT, @"alpha blend equation should be GL_FUNC_SUBTRACT");
+#endif
 #endif
 }
 
@@ -125,10 +151,20 @@
     XCTAssertEqual(SrcAlpha, GL_DST_COLOR, @"src should be GL_DST_COLOR");
     XCTAssertEqual(DstAlpha, GL_SRC_COLOR, @"dst should be GL_SRC_COLOR");
 
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+#endif
     
     
     
@@ -144,17 +180,37 @@
     XCTAssertEqual(SrcAlpha, GL_ZERO, @"src should be GL_ZERO");
     XCTAssertEqual(DstAlpha, GL_ONE, @"dst should be GL_ONE");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_ZERO, @"src state should be GL_ZERO");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_ONE, @"dst state should be GL_ONE");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_ZERO, @"src state should be GL_ZERO");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_ONE, @"dst state should be GL_ONE");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_ZERO, @"src state should be GL_ZERO");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_ONE, @"dst state should be GL_ONE");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_ZERO, @"src state should be GL_ZERO");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_ONE, @"dst state should be GL_ONE");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src = GL_DST_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src = GL_DST_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst = GL_SRC_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst = GL_SRC_COLOR;
+    }
+#else
     CC_GL_CURRENT_STATE->blendFunc.rgb.src = GL_DST_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.src = GL_DST_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.rgb.dst = GL_SRC_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.dst = GL_SRC_COLOR;
+#endif
     CC_GL_BLEND_FUNC(GL_DST_COLOR, GL_SRC_COLOR);
     
     glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&SrcRGB); CC_GL_CHECK();
@@ -167,17 +223,37 @@
     XCTAssertEqual(SrcAlpha, GL_ZERO, @"src should be the same");
     XCTAssertEqual(DstAlpha, GL_ONE, @"dst should be the same");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src = GL_DST_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src = GL_DST_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst = GL_SRC_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst = GL_ZERO;
+    }
+#else
     CC_GL_CURRENT_STATE->blendFunc.rgb.src = GL_DST_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.src = GL_DST_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.rgb.dst = GL_SRC_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.dst = GL_ZERO;
+#endif
     CC_GL_BLEND_FUNC(GL_DST_COLOR, GL_SRC_COLOR);
     
     glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&SrcRGB); CC_GL_CHECK();
@@ -190,10 +266,20 @@
     XCTAssertEqual(SrcAlpha, GL_DST_COLOR, @"src should be changed");
     XCTAssertEqual(DstAlpha, GL_SRC_COLOR, @"dst should be changed");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+#endif
 #endif
 }
 
@@ -216,10 +302,20 @@
     XCTAssertEqual(SrcAlpha, GL_DST_ALPHA, @"src should be GL_DST_ALPHA");
     XCTAssertEqual(DstAlpha, GL_SRC_ALPHA, @"dst should be GL_SRC_ALPHA");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_DST_ALPHA, @"src state should be GL_DST_ALPHA");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_SRC_ALPHA, @"dst state should be GL_SRC_ALPHA");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_DST_ALPHA, @"src state should be GL_DST_ALPHA");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_SRC_ALPHA, @"dst state should be GL_SRC_ALPHA");
+#endif
     
     
     
@@ -235,17 +331,37 @@
     XCTAssertEqual(SrcAlpha, GL_ZERO, @"src should be GL_ZERO");
     XCTAssertEqual(DstAlpha, GL_ONE, @"dst should be GL_ONE");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_ZERO, @"src state should be GL_ZERO");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_ONE, @"dst state should be GL_ONE");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_ZERO, @"src state should be GL_ZERO");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_ONE, @"dst state should be GL_ONE");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_ZERO, @"src state should be GL_ZERO");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_ONE, @"dst state should be GL_ONE");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_ZERO, @"src state should be GL_ZERO");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_ONE, @"dst state should be GL_ONE");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src = GL_DST_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src = GL_DST_ALPHA;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst = GL_SRC_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst = GL_SRC_ALPHA;
+    }
+#else
     CC_GL_CURRENT_STATE->blendFunc.rgb.src = GL_DST_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.src = GL_DST_ALPHA;
     CC_GL_CURRENT_STATE->blendFunc.rgb.dst = GL_SRC_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.dst = GL_SRC_ALPHA;
+#endif
     CC_GL_BLEND_FUNC_SEPARATE(GL_DST_COLOR, GL_SRC_COLOR, GL_DST_ALPHA, GL_SRC_ALPHA);
     
     glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&SrcRGB); CC_GL_CHECK();
@@ -258,17 +374,37 @@
     XCTAssertEqual(SrcAlpha, GL_ZERO, @"src should be the same");
     XCTAssertEqual(DstAlpha, GL_ONE, @"dst should be the same");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_DST_ALPHA, @"src state should be GL_DST_ALPHA");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_SRC_ALPHA, @"dst state should be GL_SRC_ALPHA");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_DST_ALPHA, @"src state should be GL_DST_ALPHA");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_SRC_ALPHA, @"dst state should be GL_SRC_ALPHA");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src = GL_DST_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src = GL_DST_ALPHA;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst = GL_SRC_COLOR;
+        CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst = GL_ZERO;
+    }
+#else
     CC_GL_CURRENT_STATE->blendFunc.rgb.src = GL_DST_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.src = GL_DST_ALPHA;
     CC_GL_CURRENT_STATE->blendFunc.rgb.dst = GL_SRC_COLOR;
     CC_GL_CURRENT_STATE->blendFunc.alpha.dst = GL_ZERO;
+#endif
     CC_GL_BLEND_FUNC_SEPARATE(GL_DST_COLOR, GL_SRC_COLOR, GL_DST_ALPHA, GL_SRC_ALPHA);
     
     glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&SrcRGB); CC_GL_CHECK();
@@ -281,10 +417,20 @@
     XCTAssertEqual(SrcAlpha, GL_DST_ALPHA, @"src should be changed");
     XCTAssertEqual(DstAlpha, GL_SRC_ALPHA, @"dst should be changed");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.src, GL_DST_ALPHA, @"src state should be GL_DST_ALPHA");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc[Loop].alpha.dst, GL_SRC_ALPHA, @"dst state should be GL_SRC_ALPHA");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.src, GL_DST_COLOR, @"src state should be GL_DST_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.rgb.dst, GL_SRC_COLOR, @"dst state should be GL_SRC_COLOR");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.src, GL_DST_ALPHA, @"src state should be GL_DST_ALPHA");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendFunc.alpha.dst, GL_SRC_ALPHA, @"dst state should be GL_SRC_ALPHA");
+#endif
 #endif
 }
 
@@ -303,8 +449,16 @@
     XCTAssertEqual(EqRGB, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     XCTAssertEqual(EqAlpha, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+#endif
     
     
     
@@ -316,13 +470,29 @@
     XCTAssertEqual(EqRGB, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
     XCTAssertEqual(EqAlpha, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode = GL_FUNC_ADD;
+        CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode = GL_FUNC_ADD;
+    }
+#else
     CC_GL_CURRENT_STATE->blendEquation.rgb.mode = GL_FUNC_ADD;
     CC_GL_CURRENT_STATE->blendEquation.alpha.mode = GL_FUNC_ADD;
+#endif
     CC_GL_BLEND_EQUATION(GL_FUNC_ADD); CC_GL_CHECK();
     
     glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&EqRGB); CC_GL_CHECK();
@@ -331,13 +501,29 @@
     XCTAssertEqual(EqRGB, GL_FUNC_SUBTRACT, @"should be unchanged");
     XCTAssertEqual(EqAlpha, GL_FUNC_SUBTRACT, @"should be unchanged");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode = GL_FUNC_SUBTRACT;
+        CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode = GL_FUNC_ADD;
+    }
+#else
     CC_GL_CURRENT_STATE->blendEquation.rgb.mode = GL_FUNC_SUBTRACT;
     CC_GL_CURRENT_STATE->blendEquation.alpha.mode = GL_FUNC_ADD;
+#endif
     CC_GL_BLEND_EQUATION(GL_FUNC_ADD); CC_GL_CHECK();
     
     glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&EqRGB); CC_GL_CHECK();
@@ -346,8 +532,16 @@
     XCTAssertEqual(EqRGB, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     XCTAssertEqual(EqAlpha, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+#endif
 #endif
 }
 
@@ -366,8 +560,16 @@
     XCTAssertEqual(EqRGB, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     XCTAssertEqual(EqAlpha, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+#endif
     
     
     
@@ -379,13 +581,29 @@
     XCTAssertEqual(EqRGB, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
     XCTAssertEqual(EqAlpha, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode = GL_FUNC_ADD;
+        CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode = GL_FUNC_ADD;
+    }
+#else
     CC_GL_CURRENT_STATE->blendEquation.rgb.mode = GL_FUNC_ADD;
     CC_GL_CURRENT_STATE->blendEquation.alpha.mode = GL_FUNC_ADD;
+#endif
     CC_GL_BLEND_EQUATION_SEPARATE(GL_FUNC_ADD, GL_FUNC_ADD); CC_GL_CHECK();
     
     glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&EqRGB); CC_GL_CHECK();
@@ -394,13 +612,29 @@
     XCTAssertEqual(EqRGB, GL_FUNC_SUBTRACT, @"should be unchanged");
     XCTAssertEqual(EqAlpha, GL_FUNC_ADD, @"should be unchanged");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+#endif
     
     
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode = GL_FUNC_ADD;
+        CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode = GL_FUNC_ADD;
+    }
+#else
     CC_GL_CURRENT_STATE->blendEquation.rgb.mode = GL_FUNC_ADD;
     CC_GL_CURRENT_STATE->blendEquation.alpha.mode = GL_FUNC_ADD;
+#endif
     CC_GL_BLEND_EQUATION_SEPARATE(GL_FUNC_ADD, GL_FUNC_SUBTRACT); CC_GL_CHECK();
     
     glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&EqRGB); CC_GL_CHECK();
@@ -409,8 +643,16 @@
     XCTAssertEqual(EqRGB, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
     XCTAssertEqual(EqAlpha, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
     
+#if CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+    for (GLint Loop = 0, Count = CC_GL_CAPABILITY(CC_GL_CURRENT_STATE, GL_MAX_DRAW_BUFFERS); Loop < Count; Loop++)
+    {
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
+        XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation[Loop].alpha.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
+    }
+#else
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.rgb.mode, GL_FUNC_ADD, @"state should be GL_FUNC_ADD");
     XCTAssertEqual(CC_GL_CURRENT_STATE->blendEquation.alpha.mode, GL_FUNC_SUBTRACT, @"state should be GL_FUNC_SUBTRACT");
+#endif
 #endif
 }
 
