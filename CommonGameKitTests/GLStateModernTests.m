@@ -656,6 +656,105 @@
 #endif
 }
 
+-(void) testBlendIndexed
+{
+#if CC_GL_STATE_ENABLED && CC_GL_VERSION_MIN_REQUIRED(CC_OPENGL_VERSION_4_0, CC_OPENGL_ES_VERSION_NA) && CC_GL_VERSION_MAX_SUPPORTED(CC_OPENGL_VERSION_NA, CC_OPENGL_ES_VERSION_NA)
+
+    CCGLState *State = CCGLCurrentState;
+    
+    if (CC_GL_CAPABILITY(State, GL_MAX_DRAW_BUFFERS) > 1)
+    {
+        glBlendFunci(0, GL_ZERO, GL_ONE); CC_GL_CHECK();
+        glBlendFunci(1, GL_ONE, GL_ZERO); CC_GL_CHECK();
+        glBlendEquationi(0, GL_FUNC_SUBTRACT);
+        glBlendEquationi(1, GL_FUNC_ADD);
+        CCGLStateInitializeWithCurrent(State);
+        XCTAssertEqual(State->blendFunc[0].rgb.src, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[0].rgb.dst, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[0].alpha.src, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[0].alpha.dst, GL_ONE, @"should be GL_ONE");
+        
+        XCTAssertEqual(State->blendFunc[1].rgb.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].rgb.dst, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[1].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.dst, GL_ZERO, @"should be GL_ZERO");
+        
+        XCTAssertEqual(State->blendEquation[0].rgb.mode, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(State->blendEquation[0].alpha.mode, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(State->blendEquation[1].rgb.mode, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
+        XCTAssertEqual(State->blendEquation[1].alpha.mode, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
+        
+        CC_GL_BLEND_FUNC(GL_ONE, GL_ONE);
+        CC_GL_BLEND_EQUATION(GL_MAX);
+        XCTAssertEqual(State->blendFunc[0].rgb.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[0].rgb.dst, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[0].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[0].alpha.dst, GL_ONE, @"should be GL_ONE");
+        
+        XCTAssertEqual(State->blendFunc[1].rgb.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].rgb.dst, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.dst, GL_ONE, @"should be GL_ONE");
+        
+        XCTAssertEqual(State->blendEquation[0].rgb.mode, GL_MAX, @"should be GL_MAX");
+        XCTAssertEqual(State->blendEquation[0].alpha.mode, GL_MAX, @"should be GL_MAX");
+        XCTAssertEqual(State->blendEquation[1].rgb.mode, GL_MAX, @"should be GL_MAX");
+        XCTAssertEqual(State->blendEquation[1].alpha.mode, GL_MAX, @"should be GL_MAX");
+        
+        CC_GL_BLEND_FUNCi(0, GL_ZERO, GL_ZERO);
+        CC_GL_BLEND_EQUATIONi(0, GL_MIN);
+        XCTAssertEqual(State->blendFunc[0].rgb.src, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[0].rgb.dst, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[0].alpha.src, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[0].alpha.dst, GL_ZERO, @"should be GL_ZERO");
+        
+        XCTAssertEqual(State->blendFunc[1].rgb.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].rgb.dst, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.dst, GL_ONE, @"should be GL_ONE");
+        
+        XCTAssertEqual(State->blendEquation[0].rgb.mode, GL_MIN, @"should be GL_MIN");
+        XCTAssertEqual(State->blendEquation[0].alpha.mode, GL_MIN, @"should be GL_MIN");
+        XCTAssertEqual(State->blendEquation[1].rgb.mode, GL_MAX, @"should be GL_MAX");
+        XCTAssertEqual(State->blendEquation[1].alpha.mode, GL_MAX, @"should be GL_MAX");
+        
+        CC_GL_BLEND_FUNC_SEPARATE(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_ONE, GL_ZERO);
+        CC_GL_BLEND_EQUATION_SEPARATE(GL_FUNC_ADD, GL_FUNC_SUBTRACT);
+        XCTAssertEqual(State->blendFunc[0].rgb.src, GL_SRC_COLOR, @"should be GL_SRC_COLOR");
+        XCTAssertEqual(State->blendFunc[0].rgb.dst, GL_ONE_MINUS_SRC_COLOR, @"should be GL_ONE_MINUS_SRC_COLOR");
+        XCTAssertEqual(State->blendFunc[0].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[0].alpha.dst, GL_ZERO, @"should be GL_ZERO");
+        
+        XCTAssertEqual(State->blendFunc[1].rgb.src, GL_SRC_COLOR, @"should be GL_SRC_COLOR");
+        XCTAssertEqual(State->blendFunc[1].rgb.dst, GL_ONE_MINUS_SRC_COLOR, @"should be GL_ONE_MINUS_SRC_COLOR");
+        XCTAssertEqual(State->blendFunc[1].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.dst, GL_ZERO, @"should be GL_ZERO");
+        
+        XCTAssertEqual(State->blendEquation[0].rgb.mode, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
+        XCTAssertEqual(State->blendEquation[0].alpha.mode, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(State->blendEquation[1].rgb.mode, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
+        XCTAssertEqual(State->blendEquation[1].alpha.mode, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
+        
+        CC_GL_BLEND_FUNC_SEPARATEi(1, GL_ONE, GL_ONE, GL_ZERO, GL_ONE);
+        CC_GL_BLEND_EQUATION_SEPARATEi(1, GL_MIN, GL_MAX);
+        XCTAssertEqual(State->blendFunc[0].rgb.src, GL_SRC_COLOR, @"should be GL_SRC_COLOR");
+        XCTAssertEqual(State->blendFunc[0].rgb.dst, GL_ONE_MINUS_SRC_COLOR, @"should be GL_ONE_MINUS_SRC_COLOR");
+        XCTAssertEqual(State->blendFunc[0].alpha.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[0].alpha.dst, GL_ZERO, @"should be GL_ZERO");
+        
+        XCTAssertEqual(State->blendFunc[1].rgb.src, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].rgb.dst, GL_ONE, @"should be GL_ONE");
+        XCTAssertEqual(State->blendFunc[1].alpha.src, GL_ZERO, @"should be GL_ZERO");
+        XCTAssertEqual(State->blendFunc[1].alpha.dst, GL_ONE, @"should be GL_ONE");
+        
+        XCTAssertEqual(State->blendEquation[0].rgb.mode, GL_FUNC_ADD, @"should be GL_FUNC_ADD");
+        XCTAssertEqual(State->blendEquation[0].alpha.mode, GL_FUNC_SUBTRACT, @"should be GL_FUNC_SUBTRACT");
+        XCTAssertEqual(State->blendEquation[1].rgb.mode, GL_MIN, @"should be GL_MIN");
+        XCTAssertEqual(State->blendEquation[1].alpha.mode, GL_MAX, @"should be GL_MAX");
+    }
+#endif
+}
+
 -(void) testBufferState
 {
 #if CC_GL_STATE_BUFFER
