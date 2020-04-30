@@ -108,7 +108,7 @@ typedef void (*GFXTextureGetInternalSizeCallback)(GFXTexture Texture, size_t *Wi
 typedef void (*GFXDrawConstructorCallback)(CCAllocatorType Allocator, GFXDraw Draw);
 typedef void (*GFXDrawDestructorCallback)(GFXDraw Draw);
 typedef void (*GFXDrawSetShaderCallback)(GFXDraw Draw, GFXShader Shader);
-typedef void (*GFXDrawSetFramebufferCallback)(GFXDraw Draw, GFXDrawDestination *Destination);
+typedef void (*GFXDrawSetFramebufferCallback)(GFXDraw Draw, GFXDrawDestination *Destination, size_t Count);
 typedef void (*GFXDrawSetIndexBufferCallback)(GFXDraw Draw, GFXDrawIndexBuffer *IndexBuffer);
 typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexBuffer *VertexBuffer);
 typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);

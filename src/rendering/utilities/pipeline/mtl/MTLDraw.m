@@ -388,17 +388,23 @@ static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDr
 static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances, _Bool Indexed)
 {
     @autoreleasepool {
-        GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
-        
         MTLRenderPipelineDescriptor *RenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
-        RenderPipelineDescriptor.colorAttachments[0].pixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
-        RenderPipelineDescriptor.colorAttachments[0].blendingEnabled = Draw->blending != GFXBlendOpaque;
-        RenderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendSource));
-        RenderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendSource));
-        RenderPipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentRGB, GFXBlendDestination));
-        RenderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Draw->blending, GFXBlendComponentAlpha, GFXBlendDestination));
-        RenderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentRGB));
-        RenderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Draw->blending, GFXBlendComponentAlpha));
+        
+        for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
+        {
+            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+            
+            const GFXBlend Blending = Draw->destination[Loop].blending;
+            MTLRenderPipelineColorAttachmentDescriptor *ColourAttachmetDescriptor = RenderPipelineDescriptor.colorAttachments[Loop];
+            ColourAttachmetDescriptor.pixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
+            ColourAttachmetDescriptor.blendingEnabled = Blending != GFXBlendOpaque;
+            ColourAttachmetDescriptor.sourceRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Blending, GFXBlendComponentRGB, GFXBlendSource));
+            ColourAttachmetDescriptor.sourceAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Blending, GFXBlendComponentAlpha, GFXBlendSource));
+            ColourAttachmetDescriptor.destinationRGBBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Blending, GFXBlendComponentRGB, GFXBlendDestination));
+            ColourAttachmetDescriptor.destinationAlphaBlendFactor = DrawBlendFactor(GFXBlendGetFactor(Blending, GFXBlendComponentAlpha, GFXBlendDestination));
+            ColourAttachmetDescriptor.rgbBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Blending, GFXBlendComponentRGB));
+            ColourAttachmetDescriptor.alphaBlendOperation = DrawBlendOperation(GFXBlendGetOperation(Blending, GFXBlendComponentAlpha));
+        }
         
         id <MTLFunction>Vert = ((MTLGFXShader)Draw->shader)->vert;
         RenderPipelineDescriptor.vertexFunction = Vert;
@@ -452,14 +458,20 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
         id <MTLRenderPipelineState>RenderPipelineState = [((MTLInternal*)MTLGFX->internal)->device newRenderPipelineStateWithDescriptor: RenderPipelineDescriptor options: MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo reflection: &Reflection error: NULL];
         
         MTLRenderPassDescriptor *RenderPassDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-        RenderPassDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
-        RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-        RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
-        RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
-        
-        const _Bool ClearStore = (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((Attachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
-        Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
-        Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        _Bool ClearStore[sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))];
+        for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
+        {
+            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+            
+            RenderPassDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
+            RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+            RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
+            RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
+            
+            ClearStore[Loop] = (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((Attachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
+            Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+            Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        }
         
         id <MTLRenderCommandEncoder>RenderCommand = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor:  RenderPassDescriptor];
         
@@ -576,7 +588,12 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
         [RenderCommand endEncoding];
         
         
-        if (ClearStore) [MTLGFXClearEncoder(Attachment) endEncoding];
+        for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
+        {
+            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+            
+            if (ClearStore[Loop]) [MTLGFXClearEncoder(Attachment) endEncoding];
+        }
     }
 }
 

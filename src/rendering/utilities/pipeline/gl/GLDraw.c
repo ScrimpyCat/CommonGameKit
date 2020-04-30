@@ -136,15 +136,24 @@ static void GLDrawSetUniformTextureState(GLShader Shader, CCCollection(GFXDrawIn
     }
 }
 
-static void GLDrawSetFramebufferState(GLFramebuffer Framebuffer, size_t Index)
+static void GLDrawSetFramebufferState(GLFramebuffer Framebuffer, GFXDraw Draw)
 {
-    CC_GL_BIND_FRAMEBUFFER(GL_FRAMEBUFFER, GLFramebufferGetID(Framebuffer, Index));
-#ifdef GL_COLOR_ATTACHMENT1
+    const GLuint FBO = GLFramebufferGetID(Framebuffer, Draw->destination[0].index);
+    CC_GL_BIND_FRAMEBUFFER(GL_FRAMEBUFFER, FBO);
+    
     if ((GFXFramebuffer)Framebuffer != GFXFramebufferDefault())
     {
-        glDrawBuffers(1, &(GLenum){ GLFramebufferGetAttachmentIndex(Framebuffer, Index) }); CC_GL_CHECK();
+        GLenum DrawBuffers[sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))];
+        size_t Loop = 0;
+        for ( ; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
+        {
+            CCAssertLog(FBO == GLFramebufferGetID(Framebuffer, Draw->destination[Loop].index), "Attachment belongs to another internal FBO");
+            
+            DrawBuffers[Loop] = GLFramebufferGetAttachmentIndex(Framebuffer, Draw->destination[Loop].index);
+        }
+        
+        glDrawBuffers((GLsizei)Loop, DrawBuffers); CC_GL_CHECK();
     }
-#endif
 }
 
 static GLenum GLDrawTypeFromBufferFormat(GFXBufferFormat Format)
@@ -288,24 +297,26 @@ static GLenum GLDrawBlendOp(GFXBlend Op)
     CCAssertLog(0, "Unsupported operation %d", Op);
 }
 
-static void GLDrawSetBlendingState(GFXBlend BlendMask)
+static void GLDrawSetBlendingState(GFXBlend BlendMask, GLuint Index)
 {
     if (BlendMask != GFXBlendOpaque)
     {
-        CC_GL_ENABLE(GL_BLEND);
+        CC_GL_ENABLEi(GL_BLEND, Index);
         
-        CC_GL_BLEND_FUNC_SEPARATE(GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentRGB, GFXBlendSource)),
-                                  GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentRGB, GFXBlendDestination)),
-                                  GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentAlpha, GFXBlendSource)),
-                                  GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentAlpha, GFXBlendDestination)));
+        CC_GL_BLEND_FUNC_SEPARATEi(Index,
+                                   GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentRGB, GFXBlendSource)),
+                                   GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentRGB, GFXBlendDestination)),
+                                   GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentAlpha, GFXBlendSource)),
+                                   GLDrawBlendFunc(GFXBlendGetFactor(BlendMask, GFXBlendComponentAlpha, GFXBlendDestination)));
         
-        CC_GL_BLEND_EQUATION_SEPARATE(GLDrawBlendOp(GFXBlendGetOperation(BlendMask, GFXBlendComponentRGB)),
-                                      GLDrawBlendOp(GFXBlendGetOperation(BlendMask, GFXBlendComponentAlpha)));
+        CC_GL_BLEND_EQUATION_SEPARATEi(Index,
+                                       GLDrawBlendOp(GFXBlendGetOperation(BlendMask, GFXBlendComponentRGB)),
+                                       GLDrawBlendOp(GFXBlendGetOperation(BlendMask, GFXBlendComponentAlpha)));
     }
     
     else
     {
-        CC_GL_DISABLE(GL_BLEND);
+        CC_GL_DISABLEi(GL_BLEND, Index);
     }
 }
 
@@ -325,14 +336,23 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     GLDrawSetUniformTextureState((GLShader)Draw->shader, Draw->textures);
     
     
-    GLDrawSetFramebufferState((GLFramebuffer)Draw->destination.framebuffer, Draw->destination.index);
-    GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
-    if ((Attachment->load == GFXFramebufferAttachmentActionClear) || (Attachment->load & GFXFramebufferAttachmentActionFlagClearOnce))
+    GLDrawSetFramebufferState((GLFramebuffer)Draw->framebuffer, Draw);
+    for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
     {
-        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
+        GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+        if ((Attachment->load == GFXFramebufferAttachmentActionClear) || (Attachment->load & GFXFramebufferAttachmentActionFlagClearOnce))
+        {
+            switch (Attachment->type)
+            {
+                case GFXFramebufferAttachmentTypeColour:
+                    glClearBufferfv(GL_COLOR, (GLint)Loop, (GLfloat*)&Attachment->colour.clear); CC_GL_CHECK();
+                    break;
+            }
+            
+            Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        }
         
-        Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        GLDrawSetBlendingState(Draw->destination[Loop].blending, (GLint)Loop);
     }
     
     
@@ -351,8 +371,6 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     }
     
     
-    GLDrawSetBlendingState(Draw->blending);
-    
     if (Indexed)
     {
         glDrawElementsInstancedBaseVertex(GLDrawPrimitive(Primitive), (GLsizei)Count, GLDrawTypeFromBufferFormat(Draw->index.format), NULL, (GLsizei)Instances, (GLint)Offset); CC_GL_CHECK();
@@ -364,12 +382,20 @@ static void GLDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size
     }
     
     
-    if ((Attachment->store == GFXFramebufferAttachmentActionClear) || (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce))
+    for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
     {
-        CC_GL_CLEAR_COLOR(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-        glClear(GL_COLOR_BUFFER_BIT); CC_GL_CHECK();
-        
-        Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+        if ((Attachment->store == GFXFramebufferAttachmentActionClear) || (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce))
+        {
+            switch (Attachment->type)
+            {
+                case GFXFramebufferAttachmentTypeColour:
+                    glClearBufferfv(GL_COLOR, (GLint)Loop, (GLfloat*)&Attachment->colour.clear); CC_GL_CHECK();
+                    break;
+            }
+            
+            Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+        }
     }
     
     CC_GL_BIND_VERTEX_ARRAY(0);

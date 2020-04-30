@@ -72,8 +72,8 @@ typedef struct {
 } GFXDrawIndexBuffer;
 
 typedef struct {
-    GFXFramebuffer framebuffer;
     size_t index;
+    GFXBlend blending;
 } GFXDrawDestination;
 
 typedef struct {
@@ -82,13 +82,13 @@ typedef struct {
     CCCollection(GFXDrawInputVertexBuffer) vertexBuffers;
     CCCollection(GFXDrawInputBuffer) buffers;
     CCCollection(GFXDrawInputTexture) textures;
-    GFXDrawDestination destination;
     GFXDrawIndexBuffer index;
-    GFXBlend blending;
+    GFXFramebuffer framebuffer;
     struct {
         GFXViewport bounds;
         _Bool normalized;
     } viewport;
+    GFXDrawDestination destination[8];
 } GFXDrawInfo;
 
 /*!
@@ -170,6 +170,17 @@ void GFXDrawSetShader(GFXDraw Draw, GFXShader CC_RETAIN(Shader));
  * @param Index The attachment of that framebuffer to be used as the destination.
  */
 void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer CC_RETAIN(Framebuffer), size_t Index);
+
+/*!
+ * @brief Set the framebuffers to be used for the draw command.
+ * @param Draw The draw operation.
+ * @param Framebuffer The framebuffer to be used as the destination. Retains a reference
+ *        to the framebuffer.
+ *
+ * @param Indexes The attachments of that framebuffer to be used as the destinations.
+ * @param Count The attachments of that framebuffer to be used as the destinations.
+ */
+void GFXDrawSetFramebuffers(GFXDraw Draw, GFXFramebuffer CC_RETAIN(Framebuffer), size_t *Indexes, size_t Count);
 
 /*!
  * @brief Set the index buffer of the draw command.

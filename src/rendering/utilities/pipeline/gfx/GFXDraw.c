@@ -49,7 +49,7 @@ static void GFXDrawDestructor(GFXDraw Draw)
     CCCollectionDestroy(Draw->textures);
     
     CC_SAFE_Free(Draw->shader);
-    CC_SAFE_Free(Draw->destination.framebuffer);
+    CC_SAFE_Free(Draw->framebuffer);
     CC_SAFE_Free(Draw->index.buffer);
 }
 
@@ -66,17 +66,15 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
             .vertexBuffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputVertexBuffer), (CCCollectionElementDestructor)GFXDrawInputBufferElementDestructor),
             .buffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputBuffer), (CCCollectionElementDestructor)GFXDrawInputBufferElementDestructor),
             .textures = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputTexture), (CCCollectionElementDestructor)GFXDrawInputTextureElementDestructor),
-            .destination = {
-                .framebuffer = NULL,
-                .index = 0
-            },
+            .framebuffer = NULL,
             .index = {
                 .buffer = NULL,
                 .format = 0
             },
-            .blending = GFXBlendOpaque,
             .viewport = { .bounds = GFXViewport2D(0.0f, 0.0f, 1.0f, 1.0f), .normalized = TRUE }
         };
+        
+        for (size_t Loop = 0; Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination)); Loop++) Draw->destination[Loop] = (GFXDrawDestination){ .index = SIZE_MAX, .blending = GFXBlendOpaque };
         
         if (GFXMain->draw->optional.create) GFXMain->draw->optional.create(Allocator, Draw);
     }
@@ -106,7 +104,7 @@ void GFXDrawSubmitInstances(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Off
 }
 
 void GFXDrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count)
-{    
+{
     GFXDrawSubmitIndexedInstances(Draw, Primitive, Offset, Count, 1);
 }
 
@@ -147,15 +145,23 @@ void GFXDrawSetShader(GFXDraw Draw, GFXShader Shader)
 
 void GFXDrawSetFramebuffer(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t Index)
 {
+    GFXDrawSetFramebuffers(Draw, Framebuffer, &Index, 1);
+}
+
+void GFXDrawSetFramebuffers(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t *Indexes, size_t Count)
+{
     CCAssertLog(Draw, "Draw must not be null");
+    CCAssertLog(Count < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination)), "Count must be less than destination limit");
     
-    CC_SAFE_Free(Draw->destination.framebuffer);
-    Draw->destination = (GFXDrawDestination){
-        .framebuffer = CCRetain(Framebuffer),
-        .index = Index
-    };
+    CC_SAFE_Free(Draw->framebuffer);
     
-    if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, &Draw->destination);
+    Draw->framebuffer = CCRetain(Framebuffer);
+    
+    for (size_t Loop = 0; Loop < Count; Loop++) Draw->destination[Loop].index = Indexes[Loop];
+    
+    if (Count < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))) Draw->destination[Count].index = SIZE_MAX;
+    
+    if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, &Draw->destination, Count);
     if (GFXMain->draw->optional.setViewport) GFXMain->draw->optional.setViewport(Draw, GFXDrawGetViewport(Draw));
 }
 
@@ -262,7 +268,7 @@ void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask)
 {
     CCAssertLog(Draw, "Draw must not be null");
     
-    Draw->blending = BlendMask;
+    for (size_t Loop = 0; Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination)); Loop++) Draw->destination[Loop].blending = BlendMask;
     
     if (GFXMain->draw->optional.setBlend) GFXMain->draw->optional.setBlend(Draw, BlendMask);
 }
@@ -294,7 +300,7 @@ GFXViewport GFXDrawGetViewport(GFXDraw Draw)
     GFXViewport Viewport = Draw->viewport.bounds;
     if (Draw->viewport.normalized)
     {
-        if (Draw->destination.framebuffer == GFXFramebufferDefault())
+        if (Draw->framebuffer == GFXFramebufferDefault())
         {
             CCVector2Di FrameSize = CCWindowGetFrameSize();
             Viewport = GFXViewport3D(FrameSize.x * Draw->viewport.bounds.x, FrameSize.y * Draw->viewport.bounds.y, FrameSize.x * Draw->viewport.bounds.width, FrameSize.y * Draw->viewport.bounds.height, Draw->viewport.bounds.minDepth, Draw->viewport.bounds.maxDepth);
@@ -302,7 +308,7 @@ GFXViewport GFXDrawGetViewport(GFXDraw Draw)
         
         else
         {
-            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->destination.framebuffer, Draw->destination.index);
+            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[0].index);
             if (Attachment)
             {
                 size_t Width, Height;
