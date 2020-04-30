@@ -32,6 +32,7 @@
 #import "MTLBlit.h"
 #import "MTLCommandBuffer.h"
 
+static void DrawSetFramebuffer(GFXDraw Draw, GFXDrawDestination *Destination, size_t Count);
 static void DrawSubmit(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
 static void DrawSubmitIndexed(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, size_t Count, size_t Instances);
 
@@ -43,7 +44,7 @@ const GFXDrawInterface MTLDrawInterface = {
         .create = NULL,
         .destroy = NULL,
         .setShader = NULL,
-        .setFramebuffer = NULL,
+        .setFramebuffer = DrawSetFramebuffer,
         .setIndexBuffer = NULL,
         .setVertexBuffer = NULL,
         .setBuffer = NULL,
@@ -53,6 +54,11 @@ const GFXDrawInterface MTLDrawInterface = {
     }
 };
 
+
+static void DrawSetFramebuffer(GFXDraw Draw, GFXDrawDestination *Destination, size_t Count)
+{
+    CCAssertLog(Count < ((MTLInternal*)MTLGFX->internal)->support->capability.renderTargets.maxColourRenderTargets, "Draw destinations exceeds max number of supported destinations");
+}
 
 static CC_CONSTANT_FUNCTION MTLBlendFactor DrawBlendFactor(GFXBlend Factor)
 {
