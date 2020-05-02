@@ -230,6 +230,15 @@ void GFXDrawSetTexture(GFXDraw Draw, CCString CC_COPY(Input), GFXTexture CC_RETA
 void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask);
 
 /*!
+ * @brief Set the blending for a specific draw destination in the draw command.
+ * @description The default is opaque.
+ * @param Draw The draw operation.
+ * @param BlendMask The blend mask.
+ * @param Index The index of the draw destination to have its blend mode changed.
+ */
+void GFXDrawSetDestinationBlending(GFXDraw Draw, GFXBlend BlendMask, size_t Index);
+
+/*!
  * @brief Set the clipping viewport for the draw command.
  * @description The default is equal to the bounds of the @b GFXDrawDestination and 0.0 -
  *              1.0 for the depth range.

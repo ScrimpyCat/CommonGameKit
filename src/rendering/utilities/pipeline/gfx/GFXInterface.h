@@ -114,6 +114,7 @@ typedef void (*GFXDrawSetVertexBufferCallback)(GFXDraw Draw, GFXDrawInputVertexB
 typedef void (*GFXDrawSetBufferCallback)(GFXDraw Draw, GFXDrawInputBuffer *Buffer);
 typedef void (*GFXDrawSetTextureCallback)(GFXDraw Draw, GFXDrawInputTexture *Texture);
 typedef void (*GFXDrawSetBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask);
+typedef void (*GFXDrawSetDestinationBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask, size_t Index);
 typedef void (*GFXDrawSetViewportCallback)(GFXDraw Draw, GFXViewport Viewport);
 
 #pragma mark Optional Blit Callbacks
@@ -197,6 +198,7 @@ typedef struct {
         GFXDrawSetBufferCallback setBuffer;
         GFXDrawSetTextureCallback setTexture;
         GFXDrawSetBlendingCallback setBlend;
+        GFXDrawSetDestinationBlendingCallback setDestinationBlend;
         GFXDrawSetViewportCallback setViewport;
     } optional;
 } GFXDrawInterface;

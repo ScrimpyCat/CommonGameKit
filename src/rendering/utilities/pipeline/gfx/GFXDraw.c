@@ -273,6 +273,16 @@ void GFXDrawSetBlending(GFXDraw Draw, GFXBlend BlendMask)
     if (GFXMain->draw->optional.setBlend) GFXMain->draw->optional.setBlend(Draw, BlendMask);
 }
 
+void GFXDrawSetDestinationBlending(GFXDraw Draw, GFXBlend BlendMask, size_t Index)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    CCAssertLog(Index < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination)), "Index must not exceed draw destination bounds");
+    
+    Draw->destination[Index].blending = BlendMask;
+    
+    if (GFXMain->draw->optional.setDestinationBlend) GFXMain->draw->optional.setDestinationBlend(Draw, BlendMask, Index);
+}
+
 void GFXDrawSetViewport(GFXDraw Draw, GFXViewport Viewport)
 {
     CCAssertLog(Draw, "Draw must not be null");
