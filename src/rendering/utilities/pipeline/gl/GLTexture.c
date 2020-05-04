@@ -482,7 +482,7 @@ static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, C
     
     glGetTexImage(Target, 0, InternalFormat, InternalType, Pixels); CC_GL_CHECK();
     
-    CCPixelData CopiedData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataBufferHintFree, InternalSampleSize * Root->width * Root->height * Root->depth, Pixels, NULL, NULL), PixelFormat, Root->width, Root->height, Root->depth);
+    CCPixelData CopiedData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataBufferHintFree | CCDataHintRead, InternalSampleSize * Root->width * Root->height * Root->depth, Pixels, NULL, NULL), PixelFormat, Root->width, Root->height, Root->depth);
     
     size_t RealX = 0, RealY = 0, RealZ = 0;
     GLTextureGetInternalOffset(Texture, &RealX, &RealY, &RealZ);
@@ -497,7 +497,7 @@ static CCPixelData GLTextureRead(GLTexture Texture, CCAllocatorType Allocator, C
     CCPixelDataGetPackedDataWithFormat(CopiedData, Format, RealX + X, RealY + Y, RealZ + Z, Width, Height, Depth, Pixels);
     CCPixelDataDestroy(CopiedData);
     
-    return CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree, SampleSize * Width * Height * Depth, Pixels, NULL, NULL), Format, Width, Height, Depth);
+    return CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintReadWrite, SampleSize * Width * Height * Depth, Pixels, NULL, NULL), Format, Width, Height, Depth);
 }
 
 static void GLTextureWrite(GLTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)

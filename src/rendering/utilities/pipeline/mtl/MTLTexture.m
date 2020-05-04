@@ -558,7 +558,7 @@ static CCPixelData TextureRead(MTLGFXTexture Texture, CCAllocatorType Allocator,
         }
     }
     
-    CCPixelData CopiedData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataBufferHintFree, InternalSampleSize * Width * Height * Depth, Pixels, NULL, NULL), Root->root.format, Width, Height, Depth);
+    CCPixelData CopiedData = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataBufferHintFree | CCDataHintRead, InternalSampleSize * Width * Height * Depth, Pixels, NULL, NULL), Root->root.format, Width, Height, Depth);
     
     const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0);
     CC_SAFE_Malloc(Pixels, SampleSize * Width * Height * Depth,
@@ -570,7 +570,7 @@ static CCPixelData TextureRead(MTLGFXTexture Texture, CCAllocatorType Allocator,
     CCPixelDataGetPackedDataWithFormat(CopiedData, Format, 0, 0, 0, Width, Height, Depth, Pixels);
     CCPixelDataDestroy(CopiedData);
     
-    return CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree, SampleSize * Width * Height * Depth, Pixels, NULL, NULL), Format, Width, Height, Depth);
+    return CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintReadWrite, SampleSize * Width * Height * Depth, Pixels, NULL, NULL), Format, Width, Height, Depth);
 }
 
 static void TextureWrite(MTLGFXTexture Texture, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth, CCPixelData Data)
