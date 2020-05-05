@@ -92,7 +92,7 @@ void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
     CCAssetInfo *Asset = Manager->assets ? CCDictionaryGetValue(Manager->assets, Identifier) : NULL;
     atomic_flag_clear(&Manager->lock);
     
-    return CCRetain(Asset->asset);
+    return Asset ? CCRetain(Asset->asset) : NULL;
 }
 
 #pragma mark - Shader Library
