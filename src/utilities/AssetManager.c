@@ -88,11 +88,19 @@ void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier)
 
 void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
 {
+    void *Asset = NULL;
+    
     while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
-    CCAssetInfo *Asset = Manager->assets ? CCDictionaryGetValue(Manager->assets, Identifier) : NULL;
+    
+    if (Manager->assets)
+    {
+        CCAssetInfo *Info = CCDictionaryGetValue(Manager->assets, Identifier)
+        if (Info) Asset = CCRetain(Info->asset);
+    }
+    
     atomic_flag_clear(&Manager->lock);
     
-    return Asset ? CCRetain(Asset->asset) : NULL;
+    return Asset;
 }
 
 #pragma mark - Shader Library
