@@ -127,6 +127,11 @@ void CCAssetManagerRegisterShaderLibrary(CCString CC_COPY(Name), GFXShaderLibrar
 void CCAssetManagerDeregisterShaderLibrary(CCString Name);
 
 /*!
+ * @brief Deregisters all shader libraries from the asset manager.
+ */
+void CCAssetManagerDeregisterAllShaderLibrary(void);
+
+/*!
  * @brief Creates the registered shader library.
  * @param Name The lookup name for the shader library asset entry.
  * @return The shader library. Must be destroyed.
@@ -145,6 +150,11 @@ void CCAssetManagerRegisterShader(CCString CC_COPY(Name), GFXShader CC_RETAIN(Sh
  * @param Name The lookup name for the shader asset entry.
  */
 void CCAssetManagerDeregisterShader(CCString Name);
+
+/*!
+ * @brief Deregisters all shaders from the asset manager.
+ */
+void CCAssetManagerDeregisterAllShader(void);
 
 /*!
  * @brief Creates the registered shader.
@@ -167,6 +177,11 @@ void CCAssetManagerRegisterTexture(CCString CC_COPY(Name), GFXTexture CC_RETAIN(
 void CCAssetManagerDeregisterTexture(CCString Name);
 
 /*!
+ * @brief Deregisters all textures from the asset manager.
+ */
+void CCAssetManagerDeregisterAllTexture(void);
+
+/*!
  * @brief Creates the registered texture.
  * @param Name The lookup name for the texture asset entry.
  * @return The texture. Must be destroyed.
@@ -187,6 +202,11 @@ void CCAssetManagerRegisterTextureStream(CCString CC_COPY(Name), GFXTextureStrea
 void CCAssetManagerDeregisterTextureStream(CCString Name);
 
 /*!
+ * @brief Deregisters all texture streams from the asset manager.
+ */
+void CCAssetManagerDeregisterAllTextureStream(void);
+
+/*!
  * @brief Creates the registered texture stream.
  * @param Name The lookup name for the texture stream asset entry.
  * @return The texture stream. Must be destroyed.
@@ -205,6 +225,11 @@ void CCAssetManagerRegisterFont(CCString CC_COPY(Name), CCFont CC_RETAIN(Font));
  * @param Name The lookup name for the font asset entry.
  */
 void CCAssetManagerDeregisterFont(CCString Name);
+
+/*!
+ * @brief Deregisters all fonts from the asset manager.
+ */
+void CCAssetManagerDeregisterAllFont(void);
 
 /*!
  * @brief Creates the registered font.

@@ -136,6 +136,11 @@ void CCAssetManagerDeregisterShaderLibrary(CCString Name)
     CCAssetManagerDeregister(&ShaderLibraryManager, &Name);
 }
 
+void CCAssetManagerDeregisterAllShaderLibrary(void)
+{
+    CCAssetManagerDeregisterAll(&ShaderLibraryManager);
+}
+
 GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
 {
     void *Asset = CCAssetManagerCreate(&ShaderLibraryManager, &Name);
@@ -160,6 +165,11 @@ void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader)
 void CCAssetManagerDeregisterShader(CCString Name)
 {
     CCAssetManagerDeregister(&ShaderManager, &Name);
+}
+
+void CCAssetManagerDeregisterAllShader(void)
+{
+    CCAssetManagerDeregisterAll(&ShaderManager);
 }
 
 GFXShader CCAssetManagerCreateShader(CCString Name)
@@ -188,6 +198,11 @@ void CCAssetManagerDeregisterTexture(CCString Name)
     CCAssetManagerDeregister(&TextureManager, &Name);
 }
 
+void CCAssetManagerDeregisterAllTexture(void)
+{
+    CCAssetManagerDeregisterAll(&TextureManager);
+}
+
 GFXTexture CCAssetManagerCreateTexture(CCString Name)
 {
     void *Asset = CCAssetManagerCreate(&TextureManager, &Name);
@@ -214,6 +229,11 @@ void CCAssetManagerDeregisterTextureStream(CCString Name)
     CCAssetManagerDeregister(&TextureStreamManager, &Name);
 }
 
+void CCAssetManagerDeregisterAllTextureStream(void)
+{
+    CCAssetManagerDeregisterAll(&TextureStreamManager);
+}
+
 GFXTextureStream CCAssetManagerCreateTextureStream(CCString Name)
 {
     void *Asset = CCAssetManagerCreate(&TextureStreamManager, &Name);
@@ -238,6 +258,11 @@ void CCAssetManagerRegisterFont(CCString Name, CCFont Font)
 void CCAssetManagerDeregisterFont(CCString Name)
 {
     CCAssetManagerDeregister(&FontManager, &Name);
+}
+
+void CCAssetManagerDeregisterAllFont(void)
+{
+    CCAssetManagerDeregisterAll(&FontManager);
 }
 
 CCFont CCAssetManagerCreateFont(CCString Name)
