@@ -29,6 +29,25 @@
 #include <CommonGameKit/GFX.h>
 #include <CommonGameKit/Font.h>
 
+/*!
+ * @brief A callback to handle custom destruction of asset source reference.
+ * @param Reference The source reference to be destroyed.
+ */
+typedef void (*CCAssetManagerSourceDestructor)(void *Reference);
+
+/*!
+ * @brief A callback to handle custom asset creation from an assert source reference.
+ * @param Reference The source reference to create the asset from. May be NULL.
+ * @return The asset. Ownership should be passed to the caller.
+ */
+typedef CC_NEW void *(*CCAssetManagerSourceAsset)(void *Reference);
+
+
+typedef struct {
+    CCAssetManagerSourceAsset asset;
+    CCAssetManagerSourceDestructor destructor;
+} CCAssetManagerSourceCallbacks;
+
 typedef struct {
     struct {
         const CCDictionaryElementDestructor *destructor;
@@ -62,8 +81,10 @@ extern const CCAssetManagerInterface CCAssetManagerNamedInterface;
  * @param Manager The asset manager the asset should be registered with.
  * @param Identifier The pointer to the lookup identifier for the asset entry.
  * @param Asset The asset to be managed. Retains a reference to the asset.
+ * @param Reference Optional asset source reference. May be NULL.
+ * @param Callbacks Optional callbacks for the asset source. May be NULL.
  */
-void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *CC_RETAIN(Asset));
+void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *CC_RETAIN(Asset), void *Reference, const CCAssetManagerSourceCallbacks *Callbacks);
 
 /*!
  * @brief Deregisters the asset from the asset manager.

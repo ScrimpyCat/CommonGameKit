@@ -28,7 +28,8 @@
 
 typedef struct {
     void *asset;
-    FSPath reference;
+    void *reference;
+    CCAssetManagerSourceCallbacks callbacks;
 } CCAssetInfo;
 
 const CCAssetManagerInterface CCAssetManagerNamedInterface = {
@@ -44,7 +45,7 @@ static void CCAssetElementDestructor(CCDictionary Dictionary, CCAssetInfo *Eleme
 {
     CCFree(Element->asset);
     
-    if (Element->reference) FSPathDestroy(Element->reference);
+    if ((Element->reference) && (Element->callbacks.destructor)) Element->callbacks.destructor(Element->reference);
 }
 
 static void CCAssetManagerRegisterAsset(CCAssetManager *Manager, const void *Identifier, CCAssetInfo *Asset)
@@ -66,11 +67,12 @@ static void CCAssetManagerRegisterAsset(CCAssetManager *Manager, const void *Ide
     atomic_flag_clear(&Manager->lock);
 }
 
-void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *Asset)
+void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *Asset, void *Reference, const CCAssetManagerSourceCallbacks *Callbacks)
 {
     CCAssetManagerRegisterAsset(Manager, Identifier, &(CCAssetInfo){
         .asset = CCRetain(Asset),
-        .reference = NULL
+        .reference = Reference,
+        .callbacks = *Callbacks
     });
 }
 
@@ -94,8 +96,14 @@ void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
     
     if (Manager->assets)
     {
-        CCAssetInfo *Info = CCDictionaryGetValue(Manager->assets, Identifier)
-        if (Info) Asset = CCRetain(Info->asset);
+        CCAssetInfo *Info = CCDictionaryGetValue(Manager->assets, Identifier);
+        
+        if (Info)
+        {
+            if ((!Info->asset) && (Info->callbacks.asset)) Info->asset = Info->callbacks.asset(Info->reference);
+            
+            Asset = CCRetain(Info->asset);
+        }
     }
     
     atomic_flag_clear(&Manager->lock);
@@ -108,7 +116,7 @@ static CCAssetManager ShaderLibraryManager = CC_ASSET_MANAGER_INIT(&CCAssetManag
 
 void CCAssetManagerRegisterShaderLibrary(CCString Name, GFXShaderLibrary Library)
 {
-    CCAssetManagerRegister(&ShaderLibraryManager, &(CCString){ CCStringCopy(Name) }, Library);
+    CCAssetManagerRegister(&ShaderLibraryManager, &(CCString){ CCStringCopy(Name) }, Library, NULL, NULL);
 }
 
 void CCAssetManagerDeregisterShaderLibrary(CCString Name)
@@ -134,7 +142,7 @@ static CCAssetManager ShaderManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamed
 
 void CCAssetManagerRegisterShader(CCString Name, GFXShader Shader)
 {
-    CCAssetManagerRegister(&ShaderManager, &(CCString){ CCStringCopy(Name) }, Shader);
+    CCAssetManagerRegister(&ShaderManager, &(CCString){ CCStringCopy(Name) }, Shader, NULL, NULL);
 }
 
 void CCAssetManagerDeregisterShader(CCString Name)
@@ -160,7 +168,7 @@ static CCAssetManager TextureManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerName
 
 void CCAssetManagerRegisterTexture(CCString Name, GFXTexture Texture)
 {
-    CCAssetManagerRegister(&TextureManager, &(CCString){ CCStringCopy(Name) }, Texture);
+    CCAssetManagerRegister(&TextureManager, &(CCString){ CCStringCopy(Name) }, Texture, NULL, NULL);
 }
 
 void CCAssetManagerDeregisterTexture(CCString Name)
@@ -186,7 +194,7 @@ static CCAssetManager TextureStreamManager = CC_ASSET_MANAGER_INIT(&CCAssetManag
 
 void CCAssetManagerRegisterTextureStream(CCString Name, GFXTextureStream Stream)
 {
-    CCAssetManagerRegister(&TextureStreamManager, &(CCString){ CCStringCopy(Name) }, Stream);
+    CCAssetManagerRegister(&TextureStreamManager, &(CCString){ CCStringCopy(Name) }, Stream, NULL, NULL);
 }
 
 void CCAssetManagerDeregisterTextureStream(CCString Name)
@@ -212,7 +220,7 @@ static CCAssetManager FontManager = CC_ASSET_MANAGER_INIT(&CCAssetManagerNamedIn
 //TODO: Fix so it groups them into families (so we can have two arial fonts but they may differ by style or size)
 void CCAssetManagerRegisterFont(CCString Name, CCFont Font)
 {
-    CCAssetManagerRegister(&FontManager, &(CCString){ CCStringCopy(Name) }, Font);
+    CCAssetManagerRegister(&FontManager, &(CCString){ CCStringCopy(Name) }, Font, NULL, NULL);
 }
 
 void CCAssetManagerDeregisterFont(CCString Name)
