@@ -88,6 +88,18 @@ void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier)
     atomic_flag_clear(&Manager->lock);
 }
 
+void CCAssetManagerDeregisterAll(CCAssetManager *Manager)
+{
+    CCDictionary Assets = NULL;
+    
+    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    Assets = Manager->assets;
+    Manager->assets = NULL;
+    atomic_flag_clear(&Manager->lock);
+    
+    if (Assets) CCDictionaryDestroy(Assets);
+}
+
 void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
 {
     void *Asset = NULL;

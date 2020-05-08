@@ -95,6 +95,13 @@ void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, voi
 void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier);
 
 /*!
+ * @brief Deregisters all assets from the asset manager.
+ * @note This should usually be wrapped by a simpler interface.
+ * @param Manager The asset manager the assets should be deregistered from.
+ */
+void CCAssetManagerDeregisterAll(CCAssetManager *Manager);
+
+/*!
  * @brief Creates the registered asset.
  * @note This should usually be wrapped by a simpler interface.
  * @param Manager The asset manager the asset should be created from.
