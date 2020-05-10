@@ -71,11 +71,13 @@ static void CCAssetManagerRegisterAsset(CCAssetManager *Manager, const void *Ide
 
 void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *Asset, void *Reference, const CCAssetManagerSourceCallbacks *Callbacks)
 {
+    CCAssetManagerSourceCallbacks DefaultCallbacks = Callbacks? *Callbacks : (CCAssetManagerSourceCallbacks){};
+    
     CCAssetManagerRegisterAsset(Manager, Identifier, &(CCAssetInfo){
         .asset = CCRetain(Asset),
         .timestamp = CCTimestamp(),
         .reference = Reference,
-        .callbacks = *Callbacks
+        .callbacks = DefaultCallbacks
     });
 }
 
