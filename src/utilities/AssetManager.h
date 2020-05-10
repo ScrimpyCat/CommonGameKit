@@ -141,6 +141,13 @@ void CCAssetManagerDeregisterShaderLibrary(CCString Name);
 void CCAssetManagerDeregisterAllShaderLibrary(void);
 
 /*!
+ * @brief Purge all shader libraries from the asset manager that are older than the threshold.
+ * @param Threshold The amount of time that should have elapsed to consider the asset stale. Expects
+ *        a value with the same precision as @b CCTimestamp.
+ */
+void CCAssetManagerPurgeShaderLibrary(double Threshold);
+
+/*!
  * @brief Creates the registered shader library.
  * @param Name The lookup name for the shader library asset entry.
  * @return The shader library. Must be destroyed.
@@ -164,6 +171,13 @@ void CCAssetManagerDeregisterShader(CCString Name);
  * @brief Deregisters all shaders from the asset manager.
  */
 void CCAssetManagerDeregisterAllShader(void);
+
+/*!
+ * @brief Purge all shaders from the asset manager that are older than the threshold.
+ * @param Threshold The amount of time that should have elapsed to consider the asset stale. Expects
+ *        a value with the same precision as @b CCTimestamp.
+ */
+void CCAssetManagerPurgeShader(double Threshold);
 
 /*!
  * @brief Creates the registered shader.
@@ -191,6 +205,13 @@ void CCAssetManagerDeregisterTexture(CCString Name);
 void CCAssetManagerDeregisterAllTexture(void);
 
 /*!
+ * @brief Purge all textures from the asset manager that are older than the threshold.
+ * @param Threshold The amount of time that should have elapsed to consider the asset stale. Expects
+ *        a value with the same precision as @b CCTimestamp.
+ */
+void CCAssetManagerPurgeTexture(double Threshold);
+
+/*!
  * @brief Creates the registered texture.
  * @param Name The lookup name for the texture asset entry.
  * @return The texture. Must be destroyed.
@@ -216,6 +237,13 @@ void CCAssetManagerDeregisterTextureStream(CCString Name);
 void CCAssetManagerDeregisterAllTextureStream(void);
 
 /*!
+ * @brief Purge all texture streams from the asset manager that are older than the threshold.
+ * @param Threshold The amount of time that should have elapsed to consider the asset stale. Expects
+ *        a value with the same precision as @b CCTimestamp.
+ */
+void CCAssetManagerPurgeTextureStream(double Threshold);
+
+/*!
  * @brief Creates the registered texture stream.
  * @param Name The lookup name for the texture stream asset entry.
  * @return The texture stream. Must be destroyed.
@@ -239,6 +267,13 @@ void CCAssetManagerDeregisterFont(CCString Name);
  * @brief Deregisters all fonts from the asset manager.
  */
 void CCAssetManagerDeregisterAllFont(void);
+
+/*!
+ * @brief Purge all fonts from the asset manager that are older than the threshold.
+ * @param Threshold The amount of time that should have elapsed to consider the asset stale. Expects
+ *        a value with the same precision as @b CCTimestamp.
+ */
+void CCAssetManagerPurgeFont(double Threshold);
 
 /*!
  * @brief Creates the registered font.

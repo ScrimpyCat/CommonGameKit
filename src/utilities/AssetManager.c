@@ -162,6 +162,11 @@ void CCAssetManagerDeregisterAllShaderLibrary(void)
     CCAssetManagerDeregisterAll(&ShaderLibraryManager);
 }
 
+void CCAssetManagerPurgeShaderLibrary(double Threshold)
+{
+    CCAssetManagerPurge(&ShaderLibraryManager, Threshold);
+}
+
 GFXShaderLibrary CCAssetManagerCreateShaderLibrary(CCString Name)
 {
     void *Asset = CCAssetManagerCreate(&ShaderLibraryManager, &Name);
@@ -191,6 +196,11 @@ void CCAssetManagerDeregisterShader(CCString Name)
 void CCAssetManagerDeregisterAllShader(void)
 {
     CCAssetManagerDeregisterAll(&ShaderManager);
+}
+
+void CCAssetManagerPurgeShader(double Threshold)
+{
+    CCAssetManagerPurge(&ShaderManager, Threshold);
 }
 
 GFXShader CCAssetManagerCreateShader(CCString Name)
@@ -224,6 +234,11 @@ void CCAssetManagerDeregisterAllTexture(void)
     CCAssetManagerDeregisterAll(&TextureManager);
 }
 
+void CCAssetManagerPurgeTexture(double Threshold)
+{
+    CCAssetManagerPurge(&TextureManager, Threshold);
+}
+
 GFXTexture CCAssetManagerCreateTexture(CCString Name)
 {
     void *Asset = CCAssetManagerCreate(&TextureManager, &Name);
@@ -255,6 +270,11 @@ void CCAssetManagerDeregisterAllTextureStream(void)
     CCAssetManagerDeregisterAll(&TextureStreamManager);
 }
 
+void CCAssetManagerPurgeTextureStream(double Threshold)
+{
+    CCAssetManagerPurge(&TextureStreamManager, Threshold);
+}
+
 GFXTextureStream CCAssetManagerCreateTextureStream(CCString Name)
 {
     void *Asset = CCAssetManagerCreate(&TextureStreamManager, &Name);
@@ -284,6 +304,11 @@ void CCAssetManagerDeregisterFont(CCString Name)
 void CCAssetManagerDeregisterAllFont(void)
 {
     CCAssetManagerDeregisterAll(&FontManager);
+}
+
+void CCAssetManagerPurgeFont(double Threshold)
+{
+    CCAssetManagerPurge(&FontManager, Threshold);
 }
 
 CCFont CCAssetManagerCreateFont(CCString Name)
