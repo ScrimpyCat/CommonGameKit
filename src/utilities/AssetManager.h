@@ -102,6 +102,15 @@ void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier);
 void CCAssetManagerDeregisterAll(CCAssetManager *Manager);
 
 /*!
+ * @brief Purge all assets from the asset manager that are older than the threshold.
+ * @note This should usually be wrapped by a simpler interface.
+ * @param Manager The asset manager that should have its assets purged.
+ * @param Threshold The amount of time that should have elapsed to consider the asset stale. Expects
+ *        a value with the same precision as @b CCTimestamp.
+ */
+void CCAssetManagerPurge(CCAssetManager *Manager, double Threshold);
+
+/*!
  * @brief Creates the registered asset.
  * @note This should usually be wrapped by a simpler interface.
  * @param Manager The asset manager the asset should be created from.

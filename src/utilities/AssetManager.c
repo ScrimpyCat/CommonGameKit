@@ -25,9 +25,11 @@
 
 #define CC_QUICK_COMPILE
 #include "AssetManager.h"
+#include "Callbacks.h"
 
 typedef struct {
     void *asset;
+    double timestamp;
     void *reference;
     CCAssetManagerSourceCallbacks callbacks;
 } CCAssetInfo;
@@ -71,6 +73,7 @@ void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, voi
 {
     CCAssetManagerRegisterAsset(Manager, Identifier, &(CCAssetInfo){
         .asset = CCRetain(Asset),
+        .timestamp = CCTimestamp(),
         .reference = Reference,
         .callbacks = *Callbacks
     });
@@ -100,6 +103,23 @@ void CCAssetManagerDeregisterAll(CCAssetManager *Manager)
     if (Assets) CCDictionaryDestroy(Assets);
 }
 
+void CCAssetManagerPurge(CCAssetManager *Manager, double Threshold)
+{
+    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    
+    const double Timestamp = CCTimestamp() - Threshold;
+    CC_DICTIONARY_FOREACH_VALUE_PTR(CCAssetInfo, Info, Manager->assets)
+    {
+        if (Info->timestamp < Timestamp)
+        {
+            CCFree(Info->asset);
+            Info->asset = NULL;
+        }
+    }
+    
+    atomic_flag_clear(&Manager->lock);
+}
+
 void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
 {
     void *Asset = NULL;
@@ -115,6 +135,7 @@ void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
             if ((!Info->asset) && (Info->callbacks.asset)) Info->asset = Info->callbacks.asset(Info->reference);
             
             Asset = CCRetain(Info->asset);
+            Info->timestamp = CCTimestamp();
         }
     }
     
