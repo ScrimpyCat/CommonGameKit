@@ -91,6 +91,7 @@ typedef void (*GFXBlitSubmitCallback)(GFXBlit Blit);
 typedef CC_NEW GFXCommandBuffer (*GFXCommandBufferConstructorCallback)(CCAllocatorType Allocator);
 typedef void (*GFXCommandBufferDestructorCallback)(GFXCommandBuffer CC_DESTROY(CommandBuffer));
 typedef void (*GFXCommandBufferCommitCallback)(GFXCommandBuffer CommandBuffer, _Bool Present);
+typedef _Bool (*GFXCommandBufferCompletedCallback)(GFXCommandBuffer CommandBuffer);
 
 
 
@@ -218,6 +219,7 @@ typedef struct {
     GFXCommandBufferConstructorCallback create;
     GFXCommandBufferDestructorCallback destroy;
     GFXCommandBufferCommitCallback commit;
+    GFXCommandBufferCompletedCallback completed;
 } GFXCommandBufferInterface;
 
 #endif

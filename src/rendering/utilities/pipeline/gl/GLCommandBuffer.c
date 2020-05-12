@@ -29,11 +29,13 @@
 static void *GLCommandBufferConstructor(CCAllocatorType Allocator);
 static void GLCommandBufferDestructor(void *CommandBuffer);
 static void GLCommandBufferCommit(void *CommandBuffer, _Bool Present);
+static _Bool GLCommandBufferCompleted(void *CommandBuffer);
 
 const GFXCommandBufferInterface GLCommandBufferInterface = {
     .create = (GFXCommandBufferConstructorCallback)GLCommandBufferConstructor,
     .destroy = (GFXCommandBufferDestructorCallback)GLCommandBufferDestructor,
-    .commit = (GFXCommandBufferCommitCallback)GLCommandBufferCommit
+    .commit = (GFXCommandBufferCommitCallback)GLCommandBufferCommit,
+    .completed = (GFXCommandBufferCompletedCallback)GLCommandBufferCompleted
 };
 
 
@@ -53,6 +55,12 @@ static void *GLCommandBufferConstructor(CCAllocatorType Allocator)
 static void GLCommandBufferDestructor(void *CommandBuffer)
 {
     CC_SAFE_Free(CommandBuffer);
+}
+
+static _Bool GLCommandBufferCompleted(void *CommandBuffer)
+{
+    // TODO: Setup a sync object on commit and check GL_SYNC_GPU_COMMANDS_COMPLETE
+    return TRUE;
 }
 
 static void GLCommandBufferCommit(void *CommandBuffer, _Bool Present)

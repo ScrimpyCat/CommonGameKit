@@ -40,6 +40,13 @@ void GFXCommandBufferDestroy(GFXCommandBuffer CommandBuffer)
     GFXMain->commandBuffer->destroy(CommandBuffer);
 }
 
+_Bool GFXCommandBufferIsComplete(GFXCommandBuffer CommandBuffer)
+{
+    CCAssertLog(CommandBuffer, "CommandBuffer must not be null");
+    
+    return GFXMain->commandBuffer->completed(CommandBuffer);
+}
+
 static _Thread_local GFXCommandBuffer Recording = NULL;
 
 void GFXCommandBufferRecord(GFXCommandBuffer CommandBuffer)

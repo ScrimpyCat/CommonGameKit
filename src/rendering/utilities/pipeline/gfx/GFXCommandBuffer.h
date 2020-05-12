@@ -49,6 +49,12 @@ CC_NEW GFXCommandBuffer GFXCommandBufferCreate(CCAllocatorType Allocator);
 void GFXCommandBufferDestroy(GFXCommandBuffer CC_DESTROY(CommandBuffer));
 
 /*!
+ * @brief Check whether the command buffer has completed.
+ * @param CommandBuffer The command buffer to check for completion.
+ */
+_Bool GFXCommandBufferIsComplete(GFXCommandBuffer CommandBuffer);
+
+/*!
  * @brief Record all operations submitted on this thread to this command buffer.
  * @param CommandBuffer The command buffer to add the operations to. May be NULL.
  */

@@ -29,11 +29,13 @@
 static MTLGFXCommandBuffer MTLCommandBufferConstructor(CCAllocatorType Allocator);
 static void MTLCommandBufferDestructor(MTLGFXCommandBuffer CommandBuffer);
 static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer, _Bool Present);
+static _Bool MTLCommandBufferCompleted(MTLGFXCommandBuffer CommandBuffer);
 
 const GFXCommandBufferInterface MTLCommandBufferInterface = {
     .create = (GFXCommandBufferConstructorCallback)MTLCommandBufferConstructor,
     .destroy = (GFXCommandBufferDestructorCallback)MTLCommandBufferDestructor,
-    .commit = (GFXCommandBufferCommitCallback)MTLCommandBufferCommit
+    .commit = (GFXCommandBufferCommitCallback)MTLCommandBufferCommit,
+    .completed = (GFXCommandBufferCompletedCallback)MTLCommandBufferCompleted
 };
 
 
@@ -67,6 +69,21 @@ static void MTLCommandBufferDestructor(MTLGFXCommandBuffer CommandBuffer)
     }
 }
 
+static _Bool MTLCommandBufferCompleted(MTLGFXCommandBuffer CommandBuffer)
+{
+    @autoreleasepool {
+        switch (CommandBuffer->commandBuffer.status)
+        {
+            case MTLCommandBufferStatusCompleted:
+            case MTLCommandBufferStatusError:
+                return TRUE;
+                
+            default:
+                return FALSE;
+        }
+    }
+}
+
 static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer, _Bool Present)
 {
     @autoreleasepool {
@@ -75,4 +92,3 @@ static void MTLCommandBufferCommit(MTLGFXCommandBuffer CommandBuffer, _Bool Pres
         [CommandBuffer->commandBuffer commit];
     }
 }
-
