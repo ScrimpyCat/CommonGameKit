@@ -304,10 +304,10 @@
         for (size_t X = 0; X < 4; X++)
         {
             CCColour Pixel = CCPixelDataGetColour(Pixels, X, Y, 0);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff, @"Incorrect red channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff, @"Incorrect green channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff, @"Incorrect blue channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff, @"Incorrect alpha channel for pixel (%zu, %zu)", X, Y);
         }
     }
     
@@ -382,10 +382,10 @@
         for (size_t X = 0; X < 4; X++)
         {
             CCColour Pixel = CCPixelDataGetColour(Pixels, X, Y, 0);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff, @"Incorrect red channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff, @"Incorrect green channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff, @"Incorrect blue channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff, @"Incorrect alpha channel for pixel (%zu, %zu)", X, Y);
         }
     }
     
@@ -459,10 +459,10 @@
         for (size_t X = 0; X < 4; X++)
         {
             CCColour Pixel = CCPixelDataGetColour(Pixels, X, Y, 0);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff, @"Incorrect red channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff, @"Incorrect green channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff, @"Incorrect blue channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff, @"Incorrect alpha channel for pixel (%zu, %zu)", X, Y);
         }
     }
     
@@ -537,10 +537,10 @@
         for (size_t X = 0; X < 4; X++)
         {
             CCColour Pixel = CCPixelDataGetColour(Pixels, X, Y, 0);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff);
-            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff, @"Incorrect red channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff, @"Incorrect green channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff, @"Incorrect blue channel for pixel (%zu, %zu)", X, Y);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff, @"Incorrect alpha channel for pixel (%zu, %zu)", X, Y);
         }
     }
     
