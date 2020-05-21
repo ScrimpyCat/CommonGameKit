@@ -469,6 +469,84 @@
     GFXFramebufferDestroy(Framebuffer);
 }
 
+-(void) testRoundedRectCurveWithBlending
+{
+    GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | GFXTextureHintUsageColourRenderTarget | GFXTextureHintCPUReadMany | GFXTextureHintGPUReadMany | GFXTextureHintCPUWriteMany, CCColourFormatRGBA8Unorm, 4, 4, 1, NULL);
+    
+    GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionClear, GFXFramebufferAttachmentActionStore, (CCColourRGBA){ 1.0f, 0.0f, 0.0f, 1.0f });
+    GFXFramebuffer Framebuffer = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
+    
+    GFXCommandBuffer CommandBuffer = CCRetain(GFXCommandBufferCreate(CC_STD_ALLOCATOR));
+    GFXCommandBufferRecord(CommandBuffer);
+    
+    GFXDraw Draw = GFXDrawCreate(CC_STD_ALLOCATOR);
+    
+    GFXShader Shader = CCAssetManagerCreateShader(CC_STRING("rounded-rect"));
+    GFXDrawSetShader(Draw, Shader);
+    GFXShaderDestroy(Shader);
+    
+    const CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, 4.0f, 0.0f, 4.0f, -1.0f, 1.0f);
+    GFXBuffer Projection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+    GFXDrawSetBuffer(Draw, CC_STRING("modelViewProjectionMatrix"), Projection);
+    GFXBufferDestroy(Projection);
+    
+    GFXBuffer Radius = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(float), &(float){ 0.25f });
+    GFXDrawSetBuffer(Draw, CC_STRING("radius"), Radius);
+    GFXBufferDestroy(Radius);
+    
+    GFXBuffer Scale = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCVector2D), &(CCVector2D){ 0.5f, 0.5f });
+    GFXDrawSetBuffer(Draw, CC_STRING("scale"), Scale);
+    GFXBufferDestroy(Scale);
+    
+    struct {
+        CCVector2D position;
+        CCColourRGBA colour;
+        CCVector2D coord;
+    } Data[4] = {
+        { CCVector2DMake(0.0f, 0.0f), CCVector4DMake(0.0f, 0.0f, 1.0f, 1.0f), CCVector2DMake(0.0f, 0.0f) },
+        { CCVector2DMake(4.0f, 0.0f), CCVector4DMake(0.0f, 0.0f, 1.0f, 1.0f), CCVector2DMake(0.5f, 0.0f) },
+        { CCVector2DMake(0.0f, 4.0f), CCVector4DMake(0.0f, 0.0f, 1.0f, 1.0f), CCVector2DMake(0.0f, 0.5f) },
+        { CCVector2DMake(4.0f, 4.0f), CCVector4DMake(0.0f, 0.0f, 1.0f, 1.0f), CCVector2DMake(0.5f, 0.5f) }
+    };
+    GFXBuffer Rect = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex, sizeof(Data), Data);
+    GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), 0);
+    GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
+    GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    
+    GFXDrawSetBlending(Draw, GFXBlendTransparentPremultiplied);
+    GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
+    GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
+    
+    GFXDrawDestroy(Draw);
+    
+    GFXCommandBufferCommit(CommandBuffer, FALSE);
+    
+    while (!GFXCommandBufferIsComplete(CommandBuffer)) CC_SPIN_WAIT();
+    GFXCommandBufferDestroy(CommandBuffer);
+    
+    uint32_t Match[4][4] = {
+        { 0xff0000ff, 0xff0000ff, 0x0000ffff, 0x0000ffff },
+        { 0xff0000ff, 0x0000ffff, 0x0000ffff, 0x0000ffff },
+        { 0x0000ffff, 0x0000ffff, 0x0000ffff, 0x0000ffff },
+        { 0x0000ffff, 0x0000ffff, 0x0000ffff, 0x0000ffff }
+    };
+    
+    CCPixelData Pixels = GFXTextureRead(Texture, CC_STD_ALLOCATOR, CCColourFormatRGBA8Unorm, 0, 0, 0, 4, 4, 1);
+    for (size_t Y = 0; Y < 4; Y++)
+    {
+        for (size_t X = 0; X < 4; X++)
+        {
+            CCColour Pixel = CCPixelDataGetColour(Pixels, X, Y, 0);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, (Match[Y][X] >> 24) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, (Match[Y][X] >> 16) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, (Match[Y][X] >> 8) & 0xff);
+            XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelAlpha).u8, (Match[Y][X] >> 0) & 0xff);
+        }
+    }
+    
+    GFXFramebufferDestroy(Framebuffer);
+}
+
 -(void) testTextureBounds
 {
     GFXTexture Root = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension1D, CCColourFormatRGB8Unorm, 100, 1, 1, NULL);
