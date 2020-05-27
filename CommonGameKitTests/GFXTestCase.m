@@ -99,6 +99,7 @@
     GFXBuffer Rect = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex, sizeof(Data), Data);
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), 0);
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
     GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
@@ -184,6 +185,7 @@
         CCVector2DMake(4, 4)
     });
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(CCVector2D), 0);
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
     GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
@@ -280,6 +282,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), 0);
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
     GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
@@ -357,6 +360,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), 0);
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetBlending(Draw, GFXBlendTransparentPremultiplied);
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
@@ -435,6 +439,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), 0);
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
     GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
@@ -512,6 +517,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vPosition"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), 0);
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetBlending(Draw, GFXBlendTransparentPremultiplied);
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
@@ -596,6 +602,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColourOutline"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), outlineColour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
     GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
@@ -679,6 +686,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColourOutline"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), outlineColour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetBlending(Draw, GFXBlendTransparentPremultiplied);
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
@@ -763,6 +771,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColourOutline"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), outlineColour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
     GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
@@ -846,6 +855,7 @@
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColour"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), colour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vColourOutline"), Rect, GFXBufferFormatFloat32x4, sizeof(*Data), offsetof(typeof(*Data), outlineColour));
     GFXDrawSetVertexBuffer(Draw, CC_STRING("vCoord"), Rect, GFXBufferFormatFloat32x2, sizeof(*Data), offsetof(typeof(*Data), coord));
+    GFXBufferDestroy(Rect);
     
     GFXDrawSetBlending(Draw, GFXBlendTransparentPremultiplied);
     GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
