@@ -30,8 +30,48 @@
 #import "Expression.h"
 #import "AssetManager.h"
 #import "Callbacks.h"
+#import <CommonObjc/Common.h>
 
 @implementation GFXTestCase
+
++(Class) lastGFXTestCase: (XCTestSuite*)suite
+{
+    Class Last = Nil;
+    for (XCTest *Test in suite.tests)
+    {
+        if ([Test isKindOfClass: [self class]])
+        {
+            return [Test class];
+        }
+        
+        else if ([Test isKindOfClass: [XCTestSuite class]])
+        {
+            Class Cls = [self lastGFXTestCase: (XCTestSuite*)Test];
+            if (Cls) Last = Cls;
+        }
+    }
+    
+    return Last;
+}
+
++(XCTestSuite*) defaultTestSuite
+{
+    XCTestSuite *Suite = [XCTestSuite testSuiteForTestCaseClass: [self class]];
+    
+    [Suite addTest: [self testCaseWithSelector: @selector(compareResults)]];
+    
+    return Suite;
+}
+
+static NSMutableDictionary<NSString *, NSMutableDictionary<NSString *, CCGenericContainer *> *> *Results = nil;
++(void) setUp
+{
+    [super setUp];
+    
+    if (!Results) Results = [NSMutableDictionary new];
+    
+    if ([self class] != [GFXTestCase class]) Results[NSStringFromClass([self class])] = [NSMutableDictionary new];
+}
 
 -(void) setUp
 {
@@ -64,6 +104,257 @@
 -(void) performTest: (XCTestRun*)run
 {
     if ([self class] != [GFXTestCase class]) [super performTest: run];
+}
+
+typedef struct {
+    CCString name;
+    GFXBufferFormat format;
+    _Bool nonNeg; //only set if signed
+    _Bool small;
+} ShaderArgument;
+
+void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t Factor, _Bool NonNeg, _Bool Small)
+{
+    for (size_t Loop = 0, Count = GFXBufferFormatGetElementCount(Format); Loop < Count; Loop++)
+    {
+        const size_t Bits = GFXBufferFormatGetBitSize(Format);
+        uint64_t Value = Factor + Loop + Offset;
+        for (size_t Scale = 2; Scale < 20; Scale++) Value = (Value * ((Factor / Scale) + 1)) + (Value / (Scale + 30));
+        
+        if (NonNeg) Value &= CCBitSet(Bits - 1);
+        
+        if (GFXBufferFormatIsFloat(Format))
+        {
+            const uint64_t MSB = CCBitHighestSet(CCBitSet(Bits));
+            if ((Value & (MSB >> 1)) && (!Small))
+            {
+                Value &= ~(MSB >> 2);
+                Value &= ~(MSB >> 3);
+                Value &= ~(MSB >> 4);
+                Value &= ~(MSB >> 5);
+            }
+            
+            else
+            {
+                Value &= ~(MSB >> 1);
+                Value |= MSB >> 2;
+                Value |= MSB >> 3;
+                Value |= MSB >> 4;
+            }
+        }
+        
+        else if (Small)
+        {
+            Value &= 0x0f;
+        }
+        
+        for (size_t Byte = 0, ByteCount = Bits / 8; Byte < ByteCount; Byte++) Data[(ByteCount * Loop) + Byte] = ((uint8_t*)&Value)[Byte];
+    }
+}
+
+-(CCPixelData) get2DResultForShader: (CCString)shader WithVertexArg: (ShaderArgument*)vArg Count: (size_t)vCount FragArg: (ShaderArgument*)fArg Count: (size_t)fCount Factor: (size_t)factor Blending: (GFXBlend)blending
+{
+    size_t Width = 100, Height = 100;
+    GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | GFXTextureHintUsageColourRenderTarget | GFXTextureHintCPUReadMany | GFXTextureHintGPUReadMany | GFXTextureHintCPUWriteMany, CCColourFormatRGBA8Unorm, Width, Height, 1, NULL);
+    
+    GFXFramebufferAttachment Attachment = GFXFramebufferAttachmentCreateColour(Texture, GFXFramebufferAttachmentActionClear, GFXFramebufferAttachmentActionStore, (CCColourRGBA){ 0.0f, 0.0f, 0.0f, 1.0f });
+    GFXFramebuffer Framebuffer = GFXFramebufferCreate(CC_STD_ALLOCATOR, &Attachment, 1);
+    
+    GFXCommandBuffer CommandBuffer = CCRetain(GFXCommandBufferCreate(CC_STD_ALLOCATOR));
+    GFXCommandBufferRecord(CommandBuffer);
+    
+    GFXDraw Draw = GFXDrawCreate(CC_STD_ALLOCATOR);
+    
+    GFXShader Shader = CCAssetManagerCreateShader(shader);
+    GFXDrawSetShader(Draw, Shader);
+    GFXShaderDestroy(Shader);
+    
+    const CCMatrix4 Ortho = CCMatrix4MakeOrtho(0.0f, Width, 0.0f, Height, -1.0f, 1.0f);
+    GFXBuffer Projection = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData | GFXBufferHintCPUWriteOnce | GFXBufferHintGPUReadOnce, sizeof(CCMatrix4), &Ortho);
+    GFXDrawSetBuffer(Draw, CC_STRING("modelViewProjectionMatrix"), Projection);
+    GFXBufferDestroy(Projection);
+    
+    for (size_t Loop = 0; Loop < fCount; Loop++)
+    {
+        const GFXBufferFormat Format = fArg[Loop].format;
+        const size_t Size = GFXBufferFormatGetSize(Format);
+        uint8_t Data[Size];
+        SetScaledValue(Data, Format, Loop & 1, factor, fArg[Loop].nonNeg, fArg[Loop].small);
+        
+        GFXBuffer Buffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData, Size, Data);
+        GFXDrawSetVertexBuffer(Draw, fArg[Loop].name, Buffer, Format, Size, 0);
+        GFXBufferDestroy(Buffer);
+    }
+    
+    size_t BufferVertexSize = 0;
+    for (size_t Loop = 0; Loop < vCount; Loop++) BufferVertexSize += GFXBufferFormatGetSize(vArg[Loop].format);
+    
+    uint8_t BufferData[BufferVertexSize * 4];
+    for (size_t Vert = 0; Vert < 4; Vert++)
+    {
+        uint8_t *Data = &BufferData[BufferVertexSize * Vert];
+        for (size_t Loop = 0; Loop < vCount; Loop++)
+        {
+            const GFXBufferFormat Format = vArg[Loop].format;
+            const size_t Size = GFXBufferFormatGetSize(Format);
+            
+            SetScaledValue(Data, Format, (Loop & 1) + Vert, factor, vArg[Loop].nonNeg, vArg[Loop].small);
+            
+            Data += Size;
+        }
+    }
+    
+    GFXBuffer Buffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintDataVertex, BufferVertexSize * 4, BufferData);
+    for (size_t Loop = 0, Offset = 0; Loop < vCount; Loop++)
+    {
+        const GFXBufferFormat Format = vArg[Loop].format;
+        GFXDrawSetVertexBuffer(Draw, vArg[Loop].name, Buffer, Format, BufferVertexSize, Offset);
+        
+        Offset += GFXBufferFormatGetSize(Format);
+    }
+    GFXBufferDestroy(Buffer);
+    
+    GFXDrawSetBlending(Draw, blending);
+    GFXDrawSetFramebuffer(Draw, Framebuffer, 0);
+    GFXDrawSubmit(Draw, GFXPrimitiveTypeTriangleStrip, 0, 4);
+    
+    GFXDrawDestroy(Draw);
+    
+    GFXCommandBufferCommit(CommandBuffer, FALSE);
+    
+    while (!GFXCommandBufferIsComplete(CommandBuffer)) CC_SPIN_WAIT();
+    GFXCommandBufferDestroy(CommandBuffer);
+    
+    
+    CCPixelData Pixels = GFXTextureRead(Texture, CC_STD_ALLOCATOR, CCColourFormatRGBA8Unorm, 0, 0, 0, Width, Height, 1);
+    
+    GFXFramebufferDestroy(Framebuffer);
+    
+    return Pixels;
+}
+
+static struct {
+    CCString name;
+    ShaderArgument vArgs[16];
+    ShaderArgument fArgs[16];
+} Shaders[] = {
+    {
+        .name = CC_STRING("vertex-colour"),
+        .vArgs = {
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE },
+            { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
+        }
+    }
+};
+
+-(void) compareResults
+{
+    NSString *Impl = NSStringFromClass([self class]);
+    NSMutableDictionary<NSString *, CCGenericContainer *> *Store = Results[Impl];
+    
+    for (size_t Loop = 0; Loop < sizeof(Shaders) / sizeof(typeof(*Shaders)); Loop++)
+    {
+        size_t VertCount = 0, FragCount = 0;
+        while ((Shaders[Loop].vArgs[VertCount].name) && (++VertCount < 16));
+        while ((Shaders[Loop].fArgs[FragCount].name) && (++FragCount < 16));
+        
+        for (size_t Loop2 = 10; Loop2 < 50; Loop2++)
+        {
+            NSString *Key = nil;
+            CC_STRING_TEMP_BUFFER(Name, Shaders[Loop].name,
+                                  Store[Key] = [CCGenericContainer containerWithCopiedData: &(CCPixelData){ NULL } OfSize: sizeof(CCPixelData)];
+                                  continue;
+                                  ) Key = [NSString stringWithFormat: @"%s.%zu", Name, Loop2];
+            
+            CCPixelData Pixels = [self get2DResultForShader: Shaders[Loop].name
+                                              WithVertexArg: Shaders[Loop].vArgs
+                                                      Count: VertCount
+                                                    FragArg: Shaders[Loop].fArgs
+                                                      Count: FragCount
+                                                     Factor: Loop2
+                                                   Blending: GFXBlendOpaque];
+            
+            Store[Key] = [CCGenericContainer containerWithData: Pixels
+                                                        OfSize: sizeof(Pixels)
+                                                 ReleaserBlock: ^(void *Data, size_t Size, bool IsCopied){ CCPixelDataDestroy(Data); }];
+        }
+    }
+    
+    if ([GFXTestCase lastGFXTestCase: [XCTestSuite defaultTestSuite]] == [self class])
+    {
+        for (NSString *Program in Store)
+        {
+            CCPixelData A = Store[Program].data;
+            if (A)
+            {
+                size_t WidthA, HeightA, DepthA;
+                CCPixelDataGetSize(A, &WidthA, &HeightA, &DepthA);
+                const size_t SizeA = WidthA * HeightA * DepthA * CCColourFormatSampleSizeForPlanar(A->format, CCColourFormatChannelPlanarIndex0);
+                
+                for (NSString *Impl in Results)
+                {
+                    if (![Impl isEqualToString: NSStringFromClass([self class])])
+                    {
+                        CCPixelData B = Results[Impl][Program].data;
+                        if (B)
+                        {
+                            size_t WidthB, HeightB, DepthB;
+                            CCPixelDataGetSize(A, &WidthB, &HeightB, &DepthB);
+                            const size_t SizeB = WidthB * HeightB * DepthB * CCColourFormatSampleSizeForPlanar(B->format, CCColourFormatChannelPlanarIndex0);
+                            
+                            XCTAssertEqual(A->format, B->format, @"Pixel formats should be the same (%@.%@ : %@.%@)", NSStringFromClass([self class]), Program, Impl, Program);
+                            XCTAssertEqual(SizeA, SizeB, @"Pixel data should be the same (%@.%@ : %@.%@)", NSStringFromClass([self class]), Program, Impl, Program);
+                            
+                            size_t ErrorCount = 0, AccumPrecisionError = 0;
+                            for (size_t y = 0; y < HeightA; y++)
+                            {
+                                for (size_t x = 0; x < WidthA; x++)
+                                {
+                                    CCColour ColourA = CCPixelDataGetColour(A, x, y, 0);
+                                    CCColour ColourB = CCPixelDataGetColour(B, x, y, 0);
+                                    
+                                    size_t Diff = 0;
+                                    Diff += ColourA.channel[0].u8 > ColourB.channel[0].u8 ? ColourA.channel[0].u8 - ColourB.channel[0].u8 : ColourB.channel[0].u8 - ColourA.channel[0].u8;
+                                    Diff += ColourA.channel[1].u8 > ColourB.channel[1].u8 ? ColourA.channel[1].u8 - ColourB.channel[1].u8 : ColourB.channel[1].u8 - ColourA.channel[1].u8;
+                                    Diff += ColourA.channel[2].u8 > ColourB.channel[2].u8 ? ColourA.channel[2].u8 - ColourB.channel[2].u8 : ColourB.channel[2].u8 - ColourA.channel[2].u8;
+                                    Diff += ColourA.channel[3].u8 > ColourB.channel[3].u8 ? ColourA.channel[3].u8 - ColourB.channel[3].u8 : ColourB.channel[3].u8 - ColourA.channel[3].u8;
+                                    
+                                    if (Diff)
+                                    {
+                                        AccumPrecisionError += Diff;
+                                        ErrorCount++;
+                                    }
+                                }
+                            }
+                            
+                            if ((ErrorCount > 3) || (AccumPrecisionError > 5)) // Adjust these as needed
+                            {
+                                for (size_t y = 0; y < HeightA; y++)
+                                {
+                                    for (size_t x = 0; x < WidthA; x++)
+                                    {
+                                        CCColour ColourA = CCPixelDataGetColour(A, x, y, 0);
+                                        CCColour ColourB = CCPixelDataGetColour(B, x, y, 0);
+                                        
+                                        XCTAssertEqual(ColourA.channel[0].u8, ColourB.channel[0].u8, @"Pixel data red channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                        XCTAssertEqual(ColourA.channel[1].u8, ColourB.channel[1].u8, @"Pixel data green channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                        XCTAssertEqual(ColourA.channel[2].u8, ColourB.channel[2].u8, @"Pixel data blue channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                        XCTAssertEqual(ColourA.channel[3].u8, ColourB.channel[3].u8, @"Pixel data alpha channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        else XCTAssert(0, @"No pixel data available for %@.%@", Impl, Program);
+                    }
+                }
+            }
+            
+            else XCTAssert(0, @"No pixel data available for %@.%@", Impl, Program);
+        }
+        
+        Results = nil;
+    }
 }
 
 -(void) testVertexColour

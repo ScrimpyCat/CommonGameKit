@@ -29,6 +29,7 @@
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F34EB81D249BB4CE00B3D984 /* GFXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */; };
 		F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */; };
+		F34EB824249F761700B3D984 /* CommonObjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -817,6 +818,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F34EB824249F761700B3D984 /* CommonObjc.framework in Frameworks */,
 				F3897BD91DCD7E1B008D6C1D /* CommonC.framework in Frameworks */,
 				F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */,
 			);
