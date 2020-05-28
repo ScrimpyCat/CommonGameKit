@@ -258,7 +258,13 @@ static struct {
         while ((Shaders[Loop].vArgs[VertCount].name) && (++VertCount < 16));
         while ((Shaders[Loop].fArgs[FragCount].name) && (++FragCount < 16));
         
-        for (size_t Loop2 = 10; Loop2 < 50; Loop2++)
+        const GFXBlend BlendModes[] = {
+            GFXBlendOpaque,
+            GFXBlendTransparent,
+            GFXBlendTransparentPremultiplied
+        };
+        
+        for (size_t Loop2 = 0; Loop2 < 40 * sizeof(BlendModes) / sizeof(typeof(*BlendModes)); Loop2++)
         {
             NSString *Key = nil;
             CC_STRING_TEMP_BUFFER(Name, Shaders[Loop].name,
@@ -271,8 +277,8 @@ static struct {
                                                       Count: VertCount
                                                     FragArg: Shaders[Loop].fArgs
                                                       Count: FragCount
-                                                     Factor: Loop2
-                                                   Blending: GFXBlendOpaque];
+                                                     Factor: (Loop2 % 40) + 10
+                                                   Blending: BlendModes[Loop2 / 40]];
             
             Store[Key] = [CCGenericContainer containerWithData: Pixels
                                                         OfSize: sizeof(Pixels)
