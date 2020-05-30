@@ -182,7 +182,7 @@ void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t
         SetScaledValue(Data, Format, Loop & 1, factor, fArg[Loop].nonNeg, fArg[Loop].small);
         
         GFXBuffer Buffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData, Size, Data);
-        GFXDrawSetVertexBuffer(Draw, fArg[Loop].name, Buffer, Format, Size, 0);
+        GFXDrawSetBuffer(Draw, fArg[Loop].name, Buffer);
         GFXBufferDestroy(Buffer);
     }
     
