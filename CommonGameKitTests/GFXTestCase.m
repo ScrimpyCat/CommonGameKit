@@ -244,6 +244,15 @@ static struct {
             { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE },
             { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
         }
+    },
+    {
+        .name = CC_STRING("fragment-colour"),
+        .vArgs = {
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE }
+        },
+        .fArgs = {
+            { .name = CC_STRING("colour"),      .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
+        }
     }
 };
 
