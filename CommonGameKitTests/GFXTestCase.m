@@ -265,6 +265,20 @@ static struct {
             { .name = CC_STRING("radius"),      .format = GFXBufferFormatFloat32,       .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("scale"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
         }
+    },
+    {
+        .name = CC_STRING("outline-rounded-rect"),
+        .vArgs = {
+            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE },
+            { .name = CC_STRING("vColour"),         .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
+            { .name = CC_STRING("vColourOutline"),  .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
+            { .name = CC_STRING("vCoord"),          .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
+        },
+        .fArgs = {
+            { .name = CC_STRING("radius"),      .format = GFXBufferFormatFloat32,       .nonNeg = TRUE,     .small = TRUE },
+            { .name = CC_STRING("scale"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE },
+            { .name = CC_STRING("outline"),     .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
+        }
     }
 };
 
