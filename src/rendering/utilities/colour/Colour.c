@@ -324,10 +324,12 @@ static CCColour CCColourHSConvertToRGB(CCColour Colour, CCColourFormat ColourSpa
             
         case CCColourFormatSpaceHS_HSI:
             //TODO: add HSI
+            CCAssertLog(0, "Conversion not currently supported");
             break;
             
         case CCColourFormatSpaceHS_HSluma:
             //TODO: add luma
+            CCAssertLog(0, "Conversion not currently supported");
             break;
             
         default:
@@ -392,6 +394,7 @@ static CCColour CCColourRGBConvertToHS(CCColour Colour, CCColourFormat ColourSpa
             
         case CCColourFormatSpaceHS_HSluma:
             //TODO: add luma
+            CCAssertLog(0, "Conversion not currently supported");
             break;
             
         default:
