@@ -203,7 +203,7 @@ static CCColourComponent CCColourComponentRGBPrecisionConversion(CCColourCompone
 {
     CCAssertLog((OldType & CCColourFormatModelMask) == CCColourFormatModelRGB, "Must be a colour space within the RGB model");
     
-    if ((OldType == NewType) && (Component.type == NewPrecision)) return Component;
+    if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
     
     CCAssertLog((OldType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB, "Only supports linear RGB currently");
     CCAssertLog((NewType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB, "Only supports linear RGB currently");
@@ -215,7 +215,7 @@ static CCColourComponent CCColourComponentYUVPrecisionConversion(CCColourCompone
 {
     CCAssertLog((OldType & CCColourFormatModelMask) == CCColourFormatModelYUV, "Must be a colour space within the YUV model");
     
-    if ((OldType == NewType) && (Component.type == NewPrecision)) return Component;
+    if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
     
     CCAssertLog((OldType & CCColourFormatSpaceMask) == CCColourFormatSpaceYUV_YpCbCr, "Only supports YpCbCr currently");
     
@@ -226,7 +226,7 @@ static CCColourComponent CCColourComponentHSPrecisionConversion(CCColourComponen
 {
     CCAssertLog((OldType & CCColourFormatModelMask) == CCColourFormatModelHS, "Must be a colour space within the HS model");
     
-    if ((OldType == NewType) && (Component.type == NewPrecision)) return Component;
+    if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
     
     return CCColourComponentLinearPrecisionConversion(Component, OldType, NewType, NewPrecision);
 }
@@ -302,7 +302,7 @@ static CCColour CCColourHSConvertToRGB(CCColour Colour, CCColourFormat ColourSpa
     } \
 }
     
-    CCAssertLog((Colour.type & CCColourFormatSpaceMask) == CCColourFormatSpaceHS_HSB, "Must belong to the HSB space");
+    CCAssertLog((Colour.type & CCColourFormatModelMask) == CCColourFormatModelHS, "Must belong to the HS* model");
     
     CCColourComponent h = CCColourHSGetComponent(Colour, CCColourFormatChannelHue, CCColourFormatTypeFloat | CCColourFormatNormalized, 32);
     CCColourComponent s = CCColourHSGetComponent(Colour, CCColourFormatChannelSaturation, CCColourFormatTypeFloat | CCColourFormatNormalized, 32);
@@ -356,7 +356,7 @@ static CCColour CCColourHSConvertToRGB(CCColour Colour, CCColourFormat ColourSpa
 
 static CCColour CCColourRGBConvertToHS(CCColour Colour, CCColourFormat ColourSpace)
 {
-    CCAssertLog((Colour.type & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB, "Must belong to the RGB space");
+    CCAssertLog((Colour.type & CCColourFormatModelMask) == CCColourFormatModelRGB, "Must belong to the RGB model");
     
     CCColourComponent r = CCColourRGBGetComponent(Colour, CCColourFormatChannelRed, CCColourFormatTypeFloat | CCColourFormatNormalized, 32);
     CCColourComponent g = CCColourRGBGetComponent(Colour, CCColourFormatChannelGreen, CCColourFormatTypeFloat | CCColourFormatNormalized, 32);
