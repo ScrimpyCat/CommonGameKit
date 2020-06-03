@@ -48,7 +48,7 @@ static CC_CONSTANT_FUNCTION uint64_t CCIntegerPrecisionConversionLinearSigned(ui
 
 CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversion(CCColourComponent Component, CCColourFormat OldType, CCColourFormat NewType, int NewPrecision)
 {
-    if ((OldType == NewType) && (Component.type == NewPrecision)) return Component;
+    if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
     
     if ((OldType & CCColourFormatTypeMask) == CCColourFormatTypeUnsignedInteger)
     {
