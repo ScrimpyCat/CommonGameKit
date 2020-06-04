@@ -205,8 +205,50 @@ static CCColourComponent CCColourComponentRGBPrecisionConversion(CCColourCompone
     
     if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
     
-    CCAssertLog((OldType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB, "Only supports linear RGB currently");
-    CCAssertLog((NewType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB, "Only supports linear RGB currently");
+    if (!CCColourFormatHasChannel(Component.type, CCColourFormatChannelAlpha))
+    {
+        if (((OldType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB) && ((NewType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_sRGB))
+        {
+            CCColourFormat TempType = 0;
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset0);
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset1);
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset2);
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset3);
+            TempType = (TempType & NewType) | CCColourFormatTypeFloat | CCColourFormatNormalized | CCColourFormatSpaceRGB_RGB | CCColourFormatOptionChannel4;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset0;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset1;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset2;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset3;
+            
+            Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, NewPrecision);
+            
+            if (Component.f32 <= 0.0031308f) Component.f32 *= 12.92f;
+            else Component.f32 = (1.055f * powf(Component.f32, 2.4f)) - 0.055f;
+            
+            OldType = TempType;
+        }
+        
+        else if (((OldType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_sRGB) && ((NewType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB))
+        {
+            CCColourFormat TempType = 0;
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset0);
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset1);
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset2);
+            TempType |= ((CCColourFormat)(CCColourFormatChannelMask ^ CCColourFormatChannelBitSizeMask) << (CCColourFormat)CCColourFormatChannelOffset3);
+            TempType = (TempType & NewType) | CCColourFormatTypeFloat | CCColourFormatNormalized | CCColourFormatSpaceRGB_sRGB | CCColourFormatOptionChannel4;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset0;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset1;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset2;
+            TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset3;
+            
+            Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, NewPrecision);
+            
+            if (Component.f32 <= 0.04045f) Component.f32 /= 12.92f;
+            else Component.f32 = powf((Component.f32 + 0.055f) / 1.055f, 2.4f);
+            
+            OldType = TempType;
+        }
+    }
     
     return CCColourComponentLinearPrecisionConversion(Component, OldType, NewType, NewPrecision);
 }
