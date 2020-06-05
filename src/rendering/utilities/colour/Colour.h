@@ -147,7 +147,7 @@ static CC_FORCE_INLINE CCColourRGBA CCColourToRGBA(CCColour Colour);
 static CC_FORCE_INLINE CCColour CCColourCreateFromRGB(CCColourRGB Colour)
 {
     return (CCColour){
-        .type = CCColourFormatRGB32Float,
+        .type = CCColourFormatRGB32Float | CCColourFormatNormalized,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (32 << CCColourFormatChannelBitSize), .f32 = Colour.r },
             [1] = { .type = CCColourFormatChannelGreen  | (32 << CCColourFormatChannelBitSize), .f32 = Colour.g },
@@ -159,7 +159,7 @@ static CC_FORCE_INLINE CCColour CCColourCreateFromRGB(CCColourRGB Colour)
 static CC_FORCE_INLINE CCColour CCColourCreateFromRGBA(CCColourRGBA Colour)
 {
     return (CCColour){
-        .type = CCColourFormatRGBA32Float,
+        .type = CCColourFormatRGBA32Float | CCColourFormatNormalized,
         .channel = {
             [0] = { .type = CCColourFormatChannelRed    | (32 << CCColourFormatChannelBitSize), .f32 = Colour.r },
             [1] = { .type = CCColourFormatChannelGreen  | (32 << CCColourFormatChannelBitSize), .f32 = Colour.g },
