@@ -205,7 +205,7 @@ static CCColourComponent CCColourComponentRGBPrecisionConversion(CCColourCompone
     
     if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
     
-    if (!CCColourFormatHasChannel(Component.type, CCColourFormatChannelAlpha))
+    if ((Component.type & CCColourFormatChannelIndexMask) != CCColourFormatChannelAlpha)
     {
         if (((OldType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB) && ((NewType & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_sRGB))
         {
@@ -220,7 +220,7 @@ static CCColourComponent CCColourComponentRGBPrecisionConversion(CCColourCompone
             TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset2;
             TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset3;
             
-            Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, NewPrecision);
+            Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, 32);
             
             if (Component.f32 <= 0.0031308f) Component.f32 *= 12.92f;
             else Component.f32 = (1.055f * powf(Component.f32, 2.4f)) - 0.055f;
@@ -241,7 +241,7 @@ static CCColourComponent CCColourComponentRGBPrecisionConversion(CCColourCompone
             TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset2;
             TempType |= (CCColourFormat)(32 << CCColourFormatChannelBitSize) << (CCColourFormat)CCColourFormatChannelOffset3;
             
-            Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, NewPrecision);
+            Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, 32);
             
             if (Component.f32 <= 0.04045f) Component.f32 /= 12.92f;
             else Component.f32 = powf((Component.f32 + 0.055f) / 1.055f, 2.4f);
