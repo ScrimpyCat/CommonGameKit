@@ -169,7 +169,7 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
     return Pixels;
 }
 
-void CCPixelDataFileWrite(CCPixelData Pixels, size_t Width, size_t Height, size_t Depth, FSPath Path)
+void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, FSPath Path)
 {
     CCAssertLog((png_uint_32)Width == Width, "Width exceeds max png width size");
     CCAssertLog((png_uint_32)Height == Height, "Height exceeds max png height size");
@@ -213,7 +213,7 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t Width, size_t Height, size_
                    return;
                    );
     
-    CCPixelDataGetPackedDataWithFormat(Pixels, Format, 0, 0, 0, Width, Height, 1, Buffer);
+    CCPixelDataGetPackedDataWithFormat(Pixels, Format, x, y, z, Width, Height, 1, Buffer);
     
     void *ImageData;
     if (Size < PNG_IMAGE_DATA_SIZE(Image)) Size = PNG_IMAGE_DATA_SIZE(Image);
