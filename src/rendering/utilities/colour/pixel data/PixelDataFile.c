@@ -168,3 +168,110 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
     
     return Pixels;
 }
+
+void CCPixelDataFileWrite(CCPixelData Pixels, size_t Width, size_t Height, size_t Depth, FSPath Path)
+{
+    CCAssertLog((png_uint_32)Width == Width, "Width exceeds max png width size");
+    CCAssertLog((png_uint_32)Height == Height, "Height exceeds max png height size");
+    CCAssertLog(Depth == 1, "3D textures are currently unsupported");
+    
+    png_image Image;
+    memset(&Image, 0, sizeof(Image));
+    
+    Image.version = PNG_IMAGE_VERSION;
+    Image.width = (png_uint_32)Width;
+    Image.height = (png_uint_32)Height;
+    
+    CCColourFormat Format;
+    if ((Pixels->format & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_sRGB)
+    {
+        Format = CCColourFormatRGB8Unorm_sRGB;
+        Image.flags = 0;
+    }
+    
+    else
+    {
+        Format = CCColourFormatRGB8Unorm;
+        Image.flags = PNG_IMAGE_FLAG_COLORSPACE_NOT_sRGB;
+    }
+    
+    if (CCColourFormatHasChannel(Pixels->format, CCColourFormatChannelAlpha))
+    {
+        Format |= CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelAlpha, 8, CCColourFormatChannelOffset3);
+        Image.format = PNG_FORMAT_RGBA;
+    }
+    
+    else
+    {
+        Image.format = PNG_FORMAT_RGB;
+    }
+    
+    size_t Size = CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width * Height;
+    void *Buffer;
+    CC_SAFE_Malloc(Buffer, Size,
+                   CC_LOG_ERROR("Failed to write image data due to allocation failure. Allocation size (%zu)", Size);
+                   return;
+                   );
+    
+    CCPixelDataGetPackedDataWithFormat(Pixels, Format, 0, 0, 0, Width, Height, 1, Buffer);
+    
+    void *ImageData;
+    if (Size < PNG_IMAGE_DATA_SIZE(Image)) Size = PNG_IMAGE_DATA_SIZE(Image);
+    CC_SAFE_Malloc(ImageData, Size,
+                   CC_LOG_ERROR("Failed to write image data due to allocation failure. Allocation size (%zu)", Size);
+                   CC_SAFE_Free(Buffer);
+                   return;
+                   );
+    
+    size_t SizeRequired = Size;
+    if (!png_image_write_to_memory(&Image, ImageData, &SizeRequired, 0, Buffer, 0, NULL))
+    {
+        _Bool Success = FALSE;
+        if (SizeRequired > Size)
+        {
+            CC_SAFE_Realloc(ImageData, SizeRequired,
+                            CC_LOG_ERROR("Failed to write image data due to allocation failure. Allocation size (%zu)", Size);
+                            CC_SAFE_Free(Buffer);
+                            CC_SAFE_Free(ImageData);
+                            return;
+                            );
+            
+            Success = png_image_write_to_memory(&Image, ImageData, &SizeRequired, 0, Buffer, 0, NULL);
+        }
+        
+        if (!Success)
+        {
+            CC_LOG_ERROR("Failed to write image data due to png_image_write_to_memory failure");
+            
+            CC_SAFE_Free(Buffer);
+            CC_SAFE_Free(ImageData);
+            
+            return;
+        }
+    }
+    
+    if (FSManagerCreate(Path, TRUE) == FSOperationSuccess)
+    {
+        FSHandle Handle;
+        if (FSHandleOpen(Path, FSHandleTypeWrite, &Handle) != FSOperationSuccess)
+        {
+            CC_LOG_ERROR("Failed to write image to file at path: %s", FSPathGetFullPathString(Path));
+            
+            CC_SAFE_Free(Buffer);
+            CC_SAFE_Free(ImageData);
+            
+            return;
+        }
+        
+        FSHandleRemove(Handle, SIZE_MAX, FSBehaviourDefault);
+        FSHandleWrite(Handle, SizeRequired, ImageData, FSBehaviourDefault);
+        FSHandleClose(Handle);
+    }
+    
+    else CC_LOG_ERROR("Failed to write image to file at path: %s", FSPathGetFullPathString(Path));
+    
+    CC_SAFE_Free(Buffer);
+    CC_SAFE_Free(ImageData);
+    
+    return;
+}

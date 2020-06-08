@@ -39,4 +39,15 @@ extern const CCPixelDataInterface * const CCPixelDataFile;
  */
 CC_NEW CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath CC_COPY(Path));
 
+/*!
+ * @brief Write a pixel data container to an image file.
+ * @description Supports PNG files.
+ * @param Pixel The pixel data container to create the PNG image file from.
+ * @param Width The width of the image.
+ * @param Height The height of the image.
+ * @param Depth The depth of the image.
+ * @param Path The path to the image file.
+ */
+void CCPixelDataFileWrite(CCPixelData Pixels, size_t Width, size_t Height, size_t Depth, FSPath Path);
+
 #endif
