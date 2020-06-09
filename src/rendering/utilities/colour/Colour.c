@@ -223,7 +223,7 @@ static CCColourComponent CCColourComponentRGBPrecisionConversion(CCColourCompone
             Component = CCColourComponentLinearPrecisionConversion(Component, OldType, TempType, 32);
             
             if (Component.f32 <= 0.0031308f) Component.f32 *= 12.92f;
-            else Component.f32 = (1.055f * powf(Component.f32, 2.4f)) - 0.055f;
+            else Component.f32 = (1.055f * powf(Component.f32, 1.0f / 2.4f)) - 0.055f;
             
             OldType = TempType;
         }
