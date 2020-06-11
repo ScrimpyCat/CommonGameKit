@@ -479,7 +479,7 @@ CCColour CCColourConversion(CCColour Colour, CCColourFormat NewFormat)
     else if ((Colour.type & CCColourFormatModelMask) != (NewFormat & CCColourFormatModelMask)) return (CCColour){ .type = 0 };
     
     
-    CCColour OldColour = Colour;
+    CCColour NewColour = { .type = 0 };
     for (int Loop = 0, Index = 0; Loop < 4; Loop++)
     {
         const CCColourFormat ChannelFormat = (NewFormat >> CCColourFormatLiteralIndexToChannelOffset(Loop)) & CCColourFormatChannelMask;
@@ -487,11 +487,11 @@ CCColour CCColourConversion(CCColour Colour, CCColourFormat NewFormat)
         const int Precision = (ChannelFormat & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize;
         if (Precision)
         {
-            Colour.channel[Index++] = CCColourGetComponentWithPrecision(OldColour, ChannelType, NewFormat, Precision);
+            NewColour.channel[Index++] = CCColourGetComponentWithPrecision(Colour, ChannelType, NewFormat, Precision);
         }
     }
     
-    Colour.type = NewFormat;
+    NewColour.type = NewFormat;
     
-    return Colour;
+    return NewColour;
 }
