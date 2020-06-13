@@ -909,6 +909,31 @@
     XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelAlpha, @"Should retrieve the correct component");
     XCTAssertEqual(Component.f32, Pixel.channel[3].f32, @"Should retrieve the correct component value");
     XCTAssertEqual(PixelRGB.channel[0].f32, Pixel.channel[3].f32, @"Should be correctly positioned");
+    
+    
+    
+    PixelRGB = CCColourConversion(Pixel, CCColourFormatRGBA8Unorm_sRGB);
+    PixelRGB = CCColourConversion(PixelRGB, CCColourFormatRGBA32Float | CCColourFormatNormalized);
+    
+    Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelRed);
+    XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelRed, @"Should retrieve the correct component");
+    XCTAssertTrue(CCFloatEqualAbsolute(Component.f32, Pixel.channel[0].f32, 0.01f), @"Should retrieve the correct component value");
+    XCTAssertTrue(CCFloatEqualAbsolute(PixelRGB.channel[0].f32, Pixel.channel[0].f32, 0.01f), @"Should be correctly positioned");
+    
+    Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelGreen);
+    XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelGreen, @"Should retrieve the correct component");
+    XCTAssertTrue(CCFloatEqualAbsolute(Component.f32, Pixel.channel[1].f32, 0.01f), @"Should retrieve the correct component value");
+    XCTAssertTrue(CCFloatEqualAbsolute(PixelRGB.channel[1].f32, Pixel.channel[1].f32, 0.01f), @"Should be correctly positioned");
+    
+    Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelBlue);
+    XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelBlue, @"Should retrieve the correct component");
+    XCTAssertEqual(Component.f32, Pixel.channel[2].f32, @"Should retrieve the correct component value");
+    XCTAssertEqual(PixelRGB.channel[2].f32, Pixel.channel[2].f32, @"Should be correctly positioned");
+    
+    Component = CCColourGetComponent(PixelRGB, CCColourFormatChannelAlpha);
+    XCTAssertEqual(Component.type & CCColourFormatChannelIndexMask, CCColourFormatChannelAlpha, @"Should retrieve the correct component");
+    XCTAssertTrue(CCFloatEqualAbsolute(Component.f32, Pixel.channel[3].f32, 0.01f), @"Should retrieve the correct component value");
+    XCTAssertTrue(CCFloatEqualAbsolute(PixelRGB.channel[3].f32, Pixel.channel[3].f32, 0.01f), @"Should be correctly positioned");
 }
 
 @end
