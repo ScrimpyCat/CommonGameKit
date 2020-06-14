@@ -221,14 +221,18 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size
         Image.format = PNG_FORMAT_RGB;
     }
     
-    size_t Size = CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width * Height;
+    const size_t RowSize = CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Width;
+    size_t Size = RowSize * Height;
     void *Buffer;
     CC_SAFE_Malloc(Buffer, Size,
                    CC_LOG_ERROR("Failed to write image data due to allocation failure. Allocation size (%zu)", Size);
                    return;
                    );
     
-    CCPixelDataGetPackedDataWithFormat(Pixels, Format, x, y, z, Width, Height, 1, Buffer);
+    for (size_t Y = 0; Y < Height; Y++)
+    {
+        CCPixelDataGetPackedDataWithFormat(Pixels, Format, x, (Height - Y) - 1, z, Width, 1, 1, Buffer + (RowSize * Y));
+    }
     
     void *ImageData;
     if (Size < PNG_IMAGE_DATA_SIZE(Image)) Size = PNG_IMAGE_DATA_SIZE(Image);
