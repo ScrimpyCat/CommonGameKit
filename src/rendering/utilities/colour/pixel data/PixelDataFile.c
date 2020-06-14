@@ -125,7 +125,7 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
             png_image Image = { .version = PNG_IMAGE_VERSION };
             if (png_image_begin_read_from_memory(&Image, ImageData, Size))
             {
-                Image.format = PNG_FORMAT_RGBA;
+                if (Image.format != PNG_FORMAT_RGB) Image.format = PNG_FORMAT_RGBA;
                 
                 const size_t BufferSize = PNG_IMAGE_SIZE(Image);
                 uint8_t *Buffer;
@@ -138,7 +138,23 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
                 
                 if (png_image_finish_read(&Image, NULL, Buffer, -PNG_IMAGE_ROW_STRIDE(Image), NULL))
                 {
-                    Data = CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintRead, BufferSize, Buffer, NULL, NULL), CCColourFormatRGBA8Unorm_sRGB, Image.width, Image.height, 1);
+                    CCColourFormat Format;
+                    switch (Image.format)
+                    {
+                        case PNG_FORMAT_RGB:
+                            Format = CCColourFormatRGB8Unorm_sRGB;
+                            break;
+                            
+                        case PNG_FORMAT_RGBA:
+                            Format = CCColourFormatRGBA8Unorm_sRGB;
+                            break;
+                            
+                        default:
+                            CCAssertLog(0, "Unsupported PNG format");
+                            break;
+                    }
+                    
+                    Data = CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintRead, BufferSize, Buffer, NULL, NULL), Format, Image.width, Image.height, 1);
                 }
                 
                 else CC_SAFE_Free(Buffer);
@@ -175,12 +191,11 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size
     CCAssertLog((png_uint_32)Height == Height, "Height exceeds max png height size");
     CCAssertLog(Depth == 1, "3D textures are currently unsupported");
     
-    png_image Image;
-    memset(&Image, 0, sizeof(Image));
-    
-    Image.version = PNG_IMAGE_VERSION;
-    Image.width = (png_uint_32)Width;
-    Image.height = (png_uint_32)Height;
+    png_image Image = {
+        .version = PNG_IMAGE_VERSION,
+        .width = (png_uint_32)Width,
+        .height = (png_uint_32)Height
+    };
     
     CCColourFormat Format;
     if ((Pixels->format & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_sRGB)
