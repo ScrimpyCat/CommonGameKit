@@ -234,7 +234,7 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size
         CCPixelDataGetPackedDataWithFormat(Pixels, Format, x, (Height - Y) - 1, z, Width, 1, 1, Buffer + (RowSize * Y));
     }
     
-    void *ImageData;
+    uint8_t *ImageData;
     if (Size < PNG_IMAGE_DATA_SIZE(Image)) Size = PNG_IMAGE_DATA_SIZE(Image);
     CC_SAFE_Malloc(ImageData, Size,
                    CC_LOG_ERROR("Failed to write image data due to allocation failure. Allocation size (%zu)", Size);
@@ -266,6 +266,37 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size
             CC_SAFE_Free(ImageData);
             
             return;
+        }
+    }
+    
+    if ((Format & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB)
+    {
+        uint8_t *Chunks = ImageData + 8;
+        
+        while (Chunks < ImageData + SizeRequired)
+        {
+#if CC_HARDWARE_ENDIAN_LITTLE
+            const size_t Length = (Chunks[0] << 24) | (Chunks[1] << 16) | (Chunks[2] << 8) | Chunks[3];
+#elif CC_HARDWARE_ENDIAN_BIG
+            const size_t Length = *(uint32_t*)Chunks;
+#endif
+            
+#if CC_HARDWARE_ENDIAN_LITTLE
+            if (*(uint32_t*)(Chunks + 4) == 'AMAg')
+#elif CC_HARDWARE_ENDIAN_BIG
+            if (*(uint32_t*)(Chunks + 4) == 'gAMA')
+#endif
+            {
+                *(uint32_t*)(Chunks + 8) = 0;
+#if CC_HARDWARE_ENDIAN_LITTLE
+                *(uint32_t*)(Chunks + 12) = 0x4d60258b;
+#elif CC_HARDWARE_ENDIAN_BIG
+                *(uint32_t*)(Chunks + 12) = 0x8b25604d;
+#endif
+                break;
+            }
+            
+            Chunks += Length + 12;
         }
     }
     
