@@ -142,16 +142,60 @@ CCPixelData CCPixelDataFileCreate(CCAllocatorType Allocator, FSPath Path)
                     switch (Image.format)
                     {
                         case PNG_FORMAT_RGB:
-                            Format = CCColourFormatRGB8Unorm_sRGB;
+                            Format = CCColourFormatRGB8Unorm;
                             break;
                             
                         case PNG_FORMAT_RGBA:
-                            Format = CCColourFormatRGBA8Unorm_sRGB;
+                            Format = CCColourFormatRGBA8Unorm;
                             break;
                             
                         default:
                             CCAssertLog(0, "Unsupported PNG format");
                             break;
+                    }
+                    
+                    uint32_t GammaCurve = FALSE;
+                    for (uint8_t *Chunks = ImageData + 8; Chunks < ImageData + Size; Chunks += 12)
+                    {
+#if CC_HARDWARE_ENDIAN_LITTLE
+                        const size_t Length = (Chunks[0] << 24) | (Chunks[1] << 16) | (Chunks[2] << 8) | Chunks[3];
+#elif CC_HARDWARE_ENDIAN_BIG
+                        const size_t Length = *(uint32_t*)Chunks;
+#endif
+                        
+                        switch (*(uint32_t*)(Chunks + 4))
+                        {
+#if CC_HARDWARE_ENDIAN_LITTLE
+                            case 'BGRs':
+#elif CC_HARDWARE_ENDIAN_BIG
+                            case 'sRGB':
+#endif
+                                Format = (Format & ~CCColourFormatSpaceMask) | CCColourFormatSpaceRGB_sRGB;
+                                break;
+                                
+#if CC_HARDWARE_ENDIAN_LITTLE
+                            case 'AMAg':
+                                GammaCurve = (Chunks[8] << 24) | (Chunks[9] << 16) | (Chunks[10] << 8) | Chunks[11];
+#elif CC_HARDWARE_ENDIAN_BIG
+                            case 'gAMA':
+                                GammaCurve = *(uint32_t*)(Chunks + 8)
+#endif
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        
+                        Chunks += Length;
+                    }
+                    
+                    if ((GammaCurve) && ((Format & CCColourFormatSpaceMask) != CCColourFormatSpaceRGB_sRGB))
+                    {
+                        /*
+                         TODO: Should we handle gamma correction, or at least map the approx 0.4545 to sRGB? Or ignore
+                         it and treat it as linear (what a lot of implementatons do)?
+                         */
+                        CC_LOG_WARNING_CUSTOM("Ignoring gamma curve of PNG image: %s", FSPathGetPathString(Path));
                     }
                     
                     Data = CCPixelDataStaticCreate(Allocator, CCDataBufferCreate(Allocator, CCDataBufferHintFree | CCDataHintRead, BufferSize, Buffer, NULL, NULL), Format, Image.width, Image.height, 1);
@@ -271,9 +315,7 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size
     
     if ((Format & CCColourFormatSpaceMask) == CCColourFormatSpaceRGB_RGB)
     {
-        uint8_t *Chunks = ImageData + 8;
-        
-        while (Chunks < ImageData + SizeRequired)
+        for (uint8_t *Chunks = ImageData + 8; Chunks < ImageData + SizeRequired; Chunks += 12)
         {
 #if CC_HARDWARE_ENDIAN_LITTLE
             const size_t Length = (Chunks[0] << 24) | (Chunks[1] << 16) | (Chunks[2] << 8) | Chunks[3];
@@ -296,7 +338,7 @@ void CCPixelDataFileWrite(CCPixelData Pixels, size_t x, size_t y, size_t z, size
                 break;
             }
             
-            Chunks += Length + 12;
+            Chunks += Length;
         }
     }
     
