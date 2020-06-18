@@ -30,6 +30,7 @@
 		F34EB81D249BB4CE00B3D984 /* GFXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */; };
 		F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */; };
 		F34EB824249F761700B3D984 /* CommonObjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; };
+		F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -541,6 +542,7 @@
 		F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GFXTestCase.m; sourceTree = "<group>"; };
 		F34EB81E249BB4F900B3D984 /* GFXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXTestCase.h; sourceTree = "<group>"; };
 		F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLGFXTests.m; sourceTree = "<group>"; };
+		F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataFileTests.m; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
@@ -966,6 +968,7 @@
 			children = (
 				F3897BB31DCD764E008D6C1D /* PixelDataGeneratorTests.m */,
 				F3897BB41DCD764E008D6C1D /* PixelDataStaticTests.m */,
+				F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */,
 			);
 			name = "Pixel Data";
 			sourceTree = "<group>";
@@ -2194,6 +2197,7 @@
 				F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */,
 				F3897BC31DCD764E008D6C1D /* ExpressionStateTests.m in Sources */,
 				F3897BC91DCD764E008D6C1D /* PixelDataGeneratorTests.m in Sources */,
+				F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */,
 				F3897BBD1DCD764E008D6C1D /* ExpressionEqualityTests.m in Sources */,
 				F3897BC51DCD764E008D6C1D /* ExpressionTests.m in Sources */,
 				F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */,
