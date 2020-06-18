@@ -109,11 +109,12 @@ static NSMutableDictionary<NSString *, NSMutableDictionary<NSString *, CCGeneric
 typedef struct {
     CCString name;
     GFXBufferFormat format;
+    void *data;
     _Bool nonNeg; //only set if signed
     _Bool small;
 } ShaderArgument;
 
-void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t Factor, _Bool NonNeg, _Bool Small)
+static void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t Factor, _Bool NonNeg, _Bool Small)
 {
     for (size_t Loop = 0, Count = GFXBufferFormatGetElementCount(Format); Loop < Count; Loop++)
     {
@@ -179,7 +180,9 @@ void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t
         const GFXBufferFormat Format = fArg[Loop].format;
         const size_t Size = GFXBufferFormatGetSize(Format);
         uint8_t Data[Size];
-        SetScaledValue(Data, Format, Loop & 1, factor, fArg[Loop].nonNeg, fArg[Loop].small);
+        
+        if (fArg[Loop].data) memcpy(Data, fArg[Loop].data, Size);
+        else SetScaledValue(Data, Format, Loop & 1, factor, fArg[Loop].nonNeg, fArg[Loop].small);
         
         GFXBuffer Buffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData, Size, Data);
         GFXDrawSetBuffer(Draw, fArg[Loop].name, Buffer);
@@ -198,7 +201,8 @@ void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t
             const GFXBufferFormat Format = vArg[Loop].format;
             const size_t Size = GFXBufferFormatGetSize(Format);
             
-            SetScaledValue(Data, Format, (Loop & 1) + Vert, factor, vArg[Loop].nonNeg, vArg[Loop].small);
+            if (vArg[Loop].data) memcpy(Data, vArg[Loop].data + (Size * Vert), Size);
+            else SetScaledValue(Data, Format, (Loop & 1) + Vert, factor, vArg[Loop].nonNeg, vArg[Loop].small);
             
             Data += Size;
         }
@@ -233,22 +237,30 @@ void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t
     return Pixels;
 }
 
+static CCVector2D DefaultRect[4] = {
+    CCVector2DMake(20.0f, 20.0f),
+    CCVector2DMake(80.0f, 20.0f),
+    CCVector2DMake(20.0f, 80.0f),
+    CCVector2DMake(80.0f, 80.0f)
+};
+
 static struct {
     CCString name;
     ShaderArgument vArgs[16];
     ShaderArgument fArgs[16];
+    TextureArgument tArgs[16];
 } Shaders[] = {
     {
         .name = CC_STRING("vertex-colour"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE },
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect },
             { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
         }
     },
     {
         .name = CC_STRING("fragment-colour"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE }
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect }
         },
         .fArgs = {
             { .name = CC_STRING("colour"),      .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
@@ -257,7 +269,7 @@ static struct {
     {
         .name = CC_STRING("rounded-rect"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE },
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect },
             { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("vCoord"),      .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
         },
@@ -269,7 +281,7 @@ static struct {
     {
         .name = CC_STRING("outline-rounded-rect"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE },
+            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect },
             { .name = CC_STRING("vColour"),         .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("vColourOutline"),  .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("vCoord"),          .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
