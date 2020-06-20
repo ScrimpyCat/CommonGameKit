@@ -30,6 +30,7 @@
 #import "Expression.h"
 #import "AssetManager.h"
 #import "Callbacks.h"
+#import "PixelDataGenerator.h"
 #import <CommonObjc/Common.h>
 
 @implementation GFXTestCase
@@ -114,6 +115,12 @@ typedef struct {
     _Bool small;
 } ShaderArgument;
 
+typedef struct {
+    CCString name;
+    GFXTextureHint dimensions;
+    CCColourFormat format;
+} TextureArgument;
+
 static void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset, size_t Factor, _Bool NonNeg, _Bool Small)
 {
     for (size_t Loop = 0, Count = GFXBufferFormatGetElementCount(Format); Loop < Count; Loop++)
@@ -153,7 +160,12 @@ static void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset,
     }
 }
 
--(CCPixelData) get2DResultForShader: (CCString)shader WithVertexArg: (ShaderArgument*)vArg Count: (size_t)vCount FragArg: (ShaderArgument*)fArg Count: (size_t)fCount Factor: (size_t)factor Blending: (GFXBlend)blending
+static CCColour ScaledColour(size_t x, size_t y, size_t z)
+{
+    return CCColourCreateFromRGBA((CCColourRGBA){ (float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f, fminf((float)(x + y + z) / 100.0f, 1.0f) });
+}
+
+-(CCPixelData) get2DResultForShader: (CCString)shader WithVertexArg: (ShaderArgument*)vArg Count: (size_t)vCount FragArg: (ShaderArgument*)fArg Count: (size_t)fCount TextureArg: (TextureArgument*)tArg Count: (size_t)tCount Factor: (size_t)factor Blending: (GFXBlend)blending
 {
     size_t Width = 100, Height = 100;
     GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, GFXTextureHintDimension2D | GFXTextureHintUsageColourRenderTarget | GFXTextureHintCPUReadMany | GFXTextureHintGPUReadMany | GFXTextureHintCPUWriteMany, CCColourFormatRGBA8Unorm, Width, Height, 1, NULL);
@@ -187,6 +199,28 @@ static void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset,
         GFXBuffer Buffer = GFXBufferCreate(CC_STD_ALLOCATOR, GFXBufferHintData, Size, Data);
         GFXDrawSetBuffer(Draw, fArg[Loop].name, Buffer);
         GFXBufferDestroy(Buffer);
+    }
+    
+    for (size_t Loop = 0; Loop < tCount; Loop++)
+    {
+        size_t Width = 1, Height = 1, Depth = 1;
+        switch (tArg[Loop].dimensions & GFXTextureHintDimensionMask)
+        {
+            case GFXTextureHintDimension3D:
+                Depth = 10;
+            case GFXTextureHintDimension2D:
+                Height = 10;
+            case GFXTextureHintDimension1D:
+                Width = 10;
+                break;
+                
+            default:
+                break;
+        }
+        
+        GFXTexture Texture = GFXTextureCreate(CC_STD_ALLOCATOR, tArg[Loop].dimensions, tArg[Loop].format, Width, Height, Depth, CCPixelDataGeneratorCreate(CC_STD_ALLOCATOR, ScaledColour, tArg[Loop].format));
+        GFXDrawSetTexture(Draw, tArg[Loop].name, Texture);
+        GFXTextureDestroy(Texture);
     }
     
     size_t BufferVertexSize = 0;
@@ -301,9 +335,10 @@ static struct {
     
     for (size_t Loop = 0; Loop < sizeof(Shaders) / sizeof(typeof(*Shaders)); Loop++)
     {
-        size_t VertCount = 0, FragCount = 0;
+        size_t VertCount = 0, FragCount = 0, TextureCount = 0;
         while ((Shaders[Loop].vArgs[VertCount].name) && (++VertCount < 16));
         while ((Shaders[Loop].fArgs[FragCount].name) && (++FragCount < 16));
+        while ((Shaders[Loop].tArgs[TextureCount].name) && (++TextureCount < 16));
         
         const GFXBlend BlendModes[] = {
             GFXBlendOpaque,
@@ -324,6 +359,8 @@ static struct {
                                                       Count: VertCount
                                                     FragArg: Shaders[Loop].fArgs
                                                       Count: FragCount
+                                                 TextureArg: Shaders[Loop].tArgs
+                                                      Count: TextureCount
                                                      Factor: (Loop2 % 40) + 10
                                                    Blending: BlendModes[Loop2 / 40]];
             
