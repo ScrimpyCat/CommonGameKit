@@ -31,6 +31,7 @@
 #import "AssetManager.h"
 #import "Callbacks.h"
 #import "PixelDataGenerator.h"
+#import "PixelDataFile.h"
 #import <CommonObjc/Common.h>
 
 @implementation GFXTestCase
@@ -432,6 +433,17 @@ static struct {
                                         XCTAssertEqual(ColourA.channel[3].u8, ColourB.channel[3].u8, @"Pixel data alpha channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
                                     }
                                 }
+                                
+                                FSPath Path = FSPathCreate("gfx-test-dumps/");
+                                
+                                FSPathAppendComponent(Path, FSPathComponentCreate(FSPathComponentTypeFile, [[NSString stringWithFormat: @"%@.%@", NSStringFromClass([self class]), Program] UTF8String]));
+                                FSPathAppendComponent(Path, FSPathComponentCreate(FSPathComponentTypeExtension, "png"));
+                                CCPixelDataFileWrite(A, 0, 0, 0, WidthA, HeightA, DepthA, Path);
+                                
+                                FSPathSetComponentAtIndex(Path, FSPathComponentCreate(FSPathComponentTypeFile, [[NSString stringWithFormat: @"%@.%@", Impl, Program] UTF8String]), FSPathGetComponentCount(Path) - 2);
+                                CCPixelDataFileWrite(B, 0, 0, 0, WidthB, HeightB, DepthB, Path);
+                                
+                                FSPathDestroy(Path);
                             }
                         }
                         
