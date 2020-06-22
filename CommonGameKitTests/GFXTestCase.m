@@ -284,13 +284,18 @@ static struct {
     ShaderArgument vArgs[16];
     ShaderArgument fArgs[16];
     TextureArgument tArgs[16];
+    struct {
+        size_t count;
+        size_t accum;
+    } error;
 } Shaders[] = {
     {
         .name = CC_STRING("vertex-colour"),
         .vArgs = {
             { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .data = DefaultRect },
             { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
-        }
+        },
+        .error = { .count = 3, .accum = 5 }
     },
     {
         .name = CC_STRING("fragment-colour"),
@@ -299,7 +304,8 @@ static struct {
         },
         .fArgs = {
             { .name = CC_STRING("colour"),      .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
-        }
+        },
+        .error = { .count = 3, .accum = 5 }
     },
     {
         .name = CC_STRING("rounded-rect"),
@@ -311,7 +317,8 @@ static struct {
         .fArgs = {
             { .name = CC_STRING("radius"),      .format = GFXBufferFormatFloat32,       .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("scale"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
-        }
+        },
+        .error = { .count = 3, .accum = 5 }
     },
     {
         .name = CC_STRING("outline-rounded-rect"),
@@ -325,7 +332,8 @@ static struct {
             { .name = CC_STRING("radius"),      .format = GFXBufferFormatFloat32,       .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("scale"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("outline"),     .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
-        }
+        },
+        .error = { .count = 3, .accum = 5 }
     }
 };
 
@@ -418,33 +426,44 @@ static struct {
                                 }
                             }
                             
-                            if ((ErrorCount > 3) || (AccumPrecisionError > 5)) // Adjust these as needed
+                            NSString *Name = [Program stringByDeletingPathExtension];
+                            CCString String = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingUTF8, [Name UTF8String]);
+                            for (size_t Loop = 0; Loop < sizeof(Shaders) / sizeof(typeof(*Shaders)); Loop++)
                             {
-                                for (size_t y = 0; y < HeightA; y++)
+                                if (CCStringEqual(String, Shaders[Loop].name))
                                 {
-                                    for (size_t x = 0; x < WidthA; x++)
+                                    if ((ErrorCount > Shaders[Loop].error.count) || (AccumPrecisionError > Shaders[Loop].error.accum))
                                     {
-                                        CCColour ColourA = CCPixelDataGetColour(A, x, y, 0);
-                                        CCColour ColourB = CCPixelDataGetColour(B, x, y, 0);
+                                        for (size_t y = 0; y < HeightA; y++)
+                                        {
+                                            for (size_t x = 0; x < WidthA; x++)
+                                            {
+                                                CCColour ColourA = CCPixelDataGetColour(A, x, y, 0);
+                                                CCColour ColourB = CCPixelDataGetColour(B, x, y, 0);
+                                                
+                                                XCTAssertEqual(ColourA.channel[0].u8, ColourB.channel[0].u8, @"Pixel data red channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                                XCTAssertEqual(ColourA.channel[1].u8, ColourB.channel[1].u8, @"Pixel data green channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                                XCTAssertEqual(ColourA.channel[2].u8, ColourB.channel[2].u8, @"Pixel data blue channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                                XCTAssertEqual(ColourA.channel[3].u8, ColourB.channel[3].u8, @"Pixel data alpha channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                            }
+                                        }
                                         
-                                        XCTAssertEqual(ColourA.channel[0].u8, ColourB.channel[0].u8, @"Pixel data red channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
-                                        XCTAssertEqual(ColourA.channel[1].u8, ColourB.channel[1].u8, @"Pixel data green channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
-                                        XCTAssertEqual(ColourA.channel[2].u8, ColourB.channel[2].u8, @"Pixel data blue channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
-                                        XCTAssertEqual(ColourA.channel[3].u8, ColourB.channel[3].u8, @"Pixel data alpha channel should be the same (%@.%@ : %@.%@) @ (%zu, %zu)", NSStringFromClass([self class]), Program, Impl, Program, x, y);
+                                        FSPath Path = FSPathCreate("gfx-test-dumps/");
+                                        
+                                        FSPathAppendComponent(Path, FSPathComponentCreate(FSPathComponentTypeFile, [[NSString stringWithFormat: @"%@.%@", NSStringFromClass([self class]), Program] UTF8String]));
+                                        FSPathAppendComponent(Path, FSPathComponentCreate(FSPathComponentTypeExtension, "png"));
+                                        CCPixelDataFileWrite(A, 0, 0, 0, WidthA, HeightA, DepthA, Path);
+                                        
+                                        FSPathSetComponentAtIndex(Path, FSPathComponentCreate(FSPathComponentTypeFile, [[NSString stringWithFormat: @"%@.%@", Impl, Program] UTF8String]), FSPathGetComponentCount(Path) - 2);
+                                        CCPixelDataFileWrite(B, 0, 0, 0, WidthB, HeightB, DepthB, Path);
+                                        
+                                        FSPathDestroy(Path);
                                     }
+                                    
+                                    break;
                                 }
-                                
-                                FSPath Path = FSPathCreate("gfx-test-dumps/");
-                                
-                                FSPathAppendComponent(Path, FSPathComponentCreate(FSPathComponentTypeFile, [[NSString stringWithFormat: @"%@.%@", NSStringFromClass([self class]), Program] UTF8String]));
-                                FSPathAppendComponent(Path, FSPathComponentCreate(FSPathComponentTypeExtension, "png"));
-                                CCPixelDataFileWrite(A, 0, 0, 0, WidthA, HeightA, DepthA, Path);
-                                
-                                FSPathSetComponentAtIndex(Path, FSPathComponentCreate(FSPathComponentTypeFile, [[NSString stringWithFormat: @"%@.%@", Impl, Program] UTF8String]), FSPathGetComponentCount(Path) - 2);
-                                CCPixelDataFileWrite(B, 0, 0, 0, WidthB, HeightB, DepthB, Path);
-                                
-                                FSPathDestroy(Path);
                             }
+                            CCStringDestroy(String);
                         }
                         
                         else XCTAssert(0, @"No pixel data available for %@.%@", Impl, Program);
