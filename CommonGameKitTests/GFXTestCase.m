@@ -288,14 +288,14 @@ static struct {
     {
         .name = CC_STRING("vertex-colour"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect },
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .data = DefaultRect },
             { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
         }
     },
     {
         .name = CC_STRING("fragment-colour"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect }
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .data = DefaultRect }
         },
         .fArgs = {
             { .name = CC_STRING("colour"),      .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE }
@@ -304,7 +304,7 @@ static struct {
     {
         .name = CC_STRING("rounded-rect"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect },
+            { .name = CC_STRING("vPosition"),   .format = GFXBufferFormatFloat32x2,     .data = DefaultRect },
             { .name = CC_STRING("vColour"),     .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("vCoord"),      .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
         },
@@ -316,7 +316,7 @@ static struct {
     {
         .name = CC_STRING("outline-rounded-rect"),
         .vArgs = {
-            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = FALSE, .data = DefaultRect },
+            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .data = DefaultRect },
             { .name = CC_STRING("vColour"),         .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("vColourOutline"),  .format = GFXBufferFormatFloat32x4,     .nonNeg = TRUE,     .small = TRUE },
             { .name = CC_STRING("vCoord"),          .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
