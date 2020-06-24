@@ -163,7 +163,7 @@ static void SetScaledValue(uint8_t *Data, GFXBufferFormat Format, size_t Offset,
 
 static CCColour ScaledColour(size_t x, size_t y, size_t z)
 {
-    return CCColourCreateFromRGBA((CCColourRGBA){ (float)x / 100.0f, (float)y / 100.0f, (float)z / 100.0f, fminf((float)(x + y + z) / 100.0f, 1.0f) });
+    return CCColourCreateFromRGBA((CCColourRGBA){ (float)x / 10.0f, (float)y / 10.0f, (float)z / 10.0f, fminf((float)(x + y + z) / 10.0f, 1.0f) });
 }
 
 -(CCPixelData) get2DResultForShader: (CCString)shader WithVertexArg: (ShaderArgument*)vArg Count: (size_t)vCount FragArg: (ShaderArgument*)fArg Count: (size_t)fCount TextureArg: (TextureArgument*)tArg Count: (size_t)tCount Factor: (size_t)factor Blending: (GFXBlend)blending
