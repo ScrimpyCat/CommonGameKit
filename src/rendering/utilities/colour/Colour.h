@@ -169,4 +169,18 @@ static CC_FORCE_INLINE CCColour CCColourCreateFromRGBA(CCColourRGBA Colour)
     };
 }
 
+static CC_FORCE_INLINE CCColourRGB CCColourToRGB(CCColour Colour)
+{
+    Colour = CCColourConversion(Colour, CCColourFormatRGB32Float | CCColourFormatNormalized);
+    
+    return CCVector3DMake(CCColourGetComponent(Colour, CCColourFormatChannelRed).f32, CCColourGetComponent(Colour, CCColourFormatChannelGreen).f32, CCColourGetComponent(Colour, CCColourFormatChannelBlue).f32);
+}
+
+static CC_FORCE_INLINE CCColourRGBA CCColourToRGBA(CCColour Colour)
+{
+    Colour = CCColourConversion(Colour, CCColourFormatRGBA32Float | CCColourFormatNormalized);
+    
+    return CCVector4DMake(CCColourGetComponent(Colour, CCColourFormatChannelRed).f32, CCColourGetComponent(Colour, CCColourFormatChannelGreen).f32, CCColourGetComponent(Colour, CCColourFormatChannelBlue).f32, CCColourGetComponent(Colour, CCColourFormatChannelAlpha).f32);
+}
+
 #endif
