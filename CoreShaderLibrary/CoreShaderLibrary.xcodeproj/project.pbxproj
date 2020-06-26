@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		F344167F227DBFAF0034F169 /* FragmentColour.metal in Sources */ = {isa = PBXBuildFile; fileRef = F344167E227DBFAF0034F169 /* FragmentColour.metal */; };
+		F34EB7F6248FCC5400B3D984 /* Math.metal in Sources */ = {isa = PBXBuildFile; fileRef = F34EB7F5248FCC5400B3D984 /* Math.metal */; };
+		F34EB7FA248FD3F500B3D984 /* Poxel.metal in Sources */ = {isa = PBXBuildFile; fileRef = F34EB7F9248FD3F500B3D984 /* Poxel.metal */; };
 		F3A9F0C4227F39DD00F52287 /* VertexColour.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C3227F39DD00F52287 /* VertexColour.metal */; };
 		F3A9F0C6227F3B9300F52287 /* Texture2D.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C5227F3B9300F52287 /* Texture2D.metal */; };
 		F3A9F0C8227F3E1500F52287 /* RoundedRect.metal in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0C7227F3E1500F52287 /* RoundedRect.metal */; };
@@ -20,6 +22,8 @@
 
 /* Begin PBXFileReference section */
 		F344167E227DBFAF0034F169 /* FragmentColour.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = FragmentColour.metal; sourceTree = "<group>"; };
+		F34EB7F5248FCC5400B3D984 /* Math.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Math.metal; sourceTree = "<group>"; };
+		F34EB7F9248FD3F500B3D984 /* Poxel.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Poxel.metal; sourceTree = "<group>"; };
 		F3A9F0C3227F39DD00F52287 /* VertexColour.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = VertexColour.metal; sourceTree = "<group>"; };
 		F3A9F0C5227F3B9300F52287 /* Texture2D.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Texture2D.metal; sourceTree = "<group>"; };
 		F3A9F0C7227F3E1500F52287 /* RoundedRect.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = RoundedRect.metal; sourceTree = "<group>"; };
@@ -53,6 +57,7 @@
 			children = (
 				F3A9F0CB227F4F2B00F52287 /* glsl.metal */,
 				F3E747EF227C930E007690A2 /* Core.metal */,
+				F34EB7F5248FCC5400B3D984 /* Math.metal */,
 				F344167E227DBFAF0034F169 /* FragmentColour.metal */,
 				F3A9F0C3227F39DD00F52287 /* VertexColour.metal */,
 				F3A9F0C5227F3B9300F52287 /* Texture2D.metal */,
@@ -60,6 +65,7 @@
 				F3A9F0CF2280412300F52287 /* SignedDistanceField.metal */,
 				F3A9F0C7227F3E1500F52287 /* RoundedRect.metal */,
 				F3A9F0C9227F40C600F52287 /* OutlineRoundedRect.metal */,
+				F34EB7F9248FD3F500B3D984 /* Poxel.metal */,
 			);
 			path = CoreShaderLibrary;
 			sourceTree = "<group>";
@@ -125,7 +131,9 @@
 				F344167F227DBFAF0034F169 /* FragmentColour.metal in Sources */,
 				F3A9F0C4227F39DD00F52287 /* VertexColour.metal in Sources */,
 				F3A9F0CC227F4F2B00F52287 /* glsl.metal in Sources */,
+				F34EB7F6248FCC5400B3D984 /* Math.metal in Sources */,
 				F3A9F0CA227F40C600F52287 /* OutlineRoundedRect.metal in Sources */,
+				F34EB7FA248FD3F500B3D984 /* Poxel.metal in Sources */,
 				F3A9F0D02280412300F52287 /* SignedDistanceField.metal in Sources */,
 				F3A9F0C6227F3B9300F52287 /* Texture2D.metal in Sources */,
 			);
