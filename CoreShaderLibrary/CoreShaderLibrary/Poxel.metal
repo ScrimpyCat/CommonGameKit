@@ -199,4 +199,46 @@ typedef struct {
 
 //separate uniforms/single buffers for viewProjectionMatrix, inverseViewProjectionMatrix, rayPrecisionMethod (or should link another frag function?)
 
+#ifndef Poxel_header
+
+constant struct {
+    float3 normal;
+    float2 order;
+    float2 planarX;
+    float2 planarY;
+} faces[6] = {
+    { .normal = float3( 1, 0, 0), .order = float2(1, 1), .planarX = float2(0, 1), .planarY = float2(1, 0) },
+    { .normal = float3(-1, 0, 0), .order = float2(0, 1), .planarX = float2(0, 1), .planarY = float2(1, 0) },
+    { .normal = float3( 0, 1, 0), .order = float2(0, 0), .planarX = float2(1, 0), .planarY = float2(0, 1) },
+    { .normal = float3( 0,-1, 0), .order = float2(0, 1), .planarX = float2(1, 0), .planarY = float2(0, 1) },
+    { .normal = float3( 0, 0, 1), .order = float2(0, 1), .planarX = float2(1, 0), .planarY = float2(1, 0) },
+    { .normal = float3( 0, 0,-1), .order = float2(1, 1), .planarX = float2(1, 0), .planarY = float2(1, 0) }
+};
+
+vertex VertexOut poxel_vs(VertexData in [[stage_in]], constant InstancedData *instance [[buffer(0)]], constant UniformData &uniforms [[buffer(1)]], const uint index [[instance_id]])
+{
+    const float4 position = float4(in.vPosition, 1.0);
+    const float4 projectedPosition = uniforms.viewProjectionMatrix * instance[index].modelMatrix * position;
+    
+    VertexOut out;
+    out.position = projectedPosition;
+    out.near = position;
+    out.far = instance[index].inverseModelMatrix * uniforms.inverseViewProjectionMatrix * float4(projectedPosition.xy, 1, 1);
+    out.face = in.vFace;
+    out.texCoord = in.vTexCoord;
+    out.scale = instance[index].scale;
+    out.depth = instance[index].coords[in.vFace].depth;
+    out.colour = instance[index].coords[in.vFace].colour;
+    out.palette = instance[index].coords[in.vFace].palette;
+    
+    return out;
+}
+
+fragment float4 poxel_fs(VertexOut in [[stage_in]], constant GeometryData &geometry [[buffer(0)]], constant LightData *lights[[buffer(2)]])
+{
+    return float4(0);
+}
+
+#endif
+
 #endif
