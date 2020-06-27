@@ -334,6 +334,17 @@ static struct {
             { .name = CC_STRING("outline"),     .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
         },
         .error = { .count = 3, .accum = 5 }
+    },
+    {
+        .name = CC_STRING("texture2d"),
+        .vArgs = {
+            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .data = DefaultRect },
+            { .name = CC_STRING("vTexCoord"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
+        },
+        .tArgs = {
+            { .name = CC_STRING("tex"),             .dimensions = GFXTextureHintDimension2D, .format = CCColourFormatRGBA8Unorm },
+        },
+        .error = { .count = 20, .accum = 900 }
     }
 };
 
