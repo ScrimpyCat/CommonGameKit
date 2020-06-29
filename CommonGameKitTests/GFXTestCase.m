@@ -342,9 +342,25 @@ static struct {
             { .name = CC_STRING("vTexCoord"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
         },
         .tArgs = {
-            { .name = CC_STRING("tex"),             .dimensions = GFXTextureHintDimension2D, .format = CCColourFormatRGBA8Unorm },
+            { .name = CC_STRING("tex"),             .dimensions = GFXTextureHintDimension2D, .format = CCColourFormatRGBA8Unorm }
         },
         .error = { .count = 20, .accum = 900 }
+    },
+    {
+        .name = CC_STRING("signed-distance-field"),
+        .vArgs = {
+            { .name = CC_STRING("vPosition"),       .format = GFXBufferFormatFloat32x2,     .data = DefaultRect },
+            { .name = CC_STRING("vColour"),       .format = GFXBufferFormatFloat32x4,       .nonNeg = TRUE,     .small = TRUE },
+            { .name = CC_STRING("vTexCoord"),       .format = GFXBufferFormatFloat32x2,     .nonNeg = TRUE,     .small = TRUE }
+        },
+        .fArgs = {
+            { .name = CC_STRING("width"),      .format = GFXBufferFormatFloat32,       .nonNeg = TRUE,     .small = TRUE },
+            { .name = CC_STRING("edge"),       .format = GFXBufferFormatFloat32,       .nonNeg = TRUE,     .small = TRUE }
+        },
+        .tArgs = {
+            { .name = CC_STRING("tex"),             .dimensions = GFXTextureHintDimension2D, .format = CCColourFormatRGBA8Unorm }
+        },
+        .error = { .count = 11, .accum = 170 }
     }
 };
 
