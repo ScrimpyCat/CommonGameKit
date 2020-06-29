@@ -90,6 +90,12 @@ void CCPixelDataGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_
     CCAssertLog(Pixels, "Pixel data must not be null");
     
     if (Pixels->interface->optional.size) Pixels->interface->optional.size(Pixels, Width, Height, Depth);
+    else
+    {
+        if (Width) *Width = SIZE_MAX;
+        if (Height) *Height = SIZE_MAX;
+        if (Depth) *Depth = SIZE_MAX;
+    }
 }
 
 void CCPixelDataGetPackedData(CCPixelData Pixels, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
