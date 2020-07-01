@@ -357,6 +357,16 @@ static CC_FORCE_INLINE size_t CCColourFormatChannelIndexToLiteralIndex(CCColourF
  */
 static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelIndex(size_t Index);
 
+/*!
+ * @brief Check whether the two colour formats are binary compatiable.
+ * @descrption Both formats can be used to safely sample the same binary layout.
+ * @note Binary compatibility does not imply the resulting colours will be comparable.
+ * @param ColourFormatA The first colour format.
+ * @param ColourFormatB The second colour format.
+ * @return Whether the colour formats have compatible binary layouts.
+ */
+static CC_FORCE_INLINE _Bool CCColourFormatCompatibleBinaryLayout(CCColourFormat ColourFormatA, CCColourFormat ColourFormatB);
+
 #pragma mark -
 
 static CC_FORCE_INLINE size_t CCColourFormatChannelOffsetToLiteralIndex(CCColourFormat Index)
@@ -417,6 +427,14 @@ static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelIndex(s
                    CCColourFormatChannelIndex3 == (3 << 0), "Expects values to equal these exactly");
     
     return Index;
+}
+
+static CC_FORCE_INLINE _Bool CCColourFormatCompatibleBinaryLayout(CCColourFormat ColourFormatA, CCColourFormat ColourFormatB)
+{
+    return (CCColourFormatSampleSizeForPlanar(ColourFormatA, CCColourFormatChannelPlanarIndex0) == CCColourFormatSampleSizeForPlanar(ColourFormatB, CCColourFormatChannelPlanarIndex0))
+        && (CCColourFormatSampleSizeForPlanar(ColourFormatA, CCColourFormatChannelPlanarIndex1) == CCColourFormatSampleSizeForPlanar(ColourFormatB, CCColourFormatChannelPlanarIndex1))
+        && (CCColourFormatSampleSizeForPlanar(ColourFormatA, CCColourFormatChannelPlanarIndex2) == CCColourFormatSampleSizeForPlanar(ColourFormatB, CCColourFormatChannelPlanarIndex2))
+        && (CCColourFormatSampleSizeForPlanar(ColourFormatA, CCColourFormatChannelPlanarIndex3) == CCColourFormatSampleSizeForPlanar(ColourFormatB, CCColourFormatChannelPlanarIndex3));
 }
 
 #endif
