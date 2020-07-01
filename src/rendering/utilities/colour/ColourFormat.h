@@ -286,7 +286,6 @@ size_t CCColourFormatSampleSizeForPlanar(CCColourFormat ColourFormat, CCColourFo
 
 /*!
  * @brief Convert a channel offset to a literal index.
- * @param ColourFormat The colour format.
  * @param Index The offset.
  *        @b CCColourFormatChannelOffset0
  *        @b CCColourFormatChannelOffset1
@@ -299,7 +298,6 @@ static CC_FORCE_INLINE size_t CCColourFormatChannelOffsetToLiteralIndex(CCColour
 
 /*!
  * @brief Convert a literal index to a channel offset.
- * @param ColourFormat The colour format.
  * @param Index The literal index.
  * @return The offset for the literal index.
  *         @b CCColourFormatChannelOffset0
@@ -312,7 +310,6 @@ static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelOffset(
 
 /*!
  * @brief Convert a planar index to a literal index.
- * @param ColourFormat The colour format.
  * @param Index The planar index.
  *        @b CCColourFormatChannelPlanarIndex0
  *        @b CCColourFormatChannelPlanarIndex1
@@ -325,7 +322,6 @@ static CC_FORCE_INLINE size_t CCColourFormatChannelPlanarToLiteralIndex(CCColour
 
 /*!
  * @brief Convert a literal index to a planar index.
- * @param ColourFormat The colour format.
  * @param Index The literal index.
  * @return The planar index for the literal index.
  *         @b CCColourFormatChannelPlanarIndex0
@@ -338,7 +334,6 @@ static CC_FORCE_INLINE CCColourFormat CCColourFormatLiteralIndexToChannelPlanar(
 
 /*!
  * @brief Convert a channel index to a literal index.
- * @param ColourFormat The colour format.
  * @param Index The channel index.
  *        @b CCColourFormatChannelIndex0
  *        @b CCColourFormatChannelIndex1
