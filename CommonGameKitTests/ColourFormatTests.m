@@ -936,4 +936,35 @@
     XCTAssertTrue(CCFloatEqualAbsolute(PixelRGB.channel[3].f32, Pixel.channel[3].f32, 0.01f), @"Should be correctly positioned");
 }
 
+-(void) testBinaryCompatibility
+{
+    XCTAssertTrue(CCColourFormatCompatibleBinaryLayout(CCColourFormatRGB8Sint, CCColourFormatRGB8Unorm_sRGB), @"Colour formats should be compatible");
+    XCTAssertTrue(CCColourFormatCompatibleBinaryLayout(CCColourFormatRG32Uint, CCColourFormatARGB16Float), @"Colour formats should be compatible");
+    XCTAssertFalse(CCColourFormatCompatibleBinaryLayout(CCColourFormatRG32Uint, CCColourFormatRGB32Uint), @"Colour formats should not be compatible");
+    XCTAssertTrue(CCColourFormatCompatibleBinaryLayout(CCColourFormatHSV32Float, CCColourFormatRGB32Uint), @"Colour formats should be compatible");
+    
+    XCTAssertFalse(CCColourFormatCompatibleBinaryLayout(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 32, CCColourFormatChannelOffset1),
+                                                        CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                                        | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)), @"Colour formats should not be compatible");
+    
+    XCTAssertTrue(CCColourFormatCompatibleBinaryLayout(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                       | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                                       | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelGreen,   16, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)
+                                                       | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelBlue,   16, CCColourFormatChannelOffset2, CCColourFormatChannelPlanarIndex1),
+                                                       CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                       | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                                       | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)), @"Colour formats should be compatible");
+    
+    XCTAssertFalse(CCColourFormatCompatibleBinaryLayout(CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                                        | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelGreen,   16, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)
+                                                        | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelBlue,     8, CCColourFormatChannelOffset2, CCColourFormatChannelPlanarIndex1),
+                                                        CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset0)
+                                                        | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelRed,   32, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)), @"Colour formats should not be compatible");
+}
+
 @end
