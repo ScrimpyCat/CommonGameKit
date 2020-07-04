@@ -35,17 +35,106 @@ typedef struct {
     size_t width, height, depth;
 } CCPixelDataCompositionReferenceRegion;
 
+struct {
+    /// The pixel data
+    CCPixelData data;
+    /// The referenced region
+    CCPixelDataCompositionReferenceRegion region;
+} CCPixelDataCompositionReferenceData;
+
 typedef struct {
     /// The referenced pixel data
     struct {
+        /// The pixel data
         CCPixelData data;
-        size_t x, y, z;
+        /// The referenced region
+        CCPixelDataCompositionReferenceRegion region;
     } pixel;
     /// The region of the composite the pixel data is applied
-    CCPixelDataCompositionReferenceRegion region;
+    size_t x, y, z;
     /// Whether the pixel data should be converted or reinterpreted to match the colour format of the composite
     _Bool reinterpret;
 } CCPixelDataCompositionReference;
+
+/*!
+ * @brief Create a reference for converted pixel data in a composition.
+ * @description The entire pixel data chunk is referenced, and explicit colour conversions
+ *              are applied if the formats are different.
+ *
+ * @warning The pixel data must have a defined size. If it doesn't use @b CCPixelDataCompositionConvertedSubPixelData
+ *          instead.
+ *
+ * @param Pixels The pixel data to be referenced. Ownership only applies if the
+ *        reference is passed to a pixel data composition.
+ *
+ * @param X The x position in the composite that will reference this data.
+ * @param Y The y position in the composite that will reference this data.
+ * @param Z The z position in the composite that will reference this data.
+ * @return The composition pixel data reference.
+ */
+static inline CCPixelDataCompositionReference CCPixelDataCompositionConvertedPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z);
+
+/*!
+ * @brief Create a reference for reinterpreted pixel data in a composition.
+ * @description The entire pixel data chunk is referenced, and colour conversions
+ *              are not applied if the formats are different, instead the data is
+ *              reinterpreted as the new format.
+ *
+ * @warning The pixel data must have a defined size. If it doesn't use @b CCPixelDataCompositionReinterpretedSubPixelData
+ *          instead.
+ *
+ * @warning The pixel data must have a format that has a binary compatible layout in order to support reinterpreting.
+ *          e.g. @b CCColourFormatCompatibleBinaryLayout must return TRUE.
+ *
+ * @param Pixels The pixel data to be referenced. Ownership only applies if the
+ *        reference is passed to a pixel data composition.
+ *
+ * @param X The x position in the composite that will reference this data.
+ * @param Y The y position in the composite that will reference this data.
+ * @param Z The z position in the composite that will reference this data.
+ * @return The composition pixel data reference.
+ */
+static inline CCPixelDataCompositionReference CCPixelDataCompositionReinterpretedPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z);
+
+/*!
+ * @brief Create a reference for converted pixel data in a composition.
+ * @description The entire pixel data chunk is referenced, and explicit colour conversions
+ *              are applied if the formats are different.
+ *
+ * @param Pixels The pixel data to be referenced. Ownership only applies if the
+ *        reference is passed to a pixel data composition.
+ *
+ * @param X The x position in the composite that will reference this data.
+ * @param Y The y position in the composite that will reference this data.
+ * @param Z The z position in the composite that will reference this data.
+ * @param Width The width of the referenced data.
+ * @param Height The height of the referenced data.
+ * @param Depth The depth of the referenced data.
+ * @return The composition pixel data reference.
+ */
+static inline CCPixelDataCompositionReference CCPixelDataCompositionConvertedSubPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+
+/*!
+ * @brief Create a reference for reinterpreted pixel data in a composition.
+ * @description The entire pixel data chunk is referenced, and colour conversions
+ *              are not applied if the formats are different, instead the data is
+ *              reinterpreted as the new format.
+ *
+ * @warning The pixel data must have a format that has a binary compatible layout in order to support reinterpreting.
+ *          e.g. @b CCColourFormatCompatibleBinaryLayout must return TRUE.
+ *
+ * @param Pixels The pixel data to be referenced. Ownership only applies if the
+ *        reference is passed to a pixel data composition.
+ *
+ * @param X The x position in the composite that will reference this data.
+ * @param Y The y position in the composite that will reference this data.
+ * @param Z The z position in the composite that will reference this data.
+ * @param Width The width of the referenced data.
+ * @param Height The height of the referenced data.
+ * @param Depth The depth of the referenced data.
+ * @return The composition pixel data reference.
+ */
+static inline CCPixelDataCompositionReference CCPixelDataCompositionReinterpretedSubPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
 
 /*!
  * @brief Create a pixel data container for composite data.
@@ -61,5 +150,49 @@ typedef struct {
  * @return The pixel data container.
  */
 CC_NEW CCPixelData CCPixelDataCompositionCreate(CCAllocatorType Allocator, CCPixelDataCompositionReference *CC_OWN(References), size_t Count, CCColourFormat Format, size_t Width, size_t Height, size_t Depth);
+
+#pragma mark -
+
+static inline CCPixelDataCompositionReference CCPixelDataCompositionConvertedPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z)
+{
+    size_t Width, Height, Depth;
+    CCPixelDataGetSize(Pixels, &Width, &Height, &Depth);
+    
+    return CCPixelDataCompositionConvertedSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+}
+
+static inline CCPixelDataCompositionReference CCPixelDataCompositionReinterpretedPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z)
+{
+    size_t Width, Height, Depth;
+    CCPixelDataGetSize(Pixels, &Width, &Height, &Depth);
+    
+    return CCPixelDataCompositionReinterpretedSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+}
+
+static inline CCPixelDataCompositionReference CCPixelDataCompositionConvertedSubPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+{
+    return (CCPixelDataCompositionReference){
+        .pixel = {
+            .data = Pixels,
+            .region = {
+                .x = 0, .y = 0, .z = 0,
+                .width = Width, .height = Height, .depth = Depth
+            }
+        },
+        .x = X,
+        .y = Y,
+        .z = Z,
+        .reinterpret = FALSE
+    };
+}
+
+static inline CCPixelDataCompositionReference CCPixelDataCompositionReinterpretedSubPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+{
+    CCPixelDataCompositionReference Reference = CCPixelDataCompositionConvertedSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    
+    Reference.reinterpret = TRUE;
+    
+    return Reference;
+}
 
 #endif
