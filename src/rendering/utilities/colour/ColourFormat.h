@@ -149,7 +149,7 @@ typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
      
      How planar and offset work:
      Offset is for shifting the used component information into the format value. It doesn't correlate to offset location of the channel. Channel location works
-     in increments based on the planar. So if planar 0 is used twice, it will have locations 0 and 1, if planar 1 is used once, it will have loations 0.
+     in increments based on the planar. So if planar 0 is used twice, it will have locations 0 and 1, if planar 1 is used once, it will have locations 0.
      */
     
     CCColourFormatChannelMask = 1023, //Must shift the offset back before using mask
