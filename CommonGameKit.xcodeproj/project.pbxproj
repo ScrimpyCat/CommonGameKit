@@ -36,6 +36,8 @@
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3750F892347B94500DFE104 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = F3750F882347B94500DFE104 /* Base.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F378DAFD234D5278000600CC /* ContainerTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F380C2D224B21CEA00151C4F /* PixelDataComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = F380C2D024B21CEA00151C4F /* PixelDataComposite.h */; };
+		F380C2D324B21CEA00151C4F /* PixelDataComposite.c in Sources */ = {isa = PBXBuildFile; fileRef = F380C2D124B21CEA00151C4F /* PixelDataComposite.c */; };
 		F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */; };
 		F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B2B1DCD6B32008D6C1D /* stdatomic.h */; };
@@ -548,6 +550,8 @@
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 		F3750F882347B94500DFE104 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		F378DAFD234D5278000600CC /* ContainerTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerTypes.h; sourceTree = "<group>"; };
+		F380C2D024B21CEA00151C4F /* PixelDataComposite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelDataComposite.h; sourceTree = "<group>"; };
+		F380C2D124B21CEA00151C4F /* PixelDataComposite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PixelDataComposite.c; sourceTree = "<group>"; };
 		F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "blob-repl.xcodeproj"; path = "blob-repl/blob-repl.xcodeproj"; sourceTree = "<group>"; };
 		F3897B1E1DCD3A1C008D6C1D /* Callbacks.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Callbacks.c; sourceTree = "<group>"; };
 		F3897B1F1DCD3A1C008D6C1D /* Callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callbacks.h; sourceTree = "<group>"; };
@@ -1340,6 +1344,8 @@
 				F3AF32F11DCCD4EB00CAD472 /* PixelDataGenerator.h */,
 				F3AF32F21DCCD4EB00CAD472 /* PixelDataStatic.c */,
 				F3AF32F31DCCD4EB00CAD472 /* PixelDataStatic.h */,
+				F380C2D124B21CEA00151C4F /* PixelDataComposite.c */,
+				F380C2D024B21CEA00151C4F /* PixelDataComposite.h */,
 			);
 			name = "Pixel Data";
 			path = "pixel data";
@@ -1683,6 +1689,7 @@
 				F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */,
 				F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */,
 				F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */,
+				F380C2D224B21CEA00151C4F /* PixelDataComposite.h in Headers */,
 				F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */,
 				F3AF33EB1DCCD4EC00CAD472 /* GLShaderLibrary.h in Headers */,
 				F3AF33E91DCCD4EC00CAD472 /* GLShader.h in Headers */,
@@ -2151,6 +2158,7 @@
 				F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */,
 				F3AF337D1DCCD4EC00CAD472 /* AnimationSystem.c in Sources */,
 				F3AF33B91DCCD4EC00CAD472 /* ColourFormat.c in Sources */,
+				F380C2D324B21CEA00151C4F /* PixelDataComposite.c in Sources */,
 				F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */,
 				F3AF33C11DCCD4EC00CAD472 /* PixelDataGenerator.c in Sources */,
 				F3FE7454223AEAFF004D1386 /* MTLBlit.m in Sources */,
