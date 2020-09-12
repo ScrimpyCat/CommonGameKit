@@ -155,7 +155,6 @@ typedef struct {
             texture2d<uint> RGBA32Uint;
         } paletteIndex;
     } colour;
-    texture1d<float> palette;
 } GeometryData;
 
 //typedef struct {
