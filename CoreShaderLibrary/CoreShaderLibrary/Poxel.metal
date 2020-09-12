@@ -44,7 +44,7 @@ typedef struct {
     float3 scale [[flat]];
     float2 depth [[flat]];
     float2 colour [[flat]];
-    float palette [[flat]];
+    float2 palette [[flat]];
 } VertexOut;
 
 typedef struct {
@@ -56,7 +56,7 @@ typedef struct {
     struct {
         float2 depth;
         float2 colour;
-        float palette; //maybe if NaN or +INF or sign bit or something could indicate non-palettalized colour, sign-bit set could indicate a higher precision palette or something, sign and most significant exponent bit (0x40000000) can be used to inform of the palette mode.
+        float2 palette; //maybe if NaN or +INF or sign bit or something could indicate non-palettalized colour, sign-bit set could indicate a higher precision palette or something, sign and most significant exponent bit (0x40000000) can be used to inform of the palette mode.
         /*
          If using additional bits to control logic, possibly group instance data so blocks with the same config will be executed together (hopefully
          avoding fewer stalls in simd groups).
