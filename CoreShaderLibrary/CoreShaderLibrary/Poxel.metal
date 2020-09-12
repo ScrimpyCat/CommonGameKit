@@ -40,7 +40,7 @@ typedef struct {
     float4 far;
     float2 texCoord;
 //    float3 normal [[flat]];
-    uchar4 face [[flat]];
+    uint face [[flat]];
     float3 scale [[flat]];
     float2 depth [[flat]];
     float2 colour [[flat]];
