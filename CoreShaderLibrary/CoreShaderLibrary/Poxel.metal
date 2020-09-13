@@ -45,6 +45,7 @@ typedef struct {
     float2 depth [[flat]];
     float2 colour [[flat]];
     float2 palette [[flat]];
+    uint flags [[flat]];
 } VertexOut;
 
 typedef struct {
@@ -225,10 +226,18 @@ vertex VertexOut poxel_vs(VertexData in [[stage_in]], constant InstancedData *in
     out.far = instance[index].inverseModelMatrix * uniforms.inverseViewProjectionMatrix * float4(projectedPosition.xy, 1, 1);
     out.face = in.vFace;
     out.texCoord = in.vTexCoord;
-    out.scale = instance[index].scale;
-    out.depth = instance[index].coords[in.vFace].depth;
-    out.colour = instance[index].coords[in.vFace].colour;
-    out.palette = instance[index].coords[in.vFace].palette;
+    out.scale = as_type<float3>(as_type<uint3>(instance[index].scale) & 0x7fffffff);
+    out.depth = as_type<float2>(as_type<uint2>(instance[index].coords[in.vFace].depth) & 0x3fffffff);
+    out.colour = as_type<float2>(as_type<uint2>(instance[index].coords[in.vFace].colour) & 0x3fffffff);
+    out.palette = as_type<float2>(as_type<uint2>(instance[index].coords[in.vFace].palette) & 0x3fffffff);
+    
+    const uint3 scale = (as_type<uint3>(instance[index].scale) & 0x80000000) >> uint3(17, 18, 19);
+    const uint2 depth = (as_type<uint2>(instance[index].coords[in.vFace].depth) & 0xc0000000) >> uint2(20, 22);
+    const uint2 colour = (as_type<uint2>(instance[index].coords[in.vFace].colour) & 0xc0000000) >> uint2(24, 26);
+    const uint2 palette = (as_type<uint2>(instance[index].coords[in.vFace].palette) & 0xc0000000) >> uint2(28, 30);
+    
+    const uint flags = scale.x | scale.y | scale.z | depth.x | depth.y | colour.x | colour.y | palette.x | palette.y;
+    out.flags = flags;
     
     return out;
 }
