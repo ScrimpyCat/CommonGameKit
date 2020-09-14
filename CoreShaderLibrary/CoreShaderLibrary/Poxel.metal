@@ -199,6 +199,157 @@ typedef struct {
 
 //separate uniforms/single buffers for viewProjectionMatrix, inverseViewProjectionMatrix, rayPrecisionMethod (or should link another frag function?)
 
+namespace poxel
+{
+    class depth
+    {
+        union
+        {
+            uint value;
+            struct
+            {
+                uint blocks : 24;
+                uint : 4;
+                uint mode : 3;
+                uint transparent : 1;
+            };
+        };
+        
+    public:
+        inline depth()
+        {
+            *this = 0;
+        }
+        
+        inline depth(uint v)
+        {
+            value = v;
+        }
+        
+        inline depth operator=(uint rhs)
+        {
+            value = rhs;
+            
+            return *this;
+        }
+        
+        inline bool empty() const
+        {
+            return transparent;
+        }
+        
+        inline bool multi() const
+        {
+            return mode >= 3;
+        }
+        
+        inline bool block(uint i) const
+        {
+            if (empty()) return false;
+            
+            switch (mode)
+            {
+                case 0:
+                case 3:
+                    return i >= blocks;
+                    
+                case 1:
+                case 4:
+                {
+                    uint block = 0;
+                    for (int index = 16; index > -1; index -= 8)
+                    {
+                        uint accum = (blocks >> index) & 0xff;
+                        block += accum >> 4;
+                        
+                        if (i < block) return false;
+                        
+                        block += (accum & 0xf);
+                        
+                        if (i < block) return true;
+                    }
+                    
+                    return false;
+                }
+                    
+                case 2:
+                case 5:
+                    return (blocks >> i) & 1;
+                    
+                default:
+                    return false;
+            }
+        }
+    };
+    
+    class palette
+    {
+        texture2d<uint> texture;
+        float2 base;
+        uint size;
+        uint count;
+        
+    public:
+        
+        inline palette(texture2d<uint> paletteTexture, float2 paletteCoord, uint paletteSize, uint paletteCount)
+        {
+            texture = paletteTexture;
+            base = paletteCoord;
+            size = paletteSize;
+            count = paletteCount;
+        }
+        
+        inline uint lookup(float2 coord, uint index) const
+        {
+            constexpr sampler nearestSampler(mip_filter::nearest,
+                                             mag_filter::nearest,
+                                             min_filter::nearest,
+                                             address::repeat);
+            
+            const uint4 lut = texture.sample(nearestSampler, base + coord);
+            const uint C = ctz(count);
+            const uint indexesPerPattern = (size * 8) / C;
+            index = index % indexesPerPattern;
+            
+            const uint component = (index * C) / 32;
+            index = (index * C) % 32;
+            
+            //TODO: reorder palette indexes to avoid shuffling (byte order stays the same, index bit order changes from msb->lsb to lsb->msb)
+            const uint mask = (count - 1) << ((32 - C) - index);
+            return ((lut[component] << (32 - (size * 8))) & mask) >> ((32 - C) - index);
+        }
+    };
+    
+    class colour
+    {
+        texture2d<float> texture;
+        float2 base;
+        
+    public:
+        
+        inline colour(texture2d<float> colourTexture, float2 colourCoord)
+        {
+            texture = colourTexture;
+            base = colourCoord;
+        }
+        
+        inline float2 coord(uint index) const
+        {
+            return float2(index / texture.get_width(), 0);
+        }
+        
+        inline float4 sample(float2 coord) const
+        {
+            constexpr sampler nearestSampler(mip_filter::nearest,
+                                             mag_filter::nearest,
+                                             min_filter::nearest,
+                                             address::repeat);
+            
+            return texture.sample(nearestSampler, base + coord);
+        }
+    };
+};
+
 #ifndef Poxel_header
 
 constant struct {
