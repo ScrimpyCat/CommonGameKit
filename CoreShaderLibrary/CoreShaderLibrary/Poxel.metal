@@ -395,6 +395,21 @@ vertex VertexOut poxel_vs(VertexData in [[stage_in]], constant InstancedData *in
 
 fragment float4 poxel_fs(VertexOut in [[stage_in]], constant GeometryData &geometry [[buffer(0)]], constant LightData *lights[[buffer(2)]])
 {
+    constexpr sampler nearestSampler(mip_filter::nearest,
+                                     mag_filter::nearest,
+                                     min_filter::nearest,
+                                     address::repeat);
+    
+    const uint paletteType = in.flags & 3;
+    
+    const uint sizes[4] = { 0, 1, 4, 16 };
+    const uint paletteCount = 2 << (((in.flags & (3 << 2)) * 2) + 1); //4 16 (unused:64) 256
+    
+    texture2d<uint> paletteIndexTextures[4] = { geometry.colour.paletteIndex.R8Uint, geometry.colour.paletteIndex.R8Uint, geometry.colour.paletteIndex.R32Uint, geometry.colour.paletteIndex.RGBA32Uint };
+    
+    const poxel::palette palette = poxel::palette(paletteIndexTextures[paletteType], in.palette, sizes[paletteType], paletteCount);
+    const poxel::colour colour = poxel::colour(geometry.colour.RGBA8Unorm_sRGB, in.colour);
+    
     return float4(0);
 }
 
