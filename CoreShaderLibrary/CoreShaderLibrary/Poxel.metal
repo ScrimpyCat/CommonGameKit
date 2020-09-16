@@ -410,6 +410,42 @@ fragment float4 poxel_fs(VertexOut in [[stage_in]], constant GeometryData &geome
     const poxel::palette palette = poxel::palette(paletteIndexTextures[paletteType], in.palette, sizes[paletteType], paletteCount);
     const poxel::colour colour = poxel::colour(geometry.colour.RGBA8Unorm_sRGB, in.colour);
     
+    const float3 origin = in.near.xyz;
+    const float3 normal = faces[in.face].normal;
+    const float3 dir = normalize(in.far.xyz - origin);
+    
+    const float planeD = dot(origin, normal);
+    const float NL = length(normal);
+    
+    const float2 ts = float2(
+        (in.scale.x * faces[in.face].planarX.x) + (in.scale.z * faces[in.face].planarX.y),
+        (in.scale.y * faces[in.face].planarY.x) + (in.scale.z * faces[in.face].planarY.y)
+    );
+    const float2 hts = ts / 2;
+    
+    const float2 depthSize = float2(geometry.depth.get_width(), geometry.depth.get_height());
+    
+    for (int steps = 0; ; steps++)
+    {
+        const float3 p = origin + (dir * steps);
+        const float d = abs(planeD - dot(p, normal)) / NL;
+        
+        const float3 planeP = p - (d * normal);
+        
+        float2 t = float2(
+            (planeP.x * faces[in.face].planarX.x) + (planeP.z * faces[in.face].planarX.y),
+            (planeP.y * faces[in.face].planarY.x) + (planeP.z * faces[in.face].planarY.y)
+        );
+        const float2 o = faces[in.face].order;
+        
+        if ((t.x < -hts.x) || (t.x > hts.x) || (t.y < -hts.y) || (t.y > hts.y)) break;
+        
+        t = (t + hts) / ts;
+        t = abs(o - t);
+        
+        t = (t * ts) / depthSize;
+    }
+    
     return float4(0);
 }
 
