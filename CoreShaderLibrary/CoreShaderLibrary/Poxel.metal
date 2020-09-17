@@ -444,6 +444,32 @@ fragment float4 poxel_fs(VertexOut in [[stage_in]], constant GeometryData &geome
         t = abs(o - t);
         
         t = (t * ts) / depthSize;
+        
+        const float2 depthCoord = t + in.depth;
+        const uint4 depth = geometry.depth.sample(nearestSampler, depthCoord);
+        const poxel::depth poxel = depth.r;
+        
+        if (poxel.block(d))
+        {
+            float2 colourCoord = t;
+            if (paletteType)
+            {
+                const uint index = palette.lookup(t, d);
+                colourCoord = colour.coord(index);
+            }
+            
+            float4 c = colour.sample(colourCoord);
+            if (c.a < 1.0)
+            {
+                //TODO: add to translucency buffer
+            }
+            
+            else
+            {
+                //TODO: add depth
+                return c;
+            }
+        }
     }
     
     return float4(0);
