@@ -124,6 +124,9 @@ typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
     CCColourFormatOptionMask = (3 << 14),
     CCColourFormatOptionChannel4 = (0 << 14), //whether it uses the 4 channel option/structure
     
+    //Parent Format Mask (excludes channels)
+    CCColourFormatMask = CCColourFormatTypeMask | CCColourFormatSpaceMask | CCColourFormatCompressionMask | CCColourFormatNormalized | CCColourFormatPremultipliedAlpha | CCColourFormatOptionMask,
+    
     /*
      Four Channel Option Structure
      
