@@ -77,6 +77,7 @@
 		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
+		F39C5F2A2519C29600D80F0D /* PixelDataCompositeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */; };
 		F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */; };
 		F3A9F0FF228444CD00F52287 /* GLCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */; };
@@ -593,6 +594,7 @@
 		F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLGFX_Private.h; sourceTree = "<group>"; };
 		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataCompositeTests.m; sourceTree = "<group>"; };
 		F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXCommandBuffer.h; sourceTree = "<group>"; };
 		F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GFXCommandBuffer.c; sourceTree = "<group>"; };
 		F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLCommandBuffer.h; sourceTree = "<group>"; };
@@ -973,6 +975,7 @@
 				F3897BB31DCD764E008D6C1D /* PixelDataGeneratorTests.m */,
 				F3897BB41DCD764E008D6C1D /* PixelDataStaticTests.m */,
 				F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */,
+				F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */,
 			);
 			name = "Pixel Data";
 			sourceTree = "<group>";
@@ -2204,6 +2207,7 @@
 				F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */,
 				F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */,
 				F3897BC31DCD764E008D6C1D /* ExpressionStateTests.m in Sources */,
+				F39C5F2A2519C29600D80F0D /* PixelDataCompositeTests.m in Sources */,
 				F3897BC91DCD764E008D6C1D /* PixelDataGeneratorTests.m in Sources */,
 				F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */,
 				F3897BBD1DCD764E008D6C1D /* ExpressionEqualityTests.m in Sources */,
