@@ -197,4 +197,85 @@
     XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
 }
 
+-(void) testMultiPlanarConversion
+{
+    static uint8_t PixelDataR8[6] = {
+        0xff, 0x00, 0xff, //red, blue, white
+        0x00, 0xff, 0x00 //green, yellow, black
+    };
+    
+    static uint16_t PixelDataGB8[6] = {
+        0x0000, 0x00ff, 0xffff, //red, blue, white
+        0xff00, 0xff00, 0x0000 //green, yellow, black
+    };
+    
+    CCPixelData Base1 = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataHintRead, sizeof(PixelDataR8), PixelDataR8, NULL, NULL), CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   8, CCColourFormatChannelOffset0), 3, 2, 1);
+    CCPixelData Base2 = CCPixelDataStaticCreate(CC_STD_ALLOCATOR, CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataHintRead, sizeof(PixelDataGB8), PixelDataGB8, NULL, NULL), CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 8, CCColourFormatChannelOffset0)
+                                                | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelBlue,  8, CCColourFormatChannelOffset1), 3, 2, 1);
+    
+    CCPixelData Pixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[1]){ CCPixelDataCompositeConvertedMultiPlanarPixelData((CCPixelData[4]){ Base1, Base2, NULL, NULL }, 0, 0, 0) }, 1, CCColourFormatRGB8Unorm, 3, 2, 1);
+    CCPixelData Ref = CCPixelDataStaticCreateWithMultiPlanar(CC_STD_ALLOCATOR, (CCData[4]){
+        CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataHintRead, sizeof(PixelDataR8), PixelDataR8, NULL, NULL),
+        CCDataBufferCreate(CC_STD_ALLOCATOR, CCDataHintRead, sizeof(PixelDataGB8), PixelDataGB8, NULL, NULL),
+        NULL,
+        NULL
+    }, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                                             | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelRed,   8, CCColourFormatChannelOffset0, CCColourFormatChannelPlanarIndex0)
+                                                             | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelGreen, 8, CCColourFormatChannelOffset1, CCColourFormatChannelPlanarIndex1)
+                                                             | CC_COLOUR_FORMAT_CHANNEL_PLANAR(CCColourFormatChannelBlue,  8, CCColourFormatChannelOffset2, CCColourFormatChannelPlanarIndex1), 3, 2, 1);
+    
+    CCColour Pixel = CCPixelDataGetColour(Pixels, 0, 0, 0), RefPixel = CCPixelDataGetColour(Ref, 0, 0, 0);
+    
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelRed).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelGreen).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelBlue).u8, @"Should contain the correct value");
+    
+    
+    Pixel = CCPixelDataGetColour(Pixels, 1, 0, 0);
+    RefPixel = CCPixelDataGetColour(Ref, 1, 0, 0);
+    
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelRed).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelGreen).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelBlue).u8, @"Should contain the correct value");
+    
+    
+    Pixel = CCPixelDataGetColour(Pixels, 2, 0, 0);
+    RefPixel = CCPixelDataGetColour(Ref, 2, 0, 0);
+    
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelRed).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelGreen).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelBlue).u8, @"Should contain the correct value");
+    
+    
+    Pixel = CCPixelDataGetColour(Pixels, 0, 1, 0);
+    RefPixel = CCPixelDataGetColour(Ref, 0, 1, 0);
+    
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelRed).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelGreen).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelBlue).u8, @"Should contain the correct value");
+    
+    
+    Pixel = CCPixelDataGetColour(Pixels, 1, 1, 0);
+    RefPixel = CCPixelDataGetColour(Ref, 1, 1, 0);
+    
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelRed).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelGreen).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelBlue).u8, @"Should contain the correct value");
+    
+    
+    Pixel = CCPixelDataGetColour(Pixels, 2, 1, 0);
+    RefPixel = CCPixelDataGetColour(Ref, 2, 1, 0);
+    
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelRed).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelRed).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelGreen).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelGreen).u8, @"Should contain the correct value");
+    XCTAssertEqual(CCColourGetComponent(Pixel, CCColourFormatChannelBlue).u8, CCColourGetComponent(RefPixel, CCColourFormatChannelBlue).u8, @"Should contain the correct value");
+    
+    
+    Pixel = CCPixelDataGetColour(Pixels, 0, 2, 0);
+    
+    XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
+}
+
 @end
