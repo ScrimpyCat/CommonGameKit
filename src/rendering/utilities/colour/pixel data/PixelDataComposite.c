@@ -106,11 +106,11 @@ static CCColour CCPixelDataCompositeGetColour(CCPixelData Pixels, size_t x, size
                 CCColourFormat Format = 0;
                 uint8_t Data[64];
                 size_t Size = 0;
-                for (size_t Loop = 0; Loop < 4; Loop++)
+                for (size_t Loop = 0, ChannelCount = 0; Loop < 4; Loop++)
                 {
                     if (Reference->pixel.data[Loop])
                     {
-                        for (size_t Loop2 = 0, ChannelCount = 0; Loop2 < 4; Loop2++)
+                        for (size_t Loop2 = 0; Loop2 < 4; Loop2++)
                         {
                             const CCColourFormat Offset = CCColourFormatLiteralIndexToChannelOffset(Loop2);
                             const CCColourFormat Channel = (Reference->pixel.data[Loop]->format & (ChannelMask << Offset)) >> Offset;
