@@ -95,7 +95,7 @@
     XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
     
     
-    CCPixelData RePixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[1]){ CCPixelDataCompositeReinterpretedPixelData(Pixels, 0, 0, 0) }, 1, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+    CCPixelData RePixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[1]){ CCPixelDataCompositeReinterpretedPixelData(CCRetain(Pixels), 0, 0, 0) }, 1, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
                                                       | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   16, CCColourFormatChannelOffset0)
                                                       | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 8, CCColourFormatChannelOffset1), 3, 2, 1);
     
@@ -145,8 +145,10 @@
     
     XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
     
+    CCPixelDataDestroy(RePixels);
     
-    CCPixelData CoPixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[1]){ CCPixelDataCompositeConvertedPixelData(Pixels, 0, 0, 0) }, 1, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+    
+    CCPixelData CoPixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[1]){ CCPixelDataCompositeConvertedPixelData(CCRetain(Pixels), 0, 0, 0) }, 1, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
                                                       | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   16, CCColourFormatChannelOffset0)
                                                       | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 8, CCColourFormatChannelOffset1), 3, 2, 1);
     
@@ -195,6 +197,10 @@
     Pixel = CCPixelDataGetColour(CoPixels, 0, 2, 0);
     
     XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
+    
+    CCPixelDataDestroy(CoPixels);
+    
+    CCPixelDataDestroy(Pixels);
 }
 
 -(void) testMultiPlanarConversion
@@ -276,6 +282,9 @@
     Pixel = CCPixelDataGetColour(Pixels, 0, 2, 0);
     
     XCTAssertEqual(Pixel.type, 0, @"Should be outside bounds");
+    
+    CCPixelDataDestroy(Pixels);
+    CCPixelDataDestroy(Ref);
 }
 
 @end
