@@ -120,7 +120,7 @@ static CCColour CCPixelDataCompositeGetColour(CCPixelData Pixels, size_t x, size
                         
                         Format |= Reference->pixel.data[Loop]->format & CCColourFormatMask;
                         
-                        CCPixelDataGetPackedDataWithFormat(Reference->pixel.data[Loop], Reference->pixel.data[Loop]->format, x, y, z, 1, 1, 1, Data + Size);
+                        CCPixelDataGetPackedDataWithFormat(Reference->pixel.data[Loop], Reference->pixel.data[Loop]->format, (x - Reference->x) + Reference->pixel.region.x, (y - Reference->y) + Reference->pixel.region.y, (z - Reference->z) + Reference->pixel.region.z, 1, 1, 1, Data + Size);
                         
                         Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex0);
                         Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex1);
