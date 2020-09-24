@@ -155,6 +155,35 @@ static void CCPixelDataCompositeGetSize(CCPixelData Pixels, size_t *Width, size_
 
 CCPixelData CCPixelDataCompositeCreate(CCAllocatorType Allocator, CCPixelDataCompositeReference *References, size_t Count, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
 {
+    for (size_t Loop = 0; Loop < Count; Loop++)
+    {
+        const CCPixelDataCompositeReference *Reference = &References[Loop];
+        
+        if (Reference->reinterpret)
+        {
+            const CCColourFormat ChannelMask = CCColourFormatChannelIndexMask | CCColourFormatChannelBitSizeMask;
+            
+            CCColourFormat ReferenceFormat = 0;
+            for (size_t Loop = 0, ChannelCount = 0; Loop < 4; Loop++)
+            {
+                if (Reference->pixel.data[Loop])
+                {
+                    for (size_t Loop2 = 0; Loop2 < 4; Loop2++)
+                    {
+                        const CCColourFormat Offset = CCColourFormatLiteralIndexToChannelOffset(Loop2);
+                        const CCColourFormat Channel = (Reference->pixel.data[Loop]->format & (ChannelMask << Offset)) >> Offset;
+                        
+                        if (Channel) ReferenceFormat |= (Channel | CCColourFormatChannelPlanarIndex0) << CCColourFormatLiteralIndexToChannelOffset(ChannelCount++);
+                    }
+                    
+                    ReferenceFormat |= Reference->pixel.data[Loop]->format & CCColourFormatMask;
+                }
+            }
+            
+            CCAssertLog(CCColourFormatCompatibleBinaryLayout(Format, ReferenceFormat), "Reinterpreted pixel data references must be of a compatible binary layout");
+        }
+    }
+    
     CCPixelData Pixels = CCPixelDataCreate(Allocator, Format, CCPixelDataComposite);
     
     ((CCPixelDataCompositeInternal*)Pixels->internal)->references = CCArrayCreate(Allocator, sizeof(CCPixelDataCompositeReference), Count);
