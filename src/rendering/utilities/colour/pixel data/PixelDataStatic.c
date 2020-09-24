@@ -90,12 +90,13 @@ static CCColour CCPixelDataStaticGetColour(CCPixelData Pixels, size_t x, size_t 
     CCData *Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer;
     const size_t Width = ((CCPixelDataStaticInternal*)Pixels->internal)->width, Height = ((CCPixelDataStaticInternal*)Pixels->internal)->height;
     const CCColourFormat Format = Pixels->format;
+    const size_t Offset = (x + (Width * y) + (Width * Height * z));
     
-    return CCColourUnpackFromBuffer(Pixels->format, (const void*[4]){
-        (Buffer[0] ? CCDataGetBuffer(Buffer[0]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * (x + (Width * y) + (Height * z))),
-        (Buffer[1] ? CCDataGetBuffer(Buffer[1]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex1) * (x + (Width * y) + (Height * z))),
-        (Buffer[2] ? CCDataGetBuffer(Buffer[2]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex2) * (x + (Width * y) + (Height * z))),
-        (Buffer[3] ? CCDataGetBuffer(Buffer[3]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex3) * (x + (Width * y) + (Height * z)))
+    return CCColourUnpackFromBuffer(Format, (const void*[4]){
+        (Buffer[0] ? CCDataGetBuffer(Buffer[0]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Offset),
+        (Buffer[1] ? CCDataGetBuffer(Buffer[1]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex1) * Offset),
+        (Buffer[2] ? CCDataGetBuffer(Buffer[2]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex2) * Offset),
+        (Buffer[3] ? CCDataGetBuffer(Buffer[3]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex3) * Offset)
     });
 }
 
