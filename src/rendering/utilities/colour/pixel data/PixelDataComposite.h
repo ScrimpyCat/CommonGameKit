@@ -140,12 +140,10 @@ static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedMul
  * @param X The x position in the composite that will reference this data.
  * @param Y The y position in the composite that will reference this data.
  * @param Z The z position in the composite that will reference this data.
- * @param Width The width of the referenced data.
- * @param Height The height of the referenced data.
- * @param Depth The depth of the referenced data.
+ * @param Region The region of the referenced data.
  * @return The composition pixel data reference.
  */
-static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedSubPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedSubPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region);
 
 /*!
  * @brief Create a reference for converted multi-planar pixel data in a composition.
@@ -158,12 +156,10 @@ static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedSubPixe
  * @param X The x position in the composite that will reference this data.
  * @param Y The y position in the composite that will reference this data.
  * @param Z The z position in the composite that will reference this data.
- * @param Width The width of the referenced data.
- * @param Height The height of the referenced data.
- * @param Depth The depth of the referenced data.
+ * @param Region The region of the referenced data.
  * @return The composition pixel data reference.
  */
-static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPlanarSubPixelData(CCPixelData CC_OWN(Pixels)[4], size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPlanarSubPixelData(CCPixelData CC_OWN(Pixels)[4], size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region);
 
 /*!
  * @brief Create a reference for reinterpreted pixel data in a composition.
@@ -180,12 +176,10 @@ static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPl
  * @param X The x position in the composite that will reference this data.
  * @param Y The y position in the composite that will reference this data.
  * @param Z The z position in the composite that will reference this data.
- * @param Width The width of the referenced data.
- * @param Height The height of the referenced data.
- * @param Depth The depth of the referenced data.
+ * @param Region The region of the referenced data.
  * @return The composition pixel data reference.
  */
-static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedSubPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedSubPixelData(CCPixelData CC_OWN(Pixels), size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region);
 
 /*!
  * @brief Create a reference for reinterpreted multi-planar pixel data in a composition.
@@ -202,12 +196,10 @@ static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedSub
  * @param X The x position in the composite that will reference this data.
  * @param Y The y position in the composite that will reference this data.
  * @param Z The z position in the composite that will reference this data.
- * @param Width The width of the referenced data.
- * @param Height The height of the referenced data.
- * @param Depth The depth of the referenced data.
+ * @param Region The region of the referenced data.
  * @return The composition pixel data reference.
  */
-static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedMultiPlanarSubPixelData(CCPixelData CC_OWN(Pixels)[4], size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth);
+static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedMultiPlanarSubPixelData(CCPixelData CC_OWN(Pixels)[4], size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region);
 
 /*!
  * @brief Create a pixel data container for composite data.
@@ -228,56 +220,57 @@ CC_NEW CCPixelData CCPixelDataCompositeCreate(CCAllocatorType Allocator, CCPixel
 
 static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z)
 {
-    size_t Width, Height, Depth;
-    CCPixelDataGetSize(Pixels, &Width, &Height, &Depth);
+    CCPixelDataCompositeReferenceRegion Region = { .x = 0, .y = 0, .z = 0 };
     
-    return CCPixelDataCompositeConvertedSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    CCPixelDataGetSize(Pixels, &Region.width, &Region.height, &Region.depth);
+    
+    return CCPixelDataCompositeConvertedSubPixelData(Pixels, X, Y, Z, Region);
 }
 
 static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPlanarPixelData(CCPixelData Pixels[4], size_t X, size_t Y, size_t Z)
 {
-    size_t Width = 0, Height = 0, Depth = 0;
-    if (Pixels[0]) CCPixelDataGetSize(Pixels[0], &Width, &Height, &Depth);
-    else if (Pixels[1]) CCPixelDataGetSize(Pixels[1], &Width, &Height, &Depth);
-    else if (Pixels[2]) CCPixelDataGetSize(Pixels[2], &Width, &Height, &Depth);
-    else if (Pixels[3]) CCPixelDataGetSize(Pixels[3], &Width, &Height, &Depth);
+    CCPixelDataCompositeReferenceRegion Region = { .x = 0, .y = 0, .z = 0 };
     
-    return CCPixelDataCompositeConvertedMultiPlanarSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    if (Pixels[0]) CCPixelDataGetSize(Pixels[0], &Region.width, &Region.height, &Region.depth);
+    else if (Pixels[1]) CCPixelDataGetSize(Pixels[1], &Region.width, &Region.height, &Region.depth);
+    else if (Pixels[2]) CCPixelDataGetSize(Pixels[2], &Region.width, &Region.height, &Region.depth);
+    else if (Pixels[3]) CCPixelDataGetSize(Pixels[3], &Region.width, &Region.height, &Region.depth);
+    
+    return CCPixelDataCompositeConvertedMultiPlanarSubPixelData(Pixels, X, Y, Z, Region);
 }
 
 static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z)
 {
-    size_t Width, Height, Depth;
-    CCPixelDataGetSize(Pixels, &Width, &Height, &Depth);
+    CCPixelDataCompositeReferenceRegion Region = { .x = 0, .y = 0, .z = 0 };
     
-    return CCPixelDataCompositeReinterpretedSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    CCPixelDataGetSize(Pixels, &Region.width, &Region.height, &Region.depth);
+    
+    return CCPixelDataCompositeReinterpretedSubPixelData(Pixels, X, Y, Z, Region);
 }
 
 static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedMultiPlanarPixelData(CCPixelData Pixels[4], size_t X, size_t Y, size_t Z)
 {
-    size_t Width = 0, Height = 0, Depth = 0;
-    if (Pixels[0]) CCPixelDataGetSize(Pixels[0], &Width, &Height, &Depth);
-    else if (Pixels[1]) CCPixelDataGetSize(Pixels[1], &Width, &Height, &Depth);
-    else if (Pixels[2]) CCPixelDataGetSize(Pixels[2], &Width, &Height, &Depth);
-    else if (Pixels[3]) CCPixelDataGetSize(Pixels[3], &Width, &Height, &Depth);
+    CCPixelDataCompositeReferenceRegion Region = { .x = 0, .y = 0, .z = 0 };
     
-    return CCPixelDataCompositeReinterpretedMultiPlanarSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    if (Pixels[0]) CCPixelDataGetSize(Pixels[0], &Region.width, &Region.height, &Region.depth);
+    else if (Pixels[1]) CCPixelDataGetSize(Pixels[1], &Region.width, &Region.height, &Region.depth);
+    else if (Pixels[2]) CCPixelDataGetSize(Pixels[2], &Region.width, &Region.height, &Region.depth);
+    else if (Pixels[3]) CCPixelDataGetSize(Pixels[3], &Region.width, &Region.height, &Region.depth);
+    
+    return CCPixelDataCompositeReinterpretedMultiPlanarSubPixelData(Pixels, X, Y, Z, Region);
 }
 
-static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedSubPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedSubPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region)
 {
-    return CCPixelDataCompositeConvertedMultiPlanarSubPixelData((CCPixelData[4]){ Pixels, NULL, NULL, NULL }, X, Y, Z, Width, Height, Depth);
+    return CCPixelDataCompositeConvertedMultiPlanarSubPixelData((CCPixelData[4]){ Pixels, NULL, NULL, NULL }, X, Y, Z, Region);
 }
 
-static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPlanarSubPixelData(CCPixelData Pixels[4], size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPlanarSubPixelData(CCPixelData Pixels[4], size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region)
 {
     return (CCPixelDataCompositeReference){
         .pixel = {
             .data = { Pixels[0], Pixels[1], Pixels[2], Pixels[3] },
-            .region = {
-                .x = 0, .y = 0, .z = 0,
-                .width = Width, .height = Height, .depth = Depth
-            }
+            .region = Region
         },
         .x = X,
         .y = Y,
@@ -286,18 +279,18 @@ static inline CCPixelDataCompositeReference CCPixelDataCompositeConvertedMultiPl
     };
 }
 
-static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedSubPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedSubPixelData(CCPixelData Pixels, size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region)
 {
-    CCPixelDataCompositeReference Reference = CCPixelDataCompositeConvertedSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    CCPixelDataCompositeReference Reference = CCPixelDataCompositeConvertedSubPixelData(Pixels, X, Y, Z, Region);
     
     Reference.reinterpret = TRUE;
     
     return Reference;
 }
 
-static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedMultiPlanarSubPixelData(CCPixelData Pixels[4], size_t X, size_t Y, size_t Z, size_t Width, size_t Height, size_t Depth)
+static inline CCPixelDataCompositeReference CCPixelDataCompositeReinterpretedMultiPlanarSubPixelData(CCPixelData Pixels[4], size_t X, size_t Y, size_t Z, CCPixelDataCompositeReferenceRegion Region)
 {
-    CCPixelDataCompositeReference Reference = CCPixelDataCompositeConvertedMultiPlanarSubPixelData(Pixels, X, Y, Z, Width, Height, Depth);
+    CCPixelDataCompositeReference Reference = CCPixelDataCompositeConvertedMultiPlanarSubPixelData(Pixels, X, Y, Z, Region);
     
     Reference.reinterpret = TRUE;
     
