@@ -90,7 +90,7 @@ static CCColour CCPixelDataStaticGetColour(CCPixelData Pixels, size_t x, size_t 
     CCData *Buffer = ((CCPixelDataStaticInternal*)Pixels->internal)->buffer;
     const size_t Width = ((CCPixelDataStaticInternal*)Pixels->internal)->width, Height = ((CCPixelDataStaticInternal*)Pixels->internal)->height;
     const CCColourFormat Format = Pixels->format;
-    const size_t Offset = (x + (Width * y) + (Width * Height * z));
+    const size_t Offset = x + (Width * y) + (Width * Height * z);
     
     return CCColourUnpackFromBuffer(Format, (const void*[4]){
         (Buffer[0] ? CCDataGetBuffer(Buffer[0]) : NULL) + (CCColourFormatSampleSizeForPlanar(Format, CCColourFormatChannelPlanarIndex0) * Offset),
@@ -110,12 +110,9 @@ static void CCPixelDataStaticGetSize(CCPixelData Pixels, size_t *Width, size_t *
 static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
 {
     if ((Pixels->format == Type) && (CCColourFormatPlaneCount(Type) == 1) &&
-        (!x) &&
-        (!y) &&
-        (!z) &&
-        (((CCPixelDataStaticInternal*)Pixels->internal)->width == Width) &&
-        (((CCPixelDataStaticInternal*)Pixels->internal)->height == Height) &&
-        (((CCPixelDataStaticInternal*)Pixels->internal)->depth == Depth))
+        (((CCPixelDataStaticInternal*)Pixels->internal)->width >= (Width + x)) &&
+        (((CCPixelDataStaticInternal*)Pixels->internal)->height >= (Height + y)) &&
+        (((CCPixelDataStaticInternal*)Pixels->internal)->depth >= (Depth + z)))
     {
         size_t Plane = SIZE_MAX;
         if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[0]) Plane = 0;
@@ -123,7 +120,33 @@ static _Bool CCPixelDataStaticGetPackedData(CCPixelData Pixels, CCColourFormat T
         else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[2]) Plane = 2;
         else if (((CCPixelDataStaticInternal*)Pixels->internal)->buffer[3]) Plane = 3;
         
-        if (Plane != SIZE_MAX) CCDataReadBuffer(((CCPixelDataStaticInternal*)Pixels->internal)->buffer[Plane], 0, CCColourFormatSampleSizeForPlanar(Type, CCColourFormatLiteralIndexToChannelPlanar(Plane)) * Width * Height * Depth, Data);
+        if (Plane != SIZE_MAX)
+        {
+            const size_t SampleSize = CCColourFormatSampleSizeForPlanar(Type, CCColourFormatLiteralIndexToChannelPlanar(Plane));
+            
+            size_t Size = SampleSize * Width, DepthChunk = 1, HeightChunk = 1;
+            if ((!x) && (((CCPixelDataStaticInternal*)Pixels->internal)->width == Width))
+            {
+                Size *= Height;
+                HeightChunk = Height;
+                
+                if ((!y) && (((CCPixelDataStaticInternal*)Pixels->internal)->height == Height))
+                {
+                    Size *= Depth;
+                    DepthChunk = Depth;
+                }
+            }
+            
+            for (size_t Chunk = 0, SubZ = 0; SubZ < Depth; SubZ += DepthChunk)
+            {
+                for (size_t SubY = 0; SubY < Height; SubY += HeightChunk, Chunk += Size)
+                {
+                    const size_t Offset = x + (((CCPixelDataStaticInternal*)Pixels->internal)->width * (SubY + y)) + (((CCPixelDataStaticInternal*)Pixels->internal)->width * ((CCPixelDataStaticInternal*)Pixels->internal)->height * (SubZ + z));
+                    
+                    CCDataReadBuffer(((CCPixelDataStaticInternal*)Pixels->internal)->buffer[Plane], SampleSize * Offset, Size, Data + Chunk);
+                }
+            }
+        }
         
         return TRUE;
     }
