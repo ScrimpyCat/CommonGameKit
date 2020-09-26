@@ -140,6 +140,13 @@
     
     XCTAssertEqual(PixelData[0], 2, @"Should contain the correct value");
     XCTAssertEqual(PixelData[1], 3, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(pixelData, 0, 1, 0, 3, 1, 1, PixelData);
+    
+    XCTAssertEqual(PixelData[0], 2, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[1], 3, @"Should contain the correct value");
+    XCTAssertEqual(PixelData[2], 0, @"Should contain the correct value");
 }
 
 @end
