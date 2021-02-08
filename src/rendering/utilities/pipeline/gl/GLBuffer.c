@@ -117,7 +117,7 @@ static inline CC_CONSTANT_FUNCTION GLenum GLBufferUsage(GFXBufferHint Hint)
     const int GPURead = (Hint >> GFXBufferHintGPURead) & GFXBufferHintAccessMask;
     
     const int Frequency = (((CPUWrite == GFXBufferHintAccessMany) | (GPUWrite == GFXBufferHintAccessMany)) << 1) + ((CPURead == GFXBufferHintAccessMany) | (GPURead == GFXBufferHintAccessMany));
-    const int Nature = CCClampi(((_Bool)CPUWrite + ((_Bool)GPUWrite * 2)) - (_Bool)GPURead, 0, 2);
+    const int Nature = CCClamp(((_Bool)CPUWrite + ((_Bool)GPUWrite * 2)) - (_Bool)GPURead, 0, 2);
     
     return Usage[Frequency > 2 ? 2 : Frequency][Nature];
 }

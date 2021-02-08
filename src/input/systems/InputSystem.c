@@ -180,7 +180,7 @@ static float CCInputSystemPressureForBinaryInput(CCInputState State, double Time
 {
     Ramp *= (CCTimestamp() - Timestamp);
     Ramp = Ramp == 0.0f ? 1.0f : Ramp;
-    return CCClampf((State == CCInputStateActive ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
+    return CCClamp((State == CCInputStateActive ? 0.0f + Ramp : 1.0f - Ramp), 0.0f, 1.0f);
 }
 
 float CCInputSystemGetPressureForAction(CCEntity Entity, CCString Action)
