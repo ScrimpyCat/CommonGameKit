@@ -161,7 +161,7 @@ void GFXDrawSetFramebuffers(GFXDraw Draw, GFXFramebuffer Framebuffer, size_t *In
     
     if (Count < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))) Draw->destination[Count].index = SIZE_MAX;
     
-    if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, &Draw->destination, Count);
+    if (GFXMain->draw->optional.setFramebuffer) GFXMain->draw->optional.setFramebuffer(Draw, Draw->destination, Count);
     if (GFXMain->draw->optional.setViewport) GFXMain->draw->optional.setViewport(Draw, GFXDrawGetViewport(Draw));
 }
 
