@@ -367,7 +367,7 @@
     
     CCPixelData Pixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[2]){
         CCPixelDataCompositeConvertedSubPixelData(CCRetain(Base), 2, 0, 0, (CCPixelDataCompositeReferenceRegion){ .x = 0, .y = 0, .z = 0, .width = 1, .height = 2, .depth = 1 }),
-        CCPixelDataCompositeConvertedPixelData(Base, 0, 0, 0)
+        CCPixelDataCompositeConvertedPixelData(CCRetain(Base), 0, 0, 0)
     }, 2, Base->format, 3, 2, 1);
     
     uint8_t Data[6];
@@ -408,6 +408,56 @@
     XCTAssertEqual(Data[0], 2, @"Should contain the correct value");
     XCTAssertEqual(Data[1], 3, @"Should contain the correct value");
     XCTAssertEqual(Data[2], 2, @"Should contain the correct value");
+    
+    CCPixelDataDestroy(Pixels);
+    
+    
+    Pixels = CCPixelDataCompositeCreate(CC_STD_ALLOCATOR, (CCPixelDataCompositeReference[2]){
+        CCPixelDataCompositeReinterpretedSubPixelData(CCRetain(Base), 2, 0, 0, (CCPixelDataCompositeReferenceRegion){ .x = 0, .y = 0, .z = 0, .width = 1, .height = 2, .depth = 1 }),
+        CCPixelDataCompositeConvertedPixelData(Base, 0, 0, 0)
+    }, 2, CCColourFormatSpaceRGB_RGB | CCColourFormatTypeUnsignedInteger
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelRed,   2, CCColourFormatChannelOffset0)
+                                        | CC_COLOUR_FORMAT_CHANNEL(CCColourFormatChannelGreen, 1, CCColourFormatChannelOffset1), 3, 2, 1);
+    
+    CCPixelDataGetPackedData(Pixels, 0, 0, 0, 3, 2, 1, Data);
+    
+    XCTAssertEqual(Data[0], 3, @"Should contain the correct value");
+    XCTAssertEqual(Data[1], 0, @"Should contain the correct value");
+    XCTAssertEqual(Data[2], 1, @"Should contain the correct value");
+    XCTAssertEqual(Data[3], 4, @"Should contain the correct value");
+    XCTAssertEqual(Data[4], 7, @"Should contain the correct value");
+    XCTAssertEqual(Data[5], 2, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(Pixels, 0, 0, 0, 2, 2, 1, Data);
+    
+    XCTAssertEqual(Data[0], 3, @"Should contain the correct value");
+    XCTAssertEqual(Data[1], 0, @"Should contain the correct value");
+    XCTAssertEqual(Data[2], 4, @"Should contain the correct value");
+    XCTAssertEqual(Data[3], 7, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(Pixels, 1, 0, 0, 2, 2, 1, Data);
+    
+    XCTAssertEqual(Data[0], 0, @"Should contain the correct value");
+    XCTAssertEqual(Data[1], 1, @"Should contain the correct value");
+    XCTAssertEqual(Data[2], 7, @"Should contain the correct value");
+    XCTAssertEqual(Data[3], 2, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(Pixels, 0, 1, 0, 2, 1, 1, Data);
+    
+    XCTAssertEqual(Data[0], 4, @"Should contain the correct value");
+    XCTAssertEqual(Data[1], 7, @"Should contain the correct value");
+    
+    
+    CCPixelDataGetPackedData(Pixels, 0, 1, 0, 3, 1, 1, Data);
+    
+    XCTAssertEqual(Data[0], 4, @"Should contain the correct value");
+    XCTAssertEqual(Data[1], 7, @"Should contain the correct value");
+    XCTAssertEqual(Data[2], 2, @"Should contain the correct value");
+    
+    CCPixelDataDestroy(Pixels);
 }
 
 @end
