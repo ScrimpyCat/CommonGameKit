@@ -26,6 +26,9 @@
 #define CC_QUICK_COMPILE
 #include "PixelDataComposite.h"
 
+#define T size_t
+#include <CommonC/Extrema.h>
+
 typedef struct {
     CCArray(CCPixelDataCompositeReference) references;
     size_t width, height, depth;
@@ -35,13 +38,15 @@ static void *CCPixelDataCompositeConstructor(CCAllocatorType Allocator);
 static void CCPixelDataCompositeDestructor(CCPixelDataCompositeInternal *Internal);
 static CCColour CCPixelDataCompositeGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z);
 static void CCPixelDataCompositeGetSize(CCPixelData Pixels, size_t *Width, size_t *Height, size_t *Depth);
+static _Bool CCPixelDataCompositeGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data);
 
 const CCPixelDataInterface CCPixelDataCompositeInterface = {
     .create = CCPixelDataCompositeConstructor,
     .destroy = (CCPixelDataDestructorCallback)CCPixelDataCompositeDestructor,
     .colour = CCPixelDataCompositeGetColour,
     .optional = {
-        .size = CCPixelDataCompositeGetSize
+        .size = CCPixelDataCompositeGetSize,
+        .packedData = CCPixelDataCompositeGetPackedData
     }
 };
 
@@ -89,6 +94,48 @@ static void CCPixelDataCompositeDestructor(CCPixelDataCompositeInternal *Interna
     CCFree(Internal);
 }
 
+static CCColour CCPixelDataCompositeReferenceColour(const CCPixelDataCompositeReference *Reference, CCColourFormat Format, size_t x, size_t y, size_t z)
+{
+    const CCColourFormat ChannelMask = CCColourFormatChannelIndexMask | CCColourFormatChannelBitSizeMask;
+    
+    CCColourFormat OriginalFormat = 0;
+    uint8_t Data[64];
+    size_t Size = 0;
+    for (size_t Loop = 0, ChannelCount = 0; Loop < 4; Loop++)
+    {
+        if (Reference->pixel.data[Loop])
+        {
+            for (size_t Loop2 = 0; Loop2 < 4; Loop2++)
+            {
+                const CCColourFormat Offset = CCColourFormatLiteralIndexToChannelOffset(Loop2);
+                const CCColourFormat Channel = (Reference->pixel.data[Loop]->format & (ChannelMask << Offset)) >> Offset;
+                
+                if (Channel) OriginalFormat |= (Channel | CCColourFormatChannelPlanarIndex0) << CCColourFormatLiteralIndexToChannelOffset(ChannelCount++);
+            }
+            
+            OriginalFormat |= Reference->pixel.data[Loop]->format & CCColourFormatMask;
+            
+            CCPixelDataGetPackedDataWithFormat(Reference->pixel.data[Loop], Reference->pixel.data[Loop]->format, (x - Reference->x) + Reference->pixel.region.x, (y - Reference->y) + Reference->pixel.region.y, (z - Reference->z) + Reference->pixel.region.z, 1, 1, 1, Data + Size);
+            
+            Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex0);
+            Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex1);
+            Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex2);
+            Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex3);
+        }
+    }
+    
+    if (Reference->reinterpret)
+    {
+        return CCColourUnpackFromBuffer(Format, (const void*[4]){ Data, NULL, NULL, NULL });
+    }
+    
+    else
+    {
+        CCColour Colour = CCColourUnpackFromBuffer(OriginalFormat, (const void*[4]){ Data, NULL, NULL, NULL });
+        return CCColourConversion(Colour, Format);
+    }
+}
+
 static CCColour CCPixelDataCompositeGetColour(CCPixelData Pixels, size_t x, size_t y, size_t z)
 {
     if (!CCPixelDataInsideBounds(Pixels, x, y, z)) return (CCColour){ .type = 0 };
@@ -99,46 +146,9 @@ static CCColour CCPixelDataCompositeGetColour(CCPixelData Pixels, size_t x, size
         {
             const CCPixelDataCompositeReference *Reference = CCArrayGetElementAtIndex(((CCPixelDataCompositeInternal*)Pixels->internal)->references, Loop);
             
-            if ((Reference->x <= x) && (Reference->y <= y) && (Reference->z <= z) && (x <= (Reference->x + Reference->pixel.region.width)) && (y <= (Reference->y + Reference->pixel.region.height)) && (z <= (Reference->z + Reference->pixel.region.depth)))
+            if ((Reference->x <= x) && (Reference->y <= y) && (Reference->z <= z) && (x < (Reference->x + Reference->pixel.region.width)) && (y < (Reference->y + Reference->pixel.region.height)) && (z < (Reference->z + Reference->pixel.region.depth)))
             {
-                const CCColourFormat ChannelMask = CCColourFormatChannelIndexMask | CCColourFormatChannelBitSizeMask;
-                
-                CCColourFormat Format = 0;
-                uint8_t Data[64];
-                size_t Size = 0;
-                for (size_t Loop = 0, ChannelCount = 0; Loop < 4; Loop++)
-                {
-                    if (Reference->pixel.data[Loop])
-                    {
-                        for (size_t Loop2 = 0; Loop2 < 4; Loop2++)
-                        {
-                            const CCColourFormat Offset = CCColourFormatLiteralIndexToChannelOffset(Loop2);
-                            const CCColourFormat Channel = (Reference->pixel.data[Loop]->format & (ChannelMask << Offset)) >> Offset;
-                            
-                            if (Channel) Format |= (Channel | CCColourFormatChannelPlanarIndex0) << CCColourFormatLiteralIndexToChannelOffset(ChannelCount++);
-                        }
-                        
-                        Format |= Reference->pixel.data[Loop]->format & CCColourFormatMask;
-                        
-                        CCPixelDataGetPackedDataWithFormat(Reference->pixel.data[Loop], Reference->pixel.data[Loop]->format, (x - Reference->x) + Reference->pixel.region.x, (y - Reference->y) + Reference->pixel.region.y, (z - Reference->z) + Reference->pixel.region.z, 1, 1, 1, Data + Size);
-                        
-                        Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex0);
-                        Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex1);
-                        Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex2);
-                        Size += CCColourFormatSampleSizeForPlanar(Reference->pixel.data[Loop]->format, CCColourFormatChannelPlanarIndex3);
-                    }
-                }
-                
-                if (Reference->reinterpret)
-                {
-                    return CCColourUnpackFromBuffer(Pixels->format, (const void*[4]){ Data, NULL, NULL, NULL });
-                }
-                
-                else
-                {
-                    CCColour Colour = CCColourUnpackFromBuffer(Format, (const void*[4]){ Data, NULL, NULL, NULL });
-                    return CCColourConversion(Colour, Pixels->format);
-                }
+                return CCPixelDataCompositeReferenceColour(Reference, Pixels->format, x, y, z);
             }
         }
     }
@@ -153,8 +163,86 @@ static void CCPixelDataCompositeGetSize(CCPixelData Pixels, size_t *Width, size_
     if (Depth) *Depth = ((CCPixelDataCompositeInternal*)Pixels->internal)->depth;
 }
 
+static _Bool CCPixelDataCompositeGetPackedData(CCPixelData Pixels, CCColourFormat Type, size_t x, size_t y, size_t z, size_t Width, size_t Height, size_t Depth, void *Data)
+{
+    if ((Pixels->format == Type) &&
+        (((CCPixelDataCompositeInternal*)Pixels->internal)->width >= (Width + x)) &&
+        (((CCPixelDataCompositeInternal*)Pixels->internal)->height >= (Height + y)) &&
+        (((CCPixelDataCompositeInternal*)Pixels->internal)->depth >= (Depth + z)))
+    {
+        if (((CCPixelDataCompositeInternal*)Pixels->internal)->references)
+        {
+            for (size_t Loop = 0, Count = CCArrayGetCount(((CCPixelDataCompositeInternal*)Pixels->internal)->references); Loop < Count; Loop++)
+            {
+                const CCPixelDataCompositeReference *Reference = CCArrayGetElementAtIndex(((CCPixelDataCompositeInternal*)Pixels->internal)->references, Loop);
+                
+                if ((x < (Reference->x + Reference->pixel.region.width)) &&
+                    (y < (Reference->y + Reference->pixel.region.height)) &&
+                    (z < (Reference->z + Reference->pixel.region.depth)) &&
+                    ((x + Width) > Reference->x) &&
+                    ((y + Height) > Reference->y) &&
+                    ((z + Depth) > Reference->z))
+                {
+                    _Bool MultiPlanar = FALSE;
+                    CCPixelData Pixels = NULL;
+                    
+                    if ((Pixels = Reference->pixel.data[0])) MultiPlanar = (_Bool)Reference->pixel.data[1] | (_Bool)Reference->pixel.data[2] | (_Bool)Reference->pixel.data[3];
+                    else if ((Pixels = Reference->pixel.data[1])) MultiPlanar = (_Bool)Reference->pixel.data[2] | (_Bool)Reference->pixel.data[3];
+                    else if ((Pixels = Reference->pixel.data[2])) MultiPlanar = (_Bool)Reference->pixel.data[3];
+                    else Pixels = Reference->pixel.data[3];
+                    
+                    
+                    size_t SubWidth = CCMin(Width, Reference->pixel.region.width);
+                    size_t SubHeight = CCMin(Height, Reference->pixel.region.height);
+                    size_t SubDepth = CCMin(Depth, Reference->pixel.region.depth);
+                    
+                    if (MultiPlanar)
+                    {
+                        for (size_t SubZ = CCMax(z, Reference->z), CountZ = SubZ + SubDepth; SubZ < CountZ; SubZ++)
+                        {
+                            const size_t RelZ = SubZ - z;
+                            
+                            for (size_t SubY = CCMax(y, Reference->y), CountY = SubY + SubHeight; SubY < CountY; SubY++)
+                            {
+                                const size_t RelY = SubY - y;
+                                
+                                for (size_t SubX = CCMax(x, Reference->x), CountX = SubX + SubWidth; SubX < CountX; SubX++)
+                                {
+                                    const size_t Offset = (SubX - x) + (Width * RelY) + (Width * Height * RelZ);
+                                    CCColourPackIntoBuffer(CCPixelDataCompositeReferenceColour(Reference, Type, SubX, SubY, SubZ), Data + Offset);
+                                }
+                            }
+                        }
+                    }
+                    
+                    else
+                    {
+                        for (size_t SubZ = CCMax(z, Reference->z), CountZ = SubZ + SubDepth; SubZ < CountZ; SubZ++)
+                        {
+                            const size_t RelZ = SubZ - z;
+                            
+                            for (size_t SubY = CCMax(y, Reference->y), CountY = SubY + SubHeight; SubY < CountY; SubY++)
+                            {
+                                const size_t RelY = SubY - y;
+                                const size_t SubX = CCMax(x, Reference->x);
+                                const size_t Offset = (SubX - x) + (Width * RelY) + (Width * Height * RelZ);
+                                
+                                CCPixelDataGetPackedDataWithFormat(Pixels, Reference->reinterpret ? Pixels->format : Type, SubX, SubY, SubZ, SubWidth, SubHeight, SubDepth, Data + Offset);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return FALSE;
+}
+
 CCPixelData CCPixelDataCompositeCreate(CCAllocatorType Allocator, CCPixelDataCompositeReference *References, size_t Count, CCColourFormat Format, size_t Width, size_t Height, size_t Depth)
 {
+    CCAssertLog(CCColourFormatPlaneCount(Format) == 1, "Must not be multi-planar");
+    
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
         const CCPixelDataCompositeReference *Reference = &References[Loop];
