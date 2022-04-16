@@ -45,8 +45,8 @@ typedef enum {
 } GFXFramebufferAttachmentType;
 
 typedef struct GFXFramebufferAttachment {
-    const GFXTexture texture;
-    const GFXFramebufferAttachmentType type;
+    GFXTexture texture;
+    GFXFramebufferAttachmentType type;
     GFXFramebufferAttachmentAction load;
     GFXFramebufferAttachmentAction store;
     union {
