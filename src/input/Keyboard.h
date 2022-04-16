@@ -177,15 +177,17 @@ typedef enum {
 
 typedef struct {
     double timestamp;
-    _Bool down, repeat;
-} CCKeyboardState;
+    _Bool down : 1, repeat : 1;
+} CC_PACKED CCKeyboardState;
 
 typedef struct {
-    CCKeyboardKeycode keycode;
-    CCChar character;
-    CCKeyboardModifier flags;
+    CCKeyboardKeycode keycode : 10;
+    CCChar character; // : 21
+    CCKeyboardModifier flags : 4;
     CCKeyboardState state;
-} CCKeyboardMap;
+} CC_PACKED CCKeyboardMap;
+
+_Static_assert(sizeof(CCKeyboardMap) <= 16, "Exceeds 16 bytes");
 
 /*!
  * @brief Register a new keyboard input event.

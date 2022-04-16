@@ -58,14 +58,16 @@ typedef enum {
 
 typedef struct {
     double timestamp;
-    _Bool down;
-} CCMouseButtonState;
+    _Bool down : 1;
+} CC_PACKED CCMouseButtonState;
 
 typedef struct {
-    CCMouseButton button;
-    CCKeyboardModifier flags;
+    CCMouseButton button : 4;
+    CCKeyboardModifier flags : 4;
     CCMouseButtonState state;
-} CCMouseButtonMap;
+} CC_PACKED CCMouseButtonMap;
+
+_Static_assert(sizeof(CCMouseButtonMap) <= 16, "Exceeds 16 bytes");
 
 typedef struct {
     CCVector2D delta;
