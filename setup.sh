@@ -23,6 +23,7 @@ build=${BUILD_DIR:-build}
 
 if [ -z "${shallow}" ]; then
     if [ -z "${preserve}" ]; then
+        git submodule init
         git submodule update
     fi
 

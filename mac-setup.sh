@@ -1,3 +1,4 @@
+git submodule init
 git submodule update
 
 cd deps/zlib
