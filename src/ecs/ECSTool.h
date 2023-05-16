@@ -26,19 +26,106 @@
 #ifndef CommonGameKit_ECSTool_h
 #define CommonGameKit_ECSTool_h
 
-#define ECS_COMPONENT(...)
+//TODO: document
+#define ECS_PACKED_COMPONENT(...)
+#define ECS_INDEXED_COMPONENT(...)
 #define ECS_ARCHETYPE_COMPONENT(...)
 
-#define ECS_SYSTEM(...)
-#define ECS_PARALLEL_SYSTEM(...)
+#define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, void *ECS_CHANGES_VAR, ECSTime ECS_TIME_VAR)
+#define ECS_PARALLEL_SYSTEM(...) ECS_SYSTEM(__VA_ARGS__)
 
 #define ECS_SYSTEM_GROUP(...)
 
-#define ECS_COMPONENT_ACCESS(system, component) system##_##component
+#define ECS_COMPONENT_ACCESS(system, component) ECS_COMPONENT_ACCESS_(system##_##component)
+#define ECS_COMPONENT_ACCESS_(...) ECS_COMPONENT_ACCESS__(__VA_ARGS__)
+#define ECS_COMPONENT_ACCESS__(components, _) components
 
-#define ECS_GET(component) ECS_GET_(ECS_COMPONENTS_VARIABLE, ECS_SYSTEM_NAME, component)
-#define ECS_GET_(var, system, component) var[ECS_COMPONENT_ACCESS(system, component)]
+#define ECS_ENTITY_ACCESS(system, component) ECS_ENTITY_ACCESS_(system##_##component)
+#define ECS_ENTITY_ACCESS_(...) ECS_ENTITY_ACCESS__(__VA_ARGS__)
+#define ECS_ENTITY_ACCESS__(_, entities) entities
 
-#define ECS_COMPONENTS_VARIABLE Components
+#define ECS_GET(component) ECS_GET_(ECS_SYSTEM_NAME, component)
+#define ECS_GET_(system, component) ECS_COMPONENT_ACCESS(system, component)
+
+#define ECS_ENTITIES(component) ECS_ENTITIES_(ECS_SYSTEM_NAME, component)
+#define ECS_ENTITIES_(system, component) ECS_ENTITY_ACCESS(system, component)
+
+#define ECS_CONTEXT_VAR Context
+#define ECS_ARCHETYPE_VAR Archetype
+#define ECS_ARCHETYPE_COMPONENT_INDEXES_VAR ArchetypeComponentIndexes
+#define ECS_COMPONENT_OFFSETS_VAR ComponentOffsets
+#define ECS_CHANGES_VAR Changes
+#define ECS_TIME_VAR Time
+
+#define ECS_SYSTEM_FUN(...) ECS_SYSTEM(ECS_SYSTEM_NAME)
+
+#pragma mark - Iterator
+
+#define ECS_ITER_CONSUME(...) __VA_ARGS__
+#define ECS_ITER_IGNORE(...)
+#define ECS_ITER_POP(x, ...) x
+
+#define ECS_ITER_TYPE(x) ECS_ITER_TYPE_(x)
+#define ECS_ITER_TYPE_(x) ECS_ITER_TYPE_##x )
+#define ECS_ITER_TYPE_0(x) ECS_ITER_TYPE_##x )
+#define ECS_ITER_TYPE_const ECS_ITER_TYPE_0(
+
+#define ECS_ITER_KIND(type) ECS_ITER_KIND_(type)
+#define ECS_ITER_KIND_(type) ECS_ITER_KIND_##type
+
+#define ECS_ITER_ARCHETYPE_PRE_INIT(type, i) *ECS_ITER_PRIVATE__Ptr##i = CCArrayGetData(ECS_GET(type))
+#define ECS_ITER_PACKED_PRE_INIT(type, i) ECS_ITER_ARCHETYPE_PRE_INIT(type, i)
+
+#define ECS_ITER_ARCHETYPE_FETCH(type, i) &((type*)ECS_ITER_PRIVATE__Ptr##i)[ECS_ITER_INDEX], ECS_ITER_IGNORE
+#define ECS_ITER_PACKED_FETCH(type, i) CC_GET(i, ECS_ITER_ARCHETYPE_FETCH, CC_REPEAT(0, 20, ECS_ITER_POP, ECS_ITER_FALLBACK_FETCH))(type, i)
+#define ECS_ITER_FALLBACK_FETCH(type, i) ECSEntityGetComponent(ECS_CONTEXT_VAR, ECS_ITER_ENTITY, ECS_ITER_ID_##type), ECS_ITER_CONSUME
+
+#define ECS_ITER_INIT(type) ECS_ITER_INIT_(type)
+#define ECS_ITER_INIT_(type) ECS_ITER_INIT__(type, ECS_ITER_KIND(type))
+#define ECS_ITER_INIT__(type, kind) ECS_ITER_INIT___(type, kind)
+#define ECS_ITER_INIT___(type, kind) ECS_ITER_INIT_##kind(type)
+
+// archetype
+#define ECS_ITER_INIT_0(type) ECS_ENTITIES(type), void,                                   ((,) ECS_ITER_ARCHETYPE_PRE_INIT, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_ARCHETYPE_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
+// packed
+#define ECS_ITER_INIT_1(type) ECS_ENTITIES(type), void ECS_ITER_PACKED_PRE_INIT(type, 0), (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_FALLBACK_FETCH,  ECS_ITER_PACKED_FETCH,   ECS_ITER_FALLBACK_FETCH)
+// indexed
+// TODO: ECS_ITER_INIT_2(type)
+
+#define ECS_ITER_PRE(e, i, init) ECS_ITER_PRE_(ECS_ITER_TYPE(e), e, i, ECS_ITER_CONSUME init)
+#define ECS_ITER_PRE_(type, e, i, ...) ECS_ITER_PRE__(ECS_ITER_KIND(type), type, e, i, __VA_ARGS__)
+#define ECS_ITER_PRE__(kind, type, e, i, ...) CC_GET(kind, __VA_ARGS__)(type, i)
+
+#define ECS_ITER_FETCH(e, i, fetch) ECS_ITER_FETCH_(ECS_ITER_TYPE(e), e, i, ECS_ITER_CONSUME fetch)
+#define ECS_ITER_FETCH_(type, e, i, ...) ECS_ITER_FETCH__(ECS_ITER_KIND(type), type, e, i, __VA_ARGS__)
+#define ECS_ITER_FETCH__(kind, type, e, i, ...) ECS_ITER_FETCH___(kind, type, e, i, CC_GET(kind, __VA_ARGS__)(type, i))
+#define ECS_ITER_FETCH___(kind, type, e, i, ...) ECS_ITER_FETCH____(kind, type, e, i, __VA_ARGS__)
+#define ECS_ITER_FETCH____(kind, type, e, i, fetch, valid) for (size_t ECS_ITER_PRIVATE__fetch##i = 0, ECS_ITER_PRIVATE__set##i = 0; !ECS_ITER_PRIVATE__fetch##i; ) for (void *ECS_ITER_PRIVATE__fetch_var##i = fetch; !ECS_ITER_PRIVATE__fetch##i++ valid(&& ECS_ITER_PRIVATE__fetch_var##i); ) for (e = ECS_ITER_PRIVATE__fetch_var##i; !ECS_ITER_PRIVATE__set##i++; )
+
+#ifndef ECS_ITER_INDEX
+#define ECS_ITER_INDEX ECSIterIndex
+#endif
+
+#ifndef ECS_ITER_COUNT
+#define ECS_ITER_COUNT ECSIterCount
+#endif
+
+#ifndef ECS_ITER_ENTITIES
+#define ECS_ITER_ENTITIES ECSIterEntities
+#endif
+
+#ifndef ECS_ITER_ENTITY
+#define ECS_ITER_ENTITY ECSIterEntity
+#endif
+
+#define ECS_ITER(...) ECS_ITER_(__VA_ARGS__)
+#define ECS_ITER_(...) ECS_ITER__(ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
+#define ECS_ITER__(...) ECS_ITER___(__VA_ARGS__)
+#define ECS_ITER___(entities, declare, pre, fetch, ...) \
+for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC_EXPAND(ECS_ITER_IGNORE CC_SOFT_JOIN(ECS_ITER_CONSUME, CC_MAP_WITH(ECS_ITER_PRE, pre, __VA_ARGS__))); !ECS_ITER_PRIVATE__pre++; ) \
+for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
+for (size_t ECS_ITER_INDEX = 0, ECS_ITER_COUNT = CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX++) \
+for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; ) \
+CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__))
 
 #endif
