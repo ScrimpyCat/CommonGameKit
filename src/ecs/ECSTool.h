@@ -125,7 +125,7 @@
 for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC_EXPAND(ECS_ITER_IGNORE CC_SOFT_JOIN(ECS_ITER_CONSUME, CC_MAP_WITH(ECS_ITER_PRE, pre, __VA_ARGS__))); !ECS_ITER_PRIVATE__pre++; ) \
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
 for (size_t ECS_ITER_INDEX = 0, ECS_ITER_COUNT = CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX++) \
-for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; ) \
+for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY) \
 CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__))
 
 #endif
