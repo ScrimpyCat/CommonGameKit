@@ -118,14 +118,23 @@
 #define ECS_ITER_ENTITY ECSIterEntity
 #endif
 
-#define ECS_ITER(...) ECS_ITER_(__VA_ARGS__)
-#define ECS_ITER_(...) ECS_ITER__(ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
-#define ECS_ITER__(...) ECS_ITER___(__VA_ARGS__)
-#define ECS_ITER___(entities, declare, pre, fetch, ...) \
+#define ECS_ITER(...) ECS_ITER_(1, __VA_ARGS__)
+#define ECS_ITER_(count, ...) ECS_ITER__(count, ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
+#define ECS_ITER__(count, ...) ECS_ITER___(count, __VA_ARGS__)
+#define ECS_ITER___(count, entities, declare, pre, fetch, ...) \
 for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC_EXPAND(ECS_ITER_IGNORE CC_SOFT_JOIN(ECS_ITER_CONSUME, CC_MAP_WITH(ECS_ITER_PRE, pre, __VA_ARGS__))); !ECS_ITER_PRIVATE__pre++; ) \
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
-for (size_t ECS_ITER_INDEX = 0, ECS_ITER_COUNT = CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX++) \
+for (size_t ECS_ITER_INDEX = 0, ECS_ITER_COUNT = CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (count)) \
 for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY) \
 CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__))
+
+#define ECS_BATCH_ITER_ASSERT_1(x, ...) ECS_ITER_KIND(ECS_ITER_TYPE(x))
+#define ECS_BATCH_ITER_ASSERT_2(x, ...) (1 << ECS_ITER_KIND(ECS_ITER_TYPE(x)))
+
+#define ECS_BATCH_ITER_BIT_COUNT(x) ((((((((x) - (((x) >> 1) & 0x5555555555555555)) & 0x3333333333333333) + ((((x) - (((x) >> 1) & 0x5555555555555555)) >> 2) & 0x3333333333333333)) + (((((x) - (((x) >> 1) & 0x5555555555555555)) & 0x3333333333333333) + ((((x) - (((x) >> 1) & 0x5555555555555555)) >> 2) & 0x3333333333333333)) >> 4)) & 0x0f0f0f0f0f0f0f0f) * 0x0101010101010101) >> 56)
+
+#define ECS_BATCH_ITER(count, ...) \
+_Static_assert((CC_SOFT_JOIN(+, CC_MAP(ECS_BATCH_ITER_ASSERT_1, __VA_ARGS__)) <= 1) && (ECS_BATCH_ITER_BIT_COUNT(CC_SOFT_JOIN(|, CC_MAP(ECS_BATCH_ITER_ASSERT_2, __VA_ARGS__))) == 1), "ECS_BATCH_ITER can only be used on groups of components that can be batched together"); \
+ECS_ITER_(count, __VA_ARGS__)
 
 #endif
