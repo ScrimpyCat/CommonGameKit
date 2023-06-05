@@ -67,20 +67,21 @@ typedef struct {
     size_t count;
 } ECSArchetypePointer;
 
-CC_ARRAY_DECLARE(ECSArchetypePointer);
-
 typedef struct {
     struct {
-        ECSComponentID *ids;
+        const ECSComponentID *ids;
         size_t count;
     } read, write;
     struct {
-        ECSArchetypePointer *pointer;
+        const ECSArchetypePointer *pointer;
         size_t count;
     } archetype;
+    struct {
+        const size_t *offsets;
+    } component;
 } ECSSystemAccess;
 
-typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, CCArray *Components, CCArray(ECSEntity) Entities, void *Changes, ECSTime Time);
+typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, void *Changes, ECSTime Time);
 
 #if ECS_SYSTEM_UPDATE_TAGGED_POINTER
 typedef ECSSystemUpdateCallback ECSSystemUpdate;
@@ -165,10 +166,16 @@ extern const size_t *ECSArchetypeComponentIndexes;
 extern const size_t *ECSArchetypeComponentSizes;
 
 /*!
- * @brief Set the individual component sizes.
+ * @brief Set the packed component sizes.
  * @warning This must be set prior to any calls to @b ECSEntityCreate.
  */
-extern const size_t *ECSIndividualComponentSizes;
+extern const size_t *ECSPackedComponentSizes;
+
+/*!
+ * @brief Set the indexed component sizes.
+ * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ */
+extern const size_t *ECSIndexedComponentSizes;
 
 /*!
  * @brief Create an ECS worker thread.
@@ -188,8 +195,11 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data,
 void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID);
 
-void ECSIndividualAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
-void ECSIndividualRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+
+void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 
 void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count);
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
@@ -209,8 +219,18 @@ static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, 
             ECSArchetypeAddComponent(Context, Entity, Data, ID);
             break;
             
-        case ECSComponentTypeIndividual:
-            ECSIndividualAddComponent(Context, Entity, Data, ID);
+        case ECSComponentTypePacked:
+            ECSPackedAddComponent(Context, Entity, Data, ID);
+            break;
+            
+        case ECSComponentTypeIndexed:
+            ECSIndexedAddComponent(Context, Entity, Data, ID);
+            break;
+            
+        case ECSComponentTypeDuplicate:
+            break;
+            
+        case ECSComponentTypeTag:
             break;
             
         default:
@@ -227,8 +247,18 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
             ECSArchetypeRemoveComponent(Context, Entity, ID);
             break;
             
-        case ECSComponentTypeIndividual:
-            ECSIndividualRemoveComponent(Context, Entity, ID);
+        case ECSComponentTypePacked:
+            ECSPackedRemoveComponent(Context, Entity, ID);
+            break;
+            
+        case ECSComponentTypeIndexed:
+            ECSIndexedRemoveComponent(Context, Entity, ID);
+            break;
+            
+        case ECSComponentTypeDuplicate:
+            break;
+            
+        case ECSComponentTypeTag:
             break;
             
         default:
@@ -246,8 +276,17 @@ static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity,
         case ECSComponentTypeArchetype:
             return CCBitsGet(Refs->archetype.has, ID);
             
-        case ECSComponentTypeIndividual:
-            return CCBitsGet(Refs->individual.has, (ID & ~ECSComponentTypeMask));
+        case ECSComponentTypePacked:
+            return CCBitsGet(Refs->packed.has, (ID & ~ECSComponentTypeMask));
+            
+        case ECSComponentTypeIndexed:
+            return CCBitsGet(Refs->indexed.has, (ID & ~ECSComponentTypeMask));
+            
+        case ECSComponentTypeDuplicate:
+            break;
+            
+        case ECSComponentTypeTag:
+            break;
             
         default:
             CCAssertLog(0, "Unsupported component type");
@@ -266,11 +305,23 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
         case ECSComponentTypeArchetype:
             return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Refs->archetype.ptr->components[ECSArchetypeComponentIndex(Refs, ID)], Refs->archetype.index) : NULL;
             
-        case ECSComponentTypeIndividual:
+        case ECSComponentTypePacked:
         {
             const size_t Index = (ID & ~ECSComponentTypeMask);
-            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(*Context->components[Index].components, Refs->individual.indexes[Index]) : NULL;
+            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(*Context->packed[Index].components, Refs->packed.indexes[Index]) : NULL;
         }
+            
+        case ECSComponentTypeIndexed:
+        {
+            const size_t Index = (ID & ~ECSComponentTypeMask);
+            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Context->indexed[Index], Entity) : NULL;
+        }
+            
+        case ECSComponentTypeDuplicate:
+            break;
+            
+        case ECSComponentTypeTag:
+            break;
             
         default:
             CCAssertLog(0, "Unsupported component type");

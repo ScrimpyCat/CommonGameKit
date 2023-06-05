@@ -28,17 +28,20 @@
 
 #include <CommonGameKit/ECSArchetype.h>
 
-typedef ECSArchetype(1) ECSComponent;
+typedef ECSArchetype(1) ECSPackedComponent;
+
+typedef CCArray ECSIndexedComponent;
 
 typedef size_t ECSComponentID;
 
 typedef enum {
-    ECSComponentTypeArchetype = (0 << 30),
-    ECSComponentTypeIndividual = (1 << 30),
-    ECSComponentTypeDuplicate = (2 << 30),
-    ECSComponentTypeTag = (3 << 30),
+    ECSComponentTypeArchetype = (0 << 29),
+    ECSComponentTypePacked = (1 << 29),
+    ECSComponentTypeIndexed = (2 << 29),
+    ECSComponentTypeDuplicate = (3 << 29),
+    ECSComponentTypeTag = (4 << 29),
     
-    ECSComponentTypeMask = 0xc0000000
+    ECSComponentTypeMask = 0xe0000000
 } ECSComponentType;
 
 typedef struct {

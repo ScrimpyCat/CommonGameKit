@@ -70,10 +70,16 @@ typedef struct {
         CCBits(uint64_t, ECS_ARCHETYPE_COMPONENT_MAX) has;
     } archetype;
     
+    // TODO: combine has fields and put a single has field here.
+    
     struct {
-        size_t indexes[ECS_INDIVIDUAL_COMPONENT_MAX];
-        CCBits(uint64_t, ECS_INDIVIDUAL_COMPONENT_MAX) has;
-    } individual;
+        size_t indexes[ECS_PACKED_COMPONENT_MAX];
+        CCBits(uint64_t, ECS_PACKED_COMPONENT_MAX) has;
+    } packed;
+    
+    struct {
+        CCBits(uint64_t, ECS_INDEXED_COMPONENT_MAX) has;
+    } indexed;
 } ECSComponentRefs;
 
 _Static_assert((offsetof(ECSComponentRefs, archetype.component.ids) % ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT) == 0, "Needs to be correctly aligned");
@@ -91,7 +97,8 @@ typedef struct {
 #define ECS_ARCHETYPE_MEMBER(x, index) ECSArchetype(index) archetypes##index[ECS_COMPONENT_ARCHETYPE##index##_MAX]
 #define ECS_ARCHETYPE_DECLARE_MEMBERS(count) CC_SOFT_JOIN(;, CC_REPEAT(1, count, ECS_ARCHETYPE_MEMBER))
     ECS_ARCHETYPE_DECLARE_MEMBERS(ECS_ARCHETYPE_MAX);
-    ECSComponent components[ECS_INDIVIDUAL_COMPONENT_MAX];
+    ECSPackedComponent packed[ECS_PACKED_COMPONENT_MAX];
+    ECSIndexedComponent indexed[ECS_INDEXED_COMPONENT_MAX];
 } ECSContext;
 
 #endif

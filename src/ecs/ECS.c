@@ -47,7 +47,7 @@ typedef struct {
         size_t count;
     } archetype;
     ECSExecutionGroup *executionGroup;
-    ECSContext *world;
+    ECSContext *context;
 } ECSSystemExecutor;
 
 #define CC_TYPE_ECSSystemExecutor(...) ECSSystemExecutor
@@ -134,21 +134,29 @@ int ECSWorker(ECSWorkerID WorkerID)
                 LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID], LocalAccessReleaseIndex, memory_order_consume);
             }
             
-            for (size_t Loop = 0, ArchCount = Executor->archetype.count; Loop < ArchCount; Loop++)
+            const size_t ArchCount = Executor->archetype.count;
+            const ECSSystemUpdateCallback Callback = Executor->update;
+            ECSContext * const Context = Executor->context;
+            const ECSTime Time = Executor->time;
+            const size_t * const ComponentOffsets = Access->component.offsets;
+            
+            if (ArchCount)
             {
-                const ECSArchetypePointer *ArchPointer = &Access->archetype.pointer[Executor->archetype.offset + Loop];
-                ECSArchetype *Archetype = (void*)Executor->world + ArchPointer->archetype;
-                
-                if ((Archetype->entities) && (CCArrayGetCount(Archetype->entities)))
+                for (size_t Loop = 0; Loop < ArchCount; Loop++)
                 {
-                    for (size_t Loop2 = 0, Count = ArchPointer->count, Index = ArchPointer->componentIndexes; Loop2 < Count; Loop2++)
-                    {
-                        // TODO: non-arch components in the exec component list should be added after (initial indexes reserved for the arch components)
-                        Executor->components[Loop2] = Archetype->components[*(ArchetypeComponentIndexes + Index + Loop2)];
-                    }
+                    const ECSArchetypePointer *ArchPointer = &Access->archetype.pointer[Executor->archetype.offset + Loop];
+                    ECSArchetype *Archetype = (void*)Executor->context + ArchPointer->archetype;
                     
-                    Executor->update(Executor->world, Executor->components, Archetype->entities, Executor->changes, Executor->time);
+                    if ((Archetype->entities) && (CCArrayGetCount(Archetype->entities)))
+                    {
+                        Callback(Context, Archetype, ArchetypeComponentIndexes + ArchPointer->componentIndexes, ComponentOffsets, Executor->changes, Time);
+                    }
                 }
+            }
+            
+            else
+            {
+                Callback(Context, NULL, NULL, ComponentOffsets, Executor->changes, Time);
             }
             
             const size_t Index = AccessReleases[WorkerID][LocalAccessReleaseIndex].count++;
@@ -232,7 +240,7 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
         .update = ECS_SYSTEM_UPDATE_GET_UPDATE(Update[SystemIndex]),
         .executionGroup = State,
         .changes = NULL,
-        .world = Context
+        .context = Context
     };
     
     if (ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex]))
@@ -407,7 +415,6 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
             TargetIndex = (TargetIndex + 1) % WorkerThreadCount;
         }
         
-        // FIXME: Only if spreading out the workload (make this a compile time conditional option mode)
         for (size_t Loop = 1; Loop < WorkerThreadCount; Loop++)
         {
             const size_t Index = (TargetIndex + Loop) % WorkerThreadCount;
@@ -456,7 +463,13 @@ static inline size_t ECSComponentBaseIndex(ECSComponentID ID)
     
     switch (ID & ECSComponentTypeMask)
     {
-        case ECSComponentTypeIndividual:
+        case ECSComponentTypeTag:
+            Index += ECS_DUPLICATE_COMPONENT_MAX;
+        case ECSComponentTypeDuplicate:
+            Index += ECS_INDEXED_COMPONENT_MAX;
+        case ECSComponentTypeIndexed:
+            Index += ECS_PACKED_COMPONENT_MAX;
+        case ECSComponentTypePacked:
             Index += ECS_ARCHETYPE_COMPONENT_MAX;
         case ECSComponentTypeArchetype:
             return Index;
@@ -489,7 +502,8 @@ static inline void ECSEntityInit(ECSContext *Context, size_t BaseIndex, size_t C
 #endif
         
         CC_BITS_INIT_CLEAR(Ref->archetype.has);
-        CC_BITS_INIT_CLEAR(Ref->individual.has);
+        CC_BITS_INIT_CLEAR(Ref->packed.has);
+        CC_BITS_INIT_CLEAR(Ref->indexed.has);
     }
 }
 
@@ -518,7 +532,8 @@ void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count)
 }
 
 const size_t *ECSArchetypeComponentSizes;
-const size_t *ECSIndividualComponentSizes;
+const size_t *ECSPackedComponentSizes;
+const size_t *ECSIndexedComponentSizes;
 
 static size_t SortedAdd(ECSArchetypeComponentID *Elements, size_t Count, ECSArchetypeComponentID Value)
 {
@@ -759,44 +774,44 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
     }
 }
 
-void ECSIndividualAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
     if (!ECSEntityHasComponent(Context, Entity, ID))
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
         const size_t Index = (ID & ~ECSComponentTypeMask);
-        ECSComponent *Individual = &Context->components[Index];
+        ECSPackedComponent *Packed = &Context->packed[Index];
         
-        CCArray(ECSEntity) Entities = Individual->entities;
-        CCArray Components = *Individual->components;
+        CCArray(ECSEntity) Entities = Packed->entities;
+        CCArray Components = *Packed->components;
         
         if (CC_UNLIKELY(!Components))
         {
-            Individual->entities = (Entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16));
+            Packed->entities = (Entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16));
             
-            *Individual->components = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSIndividualComponentSizes[Index], 16));
+            *Packed->components = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSPackedComponentSizes[Index], 16));
         }
         
         CCArrayAppendElement(Components, Data);
-        Refs->individual.indexes[Index] = CCArrayAppendElement(Entities, &Entity);
+        Refs->packed.indexes[Index] = CCArrayAppendElement(Entities, &Entity);
         
-        CCBitsSet(Refs->individual.has, Index);
+        CCBitsSet(Refs->packed.has, Index);
     }
 }
 
-void ECSIndividualRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
+void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
     if (ECSEntityHasComponent(Context, Entity, ID))
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
         const size_t Index = (ID & ~ECSComponentTypeMask);
-        ECSComponent *Individual = &Context->components[Index];
+        ECSPackedComponent *Packed = &Context->packed[Index];
         
-        CCArray(ECSEntity) Entities = Individual->entities;
-        CCArray Components = *Individual->components;
-        const size_t EntityIndex = Refs->individual.indexes[Index];
+        CCArray(ECSEntity) Entities = Packed->entities;
+        CCArray Components = *Packed->components;
+        const size_t EntityIndex = Refs->packed.indexes[Index];
         const size_t LastIndex = CCArrayGetCount(Components) - 1;
         
         if (EntityIndex != LastIndex)
@@ -808,6 +823,9 @@ void ECSIndividualRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComp
             const size_t *Entity = CCArrayGetElementAtIndex(Entities, LastIndex);
             CCArrayReplaceElementAtIndex(Entities, EntityIndex, Entity);
             CCArrayRemoveElementAtIndex(Entities, LastIndex);
+            
+            ECSComponentRefs *ReplacementRef = CCArrayGetElementAtIndex(Context->manager.map, *Entity);
+            ReplacementRef->packed.indexes[Index] = EntityIndex;
         }
         
         else
@@ -816,8 +834,47 @@ void ECSIndividualRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComp
             CCArrayRemoveElementAtIndex(Entities, LastIndex);
         }
         
-        Refs->individual.indexes[Index] = SIZE_MAX;
-        CCBitsClear(Refs->individual.has, Index);
+        Refs->packed.indexes[Index] = SIZE_MAX;
+        CCBitsClear(Refs->packed.has, Index);
+    }
+}
+
+void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+{
+    if (!ECSEntityHasComponent(Context, Entity, ID))
+    {
+        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+        
+        const size_t Index = (ID & ~ECSComponentTypeMask);
+        ECSIndexedComponent *Indexed = &Context->indexed[Index];
+        
+        CCArray Components = *Indexed;
+        
+        if (CC_UNLIKELY(!Components))
+        {
+            *Indexed = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSIndexedComponentSizes[Index], 16)); // TODO: replace 16 with configurable amount
+        }
+        
+        const size_t Count = CCArrayGetCount(Components);
+        if (Entity >= Count)
+        {
+            CCArrayAppendElements(Components, NULL, CC_ALIGN((Entity - Count) + 1, 16)); // TODO: replace 16 with configurable amount
+        }
+        
+        CCArrayReplaceElementAtIndex(Components, Entity, Data);
+        
+        CCBitsSet(Refs->indexed.has, Index);
+    }
+}
+
+void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
+{
+    if (ECSEntityHasComponent(Context, Entity, ID))
+    {
+        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+        
+        const size_t Index = (ID & ~ECSComponentTypeMask);
+        CCBitsClear(Refs->indexed.has, Index);
     }
 }
 
@@ -854,8 +911,18 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                 break;
             }
                 
-            case ECSComponentTypeIndividual:
-                ECSIndividualAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+            case ECSComponentTypePacked:
+                ECSPackedAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+                break;
+                
+            case ECSComponentTypeIndexed:
+                ECSIndexedAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+                break;
+                
+            case ECSComponentTypeDuplicate:
+                break;
+                
+            case ECSComponentTypeTag:
                 break;
                 
             default:
@@ -928,13 +995,13 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
     ECSArchetypeComponentID LastID = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
-        const ECSArchetypeComponentID ID = IDs[Loop];
+        const ECSComponentID ID = IDs[Loop];
         
-        if (ECSEntityHasComponent(Context, Entity, ID))
+        switch (ID & ECSComponentTypeMask)
         {
-            switch (ID & ECSComponentTypeMask)
+            case ECSComponentTypeArchetype:
             {
-                case ECSComponentTypeArchetype:
+                if (ECSEntityHasComponent(Context, Entity, ID))
                 {
                     const size_t Offset = LastID < ID ? LastIndex : 0;
                     
@@ -944,17 +1011,27 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                     CCBitsClear(Refs->archetype.has, ID);
                     
                     LastID = ID;
-                    break;
                 }
-                    
-                case ECSComponentTypeIndividual:
-                    ECSIndividualRemoveComponent(Context, Entity, ID);
-                    break;
-                    
-                default:
-                    CCAssertLog(0, "Unsupported component type");
-                    break;
+                break;
             }
+                
+            case ECSComponentTypePacked:
+                ECSPackedRemoveComponent(Context, Entity, ID);
+                break;
+                
+            case ECSComponentTypeIndexed:
+                ECSIndexedRemoveComponent(Context, Entity, ID);
+                break;
+                
+            case ECSComponentTypeDuplicate:
+                break;
+                
+            case ECSComponentTypeTag:
+                break;
+                
+            default:
+                CCAssertLog(0, "Unsupported component type");
+                break;
         }
     }
     
