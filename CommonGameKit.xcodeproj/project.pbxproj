@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,8 @@
 		F30730B82410E7D10078AEC4 /* FontExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F30730B62410E7D10078AEC4 /* FontExpressions.c */; };
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3292C34297627940053B5B4 /* ECS.h in Headers */ = {isa = PBXBuildFile; fileRef = F3292C32297627940053B5B4 /* ECS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3292C35297627940053B5B4 /* ECS.c in Sources */ = {isa = PBXBuildFile; fileRef = F3292C33297627940053B5B4 /* ECS.c */; };
 		F32C1C071F6A071600C68B43 /* RelationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F32C1C051F6A071600C68B43 /* RelationSystem.c */; };
 		F32C1C081F6A071600C68B43 /* RelationSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F32C1C061F6A071600C68B43 /* RelationSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */; };
@@ -31,6 +33,8 @@
 		F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */; };
 		F34EB824249F761700B3D984 /* CommonObjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; };
 		F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */; };
+		F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F3569A9329F70CA50075C6A1 /* ECSContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -46,7 +50,6 @@
 		F3897B4F1DCD6D4F008D6C1D /* threads.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B4E1DCD6D4F008D6C1D /* threads.h */; };
 		F3897B521DCD6E12008D6C1D /* tinycthread.c in Sources */ = {isa = PBXBuildFile; fileRef = F3897B501DCD6E12008D6C1D /* tinycthread.c */; };
 		F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897B511DCD6E12008D6C1D /* tinycthread.h */; };
-		F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16.a */; };
 		F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B661DCD7149008D6C1D /* libz.a */; };
 		F3897BB71DCD764E008D6C1D /* ColourFormatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BA01DCD764E008D6C1D /* ColourFormatTests.m */; };
 		F3897BB81DCD764E008D6C1D /* ComponentSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3897BA11DCD764E008D6C1D /* ComponentSystemTests.m */; };
@@ -77,13 +80,18 @@
 		F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */; };
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
+		F38A33F129E2957300661500 /* ECSComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F38A33EF29E2957300661500 /* ECSComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F39C5F2A2519C29600D80F0D /* PixelDataCompositeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */; };
+		F3A304A1298ED47200BABB22 /* ECSTool.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A304A0298ED2E800BABB22 /* ECSTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3A304A42994432B00BABB22 /* ECSEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A304A22994432B00BABB22 /* ECSEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3A304AC299443F800BABB22 /* ECSArchetype.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A304AA299443F800BABB22 /* ECSArchetype.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */; };
 		F3A9F0FF228444CD00F52287 /* GLCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */; };
 		F3A9F100228444CD00F52287 /* GLCommandBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F0FE228444CD00F52287 /* GLCommandBuffer.c */; };
 		F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A9F10122844CFE00F52287 /* MTLCommandBuffer.h */; };
 		F3A9F10422844CFE00F52287 /* MTLCommandBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F3A9F10222844CFE00F52287 /* MTLCommandBuffer.m */; };
+		F3ABBBC82988FA0A000AE08F /* ECSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3ABBBC72988FA0A000AE08F /* ECSTests.m */; };
 		F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */; };
 		F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */; };
@@ -266,6 +274,7 @@
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 		F3BEC1BF23C1131500014B5B /* TypeCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BEC1C023C1131500014B5B /* TypeCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */; };
+		F3D4A48C299B43C800B38AF8 /* ECSConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D4A46C299B43B600B38AF8 /* ECSConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -280,6 +289,7 @@
 		F3E855BA2248CCC1008896E1 /* MTLBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F3E855B82248CCC1008896E1 /* MTLBuffer.m */; };
 		F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */; };
 		F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */; };
+		F3F43C0229E6BCB900304F65 /* ECSTestAccessors.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F43BE229E6BCB800304F65 /* ECSTestAccessors.h */; };
 		F3FA88172233876E0087A318 /* MTLGFX.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FA88162233876E0087A318 /* MTLGFX.m */; };
 		F3FA8819223388740087A318 /* MTLGFX_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA8818223388290087A318 /* MTLGFX_Private.h */; };
 		F3FA881A2233887A0087A318 /* MTLGFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA8815223383850087A318 /* MTLGFX.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -326,6 +336,13 @@
 			remoteGlobalIDString = F36202A917AC404800153E85;
 			remoteInfo = CommonObjc;
 		};
+		F361E4D82A4763D300E52A6D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BCB43D7C94143BA8A240203;
+			remoteInfo = png_shared;
+		};
 		F38828351E9B293400E6D7A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F38828311E9B293400E6D7A3 /* blob-repl.xcodeproj */;
@@ -360,13 +377,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = DFB041BC00E54276BD349883;
 			remoteInfo = zlibstatic;
-		};
-		F3897B7C1DCD715A008D6C1D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E763F6F45C534CC28F692020;
-			remoteInfo = png;
 		};
 		F3897B7E1DCD715A008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -428,14 +438,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A7F8DA0DE9C34004A8212000;
+			remoteGlobalIDString = 66FAD8027D724137B5B2D271;
 			remoteInfo = zlibstatic;
 		};
 		F3897B9E1DCD7514008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = F78E195B78B940E38005031F;
+			remoteGlobalIDString = 0C41DD0377CA4F3C8D0E2AED;
 			remoteInfo = png_static;
 		};
 		F3897BD51DCD7DB3008D6C1D /* PBXContainerItemProxy */ = {
@@ -527,6 +537,8 @@
 		F30730B62410E7D10078AEC4 /* FontExpressions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FontExpressions.c; sourceTree = "<group>"; };
 		F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentExpressions.c; sourceTree = "<group>"; };
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
+		F3292C32297627940053B5B4 /* ECS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECS.h; sourceTree = "<group>"; };
+		F3292C33297627940053B5B4 /* ECS.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECS.c; sourceTree = "<group>"; };
 		F32C1C051F6A071600C68B43 /* RelationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationSystem.c; sourceTree = "<group>"; };
 		F32C1C061F6A071600C68B43 /* RelationSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RelationSystem.h; sourceTree = "<group>"; };
 		F332EAE61EA0FC4900BCDAC7 /* BitwiseExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BitwiseExpressions.c; sourceTree = "<group>"; };
@@ -546,6 +558,8 @@
 		F34EB81E249BB4F900B3D984 /* GFXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXTestCase.h; sourceTree = "<group>"; };
 		F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLGFXTests.m; sourceTree = "<group>"; };
 		F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataFileTests.m; sourceTree = "<group>"; };
+		F3569A9329F70CA50075C6A1 /* ECSContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSContext.h; sourceTree = "<group>"; };
+		F3569A9D29FAFD210075C6A1 /* ECSTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTests.h; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
@@ -594,13 +608,19 @@
 		F3897BE51DCF2219008D6C1D /* GLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLGFX_Private.h; sourceTree = "<group>"; };
 		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
+		F38A33EF29E2957300661500 /* ECSComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSComponent.h; sourceTree = "<group>"; };
 		F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataCompositeTests.m; sourceTree = "<group>"; };
+		F3A30480298ED06000BABB22 /* ECSTestData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTestData.h; sourceTree = "<group>"; };
+		F3A304A0298ED2E800BABB22 /* ECSTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTool.h; sourceTree = "<group>"; };
+		F3A304A22994432B00BABB22 /* ECSEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSEntity.h; sourceTree = "<group>"; };
+		F3A304AA299443F800BABB22 /* ECSArchetype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSArchetype.h; sourceTree = "<group>"; };
 		F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXCommandBuffer.h; sourceTree = "<group>"; };
 		F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GFXCommandBuffer.c; sourceTree = "<group>"; };
 		F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLCommandBuffer.h; sourceTree = "<group>"; };
 		F3A9F0FE228444CD00F52287 /* GLCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GLCommandBuffer.c; sourceTree = "<group>"; };
 		F3A9F10122844CFE00F52287 /* MTLCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLCommandBuffer.h; sourceTree = "<group>"; };
 		F3A9F10222844CFE00F52287 /* MTLCommandBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLCommandBuffer.m; sourceTree = "<group>"; };
+		F3ABBBC72988FA0A000AE08F /* ECSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ECSTests.m; sourceTree = "<group>"; };
 		F3AD069F1F645544004AE159 /* SpatialTransformComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SpatialTransformComponent.c; sourceTree = "<group>"; };
 		F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialTransformComponent.h; sourceTree = "<group>"; };
 		F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationParentComponent.c; sourceTree = "<group>"; };
@@ -785,6 +805,7 @@
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
 		F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeCallbacks.h; sourceTree = "<group>"; };
 		F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TypeCallbacks.c; sourceTree = "<group>"; };
+		F3D4A46C299B43B600B38AF8 /* ECSConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSConfig.h; sourceTree = "<group>"; };
 		F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelationSystemTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
 		F3E2742520D1669B00D6AFE1 /* ScriptableInterfaceSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableInterfaceSystem.h; sourceTree = "<group>"; };
@@ -799,6 +820,7 @@
 		F3E855B82248CCC1008896E1 /* MTLBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLBuffer.m; sourceTree = "<group>"; };
 		F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraComponent.h; sourceTree = "<group>"; };
 		F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderCameraComponent.c; sourceTree = "<group>"; };
+		F3F43BE229E6BCB800304F65 /* ECSTestAccessors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSTestAccessors.h; sourceTree = "<group>"; };
 		F3FA8815223383850087A318 /* MTLGFX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLGFX.h; sourceTree = "<group>"; };
 		F3FA88162233876E0087A318 /* MTLGFX.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLGFX.m; sourceTree = "<group>"; };
 		F3FA8818223388290087A318 /* MTLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLGFX_Private.h; sourceTree = "<group>"; };
@@ -816,7 +838,7 @@
 			files = (
 				F342B65B2239147C00B44319 /* CommonObjc.framework in Frameworks */,
 				F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */,
-				F3897B9A1DCD74C1008D6C1D /* libpng16.a in Frameworks */,
+				F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */,
 				F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */,
 				F3AF34C81DCCF4FE00CAD472 /* CommonC.framework in Frameworks */,
 			);
@@ -835,6 +857,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F3292C12297627450053B5B4 /* ECS */ = {
+			isa = PBXGroup;
+			children = (
+				F3A304A0298ED2E800BABB22 /* ECSTool.h */,
+				F3D4A46C299B43B600B38AF8 /* ECSConfig.h */,
+				F3292C33297627940053B5B4 /* ECS.c */,
+				F3292C32297627940053B5B4 /* ECS.h */,
+				F3A304AA299443F800BABB22 /* ECSArchetype.h */,
+				F38A33EF29E2957300661500 /* ECSComponent.h */,
+				F3A304A22994432B00BABB22 /* ECSEntity.h */,
+				F3569A9329F70CA50075C6A1 /* ECSContext.h */,
+			);
+			name = ECS;
+			path = ecs;
+			sourceTree = "<group>";
+		};
 		F32C1BE81F6A06F800C68B43 /* Systems */ = {
 			isa = PBXGroup;
 			children = (
@@ -926,9 +964,9 @@
 		F3897B681DCD715A008D6C1D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3897B7D1DCD715A008D6C1D /* libpng16.dylib */,
 				F3897B7F1DCD715A008D6C1D /* png-fix-itxt */,
-				F3897B811DCD715A008D6C1D /* libpng16.a */,
+				F361E4D92A4763D300E52A6D /* libpng16d.dylib */,
+				F3897B811DCD715A008D6C1D /* libpng16d.a */,
 				F3897B831DCD715A008D6C1D /* pngfix */,
 				F3897B851DCD715A008D6C1D /* pngimage */,
 				F3897B871DCD715A008D6C1D /* pngstest */,
@@ -1018,6 +1056,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		F3ABBBA72988F9EC000AE08F /* ECS */ = {
+			isa = PBXGroup;
+			children = (
+				F3569A9D29FAFD210075C6A1 /* ECSTests.h */,
+				F3ABBBC72988FA0A000AE08F /* ECSTests.m */,
+				F3A30480298ED06000BABB22 /* ECSTestData.h */,
+				F3F43BE229E6BCB800304F65 /* ECSTestAccessors.h */,
+			);
+			name = ECS;
+			sourceTree = "<group>";
+		};
 		F3AD06811F6454C8004AE159 /* Spatial */ = {
 			isa = PBXGroup;
 			children = (
@@ -1095,6 +1144,7 @@
 				F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */,
 				F3AF32931DCCD4EB00CAD472 /* Animation */,
 				F3AF329E1DCCD4EB00CAD472 /* Component System */,
+				F3292C12297627450053B5B4 /* ECS */,
 				F3AF32AB1DCCD4EB00CAD472 /* GUI */,
 				F3AF32B61DCCD4EB00CAD472 /* Input */,
 				F3AD06A31F66BBBF004AE159 /* Relation */,
@@ -1114,6 +1164,7 @@
 			children = (
 				F3897BDB1DCD88A4008D6C1D /* CCTestCase.h */,
 				F3897BDD1DCD8A00008D6C1D /* CCTestCase.m */,
+				F3ABBBA72988F9EC000AE08F /* ECS */,
 				F3DB295D23C4B4DE00D0D68E /* Relation */,
 				F3897CFC1DD08074008D6C1D /* Utilities */,
 				F3897CFB1DD08042008D6C1D /* Scripting */,
@@ -1682,16 +1733,19 @@
 				F3AF33E61DCCD4EC00CAD472 /* GLPortability.h in Headers */,
 				F3E855B92248CCC1008896E1 /* MTLBuffer.h in Headers */,
 				F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */,
+				F3A304A42994432B00BABB22 /* ECSEntity.h in Headers */,
 				F3AF34B61DCCD5AF00CAD472 /* ExpressionHelpers.h in Headers */,
 				F3AF34891DCCD5AF00CAD472 /* ControlFlowExpressions.h in Headers */,
 				F3AF343A1DCCD4EC00CAD472 /* Font.h in Headers */,
 				F3AF33B21DCCD4EC00CAD472 /* RenderComponent.h in Headers */,
 				F3AF33E31DCCD4EC00CAD472 /* GLFramebuffer.h in Headers */,
+				F3A304A1298ED47200BABB22 /* ECSTool.h in Headers */,
 				F3AF33E71DCCD4EC00CAD472 /* GLSelectedState.h in Headers */,
 				F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */,
 				F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */,
 				F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */,
 				F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */,
+				F38A33F129E2957300661500 /* ECSComponent.h in Headers */,
 				F380C2D224B21CEA00151C4F /* PixelDataComposite.h in Headers */,
 				F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */,
 				F3AF33EB1DCCD4EC00CAD472 /* GLShaderLibrary.h in Headers */,
@@ -1699,6 +1753,7 @@
 				F342B6A02239711B00B44319 /* MTLFramebuffer.h in Headers */,
 				F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */,
 				F3AF338F1DCCD4EC00CAD472 /* GUIExpression.h in Headers */,
+				F3D4A48C299B43C800B38AF8 /* ECSConfig.h in Headers */,
 				F3AF33B41DCCD4EC00CAD472 /* RenderSystem.h in Headers */,
 				F3AF34D51DCCFBEC00CAD472 /* Default_Private.h in Headers */,
 				F3AF33AA1DCCD4EC00CAD472 /* Keyboard.h in Headers */,
@@ -1727,6 +1782,7 @@
 				F3897B2F1DCD6B32008D6C1D /* stdatomic_clang.h in Headers */,
 				F342B62B223824B700B44319 /* MTLShaderLibrary.h in Headers */,
 				F3AF33DC1DCCD4EC00CAD472 /* GLBuffer.h in Headers */,
+				F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */,
 				F3AF337C1DCCD4EC00CAD472 /* AnimationKeyframeComponent.h in Headers */,
 				F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */,
 				F3AF33D01DCCD4EC00CAD472 /* GFXInterface.h in Headers */,
@@ -1740,8 +1796,10 @@
 				F3AF337A1DCCD4EC00CAD472 /* AnimationInterpolateComponent.h in Headers */,
 				F3AF33C61DCCD4EC00CAD472 /* GFXBlend.h in Headers */,
 				F3AF33BC1DCCD4EC00CAD472 /* ColourFormatRGB.h in Headers */,
+				F3F43C0229E6BCB900304F65 /* ECSTestAccessors.h in Headers */,
 				F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */,
 				F3AF33D81DCCD4EC00CAD472 /* GFXTexture.h in Headers */,
+				F3A304AC299443F800BABB22 /* ECSArchetype.h in Headers */,
 				F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */,
 				F3E361991EF5758000FCE1A5 /* MessageExpressions.h in Headers */,
 				F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */,
@@ -1765,6 +1823,7 @@
 				F3AF34B01DCCD5AF00CAD472 /* WindowExpressions.h in Headers */,
 				F3AF33851DCCD4EC00CAD472 /* Entity.h in Headers */,
 				F3AF33931DCCD4EC00CAD472 /* GUIObject.h in Headers */,
+				F3292C34297627940053B5B4 /* ECS.h in Headers */,
 				F3AF33D41DCCD4EC00CAD472 /* GFXShader.h in Headers */,
 				F3AF34861DCCD5AF00CAD472 /* ColourExpressions.h in Headers */,
 				F3AF343E1DCCD4EC00CAD472 /* TextAttribute.h in Headers */,
@@ -1829,7 +1888,8 @@
 		F3AF32701DCCD29000CAD472 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Stefan Johnson";
 				TargetAttributes = {
 					F3AF32781DCCD29000CAD472 = {
@@ -1845,6 +1905,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = F3AF326F1DCCD29000CAD472;
@@ -1913,6 +1974,14 @@
 			remoteRef = F342B6562239144C00B44319 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F361E4D92A4763D300E52A6D /* libpng16d.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			name = libpng16d.dylib;
+			path = libpng16d.16.40.0.dylib;
+			remoteRef = F361E4D82A4763D300E52A6D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F38828361E9B293400E6D7A3 /* blob-repl */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -1938,7 +2007,7 @@
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			name = libz.dylib;
-			path = libz.1.2.11.dylib;
+			path = libz.1.2.13.dylib;
 			remoteRef = F3897B631DCD7149008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1949,14 +2018,6 @@
 			remoteRef = F3897B651DCD7149008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B7D1DCD715A008D6C1D /* libpng16.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			name = libpng16.dylib;
-			path = libpng16d.16.34.0.dylib;
-			remoteRef = F3897B7C1DCD715A008D6C1D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F3897B7F1DCD715A008D6C1D /* png-fix-itxt */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
@@ -1964,10 +2025,9 @@
 			remoteRef = F3897B7E1DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B811DCD715A008D6C1D /* libpng16.a */ = {
+		F3897B811DCD715A008D6C1D /* libpng16d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = libpng16.a;
 			path = libpng16d.a;
 			remoteRef = F3897B801DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -2173,6 +2233,7 @@
 				F3AF33841DCCD4EC00CAD472 /* Entity.c in Sources */,
 				F3AF34B11DCCD5AF00CAD472 /* Expression.c in Sources */,
 				F3AF33BF1DCCD4EC00CAD472 /* PixelDataFile.c in Sources */,
+				F3292C35297627940053B5B4 /* ECS.c in Sources */,
 				F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */,
 				F3AF33B71DCCD4EC00CAD472 /* ColourComponent.c in Sources */,
 				F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */,
@@ -2199,6 +2260,7 @@
 				F3897BDE1DCD8A00008D6C1D /* CCTestCase.m in Sources */,
 				F3897BCA1DCD764E008D6C1D /* PixelDataStaticTests.m in Sources */,
 				F3897BC11DCD764E008D6C1D /* ExpressionMathTests.m in Sources */,
+				F3ABBBC82988FA0A000AE08F /* ECSTests.m in Sources */,
 				F3897BBA1DCD764E008D6C1D /* EntityManagerTests.m in Sources */,
 				F34EB81D249BB4CE00B3D984 /* GFXTestCase.m in Sources */,
 				F3897BCB1DCD764E008D6C1D /* TextAttributeTests.m in Sources */,
@@ -2260,6 +2322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2268,14 +2331,17 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2284,6 +2350,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -2292,6 +2359,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GL_SILENCE_DEPRECATION=1",
 					"DEBUG=1",
 					"$(inherited)",
 				);
@@ -2314,6 +2382,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -2322,14 +2391,17 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -2338,11 +2410,13 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "GL_SILENCE_DEPRECATION=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -2362,6 +2436,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2375,11 +2450,17 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
+				VALIDATE_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wno-ambiguous-macro",
 					"-Wno-multichar",
@@ -2392,6 +2473,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2406,11 +2488,17 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/src/mac/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
+				VALIDATE_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wno-ambiguous-macro",
 					"-Wno-multichar",
@@ -2423,6 +2511,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -2435,7 +2524,12 @@
 					$PROJECT_DIR/deps/tinycthread/source,
 				);
 				INFOPLIST_FILE = CommonGameKitTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
@@ -2447,6 +2541,7 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "CC_QUICK_COMPILE=1";
 				HEADER_SEARCH_PATHS = (
@@ -2455,7 +2550,12 @@
 					$PROJECT_DIR/deps/tinycthread/source,
 				);
 				INFOPLIST_FILE = CommonGameKitTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
