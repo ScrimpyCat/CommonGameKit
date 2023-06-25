@@ -178,6 +178,24 @@ extern const size_t *ECSPackedComponentSizes;
 extern const size_t *ECSIndexedComponentSizes;
 
 /*!
+ * @brief Set the duplicate archetype component sizes.
+ * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ */
+extern const size_t *ECSDuplicateArchetypeComponentSizes;
+
+/*!
+ * @brief Set the duplicate packed component sizes.
+ * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ */
+extern const size_t *ECSDuplicatePackedComponentSizes;
+
+/*!
+ * @brief Set the duplicate indexed component sizes.
+ * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ */
+extern const size_t *ECSDuplicateIndexedComponentSizes;
+
+/*!
  * @brief Create an ECS worker thread.
  * @description Can create up to @b ECS_WORKER_THREAD_MAX worker threads. The default is 128, if this limit needs to be changed @b ECS_WORKER_THREAD_MAX
  *              should be set to the new limit when compiling.
@@ -208,29 +226,31 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
 void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSComponentID *IDs, size_t Count);
 static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count);
+static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, size_t Index, size_t Count);
 
 #pragma mark -
 
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
-    switch (ID & ECSComponentTypeMask)
+    switch (ID & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
     {
-        case ECSComponentTypeArchetype:
+        case ECSComponentStorageTypeArchetype:
             ECSArchetypeAddComponent(Context, Entity, Data, ID);
             break;
             
-        case ECSComponentTypePacked:
+        case ECSComponentStorageTypePacked:
             ECSPackedAddComponent(Context, Entity, Data, ID);
             break;
             
-        case ECSComponentTypeIndexed:
+        case ECSComponentStorageTypeIndexed:
             ECSIndexedAddComponent(Context, Entity, Data, ID);
             break;
             
-        case ECSComponentTypeDuplicate:
-            break;
-            
-        case ECSComponentTypeTag:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+            ECSEntityAddDuplicateComponent(Context, Entity, Data, ID, 1);
             break;
             
         default:
@@ -241,24 +261,24 @@ static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, 
 
 static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
-    switch (ID & ECSComponentTypeMask)
+    switch (ID & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
     {
-        case ECSComponentTypeArchetype:
+        case ECSComponentStorageTypeArchetype:
             ECSArchetypeRemoveComponent(Context, Entity, ID);
             break;
             
-        case ECSComponentTypePacked:
+        case ECSComponentStorageTypePacked:
             ECSPackedRemoveComponent(Context, Entity, ID);
             break;
             
-        case ECSComponentTypeIndexed:
+        case ECSComponentStorageTypeIndexed:
             ECSIndexedRemoveComponent(Context, Entity, ID);
             break;
             
-        case ECSComponentTypeDuplicate:
-            break;
-            
-        case ECSComponentTypeTag:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+            ECSEntityRemoveDuplicateComponent(Context, Entity, ID, 0, 1);
             break;
             
         default:
@@ -271,22 +291,19 @@ static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity,
 {
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
-    switch (ID & ECSComponentTypeMask)
+    switch (ID & ECSComponentStorageTypeMask)
     {
-        case ECSComponentTypeArchetype:
+        case ECSComponentStorageTypeArchetype:
+        {
+            _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
             return CCBitsGet(Refs->archetype.has, ID);
+        }
             
-        case ECSComponentTypePacked:
-            return CCBitsGet(Refs->packed.has, (ID & ~ECSComponentTypeMask));
+        case ECSComponentStorageTypePacked:
+            return CCBitsGet(Refs->packed.has, (ID & ~ECSComponentStorageMask));
             
-        case ECSComponentTypeIndexed:
-            return CCBitsGet(Refs->indexed.has, (ID & ~ECSComponentTypeMask));
-            
-        case ECSComponentTypeDuplicate:
-            break;
-            
-        case ECSComponentTypeTag:
-            break;
+        case ECSComponentStorageTypeIndexed:
+            return CCBitsGet(Refs->indexed.has, (ID & ~ECSComponentStorageMask));
             
         default:
             CCAssertLog(0, "Unsupported component type");
@@ -300,28 +317,25 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
 {
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
-    switch (ID & ECSComponentTypeMask)
+    switch (ID & ECSComponentStorageTypeMask)
     {
-        case ECSComponentTypeArchetype:
-            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Refs->archetype.ptr->components[ECSArchetypeComponentIndex(Refs, ID)], Refs->archetype.index) : NULL;
-            
-        case ECSComponentTypePacked:
+        case ECSComponentStorageTypeArchetype:
         {
-            const size_t Index = (ID & ~ECSComponentTypeMask);
+            _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Refs->archetype.ptr->components[ECSArchetypeComponentIndex(Refs, ID)], Refs->archetype.index) : NULL;
+        }
+            
+        case ECSComponentStorageTypePacked:
+        {
+            const size_t Index = (ID & ~ECSComponentStorageMask);
             return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(*Context->packed[Index].components, Refs->packed.indexes[Index]) : NULL;
         }
             
-        case ECSComponentTypeIndexed:
+        case ECSComponentStorageTypeIndexed:
         {
-            const size_t Index = (ID & ~ECSComponentTypeMask);
+            const size_t Index = (ID & ~ECSComponentStorageMask);
             return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Context->indexed[Index], Entity) : NULL;
         }
-            
-        case ECSComponentTypeDuplicate:
-            break;
-            
-        case ECSComponentTypeTag:
-            break;
             
         default:
             CCAssertLog(0, "Unsupported component type");
@@ -329,6 +343,113 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
     }
     
     return NULL;
+}
+
+static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count)
+{
+    if (ID & ECSComponentStorageModifierDuplicate)
+    {
+        CCArray *Component = ECSEntityGetComponent(Context, Entity, ID);
+        CCArray Duplicates;
+        
+        if (!Component)
+        {
+            Component = &Duplicates;
+            
+            const size_t Index = (ID & ~ECSComponentStorageMask);
+            
+            switch (ID & ECSComponentStorageTypeMask)
+            {
+                case ECSComponentStorageTypeArchetype:
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateArchetypeComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    ECSArchetypeAddComponent(Context, Entity, &Duplicates, ID);
+                    break;
+                    
+                case ECSComponentStorageTypePacked:
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicatePackedComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    ECSPackedAddComponent(Context, Entity, &Duplicates, ID);
+                    break;
+                    
+                case ECSComponentStorageTypeIndexed:
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateIndexedComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    ECSIndexedAddComponent(Context, Entity, &Duplicates, ID);
+                    break;
+                    
+                default:
+                    CCAssertLog(0, "Unsupported component type");
+                    break;
+            }
+        }
+        
+        else Duplicates = *Component;
+        
+        CCArrayAppendElements(Duplicates, Data, Count);
+    }
+    
+    else CCAssertLog(0, "Component does not allow duplicates");
+}
+
+static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, size_t Index, size_t Count)
+{
+    if (ID & ECSComponentStorageModifierDuplicate)
+    {
+        CCArray *Component = ECSEntityGetComponent(Context, Entity, ID);
+        
+        if (Component)
+        {
+            CCArray Duplicates = *Component;
+            const size_t DuplicatesCount = CCArrayGetCount(Duplicates);
+            
+            if (Index < DuplicatesCount)
+            {
+                if ((Index + Count) >= DuplicatesCount)
+                {
+                    if (Index) CCArrayRemoveElementsAtIndex(Duplicates, Index, DuplicatesCount - Index);
+                    else
+                    {
+                        CCArrayDestroy(Duplicates);
+                        
+                        switch (ID & ECSComponentStorageTypeMask)
+                        {
+                            case ECSComponentStorageTypeArchetype:
+                                ECSArchetypeRemoveComponent(Context, Entity, ID);
+                                break;
+                                
+                            case ECSComponentStorageTypePacked:
+                                ECSPackedRemoveComponent(Context, Entity, ID);
+                                break;
+                                
+                            case ECSComponentStorageTypeIndexed:
+                                ECSIndexedRemoveComponent(Context, Entity, ID);
+                                break;
+                                
+                            default:
+                                CCAssertLog(0, "Unsupported component type");
+                                break;
+
+                        }
+                    }
+                }
+                
+                else
+                {
+                    size_t CopyIndex = Index + Count;
+                    size_t CopyCount = DuplicatesCount - CopyIndex;
+                    
+                    if (CopyCount > Count)
+                    {
+                        CopyIndex += CopyCount - Count;
+                        CopyCount = Count;
+                    }
+                    
+                    CCArrayCopyElementsAtIndex(Duplicates, CopyIndex, Index, CopyCount);
+                    CCArrayRemoveElementsAtIndex(Duplicates, Index + CopyCount, Count - CopyCount);
+                }
+            }
+        }
+    }
+    
+    else CCAssertLog(0, "Component does not allow duplicates");
 }
 
 #endif

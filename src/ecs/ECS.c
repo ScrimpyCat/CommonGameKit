@@ -459,19 +459,15 @@ Finished:;
 
 static inline size_t ECSComponentBaseIndex(ECSComponentID ID)
 {
-    size_t Index = ID & ~ECSComponentTypeMask;
+    size_t Index = ID & ~ECSComponentStorageMask;
     
-    switch (ID & ECSComponentTypeMask)
+    switch (ID & ECSComponentStorageTypeMask)
     {
-        case ECSComponentTypeTag:
-            Index += ECS_DUPLICATE_COMPONENT_MAX;
-        case ECSComponentTypeDuplicate:
-            Index += ECS_INDEXED_COMPONENT_MAX;
-        case ECSComponentTypeIndexed:
+        case ECSComponentStorageTypeIndexed:
             Index += ECS_PACKED_COMPONENT_MAX;
-        case ECSComponentTypePacked:
+        case ECSComponentStorageTypePacked:
             Index += ECS_ARCHETYPE_COMPONENT_MAX;
-        case ECSComponentTypeArchetype:
+        case ECSComponentStorageTypeArchetype:
             return Index;
     }
     
@@ -780,7 +776,7 @@ void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, EC
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
-        const size_t Index = (ID & ~ECSComponentTypeMask);
+        const size_t Index = (ID & ~ECSComponentStorageMask);
         ECSPackedComponent *Packed = &Context->packed[Index];
         
         CCArray(ECSEntity) Entities = Packed->entities;
@@ -806,7 +802,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
-        const size_t Index = (ID & ~ECSComponentTypeMask);
+        const size_t Index = (ID & ~ECSComponentStorageMask);
         ECSPackedComponent *Packed = &Context->packed[Index];
         
         CCArray(ECSEntity) Entities = Packed->entities;
@@ -845,7 +841,7 @@ void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, E
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
-        const size_t Index = (ID & ~ECSComponentTypeMask);
+        const size_t Index = (ID & ~ECSComponentStorageMask);
         ECSIndexedComponent *Indexed = &Context->indexed[Index];
         
         CCArray Components = *Indexed;
@@ -873,7 +869,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
-        const size_t Index = (ID & ~ECSComponentTypeMask);
+        const size_t Index = (ID & ~ECSComponentStorageMask);
         CCBitsClear(Refs->indexed.has, Index);
     }
 }
@@ -891,9 +887,9 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
     ECSArchetypeComponentID LastID = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
-        switch (Components[Loop].id & ECSComponentTypeMask)
+        switch (Components[Loop].id & ECSComponentStorageTypeMask)
         {
-            case ECSComponentTypeArchetype:
+            case ECSComponentStorageTypeArchetype:
             {
                 const ECSArchetypeComponentID ID = Components[Loop].id;
                 
@@ -911,18 +907,12 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                 break;
             }
                 
-            case ECSComponentTypePacked:
+            case ECSComponentStorageTypePacked:
                 ECSPackedAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
                 break;
                 
-            case ECSComponentTypeIndexed:
+            case ECSComponentStorageTypeIndexed:
                 ECSIndexedAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
-                break;
-                
-            case ECSComponentTypeDuplicate:
-                break;
-                
-            case ECSComponentTypeTag:
                 break;
                 
             default:
@@ -997,9 +987,9 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
     {
         const ECSComponentID ID = IDs[Loop];
         
-        switch (ID & ECSComponentTypeMask)
+        switch (ID & ECSComponentStorageTypeMask)
         {
-            case ECSComponentTypeArchetype:
+            case ECSComponentStorageTypeArchetype:
             {
                 if (ECSEntityHasComponent(Context, Entity, ID))
                 {
@@ -1015,18 +1005,12 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                 break;
             }
                 
-            case ECSComponentTypePacked:
+            case ECSComponentStorageTypePacked:
                 ECSPackedRemoveComponent(Context, Entity, ID);
                 break;
                 
-            case ECSComponentTypeIndexed:
+            case ECSComponentStorageTypeIndexed:
                 ECSIndexedRemoveComponent(Context, Entity, ID);
-                break;
-                
-            case ECSComponentTypeDuplicate:
-                break;
-                
-            case ECSComponentTypeTag:
                 break;
                 
             default:

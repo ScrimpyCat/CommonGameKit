@@ -34,15 +34,18 @@ typedef CCArray ECSIndexedComponent;
 
 typedef size_t ECSComponentID;
 
-typedef enum {
-    ECSComponentTypeArchetype = (0 << 29),
-    ECSComponentTypePacked = (1 << 29),
-    ECSComponentTypeIndexed = (2 << 29),
-    ECSComponentTypeDuplicate = (3 << 29),
-    ECSComponentTypeTag = (4 << 29),
+typedef CC_FLAG_ENUM(ECSComponentStorage, ECSComponentID) {
+    ECSComponentStorageTypeArchetype = (0 << 28),
+    ECSComponentStorageTypePacked = (1 << 28),
+    ECSComponentStorageTypeIndexed = (2 << 28),
     
-    ECSComponentTypeMask = 0xe0000000
-} ECSComponentType;
+    ECSComponentStorageModifierDuplicate = (1 << 30),
+    ECSComponentStorageModifierTag = (1 << 31),
+    
+    ECSComponentStorageTypeMask = 0x30000000,
+    ECSComponentStorageModifierMask = 0xc0000000,
+    ECSComponentStorageMask = ECSComponentStorageTypeMask | ECSComponentStorageModifierMask
+};
 
 typedef struct {
     ECSComponentID id;
