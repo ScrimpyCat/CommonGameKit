@@ -421,7 +421,6 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
             LocalAccessReleaseIndexes[Index] = atomic_exchange_explicit(&AccessReleaseIndex[Index], LocalAccessReleaseIndexes[Index], memory_order_consume);
         }
         
-        // TODO: combine with loop above (as will add additional time between accessing each release index so higher chance we'll get a non-empty one)
         for (size_t Loop = 0; Loop < WorkerThreadCount; Loop++)
         {
             const size_t Index = Loop;
@@ -457,25 +456,6 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
 Finished:;
 }
 
-static inline size_t ECSComponentBaseIndex(ECSComponentID ID)
-{
-    size_t Index = ID & ~ECSComponentStorageMask;
-    
-    switch (ID & ECSComponentStorageTypeMask)
-    {
-        case ECSComponentStorageTypeIndexed:
-            Index += ECS_PACKED_COMPONENT_MAX;
-        case ECSComponentStorageTypePacked:
-            Index += ECS_ARCHETYPE_COMPONENT_MAX;
-        case ECSComponentStorageTypeArchetype:
-            return Index;
-    }
-    
-    CCAssertLog(0, "Unsupported component type");
-    
-    return SIZE_MAX;
-}
-
 static inline void ECSEntityInit(ECSContext *Context, size_t BaseIndex, size_t Count, ECSEntity *Entities)
 {
     for (size_t Loop = 0; Loop < Count; Loop++)
@@ -497,9 +477,7 @@ static inline void ECSEntityInit(ECSContext *Context, size_t BaseIndex, size_t C
 #endif
 #endif
         
-        CC_BITS_INIT_CLEAR(Ref->archetype.has);
-        CC_BITS_INIT_CLEAR(Ref->packed.has);
-        CC_BITS_INIT_CLEAR(Ref->indexed.has);
+        CC_BITS_INIT_CLEAR(Ref->has);
     }
 }
 
@@ -707,7 +685,9 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data,
         
         Refs->archetype.ptr = Archetype;
         Refs->archetype.index = Index;
-        CCBitsSet(Refs->archetype.has, ID);
+        
+        _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+        CCBitsSet(Refs->has, ID);
     }
 }
 
@@ -766,7 +746,8 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
             Refs->archetype.index = 0;
         }
         
-        CCBitsClear(Refs->archetype.has, ID);
+        _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+        CCBitsClear(Refs->has, ID);
     }
 }
 
@@ -792,7 +773,7 @@ void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, EC
         CCArrayAppendElement(Components, Data);
         Refs->packed.indexes[Index] = CCArrayAppendElement(Entities, &Entity);
         
-        CCBitsSet(Refs->packed.has, Index);
+        CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked));
     }
 }
 
@@ -831,7 +812,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
         }
         
         Refs->packed.indexes[Index] = SIZE_MAX;
-        CCBitsClear(Refs->packed.has, Index);
+        CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked));
     }
 }
 
@@ -859,7 +840,7 @@ void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, E
         
         CCArrayReplaceElementAtIndex(Components, Entity, Data);
         
-        CCBitsSet(Refs->indexed.has, Index);
+        CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed));
     }
 }
 
@@ -870,7 +851,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
         const size_t Index = (ID & ~ECSComponentStorageMask);
-        CCBitsClear(Refs->indexed.has, Index);
+        CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed));
     }
 }
 
@@ -893,6 +874,8 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
             {
                 const ECSArchetypeComponentID ID = Components[Loop].id;
                 
+                _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+                
                 if (!ECSEntityHasComponent(Context, Entity, ID))
                 {
                     const size_t Offset = LastID < ID ? LastIndex : 0;
@@ -900,7 +883,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                     LastIndex = SortedAdd(Refs->archetype.component.ids + Offset, Refs->archetype.component.count++ - Offset, ID) + Offset;
                     ComponentData[IndexCount++] = Components[Loop].data;
                     CCBitsSet(AddedComponent, ID);
-                    CCBitsSet(Refs->archetype.has, ID);
+                    CCBitsSet(Refs->has, ID);
                     
                     LastID = ID;
                 }
@@ -943,6 +926,8 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
             
             for (size_t Loop = 0, ComponentIndex = 0; Loop < Count; Loop++)
             {
+                _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+                
                 const ECSArchetypeComponentID ID = Refs->archetype.component.ids[Loop];
                 
                 if (CCBitsGet(AddedComponent, ID))
@@ -993,12 +978,14 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
             {
                 if (ECSEntityHasComponent(Context, Entity, ID))
                 {
+                    _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+                    
                     const size_t Offset = LastID < ID ? LastIndex : 0;
                     
                     LastIndex = SortedSub(Refs->archetype.component.ids + Offset, Refs->archetype.component.count-- - Offset, ID) + Offset;
                     IndexCount++;
                     CCBitsSet(RemovedComponent, ID);
-                    CCBitsClear(Refs->archetype.has, ID);
+                    CCBitsClear(Refs->has, ID);
                     
                     LastID = ID;
                 }
@@ -1040,6 +1027,8 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
             
             for (size_t Loop = 0, ComponentIndex = 0; Loop < PrevCount; Loop++)
             {
+                _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+                
                 const ECSArchetypeComponentID ID = Refs->archetype.component.ids[Loop];
                 
                 if (CCBitsGet(RemovedComponent, ID)) ComponentIndex++;

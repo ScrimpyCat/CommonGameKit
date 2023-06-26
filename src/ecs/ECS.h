@@ -229,7 +229,28 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count);
 static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, size_t Index, size_t Count);
 
+static inline size_t ECSComponentBaseIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
+
 #pragma mark -
+
+static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID ID)
+{
+    size_t Index = ID & ~ECSComponentStorageMask;
+    
+    switch (ID & ECSComponentStorageTypeMask)
+    {
+        case ECSComponentStorageTypeIndexed:
+            Index += ECS_PACKED_COMPONENT_MAX;
+        case ECSComponentStorageTypePacked:
+            Index += ECS_ARCHETYPE_COMPONENT_MAX;
+        case ECSComponentStorageTypeArchetype:
+            return Index;
+    }
+    
+    CCAssertLog(0, "Unsupported component type");
+    
+    return SIZE_MAX;
+}
 
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
@@ -296,14 +317,14 @@ static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity,
         case ECSComponentStorageTypeArchetype:
         {
             _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
-            return CCBitsGet(Refs->archetype.has, ID);
+            return CCBitsGet(Refs->has, ID);
         }
             
         case ECSComponentStorageTypePacked:
-            return CCBitsGet(Refs->packed.has, (ID & ~ECSComponentStorageMask));
+            return CCBitsGet(Refs->has, ((ID & ~ECSComponentStorageMask) + ECSComponentBaseIndex(ECSComponentStorageTypePacked)));
             
         case ECSComponentStorageTypeIndexed:
-            return CCBitsGet(Refs->indexed.has, (ID & ~ECSComponentStorageMask));
+            return CCBitsGet(Refs->has, ((ID & ~ECSComponentStorageMask) + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed)));
             
         default:
             CCAssertLog(0, "Unsupported component type");

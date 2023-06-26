@@ -67,19 +67,13 @@ typedef struct {
             ECS_ARCHETYPE_COMPONENT_IDS_ALIGNAS ECSArchetypeComponentID ids[ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX)];
             size_t count;
         } component;
-        CCBits(uint64_t, ECS_ARCHETYPE_COMPONENT_MAX) has;
     } archetype;
     
-    // TODO: combine has fields and put a single has field here.
+    CCBits(uint8_t, ECS_COMPONENT_MAX) has;
     
     struct {
         size_t indexes[ECS_PACKED_COMPONENT_MAX];
-        CCBits(uint64_t, ECS_PACKED_COMPONENT_MAX) has;
     } packed;
-    
-    struct {
-        CCBits(uint64_t, ECS_INDEXED_COMPONENT_MAX) has;
-    } indexed;
 } ECSComponentRefs;
 
 _Static_assert((offsetof(ECSComponentRefs, archetype.component.ids) % ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT) == 0, "Needs to be correctly aligned");
