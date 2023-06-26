@@ -198,7 +198,7 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
 {
     _Bool Parallel = ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex]);
     const size_t ArchCount = Access[SystemIndex].archetype.count;
-    const size_t RefCount = (Parallel ? ArchCount : 1); // TODO: handle non-arch +1
+    const size_t RefCount = (Parallel ? (ArchCount ? ArchCount : 1) : 1);
     
     for (size_t Loop4 = 0, IdCount = Access[SystemIndex].read.count; Loop4 < IdCount; Loop4++)
     {
@@ -243,7 +243,7 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
         .context = Context
     };
     
-    if (ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex]))
+    if ((ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex])) && (ArchCount))
     {
         Executor.archetype.count = 1;
         
