@@ -32,12 +32,13 @@ typedef ECSArchetype(1) ECSPackedComponent;
 
 typedef CCArray ECSIndexedComponent;
 
-typedef size_t ECSComponentID;
+typedef uint32_t ECSComponentID;
 
 typedef CC_FLAG_ENUM(ECSComponentStorage, ECSComponentID) {
     ECSComponentStorageTypeArchetype = (0 << 28),
     ECSComponentStorageTypePacked = (1 << 28),
     ECSComponentStorageTypeIndexed = (2 << 28),
+    ECSComponentStorageTypeLocal = (3 << 28),
     
     ECSComponentStorageModifierDuplicate = (1 << 30),
     ECSComponentStorageModifierTag = (1 << 31),

@@ -41,7 +41,6 @@ typedef struct {
     ECSTime time;
     ECSSystemUpdateCallback update;
     void *changes;
-    CCArray components[ECS_SYSTEM_EXECUTOR_COMPONENT_MAX];
     struct {
         size_t offset;
         size_t count;
@@ -508,6 +507,11 @@ void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count)
 const size_t *ECSArchetypeComponentSizes;
 const size_t *ECSPackedComponentSizes;
 const size_t *ECSIndexedComponentSizes;
+const size_t *ECSLocalComponentSizes;
+const size_t *ECSDuplicateArchetypeComponentSizes;
+const size_t *ECSDuplicatePackedComponentSizes;
+const size_t *ECSDuplicateIndexedComponentSizes;
+const size_t *ECSDuplicateLocalComponentSizes;
 
 static size_t SortedAdd(ECSArchetypeComponentID *Elements, size_t Count, ECSArchetypeComponentID Value)
 {
@@ -646,7 +650,8 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data,
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
-        const size_t AddedIndex = SortedAdd(Refs->archetype.component.ids, Refs->archetype.component.count++, ID);
+        const size_t CompIndex = ID & ~ECSComponentStorageMask;
+        const size_t AddedIndex = SortedAdd(Refs->archetype.component.ids, Refs->archetype.component.count++, CompIndex);
         const size_t Count = Refs->archetype.component.count;
         const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
         ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
@@ -686,8 +691,7 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data,
         Refs->archetype.ptr = Archetype;
         Refs->archetype.index = Index;
         
-        _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
-        CCBitsSet(Refs->has, ID);
+        CCBitsSet(Refs->has, CompIndex);
     }
 }
 
@@ -697,7 +701,8 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
     {
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
         
-        const size_t RemovedIndex = SortedSub(Refs->archetype.component.ids, Refs->archetype.component.count--, ID);
+        const size_t CompIndex = ID & ~ECSComponentStorageMask;
+        const size_t RemovedIndex = SortedSub(Refs->archetype.component.ids, Refs->archetype.component.count--, CompIndex);
         
         const size_t Count = Refs->archetype.component.count;
         if (Count)
@@ -747,7 +752,7 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
         }
         
         _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
-        CCBitsClear(Refs->has, ID);
+        CCBitsClear(Refs->has, CompIndex);
     }
 }
 
@@ -852,6 +857,35 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
         
         const size_t Index = (ID & ~ECSComponentStorageMask);
         CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed));
+    }
+}
+
+void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+{
+    if (!ECSEntityHasComponent(Context, Entity, ID))
+    {
+        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+        
+        const size_t Index = ECSLocalComponentIndex(ID);
+        
+        if (Data)
+        {
+            const ptrdiff_t Offset = ECSLocalComponentOffset(ID);
+            memcpy(&Refs->local[Offset], Data, ECSLocalComponentSizes[Index]);
+        }
+        
+        CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeLocal));
+    }
+}
+
+void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
+{
+    if (ECSEntityHasComponent(Context, Entity, ID))
+    {
+        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+        
+        const size_t Index = ECSLocalComponentIndex(ID);
+        CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeLocal));
     }
 }
 
@@ -1057,6 +1091,8 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
 
 size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID)
 {
+    CCAssertLog((ID & ECSComponentStorageMask) == 0, "ID must not have any modifiers");
+    
 #if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP && CC_HARDWARE_VECTOR_SUPPORT_SSSE3
     const __m128i Zero = _mm_setzero_si128();
     const __m128i One = _mm_set1_epi8(1);

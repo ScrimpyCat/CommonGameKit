@@ -178,6 +178,12 @@ extern const size_t *ECSPackedComponentSizes;
 extern const size_t *ECSIndexedComponentSizes;
 
 /*!
+ * @brief Set the local component sizes.
+ * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ */
+extern const size_t *ECSLocalComponentSizes;
+
+/*!
  * @brief Set the duplicate archetype component sizes.
  * @warning This must be set prior to any calls to @b ECSEntityCreate.
  */
@@ -194,6 +200,12 @@ extern const size_t *ECSDuplicatePackedComponentSizes;
  * @warning This must be set prior to any calls to @b ECSEntityCreate.
  */
 extern const size_t *ECSDuplicateIndexedComponentSizes;
+
+/*!
+ * @brief Set the duplicate local component sizes.
+ * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ */
+extern const size_t *ECSDuplicateLocalComponentSizes;
 
 /*!
  * @brief Create an ECS worker thread.
@@ -219,6 +231,11 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
 void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
 void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 
+void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+static inline size_t ECSLocalComponentIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
+static inline ptrdiff_t ECSLocalComponentOffset(ECSComponentID ID) CC_CONSTANT_FUNCTION;
+
 void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count);
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
 static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
@@ -239,6 +256,9 @@ static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID I
     
     switch (ID & ECSComponentStorageTypeMask)
     {
+        case ECSComponentStorageTypeLocal:
+            Index &= CCBitMaskForValue(ECS_LOCAL_COMPONENT_MAX);
+            Index += ECS_INDEXED_COMPONENT_MAX;
         case ECSComponentStorageTypeIndexed:
             Index += ECS_PACKED_COMPONENT_MAX;
         case ECSComponentStorageTypePacked:
@@ -250,6 +270,20 @@ static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID I
     CCAssertLog(0, "Unsupported component type");
     
     return SIZE_MAX;
+}
+
+static inline CC_CONSTANT_FUNCTION size_t ECSLocalComponentIndex(ECSComponentID ID)
+{
+    CCAssertLog((ID & ECSComponentStorageTypeMask) == ECSComponentStorageTypeLocal, "ID must be a local storage type");
+    
+    return ID & CCBitMaskForValue(ECS_LOCAL_COMPONENT_MAX);
+}
+
+static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponentID ID)
+{
+    CCAssertLog((ID & ECSComponentStorageTypeMask) == ECSComponentStorageTypeLocal, "ID must be a local storage type");
+    
+    return (ID & ~ECSComponentStorageMask) >> CCBitCountSet(CCBitMaskForValue(ECS_LOCAL_COMPONENT_MAX));
 }
 
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
@@ -268,9 +302,14 @@ static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, 
             ECSIndexedAddComponent(Context, Entity, Data, ID);
             break;
             
+        case ECSComponentStorageTypeLocal:
+            ECSLocalAddComponent(Context, Entity, Data, ID);
+            break;
+            
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeLocal:
             ECSEntityAddDuplicateComponent(Context, Entity, Data, ID, 1);
             break;
             
@@ -296,9 +335,14 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
             ECSIndexedRemoveComponent(Context, Entity, ID);
             break;
             
+        case ECSComponentStorageTypeLocal:
+            ECSLocalRemoveComponent(Context, Entity, ID);
+            break;
+            
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeLocal:
             ECSEntityRemoveDuplicateComponent(Context, Entity, ID, 0, 1);
             break;
             
@@ -312,26 +356,7 @@ static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity,
 {
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
-    switch (ID & ECSComponentStorageTypeMask)
-    {
-        case ECSComponentStorageTypeArchetype:
-        {
-            _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
-            return CCBitsGet(Refs->has, ID);
-        }
-            
-        case ECSComponentStorageTypePacked:
-            return CCBitsGet(Refs->has, ((ID & ~ECSComponentStorageMask) + ECSComponentBaseIndex(ECSComponentStorageTypePacked)));
-            
-        case ECSComponentStorageTypeIndexed:
-            return CCBitsGet(Refs->has, ((ID & ~ECSComponentStorageMask) + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed)));
-            
-        default:
-            CCAssertLog(0, "Unsupported component type");
-            break;
-    }
-    
-    return FALSE;
+    return CCBitsGet(Refs->has, ECSComponentBaseIndex(ID));
 }
 
 static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
@@ -341,10 +366,7 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
     switch (ID & ECSComponentStorageTypeMask)
     {
         case ECSComponentStorageTypeArchetype:
-        {
-            _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
-            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Refs->archetype.ptr->components[ECSArchetypeComponentIndex(Refs, ID)], Refs->archetype.index) : NULL;
-        }
+            return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Refs->archetype.ptr->components[ECSArchetypeComponentIndex(Refs, ID & ~ECSComponentStorageMask)], Refs->archetype.index) : NULL;
             
         case ECSComponentStorageTypePacked:
         {
@@ -356,6 +378,12 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
         {
             const size_t Index = (ID & ~ECSComponentStorageMask);
             return ECSEntityHasComponent(Context, Entity, ID) ? CCArrayGetElementAtIndex(Context->indexed[Index], Entity) : NULL;
+        }
+            
+        case ECSComponentStorageTypeLocal:
+        {
+            const ptrdiff_t Offset = ECSLocalComponentOffset(ID);
+            return ECSEntityHasComponent(Context, Entity, ID) ? &Refs->local[Offset] : NULL;
         }
             
         default:
@@ -394,6 +422,11 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
                 case ECSComponentStorageTypeIndexed:
                     Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateIndexedComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
                     ECSIndexedAddComponent(Context, Entity, &Duplicates, ID);
+                    break;
+                    
+                case ECSComponentStorageTypeLocal:
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateLocalComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    ECSLocalAddComponent(Context, Entity, &Duplicates, ID);
                     break;
                     
                 default:
@@ -442,6 +475,10 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                                 
                             case ECSComponentStorageTypeIndexed:
                                 ECSIndexedRemoveComponent(Context, Entity, ID);
+                                break;
+                                
+                            case ECSComponentStorageTypeLocal:
+                                ECSLocalRemoveComponent(Context, Entity, ID);
                                 break;
                                 
                             default:
