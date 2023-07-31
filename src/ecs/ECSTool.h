@@ -87,7 +87,7 @@
 
 #define ECS_ITER_ARCHETYPE_FETCH(type, i) &((type*)ECS_ITER_PRIVATE__Ptr##i)[ECS_ITER_INDEX], ECS_ITER_IGNORE
 #define ECS_ITER_PACKED_FETCH(type, i) CC_GET(i, ECS_ITER_ARCHETYPE_FETCH, CC_REPEAT(0, 20, ECS_ITER_POP, ECS_ITER_FALLBACK_FETCH))(type, i)
-#define ECS_ITER_FALLBACK_FETCH(type, i) ECSEntityGetComponent(ECS_CONTEXT_VAR, ECS_ITER_ENTITY, ECS_ITER_ID_##type), ECS_ITER_CONSUME
+#define ECS_ITER_FALLBACK_FETCH(type, i) ECSEntityGetComponent(ECS_CONTEXT_VAR, ECS_ITER_ENTITY, ECS_ID_##type), ECS_ITER_CONSUME
 
 #define ECS_ITER_INIT(type) ECS_ITER_INIT_(type)
 #define ECS_ITER_INIT_(type) ECS_ITER_INIT__(type, ECS_ITER_KIND(type))
@@ -147,5 +147,22 @@ CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__))
 #define ECS_BATCH_ITER(count, ...) \
 _Static_assert((CC_SOFT_JOIN(+, CC_MAP(ECS_BATCH_ITER_ASSERT_1, __VA_ARGS__)) <= 1) && (ECS_BATCH_ITER_BIT_COUNT(CC_SOFT_JOIN(|, CC_MAP(ECS_BATCH_ITER_ASSERT_2, __VA_ARGS__))) == 1), "ECS_BATCH_ITER can only be used on groups of components that can be batched together"); \
 ECS_ITER_(count, __VA_ARGS__)
+
+#pragma mark - Assertions & Conditions
+
+#define ECS_IS_CONDITION(x, _, arg) ECS_IS_CHECK_##x(arg)
+    
+#define ECS_IS_CHECK_Archetype(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeArchetype)
+#define ECS_IS_CHECK_Packed(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypePacked)
+#define ECS_IS_CHECK_Indexed(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeIndexed)
+#define ECS_IS_CHECK_Local(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeLocal)
+    
+#define ECS_IS_CHECK_Duplicate(arg) ((arg & ECSComponentStorageModifierMask) == ECSComponentStorageModifierDuplicate)
+#define ECS_IS_CHECK_Tag(arg) ((arg & ECSComponentStorageModifierMask) == ECSComponentStorageModifierTag)
+    
+#define ECS_IS(arg, ...) CC_SOFT_JOIN(&&, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
+    
+#define ECS_ASSERT(arg, ...) _Static_assert(ECS_IS(arg, __VA_ARGS__), "Expects component to be the following type: " #__VA_ARGS__)
+#define ECS_ASSERT_NOT(arg, ...) _Static_assert(!ECS_IS(arg, __VA_ARGS__), "Expects component to not be the following type: " #__VA_ARGS__)
 
 #endif
