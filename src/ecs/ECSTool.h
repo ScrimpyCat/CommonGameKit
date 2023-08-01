@@ -161,8 +161,9 @@ ECS_ITER_(count, __VA_ARGS__)
 #define ECS_IS_CHECK_Tag(arg) ((arg & ECSComponentStorageModifierMask) == ECSComponentStorageModifierTag)
     
 #define ECS_IS(arg, ...) CC_SOFT_JOIN(&&, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
+#define ECS_IS_NOT(arg, ...) !CC_SOFT_JOIN(&& !, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
     
 #define ECS_ASSERT(arg, ...) _Static_assert(ECS_IS(arg, __VA_ARGS__), "Expects component to be the following type: " #__VA_ARGS__)
-#define ECS_ASSERT_NOT(arg, ...) _Static_assert(!ECS_IS(arg, __VA_ARGS__), "Expects component to not be the following type: " #__VA_ARGS__)
+#define ECS_ASSERT_NOT(arg, ...) _Static_assert(ECS_IS_NOT(arg, __VA_ARGS__), "Expects component to not be the following type: " #__VA_ARGS__)
 
 #endif
