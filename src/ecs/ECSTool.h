@@ -88,20 +88,23 @@
 #define ECS_ITER_ARCHETYPE_FETCH(type, i) &((type*)ECS_ITER_PRIVATE__Ptr##i)[ECS_ITER_INDEX], ECS_ITER_IGNORE
 #define ECS_ITER_PACKED_FETCH(type, i) CC_GET(i, ECS_ITER_ARCHETYPE_FETCH, CC_REPEAT(0, 20, ECS_ITER_POP, ECS_ITER_FALLBACK_FETCH))(type, i)
 #define ECS_ITER_FALLBACK_FETCH(type, i) ECSEntityGetComponent(ECS_CONTEXT_VAR, ECS_ITER_ENTITY, ECS_ID_##type), ECS_ITER_CONSUME
+#define ECS_ITER_WARNING_FETCH(type, i) CC_WARNING("Unsafe iteration of archetype component: " #type) ECS_ITER_FALLBACK_FETCH(type, i)
 
 #define ECS_ITER_INIT(type) ECS_ITER_INIT_(type)
 #define ECS_ITER_INIT_(type) ECS_ITER_INIT__(type, ECS_ITER_KIND(type))
 #define ECS_ITER_INIT__(type, kind) ECS_ITER_INIT___(type, kind)
 #define ECS_ITER_INIT___(type, kind) ECS_ITER_INIT_##kind(type)
 
+#define ECS_ITER_INIT_X(type) ECS_ENTITIES(type), ,                                       (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_FALLBACK_FETCH,   ECS_ITER_FALLBACK_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
+
 // archetype
-#define ECS_ITER_INIT_0(type) ECS_ENTITIES(type), void,                                   ((,) ECS_ITER_ARCHETYPE_PRE_INIT, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_ARCHETYPE_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
+#define ECS_ITER_INIT_0(type) ECS_ENTITIES(type), void,                                   ((,) ECS_ITER_ARCHETYPE_PRE_INIT, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_ARCHETYPE_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
 // packed
-#define ECS_ITER_INIT_1(type) ECS_ENTITIES(type), void ECS_ITER_PACKED_PRE_INIT(type, 0), (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_FALLBACK_FETCH,  ECS_ITER_PACKED_FETCH,   ECS_ITER_FALLBACK_FETCH)
+#define ECS_ITER_INIT_1(type) ECS_ENTITIES(type), void ECS_ITER_PACKED_PRE_INIT(type, 0), (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_WARNING_FETCH,   ECS_ITER_PACKED_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
 // indexed
-// TODO: ECS_ITER_INIT_2(type)
+#define ECS_ITER_INIT_2(type) CC_ERROR("Cannot iterate with leading indexed component: " #type) ECS_ITER_INIT_X(type)
 // local
-// TODO: ECS_ITER_INIT_3(type)
+#define ECS_ITER_INIT_3(type) CC_ERROR("Cannot iterate with leading local component: " #type) ECS_ITER_INIT_X(type)
 
 #define ECS_ITER_PRE(e, i, init) ECS_ITER_PRE_(ECS_ITER_TYPE(e), e, i, ECS_ITER_CONSUME init)
 #define ECS_ITER_PRE_(type, e, i, ...) ECS_ITER_PRE__(ECS_ITER_KIND(type), type, e, i, __VA_ARGS__)
