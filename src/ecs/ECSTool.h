@@ -73,6 +73,7 @@
 #define ECS_ITER_CONSUME(...) __VA_ARGS__
 #define ECS_ITER_IGNORE(...)
 #define ECS_ITER_POP(x, ...) x
+#define ECS_ITER_PREPEND(suffix, prefix) CC_CAT(prefix, suffix)
 
 #define ECS_ITER_TYPE(x) ECS_ITER_TYPE_(x)
 #define ECS_ITER_TYPE_(x) ECS_ITER_TYPE_##x )
@@ -132,12 +133,17 @@
 #define ECS_ITER_NESTED_NONE(e, i)
 
 #define ECS_ITER_NESTED_ARRAY_ITERATOR(e, i) \
-for (size_t ECS_ITER_PRIVATE__fetch_duplicate_index##i = 0, ECS_ITER_PRIVATE__fetch_duplicate_count##i = CCArrayGetCount(*ECS_ITER_PRIVATE__fetch_array##i), ECS_ITER_PRIVATE__duplicate_set##i = 0; ECS_ITER_PRIVATE__fetch_duplicate_index##i < ECS_ITER_PRIVATE__fetch_duplicate_count##i; ECS_ITER_PRIVATE__fetch_duplicate_index##i++, ECS_ITER_PRIVATE__duplicate_set##i = 0) \
+for (size_t ECS_ITER_PRIVATE__fetch_duplicate_index##i = 0, ECS_ITER_DECLARE_ELEMENT_INDEX_VAR(e, i, &ECS_ITER_PRIVATE__fetch_duplicate_index##i), ECS_ITER_PRIVATE__fetch_duplicate_count##i = CCArrayGetCount(*ECS_ITER_PRIVATE__fetch_array##i), ECS_ITER_PRIVATE__duplicate_set##i = 0; ECS_ITER_PRIVATE__fetch_duplicate_index##i < ECS_ITER_PRIVATE__fetch_duplicate_count##i; ECS_ITER_PRIVATE__fetch_duplicate_index##i++, ECS_ITER_PRIVATE__duplicate_set##i = 0) \
 for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVATE__fetch_array##i, ECS_ITER_PRIVATE__fetch_duplicate_index##i)); !ECS_ITER_PRIVATE__duplicate_set##i++; )
 
 #define ECS_ITER_DECLARE_ELEMENT_VAR(x, i, v) ECS_ITER_DECLARE_ELEMENT_##x, i, v)
 #define ECS_ITER_DECLARE_ELEMENT_VAR_0(x, i, v) ECS_ITER_DECLARE_ELEMENT_##x, i, v)
 #define ECS_ITER_DECLARE_ELEMENT_const const ECS_ITER_DECLARE_ELEMENT_VAR_0(
+
+#define ECS_ITER_DECLARE_ELEMENT_INDEX_VAR(x, i, v) ECS_ITER_DECLARE_ELEMENT_INDEX_##x), i, v)
+#define ECS_ITER_DECLARE_ELEMENT_INDEX_VAR_0(x, i, v) ECS_ITER_DECLARE_ELEMENT_INDEX_VAR_0_(x, i, v)
+#define ECS_ITER_DECLARE_ELEMENT_INDEX_VAR_0_(x, i, v) ECS_ITER_DECLARE_ELEMENT_INDEX_##x), i, v)
+#define ECS_ITER_DECLARE_ELEMENT_INDEX_const ECS_ITER_DECLARE_ELEMENT_INDEX_VAR_0(ECS_ITER_CONSUME(
 
 #define ECS_ITER_NESTED_FETCH(e, i) ECS_ITER_NESTED(e)(e, i)
 
@@ -147,6 +153,10 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVA
 
 #ifndef ECS_ITER_DUPLICATE_ARRAY_SUFFIX
 #define ECS_ITER_DUPLICATE_ARRAY_SUFFIX Array
+#endif
+
+#ifndef ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX
+#define ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX Index
 #endif
 
 #ifndef ECS_ITER_INDEX
