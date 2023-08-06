@@ -425,7 +425,7 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
                     break;
                     
                 case ECSComponentStorageTypeLocal:
-                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateLocalComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateLocalComponentSizes[ECSLocalComponentIndex(ID)], 16); // TODO: replace 16 with configurable amount
                     ECSLocalAddComponent(Context, Entity, &Duplicates, ID);
                     break;
                     
