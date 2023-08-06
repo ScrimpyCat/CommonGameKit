@@ -106,6 +106,14 @@
 // local
 #define ECS_ITER_INIT_3(type) CC_ERROR("Cannot iterate with leading local component: " #type) ECS_ITER_INIT_X(type)
 
+#define ECS_ITER_DECLARE_ASSIGN(e, i, v) e = v
+
+#define ECS_ITER_DECLARE_ARRAY_VAR(e, i, v) CCArray *ECS_ITER_PRIVATE__fetch_array##i = v, CC_CAT(e, ECS_ITER_DUPLICATE_ARRAY_SUFFIX) = ECS_ITER_PRIVATE__fetch_array##i
+
+#define ECS_ITER_DECLARE_VAR(x, i, v) ECS_ITER_DECLARE_##x, i, v)
+#define ECS_ITER_DECLARE_VAR_0(x, i, v) ECS_ITER_DECLARE_##x, i, v)
+#define ECS_ITER_DECLARE_const const ECS_ITER_DECLARE_VAR_0(
+
 #define ECS_ITER_PRE(e, i, init) ECS_ITER_PRE_(ECS_ITER_TYPE(e), e, i, ECS_ITER_CONSUME init)
 #define ECS_ITER_PRE_(type, e, i, ...) ECS_ITER_PRE__(ECS_ITER_KIND(type), type, e, i, __VA_ARGS__)
 #define ECS_ITER_PRE__(kind, type, e, i, ...) CC_GET(kind, __VA_ARGS__)(type, i)
@@ -114,7 +122,32 @@
 #define ECS_ITER_FETCH_(type, e, i, ...) ECS_ITER_FETCH__(ECS_ITER_KIND(type), type, e, i, __VA_ARGS__)
 #define ECS_ITER_FETCH__(kind, type, e, i, ...) ECS_ITER_FETCH___(kind, type, e, i, CC_GET(kind, __VA_ARGS__)(type, i))
 #define ECS_ITER_FETCH___(kind, type, e, i, ...) ECS_ITER_FETCH____(kind, type, e, i, __VA_ARGS__)
-#define ECS_ITER_FETCH____(kind, type, e, i, fetch, valid) for (size_t ECS_ITER_PRIVATE__fetch##i = 0, ECS_ITER_PRIVATE__set##i = 0; !ECS_ITER_PRIVATE__fetch##i; ) for (void *ECS_ITER_PRIVATE__fetch_var##i = fetch; !ECS_ITER_PRIVATE__fetch##i++ valid(&& ECS_ITER_PRIVATE__fetch_var##i); ) for (e = ECS_ITER_PRIVATE__fetch_var##i; !ECS_ITER_PRIVATE__set##i++; )
+#define ECS_ITER_FETCH____(kind, type, e, i, fetch, valid) for (size_t ECS_ITER_PRIVATE__fetch##i = 0, ECS_ITER_PRIVATE__set##i = 0; !ECS_ITER_PRIVATE__fetch##i; ) for (void *ECS_ITER_PRIVATE__fetch_var##i = fetch; !ECS_ITER_PRIVATE__fetch##i++ valid(&& ECS_ITER_PRIVATE__fetch_var##i); ) for (ECS_ITER_DECLARE_VAR(e, i, ECS_ITER_PRIVATE__fetch_var##i); !ECS_ITER_PRIVATE__set##i++; )
+
+#define ECS_ITER_NESTED(x) ECS_ITER_NESTED_(x)
+#define ECS_ITER_NESTED_(x) ECS_ITER_NESTED_##x )
+#define ECS_ITER_NESTED_0(x) ECS_ITER_NESTED_##x )
+#define ECS_ITER_NESTED_const ECS_ITER_NESTED_0(
+
+#define ECS_ITER_NESTED_NONE(e, i)
+
+#define ECS_ITER_NESTED_ARRAY_ITERATOR(e, i) \
+for (size_t ECS_ITER_PRIVATE__fetch_duplicate_index##i = 0, ECS_ITER_PRIVATE__fetch_duplicate_count##i = CCArrayGetCount(*ECS_ITER_PRIVATE__fetch_array##i), ECS_ITER_PRIVATE__duplicate_set##i = 0; ECS_ITER_PRIVATE__fetch_duplicate_index##i < ECS_ITER_PRIVATE__fetch_duplicate_count##i; ECS_ITER_PRIVATE__fetch_duplicate_index##i++, ECS_ITER_PRIVATE__duplicate_set##i = 0) \
+for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVATE__fetch_array##i, ECS_ITER_PRIVATE__fetch_duplicate_index##i)); !ECS_ITER_PRIVATE__duplicate_set##i++; )
+
+#define ECS_ITER_DECLARE_ELEMENT_VAR(x, i, v) ECS_ITER_DECLARE_ELEMENT_##x, i, v)
+#define ECS_ITER_DECLARE_ELEMENT_VAR_0(x, i, v) ECS_ITER_DECLARE_ELEMENT_##x, i, v)
+#define ECS_ITER_DECLARE_ELEMENT_const const ECS_ITER_DECLARE_ELEMENT_VAR_0(
+
+#define ECS_ITER_NESTED_FETCH(e, i) ECS_ITER_NESTED(e)(e, i)
+
+#define ECS_ITER_TYPE_ARRAY(...) __VA_ARGS__ ECS_ITER_IGNORE(
+#define ECS_ITER_DECLARE_ARRAY(...) CCArray ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_NESTED_ARRAY(...) ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
+
+#ifndef ECS_ITER_DUPLICATE_ARRAY_SUFFIX
+#define ECS_ITER_DUPLICATE_ARRAY_SUFFIX Array
+#endif
 
 #ifndef ECS_ITER_INDEX
 #define ECS_ITER_INDEX ECSIterIndex
@@ -140,7 +173,8 @@ for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
 for (size_t ECS_ITER_INDEX = 0, ECS_ITER_COUNT = CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (count)) \
 for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY) \
-CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__))
+CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__)) \
+CC_SOFT_JOIN(, CC_MAP(ECS_ITER_NESTED_FETCH, __VA_ARGS__))
 
 #define ECS_BATCH_ITER_ASSERT_1(x, ...) ECS_ITER_KIND(ECS_ITER_TYPE(x))
 #define ECS_BATCH_ITER_ASSERT_2(x, ...) (1 << ECS_ITER_KIND(ECS_ITER_TYPE(x)))
