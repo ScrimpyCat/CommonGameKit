@@ -244,7 +244,7 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
 static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count);
-static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, size_t Index, size_t Count);
+static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, ptrdiff_t Index, size_t Count);
 
 static inline size_t ECSComponentBaseIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
 
@@ -343,7 +343,7 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
         case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeLocal:
-            ECSEntityRemoveDuplicateComponent(Context, Entity, ID, 0, 1);
+            ECSEntityRemoveDuplicateComponent(Context, Entity, ID, -1, 1);
             break;
             
         default:
@@ -443,7 +443,7 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
     else CCAssertLog(0, "Component does not allow duplicates");
 }
 
-static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, size_t Index, size_t Count)
+static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, ptrdiff_t Index, size_t Count)
 {
     if (ID & ECSComponentStorageModifierDuplicate)
     {
@@ -453,6 +453,17 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
         {
             CCArray Duplicates = *Component;
             const size_t DuplicatesCount = CCArrayGetCount(Duplicates);
+            
+            if (Index < 0)
+            {
+                Index = (DuplicatesCount + Index) - (Count - 1);
+                
+                if (Index < 0)
+                {
+                    Count += Index;
+                    Index = 0;
+                }
+            }
             
             if (Index < DuplicatesCount)
             {
