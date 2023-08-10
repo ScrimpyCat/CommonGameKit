@@ -501,7 +501,7 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                     }
                     
                     CCArrayCopyElementsAtIndex(Duplicates, CopyIndex, Index, CopyCount);
-                    CCArrayRemoveElementsAtIndex(Duplicates, Index + CopyCount, Count - CopyCount);
+                    CCArrayRemoveElementsAtIndex(Duplicates, DuplicatesCount - Count, Count);
                 }
             }
         }
