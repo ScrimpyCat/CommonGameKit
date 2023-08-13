@@ -1,0 +1,484 @@
+const size_t ArchetypeComponentIndexes[] = {
+    0, 1, 2, 3, 4, 5,
+    0, 1, 2, 3, 5,
+    0, 1, 2, 4, 5,
+    0, 1, 3, 4, 5,
+    0, 2, 3, 4, 5,
+    0, 1, 2, 5,
+    0, 1, 3, 5,
+    0, 1, 4, 5,
+    0, 2, 3, 5,
+    0, 2, 4, 5,
+    0, 3, 4, 5,
+    0, 1, 5,
+    0, 2, 5,
+    0, 3, 5,
+    0, 4, 5,
+    0, 5,
+};
+
+#define INDEX_1_2_3_4 1, 4
+#define INDEX_1_3 17, 2
+#define INDEX_0_1_3_4_5 16, 5
+#define INDEX_0_1_4 34, 3
+#define INDEX_0_2_5 53, 3
+#define INDEX_0_2_4 42, 3
+#define INDEX_0_4_5 59, 3
+#define INDEX_1_2_3_4_5 1, 5
+#define INDEX_3_4_5 3, 3
+#define INDEX_1_3_4_5 17, 4
+#define INDEX_4_5 4, 2
+#define INDEX_0_1_2_3_5 6, 5
+#define INDEX_3 3, 1
+#define INDEX_1_2_3_5 7, 4
+#define INDEX_1_2_3 1, 3
+#define INDEX_4 4, 1
+#define INDEX_2 2, 1
+#define INDEX_0_1_2 0, 3
+#define INDEX_1_5 51, 2
+#define INDEX_0_1_2_5 26, 4
+#define INDEX_2_3_4_5 2, 4
+#define INDEX_1_2_4_5 12, 4
+#define INDEX_0_3_5 56, 3
+#define INDEX_3_5 9, 2
+#define INDEX_3_4 3, 2
+#define INDEX_0 0, 1
+#define INDEX_0_3 46, 2
+#define INDEX_0_1_2_4_5 11, 5
+#define INDEX_2_3_5 8, 3
+#define INDEX_0_1_5 50, 3
+#define INDEX_0_1 0, 2
+#define INDEX_0_1_2_3_4 0, 5
+#define INDEX_5 5, 1
+#define INDEX_0_1_4_5 34, 4
+#define INDEX_2_4_5 13, 3
+#define INDEX_2_4 13, 2
+#define INDEX_0_2_4_5 42, 4
+#define INDEX_0_1_2_4 11, 4
+#define INDEX_1_2_4 12, 3
+#define INDEX_1_4_5 35, 3
+#define INDEX_0_4 59, 2
+#define INDEX_2_3 2, 2
+#define INDEX_0_2_3_4_5 21, 5
+#define INDEX_0_2_3_4 21, 4
+#define INDEX_0_1_3_5 30, 4
+#define INDEX_1_2_5 27, 3
+#define INDEX_0_2 21, 2
+#define INDEX_1_3_5 31, 3
+#define INDEX_0_2_3 21, 3
+#define INDEX_0_5 62, 2
+#define INDEX_0_1_3 16, 3
+#define INDEX_0_2_3_5 38, 4
+#define INDEX_0_3_4_5 46, 4
+#define INDEX_2_3_4 2, 3
+#define INDEX_1_2 1, 2
+#define INDEX_2_5 28, 2
+#define INDEX_0_1_3_4 16, 4
+#define INDEX_1_3_4 17, 3
+#define INDEX_0_1_2_3 0, 4
+#define INDEX_0_1_2_3_4_5 0, 6
+#define INDEX_0_3_4 46, 3
+#define INDEX_1_4 35, 2
+#define INDEX_1 1, 1
+
+_Static_assert(64 == ECS_LOCAL_COMPONENT_MAX, "Regenerate file with new ECS_LOCAL_COMPONENT_MAX value.");
+
+#define COMP_A (ECSComponentStorageTypeArchetype | 0)
+#define COMP_B (ECSComponentStorageTypeArchetype | 1)
+#define COMP_C (ECSComponentStorageTypeArchetype | 2)
+#define COMP_D (ECSComponentStorageTypeArchetype | 3)
+#define COMP_E (ECSComponentStorageTypeArchetype | 4)
+#define ARCH_TAG (ECSComponentStorageTypeArchetype | ECSComponentStorageModifierTag | 5)
+#define COMP_H (ECSComponentStorageTypeIndexed | 0)
+#define COMP_I (ECSComponentStorageTypeIndexed | 1)
+#define INDEXED_TAG (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierTag | 2)
+#define LOCAL_H (ECSComponentStorageTypeLocal | (0 << 7) | 0)
+#define LOCAL_DUPLICATE_B (ECSComponentStorageTypeLocal | ((((LOCAL_H & ~ECSComponentStorageMask) >> 7) + sizeof(LocalH)) << 7) | ECSComponentStorageModifierDuplicate | 1)
+#define LOCAL_TAG (ECSComponentStorageTypeLocal | ((((LOCAL_DUPLICATE_B & ~ECSComponentStorageMask) >> 7) + sizeof(CCArray)) << 7) | ECSComponentStorageModifierTag | 2)
+#define COMP_F (ECSComponentStorageTypePacked | 0)
+#define COMP_G (ECSComponentStorageTypePacked | 1)
+#define COMP_J (ECSComponentStorageTypePacked | 2)
+#define DUPLICATE_A (ECSComponentStorageTypePacked | ECSComponentStorageModifierDuplicate | 3)
+#define PACKED_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 4)
+
+#define LOCAL_STORAGE_SIZE (((LOCAL_TAG & ~ECSComponentStorageMask) >> 7) + sizeof(LocalTag))
+
+const size_t ArchetypeComponentSizes[] = {
+    sizeof(CompA),
+    sizeof(CompB),
+    sizeof(CompC),
+    sizeof(CompD),
+    sizeof(CompE),
+    sizeof(ArchTag),
+};
+const size_t DuplicateArchetypeComponentSizes[] = {
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+const size_t IndexedComponentSizes[] = {
+    sizeof(CompH),
+    sizeof(CompI),
+    sizeof(IndexedTag),
+};
+const size_t DuplicateIndexedComponentSizes[] = {
+    0,
+    0,
+    0,
+};
+const size_t LocalComponentSizes[] = {
+    sizeof(LocalH),
+    sizeof(CCArray),
+    sizeof(LocalTag),
+};
+const size_t DuplicateLocalComponentSizes[] = {
+    0,
+    sizeof(LocalDuplicateB),
+    0,
+};
+const size_t PackedComponentSizes[] = {
+    sizeof(CompF),
+    sizeof(CompG),
+    sizeof(CompJ),
+    sizeof(CCArray),
+    sizeof(PackedTag),
+};
+const size_t DuplicatePackedComponentSizes[] = {
+    0,
+    0,
+    0,
+    sizeof(DuplicateA),
+    0,
+};
+
+const ECSArchetypePointer ArchetypeDependencies[] = {
+#define ARCHETYPE_DEPENDENCIES_CompA_CompC_CompD 0
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_D)]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_0_2_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, COMP_E)]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_0_2_3 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2_3 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2_3 },
+#define ARCHETYPE_DEPENDENCIES_CompA_CompB_CompC 8
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_C)]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_E)]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1_2 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1_2 },
+#define ARCHETYPE_DEPENDENCIES_CompC_CompD 16
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_C, COMP_D)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_D)]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, COMP_D)]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_C, COMP_D, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_2_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, COMP_E)]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_2_3 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_2_3 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1_2 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_2_3 },
+#define ARCHETYPE_DEPENDENCIES_ArchTag_CompA 32
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_3 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_3 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_4 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_4 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_4 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_4 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_5 },
+#define ARCHETYPE_DEPENDENCIES_CompA_CompC 48
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_C)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_C)]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_D)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_E)]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_2 },
+#define ARCHETYPE_DEPENDENCIES_CompA_CompB 64
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_B)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_C)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_D)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0_1 },
+#define ARCHETYPE_DEPENDENCIES_CompC 80
+    { offsetof(ECSContext, archetypes1[ECS_ARCHETYPE1_INDEX(COMP_C)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_C)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_B, COMP_C)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_C, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_C, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_C)]), INDEX_2 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_D)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, COMP_D)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_C, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_E)]), INDEX_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_2 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_2 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_2 },
+#define ARCHETYPE_DEPENDENCIES_CompB 112
+    { offsetof(ECSContext, archetypes1[ECS_ARCHETYPE1_INDEX(COMP_B)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_B)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_B, COMP_C)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_B, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_B, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_B, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_C)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_D)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_B, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_B, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_1 },
+#define ARCHETYPE_DEPENDENCIES_CompA 144
+    { offsetof(ECSContext, archetypes1[ECS_ARCHETYPE1_INDEX(COMP_A)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_B)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_C)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes2[ECS_ARCHETYPE2_INDEX(COMP_A, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_C)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_B, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_D)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_C, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_B, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes4[ECS_ARCHETYPE4_INDEX(COMP_A, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E)]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_C, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_B, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes5[ECS_ARCHETYPE5_INDEX(COMP_A, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+    { offsetof(ECSContext, archetypes6[ECS_ARCHETYPE6_INDEX(COMP_A, COMP_B, COMP_C, COMP_D, COMP_E, (ARCH_TAG & ~ECSComponentStorageMask))]), INDEX_0 },
+};
+
+#define ARCHETYPE1_DEPENDENCIES_COUNT 32
+#define ARCHETYPE2_DEPENDENCIES_COUNT 16
+#define ARCHETYPE3_DEPENDENCIES_COUNT 8
+#define ARCHETYPE4_DEPENDENCIES_COUNT 4
+#define ARCHETYPE5_DEPENDENCIES_COUNT 2
+#define ARCHETYPE6_DEPENDENCIES_COUNT 1
+
+#define COMPONENT_SYSTEM_ACCESS_ARCHETYPE1(x1) { .count = ARCHETYPE1_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1] }
+#define COMPONENT_SYSTEM_ACCESS_ARCHETYPE2(x1, x2) { .count = ARCHETYPE2_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2] }
+#define COMPONENT_SYSTEM_ACCESS_ARCHETYPE3(x1, x2, x3) { .count = ARCHETYPE3_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2##_##x3] }
+#define COMPONENT_SYSTEM_ACCESS_ARCHETYPE4(x1, x2, x3, x4) { .count = ARCHETYPE4_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2##_##x3##_##x4] }
+#define COMPONENT_SYSTEM_ACCESS_ARCHETYPE5(x1, x2, x3, x4, x5) { .count = ARCHETYPE5_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2##_##x3##_##x4##_##x5] }
+#define COMPONENT_SYSTEM_ACCESS_ARCHETYPE6(x1, x2, x3, x4, x5, x6) { .count = ARCHETYPE6_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2##_##x3##_##x4##_##x5##_##x6] }
+
+const ECSComponentID ComponentIDList[] = {
+    COMP_F, COMP_G, COMP_H, 
+    ARCH_TAG, COMP_A, 
+    COMP_C, 
+    COMP_A, COMP_I, 
+    LOCAL_DUPLICATE_B, LOCAL_H, 
+    COMP_B, 
+    COMP_D, 
+    COMP_J, 
+    DUPLICATE_A, 
+};
+
+#define COMPONENT_ID_LIST_CompF_CompG_CompH (ComponentIDList + 0)
+#define COMPONENT_ID_LIST_ArchTag_CompA (ComponentIDList + 3)
+#define COMPONENT_ID_LIST_CompA (ComponentIDList + 4)
+#define COMPONENT_ID_LIST_CompA_CompC (ComponentIDList + 4)
+#define COMPONENT_ID_LIST_CompC (ComponentIDList + 5)
+#define COMPONENT_ID_LIST_CompA_CompI (ComponentIDList + 6)
+#define COMPONENT_ID_LIST_LocalDuplicateB_LocalH (ComponentIDList + 8)
+#define COMPONENT_ID_LIST_CompB (ComponentIDList + 10)
+#define COMPONENT_ID_LIST_CompD (ComponentIDList + 11)
+#define COMPONENT_ID_LIST_CompJ (ComponentIDList + 12)
+#define COMPONENT_ID_LIST_DuplicateA (ComponentIDList + 13)
+
+const size_t ComponentOffsetList[] = {
+    offsetof(ECSContext, packed[(COMP_F & ~ECSComponentStorageMask)]), offsetof(ECSContext, packed[(COMP_G & ~ECSComponentStorageMask)]), offsetof(ECSContext, indexed[(COMP_H & ~ECSComponentStorageMask)]), offsetof(ECSContext, indexed[(COMP_I & ~ECSComponentStorageMask)]), 
+    offsetof(ECSContext, packed[(COMP_J & ~ECSComponentStorageMask)]), 
+    offsetof(ECSContext, packed[(DUPLICATE_A & ~ECSComponentStorageMask)]), 
+};
+
+#define COMPONENT_OFFSET_LIST_CompF_CompG_CompH_CompI (ComponentOffsetList + 0)
+#define COMPONENT_OFFSET_LIST_CompJ (ComponentOffsetList + 4)
+#define COMPONENT_OFFSET_LIST_DuplicateA (ComponentOffsetList + 5)
+
+#define OTHER_GROUP 1
+#define MISC_GROUP 0
+
+const ECSGroupDependency GroupDependencies[] = {
+#define MISC_GROUP_DEPENDENCIES (GroupDependencies + 0)
+    { .group = -1, .priority = -1 },
+    { .group = -1, .priority = -1 },
+#define OTHER_GROUP_DEPENDENCIES (GroupDependencies + 2)
+    { .group = -1, .priority = -1 },
+};
+
+const ECSSystemRange SystemRange[] = {
+#define MISC_GROUP_SYSTEM_RANGE (SystemRange + 0)
+    { 0, 7 },
+    { 7, 4 },
+#define OTHER_GROUP_SYSTEM_RANGE (SystemRange + 2)
+    { 0, 1 },
+};
+
+const ECSSystemUpdate SystemUpdate[] = {
+#define MISC_GROUP_SYSTEM_UPDATE (SystemUpdate + 0)
+    ECS_SYSTEM_UPDATE(Sys4ReadA),
+    ECS_SYSTEM_UPDATE(Sys5ReadC),
+    ECS_SYSTEM_UPDATE(Sys6ReadAC),
+    ECS_SYSTEM_UPDATE(Sys7WriteB),
+    ECS_SYSTEM_UPDATE(Sys1ReadA_WriteB),
+    ECS_SYSTEM_UPDATE(Sys2ReadAC_WriteB),
+    ECS_SYSTEM_UPDATE(Sys3ReadAC_WriteD),
+    ECS_SYSTEM_UPDATE(Sys11ReadAWithArchTag),
+    ECS_SYSTEM_UPDATE_PARALLEL(Sys8ReadD_WriteC),
+    ECS_SYSTEM_UPDATE_PARALLEL(Sys10WriteJ),
+    ECS_SYSTEM_UPDATE(Sys12WriteReadLocalHLocalDuplicateB_WriteDuplicateA),
+#define OTHER_GROUP_SYSTEM_UPDATE (SystemUpdate + 11)
+    ECS_SYSTEM_UPDATE(Sys9ReadFGH_WriteAI),
+};
+
+const ECSSystemAccess SystemAccess[] = {
+#define MISC_GROUP_SYSTEM_ACCESS (SystemAccess + 0)
+    { .read = { .ids = COMPONENT_ID_LIST_CompA, .count = 1 }, .write = { .ids = NULL, .count = 0 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE1(CompA) },
+    { .read = { .ids = COMPONENT_ID_LIST_CompC, .count = 1 }, .write = { .ids = NULL, .count = 0 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE1(CompC) },
+    { .read = { .ids = COMPONENT_ID_LIST_CompA_CompC, .count = 2 }, .write = { .ids = NULL, .count = 0 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE2(CompA, CompC) },
+    { .read = { .ids = NULL, .count = 0 }, .write = { .ids = COMPONENT_ID_LIST_CompB, .count = 1 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE1(CompB) },
+    { .read = { .ids = COMPONENT_ID_LIST_CompA, .count = 1 }, .write = { .ids = COMPONENT_ID_LIST_CompB, .count = 1 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE2(CompA, CompB) },
+    { .read = { .ids = COMPONENT_ID_LIST_CompA_CompC, .count = 2 }, .write = { .ids = COMPONENT_ID_LIST_CompB, .count = 1 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE3(CompA, CompB, CompC) },
+    { .read = { .ids = COMPONENT_ID_LIST_CompA_CompC, .count = 2 }, .write = { .ids = COMPONENT_ID_LIST_CompD, .count = 1 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE3(CompA, CompC, CompD) },
+    { .read = { .ids = COMPONENT_ID_LIST_ArchTag_CompA, .count = 2 }, .write = { .ids = NULL, .count = 0 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE2(ArchTag, CompA) },
+    { .read = { .ids = COMPONENT_ID_LIST_CompD, .count = 1 }, .write = { .ids = COMPONENT_ID_LIST_CompC, .count = 1 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE2(CompC, CompD) },
+    { .read = { .ids = NULL, .count = 0 }, .write = { .ids = COMPONENT_ID_LIST_CompJ, .count = 1 }, .component = { .offsets = COMPONENT_OFFSET_LIST_CompJ } },
+    { .read = { .ids = COMPONENT_ID_LIST_LocalDuplicateB_LocalH, .count = 2 }, .write = { .ids = COMPONENT_ID_LIST_DuplicateA, .count = 1 }, .component = { .offsets = COMPONENT_OFFSET_LIST_DuplicateA } },
+#define OTHER_GROUP_SYSTEM_ACCESS (SystemAccess + 11)
+    { .read = { .ids = COMPONENT_ID_LIST_CompF_CompG_CompH, .count = 3 }, .write = { .ids = COMPONENT_ID_LIST_CompA_CompI, .count = 2 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE1(CompA), .component = { .offsets = COMPONENT_OFFSET_LIST_CompF_CompG_CompH_CompI } },
+};
+
+const uint8_t SystemGraph[] = {
+#define MISC_GROUP_SYSTEM_GRAPH (SystemGraph + 0)
+    126, 125, 123, 71, 71, 71, 63, 
+    14, 13, 11, 7, 
+#define OTHER_GROUP_SYSTEM_GRAPH (SystemGraph + 11)
+    0, 
+};
+
+const ECSGroup Groups[] = {
+    {
+        .freq = ECS_TIME_FROM_SECONDS(1.0 / 60.0),
+        .dynamic = FALSE,
+        .priorities = {
+            .count = 2,
+            .deps = MISC_GROUP_DEPENDENCIES,
+            .systems = {
+                .range = MISC_GROUP_SYSTEM_RANGE,
+                .graphs = MISC_GROUP_SYSTEM_GRAPH,
+                .update = MISC_GROUP_SYSTEM_UPDATE,
+                .access = MISC_GROUP_SYSTEM_ACCESS,
+            }
+        }
+    },
+    {
+        .freq = ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2,
+        .dynamic = FALSE,
+        .priorities = {
+            .count = 1,
+            .deps = OTHER_GROUP_DEPENDENCIES,
+            .systems = {
+                .range = OTHER_GROUP_SYSTEM_RANGE,
+                .graphs = OTHER_GROUP_SYSTEM_GRAPH,
+                .update = OTHER_GROUP_SYSTEM_UPDATE,
+                .access = OTHER_GROUP_SYSTEM_ACCESS,
+            }
+        }
+    },
+};
+
