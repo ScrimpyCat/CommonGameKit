@@ -893,29 +893,31 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
 {
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
-    void *ComponentData[ECS_ARCHETYPE_MAX];
+    void *RefData[ECS_ARCHETYPE_MAX];
+    void *ComponentData[ECS_ARCHETYPE_COMPONENT_MAX];
     CCBits(uint64_t, ECS_ARCHETYPE_COMPONENT_MAX) AddedComponent;
+    CCBits(uint64_t, ECS_ARCHETYPE_COMPONENT_MAX) CachedComponentLookup;
     
     CC_BITS_INIT_CLEAR(AddedComponent);
+    CC_BITS_INIT_CLEAR(CachedComponentLookup);
     
-    size_t IndexCount = 0, LastIndex = 0;
+    size_t IndexCount = 0, LastIndex = 0, RefDataCount = 0;
     ECSArchetypeComponentID LastID = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
-        switch (Components[Loop].id & ECSComponentStorageTypeMask)
+        switch (Components[Loop].id & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
         {
             case ECSComponentStorageTypeArchetype:
             {
-                const ECSArchetypeComponentID ID = Components[Loop].id;
-                
-                _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+                const ECSArchetypeComponentID ID = Components[Loop].id & ~ECSComponentStorageMask;
                 
                 if (!ECSEntityHasComponent(Context, Entity, ID))
                 {
                     const size_t Offset = LastID < ID ? LastIndex : 0;
                     
                     LastIndex = SortedAdd(Refs->archetype.component.ids + Offset, Refs->archetype.component.count++ - Offset, ID) + Offset;
-                    ComponentData[IndexCount++] = Components[Loop].data;
+                    ComponentData[ID] = Components[Loop].data;
+                    IndexCount++;
                     CCBitsSet(AddedComponent, ID);
                     CCBitsSet(Refs->has, ID);
                     
@@ -930,6 +932,48 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                 
             case ECSComponentStorageTypeIndexed:
                 ECSIndexedAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+                break;
+                
+            case ECSComponentStorageTypeLocal:
+                ECSLocalAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+                break;
+                
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
+            {
+                const ECSArchetypeComponentID ID = Components[Loop].id & ~ECSComponentStorageMask;
+                
+                if (!ECSEntityHasComponent(Context, Entity, ID))
+                {
+                    const size_t Offset = LastID < ID ? LastIndex : 0;
+                    
+                    LastIndex = SortedAdd(Refs->archetype.component.ids + Offset, Refs->archetype.component.count++ - Offset, ID) + Offset;
+                    RefData[RefDataCount] = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateArchetypeComponentSizes[ID], 16); // TODO: replace 16 with configurable amount
+                    ComponentData[ID] = &RefData[RefDataCount++];
+                    IndexCount++;
+                    CCBitsSet(AddedComponent, ID);
+                    CCBitsSet(Refs->has, ID);
+                    
+                    LastID = ID;
+                }
+                
+                if ((!CCBitsGet(AddedComponent, ID)) && (!CCBitsGet(CachedComponentLookup, ID)))
+                {
+                    CCBitsSet(CachedComponentLookup, ID);
+                    
+                    const size_t Offset = ID ? CCBitsCount(AddedComponent, ID, ECS_ARCHETYPE_COMPONENT_MAX - ID) : 0;
+                    size_t Index = ECSArchetypeComponentIndex(Refs, ID) + Offset;
+                    ComponentData[ID] = CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index);
+                }
+                
+                CCArray *Duplicates = ComponentData[ID];
+                CCArrayAppendElement(*Duplicates, Components[Loop].data);
+                break;
+            }
+                
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeLocal:
+                ECSEntityAddDuplicateComponent(Context, Entity, Components[Loop].data, Components[Loop].id, 1);
                 break;
                 
             default:
@@ -966,7 +1010,8 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                 
                 if (CCBitsGet(AddedComponent, ID))
                 {
-                    CCArrayAppendElement(Archetype->components[Loop], ComponentData[ComponentIndex++]);
+                    CCArrayAppendElement(Archetype->components[Loop], ComponentData[ID]);
+                    ComponentIndex++;
                 }
                 
                 else
@@ -983,7 +1028,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
         {
             for (size_t Loop = 0; Loop < Count; Loop++)
             {
-                CCArrayAppendElement(Archetype->components[Loop], ComponentData[Loop]);
+                CCArrayAppendElement(Archetype->components[Loop], ComponentData[Refs->archetype.component.ids[Loop]]);
             }
         }
         
@@ -996,9 +1041,12 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
 {
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
+    void *ComponentData[ECS_ARCHETYPE_COMPONENT_MAX];
     CCBits(uint64_t, ECS_ARCHETYPE_COMPONENT_MAX) RemovedComponent;
+    CCBits(uint64_t, ECS_ARCHETYPE_COMPONENT_MAX) CachedComponentLookup;
     
     CC_BITS_INIT_CLEAR(RemovedComponent);
+    CC_BITS_INIT_CLEAR(CachedComponentLookup);
     
     size_t IndexCount = 0, LastIndex = 0;
     ECSArchetypeComponentID LastID = 0;
@@ -1006,7 +1054,7 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
     {
         const ECSComponentID ID = IDs[Loop];
         
-        switch (ID & ECSComponentStorageTypeMask)
+        switch (ID & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
         {
             case ECSComponentStorageTypeArchetype:
             {
@@ -1014,14 +1062,16 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                 {
                     _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
                     
-                    const size_t Offset = LastID < ID ? LastIndex : 0;
+                    const ECSArchetypeComponentID CompID = ID & ~ECSComponentStorageMask;
                     
-                    LastIndex = SortedSub(Refs->archetype.component.ids + Offset, Refs->archetype.component.count-- - Offset, ID) + Offset;
+                    const size_t Offset = LastID < CompID ? LastIndex : 0;
+                    
+                    LastIndex = SortedSub(Refs->archetype.component.ids + Offset, Refs->archetype.component.count-- - Offset, CompID) + Offset;
                     IndexCount++;
-                    CCBitsSet(RemovedComponent, ID);
-                    CCBitsClear(Refs->has, ID);
+                    CCBitsSet(RemovedComponent, CompID);
+                    CCBitsClear(Refs->has, CompID);
                     
-                    LastID = ID;
+                    LastID = CompID;
                 }
                 break;
             }
@@ -1032,6 +1082,51 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                 
             case ECSComponentStorageTypeIndexed:
                 ECSIndexedRemoveComponent(Context, Entity, ID);
+                break;
+                
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
+            {
+                if (ECSEntityHasComponent(Context, Entity, ID))
+                {
+                    const ECSArchetypeComponentID CompID = ID & ~ECSComponentStorageMask;
+                    
+                    if (!CCBitsGet(CachedComponentLookup, CompID))
+                    {
+                        CCBitsSet(CachedComponentLookup, CompID);
+                        
+                        const size_t Offset = CompID ? CCBitsCount(RemovedComponent, 0, CompID) : 0;
+                        const size_t Index = ECSArchetypeComponentIndex(Refs, CompID) - Offset;
+                        ComponentData[CompID] = CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index);
+                    }
+                    
+                    CCArray *Duplicates = ComponentData[CompID];
+                    const size_t Count = CCArrayGetCount(*Duplicates);
+                    if (Count)
+                    {
+                        CCArrayRemoveElementAtIndex(*Duplicates, Count - 1);
+                    }
+                    
+                    else
+                    {
+                        CCArrayDestroy(*Duplicates);
+                        
+                        const size_t Offset = LastID < CompID ? LastIndex : 0;
+                        
+                        LastIndex = SortedSub(Refs->archetype.component.ids + Offset, Refs->archetype.component.count-- - Offset, CompID) + Offset;
+                        IndexCount++;
+                        CCBitsSet(RemovedComponent, CompID);
+                        CCBitsClear(Refs->has, CompID);
+                        
+                        LastID = CompID;
+                    }
+                }
+                break;
+            }
+                
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+            case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeLocal:
+                ECSEntityRemoveDuplicateComponent(Context, Entity, ID, -1, 1);
                 break;
                 
             default:
@@ -1065,7 +1160,11 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                 
                 const ECSArchetypeComponentID ID = Refs->archetype.component.ids[Loop];
                 
-                if (CCBitsGet(RemovedComponent, ID)) ComponentIndex++;
+#if ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX) < INT8_MAX
+                if (ID == INT8_MAX) ComponentIndex++;
+#else
+                if (ID == UINT8_MAX) ComponentIndex++;
+#endif
                 else
                 {
                     const void *Copy = CCArrayGetElementAtIndex(PrevArchetype->components[Loop], Refs->archetype.index);
