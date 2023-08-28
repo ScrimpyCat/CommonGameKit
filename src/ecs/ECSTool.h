@@ -68,6 +68,24 @@
 
 #define ECS_SYSTEM_FUN(...) ECS_SYSTEM(ECS_SYSTEM_NAME)
 
+#define ECS_LOCAL_INDEX_MASK  ECS_MASK_FOR_VALUE(ECS_LOCAL_COMPONENT_MAX)
+
+#define ECS_MASK_FOR_VALUE(x) ((x) & 0x80000000? UINT32_MAX : ECS_MASK_FOR_LOWER_POWER_OF_2(ECS_MASK_HIGHEST_BIT(x) << 1))
+#define ECS_MASK_FOR_LOWER_POWER_OF_2(x) ((x)? ~-(x) : 0)
+#define ECS_MASK_HIGHEST_BIT(x) ECS_MASK_HIGHEST_BIT_0(x)
+#define ECS_MASK_HIGHEST_BIT_0(x) ECS_MASK_HIGHEST_BIT_1((x) | (x) >> 1)
+#define ECS_MASK_HIGHEST_BIT_1(x) ECS_MASK_HIGHEST_BIT_2((x) | (x) >> 2)
+#define ECS_MASK_HIGHEST_BIT_2(x) ECS_MASK_HIGHEST_BIT_3((x) | (x) >> 4)
+#define ECS_MASK_HIGHEST_BIT_3(x) ECS_MASK_HIGHEST_BIT_4((x) | (x) >> 8)
+#define ECS_MASK_HIGHEST_BIT_4(x) ECS_MASK_HIGHEST_BIT_5((x) | (x) >> 16)
+#define ECS_MASK_HIGHEST_BIT_5(x) ((x) ^ ((x) >> 1))
+
+#define ECS_COMPONENT_BASE_INDEX(id) ECS_COMPONENT_BASE_INDEX_0((id) & ECSComponentStorageTypeMask, (id) & ~ECSComponentStorageMask, SIZE_MAX, 0)
+#define ECS_COMPONENT_BASE_INDEX_0(type, index, next, offset) ECS_COMPONENT_BASE_INDEX_1(type, index, (type) == ECSComponentStorageTypeArchetype ? ((index) + (offset)) : (next), (offset) + ECS_ARCHETYPE_COMPONENT_MAX)
+#define ECS_COMPONENT_BASE_INDEX_1(type, index, next, offset) ECS_COMPONENT_BASE_INDEX_2(type, index, (type) == ECSComponentStorageTypePacked ? ((index) + (offset)) : (next), (offset) + ECS_PACKED_COMPONENT_MAX)
+#define ECS_COMPONENT_BASE_INDEX_2(type, index, next, offset) ECS_COMPONENT_BASE_INDEX_3(type, index, (type) == ECSComponentStorageTypeIndexed ? ((index) + (offset)) : (next), (offset) + ECS_INDEXED_COMPONENT_MAX)
+#define ECS_COMPONENT_BASE_INDEX_3(type, index, next, offset) ((type) == ECSComponentStorageTypeLocal ? (((index) & ECS_LOCAL_INDEX_MASK) + (offset)) : (next))
+
 #pragma mark - Iterator
 
 #define ECS_ITER_CONSUME(...) __VA_ARGS__
