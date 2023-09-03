@@ -35,16 +35,17 @@ typedef CCArray ECSIndexedComponent;
 typedef uint32_t ECSComponentID;
 
 typedef CC_FLAG_ENUM(ECSComponentStorage, ECSComponentID) {
-    ECSComponentStorageTypeArchetype = (0 << 28),
-    ECSComponentStorageTypePacked = (1 << 28),
-    ECSComponentStorageTypeIndexed = (2 << 28),
-    ECSComponentStorageTypeLocal = (3 << 28),
+    ECSComponentStorageTypeArchetype = (0 << 27),
+    ECSComponentStorageTypePacked = (1 << 27),
+    ECSComponentStorageTypeIndexed = (2 << 27),
+    ECSComponentStorageTypeLocal = (3 << 27),
     
+    ECSComponentStorageModifierDestructor = (1 << 29),
     ECSComponentStorageModifierDuplicate = (1 << 30),
     ECSComponentStorageModifierTag = (1 << 31),
     
-    ECSComponentStorageTypeMask = 0x30000000,
-    ECSComponentStorageModifierMask = 0xc0000000,
+    ECSComponentStorageTypeMask = 0x18000000,
+    ECSComponentStorageModifierMask = 0xe0000000,
     ECSComponentStorageMask = ECSComponentStorageTypeMask | ECSComponentStorageModifierMask
 };
 
@@ -52,5 +53,12 @@ typedef struct {
     ECSComponentID id;
     void *data;
 } ECSTypedComponent;
+
+/*!
+ * @brief A callback for when a component is removed.
+ * @param Data The data for the component.
+ * @param ID The ID of the component.
+ */
+typedef void (*ECSComponentDestructor)(void *Data, ECSComponentID ID);
 
 #endif

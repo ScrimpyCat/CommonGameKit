@@ -148,10 +148,21 @@ typedef uintptr_t ECSWorkerID;
 typedef void (*ECSWaitingCallback)(ECSWorkerID ID);
 
 /*!
+ * @brief The shared memory zone used for some allocations by the ECS.
+ */
+extern CCMemoryZone ECSSharedZone;
+
+/*!
  * @brief Set the callback to be used by waiting worker threads.
  * @warning This must be set prior to any calls to @b ECSWorkerCreate or @b ECSTick.
  */
 extern ECSWaitingCallback ECSWaiting;
+
+/*!
+ * @brief Set the component IDs.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy.
+ */
+extern const ECSComponentID *ECSComponentIDs;
 
 /*!
  * @brief Set the archetype component indexes.
@@ -161,51 +172,99 @@ extern const size_t *ECSArchetypeComponentIndexes;
 
 /*!
  * @brief Set the archetype component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSArchetypeComponentSizes;
 
 /*!
  * @brief Set the packed component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSPackedComponentSizes;
 
 /*!
  * @brief Set the indexed component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSIndexedComponentSizes;
 
 /*!
  * @brief Set the local component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSLocalComponentSizes;
 
 /*!
  * @brief Set the duplicate archetype component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSDuplicateArchetypeComponentSizes;
 
 /*!
  * @brief Set the duplicate packed component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSDuplicatePackedComponentSizes;
 
 /*!
  * @brief Set the duplicate indexed component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSDuplicateIndexedComponentSizes;
 
 /*!
  * @brief Set the duplicate local component sizes.
- * @warning This must be set prior to any calls to @b ECSEntityCreate.
+ * @warning This must be set prior to any calls to add/remove components.
  */
 extern const size_t *ECSDuplicateLocalComponentSizes;
+
+/*!
+ * @brief Set the archetype component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSArchetypeComponentDestructors;
+
+/*!
+ * @brief Set the packed component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSPackedComponentDestructors;
+
+/*!
+ * @brief Set the indexed component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSIndexedComponentDestructors;
+
+/*!
+ * @brief Set the local component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSLocalComponentDestructors;
+
+/*!
+ * @brief Set the duplicate archetype component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSDuplicateArchetypeComponentDestructors;
+
+/*!
+ * @brief Set the duplicate packed component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSDuplicatePackedComponentDestructors;
+
+/*!
+ * @brief Set the duplicate indexed component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSDuplicateIndexedComponentDestructors;
+
+/*!
+ * @brief Set the duplicate local component destructors.
+ * @warning This must be set prior to any calls to @b ECSEntityDestroy or component removal.
+ */
+extern const ECSComponentDestructor *ECSDuplicateLocalComponentDestructors;
 
 /*!
  * @brief Create an ECS worker thread.
@@ -237,6 +296,7 @@ static inline size_t ECSLocalComponentIndex(ECSComponentID ID) CC_CONSTANT_FUNCT
 static inline ptrdiff_t ECSLocalComponentOffset(ECSComponentID ID) CC_CONSTANT_FUNCTION;
 
 void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count);
+void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count);
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
 static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t Count);
@@ -247,6 +307,7 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
 static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, ptrdiff_t Index, size_t Count);
 
 static inline size_t ECSComponentBaseIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
+static inline void *ECSSharedZoneStore(void *Data, size_t Size);
 
 #pragma mark -
 
@@ -270,6 +331,14 @@ static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID I
     CCAssertLog(0, "Unsupported component type");
     
     return SIZE_MAX;
+}
+
+static inline void *ECSSharedZoneStore(void *Data, size_t Size)
+{
+    void *Ptr = CCMemoryZoneAllocate(ECSSharedZone, Size);
+    memcpy(Ptr, Data, Size);
+    
+    return Ptr;
 }
 
 static inline CC_CONSTANT_FUNCTION size_t ECSLocalComponentIndex(ECSComponentID ID)
@@ -447,6 +516,44 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
 {
     if (ID & ECSComponentStorageModifierDuplicate)
     {
+        ECSComponentDestructor Destructor = NULL;
+        
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+        size_t CopiedComponentCount = 0;
+        void **CopiedComponents;
+#endif
+        
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+            switch (ID & ECSComponentStorageTypeMask)
+            {
+                case ECSComponentStorageTypeArchetype:
+                    Destructor = ECSDuplicateArchetypeComponentDestructors[ID & ~ECSComponentStorageMask];
+                    break;
+                    
+                case ECSComponentStorageTypePacked:
+                    Destructor = ECSDuplicatePackedComponentDestructors[ID & ~ECSComponentStorageMask];
+                    break;
+                    
+                case ECSComponentStorageTypeIndexed:
+                    Destructor = ECSDuplicateIndexedComponentDestructors[ID & ~ECSComponentStorageMask];
+                    break;
+                    
+                case ECSComponentStorageTypeLocal:
+                    Destructor = ECSDuplicateLocalComponentDestructors[ECSLocalComponentIndex(ID)];
+                    break;
+                    
+                default:
+                    CCAssertLog(0, "Unsupported component type");
+                    break;
+                    
+            }
+            
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+            CCMemoryZoneSave(ECSSharedZone);
+#endif
+        }
+        
         CCArray *Component = ECSEntityGetComponent(Context, Entity, ID);
         
         if (Component)
@@ -469,10 +576,38 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
             {
                 if ((Index + Count) >= DuplicatesCount)
                 {
-                    if (Index) CCArrayRemoveElementsAtIndex(Duplicates, Index, DuplicatesCount - Index);
+                    if (Index)
+                    {
+                        const size_t ElementCount = DuplicatesCount - Index;
+                        
+                        if (ID & ECSComponentStorageModifierDestructor)
+                        {
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+                            for (size_t Loop = 0; Loop < ElementCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
+#else
+                            CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * ElementCount);
+                            const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
+                            for (size_t Loop = 0; Loop < ElementCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+#endif
+                        }
+                        
+                        CCArrayRemoveElementsAtIndex(Duplicates, Index, ElementCount);
+                    }
+                    
                     else
                     {
-                        CCArrayDestroy(Duplicates);
+                        if (ID & ECSComponentStorageModifierDestructor)
+                        {
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+                            for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop), ID);
+#else
+                            CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * DuplicatesCount);
+                            const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
+                            for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+#endif
+                            
+                            CCArrayDestroy(Duplicates);
+                        }
                         
                         switch (ID & ECSComponentStorageTypeMask)
                         {
@@ -495,7 +630,6 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                             default:
                                 CCAssertLog(0, "Unsupported component type");
                                 break;
-
                         }
                     }
                 }
@@ -511,11 +645,37 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                         CopyCount = Count;
                     }
                     
+                    if (ID & ECSComponentStorageModifierDestructor)
+                    {
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+                        for (size_t Loop = 0; Loop < CopyCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
+#else
+                        CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * CopyCount);
+                        const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
+                        for (size_t Loop = 0; Loop < CopyCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+#endif
+                    }
+                    
                     CCArrayCopyElementsAtIndex(Duplicates, CopyIndex, Index, CopyCount);
                     CCArrayRemoveElementsAtIndex(Duplicates, DuplicatesCount - Count, Count);
                 }
             }
         }
+        
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+            for (size_t Loop = 0; Loop < CopiedComponentCount; Loop++)
+            {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconditional-uninitialized"
+                Destructor(CopiedComponents[Loop], ID);
+#pragma clang diagnostic pop
+            }
+            
+            CCMemoryZoneRestore(ECSSharedZone);
+        }
+#endif
     }
     
     else CCAssertLog(0, "Component does not allow duplicates");

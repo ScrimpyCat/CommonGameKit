@@ -82,7 +82,6 @@ typedef struct {
 #endif
 
 int ECSWorker(ECSWorkerID WorkerID);
-static inline size_t ECSComponentBaseIndex(ECSComponentID ID);
 
 static ECSWorkerID WorkerThreadCount = 0;
 
@@ -182,9 +181,17 @@ int ECSWorker(ECSWorkerID WorkerID)
 
 static size_t LocalAccessReleaseIndexes[ECS_WORKER_THREAD_MAX];
 
+#ifndef ECS_SHARED_MEMORY_SIZE
+#define ECS_SHARED_MEMORY_SIZE 1048576 // MARK: ECS_SHARED_MEMORY_SIZE should be at least as big as the largest component size
+#endif
+
+CCMemoryZone ECSSharedZone;
+
 void ECSInit(void)
 {
     for (size_t Loop = 0; Loop < ECS_WORKER_THREAD_MAX; Loop++) LocalAccessReleaseIndexes[Loop] = 2;
+    
+    ECSSharedZone = CCMemoryZoneCreate(CC_STD_ALLOCATOR, ECS_SHARED_MEMORY_SIZE);
 }
 
 #if CC_HARDWARE_PTR_64
@@ -504,6 +511,45 @@ void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count)
     }
 }
 
+const ECSComponentID *ECSComponentIDs;
+
+void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count)
+{
+    for (size_t Loop = 0; Loop < Count; Loop++)
+    {
+        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entities[Loop]);
+        ECSComponentID IDs[32];
+        size_t ComponentCount = 0;
+        const size_t BlockSize = CC_BITS_BLOCK_SIZE(Refs->has);
+        
+        for (size_t Loop2 = 0; Loop2 < ECS_COMPONENT_MAX; Loop2 += BlockSize)
+        {
+            if (CCBitsAny(Refs->has, Loop2, BlockSize))
+            {
+                const size_t Index = Loop2 * BlockSize;
+                
+                for (size_t Loop3 = 0; Loop3 < BlockSize; Loop3++)
+                {
+                    if (CCBitsGet(Refs->has, Index + Loop3))
+                    {
+                        if (ComponentCount == (sizeof(IDs) / sizeof(*IDs)))
+                        {
+                            ECSEntityRemoveComponents(Context, Entities[Loop], IDs, ComponentCount);
+                            ComponentCount = 0;
+                        }
+                        
+                        IDs[ComponentCount++] = ECSComponentIDs[Index + Loop3] & ~ECSComponentStorageModifierDuplicate;
+                    }
+                }
+            }
+        }
+        
+        if (ComponentCount) ECSEntityRemoveComponents(Context, Entities[Loop], IDs, ComponentCount);
+    }
+    
+    CCArrayAppendElements(Context->manager.available, Entities, Count);
+}
+
 const size_t *ECSArchetypeComponentSizes;
 const size_t *ECSPackedComponentSizes;
 const size_t *ECSIndexedComponentSizes;
@@ -512,6 +558,15 @@ const size_t *ECSDuplicateArchetypeComponentSizes;
 const size_t *ECSDuplicatePackedComponentSizes;
 const size_t *ECSDuplicateIndexedComponentSizes;
 const size_t *ECSDuplicateLocalComponentSizes;
+
+const ECSComponentDestructor *ECSArchetypeComponentDestructors;
+const ECSComponentDestructor *ECSPackedComponentDestructors;
+const ECSComponentDestructor *ECSIndexedComponentDestructors;
+const ECSComponentDestructor *ECSLocalComponentDestructors;
+const ECSComponentDestructor *ECSDuplicateArchetypeComponentDestructors;
+const ECSComponentDestructor *ECSDuplicatePackedComponentDestructors;
+const ECSComponentDestructor *ECSDuplicateIndexedComponentDestructors;
+const ECSComponentDestructor *ECSDuplicateLocalComponentDestructors;
 
 static size_t SortedAdd(ECSArchetypeComponentID *Elements, size_t Count, ECSArchetypeComponentID Value)
 {
@@ -704,6 +759,21 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
         const size_t CompIndex = ID & ~ECSComponentStorageMask;
         const size_t RemovedIndex = SortedSub(Refs->archetype.component.ids, Refs->archetype.component.count--, CompIndex);
         
+        _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+        CCBitsClear(Refs->has, CompIndex);
+        
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor) ECSArchetypeComponentDestructors[CompIndex](CCArrayGetElementAtIndex(Refs->archetype.ptr->components[RemovedIndex], Refs->archetype.index), ID);
+#else
+        void *CopiedComponent;
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+            CCMemoryZoneSave(ECSSharedZone);
+            
+            CopiedComponent = ECSSharedZoneStore(CCArrayGetElementAtIndex(Refs->archetype.ptr->components[RemovedIndex], Refs->archetype.index), ECSArchetypeComponentSizes[CompIndex]);
+        }
+#endif
+        
         const size_t Count = Refs->archetype.component.count;
         if (Count)
         {
@@ -751,8 +821,18 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
             Refs->archetype.index = 0;
         }
         
-        _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
-        CCBitsClear(Refs->has, CompIndex);
+        
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconditional-uninitialized"
+            ECSArchetypeComponentDestructors[CompIndex](CopiedComponent, ID);
+#pragma clang diagnostic pop
+            
+            CCMemoryZoneRestore(ECSSharedZone);
+        }
+#endif
     }
 }
 
@@ -796,6 +876,20 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
         const size_t EntityIndex = Refs->packed.indexes[Index];
         const size_t LastIndex = CCArrayGetCount(Components) - 1;
         
+        CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked));
+        
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor) ECSPackedComponentDestructors[Index](CCArrayGetElementAtIndex(Components, EntityIndex), ID);
+#else
+        void *CopiedComponent;
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+            CCMemoryZoneSave(ECSSharedZone);
+            
+            CopiedComponent = ECSSharedZoneStore(CCArrayGetElementAtIndex(Components, EntityIndex), ECSPackedComponentSizes[Index]);
+        }
+#endif
+        
         if (EntityIndex != LastIndex)
         {
             const void *Data = CCArrayGetElementAtIndex(Components, LastIndex);
@@ -817,7 +911,18 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
         }
         
         Refs->packed.indexes[Index] = SIZE_MAX;
-        CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked));
+        
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconditional-uninitialized"
+            ECSPackedComponentDestructors[Index](CopiedComponent, ID);
+#pragma clang diagnostic pop
+            
+            CCMemoryZoneRestore(ECSSharedZone);
+        }
+#endif
     }
 }
 
@@ -857,6 +962,19 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
         
         const size_t Index = (ID & ~ECSComponentStorageMask);
         CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed));
+        
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor) ECSIndexedComponentDestructors[Index](CCArrayGetElementAtIndex(Context->indexed[Index], Entity), ID);
+#else
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+            CCMemoryZoneSave(ECSSharedZone);
+            
+            ECSIndexedComponentDestructors[Index](ECSSharedZoneStore(CCArrayGetElementAtIndex(Context->indexed[Index], Entity), ECSIndexedComponentSizes[Index]), ID);
+            
+            CCMemoryZoneRestore(ECSSharedZone);
+        }
+#endif
     }
 }
 
@@ -886,6 +1004,19 @@ void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponent
         
         const size_t Index = ECSLocalComponentIndex(ID);
         CCBitsClear(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeLocal));
+        
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+        if (ID & ECSComponentStorageModifierDestructor) ECSLocalComponentDestructors[Index](&Refs->local[ECSLocalComponentOffset(ID)], ID);
+#else
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+            CCMemoryZoneSave(ECSSharedZone);
+            
+            ECSLocalComponentDestructors[Index](ECSSharedZoneStore(&Refs->local[ECSLocalComponentOffset(ID)], ECSLocalComponentSizes[Index]), ID);
+            
+            CCMemoryZoneRestore(ECSSharedZone);
+        }
+#endif
     }
 }
 
@@ -960,8 +1091,8 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                 {
                     CCBitsSet(CachedComponentLookup, ID);
                     
-                    const size_t Offset = ID ? CCBitsCount(AddedComponent, ID, ECS_ARCHETYPE_COMPONENT_MAX - ID) : 0;
-                    size_t Index = ECSArchetypeComponentIndex(Refs, ID) + Offset;
+                    const size_t Offset = ID ? CCBitsCount(AddedComponent, 0, ID - 1) : 0;
+                    size_t Index = ECSArchetypeComponentIndex(Refs, ID) - Offset;
                     ComponentData[ID] = CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index);
                 }
                 
@@ -1048,6 +1179,16 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
     CC_BITS_INIT_CLEAR(RemovedComponent);
     CC_BITS_INIT_CLEAR(CachedComponentLookup);
     
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+    CCMemoryZoneSave(ECSSharedZone);
+    
+    size_t CopiedComponentCount = 0;
+    struct {
+        ECSComponentDestructor destructor;
+        ECSTypedComponent component;
+    } *CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * Count);
+#endif
+    
     size_t IndexCount = 0, LastIndex = 0;
     ECSArchetypeComponentID LastID = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
@@ -1072,6 +1213,23 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                     CCBitsClear(Refs->has, CompID);
                     
                     LastID = CompID;
+                    
+                    if (ID & ECSComponentStorageModifierDestructor)
+                    {
+                        const size_t CompOffset = CompID ? CCBitsCount(RemovedComponent, 0, CompID - 1) : 0;
+                        const size_t RemovedIndex = ECSArchetypeComponentIndex(Refs, CompID) + CompOffset;
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+                        ECSArchetypeComponentDestructors[CompID](CCArrayGetElementAtIndex(Refs->archetype.ptr->components[RemovedIndex], Refs->archetype.index), ID);
+#else
+                        CopiedComponents[CopiedComponentCount++] = (typeof(*CopiedComponents)){
+                            .destructor = ECSArchetypeComponentDestructors[CompID],
+                            .component = {
+                                .id = ID,
+                                .data = ECSSharedZoneStore(CCArrayGetElementAtIndex(Refs->archetype.ptr->components[RemovedIndex], Refs->archetype.index), ECSArchetypeComponentSizes[CompID])
+                            }
+                        };
+#endif
+                    }
                 }
                 break;
             }
@@ -1094,8 +1252,8 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                     {
                         CCBitsSet(CachedComponentLookup, CompID);
                         
-                        const size_t Offset = CompID ? CCBitsCount(RemovedComponent, 0, CompID) : 0;
-                        const size_t Index = ECSArchetypeComponentIndex(Refs, CompID) - Offset;
+                        const size_t Offset = CompID ? CCBitsCount(RemovedComponent, 0, CompID - 1) : 0;
+                        const size_t Index = ECSArchetypeComponentIndex(Refs, CompID) + Offset;
                         ComponentData[CompID] = CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index);
                     }
                     
@@ -1103,12 +1261,27 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                     const size_t Count = CCArrayGetCount(*Duplicates);
                     if (Count)
                     {
+                        if (ID & ECSComponentStorageModifierDestructor)
+                        {
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+                            ECSDuplicateArchetypeComponentDestructors[CompID](CCArrayGetElementAtIndex(*Duplicates, Count - 1), ID);
+#else
+                            CopiedComponents[CopiedComponentCount++] = (typeof(*CopiedComponents)){
+                                .destructor = ECSDuplicateArchetypeComponentDestructors[CompID],
+                                .component = {
+                                    .id = ID,
+                                    .data = ECSSharedZoneStore(CCArrayGetElementAtIndex(*Duplicates, Count - 1), ECSDuplicateArchetypeComponentSizes[CompID])
+                                }
+                            };
+#endif
+                        }
+                        
                         CCArrayRemoveElementAtIndex(*Duplicates, Count - 1);
                     }
                     
                     else
                     {
-                        CCArrayDestroy(*Duplicates);
+                        if (ID & ECSComponentStorageModifierDestructor) CCArrayDestroy(*Duplicates);
                         
                         const size_t Offset = LastID < CompID ? LastIndex : 0;
                         
@@ -1186,6 +1359,15 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
             Refs->archetype.index = 0;
         }
     }
+    
+#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
+    for (size_t Loop = 0; Loop < CopiedComponentCount; Loop++)
+    {
+        CopiedComponents[Loop].destructor(CopiedComponents[Loop].component.data, CopiedComponents[Loop].component.id);
+    }
+    
+    CCMemoryZoneRestore(ECSSharedZone);
+#endif
 }
 
 size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID)
