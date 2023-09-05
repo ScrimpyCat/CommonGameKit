@@ -40,6 +40,8 @@
 #define ECS_INDEXED_TAG(...)
 #define ECS_ARCHETYPE_TAG(...)
 
+#define ECS_DESTRUCTOR(destructor, ...)
+
 #define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, void *ECS_CHANGES_VAR, ECSTime ECS_TIME_VAR)
 #define ECS_PARALLEL_SYSTEM(...) ECS_SYSTEM(__VA_ARGS__)
 
