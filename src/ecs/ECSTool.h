@@ -224,9 +224,9 @@ ECS_ITER_(count, __VA_ARGS__)
 #define ECS_IS_CHECK_Indexed(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeIndexed)
 #define ECS_IS_CHECK_Local(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeLocal)
     
-#define ECS_IS_CHECK_Duplicate(arg) ((arg & ECSComponentStorageModifierMask) == ECSComponentStorageModifierDuplicate)
-#define ECS_IS_CHECK_Tag(arg) ((arg & ECSComponentStorageModifierMask) == ECSComponentStorageModifierTag)
-#define ECS_IS_CHECK_Destructor(arg) ((arg & ECSComponentStorageModifierMask) == ECSComponentStorageModifierDestructor)
+#define ECS_IS_CHECK_Duplicate(arg) (arg & ECSComponentStorageModifierDuplicate)
+#define ECS_IS_CHECK_Tag(arg) (arg & ECSComponentStorageModifierTag)
+#define ECS_IS_CHECK_Destructor(arg) (arg & ECSComponentStorageModifierDestructor)
     
 #define ECS_IS(arg, ...) CC_SOFT_JOIN(&&, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
 #define ECS_IS_NOT(arg, ...) !CC_SOFT_JOIN(&& !, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
