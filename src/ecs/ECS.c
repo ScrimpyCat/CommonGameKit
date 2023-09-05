@@ -550,6 +550,48 @@ void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count)
     CCArrayAppendElements(Context->manager.available, Entities, Count);
 }
 
+void ECSDuplicateDestructor(void *Data, ECSComponentID ID)
+{
+    const size_t Index = (ID & ~ECSComponentStorageMask);
+    ECSComponentDestructor Destructor = NULL;
+    
+    switch (ID & ECSComponentStorageTypeMask)
+    {
+        case ECSComponentStorageTypeArchetype:
+            Destructor = ECSDuplicateArchetypeComponentDestructors[Index];
+            break;
+            
+        case ECSComponentStorageTypePacked:
+            Destructor = ECSDuplicatePackedComponentDestructors[Index];
+            break;
+            
+        case ECSComponentStorageTypeIndexed:
+            Destructor = ECSDuplicateIndexedComponentDestructors[Index];
+            break;
+            
+        case ECSComponentStorageTypeLocal:
+            Destructor = ECSDuplicateLocalComponentDestructors[ECSLocalComponentIndex(ID)];
+            break;
+            
+        default:
+            CCAssertLog(0, "Unsupported component type");
+            break;
+    }
+    
+    CCArray Duplicates = *(CCArray*)Data;
+    
+    if (Destructor)
+    {
+        for (size_t Loop = 0, Count = CCArrayGetCount(Duplicates); Loop < Count; Loop++)
+        {
+            Destructor(CCArrayGetElementAtIndex(Duplicates, Loop), ID);
+        }
+    }
+    
+    CCArrayDestroy(Duplicates);
+}
+
+
 const size_t *ECSArchetypeComponentSizes;
 const size_t *ECSPackedComponentSizes;
 const size_t *ECSIndexedComponentSizes;
@@ -1036,7 +1078,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
     ECSArchetypeComponentID LastID = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
-        switch (Components[Loop].id & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
+        switch (Components[Loop].id & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
         {
             case ECSComponentStorageTypeArchetype:
             {
@@ -1195,7 +1237,7 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
     {
         const ECSComponentID ID = IDs[Loop];
         
-        switch (ID & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
+        switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
         {
             case ECSComponentStorageTypeArchetype:
             {

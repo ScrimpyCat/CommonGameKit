@@ -309,6 +309,13 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
 static inline size_t ECSComponentBaseIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
 static inline void *ECSSharedZoneStore(void *Data, size_t Size);
 
+/*!
+ * @brief The destructor for duplicate components.
+ * @param Data The data for the duplicate component.
+ * @param ID The ID of the duplicate component.
+ */
+void ECSDuplicateDestructor(void *Data, ECSComponentID ID);
+
 #pragma mark -
 
 static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID ID)
@@ -357,7 +364,7 @@ static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponen
 
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
-    switch (ID & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
+    switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
         case ECSComponentStorageTypeArchetype:
             ECSArchetypeAddComponent(Context, Entity, Data, ID);
@@ -390,7 +397,7 @@ static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, 
 
 static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
-    switch (ID & (ECSComponentStorageMask ^ ECSComponentStorageModifierTag))
+    switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
         case ECSComponentStorageTypeArchetype:
             ECSArchetypeRemoveComponent(Context, Entity, ID);
