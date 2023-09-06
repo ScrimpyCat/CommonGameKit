@@ -526,11 +526,11 @@ void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count)
         {
             if (CCBitsAny(Refs->has, Loop2, BlockSize))
             {
-                const size_t Index = Loop2 * BlockSize;
-                
                 for (size_t Loop3 = 0; Loop3 < BlockSize; Loop3++)
                 {
-                    if (CCBitsGet(Refs->has, Index + Loop3))
+                    const size_t Index = Loop2 + Loop3;
+                    
+                    if (CCBitsGet(Refs->has, Index))
                     {
                         if (ComponentCount == (sizeof(IDs) / sizeof(*IDs)))
                         {
@@ -538,7 +538,7 @@ void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count)
                             ComponentCount = 0;
                         }
                         
-                        IDs[ComponentCount++] = ECSComponentIDs[Index + Loop3] & ~ECSComponentStorageModifierDuplicate;
+                        IDs[ComponentCount++] = ECSComponentIDs[Index] & ~ECSComponentStorageModifierDuplicate;
                     }
                 }
             }
@@ -1282,6 +1282,10 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
                 
             case ECSComponentStorageTypeIndexed:
                 ECSIndexedRemoveComponent(Context, Entity, ID);
+                break;
+                
+            case ECSComponentStorageTypeLocal:
+                ECSLocalRemoveComponent(Context, Entity, ID);
                 break;
                 
             case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:

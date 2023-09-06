@@ -655,11 +655,11 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                     if (ID & ECSComponentStorageModifierDestructor)
                     {
 #if ECS_UNSAFE_COMPONENT_DESTRUCTION
-                        for (size_t Loop = 0; Loop < CopyCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
+                        for (size_t Loop = 0; Loop < Count; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
 #else
-                        CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * CopyCount);
+                        CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * Count);
                         const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
-                        for (size_t Loop = 0; Loop < CopyCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+                        for (size_t Loop = 0; Loop < Count; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
 #endif
                     }
                     
