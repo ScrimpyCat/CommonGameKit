@@ -203,6 +203,12 @@ static ECS_SYSTEM_FUN()
 }
 #undef ECS_SYSTEM_NAME
 
+static int TestDestructionCount = 0;
+static void TestDestructor(void *Data, ECSComponentID ID)
+{
+    TestDestructionCount++;
+}
+
 @interface ECSTests : XCTestCase
 @end
 
@@ -210,7 +216,10 @@ static ECS_SYSTEM_FUN()
 
 +(void) setUp
 {
+    ECSComponentIDs = ComponentIDs;
+    
     ECSArchetypeComponentIndexes = ArchetypeComponentIndexes;
+    
     ECSArchetypeComponentSizes = ArchetypeComponentSizes;
     ECSPackedComponentSizes = PackedComponentSizes;
     ECSIndexedComponentSizes = IndexedComponentSizes;
@@ -219,6 +228,15 @@ static ECS_SYSTEM_FUN()
     ECSDuplicatePackedComponentSizes = DuplicatePackedComponentSizes;
     ECSDuplicateIndexedComponentSizes = DuplicateIndexedComponentSizes;
     ECSDuplicateLocalComponentSizes = DuplicateLocalComponentSizes;
+    
+    ECSArchetypeComponentDestructors = ArchetypeComponentDestructors;
+    ECSPackedComponentDestructors = PackedComponentDestructors;
+    ECSIndexedComponentDestructors = IndexedComponentDestructors;
+    ECSLocalComponentDestructors = LocalComponentDestructors;
+    ECSDuplicateArchetypeComponentDestructors = DuplicateArchetypeComponentDestructors;
+    ECSDuplicatePackedComponentDestructors = DuplicatePackedComponentDestructors;
+    ECSDuplicateIndexedComponentDestructors = DuplicateIndexedComponentDestructors;
+    ECSDuplicateLocalComponentDestructors = DuplicateLocalComponentDestructors;
     
     ECSInit();
     ECSWorkerCreate();
@@ -1126,6 +1144,8 @@ static ECSContext Context;
     DupAArray = ECSEntityGetComponent(&Context, EntitiesAFGHIJ[0], DUPLICATE_A);
     XCTAssertEqual(DupAArray, NULL, @"should not have the duplicate component array");
     
+    XCTAssertEqual(TestDestructionCount, 3, @"should be the corrent number of destroyed components with destructors");
+    
     
     ECSTypedComponent DuplicateInit[9] = {
         { DUPLICATE_A, &(DuplicateA){ { 0 } } },
@@ -1145,6 +1165,7 @@ static ECSContext Context;
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 4);
+    XCTAssertEqual(TestDestructionCount, 7, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1158,6 +1179,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 2);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 1, 4);
+    XCTAssertEqual(TestDestructionCount, 13, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1171,6 +1193,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 2);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 2, 4);
+    XCTAssertEqual(TestDestructionCount, 19, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1184,6 +1207,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 2);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 3, 4);
+    XCTAssertEqual(TestDestructionCount, 24, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1199,6 +1223,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 3);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, -1, 4);
+    XCTAssertEqual(TestDestructionCount, 31, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1212,6 +1237,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 2);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, -2, 4);
+    XCTAssertEqual(TestDestructionCount, 37, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1225,6 +1251,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 2);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, -3, 4);
+    XCTAssertEqual(TestDestructionCount, 43, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1238,6 +1265,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 2);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, -4, 4);
+    XCTAssertEqual(TestDestructionCount, 48, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1253,6 +1281,7 @@ static ECSContext Context;
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, 0, 3);
     ECSEntityAddComponents(&Context, EntityDups, DuplicateInit, 6);
     ECSEntityRemoveDuplicateComponent(&Context, EntityDups, DUPLICATE_A, -5, 4);
+    XCTAssertEqual(TestDestructionCount, 53, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1274,6 +1303,7 @@ static ECSContext Context;
         DUPLICATE_A,
         DUPLICATE_A,
     }, 3);
+    XCTAssertEqual(TestDestructionCount, 60, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertNotEqual(DupAArray, NULL, @"should have the duplicate component array");
@@ -1291,6 +1321,7 @@ static ECSContext Context;
         DUPLICATE_A,
         DUPLICATE_A,
     }, 3);
+    XCTAssertEqual(TestDestructionCount, 63, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertEqual(DupAArray, NULL, @"should not have the duplicate component array");
@@ -1300,6 +1331,7 @@ static ECSContext Context;
         DUPLICATE_A,
         DUPLICATE_A,
     }, 3);
+    XCTAssertEqual(TestDestructionCount, 63, @"should be the corrent number of destroyed components with destructors");
     
     DupAArray = ECSEntityGetComponent(&Context, EntityDups, DUPLICATE_A);
     XCTAssertEqual(DupAArray, NULL, @"should not have the duplicate component array");
@@ -1312,6 +1344,7 @@ static ECSContext Context;
         LOCAL_DUPLICATE_B,
         DUPLICATE_A,
     }, 4);
+    XCTAssertEqual(TestDestructionCount, 66, @"should be the corrent number of destroyed components with destructors");
     
     CCArray *DupBArray = ECSEntityGetComponent(&Context, EntityDups, LOCAL_DUPLICATE_B);
     XCTAssertEqual(DupBArray, NULL, @"should not have the duplicate component array");
@@ -1333,6 +1366,7 @@ static ECSContext Context;
         LOCAL_DUPLICATE_B,
         DUPLICATE_A,
     }, 4);
+    XCTAssertEqual(TestDestructionCount, 69, @"should be the corrent number of destroyed components with destructors");
     
     DupBArray = ECSEntityGetComponent(&Context, EntityDups, LOCAL_DUPLICATE_B);
     XCTAssertEqual(DupBArray, NULL, @"should not have the duplicate component array");
@@ -1352,6 +1386,7 @@ static ECSContext Context;
         DUPLICATE_A,
         DUPLICATE_A,
     }, 7);
+    XCTAssertEqual(TestDestructionCount, 75, @"should be the corrent number of destroyed components with destructors");
     
     DupBArray = ECSEntityGetComponent(&Context, EntityDups, LOCAL_DUPLICATE_B);
     XCTAssertNotEqual(DupBArray, NULL, @"should have the duplicate component array");
@@ -1400,6 +1435,15 @@ static ECSContext Context;
     XCTAssertEqual(DupA->v[0], 5, @"should remain unchanged");
     DupA = CCArrayGetElementAtIndex(*DupAArray, 6);
     XCTAssertEqual(DupA->v[0], 6, @"should remain unchanged");
+    
+    ECSEntityDestroy(&Context, EntitiesABC, sizeof(EntitiesABC) / sizeof(*EntitiesABC));
+    ECSEntityDestroy(&Context, EntitiesBCD, sizeof(EntitiesBCD) / sizeof(*EntitiesBCD));
+    ECSEntityDestroy(&Context, EntitiesAB, sizeof(EntitiesAB) / sizeof(*EntitiesAB));
+    ECSEntityDestroy(&Context, EntitiesACD, sizeof(EntitiesACD) / sizeof(*EntitiesACD));
+    ECSEntityDestroy(&Context, EntitiesAFGHIJ, sizeof(EntitiesAFGHIJ) / sizeof(*EntitiesAFGHIJ));
+    ECSEntityDestroy(&Context, &EntityDups, 1);
+    
+    XCTAssertEqual(TestDestructionCount, 83, @"should be the corrent number of destroyed components with destructors");
 }
 
 -(void) testTime

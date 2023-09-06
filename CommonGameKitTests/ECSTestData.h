@@ -17,69 +17,69 @@ const size_t ArchetypeComponentIndexes[] = {
     0, 5,
 };
 
-#define INDEX_1_2_3_4 1, 4
-#define INDEX_1_3 17, 2
-#define INDEX_0_1_3_4_5 16, 5
-#define INDEX_0_1_4 34, 3
-#define INDEX_0_2_5 53, 3
+#define INDEX_0_4 59, 2
+#define INDEX_1_3_5 31, 3
+#define INDEX_0_5 62, 2
+#define INDEX_1_3_4 17, 3
+#define INDEX_0_1_2_4_5 11, 5
+#define INDEX_0_1_2_4 11, 4
+#define INDEX_2_3_4_5 2, 4
+#define INDEX_0_2 21, 2
+#define INDEX_0_2_4_5 42, 4
+#define INDEX_4 4, 1
+#define INDEX_1_2_4_5 12, 4
+#define INDEX_1_2 1, 2
+#define INDEX_0_1_2_3_4 0, 5
+#define INDEX_0_1_2 0, 3
+#define INDEX_0_3_4 46, 3
 #define INDEX_0_2_4 42, 3
+#define INDEX_0_2_3_4_5 21, 5
+#define INDEX_2_3_5 8, 3
+#define INDEX_0_3 46, 2
 #define INDEX_0_4_5 59, 3
+#define INDEX_0_1 0, 2
+#define INDEX_2_4_5 13, 3
+#define INDEX_2_3_4 2, 3
+#define INDEX_0_2_3_4 21, 4
+#define INDEX_1_4_5 35, 3
+#define INDEX_3_4 3, 2
+#define INDEX_0_1_2_3_4_5 0, 6
+#define INDEX_0_1_3 16, 3
+#define INDEX_2_3 2, 2
+#define INDEX_0_1_3_5 30, 4
+#define INDEX_0_1_2_3 0, 4
+#define INDEX_0_1_2_5 26, 4
+#define INDEX_2_4 13, 2
 #define INDEX_1_2_3_4_5 1, 5
+#define INDEX_2_5 28, 2
+#define INDEX_0_1_5 50, 3
+#define INDEX_0 0, 1
+#define INDEX_1_2_4 12, 3
+#define INDEX_0_3_4_5 46, 4
+#define INDEX_0_3_5 56, 3
 #define INDEX_3_4_5 3, 3
-#define INDEX_1_3_4_5 17, 4
-#define INDEX_4_5 4, 2
-#define INDEX_0_1_2_3_5 6, 5
-#define INDEX_3 3, 1
+#define INDEX_0_1_4 34, 3
 #define INDEX_1_2_3_5 7, 4
 #define INDEX_1_2_3 1, 3
-#define INDEX_4 4, 1
-#define INDEX_2 2, 1
-#define INDEX_0_1_2 0, 3
-#define INDEX_1_5 51, 2
-#define INDEX_0_1_2_5 26, 4
-#define INDEX_2_3_4_5 2, 4
-#define INDEX_1_2_4_5 12, 4
-#define INDEX_0_3_5 56, 3
 #define INDEX_3_5 9, 2
-#define INDEX_3_4 3, 2
-#define INDEX_0 0, 1
-#define INDEX_0_3 46, 2
-#define INDEX_0_1_2_4_5 11, 5
-#define INDEX_2_3_5 8, 3
-#define INDEX_0_1_5 50, 3
-#define INDEX_0_1 0, 2
-#define INDEX_0_1_2_3_4 0, 5
 #define INDEX_5 5, 1
-#define INDEX_0_1_4_5 34, 4
-#define INDEX_2_4_5 13, 3
-#define INDEX_2_4 13, 2
-#define INDEX_0_2_4_5 42, 4
-#define INDEX_0_1_2_4 11, 4
-#define INDEX_1_2_4 12, 3
-#define INDEX_1_4_5 35, 3
-#define INDEX_0_4 59, 2
-#define INDEX_2_3 2, 2
-#define INDEX_0_2_3_4_5 21, 5
-#define INDEX_0_2_3_4 21, 4
-#define INDEX_0_1_3_5 30, 4
-#define INDEX_1_2_5 27, 3
-#define INDEX_0_2 21, 2
-#define INDEX_1_3_5 31, 3
-#define INDEX_0_2_3 21, 3
-#define INDEX_0_5 62, 2
-#define INDEX_0_1_3 16, 3
-#define INDEX_0_2_3_5 38, 4
-#define INDEX_0_3_4_5 46, 4
-#define INDEX_2_3_4 2, 3
-#define INDEX_1_2 1, 2
-#define INDEX_2_5 28, 2
+#define INDEX_1_3 17, 2
+#define INDEX_1_2_3_4 1, 4
 #define INDEX_0_1_3_4 16, 4
-#define INDEX_1_3_4 17, 3
-#define INDEX_0_1_2_3 0, 4
-#define INDEX_0_1_2_3_4_5 0, 6
-#define INDEX_0_3_4 46, 3
-#define INDEX_1_4 35, 2
+#define INDEX_2 2, 1
+#define INDEX_0_1_4_5 34, 4
+#define INDEX_0_2_3 21, 3
+#define INDEX_0_1_3_4_5 16, 5
+#define INDEX_0_2_3_5 38, 4
+#define INDEX_0_2_5 53, 3
+#define INDEX_1_3_4_5 17, 4
 #define INDEX_1 1, 1
+#define INDEX_0_1_2_3_5 6, 5
+#define INDEX_1_2_5 27, 3
+#define INDEX_1_5 51, 2
+#define INDEX_1_4 35, 2
+#define INDEX_3 3, 1
+#define INDEX_4_5 4, 2
 
 _Static_assert(64 == ECS_LOCAL_COMPONENT_MAX, "Regenerate file with new ECS_LOCAL_COMPONENT_MAX value.");
 
@@ -89,21 +89,41 @@ _Static_assert(64 == ECS_LOCAL_COMPONENT_MAX, "Regenerate file with new ECS_LOCA
 #define COMP_D (ECSComponentStorageTypeArchetype | 3)
 #define COMP_E (ECSComponentStorageTypeArchetype | 4)
 #define ARCH_TAG (ECSComponentStorageTypeArchetype | ECSComponentStorageModifierTag | 5)
+#define COMP_F (ECSComponentStorageTypePacked | 0)
+#define DUPLICATE_A (ECSComponentStorageTypePacked | ECSComponentStorageModifierDuplicate | ECSComponentStorageModifierDestructor | 1)
+#define COMP_J (ECSComponentStorageTypePacked | 2)
+#define PACKED_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 3)
+#define COMP_G (ECSComponentStorageTypePacked | 10)
 #define COMP_H (ECSComponentStorageTypeIndexed | 0)
 #define COMP_I (ECSComponentStorageTypeIndexed | 1)
 #define INDEXED_TAG (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierTag | 2)
-#define LOCAL_H (ECSComponentStorageTypeLocal | (0 << 7) | 0)
+#define LOCAL_H (ECSComponentStorageTypeLocal | (0 << 7) | ECSComponentStorageModifierDestructor | 0)
 #define LOCAL_DUPLICATE_B (ECSComponentStorageTypeLocal | ((((LOCAL_H & ~ECSComponentStorageMask) >> 7) + sizeof(LocalH)) << 7) | ECSComponentStorageModifierDuplicate | 1)
 #define LOCAL_TAG (ECSComponentStorageTypeLocal | ((((LOCAL_DUPLICATE_B & ~ECSComponentStorageMask) >> 7) + sizeof(CCArray)) << 7) | ECSComponentStorageModifierTag | 2)
-#define COMP_F (ECSComponentStorageTypePacked | 0)
-#define COMP_G (ECSComponentStorageTypePacked | 1)
-#define COMP_J (ECSComponentStorageTypePacked | 2)
-#define DUPLICATE_A (ECSComponentStorageTypePacked | ECSComponentStorageModifierDuplicate | 3)
-#define PACKED_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 4)
 
 #define LOCAL_STORAGE_SIZE (((LOCAL_TAG & ~ECSComponentStorageMask) >> 7) + sizeof(LocalTag))
 
-const size_t ArchetypeComponentSizes[] = {
+const ECSComponentID ComponentIDs[ECS_COMPONENT_MAX] = {
+    [ECS_COMPONENT_BASE_INDEX(COMP_A)] = COMP_A,
+    [ECS_COMPONENT_BASE_INDEX(COMP_B)] = COMP_B,
+    [ECS_COMPONENT_BASE_INDEX(COMP_C)] = COMP_C,
+    [ECS_COMPONENT_BASE_INDEX(COMP_D)] = COMP_D,
+    [ECS_COMPONENT_BASE_INDEX(COMP_E)] = COMP_E,
+    [ECS_COMPONENT_BASE_INDEX(ARCH_TAG)] = ARCH_TAG,
+    [ECS_COMPONENT_BASE_INDEX(COMP_F)] = COMP_F,
+    [ECS_COMPONENT_BASE_INDEX(DUPLICATE_A)] = DUPLICATE_A,
+    [ECS_COMPONENT_BASE_INDEX(COMP_J)] = COMP_J,
+    [ECS_COMPONENT_BASE_INDEX(PACKED_TAG)] = PACKED_TAG,
+    [ECS_COMPONENT_BASE_INDEX(COMP_G)] = COMP_G,
+    [ECS_COMPONENT_BASE_INDEX(COMP_H)] = COMP_H,
+    [ECS_COMPONENT_BASE_INDEX(COMP_I)] = COMP_I,
+    [ECS_COMPONENT_BASE_INDEX(INDEXED_TAG)] = INDEXED_TAG,
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_H)] = LOCAL_H,
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_DUPLICATE_B)] = LOCAL_DUPLICATE_B,
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_TAG)] = LOCAL_TAG,
+};
+
+const size_t ArchetypeComponentSizes[ECS_ARCHETYPE_COMPONENT_MAX] = {
     sizeof(CompA),
     sizeof(CompB),
     sizeof(CompC),
@@ -111,7 +131,7 @@ const size_t ArchetypeComponentSizes[] = {
     sizeof(CompE),
     sizeof(ArchTag),
 };
-const size_t DuplicateArchetypeComponentSizes[] = {
+const size_t DuplicateArchetypeComponentSizes[ECS_ARCHETYPE_COMPONENT_MAX] = {
     0,
     0,
     0,
@@ -119,39 +139,114 @@ const size_t DuplicateArchetypeComponentSizes[] = {
     0,
     0,
 };
-const size_t IndexedComponentSizes[] = {
+const size_t PackedComponentSizes[ECS_PACKED_COMPONENT_MAX] = {
+    sizeof(CompF),
+    sizeof(CCArray),
+    sizeof(CompJ),
+    sizeof(PackedTag),
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    sizeof(CompG),
+};
+const size_t DuplicatePackedComponentSizes[ECS_PACKED_COMPONENT_MAX] = {
+    0,
+    sizeof(DuplicateA),
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+const size_t IndexedComponentSizes[ECS_INDEXED_COMPONENT_MAX] = {
     sizeof(CompH),
     sizeof(CompI),
     sizeof(IndexedTag),
 };
-const size_t DuplicateIndexedComponentSizes[] = {
+const size_t DuplicateIndexedComponentSizes[ECS_INDEXED_COMPONENT_MAX] = {
     0,
     0,
     0,
 };
-const size_t LocalComponentSizes[] = {
+const size_t LocalComponentSizes[ECS_LOCAL_COMPONENT_MAX] = {
     sizeof(LocalH),
     sizeof(CCArray),
     sizeof(LocalTag),
 };
-const size_t DuplicateLocalComponentSizes[] = {
+const size_t DuplicateLocalComponentSizes[ECS_LOCAL_COMPONENT_MAX] = {
     0,
     sizeof(LocalDuplicateB),
     0,
 };
-const size_t PackedComponentSizes[] = {
-    sizeof(CompF),
-    sizeof(CompG),
-    sizeof(CompJ),
-    sizeof(CCArray),
-    sizeof(PackedTag),
+
+const ECSComponentDestructor ArchetypeComponentDestructors[ECS_ARCHETYPE_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
 };
-const size_t DuplicatePackedComponentSizes[] = {
-    0,
-    0,
-    0,
-    sizeof(DuplicateA),
-    0,
+const ECSComponentDestructor DuplicateArchetypeComponentDestructors[ECS_ARCHETYPE_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+const ECSComponentDestructor PackedComponentDestructors[ECS_PACKED_COMPONENT_MAX] = {
+    NULL,
+    ECSDuplicateDestructor,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+const ECSComponentDestructor DuplicatePackedComponentDestructors[ECS_PACKED_COMPONENT_MAX] = {
+    NULL,
+    TestDestructor,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+const ECSComponentDestructor IndexedComponentDestructors[ECS_INDEXED_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
+};
+const ECSComponentDestructor DuplicateIndexedComponentDestructors[ECS_INDEXED_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
+};
+const ECSComponentDestructor LocalComponentDestructors[ECS_LOCAL_COMPONENT_MAX] = {
+    TestDestructor,
+    ECSDuplicateDestructor,
+    NULL,
+};
+const ECSComponentDestructor DuplicateLocalComponentDestructors[ECS_LOCAL_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
 };
 
 const ECSArchetypePointer ArchetypeDependencies[] = {
