@@ -303,6 +303,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
 void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSComponentID *IDs, size_t Count);
 static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+void ECSEntityGetComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t *Count);
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count);
 static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, ptrdiff_t Index, size_t Count);
 

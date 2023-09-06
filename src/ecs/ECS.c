@@ -591,6 +591,44 @@ void ECSDuplicateDestructor(void *Data, ECSComponentID ID)
     CCArrayDestroy(Duplicates);
 }
 
+void ECSEntityGetComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t *Count)
+{
+    CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(Count, "Count must not be null");
+    
+    ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+    
+    size_t ComponentCount = 0;
+    const size_t BlockSize = CC_BITS_BLOCK_SIZE(Refs->has);
+    
+    for (size_t Loop2 = 0; Loop2 < ECS_COMPONENT_MAX; Loop2 += BlockSize)
+    {
+        if (CCBitsAny(Refs->has, Loop2, BlockSize))
+        {
+            for (size_t Loop3 = 0; Loop3 < BlockSize; Loop3++)
+            {
+                const size_t Index = Loop2 + Loop3;
+                
+                if (CCBitsGet(Refs->has, Index))
+                {
+                    if ((Components) && (ComponentCount < *Count))
+                    {
+                        const ECSComponentID ID = ECSComponentIDs[Index];
+                        
+                        Components[ComponentCount] = (ECSTypedComponent){
+                            .id = ID,
+                            .data = ECSEntityGetComponent(Context, Entity, ID) // TODO: Optimise this by handling archetype separate to the loop (loop only has to start for components after archetype max)
+                        };
+                    }
+                    
+                    if (ComponentCount++ >= *Count) return;
+                }
+            }
+        }
+    }
+    
+    *Count = ComponentCount;
+}
 
 const size_t *ECSArchetypeComponentSizes;
 const size_t *ECSPackedComponentSizes;
