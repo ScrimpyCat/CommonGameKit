@@ -343,6 +343,8 @@ static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID I
 
 static inline void *ECSSharedZoneStore(void *Data, size_t Size)
 {
+    CCAssertLog(Data, "Data must not be null");
+    
     void *Ptr = CCMemoryZoneAllocate(ECSSharedZone, Size);
     memcpy(Ptr, Data, Size);
     
@@ -365,6 +367,8 @@ static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponen
 
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
+    CCAssertLog(Context, "Context must not be null");
+    
     switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
         case ECSComponentStorageTypeArchetype:
@@ -398,6 +402,8 @@ static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, 
 
 static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
+    CCAssertLog(Context, "Context must not be null");
+    
     switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
         case ECSComponentStorageTypeArchetype:
@@ -431,6 +437,8 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
 
 static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
+    CCAssertLog(Context, "Context must not be null");
+    
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
     return CCBitsGet(Refs->has, ECSComponentBaseIndex(ID));
@@ -438,6 +446,8 @@ static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity,
 
 static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
+    CCAssertLog(Context, "Context must not be null");
+    
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
     switch (ID & ECSComponentStorageTypeMask)
@@ -473,6 +483,8 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
 
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count)
 {
+    CCAssertLog(Context, "Context must not be null");
+    
     if (ID & ECSComponentStorageModifierDuplicate)
     {
         CCArray *Component = ECSEntityGetComponent(Context, Entity, ID);
@@ -522,6 +534,8 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
 
 static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, ptrdiff_t Index, size_t Count)
 {
+    CCAssertLog(Context, "Context must not be null");
+    
     if (ID & ECSComponentStorageModifierDuplicate)
     {
         ECSComponentDestructor Destructor = NULL;
