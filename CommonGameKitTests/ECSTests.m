@@ -1436,12 +1436,59 @@ static ECSContext Context;
     DupA = CCArrayGetElementAtIndex(*DupAArray, 6);
     XCTAssertEqual(DupA->v[0], 6, @"should remain unchanged");
     
+    size_t CompCount = 0;
+    ECSEntityGetComponents(&Context, EntityDups, NULL, &CompCount);
+    XCTAssertEqual(CompCount, 0, @"should not get any components");
+    
+    CompCount = 1;
+    ECSEntityGetComponents(&Context, EntityDups, NULL, &CompCount);
+    XCTAssertEqual(CompCount, 1, @"should only count 1 component");
+    
+    CompCount = SIZE_MAX;
+    ECSEntityGetComponents(&Context, EntityDups, NULL, &CompCount);
+    XCTAssertEqual(CompCount, 2, @"should only count all components");
+    
+    ECSTypedComponent Comps[2];
+    ECSEntityGetComponents(&Context, EntityDups, Comps, &CompCount);
+    XCTAssertEqual(Comps[0].id, DUPLICATE_A, @"should retrieve the correct component");
+    XCTAssertEqual(Comps[1].id, LOCAL_DUPLICATE_B, @"should retrieve the correct component");
+    
     ECSEntityDestroy(&Context, EntitiesABC, sizeof(EntitiesABC) / sizeof(*EntitiesABC));
     ECSEntityDestroy(&Context, EntitiesBCD, sizeof(EntitiesBCD) / sizeof(*EntitiesBCD));
     ECSEntityDestroy(&Context, EntitiesAB, sizeof(EntitiesAB) / sizeof(*EntitiesAB));
     ECSEntityDestroy(&Context, EntitiesACD, sizeof(EntitiesACD) / sizeof(*EntitiesACD));
     ECSEntityDestroy(&Context, EntitiesAFGHIJ, sizeof(EntitiesAFGHIJ) / sizeof(*EntitiesAFGHIJ));
     ECSEntityDestroy(&Context, &EntityDups, 1);
+    
+    XCTAssertEqual(TestDestructionCount, 83, @"should be the corrent number of destroyed components with destructors");
+    
+    ECSEntity Entities[6];
+    ECSEntityCreate(&Context, Entities, 6);
+    
+    XCTAssertEqual(Entities[0], EntityDups, @"should reuse old entities");
+    XCTAssertEqual(Entities[1], EntitiesAFGHIJ[2], @"should reuse old entities");
+    XCTAssertEqual(Entities[2], EntitiesAFGHIJ[1], @"should reuse old entities");
+    XCTAssertEqual(Entities[3], EntitiesAFGHIJ[0], @"should reuse old entities");
+    XCTAssertEqual(Entities[4], EntitiesACD[0], @"should reuse old entities");
+    XCTAssertEqual(Entities[5], EntitiesAB[1], @"should reuse old entities");
+    
+    CompCount = SIZE_MAX;
+    ECSEntityGetComponents(&Context, Entities[0], NULL, &CompCount);
+    XCTAssertEqual(CompCount, 0, @"reusing a destroyed entity should have no components");
+    CompCount = SIZE_MAX;
+    ECSEntityGetComponents(&Context, Entities[1], NULL, &CompCount);
+    XCTAssertEqual(CompCount, 0, @"reusing a destroyed entity should have no components");
+    CompCount = SIZE_MAX;
+    ECSEntityGetComponents(&Context, Entities[2], NULL, &CompCount);
+    XCTAssertEqual(CompCount, 0, @"reusing a destroyed entity should have no components");
+    CompCount = SIZE_MAX;
+    ECSEntityGetComponents(&Context, Entities[3], NULL, &CompCount);
+    XCTAssertEqual(CompCount, 0, @"reusing a destroyed entity should have no components");
+    CompCount = SIZE_MAX;
+    ECSEntityGetComponents(&Context, Entities[4], NULL, &CompCount);
+    XCTAssertEqual(CompCount, 0, @"reusing a destroyed entity should have no components");
+    
+    ECSEntityDestroy(&Context, Entities, sizeof(Entities) / sizeof(*Entities));
     
     XCTAssertEqual(TestDestructionCount, 83, @"should be the corrent number of destroyed components with destructors");
 }
