@@ -40,7 +40,6 @@ typedef struct {
     const ECSSystemAccess *access;
     ECSTime time;
     ECSSystemUpdateCallback update;
-    void *changes;
     struct {
         size_t offset;
         size_t count;
@@ -147,14 +146,14 @@ int ECSWorker(ECSWorkerID WorkerID)
                     
                     if ((Archetype->entities) && (CCArrayGetCount(Archetype->entities)))
                     {
-                        Callback(Context, Archetype, ArchetypeComponentIndexes + ArchPointer->componentIndexes, ComponentOffsets, Executor->changes, Time);
+                        Callback(Context, Archetype, ArchetypeComponentIndexes + ArchPointer->componentIndexes, ComponentOffsets, Time);
                     }
                 }
             }
             
             else
             {
-                Callback(Context, NULL, NULL, ComponentOffsets, Executor->changes, Time);
+                Callback(Context, NULL, NULL, ComponentOffsets, Time);
             }
             
             const size_t Index = AccessReleases[WorkerID][LocalAccessReleaseIndex].count++;
@@ -181,9 +180,7 @@ int ECSWorker(ECSWorkerID WorkerID)
 
 static size_t LocalAccessReleaseIndexes[ECS_WORKER_THREAD_MAX];
 
-#ifndef ECS_SHARED_MEMORY_SIZE
-#define ECS_SHARED_MEMORY_SIZE 1048576 // MARK: ECS_SHARED_MEMORY_SIZE should be at least as big as the largest component size
-#endif
+size_t ECSSharedMemorySize = 1048576;
 
 CCMemoryZone ECSSharedZone;
 
@@ -191,7 +188,7 @@ void ECSInit(void)
 {
     for (size_t Loop = 0; Loop < ECS_WORKER_THREAD_MAX; Loop++) LocalAccessReleaseIndexes[Loop] = 2;
     
-    ECSSharedZone = CCMemoryZoneCreate(CC_STD_ALLOCATOR, ECS_SHARED_MEMORY_SIZE);
+    ECSSharedZone = CCMemoryZoneCreate(CC_STD_ALLOCATOR, ECSSharedMemorySize);
 }
 
 #if CC_HARDWARE_PTR_64
@@ -245,7 +242,6 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
         .time = Time,
         .update = ECS_SYSTEM_UPDATE_GET_UPDATE(Update[SystemIndex]),
         .executionGroup = State,
-        .changes = NULL,
         .context = Context
     };
     

@@ -40,6 +40,8 @@ CC_ARRAY_DECLARE(ECSEntity);
 
 #include <CommonGameKit/ECSContext.h>
 
+#include <CommonGameKit/ECSMutation.h>
+
 /*!
  * @brief The representation of time used by the ECS.
  * @description This can be any linear unit as long as it is consistent.
@@ -81,7 +83,7 @@ typedef struct {
     } component;
 } ECSSystemAccess;
 
-typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, void *Changes, ECSTime Time);
+typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSTime Time);
 
 #if ECS_SYSTEM_UPDATE_TAGGED_POINTER
 typedef ECSSystemUpdateCallback ECSSystemUpdate;
@@ -151,6 +153,13 @@ typedef void (*ECSWaitingCallback)(ECSWorkerID ID);
  * @brief The shared memory zone used for some allocations by the ECS.
  */
 extern CCMemoryZone ECSSharedZone;
+
+/*!
+ * @brief The block size of the @b ECSSharedZone.
+ * @description This should be at least as big as the largest component size. By default it is set to 1MB.
+ * @note If you wish to change the size you must do so prior to calling @b ECSInit.
+ */
+extern size_t ECSSharedMemorySize;
 
 /*!
  * @brief Set the callback to be used by waiting worker threads.

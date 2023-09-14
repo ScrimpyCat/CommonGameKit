@@ -96,6 +96,8 @@
 		F3AD06A21F645544004AE159 /* SpatialTransformComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AD06AF1F66BEAE004AE159 /* RelationParentComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */; };
 		F3AD06B01F66BEAE004AE159 /* RelationParentComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD06AE1F66BEAE004AE159 /* RelationParentComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AD4CEA2AB332B6006C20E4 /* ECSMutation.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AD4CE82AB332B6006C20E4 /* ECSMutation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3AD4CEB2AB332B6006C20E4 /* ECSMutation.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AD4CE92AB332B6006C20E4 /* ECSMutation.c */; };
 		F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF32841DCCD29100CAD472 /* CommonGameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */; };
 		F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32951DCCD4EB00CAD472 /* AnimationComponent.c */; };
@@ -625,6 +627,8 @@
 		F3AD06A01F645544004AE159 /* SpatialTransformComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialTransformComponent.h; sourceTree = "<group>"; };
 		F3AD06AD1F66BEAE004AE159 /* RelationParentComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationParentComponent.c; sourceTree = "<group>"; };
 		F3AD06AE1F66BEAE004AE159 /* RelationParentComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RelationParentComponent.h; sourceTree = "<group>"; };
+		F3AD4CE82AB332B6006C20E4 /* ECSMutation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSMutation.h; sourceTree = "<group>"; };
+		F3AD4CE92AB332B6006C20E4 /* ECSMutation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSMutation.c; sourceTree = "<group>"; };
 		F3AF32791DCCD29000CAD472 /* CommonGameKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonGameKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3AF327C1DCCD29000CAD472 /* CommonGameKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonGameKit.h; path = src/CommonGameKit.h; sourceTree = SOURCE_ROOT; };
 		F3AF327E1DCCD29000CAD472 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = src/mac/Info.plist; sourceTree = SOURCE_ROOT; };
@@ -864,6 +868,8 @@
 				F3D4A46C299B43B600B38AF8 /* ECSConfig.h */,
 				F3292C33297627940053B5B4 /* ECS.c */,
 				F3292C32297627940053B5B4 /* ECS.h */,
+				F3AD4CE92AB332B6006C20E4 /* ECSMutation.c */,
+				F3AD4CE82AB332B6006C20E4 /* ECSMutation.h */,
 				F3A304AA299443F800BABB22 /* ECSArchetype.h */,
 				F38A33EF29E2957300661500 /* ECSComponent.h */,
 				F3A304A22994432B00BABB22 /* ECSEntity.h */,
@@ -1831,6 +1837,7 @@
 				F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */,
 				F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */,
 				F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */,
+				F3AD4CEA2AB332B6006C20E4 /* ECSMutation.h in Headers */,
 				F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */,
 				F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */,
 			);
@@ -2212,6 +2219,7 @@
 				F3AF34941DCCD5AF00CAD472 /* IOExpressions.c in Sources */,
 				F3897B521DCD6E12008D6C1D /* tinycthread.c in Sources */,
 				F3AF33CC1DCCD4EC00CAD472 /* GFXDraw.c in Sources */,
+				F3AD4CEB2AB332B6006C20E4 /* ECSMutation.c in Sources */,
 				F3AF34A91DCCD5AF00CAD472 /* TextExpressions.c in Sources */,
 				F3AF33D91DCCD4EC00CAD472 /* GLBlit.c in Sources */,
 				F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */,

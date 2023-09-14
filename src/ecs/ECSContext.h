@@ -74,6 +74,8 @@ typedef struct {
     struct {
         size_t indexes[ECS_PACKED_COMPONENT_MAX];
     } packed;
+    
+    uint8_t local[];
 } ECSComponentRefs;
 
 _Static_assert((offsetof(ECSComponentRefs, archetype.component.ids) % ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT) == 0, "Needs to be correctly aligned");
@@ -86,6 +88,7 @@ typedef struct {
 } ECSEntityManager;
 
 typedef struct {
+    struct ECSMutableState *mutations;
     ECSEntityManager manager;
     
 #define ECS_ARCHETYPE_MEMBER(x, index) ECSArchetype(index) archetypes##index[ECS_COMPONENT_ARCHETYPE##index##_MAX]
