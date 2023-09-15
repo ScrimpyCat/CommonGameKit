@@ -283,7 +283,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
     
     for (size_t Loop = 0; Loop < GroupCount; Loop++)
     {
-        State[Loop].running = ATOMIC_VAR_INIT(0);
+        State[Loop].running = 0;
         
         State[Loop].time += DeltaTime;
         ECSTime Ticks = State[Loop].time / Groups[Loop].freq;
@@ -335,13 +335,13 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
                 for (size_t Loop2 = 0; Loop2 < BlockCount; Loop2++)
                 {
                     const uint8_t Block = State[Index].state[Loop2];
-                    const int BitCount = (Loop2 + 1 != BlockCount ? 8 : SystemCount % 8);
+                    const size_t BitCount = (Loop2 + 1 != BlockCount ? 8 : (8 - ((BlockCount * 8) - SystemCount)));
                     
                     if (Block != (0xff >> (8 - BitCount)))
                     {
                         Completed = FALSE;
                         
-                        for (int Loop3 = 0; Loop3 < BitCount; Loop3++)
+                        for (size_t Loop3 = 0; Loop3 < BitCount; Loop3++)
                         {
                             if (!((Block >> Loop3) & 1))
                             {
@@ -354,12 +354,12 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
                                         const size_t ColIndex = (SystemIndex * BlockCount) + Loop4;
                                         const uint8_t GraphBlock = Graph[ColIndex];
                                         uint8_t *Block = &State[Index].state[Loop4];
-                                        const int BitCount = (Loop4 + 1 != BlockCount ? 8 : SystemCount % 8);
+                                        const size_t BitCount = (Loop4 + 1 != BlockCount ? 8 : (8 - ((BlockCount * 8) - SystemCount)));
                                         const uint8_t RunBlock = ~*Block & GraphBlock;
                                         
                                         if (RunBlock)
                                         {
-                                            for (int Loop5 = 0; Loop5 < BitCount; Loop5++)
+                                            for (size_t Loop5 = 0; Loop5 < BitCount; Loop5++)
                                             {
                                                 if ((RunBlock >> Loop5) & 1)
                                                 {
