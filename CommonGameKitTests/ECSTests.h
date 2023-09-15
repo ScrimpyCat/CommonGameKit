@@ -70,6 +70,7 @@ typedef void ArchTag;
 typedef void PackedTag;
 typedef void IndexedTag;
 typedef void LocalTag;
+typedef void DestroyMeTag;
 
 typedef CompA DuplicateA;
 typedef CompB LocalDuplicateB;
@@ -93,8 +94,11 @@ ECS_LOCAL_TAG(LocalTag);
 ECS_PACKED_DUPLICATE_COMPONENT(DuplicateA);
 ECS_LOCAL_DUPLICATE_COMPONENT(LocalDuplicateB);
 ECS_LOCAL_COMPONENT(LocalH);
+ECS_PACKED_TAG(DestroyMeTag);
 
 ECS_DESTRUCTOR(TestDestructor, DuplicateA, LocalH);
+
+ECS_DESTRUCTOR(MutationDestructor, DestroyMeTag);
 
 static ECS_SYSTEM(Sys1ReadA_WriteB, (CompA), (CompB));
 static ECS_SYSTEM(Sys2ReadAC_WriteB, (CompA, CompC), (CompB));
@@ -107,11 +111,13 @@ static ECS_PARALLEL_SYSTEM(Sys8ReadD_WriteC, (CompD), (CompC));
 static ECS_SYSTEM(Sys9ReadFGH_WriteAI, (CompF, CompG, CompH), (CompA, CompI));
 static ECS_PARALLEL_SYSTEM(Sys10WriteJ, (), (CompJ));
 static ECS_SYSTEM(Sys11ReadAWithArchTag, (CompA, ArchTag), ());
-static ECS_SYSTEM(Sys12WriteReadLocalHLocalDuplicateB_WriteDuplicateA, (LocalH, LocalDuplicateB), (DuplicateA));
+static ECS_SYSTEM(Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA, (LocalH, LocalDuplicateB), (DuplicateA));
+static ECS_SYSTEM(Sys13ReadDestroyMeTag, (DestroyMeTag), ());
+static ECS_SYSTEM(Sys14ReadA, (CompA), ());
 
 ECS_SYSTEM_GROUP(MISC_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0), FALSE,
-    PRIORITY(0, (Sys1ReadA_WriteB, Sys2ReadAC_WriteB, Sys3ReadAC_WriteD, Sys4ReadA, Sys5ReadC, Sys6ReadAC, Sys7WriteB)),
-    PRIORITY(1, (Sys8ReadD_WriteC, Sys10WriteJ, Sys11ReadAWithArchTag, Sys12WriteReadLocalHLocalDuplicateB_WriteDuplicateA))
+    PRIORITY(0, (Sys1ReadA_WriteB, Sys2ReadAC_WriteB, Sys3ReadAC_WriteD, Sys4ReadA, Sys5ReadC, Sys6ReadAC, Sys7WriteB, Sys13ReadDestroyMeTag, Sys14ReadA)),
+    PRIORITY(1, (Sys8ReadD_WriteC, Sys10WriteJ, Sys11ReadAWithArchTag, Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA))
 );
 
 ECS_SYSTEM_GROUP(OTHER_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2, FALSE,
@@ -119,5 +125,7 @@ ECS_SYSTEM_GROUP(OTHER_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2, FALSE,
 );
 
 static void TestDestructor(void *Data, ECSComponentID ID);
+
+static void MutationDestructor(void *Data, ECSComponentID ID);
 
 #endif

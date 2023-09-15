@@ -1,7 +1,9 @@
 #define Sys10WriteJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
 #define Sys11ReadAWithArchTag_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
 #define Sys11ReadAWithArchTag_ArchTag ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys12WriteReadLocalHLocalDuplicateB_WriteDuplicateA_DuplicateA *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
+#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_DuplicateA *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
+#define Sys13ReadDestroyMeTag_DestroyMeTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
+#define Sys14ReadA_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
 #define Sys1ReadA_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
 #define Sys1ReadA_WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
 #define Sys2ReadAC_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
@@ -53,6 +55,16 @@
 #define ECS_ITER_DECLARE_CompF CompF ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_CompF ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_CompF COMP_F
+#define ECS_ITER_TYPE_DestroyMeTag DestroyMeTag ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_DestroyMeTag 1
+#define ECS_ITER_DECLARE_DestroyMeTag DestroyMeTag ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_NESTED_DestroyMeTag ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
+#define ECS_ID_DestroyMeTag DESTROY_ME_TAG
+#define ECS_ITER_TYPE_CompJ CompJ ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_CompJ 1
+#define ECS_ITER_DECLARE_CompJ CompJ ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_NESTED_CompJ ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
+#define ECS_ID_CompJ COMP_J
 #define ECS_ITER_TYPE_DuplicateA DuplicateA ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_DuplicateA 1
 #define ECS_ITER_DECLARE_DuplicateA ECS_ITER_DECLARE_ARRAY_VAR(
@@ -60,11 +72,6 @@
 #define ECS_ITER_DECLARE_ELEMENT_INDEX_DuplicateA ECS_ITER_DECLARE_ASSIGN(ECS_ITER_PREPEND(ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX,
 #define ECS_ITER_NESTED_DuplicateA ECS_ITER_NESTED_ARRAY_ITERATOR ECS_ITER_IGNORE(
 #define ECS_ID_DuplicateA DUPLICATE_A
-#define ECS_ITER_TYPE_CompJ CompJ ECS_ITER_IGNORE(
-#define ECS_ITER_KIND_CompJ 1
-#define ECS_ITER_DECLARE_CompJ CompJ ECS_ITER_DECLARE_ASSIGN(
-#define ECS_ITER_NESTED_CompJ ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
-#define ECS_ID_CompJ COMP_J
 #define ECS_ITER_TYPE_CompG CompG ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_CompG 1
 #define ECS_ITER_DECLARE_CompG CompG ECS_ITER_DECLARE_ASSIGN(

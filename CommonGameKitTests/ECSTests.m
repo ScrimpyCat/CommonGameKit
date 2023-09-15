@@ -126,7 +126,7 @@ static ECS_PARALLEL_SYSTEM(Sys8ReadD_WriteC)
 #undef ECS_SYSTEM_NAME
 
 #define ECS_SYSTEM_NAME Sys9ReadFGH_WriteAI
-static void Sys9ReadFGH_WriteAI(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, void *Changes, ECSTime Time)
+static void Sys9ReadFGH_WriteAI(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSTime Time)
 {
     CHECK_SIZE(CompF);
     CHECK_SIZE(CompG);
@@ -160,14 +160,26 @@ static ECS_SYSTEM_FUN()
 {
     CHECK_SIZE(CompA);
     
+    const size_t Count = CCArrayGetCount(ECS_GET(CompA));
+    const ECSProxyEntity Base = ECSMutationStageEntityCreate(Context, Count);
+    ECSMutableAddComponentState *AddComponentState = ECSMutationStageEntityAddComponents(Context, Count);
+    ECSTypedComponent *SharedComponent = ECSMutationSetSharedData(Context, sizeof(ECSTypedComponent));
+
+    SharedComponent->id = DESTROY_ME_TAG;
+    SharedComponent->data = NULL;
+    
     ECS_ITER(CompA *A)
     {
         atomic_fetch_add_explicit(&Sys11ReadAWithArchTagCounter, 1, memory_order_relaxed);
+        
+        AddComponentState[ECSIterIndex].entity = Base + ECSIterIndex;
+        AddComponentState[ECSIterIndex].count = 1;
+        AddComponentState[ECSIterIndex].components = SharedComponent;
     }
 }
 #undef ECS_SYSTEM_NAME
 
-#define ECS_SYSTEM_NAME Sys12WriteReadLocalHLocalDuplicateB_WriteDuplicateA
+#define ECS_SYSTEM_NAME Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA
 static ECS_SYSTEM_FUN()
 {
     ECS_ASSERT(LocalH, Local);
@@ -180,7 +192,7 @@ static ECS_SYSTEM_FUN()
     if (!ECS_GET(DuplicateA)) return;
     
     if (CCArrayGetElementSize(ECS_GET(DuplicateA)) != sizeof(CCArray)) atomic_store(&CorrectAccessors, FALSE);
-    else if (CCArrayGetElementSize(*(CCArray*)CCArrayGetElementAtIndex(ECS_GET(DuplicateA), 0)) != sizeof(CompA)) atomic_store(&CorrectAccessors, FALSE);
+    else if ((CCArrayGetCount(ECS_GET(DuplicateA))) && (CCArrayGetElementSize(*(CCArray*)CCArrayGetElementAtIndex(ECS_GET(DuplicateA), 0)) != sizeof(CompA))) atomic_store(&CorrectAccessors, FALSE);
     
     int Multiplier = 1;
     ECS_ITER(ARRAY(DuplicateA) *DupA, const LocalH *LocH, const ARRAY(LocalDuplicateB) *DupB)
@@ -201,12 +213,61 @@ static ECS_SYSTEM_FUN()
         DupA->v[0] *= Multiplier;
     }
 }
+
 #undef ECS_SYSTEM_NAME
+#define ECS_SYSTEM_NAME Sys13ReadDestroyMeTag
+static ECS_SYSTEM_FUN()
+{
+    ECS_ASSERT(DestroyMeTag, Packed, Tag);
+    
+    if (!ECS_GET(DestroyMeTag)) return;
+    
+    ECS_ITER(const DestroyMeTag *Tag)
+    {
+        ECSEntity *Entity = ECSMutationStageEntityDestroy(ECS_CONTEXT_VAR, 1);
+        *Entity = ECSIterEntity;
+    }
+}
+#undef ECS_SYSTEM_NAME
+
+#undef ECS_SYSTEM_NAME
+#define ECS_SYSTEM_NAME Sys14ReadA
+static ECS_SYSTEM_FUN()
+{
+}
+#undef ECS_SYSTEM_NAME
+
 
 static int TestDestructionCount = 0;
 static void TestDestructor(void *Data, ECSComponentID ID)
 {
     TestDestructionCount++;
+}
+
+static int MutationDestructionCount = 0;
+static void MutationDestructor(void *Data, ECSComponentID ID)
+{
+    MutationDestructionCount++;
+}
+
+static size_t MutationCallbackEntityCount = 0;
+static ECSEntity MutationCallbackEntityFirst = 0;
+static size_t MutationCallbackSum = 0;
+
+static void MutationCallback(ECSContext *Context, void *Data, ECSEntity *NewEntities, size_t NewEntityCount)
+{
+    MutationCallbackEntityCount = NewEntityCount;
+    MutationCallbackEntityFirst = NewEntities[0];
+    
+    if (((ECSTypedComponent*)Data)->id == COMP_A)
+    {
+        MutationCallbackSum += ((CompA*)((ECSTypedComponent*)Data)->data)->v[0];
+    }
+    
+    else if (((ECSTypedComponent*)Data)->id == COMP_B)
+    {
+        MutationCallbackSum += ((CompB*)((ECSTypedComponent*)Data)->data)->v[0] + ((CompB*)((ECSTypedComponent*)Data)->data)->v[1];
+    }
 }
 
 @interface ECSTests : XCTestCase
@@ -238,6 +299,12 @@ static void TestDestructor(void *Data, ECSComponentID ID)
     ECSDuplicateIndexedComponentDestructors = DuplicateIndexedComponentDestructors;
     ECSDuplicateLocalComponentDestructors = DuplicateLocalComponentDestructors;
     
+    ECSMutableStateEntitiesMax = 4096;
+    ECSMutableStateAddComponentMax = 4069;
+    ECSMutableStateRemoveComponentMax = 4069;
+    ECSMutableStateCustomCallbackMax = 4096;
+    ECSMutableStateSharedDataMax = 1048576;
+    
     ECSInit();
     ECSWorkerCreate();
     ECSWorkerCreate();
@@ -247,8 +314,12 @@ static void TestDestructor(void *Data, ECSComponentID ID)
 
 static ECSContext Context;
 
+ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 1048576);
+
 -(void) testExample
 {
+    Context.mutations = &MutableState;
+    
     Context.manager.map = CCArrayCreate(CC_ALIGNED_ALLOCATOR(ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), CC_ALIGN(sizeof(ECSComponentRefs) + LOCAL_STORAGE_SIZE, ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), 16);
     Context.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
     
@@ -342,6 +413,7 @@ static ECSContext Context;
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 2, @"correct number of entities are tagged");
+    XCTAssertEqual(MutationDestructionCount, 0, @"should not have applied any mutations");
     
     const CompA *A = ECSEntityGetComponent(&Context, EntitiesABC[0], COMP_A);
     XCTAssertEqual(A->v[0], 0, @"should remain unchanged");
@@ -494,6 +566,7 @@ static ECSContext Context;
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 4, @"correct number of entities are tagged");
+    XCTAssertEqual(MutationDestructionCount, 0, @"should not have applied any mutations");
     
     A = ECSEntityGetComponent(&Context, EntitiesABC[0], COMP_A);
     XCTAssertEqual(A->v[0], 0, @"should remain unchanged");
@@ -701,6 +774,7 @@ static ECSContext Context;
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 4, @"correct number of entities are tagged");
+    XCTAssertEqual(MutationDestructionCount, 0, @"should not have applied any mutations");
     
     A = ECSEntityGetComponent(&Context, EntitiesABC[0], COMP_A);
     XCTAssertEqual(A, NULL, @"should have removed component");
@@ -861,11 +935,17 @@ static ECSContext Context;
     
     ECSEntityRemoveDuplicateComponent(&Context, EntitiesAFGHIJ[0], LOCAL_DUPLICATE_B, 0, 2);
     
+    ECSMutationApply(&Context);
+    
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2);
     ECSTick(&Context, Groups, GroupCount, State, 0);
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 6, @"correct number of entities are tagged");
+    XCTAssertEqual(MutationDestructionCount, 0, @"should not have applied the destruction mutations");
+    
+    ECSMutationApply(&Context);
+    XCTAssertEqual(MutationDestructionCount, 4, @"should have applied destruction mutations");
     
     A = ECSEntityGetComponent(&Context, EntitiesABC[0], COMP_A);
     XCTAssertEqual(A->v[0], 0, @"should remain unchanged");
@@ -1012,6 +1092,7 @@ static ECSContext Context;
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 6, @"correct number of entities are tagged");
+    XCTAssertEqual(MutationDestructionCount, 4, @"should not have applied the destruction mutations");
     
     A = ECSEntityGetComponent(&Context, EntitiesABC[0], COMP_A);
     XCTAssertEqual(A->v[0], 0, @"should remain unchanged");
@@ -1145,6 +1226,12 @@ static ECSContext Context;
     XCTAssertEqual(DupAArray, NULL, @"should not have the duplicate component array");
     
     XCTAssertEqual(TestDestructionCount, 3, @"should be the corrent number of destroyed components with destructors");
+    
+    
+    ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
+    XCTAssertEqual(MutationDestructionCount, 4, @"should not have applied the destruction mutations");
+    ECSMutationApply(&Context);
+    XCTAssertEqual(MutationDestructionCount, 6, @"should have applied the destruction mutations");
     
     
     ECSTypedComponent DuplicateInit[9] = {
@@ -1491,6 +1578,109 @@ static ECSContext Context;
     ECSEntityDestroy(&Context, Entities, sizeof(Entities) / sizeof(*Entities));
     
     XCTAssertEqual(TestDestructionCount, 83, @"should be the corrent number of destroyed components with destructors");
+    
+    
+    ECSProxyEntity Base = ECSMutationStageEntityCreate(&Context, 2);
+    ECSProxyEntity Base2 = ECSMutationStageEntityCreate(&Context, 1);
+    ECSMutableCustomCallbackState *CallbackState = ECSMutationStageCustomCallback(&Context, 2);
+    ECSMutableAddComponentState *AddComponentState = ECSMutationStageEntityAddComponents(&Context, 2);
+    ECSTypedComponent *TypedComponents = ECSMutationSetSharedData(&Context, sizeof(ECSTypedComponent) * 3);
+    CompA *CompAData = ECSMutationSetSharedData(&Context, sizeof(CompAData) * 2);
+    CompB *CompBData = ECSMutationSetSharedData(&Context, sizeof(CompBData));
+    
+    AddComponentState[0].entity = Base + 0;
+    AddComponentState[0].count = 2;
+    AddComponentState[0].components = &TypedComponents[0];
+    
+    AddComponentState[1].entity = Base + 1;
+    AddComponentState[1].count = 2;
+    AddComponentState[1].components = &TypedComponents[1];
+    
+    TypedComponents[0].id = COMP_A;
+    TypedComponents[0].data = &CompAData[0];
+    TypedComponents[1].id = COMP_B;
+    TypedComponents[1].data = CompBData;
+    TypedComponents[2].id = COMP_A;
+    TypedComponents[2].data = &CompAData[1];
+    
+    CompAData[0].v[0] = 1;
+    CompAData[1].v[0] = 2;
+    CompBData->v[0] = 10;
+    CompBData->v[1] = 11;
+    
+    CallbackState[0].callback = MutationCallback;
+    CallbackState[0].data = &TypedComponents[0].id;
+    CallbackState[1].callback = MutationCallback;
+    CallbackState[1].data = &TypedComponents[1].id;
+    
+    AddComponentState = ECSMutationStageEntityAddComponents(&Context, 1);
+    ECSTypedComponent *TypedComponents2 = ECSMutationSetSharedData(&Context, sizeof(ECSTypedComponent));
+    AddComponentState->entity = Base + 0;
+    AddComponentState->count = 1;
+    AddComponentState->components = TypedComponents2;
+    TypedComponents2->id = COMP_C;
+    TypedComponents2->data = NULL;
+    
+    ECSMutableRemoveComponentState *RemoveComponentState = ECSMutationStageEntityRemoveComponents(&Context, 1);
+    RemoveComponentState->entity = Base + 0;
+    RemoveComponentState->count = 1;
+    ECSComponentID CompCID = COMP_C;
+    RemoveComponentState->ids = &CompCID;
+    
+    
+    XCTAssertEqual(ECSMutationInspectEntityCreate(&Context), 3, @"should retrieve the number of created entities");
+    
+    size_t Count;
+    AddComponentState = ECSMutationInspectEntityAddComponents(&Context, &Count);
+    XCTAssertEqual(Count, 3, @"should retrieve the number of add component states");
+    XCTAssertEqual(AddComponentState[0].entity, Base + 0, @"should have the correct data");
+    XCTAssertEqual(AddComponentState[1].entity, Base + 1, @"should have the correct data");
+    XCTAssertEqual(AddComponentState[2].entity, Base + 0, @"should have the correct data");
+    
+    CallbackState = ECSMutationInspectCustomCallback(&Context, &Count);
+    XCTAssertEqual(Count, 2, @"should retrieve the number of callback states");
+    XCTAssertEqual(CallbackState[0].data, &TypedComponents[0].id, @"should have the correct data");
+    XCTAssertEqual(CallbackState[1].data, &TypedComponents[1].id, @"should have the correct data");
+    
+    RemoveComponentState = ECSMutationInspectEntityRemoveComponents(&Context, &Count);
+    XCTAssertEqual(Count, 1, @"should retrieve the number of remove component states");
+    XCTAssertEqual(RemoveComponentState[0].entity, Base + 0, @"should have the correct data");
+    XCTAssertEqual(RemoveComponentState[0].ids[0], COMP_C, @"should have the correct data");
+    
+    XCTAssertEqual(MutationCallbackEntityCount, 0, @"should not have called callback yet");
+    XCTAssertEqual(MutationCallbackSum, 0, @"should not have called callback yet");
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertEqual(MutationCallbackEntityCount, 3, @"should have the correct data");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_A), @"should have the correct data");
+    XCTAssertEqual(((CompA*)ECSEntityGetComponent(&Context, MutationCallbackEntityFirst, COMP_A))->v[0], 1, @"should have the correct data");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_B), @"should have the correct data");
+    XCTAssertEqual(((CompB*)ECSEntityGetComponent(&Context, MutationCallbackEntityFirst, COMP_B))->v[0], 10, @"should have the correct data");
+    XCTAssertEqual(MutationCallbackSum, 1 + 10 + 11, @"should have the correct data");
+    
+    AddComponentState = ECSMutationInspectEntityAddComponents(&Context, &Count);
+    XCTAssertEqual(Count, 0, @"should no longer have anymore staged add component states");
+    
+    CallbackState = ECSMutationInspectCustomCallback(&Context, &Count);
+    XCTAssertEqual(Count, 0, @"should no longer have anymore staged callback states");
+    
+    RemoveComponentState = ECSMutationInspectEntityRemoveComponents(&Context, &Count);
+    XCTAssertEqual(Count, 0, @"should no longer have anymore staged remove component states");
+    
+    XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_C), @"should not have removed the component that was added");
+    
+    
+    RemoveComponentState = ECSMutationStageEntityRemoveComponents(&Context, 1);
+    RemoveComponentState->entity = MutationCallbackEntityFirst;
+    RemoveComponentState->count = 1;
+    RemoveComponentState->ids = &CompCID;
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_C), @"should have removed the component that was previously added");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_A), @"should still have the remaining components");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_B), @"should still have the remaining components");
 }
 
 -(void) testTime
