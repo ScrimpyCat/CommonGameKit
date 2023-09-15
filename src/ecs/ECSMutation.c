@@ -135,8 +135,12 @@ void ECSMutationApply(ECSContext *Context)
     CCMemoryZoneSave(ECSSharedZone);
     
     size_t NewEntityCount = ECSMutationInspectEntityCreate(Context);
-    ECSEntity *NewEntities = CCMemoryZoneAllocate(ECSSharedZone, NewEntityCount);
-    ECSEntityCreate(Context, NewEntities, NewEntityCount);
+    ECSEntity *NewEntities = NULL;
+    if (NewEntityCount)
+    {
+        NewEntities = CCMemoryZoneAllocate(ECSSharedZone, sizeof(ECSEntity) * NewEntityCount);
+        ECSEntityCreate(Context, NewEntities, NewEntityCount);
+    }
     
     size_t RemoveComponentCount;
     ECSMutableRemoveComponentState *RemoveComponentState = ECSMutationInspectEntityRemoveComponents(Context, &RemoveComponentCount);
@@ -161,7 +165,7 @@ void ECSMutationApply(ECSContext *Context)
     
     size_t DestroyEntityCount;
     ECSEntity *DestroyEntities = ECSMutationInspectEntityDestroy(Context, &DestroyEntityCount);
-    ECSEntityDestroy(Context, DestroyEntities, DestroyEntityCount);
+    if (DestroyEntityCount) ECSEntityDestroy(Context, DestroyEntities, DestroyEntityCount);
     
     CCMemoryZoneRestore(ECSSharedZone);
     
