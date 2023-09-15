@@ -32,9 +32,9 @@ size_t ECSMutableStateRemoveComponentMax;
 size_t ECSMutableStateCustomCallbackMax;
 size_t ECSMutableStateSharedDataMax;
 
-size_t ECSMutationStageEntityCreate(ECSContext *Context, size_t Count)
+ECSProxyEntity ECSMutationStageEntityCreate(ECSContext *Context, size_t Count)
 {
-    return atomic_fetch_add_explicit(&Context->mutations->entity.create, Count, memory_order_relaxed);
+    return atomic_fetch_add_explicit(&Context->mutations->entity.create, Count, memory_order_relaxed) | ECS_RELATIVE_ENTITY_FLAG;
 }
 
 size_t ECSMutationInspectEntityCreate(ECSContext *Context)
@@ -142,14 +142,14 @@ void ECSMutationApply(ECSContext *Context)
     ECSMutableRemoveComponentState *RemoveComponentState = ECSMutationInspectEntityRemoveComponents(Context, &RemoveComponentCount);
     for (size_t Loop = 0; Loop < RemoveComponentCount; Loop++)
     {
-        ECSEntityRemoveComponents(Context, RemoveComponentState[Loop].entity, RemoveComponentState[Loop].ids, RemoveComponentState[Loop].count);
+        ECSEntityRemoveComponents(Context, ECSProxyEntityResolve(RemoveComponentState[Loop].entity, NewEntities, NewEntityCount), RemoveComponentState[Loop].ids, RemoveComponentState[Loop].count);
     }
     
     size_t AddComponentCount;
     ECSMutableAddComponentState *AddComponentState = ECSMutationInspectEntityAddComponents(Context, &AddComponentCount);
     for (size_t Loop = 0; Loop < AddComponentCount; Loop++)
     {
-        ECSEntityAddComponents(Context, AddComponentState[Loop].entity, AddComponentState[Loop].components, AddComponentState[Loop].count);
+        ECSEntityAddComponents(Context, ECSProxyEntityResolve(AddComponentState[Loop].entity, NewEntities, NewEntityCount), AddComponentState[Loop].components, AddComponentState[Loop].count);
     }
     
     size_t CallbackCount;

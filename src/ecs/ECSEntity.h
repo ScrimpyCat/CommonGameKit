@@ -28,6 +28,43 @@
 
 #include <CommonGameKit/Base.h>
 
+/*!
+ * @brief An entity.
+ */
 typedef size_t ECSEntity;
+
+/*!
+ * @brief A proxy entity that can either be an @b ECSEntity or a relative entity index.
+ */
+typedef size_t ECSProxyEntity;
+
+#define ECS_RELATIVE_ENTITY_FLAG ~(SIZE_MAX >> 1)
+
+#define ECS_RELATIVE_ENTITY(x) ((x) | ECS_RELATIVE_ENTITY_FLAG)
+
+/*!
+ * @brief Resolve a proxy entity.
+ * @param ProxyEntity The proxy entity to be resolved.
+ * @param Entities The entities that can be referenced by a relative entity.
+ * @param Count The number of entities.
+ * @return Returns the resolved entity.
+ */
+static inline ECSEntity ECSProxyEntityResolve(ECSProxyEntity ProxyEntity, ECSEntity *Entities, size_t Count);
+
+#pragma mark -
+
+static inline ECSEntity ECSProxyEntityResolve(ECSProxyEntity ProxyEntity, ECSEntity *Entities, size_t Count)
+{
+    if (ProxyEntity & ECS_RELATIVE_ENTITY_FLAG)
+    {
+        ProxyEntity = ProxyEntity & ~ECS_RELATIVE_ENTITY_FLAG;
+        
+        CCAssertLog(ProxyEntity < Count, "Relative entity (%zu) is out of bounds (%zu)", ProxyEntity, Count);
+        
+        return Entities[ProxyEntity];
+    }
+    
+    return ProxyEntity;
+}
 
 #endif

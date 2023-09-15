@@ -41,13 +41,13 @@
 typedef void (*ECSMutableCallback)(ECSContext *Context, void *Data, ECSEntity *NewEntities, size_t NewEntityCount);
 
 typedef struct {
-    ECSEntity entity;
+    ECSProxyEntity entity;
     size_t count;
     ECSTypedComponent *components;
 } ECSMutableAddComponentState;
 
 typedef struct {
-    ECSEntity entity;
+    ECSProxyEntity entity;
     size_t count;
     ECSComponentID *ids;
 } ECSMutableRemoveComponentState;
@@ -168,7 +168,7 @@ void *ECSMutationGetSharedData(ECSContext *Context);
  * @param Count The number of entities to be created.
  * @return Returns the relative index for the first entity. Each entity can be referenced from this index up to index + (count - 1).
  */
-size_t ECSMutationStageEntityCreate(ECSContext *Context, size_t Count);
+ECSProxyEntity ECSMutationStageEntityCreate(ECSContext *Context, size_t Count);
 
 /*!
  * @brief Stage an entity destroy mutation.
