@@ -42,7 +42,7 @@
 
 #define ECS_DESTRUCTOR(destructor, ...)
 
-#define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, void *ECS_CHANGES_VAR, ECSTime ECS_TIME_VAR)
+#define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, ECSTime ECS_TIME_VAR)
 #define ECS_PARALLEL_SYSTEM(...) ECS_SYSTEM(__VA_ARGS__)
 
 #define ECS_SYSTEM_GROUP(...)
@@ -65,7 +65,6 @@
 #define ECS_ARCHETYPE_VAR Archetype
 #define ECS_ARCHETYPE_COMPONENT_INDEXES_VAR ArchetypeComponentIndexes
 #define ECS_COMPONENT_OFFSETS_VAR ComponentOffsets
-#define ECS_CHANGES_VAR Changes
 #define ECS_TIME_VAR Time
 
 #define ECS_SYSTEM_FUN(...) ECS_SYSTEM(ECS_SYSTEM_NAME)
