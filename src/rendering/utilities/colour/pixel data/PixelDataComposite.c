@@ -26,9 +26,6 @@
 #define CC_QUICK_COMPILE
 #include "PixelDataComposite.h"
 
-#define T size_t
-#include <CommonC/Extrema.h>
-
 typedef struct {
     CCArray(CCPixelDataCompositeReference) references;
     size_t width, height, depth;
