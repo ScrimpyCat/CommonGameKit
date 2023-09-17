@@ -216,6 +216,7 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVA
 #define ECS_ITER_(increment, ...) ECS_ITER__(increment, ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
 #define ECS_ITER__(increment, ...) ECS_ITER___(increment, __VA_ARGS__)
 #define ECS_ITER___(increment, entities, declare, pre, fetch, ...) \
+ECS_ITER_ASSERT(__VA_ARGS__) \
 for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC_EXPAND(ECS_ITER_IGNORE CC_SOFT_JOIN(ECS_ITER_CONSUME, CC_MAP_WITH(ECS_ITER_PRE, pre, __VA_ARGS__))); !ECS_ITER_PRIVATE__pre++; ) \
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
 for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
@@ -231,6 +232,32 @@ CC_SOFT_JOIN(, CC_MAP(ECS_ITER_NESTED_FETCH, __VA_ARGS__))
 #define ECS_BATCH_ITER(count, ...) \
 _Static_assert((CC_SOFT_JOIN(+, CC_MAP(ECS_BATCH_ITER_ASSERT_1, __VA_ARGS__)) <= 1) && (ECS_BATCH_ITER_BIT_COUNT(CC_SOFT_JOIN(|, CC_MAP(ECS_BATCH_ITER_ASSERT_2, __VA_ARGS__))) == 1), "ECS_BATCH_ITER can only be used on groups of components that can be batched together"); \
 ECS_ITER_(count, __VA_ARGS__)
+
+#define ECS_ITER_ASSERT(...) CC_CAT(ECS_ITER_ASSERT_, ECS_SYSTEM_NAME)(__VA_ARGS__)
+
+#define ECS_ITER_ASSERT_TYPE(...) CC_CAT(ECS_ITER_ASSERT_, ECS_SYSTEM_NAME, _, ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__)))
+
+#define ECS_ITER_ASSERT_KIND(expect, ...) CC_CAT(ECS_ITER_ASSERT_KIND_, expect, _, ECS_ITER_KIND(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))))
+
+#define ECS_ITER_ASSERT_KIND_0_0
+#define ECS_ITER_ASSERT_KIND_0_1 CC_ERROR("Must iterate with an archetype component as the leading component");
+#define ECS_ITER_ASSERT_KIND_0_2 CC_ERROR("Must iterate with an archetype component as the leading component");
+#define ECS_ITER_ASSERT_KIND_0_3 CC_ERROR("Must iterate with an archetype component as the leading component");
+
+#define ECS_ITER_ASSERT_KIND_1_0
+#define ECS_ITER_ASSERT_KIND_1_1 CC_ERROR("Must iterate with a packed component as the leading component");
+#define ECS_ITER_ASSERT_KIND_1_2 CC_ERROR("Must iterate with a packed component as the leading component");
+#define ECS_ITER_ASSERT_KIND_1_3 CC_ERROR("Must iterate with a packed component as the leading component");
+
+#define ECS_ITER_ASSERT_KIND_2_0
+#define ECS_ITER_ASSERT_KIND_2_1 CC_ERROR("Must iterate with an indexed component as the leading component");
+#define ECS_ITER_ASSERT_KIND_2_2 CC_ERROR("Must iterate with an indexed component as the leading component");
+#define ECS_ITER_ASSERT_KIND_2_3 CC_ERROR("Must iterate with an indexed component as the leading component");
+
+#define ECS_ITER_ASSERT_KIND_3_0
+#define ECS_ITER_ASSERT_KIND_3_1 CC_ERROR("Must iterate with a local component as the leading component");
+#define ECS_ITER_ASSERT_KIND_3_2 CC_ERROR("Must iterate with a local component as the leading component");
+#define ECS_ITER_ASSERT_KIND_3_3 CC_ERROR("Must iterate with a local component as the leading component");
 
 #pragma mark - Assertions & Conditions
 
