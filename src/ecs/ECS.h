@@ -83,28 +83,29 @@ typedef struct {
     } component;
 } ECSSystemAccess;
 
-typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSTime Time);
+typedef struct {
+    size_t index;
+    size_t count;
+} ECSRange;
 
-#if ECS_SYSTEM_UPDATE_TAGGED_POINTER
-typedef ECSSystemUpdateCallback ECSSystemUpdate;
+typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSRange Range, ECSTime Time);
 
-#define ECS_SYSTEM_UPDATE(update) update
-#define ECS_SYSTEM_UPDATE_PARALLEL(update) ((ECSSystemUpdate)((uintptr_t)(update) + 1))
-
-#define ECS_SYSTEM_UPDATE_GET_UPDATE(update) ((ECSSystemUpdateCallback)((uintptr_t)(update) & ~1))
-#define ECS_SYSTEM_UPDATE_GET_PARALLEL(update) ((_Bool)((uintptr_t)(update) & 1))
-#else
 typedef struct {
     ECSSystemUpdateCallback callback;
-    _Bool parallel;
+    size_t offset;
+    size_t size;
 } ECSSystemUpdate;
 
-#define ECS_SYSTEM_UPDATE(update) (ECSSystemUpdate){ (update), FALSE }
-#define ECS_SYSTEM_UPDATE_PARALLEL(update) (ECSSystemUpdate){ (update), TRUE }
+#define ECS_SYSTEM_UPDATE(update) (ECSSystemUpdate){ .callback = (update), .offset = 0, .size = 0 }
+#define ECS_SYSTEM_UPDATE_PARALLEL(update) ECS_SYSTEM_UPDATE_PARALLEL_ARCHETYPE_CHUNK(update, SIZE_MAX)
+#define ECS_SYSTEM_UPDATE_PARALLEL_CHUNK(update, arrayOffset, chunkSize) (ECSSystemUpdate){ .callback = (update), .offset = (arrayOffset), .size = (chunkSize) }
+#define ECS_SYSTEM_UPDATE_PARALLEL_ARCHETYPE_CHUNK(update, chunkSize) ECS_SYSTEM_UPDATE_PARALLEL_CHUNK(update, 1, chunkSize)
 
-#define ECS_SYSTEM_UPDATE_GET_UPDATE(update) update.callback
-#define ECS_SYSTEM_UPDATE_GET_PARALLEL(update) update.parallel
-#endif
+#define ECS_SYSTEM_UPDATE_GET_UPDATE(update) (update).callback
+#define ECS_SYSTEM_UPDATE_GET_PARALLEL(update) (_Bool)(update).offset
+#define ECS_SYSTEM_UPDATE_GET_PARALLEL_ARCHETYPE(update) (ECS_SYSTEM_UPDATE_GET_PARALLEL_OFFSET(update) == 1)
+#define ECS_SYSTEM_UPDATE_GET_PARALLEL_OFFSET(update) (update).offset
+#define ECS_SYSTEM_UPDATE_GET_PARALLEL_CHUNK_SIZE(update) (update).size
 
 typedef struct {
     size_t index;

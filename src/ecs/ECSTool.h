@@ -42,7 +42,7 @@
 
 #define ECS_DESTRUCTOR(destructor, ...)
 
-#define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, ECSTime ECS_TIME_VAR)
+#define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, ECSRange ECS_RANGE_VAR, ECSTime ECS_TIME_VAR)
 #define ECS_PARALLEL_SYSTEM(...) ECS_SYSTEM(__VA_ARGS__)
 
 #define ECS_SYSTEM_GROUP(...)
@@ -61,11 +61,29 @@
 #define ECS_ENTITIES(component) ECS_ENTITIES_(ECS_SYSTEM_NAME, component)
 #define ECS_ENTITIES_(system, component) ECS_ENTITY_ACCESS(system, component)
 
+#ifndef ECS_CONTEXT_VAR
 #define ECS_CONTEXT_VAR Context
+#endif
+
+#ifndef ECS_ARCHETYPE_VAR
 #define ECS_ARCHETYPE_VAR Archetype
+#endif
+
+#ifndef ECS_ARCHETYPE_COMPONENT_INDEXES_VAR
 #define ECS_ARCHETYPE_COMPONENT_INDEXES_VAR ArchetypeComponentIndexes
+#endif
+
+#ifndef ECS_COMPONENT_OFFSETS_VAR
 #define ECS_COMPONENT_OFFSETS_VAR ComponentOffsets
+#endif
+
+#ifndef ECS_RANGE_VAR
+#define ECS_RANGE_VAR Range
+#endif
+
+#ifndef ECS_TIME_VAR
 #define ECS_TIME_VAR Time
+#endif
 
 #define ECS_SYSTEM_FUN(...) ECS_SYSTEM(ECS_SYSTEM_NAME)
 
@@ -195,12 +213,12 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVA
 #endif
 
 #define ECS_ITER(...) ECS_ITER_(1, __VA_ARGS__)
-#define ECS_ITER_(count, ...) ECS_ITER__(count, ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
-#define ECS_ITER__(count, ...) ECS_ITER___(count, __VA_ARGS__)
-#define ECS_ITER___(count, entities, declare, pre, fetch, ...) \
+#define ECS_ITER_(increment, ...) ECS_ITER__(increment, ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
+#define ECS_ITER__(increment, ...) ECS_ITER___(increment, __VA_ARGS__)
+#define ECS_ITER___(increment, entities, declare, pre, fetch, ...) \
 for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC_EXPAND(ECS_ITER_IGNORE CC_SOFT_JOIN(ECS_ITER_CONSUME, CC_MAP_WITH(ECS_ITER_PRE, pre, __VA_ARGS__))); !ECS_ITER_PRIVATE__pre++; ) \
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
-for (size_t ECS_ITER_INDEX = 0, ECS_ITER_COUNT = CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (count)) \
+for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
 for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY) \
 CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__)) \
 CC_SOFT_JOIN(, CC_MAP(ECS_ITER_NESTED_FETCH, __VA_ARGS__))

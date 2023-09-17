@@ -44,6 +44,7 @@ typedef struct {
         size_t offset;
         size_t count;
     } archetype;
+    ECSRange range;
     ECSExecutionGroup *executionGroup;
     ECSContext *context;
 } ECSSystemExecutor;
@@ -136,6 +137,7 @@ int ECSWorker(ECSWorkerID WorkerID)
             ECSContext * const Context = Executor->context;
             const ECSTime Time = Executor->time;
             const size_t * const ComponentOffsets = Access->component.offsets;
+            const ECSRange Range = Executor->range;
             
             if (ArchCount)
             {
@@ -146,14 +148,14 @@ int ECSWorker(ECSWorkerID WorkerID)
                     
                     if ((Archetype->entities) && (CCArrayGetCount(Archetype->entities)))
                     {
-                        Callback(Context, Archetype, ArchetypeComponentIndexes + ArchPointer->componentIndexes, ComponentOffsets, Time);
+                        Callback(Context, Archetype, ArchetypeComponentIndexes + ArchPointer->componentIndexes, ComponentOffsets, Range, Time);
                     }
                 }
             }
             
             else
             {
-                Callback(Context, NULL, NULL, ComponentOffsets, Time);
+                Callback(Context, NULL, NULL, ComponentOffsets, Range, Time);
             }
             
             const size_t Index = AccessReleases[WorkerID][LocalAccessReleaseIndex].count++;
@@ -199,67 +201,125 @@ typedef uint32_t ECSContextAccessFlag;
 
 static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemIndex, const ECSSystemRange *Range, const ECSSystemAccess *Access, const ECSSystemUpdate *Update, ECSContextAccessFlag *AccessFlags, uint16_t *Refs, uint8_t *Block, uint8_t BlockBit, ECSExecutionGroup *State, CCConcurrentPoolStage *Stage)
 {
-    _Bool Parallel = ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex]);
-    const size_t ArchCount = Access[SystemIndex].archetype.count;
-    const size_t RefCount = (Parallel ? (ArchCount ? ArchCount : 1) : 1);
-    
-    for (size_t Loop4 = 0, IdCount = Access[SystemIndex].read.count; Loop4 < IdCount; Loop4++)
+    for (size_t Loop = 0, IdCount = Access[SystemIndex].read.count; Loop < IdCount; Loop++)
     {
-        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop4]);
+        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop]);
         const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
         
         if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 1) return FALSE;
     }
     
-    for (size_t Loop4 = 0, IdCount = Access[SystemIndex].write.count; Loop4 < IdCount; Loop4++)
+    for (size_t Loop = 0, IdCount = Access[SystemIndex].write.count; Loop < IdCount; Loop++)
     {
-        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop4]);
+        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop]);
         const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
         
         if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 3) return FALSE;
     }
     
-    for (size_t Loop4 = 0, IdCount = Access[SystemIndex].read.count; Loop4 < IdCount; Loop4++)
-    {
-        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop4]);
-        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
-        
-        AccessFlags[AccessFlagByteIndex] |= 2 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8));
-        Refs[ComponentIndex] += RefCount;
-    }
-    
-    for (size_t Loop4 = 0, IdCount = Access[SystemIndex].write.count; Loop4 < IdCount; Loop4++)
-    {
-        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop4]);
-        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
-        
-        AccessFlags[AccessFlagByteIndex] |= 1 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8));
-        Refs[ComponentIndex] += RefCount;
-    }
+    *Block |= 1 << BlockBit;
     
     ECSSystemExecutor Executor = {
         .access = &Access[SystemIndex],
         .time = Time,
         .update = ECS_SYSTEM_UPDATE_GET_UPDATE(Update[SystemIndex]),
+        .range = { 0, SIZE_MAX },
         .executionGroup = State,
         .context = Context
     };
     
-    if ((ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex])) && (ArchCount))
+    const _Bool Parallel = ECS_SYSTEM_UPDATE_GET_PARALLEL(Update[SystemIndex]);
+    const size_t ArchCount = Access[SystemIndex].archetype.count;
+    size_t RefCount = 0;
+    
+    if (Parallel)
     {
-        Executor.archetype.count = 1;
+        const size_t ChunkSize = ECS_SYSTEM_UPDATE_GET_PARALLEL_CHUNK_SIZE(Update[SystemIndex]);
         
-        for (size_t Loop4 = 0; Loop4 < ArchCount; Loop4++)
+        if (ECS_SYSTEM_UPDATE_GET_PARALLEL_ARCHETYPE(Update[SystemIndex]))
         {
-            Executor.archetype.offset = Loop4;
-            CCConcurrentPoolStagePush(SystemExecutorPool, Executor, ECS_SYSTEM_EXECUTION_POOL_MAX, Stage);
+            Executor.archetype.count = 1;
+            
+            if (ChunkSize < SIZE_MAX)
+            {
+                for (size_t Loop = 0; Loop < ArchCount; Loop++)
+                {
+                    const ECSArchetypePointer *ArchPointer = &Access->archetype.pointer[Loop];
+                    ECSArchetype *Archetype = (void*)Context + ArchPointer->archetype;
+                    
+                    size_t Count;
+                    if ((Archetype->entities) && (Count = CCArrayGetCount(Archetype->entities)))
+                    {
+                        const size_t ChunkCount = ((Count - 1) / ChunkSize) + 1;
+                        RefCount += ChunkCount;
+                        
+                        Executor.archetype.offset = Loop;
+                        
+                        for (size_t Loop2 = 0; Loop2 < ChunkCount; Loop2++)
+                        {
+                            const size_t Offset = Loop2 * ChunkSize;
+                            Executor.range = (ECSRange){
+                                .index = Offset,
+                                .count = CCMin(Count - Offset, ChunkSize)
+                            };
+                            
+                            CCConcurrentPoolStagePush(SystemExecutorPool, Executor, ECS_SYSTEM_EXECUTION_POOL_MAX, Stage);
+                        }
+                        
+                        State->running += ChunkCount;
+                    }
+                }
+            }
+            
+            else
+            {
+                RefCount = ArchCount;
+                
+                for (size_t Loop = 0; Loop < ArchCount; Loop++)
+                {
+                    Executor.archetype.offset = Loop;
+                    CCConcurrentPoolStagePush(SystemExecutorPool, Executor, ECS_SYSTEM_EXECUTION_POOL_MAX, Stage);
+                }
+                
+                State->running += ArchCount;
+            }
         }
         
-        State->running += ArchCount;
+        else
+        {
+            CCArray Array = *(CCArray*)((void*)Context + ECS_SYSTEM_UPDATE_GET_PARALLEL_OFFSET(Update[SystemIndex]));
+            size_t Count;
+            
+            if ((Array) && (Count = CCArrayGetCount(Array)))
+            {
+                const size_t ChunkCount = ((Count - 1) / ChunkSize) + 1;
+                RefCount = ChunkCount;
+                
+                Executor.archetype.offset = 0;
+                Executor.archetype.count = ArchCount;
+                
+                for (size_t Loop2 = 0; Loop2 < ChunkCount; Loop2++)
+                {
+                    const size_t Offset = Loop2 * ChunkSize;
+                    Executor.range = (ECSRange){
+                        .index = Offset,
+                        .count = CCMin(Count - Offset, ChunkSize)
+                    };
+                    
+                    CCConcurrentPoolStagePush(SystemExecutorPool, Executor, ECS_SYSTEM_EXECUTION_POOL_MAX, Stage);
+                }
+                
+                State->running += ChunkCount;
+            }
+        }
+        
+        if (!RefCount) return FALSE;
     }
     
     else
     {
+        RefCount = 1;
+        
         Executor.archetype.offset = 0;
         Executor.archetype.count = ArchCount;
         CCConcurrentPoolStagePush(SystemExecutorPool, Executor, ECS_SYSTEM_EXECUTION_POOL_MAX, Stage);
@@ -267,7 +327,23 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
         State->running++;
     }
     
-    *Block |= 1 << BlockBit;
+    for (size_t Loop = 0, IdCount = Access[SystemIndex].read.count; Loop < IdCount; Loop++)
+    {
+        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop]);
+        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+        
+        AccessFlags[AccessFlagByteIndex] |= 2 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8));
+        Refs[ComponentIndex] += RefCount;
+    }
+    
+    for (size_t Loop = 0, IdCount = Access[SystemIndex].write.count; Loop < IdCount; Loop++)
+    {
+        const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop]);
+        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+        
+        AccessFlags[AccessFlagByteIndex] |= 1 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8));
+        Refs[ComponentIndex] += RefCount;
+    }
     
     return TRUE;
 }
