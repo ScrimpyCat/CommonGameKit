@@ -133,16 +133,27 @@
 #define ECS_ITER_INIT__(type, kind) ECS_ITER_INIT___(type, kind)
 #define ECS_ITER_INIT___(type, kind) ECS_ITER_INIT_##kind(type)
 
-#define ECS_ITER_INIT_X(type) ECS_ENTITIES(type), ,                                       (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_FALLBACK_FETCH,   ECS_ITER_FALLBACK_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
-
 // archetype
-#define ECS_ITER_INIT_0(type) ECS_ENTITIES(type), void,                                   ((,) ECS_ITER_ARCHETYPE_PRE_INIT, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_ARCHETYPE_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
+#define ECS_ITER_INIT_0(type) ,                        (ECS_ITER_ENTITY_ARRAY, ECS_ENTITIES(type)), void,                                   ((,) ECS_ITER_ARCHETYPE_PRE_INIT, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_ARCHETYPE_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
 // packed
-#define ECS_ITER_INIT_1(type) ECS_ENTITIES(type), void ECS_ITER_PACKED_PRE_INIT(type, 0), (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_WARNING_FETCH,   ECS_ITER_PACKED_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
+#define ECS_ITER_INIT_1(type) if (ECS_ENTITIES(type)), (ECS_ITER_ENTITY_ARRAY, ECS_ENTITIES(type)), void ECS_ITER_PACKED_PRE_INIT(type, 0), (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_WARNING_FETCH,   ECS_ITER_PACKED_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
 // indexed
-#define ECS_ITER_INIT_2(type) CC_ERROR("Cannot iterate with leading indexed component: " #type) ECS_ITER_INIT_X(type)
+#define ECS_ITER_INIT_2(type) ,                        (ECS_ITER_ENTITY_FALLBACK, "indexed", type), ,                                       (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_WARNING_FETCH,   ECS_ITER_FALLBACK_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
 // local
-#define ECS_ITER_INIT_3(type) CC_ERROR("Cannot iterate with leading local component: " #type) ECS_ITER_INIT_X(type)
+#define ECS_ITER_INIT_3(type) ,                        (ECS_ITER_ENTITY_FALLBACK, "local", type), ,                                         (() ECS_ITER_IGNORE,              () ECS_ITER_IGNORE, () ECS_ITER_IGNORE, () ECS_ITER_IGNORE), (ECS_ITER_WARNING_FETCH,   ECS_ITER_FALLBACK_FETCH,   ECS_ITER_FALLBACK_FETCH, ECS_ITER_FALLBACK_FETCH)
+
+#define ECS_ITER_FETCH_ENTITY(increment, ...) ECS_ITER_FETCH_ENTITY_(increment, __VA_ARGS__)
+#define ECS_ITER_FETCH_ENTITY_(increment, fetch, ...) fetch(increment, __VA_ARGS__)
+
+#define ECS_ITER_ENTITY_ARRAY(increment, entities) \
+for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
+for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
+for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY)
+
+#define ECS_ITER_ENTITY_FALLBACK(increment, kind, type) \
+CC_WARNING("Iterating with a leading " kind " component (" #type ") may be slow. Use an archetype or packed component for faster iteration.") \
+for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_CONTEXT_VAR->manager.map)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
+for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity ECS_ITER_ENTITY = ECS_ITER_INDEX; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY)
 
 #define ECS_ITER_DECLARE_ASSIGN(e, i, v) e = v
 
@@ -215,12 +226,11 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVA
 #define ECS_ITER(...) ECS_ITER_(1, __VA_ARGS__)
 #define ECS_ITER_(increment, ...) ECS_ITER__(increment, ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
 #define ECS_ITER__(increment, ...) ECS_ITER___(increment, __VA_ARGS__)
-#define ECS_ITER___(increment, entities, declare, pre, fetch, ...) \
+#define ECS_ITER___(increment, guard, entities, declare, pre, fetch, ...) \
 ECS_ITER_ASSERT(__VA_ARGS__) \
+guard \
 for (size_t ECS_ITER_PRIVATE__pre = 0; !ECS_ITER_PRIVATE__pre; ) for (declare CC_EXPAND(ECS_ITER_IGNORE CC_SOFT_JOIN(ECS_ITER_CONSUME, CC_MAP_WITH(ECS_ITER_PRE, pre, __VA_ARGS__))); !ECS_ITER_PRIVATE__pre++; ) \
-for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
-for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
-for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY) \
+ECS_ITER_FETCH_ENTITY(increment, ECS_ITER_CONSUME entities) \
 CC_SOFT_JOIN(, CC_MAP_WITH(ECS_ITER_FETCH, fetch, __VA_ARGS__)) \
 CC_SOFT_JOIN(, CC_MAP(ECS_ITER_NESTED_FETCH, __VA_ARGS__))
 
