@@ -71,6 +71,7 @@ typedef void PackedTag;
 typedef void IndexedTag;
 typedef void LocalTag;
 typedef void DestroyMeTag;
+typedef void CheckRunStateTag;
 
 typedef CompA DuplicateA;
 typedef CompB LocalDuplicateB;
@@ -95,6 +96,7 @@ ECS_PACKED_DUPLICATE_COMPONENT(DuplicateA);
 ECS_LOCAL_DUPLICATE_COMPONENT(LocalDuplicateB);
 ECS_LOCAL_COMPONENT(LocalH);
 ECS_PACKED_TAG(DestroyMeTag);
+ECS_PACKED_TAG(CheckRunStateTag);
 
 ECS_DESTRUCTOR(TestDestructor, DuplicateA, LocalH);
 
@@ -109,19 +111,27 @@ static ECS_SYSTEM(Sys6ReadAC, (CompA, CompC), ());
 static ECS_SYSTEM(Sys7WriteB, (), (CompB));
 static ECS_PARALLEL_SYSTEM(Sys8ReadD_WriteC, (CompD), (CompC));
 static ECS_SYSTEM(Sys9ReadFGH_WriteAI, (CompF, CompG, CompH), (CompA, CompI));
-static ECS_PARALLEL_SYSTEM(Sys10WriteJ, (), (CompJ));
+static ECS_PARALLEL_SYSTEM(Sys10WriteJ, (), (CompJ), (CompJ, SIZE_MAX));
 static ECS_SYSTEM(Sys11ReadAWithArchTag, (CompA, ArchTag), ());
 static ECS_SYSTEM(Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA, (LocalH, LocalDuplicateB), (DuplicateA));
 static ECS_SYSTEM(Sys13ReadDestroyMeTag, (DestroyMeTag), ());
-static ECS_SYSTEM(Sys14ReadA, (CompA), ());
+static ECS_PARALLEL_SYSTEM(Sys14ReadAJ, (CompA, CompJ), (), (CompJ, SIZE_MAX));
+static ECS_PARALLEL_SYSTEM(Sys15ReadH, (CompH), (), (CompH, SIZE_MAX));
+static ECS_SYSTEM(Sys16ReadCheckRunStateTag, (CheckRunStateTag), ());
 
 ECS_SYSTEM_GROUP(MISC_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0), FALSE,
-    PRIORITY(0, (Sys1ReadA_WriteB, Sys2ReadAC_WriteB, Sys3ReadAC_WriteD, Sys4ReadA, Sys5ReadC, Sys6ReadAC, Sys7WriteB, Sys13ReadDestroyMeTag, Sys14ReadA)),
-    PRIORITY(1, (Sys8ReadD_WriteC, Sys10WriteJ, Sys11ReadAWithArchTag, Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA))
+    PRIORITY(0, (Sys1ReadA_WriteB, Sys2ReadAC_WriteB, Sys3ReadAC_WriteD, Sys4ReadA, Sys5ReadC, Sys6ReadAC, Sys7WriteB, Sys13ReadDestroyMeTag, Sys14ReadAJ)),
+    PRIORITY(1, (Sys8ReadD_WriteC, Sys10WriteJ, Sys11ReadAWithArchTag, Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA, Sys15ReadH))
 );
 
 ECS_SYSTEM_GROUP(OTHER_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2, FALSE,
     PRIORITY(0, (Sys9ReadFGH_WriteAI))
+);
+
+ECS_SYSTEM_GROUP(TEST_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0), FALSE,
+    PRIORITY(0, (), (MISC_GROUP, 1)),
+    PRIORITY(1, (), (OTHER_GROUP, 0)),
+    PRIORITY(2, (Sys16ReadCheckRunStateTag))
 );
 
 static void TestDestructor(void *Data, ECSComponentID ID);

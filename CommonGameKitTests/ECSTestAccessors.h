@@ -3,7 +3,10 @@
 #define Sys11ReadAWithArchTag_ArchTag ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
 #define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_DuplicateA *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
 #define Sys13ReadDestroyMeTag_DestroyMeTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys14ReadA_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
+#define Sys14ReadAJ_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
+#define Sys14ReadAJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
+#define Sys15ReadH_CompH *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]), NULL
+#define Sys16ReadCheckRunStateTag_CheckRunStateTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
 #define Sys1ReadA_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
 #define Sys1ReadA_WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
 #define Sys2ReadAC_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
@@ -55,16 +58,21 @@
 #define ECS_ITER_DECLARE_CompF CompF ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_CompF ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_CompF COMP_F
-#define ECS_ITER_TYPE_DestroyMeTag DestroyMeTag ECS_ITER_IGNORE(
-#define ECS_ITER_KIND_DestroyMeTag 1
-#define ECS_ITER_DECLARE_DestroyMeTag DestroyMeTag ECS_ITER_DECLARE_ASSIGN(
-#define ECS_ITER_NESTED_DestroyMeTag ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
-#define ECS_ID_DestroyMeTag DESTROY_ME_TAG
+#define ECS_ITER_TYPE_CheckRunStateTag CheckRunStateTag ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_CheckRunStateTag 1
+#define ECS_ITER_DECLARE_CheckRunStateTag CheckRunStateTag ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_NESTED_CheckRunStateTag ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
+#define ECS_ID_CheckRunStateTag CHECK_RUN_STATE_TAG
 #define ECS_ITER_TYPE_CompJ CompJ ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_CompJ 1
 #define ECS_ITER_DECLARE_CompJ CompJ ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_CompJ ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_CompJ COMP_J
+#define ECS_ITER_TYPE_DestroyMeTag DestroyMeTag ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_DestroyMeTag 1
+#define ECS_ITER_DECLARE_DestroyMeTag DestroyMeTag ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_NESTED_DestroyMeTag ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
+#define ECS_ID_DestroyMeTag DESTROY_ME_TAG
 #define ECS_ITER_TYPE_DuplicateA DuplicateA ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_DuplicateA 1
 #define ECS_ITER_DECLARE_DuplicateA ECS_ITER_DECLARE_ARRAY_VAR(
@@ -99,4 +107,25 @@
 #define ECS_ITER_DECLARE_LocalH LocalH ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_LocalH ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_LocalH LOCAL_H
+
+#define ECS_ITER_ASSERT_Sys10WriteJ ECS_ITER_ASSERT_TYPE
+#define ECS_ITER_ASSERT_Sys10WriteJ_CompJ
+#define ECS_ITER_ASSERT_Sys11ReadAWithArchTag ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys13ReadDestroyMeTag ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys14ReadAJ ECS_ITER_ASSERT_TYPE
+#define ECS_ITER_ASSERT_Sys14ReadAJ_CompA CC_ERROR("Must iterate with CompJ as the leading component");
+#define ECS_ITER_ASSERT_Sys14ReadAJ_CompJ
+#define ECS_ITER_ASSERT_Sys15ReadH ECS_ITER_ASSERT_TYPE
+#define ECS_ITER_ASSERT_Sys15ReadH_CompH
+#define ECS_ITER_ASSERT_Sys16ReadCheckRunStateTag ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys1ReadA_WriteB ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys2ReadAC_WriteB ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys3ReadAC_WriteD ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys4ReadA ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys5ReadC ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys6ReadAC ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys7WriteB ECS_ITER_IGNORE
+#define ECS_ITER_ASSERT_Sys8ReadD_WriteC(...) ECS_ITER_ASSERT_KIND(0, __VA_ARGS__)
+#define ECS_ITER_ASSERT_Sys9ReadFGH_WriteAI ECS_ITER_IGNORE
 

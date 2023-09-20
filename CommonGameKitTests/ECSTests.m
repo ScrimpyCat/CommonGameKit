@@ -31,6 +31,69 @@
 #import "ECSTests.h"
 #import "ECSTestData.h"
 
+
+static _Atomic(size_t) RunCount = ATOMIC_VAR_INIT(0);
+
+static struct {
+    _Atomic(size_t) first;
+    _Atomic(size_t) last;
+} RunStats[15] = {
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) },
+    { ATOMIC_VAR_INIT(SIZE_MAX), ATOMIC_VAR_INIT(0) }
+};
+
+#define RUN_Sys1ReadA_WriteB 0
+#define RUN_Sys2ReadAC_WriteB 1
+#define RUN_Sys3ReadAC_WriteD 2
+#define RUN_Sys4ReadA 3
+#define RUN_Sys5ReadC 4
+#define RUN_Sys6ReadAC 5
+#define RUN_Sys7WriteB 6
+#define RUN_Sys8ReadD_WriteC 7
+#define RUN_Sys9ReadFGH_WriteAI 8
+#define RUN_Sys10WriteJ 9
+#define RUN_Sys11ReadAWithArchTag 10
+#define RUN_Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA 11
+#define RUN_Sys13ReadDestroyMeTag 12
+#define RUN_Sys14ReadAJ 13
+#define RUN_Sys15ReadH 14
+
+
+#define RECORD_RUN RecordRunStat(CC_CAT(RUN_, ECS_SYSTEM_NAME))
+
+static void RecordRunStat(size_t Index)
+{
+    size_t CurrentRunIndex = atomic_fetch_add(&RunCount, 1);
+    size_t First = atomic_load(&RunStats[Index].first);
+    while (CurrentRunIndex < First)
+    {
+        if (atomic_compare_exchange_weak(&RunStats[Index].first, &First, CurrentRunIndex)) break;
+        
+        First = atomic_load(&RunStats[Index].first);
+    }
+    
+    size_t Last = atomic_load(&RunStats[Index].last);
+    while (CurrentRunIndex > Last)
+    {
+        if (atomic_compare_exchange_weak(&RunStats[Index].last, &Last, CurrentRunIndex)) break;
+        
+        Last = atomic_load(&RunStats[Index].last);
+    }
+}
+
 static _Atomic(_Bool) CorrectAccessors = ATOMIC_VAR_INIT(TRUE);
 
 #define CHECK_SIZE(component) if (CCArrayGetElementSize(ECS_GET(component)) != sizeof(component)) atomic_store(&CorrectAccessors, FALSE);
@@ -38,6 +101,8 @@ static _Atomic(_Bool) CorrectAccessors = ATOMIC_VAR_INIT(TRUE);
 #define ECS_SYSTEM_NAME Sys1ReadA_WriteB
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompA);
     CHECK_SIZE(CompB);
     
@@ -54,6 +119,8 @@ static ECS_SYSTEM_FUN()
 #define ECS_SYSTEM_NAME Sys2ReadAC_WriteB
 static ECS_SYSTEM(Sys2ReadAC_WriteB)
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompA);
     CHECK_SIZE(CompC);
     CHECK_SIZE(CompB);
@@ -72,6 +139,8 @@ static ECS_SYSTEM(Sys2ReadAC_WriteB)
 #define ECS_SYSTEM_NAME Sys3ReadAC_WriteD
 static ECS_SYSTEM(Sys3ReadAC_WriteD, (CompA, CompC), (CompD))
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompA);
     CHECK_SIZE(CompC);
     CHECK_SIZE(CompD);
@@ -86,6 +155,8 @@ static ECS_SYSTEM(Sys3ReadAC_WriteD, (CompA, CompC), (CompD))
 #define ECS_SYSTEM_NAME Sys4ReadA
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompA);
 }
 #undef ECS_SYSTEM_NAME
@@ -93,6 +164,8 @@ static ECS_SYSTEM_FUN()
 #define ECS_SYSTEM_NAME Sys5ReadC
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompC);
 }
 #undef ECS_SYSTEM_NAME
@@ -100,6 +173,8 @@ static ECS_SYSTEM_FUN()
 #define ECS_SYSTEM_NAME Sys6ReadAC
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompA);
     CHECK_SIZE(CompC);
 }
@@ -108,6 +183,8 @@ static ECS_SYSTEM_FUN()
 #define ECS_SYSTEM_NAME Sys7WriteB
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompB);
 }
 #undef ECS_SYSTEM_NAME
@@ -115,6 +192,8 @@ static ECS_SYSTEM_FUN()
 #define ECS_SYSTEM_NAME Sys8ReadD_WriteC
 static ECS_PARALLEL_SYSTEM(Sys8ReadD_WriteC)
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompC);
     CHECK_SIZE(CompD);
     
@@ -126,8 +205,10 @@ static ECS_PARALLEL_SYSTEM(Sys8ReadD_WriteC)
 #undef ECS_SYSTEM_NAME
 
 #define ECS_SYSTEM_NAME Sys9ReadFGH_WriteAI
-static void Sys9ReadFGH_WriteAI(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSTime Time)
+static void Sys9ReadFGH_WriteAI(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSRange Range, ECSTime Time)
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompF);
     CHECK_SIZE(CompG);
     CHECK_SIZE(CompH);
@@ -145,6 +226,8 @@ static void Sys9ReadFGH_WriteAI(ECSContext *Context, ECSArchetype *Archetype, co
 #define ECS_SYSTEM_NAME Sys10WriteJ
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompJ);
     
     ECS_ITER(CompJ *J)
@@ -158,6 +241,8 @@ static ECS_SYSTEM_FUN()
 static _Atomic(int) Sys11ReadAWithArchTagCounter = ATOMIC_VAR_INIT(0);
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     CHECK_SIZE(CompA);
     
     const size_t Count = CCArrayGetCount(ECS_GET(CompA));
@@ -182,6 +267,8 @@ static ECS_SYSTEM_FUN()
 #define ECS_SYSTEM_NAME Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
     ECS_ASSERT(LocalH, Local);
     ECS_ASSERT_NOT(LocalH, Duplicate, Tag);
     ECS_ASSERT(DuplicateA, Packed, Duplicate);
@@ -213,14 +300,14 @@ static ECS_SYSTEM_FUN()
         DupA->v[0] *= Multiplier;
     }
 }
-
 #undef ECS_SYSTEM_NAME
+
 #define ECS_SYSTEM_NAME Sys13ReadDestroyMeTag
 static ECS_SYSTEM_FUN()
 {
-    ECS_ASSERT(DestroyMeTag, Packed, Tag);
+    RECORD_RUN;
     
-    if (!ECS_GET(DestroyMeTag)) return;
+    ECS_ASSERT(DestroyMeTag, Packed, Tag);
     
     ECS_ITER(const DestroyMeTag *Tag)
     {
@@ -230,10 +317,95 @@ static ECS_SYSTEM_FUN()
 }
 #undef ECS_SYSTEM_NAME
 
-#undef ECS_SYSTEM_NAME
-#define ECS_SYSTEM_NAME Sys14ReadA
+#define ECS_SYSTEM_NAME Sys14ReadAJ
 static ECS_SYSTEM_FUN()
 {
+    RECORD_RUN;
+    
+    ECS_ITER(const CompJ *J, const CompA *A)
+    {
+        
+    }
+}
+#undef ECS_SYSTEM_NAME
+
+#define ECS_SYSTEM_NAME Sys15ReadH
+static ECS_SYSTEM_FUN()
+{
+    RECORD_RUN;
+    
+    ECS_ITER(const CompH *H)
+    {
+        
+    }
+}
+#undef ECS_SYSTEM_NAME
+
+static _Bool RunCheckError = 0;
+
+#define ECS_SYSTEM_NAME Sys16ReadCheckRunStateTag
+static ECS_SYSTEM_FUN()
+{
+    static const int ExclusionTable[] = {
+        RUN_Sys1ReadA_WriteB, RUN_Sys2ReadAC_WriteB, RUN_Sys7WriteB, -1,
+        RUN_Sys2ReadAC_WriteB, RUN_Sys1ReadA_WriteB, RUN_Sys7WriteB, -1,
+        RUN_Sys3ReadAC_WriteD, RUN_Sys8ReadD_WriteC, -1,
+        //RUN_Sys4ReadA
+        //RUN_Sys5ReadC
+        //RUN_Sys6ReadAC
+        RUN_Sys7WriteB, RUN_Sys1ReadA_WriteB, RUN_Sys2ReadAC_WriteB, -1,
+        RUN_Sys8ReadD_WriteC, RUN_Sys2ReadAC_WriteB, RUN_Sys3ReadAC_WriteD, RUN_Sys5ReadC, RUN_Sys6ReadAC, -1,
+        RUN_Sys9ReadFGH_WriteAI, RUN_Sys1ReadA_WriteB, RUN_Sys2ReadAC_WriteB, RUN_Sys3ReadAC_WriteD, RUN_Sys4ReadA, RUN_Sys6ReadAC, RUN_Sys11ReadAWithArchTag, RUN_Sys14ReadAJ, -1,
+        RUN_Sys10WriteJ, RUN_Sys14ReadAJ, -1,
+        //RUN_Sys11ReadAWithArchTag
+        RUN_Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA, -1,
+        //RUN_Sys13ReadDestroyMeTag
+        //RUN_Sys14ReadAJ
+        //RUN_Sys15ReadH
+    };
+    
+    static const char * const NameTable[] = {
+        "Sys1ReadA_WriteB",
+        "Sys2ReadAC_WriteB",
+        "Sys3ReadAC_WriteD",
+        "Sys4ReadA",
+        "Sys5ReadC",
+        "Sys6ReadAC",
+        "Sys7WriteB",
+        "Sys8ReadD_WriteC",
+        "Sys9ReadFGH_WriteAI",
+        "Sys10WriteJ",
+        "Sys11ReadAWithArchTag",
+        "Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA",
+        "Sys13ReadDestroyMeTag",
+        "Sys14ReadAJ",
+        "Sys15ReadH"
+    };
+    
+    for (size_t Loop = 0, Count = sizeof(ExclusionTable) / sizeof(*ExclusionTable); Loop < Count; Loop++)
+    {
+        int Subject = ExclusionTable[Loop], Test;
+        const size_t First = atomic_load(&RunStats[Subject].first);
+        const size_t Last = atomic_load(&RunStats[Subject].last);
+        
+        while ((++Loop < Count) && ((Test = ExclusionTable[Loop]) != -1))
+        {
+            const size_t TestFirst = atomic_load(&RunStats[Test].first);
+            const size_t TestLast = atomic_load(&RunStats[Test].last);
+            
+            if ((First < TestLast) && (Last > TestFirst))
+            {
+                printf("systems \"%s\" and \"%s\" should not execute at the same time\n", NameTable[Subject], NameTable[Test]);
+                RunCheckError = TRUE;
+            }
+        }
+    }
+    
+    for (size_t Loop = 0; Loop < sizeof(RunStats) / sizeof(*RunStats); Loop++)
+    {
+        atomic_store(&RunStats[Loop].first, SIZE_MAX);
+        atomic_store(&RunStats[Loop].last, 0);
+    }
 }
 #undef ECS_SYSTEM_NAME
 
@@ -316,6 +488,13 @@ static ECSContext Context;
 
 ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 1048576);
 
+-(void) checkRun
+{
+    XCTAssertFalse(RunCheckError, @"should not execute systems with conflicting read/write access at the same time");
+    
+    RunCheckError = FALSE;
+}
+
 -(void) testExample
 {
     Context.mutations = &MutableState;
@@ -328,6 +507,10 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     uint8_t ExecState[GroupCount][10];
     
     memset(ExecState, 0, sizeof(ExecState));
+    
+    ECSEntity TestEntity;
+    ECSEntityCreate(&Context, &TestEntity, 1);
+    ECSEntityAddComponent(&Context, TestEntity, NULL, CHECK_RUN_STATE_TAG);
     
     for (size_t Loop = 0; Loop < GroupCount; Loop++)
     {
@@ -410,6 +593,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &(LocalDuplicateB){ { 222, 2 } }, LOCAL_DUPLICATE_B);
     
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
+    
+    [self checkRun];
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 2, @"correct number of entities are tagged");
@@ -563,6 +748,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
+    
+    [self checkRun];
     
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 4, @"correct number of entities are tagged");
@@ -772,6 +959,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
     
+    [self checkRun];
+    
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 4, @"correct number of entities are tagged");
     XCTAssertEqual(MutationDestructionCount, 0, @"should not have applied any mutations");
@@ -940,6 +1129,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2);
     ECSTick(&Context, Groups, GroupCount, State, 0);
     
+    [self checkRun];
+    
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 6, @"correct number of entities are tagged");
     XCTAssertEqual(MutationDestructionCount, 0, @"should not have applied the destruction mutations");
@@ -1090,6 +1281,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     ECSTick(&Context, Groups, GroupCount, State, 0);
     
+    [self checkRun];
+    
     XCTAssertTrue(atomic_load(&CorrectAccessors), @"component accessors are correct");
     XCTAssertEqual(atomic_load(&Sys11ReadAWithArchTagCounter), 6, @"correct number of entities are tagged");
     XCTAssertEqual(MutationDestructionCount, 4, @"should not have applied the destruction mutations");
@@ -1229,6 +1422,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
+    [self checkRun];
+    
     XCTAssertEqual(MutationDestructionCount, 4, @"should not have applied the destruction mutations");
     ECSMutationApply(&Context);
     XCTAssertEqual(MutationDestructionCount, 6, @"should have applied the destruction mutations");
