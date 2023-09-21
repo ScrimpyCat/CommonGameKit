@@ -49,17 +49,24 @@
 
 #define ECS_COMPONENT_ACCESS(system, component) ECS_COMPONENT_ACCESS_(system##_##component)
 #define ECS_COMPONENT_ACCESS_(...) ECS_COMPONENT_ACCESS__(__VA_ARGS__)
-#define ECS_COMPONENT_ACCESS__(components, _) components
+#define ECS_COMPONENT_ACCESS__(components, _e, _q) components
 
 #define ECS_ENTITY_ACCESS(system, component) ECS_ENTITY_ACCESS_(system##_##component)
 #define ECS_ENTITY_ACCESS_(...) ECS_ENTITY_ACCESS__(__VA_ARGS__)
-#define ECS_ENTITY_ACCESS__(_, entities) entities
+#define ECS_ENTITY_ACCESS__(_c, entities, _q) entities
+
+#define ECS_QUALIFIER_ACCESS(system, component) ECS_QUALIFIER_ACCESS_(system##_##component)
+#define ECS_QUALIFIER_ACCESS_(...) ECS_QUALIFIER_ACCESS__(__VA_ARGS__)
+#define ECS_QUALIFIER_ACCESS__(_c, _e, qualifier) qualifier
 
 #define ECS_GET(component) ECS_GET_(ECS_SYSTEM_NAME, component)
 #define ECS_GET_(system, component) ECS_COMPONENT_ACCESS(system, component)
 
 #define ECS_ENTITIES(component) ECS_ENTITIES_(ECS_SYSTEM_NAME, component)
 #define ECS_ENTITIES_(system, component) ECS_ENTITY_ACCESS(system, component)
+
+#define ECS_QUALIFIER(component) ECS_QUALIFIER_(ECS_SYSTEM_NAME, component)
+#define ECS_QUALIFIER_(system, component) ECS_QUALIFIER_ACCESS(system, component)
 
 #ifndef ECS_CONTEXT_VAR
 #define ECS_CONTEXT_VAR Context
@@ -171,7 +178,7 @@ for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity 
 #define ECS_ITER_FETCH_(type, e, i, ...) ECS_ITER_FETCH__(ECS_ITER_KIND(type), type, e, i, __VA_ARGS__)
 #define ECS_ITER_FETCH__(kind, type, e, i, ...) ECS_ITER_FETCH___(kind, type, e, i, CC_GET(kind, __VA_ARGS__)(type, i))
 #define ECS_ITER_FETCH___(kind, type, e, i, ...) ECS_ITER_FETCH____(kind, type, e, i, __VA_ARGS__)
-#define ECS_ITER_FETCH____(kind, type, e, i, fetch, valid) for (size_t ECS_ITER_PRIVATE__fetch##i = 0, ECS_ITER_PRIVATE__set##i = 0; !ECS_ITER_PRIVATE__fetch##i; ) for (void *ECS_ITER_PRIVATE__fetch_var##i = fetch; !ECS_ITER_PRIVATE__fetch##i++ valid(&& ECS_ITER_PRIVATE__fetch_var##i); ) for (ECS_ITER_DECLARE_VAR(e, i, ECS_ITER_PRIVATE__fetch_var##i); !ECS_ITER_PRIVATE__set##i++; )
+#define ECS_ITER_FETCH____(kind, type, e, i, fetch, valid) for (size_t ECS_ITER_PRIVATE__fetch##i = 0, ECS_ITER_PRIVATE__set##i = 0; !ECS_ITER_PRIVATE__fetch##i; ) for (void *ECS_ITER_PRIVATE__fetch_var##i = fetch; !ECS_ITER_PRIVATE__fetch##i++ valid(&& ECS_ITER_PRIVATE__fetch_var##i); ) for (ECS_ITER_DECLARE_VAR(e, i, (ECS_QUALIFIER(type) void*)ECS_ITER_PRIVATE__fetch_var##i); !ECS_ITER_PRIVATE__set##i++; )
 
 #define ECS_ITER_NESTED(x) ECS_ITER_NESTED_(x)
 #define ECS_ITER_NESTED_(x) ECS_ITER_NESTED_##x )
@@ -182,7 +189,7 @@ for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity 
 
 #define ECS_ITER_NESTED_ARRAY_ITERATOR(e, i) \
 for (size_t ECS_ITER_PRIVATE__fetch_duplicate_index##i = 0, ECS_ITER_DECLARE_ELEMENT_INDEX_VAR(e, i, &ECS_ITER_PRIVATE__fetch_duplicate_index##i), ECS_ITER_PRIVATE__fetch_duplicate_count##i = CCArrayGetCount(*ECS_ITER_PRIVATE__fetch_array##i), ECS_ITER_PRIVATE__duplicate_set##i = 0; ECS_ITER_PRIVATE__fetch_duplicate_index##i < ECS_ITER_PRIVATE__fetch_duplicate_count##i; ECS_ITER_PRIVATE__fetch_duplicate_index##i++, ECS_ITER_PRIVATE__duplicate_set##i = 0) \
-for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, CCArrayGetElementAtIndex(*ECS_ITER_PRIVATE__fetch_array##i, ECS_ITER_PRIVATE__fetch_duplicate_index##i)); !ECS_ITER_PRIVATE__duplicate_set##i++; )
+for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, (ECS_QUALIFIER(ECS_ITER_TYPE(e)) void*)CCArrayGetElementAtIndex(*ECS_ITER_PRIVATE__fetch_array##i, ECS_ITER_PRIVATE__fetch_duplicate_index##i)); !ECS_ITER_PRIVATE__duplicate_set##i++; )
 
 #define ECS_ITER_DECLARE_ELEMENT_VAR(x, i, v) ECS_ITER_DECLARE_ELEMENT_##x, i, v)
 #define ECS_ITER_DECLARE_ELEMENT_VAR_0(x, i, v) ECS_ITER_DECLARE_ELEMENT_##x, i, v)

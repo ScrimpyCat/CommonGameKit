@@ -1,32 +1,34 @@
-#define Sys10WriteJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys11ReadAWithArchTag_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys11ReadAWithArchTag_ArchTag ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_DuplicateA *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys13ReadDestroyMeTag_DestroyMeTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys14ReadAJ_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys14ReadAJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys15ReadH_CompH *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]), NULL
-#define Sys16ReadCheckRunStateTag_CheckRunStateTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys1ReadA_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys1ReadA_WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys2ReadAC_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys2ReadAC_WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys2ReadAC_WriteB_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 2)], ECS_ARCHETYPE_VAR->entities
-#define Sys3ReadAC_WriteD_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys3ReadAC_WriteD_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys3ReadAC_WriteD_CompD ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 2)], ECS_ARCHETYPE_VAR->entities
-#define Sys4ReadA_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys5ReadC_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys6ReadAC_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys6ReadAC_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys7WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys8ReadD_WriteC_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys8ReadD_WriteC_CompD ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities
-#define Sys9ReadFGH_WriteAI_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities
-#define Sys9ReadFGH_WriteAI_CompF *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities
-#define Sys9ReadFGH_WriteAI_CompG *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[1]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[1]))->entities
-#define Sys9ReadFGH_WriteAI_CompH *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[2]), NULL
-#define Sys9ReadFGH_WriteAI_CompI *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[3]), NULL
+#define Sys10WriteJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities,
+#define Sys11ReadAWithArchTag_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys11ReadAWithArchTag_ArchTag ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_DuplicateA *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities,
+#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_LocalH NULL, NULL, const
+#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_LocalDuplicateB NULL, NULL, const
+#define Sys13ReadDestroyMeTag_DestroyMeTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities, const
+#define Sys14ReadAJ_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys14ReadAJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities, const
+#define Sys15ReadH_CompH *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]), NULL, const
+#define Sys16ReadCheckRunStateTag_CheckRunStateTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities, const
+#define Sys1ReadA_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys1ReadA_WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities,
+#define Sys2ReadAC_WriteB_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys2ReadAC_WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities,
+#define Sys2ReadAC_WriteB_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 2)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys3ReadAC_WriteD_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys3ReadAC_WriteD_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys3ReadAC_WriteD_CompD ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 2)], ECS_ARCHETYPE_VAR->entities,
+#define Sys4ReadA_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys5ReadC_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys6ReadAC_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys6ReadAC_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys7WriteB_CompB ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities,
+#define Sys8ReadD_WriteC_CompC ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities,
+#define Sys8ReadD_WriteC_CompD ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities, const
+#define Sys9ReadFGH_WriteAI_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities,
+#define Sys9ReadFGH_WriteAI_CompF *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities, const
+#define Sys9ReadFGH_WriteAI_CompG *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[1]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[1]))->entities, const
+#define Sys9ReadFGH_WriteAI_CompH *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[2]), NULL, const
+#define Sys9ReadFGH_WriteAI_CompI *(ECSIndexedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[3]), NULL,
 
 #define ECS_ITER_TYPE_CompA CompA ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_CompA 0

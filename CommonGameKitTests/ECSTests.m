@@ -253,7 +253,7 @@ static ECS_SYSTEM_FUN()
     SharedComponent->id = DESTROY_ME_TAG;
     SharedComponent->data = NULL;
     
-    ECS_ITER(CompA *A)
+    ECS_ITER(const CompA *A)
     {
         atomic_fetch_add_explicit(&Sys11ReadAWithArchTagCounter, 1, memory_order_relaxed);
         
