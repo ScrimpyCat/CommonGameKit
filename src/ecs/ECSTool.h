@@ -155,7 +155,7 @@
 #define ECS_ITER_ENTITY_ARRAY(increment, entities) \
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
 for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
-for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY)
+for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (const ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY)
 
 #define ECS_ITER_ENTITY_FALLBACK(increment, kind, type) \
 CC_WARNING("Iterating with a leading " kind " component (" #type ") may be slow. Use an archetype or packed component for faster iteration.") \
