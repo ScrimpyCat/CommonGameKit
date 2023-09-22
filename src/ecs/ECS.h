@@ -88,6 +88,21 @@ typedef struct {
     size_t count;
 } ECSRange;
 
+/*!
+ * @brief A callback for a system update.
+ * @description For serial execution this callback will be once or more on the same thread if any of the requested components are in an archetype, or
+ *              only once if no archetype components were requested. While for parallel execution this callback may be called multiple tiles
+ *              simultaneously across different threads.
+ *
+ * @warning This function must be threadsafe if it is marked as parallel.
+ * @note A release memory barrier is used after calling this function. However note that no acquire barrier is used before.
+ * @param Context The context the system will operate on.
+ * @param Archetype The archetype to operate on or NULL if there is none.
+ * @param ArchetypeComponentIndexes The component indexed for the requested components in the archetype.
+ * @param ComponentOffsets The offsets to the other requested components (except for locals).
+ * @param Range The sub-range of entities/components to operate on.
+ * @param Time The tick time for the system group.
+ */
 typedef void (*ECSSystemUpdateCallback)(ECSContext *Context, ECSArchetype *Archetype, const size_t *ArchetypeComponentIndexes, const size_t *ComponentOffsets, ECSRange Range, ECSTime Time);
 
 typedef struct {
@@ -286,38 +301,238 @@ extern const ECSComponentDestructor *ECSDuplicateLocalComponentDestructors;
  */
 _Bool ECSWorkerCreate(void);
 
+/*!
+ * @brief Initialise the ECS before use.
+ */
 void ECSInit(void);
 
+/*!
+ * @brief Update the ECS.
+ * @param Context The context to be used for the update tick.
+ * @param Groups The system groups to be used for the update tick.
+ * @param GroupCount The number of system groups.
+ * @param State The execution state to be used by the ECS.
+ * @param DeltaTime The delta time of the tick.
+ */
 void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECSExecutionGroup *State, ECSTime DeltaTime);
 
+/*!
+ * @brief Add an archetype component.
+ * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to add a component to.
+ * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
+ * @param ID The component ID of an archetype component.
+ */
 void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+
+/*!
+ * @brief Remove an archetype component from an entity.
+ * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove a component from.
+ * @param ID The component ID of the archetype component to be removed.
+ */
 void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+
+/*!
+ * @brief Get the archetype index of an archetype component.
+ * @param ID The component ID of the archetype component to get the index of.
+ * @return Returns the index of the archetype component.
+ */
 size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID);
 
+/*!
+ * @brief Add a packed component.
+ * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to add a component to.
+ * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
+ * @param ID The component ID of a packed component.
+ */
 void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+
+/*!
+ * @brief Remove a packed component from an entity.
+ * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove a component from.
+ * @param ID The component ID of the packed component to be removed.
+ */
 void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 
+/*!
+ * @brief Add an indexed component.
+ * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to add a component to.
+ * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
+ * @param ID The component ID of an indexed component.
+ */
 void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+
+/*!
+ * @brief Remove an indexed component from an entity.
+ * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove a component from.
+ * @param ID The component ID of the indexed component to be removed.
+ */
 void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
 
+/*!
+ * @brief Add a local component.
+ * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to add a component to.
+ * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
+ * @param ID The component ID of a local component.
+ */
 void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+
+/*!
+ * @brief Remove a local component from an entity.
+ * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove a component from.
+ * @param ID The component ID of the local component to be removed.
+ */
 void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+
+/*!
+ * @brief Get the index of a local component.
+ * @param ID The component ID of the local component to get the index for.
+ * @return Returns the index of the local component.
+ */
 static inline size_t ECSLocalComponentIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
+
+/*!
+ * @brief Get the offset of a local component data.
+ * @param ID The component ID of the local component to get the offset for.
+ * @return Returns the offset of the local component.
+ */
 static inline ptrdiff_t ECSLocalComponentOffset(ECSComponentID ID) CC_CONSTANT_FUNCTION;
 
+/*!
+ * @brief Create entities.
+ * @param Context The context to be used.
+ * @param Entities A pointer to where the entities should be stored.
+ * @param Count The number of entities to create.
+ */
 void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count);
+
+/*!
+ * @brief Destroy entities.
+ * @param Context The context to be used.
+ * @param Entities A pointer to the entities to be destroyed.
+ * @param Count The number of entities to destroy.
+ */
 void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count);
+
+/*!
+ * @brief Add a component to an entity.
+ * @param Context The context to be used.
+ * @param Entity The entity to add a component to.
+ * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
+ * @param ID The component ID.
+ */
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+
+/*!
+ * @brief Remove a component from an entity.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove a component from.
+ * @param ID The component ID of the component to be removed.
+ */
 static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+
+/*!
+ * @brief Add multiple components to an entity.
+ * @param Context The context to be used.
+ * @param Entity The entity to add the components to.
+ * @param Components The type component data for the components to be added.
+ * @param Count The number of components to add.
+ */
 void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t Count);
+
+/*!
+ * @brief Remove multiple components from an entity.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove the components from.
+ * @param IDs The component IDs of the components to be removed.
+ * @param Count The number of components to be removed.
+ */
 void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSComponentID *IDs, size_t Count);
+
+/*!
+ * @brief Check whether an entity has a component.
+ * @note This function can be safely called on destroyed entity references where it will always return FALSE.
+ * @param Context The context to be used.
+ * @param Entity The entity to check.
+ * @param ID The component ID of the component to check the entity for.
+ * @return Returns whether the entity has the specified component (TRUE) or not (FALSE).
+ */
 static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+
+/*!
+ * @brief Get the component data from an entity.
+ * @note This function can be safely called on destroyed entity references where it will always return NULL.
+ * @param Context The context to be used.
+ * @param Entity The entity to get the component data for.
+ * @param ID The component ID of the component to retrieve.
+ * @return Returns a pointer to the requested component data or NULL if there is none.
+ */
 static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID);
+
+/*!
+ * @brief Get the component data for all of the components for an entity.
+ * @note This function can be safely called on destroyed entity references where it won't retrieve any components.
+ * @param Context The context to be used.
+ * @param Entity The entity to get the component data for.
+ * @param Components A pointer to an array (of size @b Count) where the typed component data should be stored. This may be NULL to not retrieve any data.
+ * @param Count A pointer to the number of components to retrieve, it will also be set to the number of components retrieved. Pass @b SIZE_MAX to retrieve
+ *              every component (or if @b Components is NULL to retrieve the number of components).
+ */
 void ECSEntityGetComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t *Count);
+
+/*!
+ * @brief Add multiple duplicate components to an entity.
+ * @param Context The context to be used.
+ * @param Entity The entity to add the duplicate components to.
+ * @param Data The array of component data (of size @b Count).
+ * @param ID The component ID of the duplicate component.
+ * @param Count The number of duplicate components to add.
+ */
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count);
+
+/*!
+ * @brief Remove multiple duplicate components from an entity.
+ * @param Context The context to be used.
+ * @param Entity The entity to remove the duplicate components from.
+ * @param ID The component ID of the duplicate component.
+ * @param Index The index in the duplicate component array of the first component to be removed. Reverse indexation is also possible where -1 = starts from the
+ *              last component and removes @b Count components towards 0.
+ * @param Count The number of duplicate components to remove.
+ */
 static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID, ptrdiff_t Index, size_t Count);
 
+/*!
+ * @brief Get the component base index.
+ * @description The base index is the flat index range of all the components, rather than the type related index.
+ * @param ID The component ID to get the base index for.
+ * @return Returns the base index for the component.
+ */
 static inline size_t ECSComponentBaseIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
+
+/*!
+ * @brief Store some data in the shared memory zone.
+ * @note This should only be called from the same thread that is also executing other ECS functions. And will automatically be deallocated by the ECS if the data
+ *       is stored during a callback (such as an @b ECSComponentDestructor callback).
+ *
+ * @param Data A pointer to the data to be copied. Use @b CCMemoryZoneAllocate(ECSSharedZone, @b Size) instead when you want uninitialised memory.
+ * @param Size The size of the data to be copied.
+ * @return Returns a pointer to the stored data.
+ */
 static inline void *ECSSharedZoneStore(void *Data, size_t Size);
 
 /*!
