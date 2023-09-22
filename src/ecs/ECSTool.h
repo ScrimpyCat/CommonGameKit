@@ -28,7 +28,7 @@
 
 /*!
  * @define ECS_LOCAL_COMPONENT
- * @abstract Mark a local component for the ecs_tool.
+ * @abstract Mark a local component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -36,7 +36,7 @@
 
 /*!
  * @define ECS_PACKED_COMPONENT
- * @abstract Mark a packed component for the ecs_tool.
+ * @abstract Mark a packed component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -44,7 +44,7 @@
 
 /*!
  * @define ECS_INDEXED_COMPONENT
- * @abstract Mark an indexed component for the ecs_tool.
+ * @abstract Mark an indexed component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -52,7 +52,7 @@
 
 /*!
  * @define ECS_ARCHETYPE_COMPONENT
- * @abstract Mark an archetype component for the ecs_tool.
+ * @abstract Mark an archetype component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -60,7 +60,7 @@
 
 /*!
  * @define ECS_LOCAL_DUPLICATE_COMPONENT
- * @abstract Mark a local duplicate component for the ecs_tool.
+ * @abstract Mark a local duplicate component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -68,7 +68,7 @@
 
 /*!
  * @define ECS_PACKED_DUPLICATE_COMPONENT
- * @abstract Mark a packed duplicate component for the ecs_tool.
+ * @abstract Mark a packed duplicate component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -76,7 +76,7 @@
 
 /*!
  * @define ECS_INDEXED_DUPLICATE_COMPONENT
- * @abstract Mark an indexed duplicate component for the ecs_tool.
+ * @abstract Mark an indexed duplicate component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -84,7 +84,7 @@
 
 /*!
  * @define ECS_ARCHETYPE_DUPLICATE_COMPONENT
- * @abstract Mark an archetype duplicate component for the ecs_tool.
+ * @abstract Mark an archetype duplicate component for the ecs\_tool.
  * @param type The type name of the component.
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -92,7 +92,7 @@
 
 /*!
  * @define ECS_LOCAL_TAG
- * @abstract Mark a local tag for the ecs_tool.
+ * @abstract Mark a local tag for the ecs\_tool.
  * @param type The type name of the tag (generally should be of type void).
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -100,7 +100,7 @@
 
 /*!
  * @define ECS_PACKED_TAG
- * @abstract Mark a packed tag for the ecs_tool.
+ * @abstract Mark a packed tag for the ecs\_tool.
  * @param type The type name of the tag (generally should be of type void).
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -108,7 +108,7 @@
 
 /*!
  * @define ECS_INDEXED_TAG
- * @abstract Mark an indexed tag for the ecs_tool.
+ * @abstract Mark an indexed tag for the ecs\_tool.
  * @param type The type name of the tag (generally should be of type void).
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -116,7 +116,7 @@
 
 /*!
  * @define ECS_ARCHETYPE_TAG
- * @abstract Mark an archetype tag for the ecs_tool.
+ * @abstract Mark an archetype tag for the ecs\_tool.
  * @param type The type name of the tag (generally should be of type void).
  * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
  */
@@ -124,7 +124,7 @@
 
 /*!
  * @define ECS_DESTRUCTOR
- * @abstract Mark a component destructor for the ecs_tool.
+ * @abstract Mark a component destructor for the ecs\_tool.
  * @param destructor The @b ECSComponentDestructor callback to be used. Note if a callback is already marked this will override the previous one.
  * @param va_arg The type names of components that should use this destructor.
  */
@@ -132,7 +132,7 @@
 
 /*!
  * @define ECS_SYSTEM
- * @abstract Mark a system for the ecs_tool.
+ * @abstract Mark a system for the ecs\_tool.
  * @param system The @b ECSSystemUpdateCallback callback for the system.
  * @param read The list of components that the system needs read access to. Wrap the list in parantheses, empty parantheses will indicate no read components.
  *             Note: tag components should typically only require read access, additionally if the component data will be modified in a threadsafe manner handled
@@ -148,7 +148,7 @@
 
 /*!
  * @define ECS_PARALLEL_SYSTEM
- * @abstract Mark a parallel system for the ecs_tool.
+ * @abstract Mark a parallel system for the ecs\_tool.
  * @warning Parallel systems guarantee they can run in parallel without threading issues.
  * @param system The @b ECSSystemUpdateCallback callback for the system.
  * @param read The list of components that the system needs read access to. Wrap the list in parantheses, empty parantheses will indicate no read components.
@@ -167,11 +167,12 @@
 
 /*!
  * @define ECS_SYSTEM_GROUP
- * @abstract Mark a system group for the ecs_tool.
+ * @abstract Mark a system group for the ecs\_tool.
  * @param group The unique name of the group.
  * @param frequency The frequency for when to process the group during an @b ECSTick. The frequency is an integer time in nanoseconds (can use the ECS_TIME macros for
  *                  for convenience).
  *
+ * @param dynamic Whether the frequency should be dynamic or locked.
  * @param va_arg The system priority/groupings. This should take the form of @b PRIORITY(index, @b systems, @b dependency) where @b index is the order of the priority
  *               group, @b systems is the list of systems to be run during that priority (wrap them in parantheses, or empty parantheses to indicate no systems to be
  *               executed), and @b dependency is the optional group depdency requirement (this should be a tuple of @b (group_name, @b priority_index) by default it
