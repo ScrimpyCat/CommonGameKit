@@ -66,7 +66,7 @@ static CCConcurrentPool(ECSSystemExecutor, ECS_SYSTEM_EXECUTION_POOL_MAX) Execut
 
 #define SystemExecutorPool ((CCConcurrentPool*)&ExecutorPool)
 
-#define ECS_COMPONENT_ACCESS_RELEASE_MAX 16
+#define ECS_COMPONENT_ACCESS_RELEASE_MAX ECS_SYSTEM_EXECUTOR_COMPONENT_MAX
 
 typedef struct {
     size_t ids[ECS_COMPONENT_ACCESS_RELEASE_MAX];
