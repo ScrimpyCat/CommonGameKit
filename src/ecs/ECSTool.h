@@ -26,25 +26,157 @@
 #ifndef CommonGameKit_ECSTool_h
 #define CommonGameKit_ECSTool_h
 
-//TODO: document
+/*!
+ * @define ECS_LOCAL_COMPONENT
+ * @abstract Mark a local component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_LOCAL_COMPONENT(...)
+
+/*!
+ * @define ECS_PACKED_COMPONENT
+ * @abstract Mark a packed component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_PACKED_COMPONENT(...)
+
+/*!
+ * @define ECS_INDEXED_COMPONENT
+ * @abstract Mark an indexed component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_INDEXED_COMPONENT(...)
+
+/*!
+ * @define ECS_ARCHETYPE_COMPONENT
+ * @abstract Mark an archetype component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_ARCHETYPE_COMPONENT(...)
+
+/*!
+ * @define ECS_LOCAL_DUPLICATE_COMPONENT
+ * @abstract Mark a local duplicate component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_LOCAL_DUPLICATE_COMPONENT(...)
+
+/*!
+ * @define ECS_PACKED_DUPLICATE_COMPONENT
+ * @abstract Mark a packed duplicate component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_PACKED_DUPLICATE_COMPONENT(...)
+
+/*!
+ * @define ECS_INDEXED_DUPLICATE_COMPONENT
+ * @abstract Mark an indexed duplicate component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_INDEXED_DUPLICATE_COMPONENT(...)
+
+/*!
+ * @define ECS_ARCHETYPE_DUPLICATE_COMPONENT
+ * @abstract Mark an archetype duplicate component for the ecs_tool.
+ * @param type The type name of the component.
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_ARCHETYPE_DUPLICATE_COMPONENT(...)
+
+/*!
+ * @define ECS_LOCAL_TAG
+ * @abstract Mark a local tag for the ecs_tool.
+ * @param type The type name of the tag (generally should be of type void).
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_LOCAL_TAG(...)
+
+/*!
+ * @define ECS_PACKED_TAG
+ * @abstract Mark a packed tag for the ecs_tool.
+ * @param type The type name of the tag (generally should be of type void).
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_PACKED_TAG(...)
+
+/*!
+ * @define ECS_INDEXED_TAG
+ * @abstract Mark an indexed tag for the ecs_tool.
+ * @param type The type name of the tag (generally should be of type void).
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_INDEXED_TAG(...)
+
+/*!
+ * @define ECS_ARCHETYPE_TAG
+ * @abstract Mark an archetype tag for the ecs_tool.
+ * @param type The type name of the tag (generally should be of type void).
+ * @param index The optional explicit index of the component. If not provided one will be automatically assigned.
+ */
 #define ECS_ARCHETYPE_TAG(...)
 
+/*!
+ * @define ECS_DESTRUCTOR
+ * @abstract Mark a component destructor for the ecs_tool.
+ * @param destructor The @b ECSComponentDestructor callback to be used. Note if a callback is already marked this will override the previous one.
+ * @param va_arg The type names of components that should use this destructor.
+ */
 #define ECS_DESTRUCTOR(destructor, ...)
 
+/*!
+ * @define ECS_SYSTEM
+ * @abstract Mark a system for the ecs_tool.
+ * @param system The @b ECSSystemUpdateCallback callback for the system.
+ * @param read The list of components that the system needs read access to. Wrap the list in parantheses, empty parantheses will indicate no read components.
+ *             Note: tag components should typically only require read access, additionally if the component data will be modified in a threadsafe manner handled
+ *             internally by the system (say an atomic member on the component data) then it may also be marked as read.
+ *
+ * @param write The list of components that the system needs write access to. Wrap the list in parantheses, empty parantheses will indicate no write components.
+ *              Note: mutation functions do not require write access, write access is only required if the component data will be modified or if you'll be writing
+ *              to some other private non-threadsafe data that you wish to use the component as a "lock" to.
+ *
+ * @return Returns the system function declaration.
+ */
 #define ECS_SYSTEM(system, ...) void system(ECSContext *ECS_CONTEXT_VAR, ECSArchetype *ECS_ARCHETYPE_VAR, const size_t *ECS_ARCHETYPE_COMPONENT_INDEXES_VAR, const size_t *ECS_COMPONENT_OFFSETS_VAR, ECSRange ECS_RANGE_VAR, ECSTime ECS_TIME_VAR)
+
+/*!
+ * @define ECS_PARALLEL_SYSTEM
+ * @abstract Mark a parallel system for the ecs_tool.
+ * @warning Parallel systems guarantee they can run in parallel without threading issues.
+ * @param system The @b ECSSystemUpdateCallback callback for the system.
+ * @param read The list of components that the system needs read access to. Wrap the list in parantheses, empty parantheses will indicate no read components.
+ * @param write The list of components that the system needs write access to. Wrap the list in parantheses, empty parantheses will indicate no write components.
+ *              Note: mutation functions do not require write access, write access is only required if the component data will be modified or if you'll be writing
+ *              to some other private non-threadsafe data that you wish to use the component as a "lock" to.
+ *
+ * @param parallelism Optionally specify how the system should be parallelised. By default systems are parallelised by archetype with no chunking, but they may also
+ *                    be parallelised by a specific component type and number (chunks) of components of that type. Valid options are indicating the size of the archetype
+ *                    component chunks (this is SIZE_MAX by default) by using an integer (may also be a macro to an integer), or specifying the compone and chunk size
+ *                    by providing a tuple with the component type and chunk size @b (component, @b size).
+ *
+ * @return Returns the system function declaration.
+ */
 #define ECS_PARALLEL_SYSTEM(...) ECS_SYSTEM(__VA_ARGS__)
 
+/*!
+ * @define ECS_SYSTEM_GROUP
+ * @abstract Mark a system group for the ecs_tool.
+ * @param group The unique name of the group.
+ * @param frequency The frequency for when to process the group during an @b ECSTick. The frequency is an integer time in nanoseconds (can use the ECS_TIME macros for
+ *                  for convenience).
+ *
+ * @param va_arg The system priority/groupings. This should take the form of @b PRIORITY(index, @b systems, @b dependency) where @b index is the order of the priority
+ *               group, @b systems is the list of systems to be run during that priority (wrap them in parantheses, or empty parantheses to indicate no systems to be
+ *               executed), and @b dependency is the optional group depdency requirement (this should be a tuple of @b (group_name, @b priority_index) by default it
+ *               depends on the previous priority in the same group having completed.
+ */
 #define ECS_SYSTEM_GROUP(...)
 
 #define ECS_COMPONENT_ACCESS(system, component) ECS_COMPONENT_ACCESS_(system##_##component)
@@ -59,39 +191,94 @@
 #define ECS_QUALIFIER_ACCESS_(...) ECS_QUALIFIER_ACCESS__(__VA_ARGS__)
 #define ECS_QUALIFIER_ACCESS__(_c, _e, qualifier) qualifier
 
+/*!
+ * @define ECS_GET
+ * @abstract Get the component array for the given component type.
+ * @note This should only be used within a system update function, and should only reference a component that the system has marked as needing read or write access to.
+ * @param component The type name of the component to get the component data array for.
+ * @return Returns the @b CCArray of the components, or NULL if there is none. Note: local components do not have a component array.
+ */
 #define ECS_GET(component) ECS_GET_(ECS_SYSTEM_NAME, component)
 #define ECS_GET_(system, component) ECS_COMPONENT_ACCESS(system, component)
 
+/*!
+ * @define ECS_ENTITIES
+ * @abstract Get the entity array for the given component type.
+ * @note This should only be used within a system update function, and should only reference a component that the system has marked as needing read or write access to.
+ * @param component The type name of the component to get the entities for.
+ * @return Returns the @b CCArray of the entities, or NULL if there is none. Note: indexed and local components do not have an entity array.
+ */
 #define ECS_ENTITIES(component) ECS_ENTITIES_(ECS_SYSTEM_NAME, component)
 #define ECS_ENTITIES_(system, component) ECS_ENTITY_ACCESS(system, component)
 
+/*!
+ * @define ECS_QUALIFIER
+ * @abstract Get access qualifier the given component type.
+ * @note This should only be used within a system update function, and should only reference a component that the system has marked as needing read or write access to.
+ * @param component The type name of the component to get the qualifier for.
+ * @return Returns the @b const if the component as read access, otherwise returns no qualifier if it has write access.
+ */
 #define ECS_QUALIFIER(component) ECS_QUALIFIER_(ECS_SYSTEM_NAME, component)
 #define ECS_QUALIFIER_(system, component) ECS_QUALIFIER_ACCESS(system, component)
 
+/*!
+ * @define ECS_CONTEXT_VAR
+ * @abstract The variable name to be used for the context argument.
+ * @description This can be defined to a custom name, otherwise it defaults to @b Context.
+ */
 #ifndef ECS_CONTEXT_VAR
 #define ECS_CONTEXT_VAR Context
 #endif
 
+/*!
+ * @define ECS_ARCHETYPE_VAR
+ * @abstract The variable name to be used for the archetype argument.
+ * @description This can be defined to a custom name, otherwise it defaults to @b Archetype.
+ */
 #ifndef ECS_ARCHETYPE_VAR
 #define ECS_ARCHETYPE_VAR Archetype
 #endif
 
+/*!
+ * @define ECS_ARCHETYPE_COMPONENT_INDEXES_VAR
+ * @abstract The variable name to be used for the archetype component indexes argument.
+ * @description This can be defined to a custom name, otherwise it defaults to @b ArchetypeComponentIndexes.
+ */
 #ifndef ECS_ARCHETYPE_COMPONENT_INDEXES_VAR
 #define ECS_ARCHETYPE_COMPONENT_INDEXES_VAR ArchetypeComponentIndexes
 #endif
 
+/*!
+ * @define ECS_COMPONENT_OFFSETS_VAR
+ * @abstract The variable name to be used for the component offsets argument.
+ * @description This can be defined to a custom name, otherwise it defaults to @b ArchetypeCoComponentOffsetsmponentIndexes.
+ */
 #ifndef ECS_COMPONENT_OFFSETS_VAR
 #define ECS_COMPONENT_OFFSETS_VAR ComponentOffsets
 #endif
 
+/*!
+ * @define ECS_RANGE_VAR
+ * @abstract The variable name to be used for the range argument.
+ * @description This can be defined to a custom name, otherwise it defaults to @b Range.
+ */
 #ifndef ECS_RANGE_VAR
 #define ECS_RANGE_VAR Range
 #endif
 
+/*!
+ * @define ECS_TIME_VAR
+ * @abstract The variable name to be used for the time argument.
+ * @description This can be defined to a custom name, otherwise it defaults to @b Time.
+ */
 #ifndef ECS_TIME_VAR
 #define ECS_TIME_VAR Time
 #endif
 
+/*!
+ * @define ECS_SYSTEM_FUN
+ * @abstract When @b ECS_SYSTEM_NAME is defined, this macro can be used to create the function definition.
+ */
 #define ECS_SYSTEM_FUN(...) ECS_SYSTEM(ECS_SYSTEM_NAME)
 
 #define ECS_LOCAL_INDEX_MASK  ECS_MASK_FOR_VALUE(ECS_LOCAL_COMPONENT_MAX)
@@ -206,30 +393,79 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, (ECS_QUALIFIER(ECS_ITER_TYPE(e)) void*)C
 #define ECS_ITER_DECLARE_ARRAY(...) CCArray ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_ARRAY(...) ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 
+/*!
+ * @define ECS_ITER_DUPLICATE_ARRAY_SUFFIX
+ * @abstract The suffix to be used when naming duplicate array variables.
+ * @description This can be defined to a custom name, otherwise it defaults to @b Array.
+ */
 #ifndef ECS_ITER_DUPLICATE_ARRAY_SUFFIX
 #define ECS_ITER_DUPLICATE_ARRAY_SUFFIX Array
 #endif
 
+/*!
+ * @define ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX
+ * @abstract The suffix to be used when naming duplicate array index variables.
+ * @description This can be defined to a custom name, otherwise it defaults to @b Index.
+ */
 #ifndef ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX
 #define ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX Index
 #endif
 
+/*!
+ * @define ECS_ITER_INDEX
+ * @abstract The variable name to be used for the iteration index.
+ * @description This can be defined to a custom name, otherwise it defaults to @b ECSIterIndex.
+ */
 #ifndef ECS_ITER_INDEX
 #define ECS_ITER_INDEX ECSIterIndex
 #endif
 
+/*!
+ * @define ECS_ITER_COUNT
+ * @abstract The variable name to be used for the iteration count.
+ * @description This can be defined to a custom name, otherwise it defaults to @b ECSIterCount.
+ */
 #ifndef ECS_ITER_COUNT
 #define ECS_ITER_COUNT ECSIterCount
 #endif
 
+/*!
+ * @define ECS_ITER_ENTITIES
+ * @abstract The variable name to be used for the iteration entity array.
+ * @description This can be defined to a custom name, otherwise it defaults to @b ECSIterEntities.
+ */
 #ifndef ECS_ITER_ENTITIES
 #define ECS_ITER_ENTITIES ECSIterEntities
 #endif
 
+/*!
+ * @define ECS_ITER_ENTITY
+ * @abstract The variable name to be used for the iteration entity.
+ * @description This can be defined to a custom name, otherwise it defaults to @b ECSIterEntity.
+ */
 #ifndef ECS_ITER_ENTITY
 #define ECS_ITER_ENTITY ECSIterEntity
 #endif
 
+/*!
+ * @define ECS_ITER
+ * @abstract A component iterator for use in a system.
+ * @param va_arg The component variable declarations for the components that should be iterated on. The first variable will be used as the leading
+ *               iterator component, which will affect how the generated iterator will be optimised. e.g. When an archetype component is leading
+ *               then all other archetype component variables will be iterated on optimally.
+ *
+ *               Variable declarations must be made const (or use @b ECS_QUALIFIER) when the system only requested read access to them. For write
+ *               access they can be either const or non-const.
+ *
+ *               A parallel system should use the component that is parallelised as the leading component.
+ *
+ *               When iterating duplicate components, both the duplicate components and the array containing the duplicate components can be iterated
+ *               on. To iterate the duplicate components just use the component type, to iterate the duplicate component arrays wrap the component type
+ *               in ARRAY(type). e.g.
+ *
+ *                  Type *x // will iterate the duplicate component type
+ *                  ARRAY(Type) *x // will iterate the duplicate component array
+ */
 #define ECS_ITER(...) ECS_ITER_(1, __VA_ARGS__)
 #define ECS_ITER_(increment, ...) ECS_ITER__(increment, ECS_ITER_INIT(ECS_ITER_TYPE(CC_GET(0, __VA_ARGS__))), __VA_ARGS__)
 #define ECS_ITER__(increment, ...) ECS_ITER___(increment, __VA_ARGS__)
@@ -246,6 +482,26 @@ CC_SOFT_JOIN(, CC_MAP(ECS_ITER_NESTED_FETCH, __VA_ARGS__))
 
 #define ECS_BATCH_ITER_BIT_COUNT(x) ((((((((x) - (((x) >> 1) & 0x5555555555555555)) & 0x3333333333333333) + ((((x) - (((x) >> 1) & 0x5555555555555555)) >> 2) & 0x3333333333333333)) + (((((x) - (((x) >> 1) & 0x5555555555555555)) & 0x3333333333333333) + ((((x) - (((x) >> 1) & 0x5555555555555555)) >> 2) & 0x3333333333333333)) >> 4)) & 0x0f0f0f0f0f0f0f0f) * 0x0101010101010101) >> 56)
 
+/*!
+ * @define ECS_BATCH_ITER
+ * @abstract A batched component iterator for use in a system.
+ * @param count The number of items to retrieve per iteration.
+ * @param va_arg The component variable declarations for the components that should be iterated on. The first variable will be used as the leading
+ *               iterator component, which will affect how the generated iterator will be optimised. e.g. When an archetype component is leading
+ *               then all other archetype component variables will be iterated on optimally.
+ *
+ *               Variable declarations must be made const (or use @b ECS_QUALIFIER) when the system only requested read access to them. For write
+ *               access they can be either const or non-const.
+ *
+ *               A parallel system should use the component that is parallelised as the leading component.
+ *
+ *               When iterating duplicate components, both the duplicate components and the array containing the duplicate components can be iterated
+ *               on. To iterate the duplicate components just use the component type, to iterate the duplicate component arrays wrap the component type
+ *               in ARRAY(type). e.g.
+ *
+ *                  Type *x // will iterate the duplicate component type
+ *                  ARRAY(Type) *x // will iterate the duplicate component array
+ */
 #define ECS_BATCH_ITER(count, ...) \
 _Static_assert((CC_SOFT_JOIN(+, CC_MAP(ECS_BATCH_ITER_ASSERT_1, __VA_ARGS__)) <= 1) && (ECS_BATCH_ITER_BIT_COUNT(CC_SOFT_JOIN(|, CC_MAP(ECS_BATCH_ITER_ASSERT_2, __VA_ARGS__))) == 1), "ECS_BATCH_ITER can only be used on groups of components that can be batched together"); \
 ECS_ITER_(count, __VA_ARGS__)
@@ -279,20 +535,44 @@ ECS_ITER_(count, __VA_ARGS__)
 #pragma mark - Assertions & Conditions
 
 #define ECS_IS_CONDITION(x, _, arg) ECS_IS_CHECK_##x(arg)
-    
+
 #define ECS_IS_CHECK_Archetype(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeArchetype)
 #define ECS_IS_CHECK_Packed(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypePacked)
 #define ECS_IS_CHECK_Indexed(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeIndexed)
 #define ECS_IS_CHECK_Local(arg) ((arg & ECSComponentStorageTypeMask) == ECSComponentStorageTypeLocal)
-    
+
 #define ECS_IS_CHECK_Duplicate(arg) (arg & ECSComponentStorageModifierDuplicate)
 #define ECS_IS_CHECK_Tag(arg) (arg & ECSComponentStorageModifierTag)
 #define ECS_IS_CHECK_Destructor(arg) (arg & ECSComponentStorageModifierDestructor)
-    
+
+/*!
+ * @define ECS_IS
+ * @abstract Check whether a component type is of a certain type or modification.
+ * @param va_arg The type (@b Archetype, @b Packed, @b Indexed, @b Local) or modifiers (@b Duplicate, @b Tag, @b Destructor) to check.
+ * @return Returns TRUE if all the arguments are true for that type or FALSE if any are not.
+ */
 #define ECS_IS(arg, ...) CC_SOFT_JOIN(&&, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
+
+/*!
+ * @define ECS_IS_NOT
+ * @abstract Check whether a component type is not of a certain type or modification.
+ * @param va_arg The type (@b Archetype, @b Packed, @b Indexed, @b Local) or modifiers (@b Duplicate, @b Tag, @b Destructor) to check.
+ * @return Returns TRUE if any of the arguments are not true for that type or FALSE if all of them are true.
+ */
 #define ECS_IS_NOT(arg, ...) !CC_SOFT_JOIN(&& !, CC_MAP_WITH(ECS_IS_CONDITION, ECS_ID_##arg, __VA_ARGS__))
-    
+
+/*!
+ * @define ECS_ASSERT
+ * @abstract Statically assert whether a component type is of a certain type or modification.
+ * @param va_arg The type (@b Archetype, @b Packed, @b Indexed, @b Local) or modifiers (@b Duplicate, @b Tag, @b Destructor) to check.
+ */
 #define ECS_ASSERT(arg, ...) _Static_assert(ECS_IS(arg, __VA_ARGS__), "Expects component to be the following type: " #__VA_ARGS__)
+
+/*!
+ * @define ECS_ASSERT_NOT
+ * @abstract Statically assert whether a component type is not of a certain type or modification.
+ * @param va_arg The type (@b Archetype, @b Packed, @b Indexed, @b Local) or modifiers (@b Duplicate, @b Tag, @b Destructor) to check.
+ */
 #define ECS_ASSERT_NOT(arg, ...) _Static_assert(ECS_IS_NOT(arg, __VA_ARGS__), "Expects component to not be the following type: " #__VA_ARGS__)
 
 #endif
