@@ -23,6 +23,187 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*!
+ * @header ECS
+ * @abstract The ECS (Entity Component System)
+ * @discussion This overview for the ECS is split into a number of concepts. These are Setup, Contexts, Groups, Systems, Components, Entities, Mutations, Concurrency,
+ *             ecs\_tool, Configuration.
+ *
+ *             ## Setup
+ *             To setup the ECS you will need to do the following:
+ *
+ *             1) Set the following global variables:
+ *
+ *                  IDs
+ *                  - @b ECSComponentIDs
+ *
+ *                  Archetype Component Indexes
+ *                  - @b ECSArchetypeComponentIndexes
+ *
+ *                  Component Sizes
+ *                  - @b ECSArchetypeComponentSizes
+ *                  - @b ECSPackedComponentSizes
+ *                  - @b ECSIndexedComponentSizes
+ *                  - @b ECSLocalComponentSizes
+ *                  - @b ECSDuplicateArchetypeComponentSizes
+ *                  - @b ECSDuplicatePackedComponentSizes
+ *                  - @b ECSDuplicateIndexedComponentSizes
+ *                  - @b ECSDuplicateLocalComponentSizes
+ *
+ *                  Component Destructors
+ *                  - @b ECSArchetypeComponentDestructors
+ *                  - @b ECSPackedComponentDestructors
+ *                  - @b ECSIndexedComponentDestructors
+ *                  - @b ECSLocalComponentDestructors
+ *                  - @b ECSDuplicateArchetypeComponentDestructors
+ *                  - @b ECSDuplicatePackedComponentDestructors
+ *                  - @b ECSDuplicateIndexedComponentDestructors
+ *                  - @b ECSDuplicateLocalComponentDestructors
+ *
+ *                  Mutable State Sizes
+ *                  - @b ECSMutableStateEntitiesMax
+ *                  - @b ECSMutableStateAddComponentMax
+ *                  - @b ECSMutableStateRemoveComponentMax
+ *                  - @b ECSMutableStateCustomCallbackMax
+ *                  - @b ECSMutableStateSharedDataMax
+ *
+ *             2) Call @b ECSInit
+ *             3) Create at least one @b ECSWorkerCreate
+ *
+ *             ## Contexts
+ *             Contexts represent the state of a simulation. Multiple contexts can be used when running multiple separate simulations is desired.
+ *
+ *             To initialise a context, it should be zeroed out with the @b mutation and @b manager fields being set. An example setup of these could be:
+ *
+ *             ```c
+ *             ECSContext Context;
+ *             ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(ECSMutableStateEntitiesMax, ECSMutableStateAddComponentMax, ECSMutableStateRemoveComponentMax, ECSMutableStateCustomCallbackMax, ECSMutableStateSharedDataMax);
+ *             memset(&Context, 0, sizeof(Context));
+ *             Context.mutations = &MutableState;
+ *             Context.manager.map = CCArrayCreate(CC_ALIGNED_ALLOCATOR(ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), CC_ALIGN(sizeof(ECSComponentRefs) + LOCAL_STORAGE_SIZE, ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), 16);
+ *             Context.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
+ *             ```
+ *
+ *             ## Groups
+ *             Groups define how systems should run. Both the frequency, the ordering of the systems, and their dependencies (what they need to wait for before they can run).
+ *             To create a group use @b ECS_SYSTEM_GROUP and the ecs\_tool to generate the configuration.
+ *
+ *             Systems in a single priority (or those of another group) can be run in concurrently. Concurrent execution of the systems will depend on their component access
+ *             requiremets. If two systems require write access to the same component then they won't be run at the same time, but if the two systems only require read access
+ *             then they will.
+ *
+ *             ## Systems
+ *             A system is processes a specific set of components. It is the primary way to interact with the @b Context and @b Components. To create a system use @b ECS_SYSTEM
+ *             or @b ECS_PARALLEL_SYSTEM when the system can be parallelised.
+ *
+ *             Systems can manage their own internal state as long as they guarantee that it will still be threadsafe.
+ *
+ *             Performing mutations is the main way for a system to apply breaking changes to the current @b Context. All the mutations will be applied later when
+ *             @b ECSMutationApply is called.
+ *
+ *             ## Components
+ *             A component is a store of data that is attached to an entity. There are different storage types and modifiers that change the use case of the component.
+ *
+ *             #### Storage Types
+ *                  These change how the component data is stored internally.
+ *
+ *                  ##### Archetype
+ *                  Archetype storage will group other components of the same storage the entity has into an archetype. All the components in an archetype will have the same order
+ *                  and are packed together which allows for easy vectorisation and iteration of multiple components. Adding or removal of components is more costly and ideally
+ *                  should opt for batch adds/removes instead of doing it one by one.
+ *
+ *                  ##### Packed
+ *                  Packed storage is similar to archetype storage with the exception that multiple component types are not grouped together. So each packed component is packed
+ *                  together but the order of one packed component type vs another are not guaranteed to be the same. This storage type allows for vectorisation and iteration of
+ *                  a single component.
+ *
+ *                  ##### Indexed
+ *                  Indexed storage keeps the component data sepaarated by an Entity's ID. This means random lookups are faster than the archetype or packed variants, but iteration
+ *                  is quite slow. If iteration is desired, it is best to parallelise the system by this component at a reasonable chunk size.
+ *
+ *                  ##### Local
+ *                  Local storage stores the component data in the entity itself. Similar to indexed, this means lookups are fast but iteration is slow. This storage type offers
+ *                  the fastest way to add/remove components, with the downside pre-allocate memory for them (regardless of if an entity has the component or not).
+ *
+ *             #### Storage Modifiers
+ *                  These change the behaviour of components. Certain modifiers can be combined.
+ *
+ *                  ##### Duplicate
+ *                  Duplicate components allow for multiple components of the same type to be added to an entity.
+ *
+ *                  ##### Tag
+ *                  Tagged components allow for components with no data to be attached to an entity.
+ *
+ *                  ##### Destructor
+ *                  Component destructors allow for custom cleanup of component data when a component is removed.
+ *
+ *             To register a component type use any of the following:
+ *              - @b ECS_LOCAL_COMPONENT
+ *              - @b ECS_PACKED_COMPONENT
+ *              - @b ECS_INDEXED_COMPONENT
+ *              - @b ECS_ARCHETYPE_COMPONENT
+ *              - @b ECS_LOCAL_DUPLICATE_COMPONENT
+ *              - @b ECS_PACKED_DUPLICATE_COMPONENT
+ *              - @b ECS_INDEXED_DUPLICATE_COMPONENT
+ *              - @b ECS_ARCHETYPE_DUPLICATE_COMPONENT
+ *              - @b ECS_LOCAL_TAG
+ *              - @b ECS_PACKED_TAG
+ *              - @b ECS_INDEXED_TAG
+ *              - @b ECS_ARCHETYPE_TAG
+ *
+ *             To register a destructor for a component use @b ECS_DESTRUCTOR.
+ *
+ *             ## Entities
+ *             An entity is what groups associated component data together.
+ *
+ *             Entity destruction will remove the components from that entity and make it available for reuse. Certain operations can still be safely performed on a destroyed entity,
+ *             but mutating the entity should be avoided.
+ *
+ *             ## Mutations
+ *             Mutations allow for breaking changes to be deferred until a later point. As it can be unsafe for a system to add or remove components of a certain storage type, creating
+ *             a mutation request with that change is the safe way to do that. These mutation requests can also be inspected to see what changes will be applied.
+ *
+ *             Applying a mutation could be done on a worker as long as you can make the guarantee that @b Context will not be modified on another at the same time.
+ *
+ *             ## Concurrency
+ *             The core concurrency mechanism is through scheduling systems to a pool of worker threads. When threads are waiting for work to become available to them they will call into a
+ *             waiting callback that can perform some custom work in the meantime.
+ *
+ *             ## ecs_tool
+ *             The CLI tool for generating a lot of the boilerplate that is required.
+ *
+ *             ## Configuration
+ *             These are the compile time configuation options for the ECS itself (will require recompilation of the framework).
+ *
+ *             #### Defines
+ *                  ##### ECS_SYSTEM_EXECUTOR_COMPONENT_MAX 16
+ *                  This should be set to at least the maximum number of components that a system will require access to. By default this is set to 16.
+ *
+ *                  ##### ECS_SYSTEM_EXECUTION_POOL_MAX 1024
+ *                  This should be set to a size that's larger than the maximum number of systems that may be scheduled to the worker pool at any one time. By default this is set to 1024.
+ *
+ *                  ##### ECS_WORKER_THREAD_MAX
+ *                  This can be defined to the hard maximum worker thread limit. By default this is set to 128.
+ *
+ *                  Note: To create N worker threads you must still call @b ECSWorkerCreate N times. This limit just affects what the total allowable number of worker threads that may be
+ *                  created is.
+ *
+ *                  ##### Component Maxes
+ *                  The maximum number of components per storage type can be set by defining the following:
+ *                      - @b ECS_ARCHETYPE_COMPONENT_MAX
+ *                      - @b ECS_PACKED_COMPONENT_MAX
+ *                      - @b ECS_INDEXED_COMPONENT_MAX
+ *                      - @b ECS_LOCAL_COMPONENT_MAX
+ *
+ *                  This will allow the default maximums to be overriden. Changing these values may require the ECSConfig.h to be regenerated, or for the @b ecs_tool to regenerate the project
+ *                  boilerplate.
+ *
+ *                  ##### ECS_UNSAFE_COMPONENT_DESTRUCTION
+ *                  If component destructors don't reference any other component data than the component being destroyed, then @b ECS_UNSAFE_COMPONENT_DESTRUCTION can be defined as 1 to enable
+ *                  the unsafe destruction pathway. The benefit of this is it will avoid a copy of the component data.
+ *             
+ */
+
 #ifndef CommonGameKit_ECS_h
 #define CommonGameKit_ECS_h
 
@@ -311,7 +492,9 @@ void ECSInit(void);
  * @param Context The context to be used for the update tick.
  * @param Groups The system groups to be used for the update tick.
  * @param GroupCount The number of system groups.
- * @param State The execution state to be used by the ECS.
+ * @param State The array of execution state (size of @b GroupCount) to be used by the ECS. The @b state field should be at least as big as the maximum number
+ *              of systems in the largest priority of any group.
+ *
  * @param DeltaTime The delta time of the tick.
  */
 void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECSExecutionGroup *State, ECSTime DeltaTime);
