@@ -348,6 +348,34 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
     return TRUE;
 }
 
+static inline void ECSReleaseAccessRefs(size_t Worker, uint16_t *Refs, ECSContextAccessFlag *AccessFlags)
+{
+    for (size_t Loop = 0, Count = AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].count; Loop < Count; Loop++)
+    {
+        const ECSSystemAccess *Access = AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].release[Loop].access;
+        
+        for (size_t Loop2 = 0, IdCount = Access->read.count; Loop2 < IdCount; Loop2++)
+        {
+            const size_t ComponentIndex = ECSComponentBaseIndex(Access->read.ids[Loop2]);
+            const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+            
+            if (!--Refs[ComponentIndex]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
+        }
+        
+        for (size_t Loop2 = 0, IdCount = Access->write.count; Loop2 < IdCount; Loop2++)
+        {
+            const size_t ComponentIndex = ECSComponentBaseIndex(Access->write.ids[Loop2]);
+            const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+            
+            if (!--Refs[ComponentIndex]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
+        }
+        
+        AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].release[Loop].executionGroup->running--;
+    }
+    
+    AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].count = 0;
+}
+
 void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECSExecutionGroup *State, ECSTime DeltaTime)
 {
     CCAssertLog(Context, "Context must not be null");
@@ -497,39 +525,14 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
             TargetIndex = (TargetIndex + 1) % WorkerThreadCount;
         }
         
+        ECSReleaseAccessRefs(TargetIndex, Refs, AccessFlags);
+        
         for (size_t Loop = 1; Loop < WorkerThreadCount; Loop++)
         {
             const size_t Index = (TargetIndex + Loop) % WorkerThreadCount;
             LocalAccessReleaseIndexes[Index] = atomic_exchange_explicit(&AccessReleaseIndex[Index], LocalAccessReleaseIndexes[Index], memory_order_consume);
-        }
-        
-        for (size_t Loop = 0; Loop < WorkerThreadCount; Loop++)
-        {
-            const size_t Index = Loop;
-            for (size_t Loop2 = 0, Count = AccessReleases[Loop][LocalAccessReleaseIndexes[Index]].count; Loop2 < Count; Loop2++)
-            {
-                const ECSSystemAccess *Access = AccessReleases[Loop][LocalAccessReleaseIndexes[Index]].release[Loop2].access;
-                
-                for (size_t Loop3 = 0, IdCount = Access->read.count; Loop3 < IdCount; Loop3++)
-                {
-                    const size_t ComponentIndex = ECSComponentBaseIndex(Access->read.ids[Loop3]);
-                    const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
-                    
-                    if (!--Refs[ComponentIndex]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
-                }
-                
-                for (size_t Loop3 = 0, IdCount = Access->write.count; Loop3 < IdCount; Loop3++)
-                {
-                    const size_t ComponentIndex = ECSComponentBaseIndex(Access->write.ids[Loop3]);
-                    const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
-                    
-                    if (!--Refs[ComponentIndex]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
-                }
-                
-                AccessReleases[Loop][LocalAccessReleaseIndexes[Index]].release[Loop2].executionGroup->running--;
-            }
             
-            AccessReleases[Loop][LocalAccessReleaseIndexes[Index]].count = 0;
+            ECSReleaseAccessRefs(Index, Refs, AccessFlags);
         }
         
         if (!RunCount) goto WaitForWorkers;
