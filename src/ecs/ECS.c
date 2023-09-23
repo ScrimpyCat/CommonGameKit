@@ -879,9 +879,11 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data,
         
         if (CC_UNLIKELY(!Archetype->entities))
         {
-            Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16);
+            const size_t ChunkSize = ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(ArchID, Count);
+            
+            Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize);
 
-            for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], 16);
+            for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], ChunkSize);
         }
         
         const size_t Index = CCArrayAppendElement(Archetype->components[AddedIndex], Data);
@@ -950,9 +952,11 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
             
             if (CC_UNLIKELY(!Archetype->entities))
             {
-                Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16);
+                const size_t ChunkSize = ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(ArchID, Count);
                 
-                for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], 16);
+                Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize);
+                
+                for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], ChunkSize);
             }
             
             const size_t Index = CCArrayAppendElement(Archetype->entities, &Entity);
@@ -1020,9 +1024,11 @@ void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, EC
         
         if (CC_UNLIKELY(!Components))
         {
-            Packed->entities = (Entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16));
+            const size_t ChunkSize = ECS_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(Index);
             
-            *Packed->components = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSPackedComponentSizes[Index], 16));
+            Packed->entities = (Entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize));
+            
+            *Packed->components = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSPackedComponentSizes[Index], ChunkSize));
         }
         
         CCArrayAppendElement(Components, Data);
@@ -1113,13 +1119,13 @@ void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, E
         
         if (CC_UNLIKELY(!Components))
         {
-            *Indexed = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSIndexedComponentSizes[Index], 16)); // TODO: replace 16 with configurable amount
+            *Indexed = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSIndexedComponentSizes[Index], ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index)));
         }
         
         const size_t Count = CCArrayGetCount(Components);
         if (Entity >= Count)
         {
-            CCArrayAppendElements(Components, NULL, CC_ALIGN((Entity - Count) + 1, 16)); // TODO: replace 16 with configurable amount
+            CCArrayAppendElements(Components, NULL, CC_ALIGN((Entity - Count) + 1, ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index)));
         }
         
         CCArrayReplaceElementAtIndex(Components, Entity, Data);
@@ -1261,7 +1267,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
                     const size_t Offset = LastID < ID ? LastIndex : 0;
                     
                     LastIndex = SortedAdd(Refs->archetype.component.ids + Offset, Refs->archetype.component.count++ - Offset, ID) + Offset;
-                    RefData[RefDataCount] = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateArchetypeComponentSizes[ID], 16); // TODO: replace 16 with configurable amount
+                    RefData[RefDataCount] = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateArchetypeComponentSizes[ID], ECS_DUPLICATE_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(ID));
                     ComponentData[ID] = &RefData[RefDataCount++];
                     IndexCount++;
                     CCBitsSet(AddedComponent, ID);
@@ -1305,9 +1311,11 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
         
         if (CC_UNLIKELY(!Archetype->entities))
         {
-            Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16);
+            const size_t ChunkSize = ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(ArchID, Count);
+            
+            Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize);
 
-            for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], 16);
+            for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], ChunkSize);
         }
         
         const size_t Index = CCArrayAppendElement(Archetype->entities, &Entity);
@@ -1507,9 +1515,11 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
             
             if (CC_UNLIKELY(!Archetype->entities))
             {
-                Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16);
+                const size_t ChunkSize = ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(ArchID, Count);
                 
-                for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], 16);
+                Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize);
+                
+                for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], ChunkSize);
             }
             
             const size_t Index = CCArrayAppendElement(Archetype->entities, &Entity);

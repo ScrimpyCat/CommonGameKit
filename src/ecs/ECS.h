@@ -201,7 +201,18 @@
  *                  ##### ECS_UNSAFE_COMPONENT_DESTRUCTION
  *                  If component destructors don't reference any other component data than the component being destroyed, then @b ECS_UNSAFE_COMPONENT_DESTRUCTION can be defined as 1 to enable
  *                  the unsafe destruction pathway. The benefit of this is it will avoid a copy of the component data.
- *             
+ *
+ *                  ##### Array Chunk Sizes
+ *                  The chunk size of the internal arrays can be overriden by defining the following:
+ *                      - `ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(index, count)` : @b index is the archetype index, and @b count is the number of components in the archetype
+ *                      - `ECS_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the packed component
+ *                      - `ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the indexed component
+ *                      - `ECS_DUPLICATE_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the duplicate archetype component
+ *                      - `ECS_DUPLICATE_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the duplicate packed component
+ *                      - `ECS_DUPLICATE_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the duplicate indexed component
+ *                      - `ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the duplicate local component
+ *
+ *                  By default these are all set to 16.
  */
 
 #ifndef CommonGameKit_ECS_h
@@ -725,6 +736,34 @@ static inline void *ECSSharedZoneStore(void *Data, size_t Size);
  */
 void ECSDuplicateDestructor(void *Data, ECSComponentID ID);
 
+#ifndef ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(index, count) 16
+#endif
+
+#ifndef ECS_PACKED_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
+#endif
+
+#ifndef ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
+#endif
+
+#ifndef ECS_DUPLICATE_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_DUPLICATE_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
+#endif
+
+#ifndef ECS_DUPLICATE_PACKED_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_DUPLICATE_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
+#endif
+
+#ifndef ECS_DUPLICATE_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_DUPLICATE_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
+#endif
+
+#ifndef ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE
+#define ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
+#endif
+
 #pragma mark -
 
 static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID ID)
@@ -902,27 +941,28 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
         {
             Component = &Duplicates;
             
-            const size_t Index = (ID & ~ECSComponentStorageMask);
+            size_t Index = (ID & ~ECSComponentStorageMask);
             
             switch (ID & ECSComponentStorageTypeMask)
             {
                 case ECSComponentStorageTypeArchetype:
-                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateArchetypeComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateArchetypeComponentSizes[Index], ECS_DUPLICATE_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(Index));
                     ECSArchetypeAddComponent(Context, Entity, &Duplicates, ID);
                     break;
                     
                 case ECSComponentStorageTypePacked:
-                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicatePackedComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicatePackedComponentSizes[Index], ECS_DUPLICATE_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(Index));
                     ECSPackedAddComponent(Context, Entity, &Duplicates, ID);
                     break;
                     
                 case ECSComponentStorageTypeIndexed:
-                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateIndexedComponentSizes[Index], 16); // TODO: replace 16 with configurable amount
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateIndexedComponentSizes[Index], ECS_DUPLICATE_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index));
                     ECSIndexedAddComponent(Context, Entity, &Duplicates, ID);
                     break;
                     
                 case ECSComponentStorageTypeLocal:
-                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateLocalComponentSizes[ECSLocalComponentIndex(ID)], 16); // TODO: replace 16 with configurable amount
+                    Index = ECSLocalComponentIndex(ID);
+                    Duplicates = CCArrayCreate(CC_STD_ALLOCATOR, ECSDuplicateLocalComponentSizes[Index], ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE(Index));
                     ECSLocalAddComponent(Context, Entity, &Duplicates, ID);
                     break;
                     
