@@ -342,12 +342,12 @@
 
 #define ECS_ITER_ENTITY_ARRAY(increment, entities) \
 for (size_t ECS_ITER_PRIVATE__pre_ent = 0; !ECS_ITER_PRIVATE__pre_ent; ) for (void *ECS_ITER_PRIVATE__ArrayEntities = entities, *ECS_ITER_PRIVATE__PtrEntities = CCArrayGetData(ECS_ITER_PRIVATE__ArrayEntities); !ECS_ITER_PRIVATE__pre_ent++; ) \
-for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
+for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.index + ECS_RANGE_VAR.count, CCArrayGetCount(ECS_ITER_PRIVATE__ArrayEntities)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
 for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (const ECSEntity *ECS_ITER_ENTITIES = &((ECSEntity*)ECS_ITER_PRIVATE__PtrEntities)[ECS_ITER_INDEX], ECS_ITER_ENTITY = *ECS_ITER_ENTITIES; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY)
 
 #define ECS_ITER_ENTITY_FALLBACK(increment, kind, type) \
 CC_WARNING("Iterating with a leading " kind " component (" #type ") may be slow. Use an archetype or packed component for faster iteration.") \
-for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.count, CCArrayGetCount(ECS_CONTEXT_VAR->manager.map)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
+for (size_t ECS_ITER_INDEX = ECS_RANGE_VAR.index, ECS_ITER_COUNT = CCMin(ECS_RANGE_VAR.index + ECS_RANGE_VAR.count, CCArrayGetCount(ECS_CONTEXT_VAR->manager.map)); ECS_ITER_INDEX < ECS_ITER_COUNT; ECS_ITER_INDEX += (increment)) \
 for (size_t ECS_ITER_PRIVATE__ent = 0; !ECS_ITER_PRIVATE__ent; ) for (ECSEntity ECS_ITER_ENTITY = ECS_ITER_INDEX; !ECS_ITER_PRIVATE__ent++; (void)ECS_ITER_ENTITY)
 
 #define ECS_ITER_DECLARE_ASSIGN(e, i, v) e = v
@@ -416,6 +416,7 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, (ECS_QUALIFIER(ECS_ITER_TYPE(e)) void*)C
  * @define ECS_ITER_INDEX
  * @abstract The variable name to be used for the iteration index.
  * @description This can be defined to a custom name, otherwise it defaults to @b ECSIterIndex.
+ * * @discussion To get local index subtract @b ECS_RANGE_VAR.index.
  */
 #ifndef ECS_ITER_INDEX
 #define ECS_ITER_INDEX ECSIterIndex
@@ -425,6 +426,7 @@ for (ECS_ITER_DECLARE_ELEMENT_VAR(e, i, (ECS_QUALIFIER(ECS_ITER_TYPE(e)) void*)C
  * @define ECS_ITER_COUNT
  * @abstract The variable name to be used for the iteration count.
  * @description This can be defined to a custom name, otherwise it defaults to @b ECSIterCount.
+ * @discussion To get local count use @b ECS_RANGE_VAR.count.
  */
 #ifndef ECS_ITER_COUNT
 #define ECS_ITER_COUNT ECSIterCount
