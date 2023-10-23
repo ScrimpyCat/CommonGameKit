@@ -508,10 +508,6 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     memset(ExecState, 0, sizeof(ExecState));
     
-    ECSEntity TestEntity;
-    ECSEntityCreate(&Context, &TestEntity, 1);
-    ECSEntityAddComponent(&Context, TestEntity, NULL, CHECK_RUN_STATE_TAG);
-    
     for (size_t Loop = 0; Loop < GroupCount; Loop++)
     {
         State[Loop] = (ECSExecutionGroup){
@@ -521,6 +517,10 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
             .running = 0
         };
     }
+    
+    ECSEntity TestEntity;
+    ECSEntityCreate(&Context, &TestEntity, 1);
+    ECSEntityAddComponent(&Context, TestEntity, NULL, CHECK_RUN_STATE_TAG);
     
     ECSEntity EntitiesABC[5];
     ECSEntityCreate(&Context, EntitiesABC, 5);
