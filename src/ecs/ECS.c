@@ -66,15 +66,16 @@ static CCConcurrentPool(ECSSystemExecutor, ECS_SYSTEM_EXECUTION_POOL_MAX) Execut
 
 #define SystemExecutorPool ((CCConcurrentPool*)&ExecutorPool)
 
-#define ECS_COMPONENT_ACCESS_RELEASE_MAX ECS_SYSTEM_EXECUTOR_COMPONENT_MAX
+#ifndef ECS_COMPONENT_ACCESS_RELEASE_MAX
+#define ECS_COMPONENT_ACCESS_RELEASE_MAX 16
+#endif
 
 typedef struct {
-    size_t ids[ECS_COMPONENT_ACCESS_RELEASE_MAX];
+    size_t count;
     struct {
         const ECSSystemAccess *access;
         ECSExecutionGroup *executionGroup;
     } release[ECS_COMPONENT_ACCESS_RELEASE_MAX];
-    size_t count;
 } ECSComponentAccessRelease;
 
 #ifndef ECS_WORKER_THREAD_MAX
@@ -112,7 +113,12 @@ ECSWaitingCallback ECSWaiting = ECSSpinWait;
 const size_t *ECSArchetypeComponentIndexes;
 
 static ECSComponentAccessRelease AccessReleases[ECS_WORKER_THREAD_MAX][3];
-static _Atomic(size_t) AccessReleaseIndex[ECS_WORKER_THREAD_MAX] = {ATOMIC_VAR_INIT(0)};
+static _Alignas(CC_HARDWARE_CACHE_LINE) struct {
+    _Atomic(uint8_t) index;
+#if ECS_ACCESS_RELEASE_INDEX_PAD_TO_CACHE_LINE
+    uint8_t pad[CC_ALIGN(sizeof(_Atomic(uint8_t)), CC_HARDWARE_CACHE_LINE) - sizeof(_Atomic(uint8_t))];
+#endif
+} AccessReleaseIndex[ECS_WORKER_THREAD_MAX] = {ATOMIC_VAR_INIT(0)};
 
 int ECSWorker(ECSWorkerID WorkerID)
 {
@@ -129,7 +135,7 @@ int ECSWorker(ECSWorkerID WorkerID)
             {
                 ECSWaiting(WorkerID);
                 
-                LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID], LocalAccessReleaseIndex, memory_order_consume);
+                LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID].index, LocalAccessReleaseIndex, memory_order_consume);
             }
             
             const size_t ArchCount = Executor->archetype.count;
@@ -163,7 +169,7 @@ int ECSWorker(ECSWorkerID WorkerID)
             AccessReleases[WorkerID][LocalAccessReleaseIndex].release[Index].executionGroup = Executor->executionGroup;
             
             atomic_thread_fence(memory_order_release);
-            LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID], LocalAccessReleaseIndex, memory_order_consume);
+            LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID].index, LocalAccessReleaseIndex, memory_order_consume);
         }
         
         else
@@ -172,7 +178,7 @@ int ECSWorker(ECSWorkerID WorkerID)
             
             if (AccessReleases[WorkerID][LocalAccessReleaseIndex].count)
             {
-                LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID], LocalAccessReleaseIndex, memory_order_consume);
+                LocalAccessReleaseIndex = atomic_exchange_explicit(&AccessReleaseIndex[WorkerID].index, LocalAccessReleaseIndex, memory_order_consume);
             }
         }
     }
@@ -518,7 +524,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
             if (!RunningCount) goto Finished;
         }
         
-        while (!AccessReleases[TargetIndex][(LocalAccessReleaseIndexes[TargetIndex] = atomic_exchange_explicit(&AccessReleaseIndex[TargetIndex], LocalAccessReleaseIndexes[TargetIndex], memory_order_consume))].count)
+        while (!AccessReleases[TargetIndex][(LocalAccessReleaseIndexes[TargetIndex] = atomic_exchange_explicit(&AccessReleaseIndex[TargetIndex].index, LocalAccessReleaseIndexes[TargetIndex], memory_order_consume))].count)
         {
             ECSWaiting(-1);
             
@@ -530,7 +536,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
         for (size_t Loop = 1; Loop < WorkerThreadCount; Loop++)
         {
             const size_t Index = (TargetIndex + Loop) % WorkerThreadCount;
-            LocalAccessReleaseIndexes[Index] = atomic_exchange_explicit(&AccessReleaseIndex[Index], LocalAccessReleaseIndexes[Index], memory_order_consume);
+            LocalAccessReleaseIndexes[Index] = atomic_exchange_explicit(&AccessReleaseIndex[Index].index, LocalAccessReleaseIndexes[Index], memory_order_consume);
             
             ECSReleaseAccessRefs(Index, Refs, AccessFlags);
         }

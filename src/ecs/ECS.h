@@ -176,11 +176,15 @@
  *             These are the compile time configuation options for the ECS itself (will require recompilation of the framework).
  *
  *             #### Defines
- *                  ##### ECS_SYSTEM_EXECUTOR_COMPONENT_MAX 16
+ *                  ##### ECS_SYSTEM_EXECUTOR_COMPONENT_MAX
  *                  This should be set to at least the maximum number of components that a system will require access to. By default this is set to 16.
  *
- *                  ##### ECS_SYSTEM_EXECUTION_POOL_MAX 1024
+ *                  ##### ECS_SYSTEM_EXECUTION_POOL_MAX
  *                  This should be set to a size that's larger than the maximum number of systems that may be scheduled to the worker pool at any one time. By default this is set to 1024.
+ *
+ *                  ##### ECS_COMPONENT_ACCESS_RELEASE_MAX
+ *                  This should be set to the maximum number of allowed entires in an access release. By default this is set to 16. A larger value reduces the likelihood of a worker's access
+ *                  releases getting filled and having to wait until the @b ECSTick has processed them.
  *
  *                  ##### ECS_WORKER_THREAD_MAX
  *                  This can be defined to the hard maximum worker thread limit. By default this is set to 128.
@@ -201,6 +205,10 @@
  *                  ##### ECS_UNSAFE_COMPONENT_DESTRUCTION
  *                  If component destructors don't reference any other component data than the component being destroyed, then @b ECS_UNSAFE_COMPONENT_DESTRUCTION can be defined as 1 to enable
  *                  the unsafe destruction pathway. The benefit of this is it will avoid a copy of the component data.
+ *
+ *                  ##### ECS_ACCESS_RELEASE_INDEX_PAD_TO_CACHE_LINE
+ *                  If the cost of false sharing access release indexes by workers is greater than the benefit of the @b ECSTick thread iterating the packed indexes, then @b ECS_ACCESS_RELEASE_INDEX_PAD_TO_CACHE_LINE
+ *                  can be defined as 1 to enable a single index per cache line.
  *
  *                  ##### Array Chunk Sizes
  *                  The chunk size of the internal arrays can be overriden by defining the following:
