@@ -234,8 +234,6 @@
 
 #include <CommonGameKit/ECSEntity.h>
 
-CC_ARRAY_DECLARE(ECSEntity);
-
 #include <CommonGameKit/ECSArchetype.h>
 
 #include <CommonGameKit/ECSContext.h>

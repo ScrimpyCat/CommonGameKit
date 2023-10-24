@@ -38,6 +38,8 @@ func(__VA_ARGS__, CCMessageRouter); \
 func(__VA_ARGS__, CCComponentID); \
 func(__VA_ARGS__, CCComponent); \
 func(__VA_ARGS__, CCEntity); \
+func(__VA_ARGS__, ECSComponentRefs); \
+func(__VA_ARGS__, ECSEntity); \
 func(__VA_ARGS__, GUIObject); \
 func(__VA_ARGS__, GUIEvent); \
 func(__VA_ARGS__, CCInputMapType); \
@@ -124,6 +126,8 @@ func(__VA_ARGS__, CCMessageRouter); \
 func(__VA_ARGS__, CCComponentID); \
 func(__VA_ARGS__, CCComponent); \
 func(__VA_ARGS__, CCEntity); \
+func(__VA_ARGS__, ECSComponentRefs); \
+func(__VA_ARGS__, ECSEntity); \
 func(__VA_ARGS__, GUIObject); \
 func(__VA_ARGS__, GUIEvent); \
 func(__VA_ARGS__, CCInputMapType); \

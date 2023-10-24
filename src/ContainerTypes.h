@@ -3,8 +3,13 @@
 CC_CONTAINER_DECLARE(CCArray, CCChar); \
 CC_CONTAINER_DECLARE(CCArray, CCExpressionEvaluator); \
 CC_CONTAINER_DECLARE(CCArray, CCFontGlyph); \
+CC_CONTAINER_DECLARE(CCArray, CCPixelDataCompositeReference); \
+CC_CONTAINER_DECLARE(CCArray, ECSComponentRefs); \
+CC_CONTAINER_DECLARE(CCArray, ECSEntity); \
 CC_CONTAINER_DECLARE(CCArray, GLint); \
-CC_CONTAINER_DECLARE(CCArray, uint32_t);
+CC_CONTAINER_DECLARE(CCArray, size_t); \
+CC_CONTAINER_DECLARE(CCArray, uint32_t); \
+CC_CONTAINER_DECLARE(CCArray, uint8_t);
 
 #define CC_CONTAINER_DECLARE_PRESET_CCCollection() \
 CC_CONTAINER_DECLARE(CCCollection, CCCollectionEntry); \
@@ -40,6 +45,7 @@ CC_CONTAINER_DECLARE(CCDictionary, CCString, CCKeyboardKeycode); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CCKeyboardModifier); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CCMouseButton); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CFTypeRef); \
+CC_CONTAINER_DECLARE(CCDictionary, CCString, FSVirtualNode); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderAttributeInfo); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderLibrarySource); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderUniformInfo); \

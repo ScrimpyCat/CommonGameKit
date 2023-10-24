@@ -80,8 +80,6 @@ typedef struct {
 
 _Static_assert((offsetof(ECSComponentRefs, archetype.component.ids) % ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT) == 0, "Needs to be correctly aligned");
 
-CC_ARRAY_DECLARE(ECSComponentRefs);
-
 typedef struct {
     CCArray(ECSComponentRefs) map;
     CCArray(size_t) available;
