@@ -30,6 +30,8 @@
 #import "ECSTestAccessors.h"
 #import "ECSTests.h"
 #import "ECSTestData.h"
+#import "ECSMonitor.h"
+#import "ECSBinaryMonitor.h"
 
 
 static _Atomic(size_t) RunCount = ATOMIC_VAR_INIT(0);
@@ -1886,6 +1888,639 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     XCTAssertEqual(Hours, 3, @"Should extract the hours rounded down");
     XCTAssertEqual(Minutes, 30, @"Should extract the remaining minutes");
+}
+
+-(void) testMonitor
+{
+    ECSMonitor Monitor = ECSBinaryMonitorCreate(CC_STD_ALLOCATOR, COMP_C, 4, 3, sizeof(int));
+    
+    CompC C = { { 0, 1, 2 } };
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[1] = 10;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[0] = 5;
+    C.v[2] = 20;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    ECSMonitorRecord(&Monitor, NULL);
+    ECSMonitorRecord(&Monitor, NULL);
+    
+    C.v[0] = 100;
+    C.v[1] = 200;
+    C.v[2] = 300;
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[2] = 303;
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[1] = 202;
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[0] = 101;
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+#define TEST_COMP_C_TRANSFORM_VALUES_FALSE(...)
+#define TEST_COMP_C_TRANSFORM_VALUES_TRUE(v0, v1, v2) \
+XCTAssertEqual(OldC.v[0], v0, @"Should have the correct value"); \
+XCTAssertEqual(OldC.v[1], v1, @"Should have the correct value"); \
+XCTAssertEqual(OldC.v[2], v2, @"Should have the correct value");
+    
+#define TEST_COMP_C_TRANSFORM(r, exists, ...) \
+{\
+CompC OldC = C; \
+_Bool Result = ECSMonitorTransform(&Monitor, &OldC, r); \
+XCTAssertEqual(Result, exists, @"Should %@", exists ? @"exist" : @"be removed"); \
+TEST_COMP_C_TRANSFORM_VALUES_##exists(__VA_ARGS__) \
+}
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(4, FALSE);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 5, 10, 20);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 0, 10, 2);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 0, 1, 2);
+    TEST_COMP_C_TRANSFORM(8, FALSE);
+    TEST_COMP_C_TRANSFORM(9, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[0] = 1010;
+    C.v[1] = 2020;
+    C.v[2] = 3030;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(5, FALSE);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 5, 10, 20);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 0, 10, 2);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 0, 1, 2);
+    TEST_COMP_C_TRANSFORM(9, FALSE);
+    TEST_COMP_C_TRANSFORM(10, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[0] = 1011;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[1] = 2021;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(7, FALSE);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 5, 10, 20);
+    TEST_COMP_C_TRANSFORM(9, TRUE, 0, 10, 2);
+    TEST_COMP_C_TRANSFORM(10, TRUE, 0, 1, 2);
+    TEST_COMP_C_TRANSFORM(11, FALSE);
+    TEST_COMP_C_TRANSFORM(12, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[2] = 3031;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(8, FALSE);
+    TEST_COMP_C_TRANSFORM(9, FALSE);
+    TEST_COMP_C_TRANSFORM(10, FALSE);
+    TEST_COMP_C_TRANSFORM(11, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[0] = 1012;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1012, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(9, FALSE);
+    TEST_COMP_C_TRANSFORM(10, FALSE);
+    TEST_COMP_C_TRANSFORM(11, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[1] = 2022;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1012, 2022, 3031);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1012, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(9, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(10, FALSE);
+    TEST_COMP_C_TRANSFORM(11, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[2] = 3032;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1012, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1012, 2022, 3031);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1012, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 100, 202, 303);
+    TEST_COMP_C_TRANSFORM(9, TRUE, 100, 200, 303);
+    TEST_COMP_C_TRANSFORM(10, TRUE, 100, 200, 300);
+    TEST_COMP_C_TRANSFORM(11, FALSE);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, FALSE);
+    
+    C.v[0] = 1013;
+    
+    ECSMonitorRecord(&Monitor, &C);
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1013, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1012, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1012, 2022, 3031);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1012, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(9, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(10, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(11, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, TRUE, 101, 202, 303);
+    
+    C.v[1] = 2023;
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[2] = 3033;
+    ECSMonitorRecord(&Monitor, &C);
+    
+    C.v[0] = 1014;
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1014, 2023, 3033);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1013, 2023, 3033);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1013, 2023, 3032);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1013, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 1012, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 1012, 2022, 3031);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 1012, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 1011, 2021, 3030);
+    TEST_COMP_C_TRANSFORM(9, TRUE, 1011, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(10, TRUE, 1010, 2020, 3030);
+    TEST_COMP_C_TRANSFORM(11, TRUE, 101, 202, 303);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, TRUE, 101, 202, 303);
+    
+    C.v[1] = 2024;
+    ECSMonitorRecord(&Monitor, &C);
+    
+    TEST_COMP_C_TRANSFORM(0, TRUE, 1014, 2024, 3033);
+    TEST_COMP_C_TRANSFORM(1, TRUE, 1014, 2023, 3033);
+    TEST_COMP_C_TRANSFORM(2, TRUE, 1013, 2023, 3033);
+    TEST_COMP_C_TRANSFORM(3, TRUE, 1013, 2023, 3032);
+    TEST_COMP_C_TRANSFORM(4, TRUE, 1013, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(5, TRUE, 1012, 2022, 3032);
+    TEST_COMP_C_TRANSFORM(6, TRUE, 1012, 2022, 3031);
+    TEST_COMP_C_TRANSFORM(7, TRUE, 1012, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(8, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(9, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(10, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(11, TRUE, 1011, 2021, 3031);
+    TEST_COMP_C_TRANSFORM(SIZE_MAX, TRUE, 1011, 2021, 3031);
+    
+    ECSMonitorDestroy(&Monitor);
+    
+    
+    
+    Monitor = ECSBinaryMonitorCreate(CC_STD_ALLOCATOR, LOCAL_DUPLICATE_B, 4, 3, sizeof(int));
+    
+    CCArray DupB = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(LocalDuplicateB), 4);
+    
+    CCArrayAppendElement(DupB, &(LocalDuplicateB){
+        { 1, 2 }
+    });
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0] *= 10;
+    CCArrayAppendElements(DupB, (LocalDuplicateB[3]){
+        { { 3, 4 } },
+        { { 5, 6 } },
+        { { 7, 8 } },
+    }, 3);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0] *= 10;
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 3))->v[1] *= 10;
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    CCArrayRemoveElementAtIndex(DupB, 2);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    ECSMonitorRecord(&Monitor, NULL);
+    ECSMonitorRecord(&Monitor, NULL);
+    
+    CCArrayRemoveElementAtIndex(DupB, 2);
+    CCArrayRemoveElementAtIndex(DupB, 1);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    CCArrayRemoveAllElements(DupB);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+#define TEST_LOCAL_DUPLICATE_B_TRANSFORM_VALUES_FALSE(...)
+#define TEST_LOCAL_DUPLICATE_B_TRANSFORM_VALUES_TRUE(x, c) \
+XCTAssertEqual(CCArrayGetCount(OldDupB), c, @"Should have the number of elements"); \
+if (CCArrayGetCount(OldDupB) == c) \
+{ \
+for (size_t Loop = 0; Loop < c; Loop++) \
+{ \
+XCTAssertEqual(((LocalDuplicateB*)CCArrayGetElementAtIndex(OldDupB, Loop))->v[0], x[Loop].v[0], @"Should have the correct value"); \
+XCTAssertEqual(((LocalDuplicateB*)CCArrayGetElementAtIndex(OldDupB, Loop))->v[1], x[Loop].v[1], @"Should have the correct value"); \
+} \
+}
+    
+#define TEST_LOCAL_DUPLICATE_B_TRANSFORM(r, exists, ...) \
+{\
+CCArray OldDupB = NULL; \
+if (CCArrayGetCount(DupB)) \
+{ \
+OldDupB = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(LocalDuplicateB), 4); \
+CCArrayAppendElements(OldDupB, CCArrayGetData(DupB), CCArrayGetCount(DupB)); \
+} \
+_Bool Result = ECSMonitorTransform(&Monitor, &OldDupB, r); \
+XCTAssertEqual(Result, exists, @"Should %@", exists ? @"exist" : @"be removed"); \
+TEST_LOCAL_DUPLICATE_B_TRANSFORM_VALUES_##exists(__VA_ARGS__) \
+if (OldDupB) CCArrayDestroy(OldDupB); \
+}
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[4]){ { 100, 2 }, { 3, 4 }, { 5, 6 }, { 7, 80 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[4]){ { 10, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[1]){ { 1, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, FALSE);
+    
+    CCArrayAppendElements(DupB, (LocalDuplicateB[2]){
+        { { 10, 20 } },
+        { { 30, 40 } },
+    }, 2);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    CCArrayInsertElementAtIndex(DupB, 1, &(LocalDuplicateB){ 50, 60 });
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[4]){ { 100, 2 }, { 3, 4 }, { 5, 6 }, { 7, 80 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[4]){ { 10, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 1, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, FALSE);
+    
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0] *= 10;
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[1] *= 10;
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 1))->v[0] *= 10;
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 2))->v[0] *= 10;
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[4]){ { 100, 2 }, { 3, 4 }, { 5, 6 }, { 7, 80 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[4]){ { 10, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[1]){ { 1, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, FALSE);
+    
+    CCArrayRemoveElementAtIndex(DupB, 0);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[4]){ { 100, 2 }, { 3, 4 }, { 5, 6 }, { 7, 80 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[4]){ { 10, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }), 4);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[1]){ { 1, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, FALSE);
+    
+    CCArrayRemoveElementAtIndex(DupB, 1);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    
+    CCArrayAppendElements(DupB, (LocalDuplicateB[2]){
+        { { 12, 34 } },
+        { { 56, 78 } },
+    }, 2);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[3]){ { 500, 60 }, { 12, 34 }, { 56, 78 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    
+    CCArrayRemoveAllElements(DupB);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[3]){ { 500, 60 }, { 12, 34 }, { 56, 78 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    
+    ECSMonitorRecord(&Monitor, NULL);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[3]){ { 500, 60 }, { 12, 34 }, { 56, 78 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    
+    CCArrayAppendElements(DupB, (LocalDuplicateB[2]){
+        { { 120, 340 } },
+        { { 560, 780 } },
+    }, 2);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[2]){ { 120, 340 }, { 560, 780 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[3]){ { 500, 60 }, { 12, 34 }, { 56, 78 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[1]){ { 100, 2 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[3]){ { 100, 2 }, { 3, 4 }, { 7, 80 } }), 3);
+    
+    CCArrayRemoveElementAtIndex(DupB, 1);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[1]){ { 120, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[2]){ { 120, 340 }, { 560, 780 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[3]){ { 500, 60 }, { 12, 34 }, { 56, 78 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0] *= 10;
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[1]){ { 1200, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 120, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[2]){ { 120, 340 }, { 560, 780 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, FALSE);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[3]){ { 500, 60 }, { 12, 34 }, { 56, 78 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[1]){ { 500, 60 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[2]){ { 500, 60 }, { 300, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[3]){ { 100, 200 }, { 500, 60 }, { 300, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[3]){ { 10, 20 }, { 50, 60 }, { 30, 40 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[2]){ { 10, 20 }, { 30, 40 } }), 2);
+    
+    for (size_t Loop = 0; Loop < 10; Loop++)
+    {
+        ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0]++;
+        
+        ECSMonitorRecord(&Monitor, &DupB);
+    }
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[1]){ { 1210, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 1209, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[1]){ { 1208, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[1]){ { 1207, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[1]){ { 1206, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[1]){ { 1205, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[1]){ { 1204, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[1]){ { 1203, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 1202, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[1]){ { 1201, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[1]){ { 1200, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[1]){ { 120, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[1]){ { 120, 340 } }), 1);
+    
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0]++;
+    
+    CCArrayAppendElements(DupB, (LocalDuplicateB[2]){
+        { { 0, 1 } },
+        { { 2, 3 } },
+    }, 2);
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[3]){ { 1211, 340 }, { 0, 1 }, { 2, 3 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 1210, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[1]){ { 1209, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[1]){ { 1208, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[1]){ { 1207, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[1]){ { 1206, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[1]){ { 1205, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[1]){ { 1204, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 1203, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[1]){ { 1203, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[1]){ { 1203, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[1]){ { 1203, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[1]){ { 1203, 340 } }), 1);
+    
+    CCArrayRemoveElementsAtIndex(DupB, 1, 2);
+    
+    for (size_t Loop = 0; Loop < 10; Loop++)
+    {
+        ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0]++;
+        
+        ECSMonitorRecord(&Monitor, &DupB);
+    }
+    
+    CCArrayAppendElements(DupB, (LocalDuplicateB[2]){
+        { { 1, 2 } },
+        { { 3, 4 } },
+    }, 2);
+    
+    ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0]++;
+    
+    ECSMonitorRecord(&Monitor, &DupB);
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[3]){ { 1222, 340 }, { 1, 2 }, { 3, 4 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 1221, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[1]){ { 1220, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[1]){ { 1219, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[1]){ { 1218, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[1]){ { 1217, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[1]){ { 1216, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[1]){ { 1215, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 1214, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[1]){ { 1213, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[1]){ { 1212, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[3]){ { 1211, 340 }, { 0, 1 }, { 2, 3 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[3]){ { 1211, 340 }, { 0, 1 }, { 2, 3 } }), 3);
+    
+    CCArrayRemoveElementsAtIndex(DupB, 1, 2);
+    
+    for (size_t Loop = 0; Loop < 4; Loop++)
+    {
+        ((LocalDuplicateB*)CCArrayGetElementAtIndex(DupB, 0))->v[0]++;
+        
+        ECSMonitorRecord(&Monitor, &DupB);
+    }
+    
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(0, TRUE, ((LocalDuplicateB[1]){ { 1226, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(1, TRUE, ((LocalDuplicateB[1]){ { 1225, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(2, TRUE, ((LocalDuplicateB[1]){ { 1224, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(3, TRUE, ((LocalDuplicateB[1]){ { 1223, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(4, TRUE, ((LocalDuplicateB[3]){ { 1222, 340 }, { 1, 2 }, { 3, 4 } }), 3);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(5, TRUE, ((LocalDuplicateB[1]){ { 1221, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(6, TRUE, ((LocalDuplicateB[1]){ { 1220, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(7, TRUE, ((LocalDuplicateB[1]){ { 1219, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(8, TRUE, ((LocalDuplicateB[1]){ { 1218, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(9, TRUE, ((LocalDuplicateB[1]){ { 1217, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(10, TRUE, ((LocalDuplicateB[1]){ { 1216, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(11, TRUE, ((LocalDuplicateB[1]){ { 1215, 340 } }), 1);
+    TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[1]){ { 1215, 340 } }), 1);
+    
+    ECSMonitorDestroy(&Monitor);
 }
 
 @end
