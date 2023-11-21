@@ -578,4 +578,68 @@ ECS_ITER_(count, __VA_ARGS__)
  */
 #define ECS_ASSERT_NOT(arg, ...) _Static_assert(ECS_IS_NOT(arg, __VA_ARGS__), "Expects component to not be the following type: " #__VA_ARGS__)
 
+#pragma mark - Dynamic Component Dependencies
+
+/*!
+ * @abstract Dynamically include certain components as system read/write dependencies.
+ * @description The `ECS_EVERY_*` variants include every component for that variant, `ECS_MATCH_*` variants include only the components of that variant
+ *              whose name matches the given regular expression, `ECS_ENV` uses the externally defined value (value passed to `ecs_tool`).
+ */
+
+#define ECS_EVERY_COMPONENT
+#define ECS_EVERY_ARCHETYPE_COMPONENT
+#define ECS_EVERY_PACKED_COMPONENT
+#define ECS_EVERY_INDEXED_COMPONENT
+#define ECS_EVERY_LOCAL_COMPONENT
+
+#define ECS_EVERY_NORMAL_COMPONENT
+#define ECS_EVERY_NORMAL_ARCHETYPE_COMPONENT
+#define ECS_EVERY_NORMAL_PACKED_COMPONENT
+#define ECS_EVERY_NORMAL_INDEXED_COMPONENT
+#define ECS_EVERY_NORMAL_LOCAL_COMPONENT
+
+#define ECS_EVERY_DUPLICATE_COMPONENT
+#define ECS_EVERY_DUPLICATE_ARCHETYPE_COMPONENT
+#define ECS_EVERY_DUPLICATE_PACKED_COMPONENT
+#define ECS_EVERY_DUPLICATE_INDEXED_COMPONENT
+#define ECS_EVERY_DUPLICATE_LOCAL_COMPONENT
+
+#define ECS_EVERY_TAG_COMPONENT
+#define ECS_EVERY_TAG_ARCHETYPE_COMPONENT
+#define ECS_EVERY_TAG_PACKED_COMPONENT
+#define ECS_EVERY_TAG_INDEXED_COMPONENT
+#define ECS_EVERY_TAG_LOCAL_COMPONENT
+
+#define ECS_MATCH_COMPONENT(...)
+#define ECS_MATCH_ARCHETYPE_COMPONENT(...)
+#define ECS_MATCH_PACKED_COMPONENT(...)
+#define ECS_MATCH_INDEXED_COMPONENT(...)
+#define ECS_MATCH_LOCAL_COMPONENT(...)
+
+#define ECS_MATCH_NORMAL_COMPONENT(...)
+#define ECS_MATCH_NORMAL_ARCHETYPE_COMPONENT(...)
+#define ECS_MATCH_NORMAL_PACKED_COMPONENT(...)
+#define ECS_MATCH_NORMAL_INDEXED_COMPONENT(...)
+#define ECS_MATCH_NORMAL_LOCAL_COMPONENT(...)
+
+#define ECS_MATCH_DUPLICATE_COMPONENT(...)
+#define ECS_MATCH_DUPLICATE_ARCHETYPE_COMPONENT(...)
+#define ECS_MATCH_DUPLICATE_PACKED_COMPONENT(...)
+#define ECS_MATCH_DUPLICATE_INDEXED_COMPONENT(...)
+#define ECS_MATCH_DUPLICATE_LOCAL_COMPONENT(...)
+
+#define ECS_MATCH_TAG_COMPONENT(...)
+#define ECS_MATCH_TAG_ARCHETYPE_COMPONENT(...)
+#define ECS_MATCH_TAG_PACKED_COMPONENT(...)
+#define ECS_MATCH_TAG_INDEXED_COMPONENT(...)
+#define ECS_MATCH_TAG_LOCAL_COMPONENT(...)
+
+/*!
+ * @define ECS_ENV
+ * @abstract Provide a configurable value that will be used for the dynamic dependency.
+ * @description The value may be a literal component or list of components, or it may be another dynamic dependency.
+ * @param name The name of the config variable.
+ */
+#define ECS_ENV(name)
+
 #endif
