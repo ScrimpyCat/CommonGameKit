@@ -725,6 +725,20 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
 static inline size_t ECSComponentBaseIndex(ECSComponentID ID) CC_CONSTANT_FUNCTION;
 
 /*!
+ * @brief Get the component size.
+ * @param ID The component ID to get the size for.
+ * @return Returns the size of the component.
+ */
+static inline size_t ECSComponentSize(ECSComponentID ID);
+
+/*!
+ * @brief Get the duplicate component size.
+ * @param ID The component ID to get the duplicate size for.
+ * @return Returns the duplicate size of the component.
+ */
+static inline size_t ECSDuplicateComponentSize(ECSComponentID ID);
+
+/*!
  * @brief Store some data in the shared memory zone.
  * @note This should only be called from the same thread that is also executing other ECS functions. And will automatically be deallocated by the ECS if the data
  *       is stored during a callback (such as an @b ECSComponentDestructor callback).
@@ -787,6 +801,50 @@ static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID I
             Index += ECS_ARCHETYPE_COMPONENT_MAX;
         case ECSComponentStorageTypeArchetype:
             return Index;
+    }
+    
+    CCAssertLog(0, "Unsupported component type");
+    
+    return SIZE_MAX;
+}
+
+static inline size_t ECSComponentSize(ECSComponentID ID)
+{
+    switch (ID & ECSComponentStorageTypeMask)
+    {
+        case ECSComponentStorageTypeArchetype:
+            return ECSArchetypeComponentSizes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypePacked:
+            return ECSPackedComponentSizes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeIndexed:
+            return ECSIndexedComponentSizes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeLocal:
+            return ECSLocalComponentSizes[ECSLocalComponentIndex(ID)];
+    }
+    
+    CCAssertLog(0, "Unsupported component type");
+    
+    return SIZE_MAX;
+}
+
+static inline size_t ECSDuplicateComponentSize(ECSComponentID ID)
+{
+    switch (ID & ECSComponentStorageTypeMask)
+    {
+        case ECSComponentStorageTypeArchetype:
+            return ECSDuplicateArchetypeComponentSizes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypePacked:
+            return ECSDuplicatePackedComponentSizes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeIndexed:
+            return ECSDuplicateIndexedComponentSizes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeLocal:
+            return ECSDuplicateLocalComponentSizes[ECSLocalComponentIndex(ID)];
     }
     
     CCAssertLog(0, "Unsupported component type");
