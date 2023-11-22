@@ -30,7 +30,7 @@
 
 typedef ECSMonitor ECSMonitorComponent;
 
-ECS_PACKED_DUPLICATE_COMPONENT(ECSMonitorComponent);
+ECS_PACKED_DUPLICATE_COMPONENT(ECSMonitorComponent, ECS_MONITOR_COMPONENT_ID);
 
 ECS_DESTRUCTOR(ECSMonitorComponentDestructor, ECSMonitorComponent);
 
