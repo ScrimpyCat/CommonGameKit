@@ -1,0 +1,13 @@
+#define ECSMonitorSystem_ECSMonitorComponent *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities,
+
+#define ECS_ITER_TYPE_ECSMonitorComponent ECSMonitorComponent ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_ECSMonitorComponent 1
+#define ECS_ITER_DECLARE_ECSMonitorComponent ECS_ITER_DECLARE_ARRAY_VAR(
+#define ECS_ITER_DECLARE_ELEMENT_ECSMonitorComponent ECSMonitorComponent ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_DECLARE_ELEMENT_INDEX_ECSMonitorComponent ECS_ITER_DECLARE_ASSIGN(ECS_ITER_PREPEND(ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX,
+#define ECS_ITER_NESTED_ECSMonitorComponent ECS_ITER_NESTED_ARRAY_ITERATOR ECS_ITER_IGNORE(
+#define ECS_ID_ECSMonitorComponent ECS_MONITOR_COMPONENT
+
+#define ECS_ITER_ASSERT_ECSMonitorSystem ECS_ITER_ASSERT_TYPE
+#define ECS_ITER_ASSERT_ECSMonitorSystem_ECSMonitorComponent
+
