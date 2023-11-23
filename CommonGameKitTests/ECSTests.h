@@ -131,7 +131,8 @@ ECS_SYSTEM_GROUP(OTHER_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0) * 2, FALSE,
 ECS_SYSTEM_GROUP(TEST_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0), FALSE,
     PRIORITY(0, (), (MISC_GROUP, 1)),
     PRIORITY(1, (), (OTHER_GROUP, 0)),
-    PRIORITY(2, (Sys16ReadCheckRunStateTag))
+    PRIORITY(2, (Sys16ReadCheckRunStateTag)),
+    PRIORITY(3, (ECSMonitorSystem))
 );
 
 static void TestDestructor(void *Data, ECSComponentID ID);

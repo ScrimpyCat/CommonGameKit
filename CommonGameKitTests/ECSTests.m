@@ -23,10 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ecs_tool setup -i CommonGameKitTests/ECSTests.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 CommonGameKitTests/ECSTestData.h
+//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_COMPONENT_ID_BASE=1' CommonGameKitTests/ECSTestData.h
 
 #import <XCTest/XCTest.h>
 #import "ECS.h"
+#define ECS_COMPONENT_ID_BASE 1
+#import "ECSComponentIDs.h"
+#import "ECSMonitorComponent.h"
+#import "ECSMonitorSystem.h"
 #import "ECSTestAccessors.h"
 #import "ECSTests.h"
 #import "ECSTestData.h"
@@ -594,6 +598,11 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &(LocalDuplicateB){ { 111, 1 } }, LOCAL_DUPLICATE_B);
     ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &(LocalDuplicateB){ { 222, 2 } }, LOCAL_DUPLICATE_B);
     
+    ECSMonitorComponent Monitor = ECSBinaryMonitorCreate(CC_STD_ALLOCATOR, COMP_A, 3, 4, sizeof(int));
+    ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &Monitor, ECS_MONITOR_COMPONENT);
+    Monitor = ECSBinaryMonitorCreate(CC_STD_ALLOCATOR, COMP_J, 3, 4, sizeof(int));
+    ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &Monitor, ECS_MONITOR_COMPONENT);
+    
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
     
     [self checkRun];
@@ -903,6 +912,13 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     DupA = CCArrayGetElementAtIndex(*DupAArray, 2);
     XCTAssertEqual(DupA->v[0], 1461, @"should have changed");
     
+    CompA CopyA = *(CompA*)ECSEntityGetComponent(&Context, EntitiesAFGHIJ[0], COMP_A);
+    ECSMonitorTransform(CCArrayGetElementAtIndex(*(CCArray*)ECSEntityGetComponent(&Context, EntitiesAFGHIJ[0], ECS_MONITOR_COMPONENT), 0), &CopyA, 1);
+    XCTAssertEqual(CopyA.v[0], 10, @"should revert change back to previous");
+    
+    CompJ CopyJ = *(CompJ*)ECSEntityGetComponent(&Context, EntitiesAFGHIJ[0], COMP_J);
+    ECSMonitorTransform(CCArrayGetElementAtIndex(*(CCArray*)ECSEntityGetComponent(&Context, EntitiesAFGHIJ[0], ECS_MONITOR_COMPONENT), 1), &CopyJ, 1);
+    XCTAssertEqual(CopyJ.v[0], 11, @"should revert change back to previous");
     
     for (size_t Loop = 0; Loop < 5; Loop++)
     {

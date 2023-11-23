@@ -90,11 +90,12 @@ _Static_assert(64 == ECS_LOCAL_COMPONENT_MAX, "Regenerate file with new ECS_LOCA
 #define COMP_E (ECSComponentStorageTypeArchetype | 4)
 #define ARCH_TAG (ECSComponentStorageTypeArchetype | ECSComponentStorageModifierTag | 5)
 #define COMP_F (ECSComponentStorageTypePacked | 0)
-#define CHECK_RUN_STATE_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 1)
+#define ECS_MONITOR_COMPONENT (ECSComponentStorageTypePacked | ECSComponentStorageModifierDuplicate | ECSComponentStorageModifierDestructor | (ECS_MONITOR_COMPONENT_ID))
 #define COMP_J (ECSComponentStorageTypePacked | 2)
-#define DESTROY_ME_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | ECSComponentStorageModifierDestructor | 3)
-#define DUPLICATE_A (ECSComponentStorageTypePacked | ECSComponentStorageModifierDuplicate | ECSComponentStorageModifierDestructor | 4)
-#define PACKED_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 5)
+#define CHECK_RUN_STATE_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 3)
+#define DESTROY_ME_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | ECSComponentStorageModifierDestructor | 4)
+#define DUPLICATE_A (ECSComponentStorageTypePacked | ECSComponentStorageModifierDuplicate | ECSComponentStorageModifierDestructor | 5)
+#define PACKED_TAG (ECSComponentStorageTypePacked | ECSComponentStorageModifierTag | 6)
 #define COMP_G (ECSComponentStorageTypePacked | 10)
 #define COMP_H (ECSComponentStorageTypeIndexed | 0)
 #define COMP_I (ECSComponentStorageTypeIndexed | 1)
@@ -113,8 +114,9 @@ const ECSComponentID ComponentIDs[ECS_COMPONENT_MAX] = {
     [ECS_COMPONENT_BASE_INDEX(COMP_E)] = COMP_E,
     [ECS_COMPONENT_BASE_INDEX(ARCH_TAG)] = ARCH_TAG,
     [ECS_COMPONENT_BASE_INDEX(COMP_F)] = COMP_F,
-    [ECS_COMPONENT_BASE_INDEX(CHECK_RUN_STATE_TAG)] = CHECK_RUN_STATE_TAG,
+    [ECS_COMPONENT_BASE_INDEX(ECS_MONITOR_COMPONENT)] = ECS_MONITOR_COMPONENT,
     [ECS_COMPONENT_BASE_INDEX(COMP_J)] = COMP_J,
+    [ECS_COMPONENT_BASE_INDEX(CHECK_RUN_STATE_TAG)] = CHECK_RUN_STATE_TAG,
     [ECS_COMPONENT_BASE_INDEX(DESTROY_ME_TAG)] = DESTROY_ME_TAG,
     [ECS_COMPONENT_BASE_INDEX(DUPLICATE_A)] = DUPLICATE_A,
     [ECS_COMPONENT_BASE_INDEX(PACKED_TAG)] = PACKED_TAG,
@@ -145,12 +147,12 @@ const size_t DuplicateArchetypeComponentSizes[ECS_ARCHETYPE_COMPONENT_MAX] = {
 };
 const size_t PackedComponentSizes[ECS_PACKED_COMPONENT_MAX] = {
     sizeof(CompF),
-    sizeof(CheckRunStateTag),
+    sizeof(CCArray),
     sizeof(CompJ),
+    sizeof(CheckRunStateTag),
     sizeof(DestroyMeTag),
     sizeof(CCArray),
     sizeof(PackedTag),
-    0,
     0,
     0,
     0,
@@ -158,11 +160,11 @@ const size_t PackedComponentSizes[ECS_PACKED_COMPONENT_MAX] = {
 };
 const size_t DuplicatePackedComponentSizes[ECS_PACKED_COMPONENT_MAX] = {
     0,
+    sizeof(ECSMonitorComponent),
     0,
     0,
     0,
     sizeof(DuplicateA),
-    0,
     0,
     0,
     0,
@@ -208,6 +210,7 @@ const ECSComponentDestructor DuplicateArchetypeComponentDestructors[ECS_ARCHETYP
 };
 const ECSComponentDestructor PackedComponentDestructors[ECS_PACKED_COMPONENT_MAX] = {
     NULL,
+    ECSDuplicateDestructor,
     NULL,
     NULL,
     MutationDestructor,
@@ -217,15 +220,14 @@ const ECSComponentDestructor PackedComponentDestructors[ECS_PACKED_COMPONENT_MAX
     NULL,
     NULL,
     NULL,
-    NULL,
 };
 const ECSComponentDestructor DuplicatePackedComponentDestructors[ECS_PACKED_COMPONENT_MAX] = {
     NULL,
+    ECSMonitorComponentDestructor,
     NULL,
     NULL,
     NULL,
     TestDestructor,
-    NULL,
     NULL,
     NULL,
     NULL,
@@ -467,6 +469,7 @@ const ECSComponentID ComponentIDList[] = {
     COMP_D, 
     DESTROY_ME_TAG, 
     DUPLICATE_A, 
+    ECS_MONITOR_COMPONENT, 
 };
 
 #define COMPONENT_ID_LIST_CompF_CompG_CompH (ComponentIDList + 0)
@@ -484,6 +487,7 @@ const ECSComponentID ComponentIDList[] = {
 #define COMPONENT_ID_LIST_CompD (ComponentIDList + 14)
 #define COMPONENT_ID_LIST_DestroyMeTag (ComponentIDList + 15)
 #define COMPONENT_ID_LIST_DuplicateA (ComponentIDList + 16)
+#define COMPONENT_ID_LIST_ECSMonitorComponent (ComponentIDList + 17)
 
 const size_t ComponentOffsetList[] = {
     offsetof(ECSContext, packed[(COMP_F & ~ECSComponentStorageMask)]), offsetof(ECSContext, packed[(COMP_G & ~ECSComponentStorageMask)]), offsetof(ECSContext, indexed[(COMP_H & ~ECSComponentStorageMask)]), offsetof(ECSContext, indexed[(COMP_I & ~ECSComponentStorageMask)]), 
@@ -491,6 +495,7 @@ const size_t ComponentOffsetList[] = {
     offsetof(ECSContext, packed[(COMP_J & ~ECSComponentStorageMask)]), 
     offsetof(ECSContext, packed[(DESTROY_ME_TAG & ~ECSComponentStorageMask)]), 
     offsetof(ECSContext, packed[(DUPLICATE_A & ~ECSComponentStorageMask)]), 
+    offsetof(ECSContext, packed[(ECS_MONITOR_COMPONENT & ~ECSComponentStorageMask)]), 
 };
 
 #define COMPONENT_OFFSET_LIST_CompF_CompG_CompH_CompI (ComponentOffsetList + 0)
@@ -499,6 +504,7 @@ const size_t ComponentOffsetList[] = {
 #define COMPONENT_OFFSET_LIST_CompJ (ComponentOffsetList + 5)
 #define COMPONENT_OFFSET_LIST_DestroyMeTag (ComponentOffsetList + 6)
 #define COMPONENT_OFFSET_LIST_DuplicateA (ComponentOffsetList + 7)
+#define COMPONENT_OFFSET_LIST_ECSMonitorComponent (ComponentOffsetList + 8)
 
 #define TEST_GROUP 2
 #define OTHER_GROUP 1
@@ -514,6 +520,7 @@ const ECSGroupDependency GroupDependencies[] = {
     { .group = MISC_GROUP, .priority = 1 },
     { .group = OTHER_GROUP, .priority = 0 },
     { .group = -1, .priority = -1 },
+    { .group = -1, .priority = -1 },
 };
 
 const ECSSystemRange SystemRange[] = {
@@ -526,6 +533,7 @@ const ECSSystemRange SystemRange[] = {
     { 0, 0 },
     { 0, 0 },
     { 0, 1 },
+    { 1, 1 },
 };
 
 const ECSSystemUpdate SystemUpdate[] = {
@@ -548,6 +556,7 @@ const ECSSystemUpdate SystemUpdate[] = {
     ECS_SYSTEM_UPDATE(Sys9ReadFGH_WriteAI),
 #define TEST_GROUP_SYSTEM_UPDATE (SystemUpdate + 15)
     ECS_SYSTEM_UPDATE(Sys16ReadCheckRunStateTag),
+    ECS_SYSTEM_UPDATE_PARALLEL_CHUNK(ECSMonitorSystem, offsetof(ECSContext, packed[(ECS_MONITOR_COMPONENT & ~ECSComponentStorageMask)].entities), ECS_MONITOR_SYSTEM_PARALLEL_CHUNK_SIZE),
 };
 
 const ECSSystemAccess SystemAccess[] = {
@@ -570,6 +579,7 @@ const ECSSystemAccess SystemAccess[] = {
     { .read = { .ids = COMPONENT_ID_LIST_CompF_CompG_CompH, .count = 3 }, .write = { .ids = COMPONENT_ID_LIST_CompA_CompI, .count = 2 }, .archetype = COMPONENT_SYSTEM_ACCESS_ARCHETYPE1(CompA), .component = { .offsets = COMPONENT_OFFSET_LIST_CompF_CompG_CompH_CompI } },
 #define TEST_GROUP_SYSTEM_ACCESS (SystemAccess + 15)
     { .read = { .ids = COMPONENT_ID_LIST_CheckRunStateTag, .count = 1 }, .write = { .ids = NULL, .count = 0 }, .component = { .offsets = COMPONENT_OFFSET_LIST_CheckRunStateTag } },
+    { .read = { .ids = NULL, .count = 0 }, .write = { .ids = COMPONENT_ID_LIST_ECSMonitorComponent, .count = 1 }, .component = { .offsets = COMPONENT_OFFSET_LIST_ECSMonitorComponent } },
 };
 
 const uint8_t SystemGraph[] = {
@@ -581,6 +591,7 @@ const uint8_t SystemGraph[] = {
 #define TEST_GROUP_SYSTEM_GRAPH (SystemGraph + 24)
     
     
+    0, 
     0, 
 };
 
@@ -617,7 +628,7 @@ const ECSGroup Groups[] = {
         .freq = ECS_TIME_FROM_SECONDS(1.0 / 60.0),
         .dynamic = FALSE,
         .priorities = {
-            .count = 3,
+            .count = 4,
             .deps = TEST_GROUP_DEPENDENCIES,
             .systems = {
                 .range = TEST_GROUP_SYSTEM_RANGE,

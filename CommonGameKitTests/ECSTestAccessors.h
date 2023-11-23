@@ -1,9 +1,10 @@
+#define ECSMonitorSystem_ECSMonitorComponent *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities,
 #define Sys10WriteJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities,
 #define Sys11ReadAWithArchTag_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
 #define Sys11ReadAWithArchTag_ArchTag ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 1)], ECS_ARCHETYPE_VAR->entities, const
 #define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_DuplicateA *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities,
-#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_LocalH NULL, NULL, const
 #define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_LocalDuplicateB NULL, NULL, const
+#define Sys12ReadLocalHLocalDuplicateB_WriteDuplicateA_LocalH NULL, NULL, const
 #define Sys13ReadDestroyMeTag_DestroyMeTag *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities, const
 #define Sys14ReadAJ_CompA ECS_ARCHETYPE_VAR->components[*(ECS_ARCHETYPE_COMPONENT_INDEXES_VAR + 0)], ECS_ARCHETYPE_VAR->entities, const
 #define Sys14ReadAJ_CompJ *((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->components, ((ECSPackedComponent*)((void*)ECS_CONTEXT_VAR + ECS_COMPONENT_OFFSETS_VAR[0]))->entities, const
@@ -60,16 +61,23 @@
 #define ECS_ITER_DECLARE_CompF CompF ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_CompF ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_CompF COMP_F
-#define ECS_ITER_TYPE_CheckRunStateTag CheckRunStateTag ECS_ITER_IGNORE(
-#define ECS_ITER_KIND_CheckRunStateTag 1
-#define ECS_ITER_DECLARE_CheckRunStateTag CheckRunStateTag ECS_ITER_DECLARE_ASSIGN(
-#define ECS_ITER_NESTED_CheckRunStateTag ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
-#define ECS_ID_CheckRunStateTag CHECK_RUN_STATE_TAG
+#define ECS_ITER_TYPE_ECSMonitorComponent ECSMonitorComponent ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_ECSMonitorComponent 1
+#define ECS_ITER_DECLARE_ECSMonitorComponent ECS_ITER_DECLARE_ARRAY_VAR(
+#define ECS_ITER_DECLARE_ELEMENT_ECSMonitorComponent ECSMonitorComponent ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_DECLARE_ELEMENT_INDEX_ECSMonitorComponent ECS_ITER_DECLARE_ASSIGN(ECS_ITER_PREPEND(ECS_ITER_DUPLICATE_ARRAY_INDEX_SUFFIX,
+#define ECS_ITER_NESTED_ECSMonitorComponent ECS_ITER_NESTED_ARRAY_ITERATOR ECS_ITER_IGNORE(
+#define ECS_ID_ECSMonitorComponent ECS_MONITOR_COMPONENT
 #define ECS_ITER_TYPE_CompJ CompJ ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_CompJ 1
 #define ECS_ITER_DECLARE_CompJ CompJ ECS_ITER_DECLARE_ASSIGN(
 #define ECS_ITER_NESTED_CompJ ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_CompJ COMP_J
+#define ECS_ITER_TYPE_CheckRunStateTag CheckRunStateTag ECS_ITER_IGNORE(
+#define ECS_ITER_KIND_CheckRunStateTag 1
+#define ECS_ITER_DECLARE_CheckRunStateTag CheckRunStateTag ECS_ITER_DECLARE_ASSIGN(
+#define ECS_ITER_NESTED_CheckRunStateTag ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
+#define ECS_ID_CheckRunStateTag CHECK_RUN_STATE_TAG
 #define ECS_ITER_TYPE_DestroyMeTag DestroyMeTag ECS_ITER_IGNORE(
 #define ECS_ITER_KIND_DestroyMeTag 1
 #define ECS_ITER_DECLARE_DestroyMeTag DestroyMeTag ECS_ITER_DECLARE_ASSIGN(
@@ -110,6 +118,8 @@
 #define ECS_ITER_NESTED_LocalH ECS_ITER_NESTED_NONE ECS_ITER_IGNORE(
 #define ECS_ID_LocalH LOCAL_H
 
+#define ECS_ITER_ASSERT_ECSMonitorSystem ECS_ITER_ASSERT_TYPE
+#define ECS_ITER_ASSERT_ECSMonitorSystem_ECSMonitorComponent
 #define ECS_ITER_ASSERT_Sys10WriteJ ECS_ITER_ASSERT_TYPE
 #define ECS_ITER_ASSERT_Sys10WriteJ_CompJ
 #define ECS_ITER_ASSERT_Sys11ReadAWithArchTag ECS_ITER_IGNORE
