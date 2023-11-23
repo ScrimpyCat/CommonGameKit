@@ -205,14 +205,20 @@ typedef uint64_t ECSContextAccessFlag;
 typedef uint32_t ECSContextAccessFlag;
 #endif
 
-static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemIndex, const ECSSystemRange *Range, const ECSSystemAccess *Access, const ECSSystemUpdate *Update, ECSContextAccessFlag *AccessFlags, uint16_t *Refs, uint8_t *Block, uint8_t BlockBit, ECSExecutionGroup *State, CCConcurrentPoolStage *Stage)
+typedef enum {
+    ECSSystemStatusDeferred,
+    ECSSystemStatusRunning,
+    ECSSystemStatusCompleted
+} ECSSystemStatus;
+
+static ECSSystemStatus ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemIndex, const ECSSystemRange *Range, const ECSSystemAccess *Access, const ECSSystemUpdate *Update, ECSContextAccessFlag *AccessFlags, uint16_t *Refs, uint8_t *Block, uint8_t BlockBit, ECSExecutionGroup *State, CCConcurrentPoolStage *Stage)
 {
     for (size_t Loop = 0, IdCount = Access[SystemIndex].read.count; Loop < IdCount; Loop++)
     {
         const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop]);
         const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
         
-        if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 1) return FALSE;
+        if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 1) return ECSSystemStatusDeferred;
     }
     
     for (size_t Loop = 0, IdCount = Access[SystemIndex].write.count; Loop < IdCount; Loop++)
@@ -220,7 +226,7 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
         const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop]);
         const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
         
-        if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 3) return FALSE;
+        if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 3) return ECSSystemStatusDeferred;
     }
     
     *Block |= 1 << BlockBit;
@@ -319,7 +325,7 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
             }
         }
         
-        if (!RefCount) return FALSE;
+        if (!RefCount) return ECSSystemStatusCompleted;
     }
     
     else
@@ -351,7 +357,7 @@ static _Bool ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemInd
         Refs[ComponentIndex] += RefCount;
     }
     
-    return TRUE;
+    return ECSSystemStatusRunning;
 }
 
 static inline void ECSReleaseAccessRefs(size_t Worker, uint16_t *Refs, ECSContextAccessFlag *AccessFlags)
@@ -449,39 +455,48 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
                     
                     if (Block != (0xff >> (8 - BitCount)))
                     {
-                        Completed = FALSE;
-                        
                         for (size_t Loop3 = 0; Loop3 < BitCount; Loop3++)
                         {
                             if (!((Block >> Loop3) & 1))
                             {
                                 const size_t SystemIndex = Loop3 + (Loop2 * 8);
                                 
-                                if (ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, &State[Index].state[Loop2], Loop3, &State[Index], &Stage))
+                                switch (ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, &State[Index].state[Loop2], Loop3, &State[Index], &Stage))
                                 {
-                                    for (size_t Loop4 = 0; Loop4 < BlockCount; Loop4++)
-                                    {
-                                        const size_t ColIndex = (SystemIndex * BlockCount) + Loop4;
-                                        const uint8_t GraphBlock = Graph[ColIndex];
-                                        uint8_t *Block = &State[Index].state[Loop4];
-                                        const size_t BitCount = (Loop4 + 1 != BlockCount ? 8 : (8 - ((BlockCount * 8) - SystemCount)));
-                                        const uint8_t RunBlock = ~*Block & GraphBlock;
+                                    case ECSSystemStatusRunning:
+                                        Completed = FALSE;
                                         
-                                        if (RunBlock)
+                                        for (size_t Loop4 = 0; Loop4 < BlockCount; Loop4++)
                                         {
-                                            for (size_t Loop5 = 0; Loop5 < BitCount; Loop5++)
+                                            const size_t ColIndex = (SystemIndex * BlockCount) + Loop4;
+                                            const uint8_t GraphBlock = Graph[ColIndex];
+                                            uint8_t *Block = &State[Index].state[Loop4];
+                                            const size_t BitCount = (Loop4 + 1 != BlockCount ? 8 : (8 - ((BlockCount * 8) - SystemCount)));
+                                            const uint8_t RunBlock = ~*Block & GraphBlock;
+                                            
+                                            if (RunBlock)
                                             {
-                                                if ((RunBlock >> Loop5) & 1)
+                                                for (size_t Loop5 = 0; Loop5 < BitCount; Loop5++)
                                                 {
-                                                    const size_t SystemIndex = Loop5 + (Loop4 * 8);
-                                                    
-                                                    ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, Block, Loop5, &State[Index], &Stage);
+                                                    if ((RunBlock >> Loop5) & 1)
+                                                    {
+                                                        const size_t SystemIndex = Loop5 + (Loop4 * 8);
+                                                        
+                                                        ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, Block, Loop5, &State[Index], &Stage);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    
-                                    goto FinishedRow;
+                                        
+                                        goto FinishedRow;
+                                        
+                                    case ECSSystemStatusCompleted:
+                                        Completed = TRUE;
+                                        break;
+                                        
+                                    case ECSSystemStatusDeferred:
+                                        Completed = FALSE;
+                                        break;
                                 }
                             }
                         }
