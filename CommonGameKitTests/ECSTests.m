@@ -27,7 +27,7 @@
 
 #import <XCTest/XCTest.h>
 #import "ECS.h"
-#define ECS_COMPONENT_ID_BASE 1
+#define ECS_PACKED_COMPONENT_ID_BASE 1
 #import "ECSComponentIDs.h"
 #import "ECSMonitorComponent.h"
 #import "ECSMonitorSystem.h"
