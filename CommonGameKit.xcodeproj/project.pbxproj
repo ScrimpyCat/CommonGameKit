@@ -28,6 +28,10 @@
 		F342B660223918D600B44319 /* MTLShader.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B65E223918D600B44319 /* MTLShader.m */; };
 		F342B6A02239711B00B44319 /* MTLFramebuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F342B69E2239711B00B44319 /* MTLFramebuffer.h */; };
 		F342B6A12239711B00B44319 /* MTLFramebuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F342B69F2239711B00B44319 /* MTLFramebuffer.m */; };
+		F34551672AFBC29200316D15 /* ECSMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = F34551652AFBC29200316D15 /* ECSMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F34551682AFBC29200316D15 /* ECSMonitor.c in Sources */ = {isa = PBXBuildFile; fileRef = F34551662AFBC29200316D15 /* ECSMonitor.c */; };
+		F34551972AFCD68700316D15 /* ECSBinaryMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = F34551952AFCD68700316D15 /* ECSBinaryMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F34551982AFCD68700316D15 /* ECSBinaryMonitor.c in Sources */ = {isa = PBXBuildFile; fileRef = F34551962AFCD68700316D15 /* ECSBinaryMonitor.c */; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
 		F34EB81D249BB4CE00B3D984 /* GFXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */; };
 		F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */; };
@@ -35,6 +39,12 @@
 		F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */; };
 		F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F3569A9329F70CA50075C6A1 /* ECSContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
+		F36081F02B0B075A002B2A89 /* ECSMonitorSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081EE2B0B075A002B2A89 /* ECSMonitorSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F36081F12B0B075A002B2A89 /* ECSMonitorSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F36081EF2B0B075A002B2A89 /* ECSMonitorSystem.c */; };
+		F36081F72B1069B8002B2A89 /* ECSNameComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081F52B1069B8002B2A89 /* ECSNameComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F36081F82B1069B8002B2A89 /* ECSNameComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F36081F62B1069B8002B2A89 /* ECSNameComponent.c */; };
+		F36081FF2B108352002B2A89 /* ECSRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081FD2B108352002B2A89 /* ECSRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F36082002B108352002B2A89 /* ECSRegistry.c in Sources */ = {isa = PBXBuildFile; fileRef = F36081FE2B108352002B2A89 /* ECSRegistry.c */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -276,6 +286,8 @@
 		F3BCE65F1E728C5300EB3FBC /* GLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */; };
 		F3BEC1BF23C1131500014B5B /* TypeCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BEC1C023C1131500014B5B /* TypeCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */; };
+		F3BFD7592AE9416500118816 /* ECSMonitorComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BFD7572AE9416500118816 /* ECSMonitorComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3BFD75A2AE9416500118816 /* ECSMonitorComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BFD7582AE9416500118816 /* ECSMonitorComponent.c */; };
 		F3D4A48C299B43C800B38AF8 /* ECSConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D4A46C299B43B600B38AF8 /* ECSConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -555,6 +567,10 @@
 		F342B65E223918D600B44319 /* MTLShader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLShader.m; sourceTree = "<group>"; };
 		F342B69E2239711B00B44319 /* MTLFramebuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLFramebuffer.h; sourceTree = "<group>"; };
 		F342B69F2239711B00B44319 /* MTLFramebuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLFramebuffer.m; sourceTree = "<group>"; };
+		F34551652AFBC29200316D15 /* ECSMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSMonitor.h; sourceTree = "<group>"; };
+		F34551662AFBC29200316D15 /* ECSMonitor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSMonitor.c; sourceTree = "<group>"; };
+		F34551952AFCD68700316D15 /* ECSBinaryMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSBinaryMonitor.h; sourceTree = "<group>"; };
+		F34551962AFCD68700316D15 /* ECSBinaryMonitor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSBinaryMonitor.c; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
 		F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GFXTestCase.m; sourceTree = "<group>"; };
 		F34EB81E249BB4F900B3D984 /* GFXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXTestCase.h; sourceTree = "<group>"; };
@@ -562,6 +578,14 @@
 		F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataFileTests.m; sourceTree = "<group>"; };
 		F3569A9329F70CA50075C6A1 /* ECSContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSContext.h; sourceTree = "<group>"; };
 		F3569A9D29FAFD210075C6A1 /* ECSTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTests.h; sourceTree = "<group>"; };
+		F36081EE2B0B075A002B2A89 /* ECSMonitorSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSMonitorSystem.h; sourceTree = "<group>"; };
+		F36081EF2B0B075A002B2A89 /* ECSMonitorSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSMonitorSystem.c; sourceTree = "<group>"; };
+		F36081F22B0CF3F5002B2A89 /* ECSSystemAccessors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSSystemAccessors.h; sourceTree = "<group>"; };
+		F36081F32B0E66F8002B2A89 /* ECSComponentIDs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSComponentIDs.h; sourceTree = "<group>"; };
+		F36081F52B1069B8002B2A89 /* ECSNameComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSNameComponent.h; sourceTree = "<group>"; };
+		F36081F62B1069B8002B2A89 /* ECSNameComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSNameComponent.c; sourceTree = "<group>"; };
+		F36081FD2B108352002B2A89 /* ECSRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSRegistry.h; sourceTree = "<group>"; };
+		F36081FE2B108352002B2A89 /* ECSRegistry.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSRegistry.c; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
@@ -809,6 +833,8 @@
 		F3BCE65E1E728C5300EB3FBC /* GLGFXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLGFXTests.m; sourceTree = "<group>"; };
 		F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeCallbacks.h; sourceTree = "<group>"; };
 		F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TypeCallbacks.c; sourceTree = "<group>"; };
+		F3BFD7572AE9416500118816 /* ECSMonitorComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSMonitorComponent.h; sourceTree = "<group>"; };
+		F3BFD7582AE9416500118816 /* ECSMonitorComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSMonitorComponent.c; sourceTree = "<group>"; };
 		F3D4A46C299B43B600B38AF8 /* ECSConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSConfig.h; sourceTree = "<group>"; };
 		F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelationSystemTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
@@ -874,6 +900,13 @@
 				F38A33EF29E2957300661500 /* ECSComponent.h */,
 				F3A304A22994432B00BABB22 /* ECSEntity.h */,
 				F3569A9329F70CA50075C6A1 /* ECSContext.h */,
+				F34551662AFBC29200316D15 /* ECSMonitor.c */,
+				F34551652AFBC29200316D15 /* ECSMonitor.h */,
+				F36081FE2B108352002B2A89 /* ECSRegistry.c */,
+				F36081FD2B108352002B2A89 /* ECSRegistry.h */,
+				F34551942AFCD5D000316D15 /* Monitors */,
+				F3BFD72B2AE8414100118816 /* Components */,
+				F36081ED2B0B06DC002B2A89 /* Systems */,
 			);
 			name = ECS;
 			path = ecs;
@@ -907,6 +940,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F34551942AFCD5D000316D15 /* Monitors */ = {
+			isa = PBXGroup;
+			children = (
+				F34551962AFCD68700316D15 /* ECSBinaryMonitor.c */,
+				F34551952AFCD68700316D15 /* ECSBinaryMonitor.h */,
+			);
+			name = Monitors;
+			path = monitors;
+			sourceTree = "<group>";
+		};
 		F34EB7FB249BB48D00B3D984 /* GFX */ = {
 			isa = PBXGroup;
 			children = (
@@ -924,6 +967,17 @@
 				F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */,
 			);
 			name = Metal;
+			sourceTree = "<group>";
+		};
+		F36081ED2B0B06DC002B2A89 /* Systems */ = {
+			isa = PBXGroup;
+			children = (
+				F36081F22B0CF3F5002B2A89 /* ECSSystemAccessors.h */,
+				F36081EF2B0B075A002B2A89 /* ECSMonitorSystem.c */,
+				F36081EE2B0B075A002B2A89 /* ECSMonitorSystem.h */,
+			);
+			name = Systems;
+			path = systems;
 			sourceTree = "<group>";
 		};
 		F38828321E9B293400E6D7A3 /* Products */ = {
@@ -1628,6 +1682,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F3BFD72B2AE8414100118816 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F36081F62B1069B8002B2A89 /* ECSNameComponent.c */,
+				F36081F52B1069B8002B2A89 /* ECSNameComponent.h */,
+				F3BFD7582AE9416500118816 /* ECSMonitorComponent.c */,
+				F3BFD7572AE9416500118816 /* ECSMonitorComponent.h */,
+				F36081F32B0E66F8002B2A89 /* ECSComponentIDs.h */,
+			);
+			name = Components;
+			path = components;
+			sourceTree = "<group>";
+		};
 		F3DB295D23C4B4DE00D0D68E /* Relation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1702,8 +1769,10 @@
 				F3AF33F11DCCD4EC00CAD472 /* GLVersionMacro.h in Headers */,
 				F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */,
 				F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */,
+				F34551972AFCD68700316D15 /* ECSBinaryMonitor.h in Headers */,
 				F3897BE61DCF2252008D6C1D /* GLGFX_Private.h in Headers */,
 				F3AF34A71DCCD5AF00CAD472 /* StringExpressions.h in Headers */,
+				F34551672AFBC29200316D15 /* ECSMonitor.h in Headers */,
 				F3AF33E51DCCD4EC00CAD472 /* GLGFX.h in Headers */,
 				F3FA8819223388740087A318 /* MTLGFX_Private.h in Headers */,
 				F3AF348C1DCCD5AF00CAD472 /* DebugExpressions.h in Headers */,
@@ -1715,9 +1784,11 @@
 				F3AF33CD1DCCD4EC00CAD472 /* GFXDraw.h in Headers */,
 				F3A9F0FF228444CD00F52287 /* GLCommandBuffer.h in Headers */,
 				F3AF33AE1DCCD4EC00CAD472 /* InputSystem.h in Headers */,
+				F3BFD7592AE9416500118816 /* ECSMonitorComponent.h in Headers */,
 				F3AF349B1DCCD5AF00CAD472 /* MacroExpressions.h in Headers */,
 				F3AF348F1DCCD5AF00CAD472 /* EqualityExpressions.h in Headers */,
 				F3AF34831DCCD5AF00CAD472 /* AssetExpressions.h in Headers */,
+				F36081F72B1069B8002B2A89 /* ECSNameComponent.h in Headers */,
 				F3E2742C20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.h in Headers */,
 				F3AF33C41DCCD4EC00CAD472 /* PixelDataStatic.h in Headers */,
 				F3AF34381DCCD4EC00CAD472 /* AssetManager.h in Headers */,
@@ -1729,6 +1800,7 @@
 				F3AF33A81DCCD4EC00CAD472 /* Controller.h in Headers */,
 				F3AF34D31DCCFB7C00CAD472 /* Defined.h in Headers */,
 				F3AF337E1DCCD4EC00CAD472 /* AnimationSystem.h in Headers */,
+				F36081FF2B108352002B2A89 /* ECSRegistry.h in Headers */,
 				F3AF33C21DCCD4EC00CAD472 /* PixelDataGenerator.h in Headers */,
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
 				F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */,
@@ -1834,6 +1906,7 @@
 				F3AF34861DCCD5AF00CAD472 /* ColourExpressions.h in Headers */,
 				F3AF343E1DCCD4EC00CAD472 /* TextAttribute.h in Headers */,
 				F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */,
+				F36081F02B0B075A002B2A89 /* ECSMonitorSystem.h in Headers */,
 				F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */,
 				F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */,
 				F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */,
@@ -2141,6 +2214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F36082002B108352002B2A89 /* ECSRegistry.c in Sources */,
 				F3AF34881DCCD5AF00CAD472 /* ControlFlowExpressions.c in Sources */,
 				F3AF34371DCCD4EC00CAD472 /* AssetManager.c in Sources */,
 				F3AF34821DCCD5AF00CAD472 /* AssetExpressions.c in Sources */,
@@ -2156,6 +2230,7 @@
 				F3AF33EC1DCCD4EC00CAD472 /* GLState.c in Sources */,
 				F3AF33861DCCD4EC00CAD472 /* EntityManager.c in Sources */,
 				F3AF34DA1DCD014700CAD472 /* Window.c in Sources */,
+				F36081F12B0B075A002B2A89 /* ECSMonitorSystem.c in Sources */,
 				F3AF33961DCCD4EC00CAD472 /* InputMapControllerButtonComponent.c in Sources */,
 				F3AF343B1DCCD4EC00CAD472 /* Text.c in Sources */,
 				F3AF33C71DCCD4EC00CAD472 /* GFXBlit.c in Sources */,
@@ -2174,6 +2249,7 @@
 				F3AF34851DCCD5AF00CAD472 /* ColourExpressions.c in Sources */,
 				F3AF33B31DCCD4EC00CAD472 /* RenderSystem.c in Sources */,
 				F3AF33941DCCD4EC00CAD472 /* InputMapControllerAxesComponent.c in Sources */,
+				F34551982AFCD68700316D15 /* ECSBinaryMonitor.c in Sources */,
 				F3AF337B1DCCD4EC00CAD472 /* AnimationKeyframeComponent.c in Sources */,
 				F3AF33A91DCCD4EC00CAD472 /* Keyboard.c in Sources */,
 				F3AF33E41DCCD4EC00CAD472 /* GLGFX.c in Sources */,
@@ -2196,8 +2272,10 @@
 				F3AF33D51DCCD4EC00CAD472 /* GFXShaderLibrary.c in Sources */,
 				F3AF33BD1DCCD4EC00CAD472 /* PixelData.c in Sources */,
 				F3AF348E1DCCD5AF00CAD472 /* EqualityExpressions.c in Sources */,
+				F3BFD75A2AE9416500118816 /* ECSMonitorComponent.c in Sources */,
 				F3AF33DF1DCCD4EC00CAD472 /* GLDraw.c in Sources */,
 				F3A9F10422844CFE00F52287 /* MTLCommandBuffer.m in Sources */,
+				F36081F82B1069B8002B2A89 /* ECSNameComponent.c in Sources */,
 				F3AF337F1DCCD4EC00CAD472 /* Component.c in Sources */,
 				F3AF34A31DCCD5AF00CAD472 /* StateExpressions.c in Sources */,
 				F3AF343D1DCCD4EC00CAD472 /* TextAttribute.c in Sources */,
@@ -2224,6 +2302,7 @@
 				F3AF33D91DCCD4EC00CAD472 /* GLBlit.c in Sources */,
 				F3E361981EF5758000FCE1A5 /* MessageExpressions.c in Sources */,
 				F332EAE81EA0FC4900BCDAC7 /* BitwiseExpressions.c in Sources */,
+				F34551682AFBC29200316D15 /* ECSMonitor.c in Sources */,
 				F3AF33901DCCD4EC00CAD472 /* GUIManager.c in Sources */,
 				F32C1C071F6A071600C68B43 /* RelationSystem.c in Sources */,
 				F3AF33DB1DCCD4EC00CAD472 /* GLBuffer.c in Sources */,
