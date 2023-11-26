@@ -30,6 +30,7 @@
 #include <CommonGameKit/ECSConfig.h>
 #include <CommonGameKit/ECSArchetype.h>
 #include <CommonGameKit/ECSComponent.h>
+#include <CommonGameKit/ECSRegistry.h>
 
 
 #if ECS_ARCHETYPE_COMPONENT_MAX < UINT8_MAX
@@ -85,7 +86,8 @@ typedef struct {
     CCArray(size_t) available;
 } ECSEntityManager;
 
-typedef struct {
+typedef struct ECSContext {
+    ECSRegistry registry;
     struct ECSMutableState *mutations;
     ECSEntityManager manager;
     

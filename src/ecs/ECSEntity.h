@@ -42,6 +42,8 @@ typedef size_t ECSProxyEntity;
 
 #define ECS_RELATIVE_ENTITY(x) ((x) | ECS_RELATIVE_ENTITY_FLAG)
 
+#define ECS_ENTITY_NULL ((ECSEntity)-1)
+
 /*!
  * @brief Resolve a proxy entity.
  * @param ProxyEntity The proxy entity to be resolved.

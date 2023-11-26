@@ -453,6 +453,10 @@ static void MutationCallback(ECSContext *Context, void *Data, ECSEntity *NewEnti
 
 @implementation ECSTests
 
+static ECSContext Context;
+
+ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 1048576);
+
 +(void) setUp
 {
     ECSComponentIDs = ComponentIDs;
@@ -488,11 +492,12 @@ static void MutationCallback(ECSContext *Context, void *Data, ECSEntity *NewEnti
     ECSWorkerCreate();
     ECSWorkerCreate();
     ECSWorkerCreate();
+    
+    Context.mutations = &MutableState;
+    
+    Context.manager.map = CCArrayCreate(CC_ALIGNED_ALLOCATOR(ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), CC_ALIGN(sizeof(ECSComponentRefs) + LOCAL_STORAGE_SIZE, ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), 16);
+    Context.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
 }
-
-static ECSContext Context;
-
-ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 1048576);
 
 -(void) checkRun
 {
@@ -503,11 +508,6 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
 
 -(void) testExample
 {
-    Context.mutations = &MutableState;
-    
-    Context.manager.map = CCArrayCreate(CC_ALIGNED_ALLOCATOR(ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), CC_ALIGN(sizeof(ECSComponentRefs) + LOCAL_STORAGE_SIZE, ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), 16);
-    Context.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
-    
     const size_t GroupCount = sizeof(Groups) / sizeof(*Groups);
     ECSExecutionGroup State[GroupCount];
     uint8_t ExecState[GroupCount][10];
@@ -2537,6 +2537,172 @@ if (OldDupB) CCArrayDestroy(OldDupB); \
     TEST_LOCAL_DUPLICATE_B_TRANSFORM(SIZE_MAX, TRUE, ((LocalDuplicateB[1]){ { 1215, 340 } }), 1);
     
     ECSMonitorDestroy(&Monitor);
+}
+
+-(void) testRegistry
+{
+    ECSRegistryInit(&Context, CC_BIG_INT_FAST_0);
+    
+    XCTAssertEqual(ECSRegistryGetID(&Context, 0), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 1), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 2), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 3), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 4), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 5), NULL, @"Should not be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    
+    
+    ECSRegistryDeregister(&Context, 0);
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 1), CC_BIG_INT_FAST_0), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 0), CC_BIG_INT_FAST_2), @"Should be registered");
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 0), CC_BIG_INT_FAST_2), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 1), CC_BIG_INT_FAST_0), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 2), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 3), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 5), NULL, @"Should not be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), 1, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 4, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), 0, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    
+    
+    ECSRegistryDeregister(&Context, 0);
+    
+    XCTAssertEqual(ECSRegistryGetID(&Context, 0), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 1), CC_BIG_INT_FAST_0), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 2), NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 3), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 5), NULL, @"Should not be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), 1, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 4, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 3), CC_BIG_INT_FAST_3), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 0), CC_BIG_INT_FAST_4), @"Should be registered");
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 0), CC_BIG_INT_FAST_4), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 1), CC_BIG_INT_FAST_0), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 2), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 3), CC_BIG_INT_FAST_3), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 5), NULL, @"Should not be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), 1, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 4, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), 3, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), 0, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    
+    
+    ECSRegistryReregister(&Context, 0, CC_BIG_INT_FAST_2, FALSE);
+    ECSRegistryReregister(&Context, 5, CC_BIG_INT_FAST_8, FALSE);
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 2), CC_BIG_INT_FAST_9), @"Should be registered");
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 0), CC_BIG_INT_FAST_2), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 1), CC_BIG_INT_FAST_0), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 2), CC_BIG_INT_FAST_9), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 3), CC_BIG_INT_FAST_3), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 5), CC_BIG_INT_FAST_8), @"Should be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), 1, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 4, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), 0, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), 3, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_8), 5, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_9), 2, @"Should be registered");
+    
+    
+    ECSRegistryReregister(&Context, 0, CC_BIG_INT_FAST_0, TRUE);
+        
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 0), CC_BIG_INT_FAST_0), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 1), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 2), CC_BIG_INT_FAST_9), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 3), CC_BIG_INT_FAST_3), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 5), CC_BIG_INT_FAST_8), @"Should be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), 0, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 4, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), 3, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_8), 5, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_9), 2, @"Should be registered");
+
+    
+    ECSRegistryReregister(&Context, 0, CC_BIG_INT_FAST_NEGATIVE_3, FALSE);
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 0), CC_BIG_INT_FAST_NEGATIVE_3), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 1), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 2), CC_BIG_INT_FAST_9), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 3), CC_BIG_INT_FAST_3), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 4), CC_BIG_INT_FAST_1), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 5), CC_BIG_INT_FAST_8), @"Should be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_NEGATIVE_3), 0, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 4, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), 3, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_8), 5, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_9), 2, @"Should be registered");
+    
+    
+    ECSRegistryInit(&Context, CC_BIG_INT_FAST_14);
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 10), CC_BIG_INT_FAST_14), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryRegister(&Context, 11), CC_BIG_INT_FAST_15), @"Should be registered");
+    
+    ECSRegistryReregister(&Context, 20, CC_BIG_INT_FAST_1, TRUE);
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 0), CC_BIG_INT_FAST_NEGATIVE_3), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 1), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 2), CC_BIG_INT_FAST_9), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 3), CC_BIG_INT_FAST_3), @"Should be registered");
+    XCTAssertEqual(ECSRegistryGetID(&Context, 4), NULL, @"Should not be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 5), CC_BIG_INT_FAST_8), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 10), CC_BIG_INT_FAST_14), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 11), CC_BIG_INT_FAST_15), @"Should be registered");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&Context, 20), CC_BIG_INT_FAST_1), @"Should be registered");
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_NEGATIVE_3), 0, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), 20, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_3), 3, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_4), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_5), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_8), 5, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_9), 2, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_14), 10, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_15), 11, @"Should be registered");
 }
 
 @end

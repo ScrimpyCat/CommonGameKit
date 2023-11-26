@@ -6,6 +6,7 @@ CC_CONTAINER_DECLARE(CCArray, CCFontGlyph); \
 CC_CONTAINER_DECLARE(CCArray, CCPixelDataCompositeReference); \
 CC_CONTAINER_DECLARE(CCArray, ECSComponentRefs); \
 CC_CONTAINER_DECLARE(CCArray, ECSEntity); \
+CC_CONTAINER_DECLARE(CCArray, ECSRegistryID); \
 CC_CONTAINER_DECLARE(CCArray, GLint); \
 CC_CONTAINER_DECLARE(CCArray, size_t); \
 CC_CONTAINER_DECLARE(CCArray, uint32_t); \
@@ -49,7 +50,8 @@ CC_CONTAINER_DECLARE(CCDictionary, CCString, FSVirtualNode); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderAttributeInfo); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderLibrarySource); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderUniformInfo); \
-CC_CONTAINER_DECLARE(CCDictionary, CCString, size_t);
+CC_CONTAINER_DECLARE(CCDictionary, CCString, size_t); \
+CC_CONTAINER_DECLARE(CCDictionary, ECSRegistryID, ECSEntity);
 
 #define CC_CONTAINER_DECLARE_PRESET_CCHashMap()
 
