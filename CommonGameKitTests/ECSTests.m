@@ -500,6 +500,27 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     Context.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
 }
 
+-(void) setUp
+{
+    [super setUp];
+    
+    Context.registry.id = NULL;
+    
+    if (Context.registry.registeredEntities)
+    {
+        CCDictionaryDestroy(Context.registry.registeredEntities);
+        Context.registry.registeredEntities = NULL;
+    }
+    
+    if (Context.registry.uniqueEntityIDs)
+    {
+        CCArrayDestroy(Context.registry.uniqueEntityIDs);
+        Context.registry.uniqueEntityIDs = NULL;
+    }
+    
+    ECSRegistryInit(&Context, CC_BIG_INT_FAST_0);
+}
+
 -(void) checkRun
 {
     XCTAssertFalse(RunCheckError, @"should not execute systems with conflicting read/write access at the same time");
@@ -2542,8 +2563,6 @@ if (OldDupB) CCArrayDestroy(OldDupB); \
 
 -(void) testRegistry
 {
-    ECSRegistryInit(&Context, CC_BIG_INT_FAST_0);
-    
     XCTAssertEqual(ECSRegistryGetID(&Context, 0), NULL, @"Should not be registered");
     XCTAssertEqual(ECSRegistryGetID(&Context, 1), NULL, @"Should not be registered");
     XCTAssertEqual(ECSRegistryGetID(&Context, 2), NULL, @"Should not be registered");

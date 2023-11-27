@@ -651,6 +651,8 @@ void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count)
         }
         
         if (ComponentCount) ECSEntityRemoveComponents(Context, Entities[Loop], IDs, ComponentCount);
+        
+        ECSRegistryDeregister(Context, Entities[Loop]);
     }
     
     CCArrayAppendElements(Context->manager.available, Entities, Count);
