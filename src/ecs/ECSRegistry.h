@@ -33,7 +33,7 @@ typedef CCBigIntFast ECSRegistryID;
 
 typedef struct ECSRegistry {
     ECSRegistryID id;
-    CCDictionary(ECSRegistryID, ECSEntity) registeredEntites;
+    CCDictionary(ECSRegistryID, ECSEntity) registeredEntities;
     CCArray(ECSRegistryID) uniqueEntityIDs;
 } ECSRegistry;
 

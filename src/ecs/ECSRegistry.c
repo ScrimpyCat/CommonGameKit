@@ -34,7 +34,7 @@ void ECSRegistryInit(ECSContext *Context, ECSRegistryID ID)
     if (!Context->registry.id) Context->registry.id = CCBigIntFastCopy(ID);
     else CCBigIntFastSet(&Context->registry.id, ID);
     
-    if (!Context->registry.registeredEntites) Context->registry.registeredEntites = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintHeavyInserting | CCDictionaryHintHeavyDeleting , sizeof(ECSRegistryID), sizeof(ECSEntity), &(CCDictionaryCallbacks){
+    if (!Context->registry.registeredEntities) Context->registry.registeredEntities = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintHeavyInserting | CCDictionaryHintHeavyDeleting , sizeof(ECSRegistryID), sizeof(ECSEntity), &(CCDictionaryCallbacks){
         .keyDestructor = CCBigIntFastDestructorForDictionary,
         .getHash = CCBigIntFastLowHasherForDictionary,
         .compareKeys = CCBigIntFastComparatorForDictionary
@@ -70,7 +70,7 @@ ECSRegistryID ECSRegistryRegister(ECSContext *Context, ECSEntity Entity)
     
     CCBigIntFastAdd(&Context->registry.id, 1);
     
-    CCDictionarySetValue(Context->registry.registeredEntites, &NewID, &Entity);
+    CCDictionarySetValue(Context->registry.registeredEntities, &NewID, &Entity);
     CCArrayReplaceElementAtIndex(Context->registry.uniqueEntityIDs, Entity, &NewID);
     
     return NewID;
@@ -88,7 +88,7 @@ void ECSRegistryDeregister(ECSContext *Context, ECSEntity Entity)
         
         if (ID)
         {
-            CCDictionaryRemoveValue(Context->registry.registeredEntites, &ID);
+            CCDictionaryRemoveValue(Context->registry.registeredEntities, &ID);
             CCArrayReplaceElementAtIndex(Context->registry.uniqueEntityIDs, Entity, &(ECSRegistryID){ NULL });
         }
     }
@@ -104,11 +104,11 @@ void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID 
         CCBigIntFastAdd(&Context->registry.id, 1);
     }
     
-    CCDictionaryEntry Entry = CCDictionaryEntryForKey(Context->registry.registeredEntites, &ID);
+    CCDictionaryEntry Entry = CCDictionaryEntryForKey(Context->registry.registeredEntities, &ID);
     
-    if (CCDictionaryEntryIsInitialized(Context->registry.registeredEntites, Entry))
+    if (CCDictionaryEntryIsInitialized(Context->registry.registeredEntities, Entry))
     {
-        ECSEntity RegisteredEntity = *(ECSEntity*)CCDictionaryGetEntry(Context->registry.registeredEntites, Entry);
+        ECSEntity RegisteredEntity = *(ECSEntity*)CCDictionaryGetEntry(Context->registry.registeredEntities, Entry);
         
         if (RegisteredEntity == Entity) return;
         
@@ -125,7 +125,7 @@ void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID 
         
         if (CurrentID)
         {
-            CCDictionaryRemoveValue(Context->registry.registeredEntites, &CurrentID);
+            CCDictionaryRemoveValue(Context->registry.registeredEntities, &CurrentID);
         }
     }
     
@@ -138,7 +138,7 @@ void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID 
         memset(CCArrayGetData(Context->registry.uniqueEntityIDs) + (Count * sizeof(ECSRegistryID)), 0, NewElementCount * sizeof(ECSRegistryID));
     }
     
-    CCDictionarySetEntry(Context->registry.registeredEntites, Entry, &Entity);
+    CCDictionarySetEntry(Context->registry.registeredEntities, Entry, &Entity);
     CCArrayReplaceElementAtIndex(Context->registry.uniqueEntityIDs, Entity, &ID);
 }
 
@@ -146,7 +146,7 @@ ECSEntity ECSRegistryLookup(ECSContext *Context, ECSRegistryID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     
-    ECSEntity *Entity = CCDictionaryGetValue(Context->registry.registeredEntites, &ID);
+    ECSEntity *Entity = CCDictionaryGetValue(Context->registry.registeredEntities, &ID);
     
     return Entity ? *Entity : ECS_ENTITY_NULL;
 }
