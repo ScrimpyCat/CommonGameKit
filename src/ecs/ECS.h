@@ -26,7 +26,7 @@
 /*!
  * @header ECS
  * @abstract The ECS (Entity Component System)
- * @discussion This overview for the ECS is split into a number of concepts. These are Setup, Contexts, Groups, Systems, Components, Entities, Mutations, Concurrency,
+ * @discussion This overview for the ECS is split into a number of concepts. These are Setup, Contexts, Groups, Systems, Components, Entities, Registry, Mutations, Concurrency,
  *             ecs\_tool, Configuration.
  *
  *             ## Setup
@@ -62,6 +62,7 @@
  *
  *                  Mutable State Sizes
  *                  - @b ECSMutableStateEntitiesMax
+ *                  - @b ECSMutableStateReplaceRegistryMax
  *                  - @b ECSMutableStateAddComponentMax
  *                  - @b ECSMutableStateRemoveComponentMax
  *                  - @b ECSMutableStateCustomCallbackMax
@@ -77,11 +78,12 @@
  *
  *             ```c
  *             ECSContext Context;
- *             ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(ECSMutableStateEntitiesMax, ECSMutableStateAddComponentMax, ECSMutableStateRemoveComponentMax, ECSMutableStateCustomCallbackMax, ECSMutableStateSharedDataMax);
+ *             ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(ECSMutableStateEntitiesMax, ECSMutableStateReplaceRegistryMax, ECSMutableStateAddComponentMax, ECSMutableStateRemoveComponentMax, ECSMutableStateCustomCallbackMax, ECSMutableStateSharedDataMax);
  *             memset(&Context, 0, sizeof(Context));
  *             Context.mutations = &MutableState;
  *             Context.manager.map = CCArrayCreate(CC_ALIGNED_ALLOCATOR(ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), CC_ALIGN(sizeof(ECSComponentRefs) + LOCAL_STORAGE_SIZE, ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), 16);
  *             Context.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
+ *             ECSRegistryInit(&Context, CC_BIG_INT_FAST_0);
  *             ```
  *
  *             ## Groups
@@ -158,6 +160,9 @@
  *
  *             Entity destruction will remove the components from that entity and make it available for reuse. Certain operations can still be safely performed on a destroyed entity,
  *             but mutating the entity should be avoided.
+ *
+ *             ## Registry
+ *             The registry allows for entities to be associated with a context unique ID that can optionally persist across runtimes.
  *
  *             ## Mutations
  *             Mutations allow for breaking changes to be deferred until a later point. As it can be unsafe for a system to add or remove components of a certain storage type, creating
