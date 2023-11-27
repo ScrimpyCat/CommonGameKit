@@ -42,6 +42,12 @@ typedef void (*ECSMutableCallback)(ECSContext *Context, void *Data, ECSEntity *N
 
 typedef struct {
     ECSProxyEntity entity;
+    ECSRegistryID id;
+    _Bool acquire;
+} ECSMutableReplaceRegistryState;
+
+typedef struct {
+    ECSProxyEntity entity;
     size_t count;
     ECSTypedComponent *components;
 } ECSMutableAddComponentState;
@@ -65,6 +71,20 @@ typedef struct ECSMutableState {
             ECSEntity *entities;
         } remove;
     } entity;
+    struct {
+        struct {
+            _Atomic(size_t) count;
+            ECSProxyEntity *entities;
+        } add;
+        struct {
+            _Atomic(size_t) count;
+            ECSEntity *entities;
+        } remove;
+        struct {
+            _Atomic(size_t) count;
+            ECSMutableReplaceRegistryState *state;
+        } replace;
+    } registry;
     struct {
         struct {
             _Atomic(size_t) count;
@@ -92,24 +112,38 @@ typedef struct ECSMutableState {
         .count = ATOMIC_VAR_INIT(0) \
     } \
 }, \
-.component = { \
+.registry = { \
     .add = { \
-        .count = ATOMIC_VAR_INIT(0), \
+        .count = ATOMIC_VAR_INIT(0) \
     }, \
     .remove = { \
-        .count = ATOMIC_VAR_INIT(0), \
+        .count = ATOMIC_VAR_INIT(0) \
+    }, \
+    .replace = { \
+        .count = ATOMIC_VAR_INIT(0) \
+    } \
+}, \
+.component = { \
+    .add = { \
+        .count = ATOMIC_VAR_INIT(0) \
+    }, \
+    .remove = { \
+        .count = ATOMIC_VAR_INIT(0) \
     } \
 }, \
 .custom = { \
-    .count = ATOMIC_VAR_INIT(0), \
+    .count = ATOMIC_VAR_INIT(0) \
 }, \
 .shared = { \
     .size = ATOMIC_VAR_INIT(0) \
 }
 
-#define ECS_MUTABLE_STATE_CREATE(entitiesMax, addComponentMax, removeComponentMax, customCallbackMax, sharedDataMax) (ECSMutableState){ \
+#define ECS_MUTABLE_STATE_CREATE(entitiesMax, replaceRegistryMax, addComponentMax, removeComponentMax, customCallbackMax, sharedDataMax) (ECSMutableState){ \
     ECS_MUTABLE_STATE_INIT, \
     .entity.remove.entities = (ECSEntity[entitiesMax]){}, \
+    .registry.add.entities = (ECSEntity[entitiesMax]){}, \
+    .registry.remove.entities = (ECSEntity[entitiesMax]){}, \
+    .registry.replace.state = (ECSMutableReplaceRegistryState[replaceRegistryMax]){}, \
     .component.add.state = (ECSMutableAddComponentState[addComponentMax]){}, \
     .component.remove.state = (ECSMutableRemoveComponentState[removeComponentMax]){}, \
     .custom.state = (ECSMutableCustomCallbackState[customCallbackMax]){}, \
@@ -121,6 +155,12 @@ typedef struct ECSMutableState {
  * @warning This must be set prior to any mutation calls.
  */
 extern size_t ECSMutableStateEntitiesMax;
+
+/*!
+ * @brief Set the maximum number of replace registry states that can be staged in a mutation.
+ * @warning This must be set prior to any mutation calls.
+ */
+extern size_t ECSMutableStateReplaceRegistryMax;
 
 /*!
  * @brief Set the maximum number of add component states that can be staged in a mutation.
@@ -179,6 +219,30 @@ ECSProxyEntity ECSMutationStageEntityCreate(ECSContext *Context, size_t Count);
 ECSEntity *ECSMutationStageEntityDestroy(ECSContext *Context, size_t Count);
 
 /*!
+ * @brief Stage an entity register mutation.
+ * @param Context The ECS context to stage mutations for. Must not be NULL.
+ * @param Count The number of entities to be registered.
+ * @return A pointer to an array (of size @b Count) to store the entities that will be registered.
+ */
+ECSProxyEntity *ECSMutationStageRegistryRegister(ECSContext *Context, size_t Count);
+
+/*!
+ * @brief Stage an entity deregister mutation.
+ * @param Context The ECS context to stage mutations for. Must not be NULL.
+ * @param Count The number of entities to be deregistered.
+ * @return A pointer to an array (of size @b Count) to store the entities that will be deregistered.
+ */
+ECSEntity *ECSMutationStageRegistryDeregister(ECSContext *Context, size_t Count);
+
+/*!
+ * @brief Stage an entity reregister mutation.
+ * @param Context The ECS context to stage mutations for. Must not be NULL.
+ * @param Count The number of entities to be reregistered.
+ * @return A pointer to an array (of size @b Count) to store the entities that will be reregistered.
+ */
+ECSMutableReplaceRegistryState *ECSMutationStageRegistryReregister(ECSContext *Context, size_t Count);
+
+/*!
  * @brief Stage an add components mutation.
  * @param Context The ECS context to stage mutations for. Must not be NULL.
  * @param Count The number of add component requests.
@@ -221,6 +285,33 @@ size_t ECSMutationInspectEntityCreate(ECSContext *Context);
  * @return Returns a pointer to an array of entities that will be destroyed.
  */
 ECSEntity *ECSMutationInspectEntityDestroy(ECSContext *Context, size_t *Count);
+
+/*!
+ * @brief Get the number of staged entity register requests.
+ * @warning This is not threadsafe. It shouldn't be used at the same time other mutation calls are made on the context.
+ * @param Context The ECS context to inspect. Must not be NULL.
+ * @param Count A pointer to where the size of the array should be stored. Must not be NULL.
+ * @return Returns a pointer to an array of entities that will be registered.
+ */
+ECSProxyEntity *ECSMutationInspectRegistryRegister(ECSContext *Context, size_t *Count);
+
+/*!
+ * @brief Get the number of staged entity deregister requests.
+ * @warning This is not threadsafe. It shouldn't be used at the same time other mutation calls are made on the context.
+ * @param Context The ECS context to inspect. Must not be NULL.
+ * @param Count A pointer to where the size of the array should be stored. Must not be NULL.
+ * @return Returns a pointer to an array of entities that will be deregistered.
+ */
+ECSEntity *ECSMutationInspectRegistryDeregister(ECSContext *Context, size_t *Count);
+
+/*!
+ * @brief Get the number of staged entity reregister requests.
+ * @warning This is not threadsafe. It shouldn't be used at the same time other mutation calls are made on the context.
+ * @param Context The ECS context to inspect. Must not be NULL.
+ * @param Count A pointer to where the size of the array should be stored. Must not be NULL.
+ * @return Returns a pointer to an array of entities that will be reregistered.
+ */
+ECSMutableReplaceRegistryState *ECSMutationInspectRegistryReregister(ECSContext *Context, size_t *Count);
 
 /*!
  * @brief Get the number of staged add component requests.

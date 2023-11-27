@@ -27,6 +27,7 @@
 #include "ECS.h"
 
 size_t ECSMutableStateEntitiesMax;
+size_t ECSMutableStateReplaceRegistryMax;
 size_t ECSMutableStateAddComponentMax;
 size_t ECSMutableStateRemoveComponentMax;
 size_t ECSMutableStateCustomCallbackMax;
@@ -58,6 +59,60 @@ ECSEntity *ECSMutationInspectEntityDestroy(ECSContext *Context, size_t *Count)
     *Count = atomic_load_explicit(&Context->mutations->entity.remove.count, memory_order_relaxed);
     
     return Context->mutations->entity.remove.entities;
+}
+
+ECSProxyEntity *ECSMutationStageRegistryRegister(ECSContext *Context, size_t Count)
+{
+    const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->registry.add.count, Count, memory_order_relaxed);
+    
+    CCAssertLog(Offset <= ECSMutableStateEntitiesMax, "Exceeds ECSMutableStateEntitiesMax (%zu)", ECSMutableStateEntitiesMax);
+    
+    return Context->mutations->registry.add.entities + Offset;
+}
+
+ECSProxyEntity *ECSMutationInspectRegistryRegister(ECSContext *Context, size_t *Count)
+{
+    CCAssertLog(Count, "Count must not be null");
+    
+    *Count = atomic_load_explicit(&Context->mutations->registry.add.count, memory_order_relaxed);
+    
+    return Context->mutations->registry.add.entities;
+}
+
+ECSEntity *ECSMutationStageRegistryDeregister(ECSContext *Context, size_t Count)
+{
+    const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->registry.remove.count, Count, memory_order_relaxed);
+    
+    CCAssertLog(Offset <= ECSMutableStateEntitiesMax, "Exceeds ECSMutableStateEntitiesMax (%zu)", ECSMutableStateEntitiesMax);
+    
+    return Context->mutations->registry.remove.entities + Offset;
+}
+
+ECSEntity *ECSMutationInspectRegistryDeregister(ECSContext *Context, size_t *Count)
+{
+    CCAssertLog(Count, "Count must not be null");
+    
+    *Count = atomic_load_explicit(&Context->mutations->registry.remove.count, memory_order_relaxed);
+    
+    return Context->mutations->registry.remove.entities;
+}
+
+ECSMutableReplaceRegistryState *ECSMutationStageRegistryReregister(ECSContext *Context, size_t Count)
+{
+    const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->registry.replace.count, Count, memory_order_relaxed);
+    
+    CCAssertLog(Offset <= ECSMutableStateReplaceRegistryMax, "Exceeds ECSMutableStateReplaceRegistryMax (%zu)", ECSMutableStateReplaceRegistryMax);
+    
+    return Context->mutations->registry.replace.state + Offset;
+}
+
+ECSMutableReplaceRegistryState *ECSMutationInspectRegistryReregister(ECSContext *Context, size_t *Count)
+{
+    CCAssertLog(Count, "Count must not be null");
+    
+    *Count = atomic_load_explicit(&Context->mutations->registry.replace.count, memory_order_relaxed);
+    
+    return Context->mutations->registry.replace.state;
 }
 
 ECSMutableAddComponentState *ECSMutationStageEntityAddComponents(ECSContext *Context, size_t Count)
@@ -142,6 +197,21 @@ void ECSMutationApply(ECSContext *Context)
         ECSEntityCreate(Context, NewEntities, NewEntityCount);
     }
     
+    size_t ReregisterEntityCount;
+    ECSMutableReplaceRegistryState *ReregisterState = ECSMutationInspectRegistryReregister(Context, &ReregisterEntityCount);
+    for (size_t Loop = 0; Loop < ReregisterEntityCount; Loop++)
+    {
+        ECSRegistryReregister(Context, ECSProxyEntityResolve(ReregisterState[Loop].entity, NewEntities, NewEntityCount), ReregisterState[Loop].id, ReregisterState[Loop].acquire);
+    }
+    
+    size_t RegisterEntityCount;
+    ECSProxyEntity *RegisterEntities = ECSMutationInspectRegistryRegister(Context, &RegisterEntityCount);
+    for (size_t Loop = 0; Loop < RegisterEntityCount; Loop++)
+    {
+        // TODO: Add batched variant
+        ECSRegistryRegister(Context, ECSProxyEntityResolve(RegisterEntities[Loop], NewEntities, NewEntityCount));
+    }
+    
     size_t RemoveComponentCount;
     ECSMutableRemoveComponentState *RemoveComponentState = ECSMutationInspectEntityRemoveComponents(Context, &RemoveComponentCount);
     for (size_t Loop = 0; Loop < RemoveComponentCount; Loop++)
@@ -163,6 +233,14 @@ void ECSMutationApply(ECSContext *Context)
         CallbackState[Loop].callback(Context, CallbackState[Loop].data, NewEntities, NewEntityCount);
     }
     
+    size_t DeregisterEntityCount;
+    ECSProxyEntity *DeregisterEntities = ECSMutationInspectRegistryDeregister(Context, &DeregisterEntityCount);
+    for (size_t Loop = 0; Loop < DeregisterEntityCount; Loop++)
+    {
+        // TODO: Add batched variant
+        ECSRegistryDeregister(Context, ECSProxyEntityResolve(DeregisterEntities[Loop], NewEntities, NewEntityCount));
+    }
+    
     size_t DestroyEntityCount;
     ECSEntity *DestroyEntities = ECSMutationInspectEntityDestroy(Context, &DestroyEntityCount);
     if (DestroyEntityCount) ECSEntityDestroy(Context, DestroyEntities, DestroyEntityCount);
@@ -171,6 +249,9 @@ void ECSMutationApply(ECSContext *Context)
     
     atomic_store_explicit(&Context->mutations->entity.create, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->entity.remove.count, 0, memory_order_relaxed);
+    atomic_store_explicit(&Context->mutations->registry.add.count, 0, memory_order_relaxed);
+    atomic_store_explicit(&Context->mutations->registry.remove.count, 0, memory_order_relaxed);
+    atomic_store_explicit(&Context->mutations->registry.replace.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->component.add.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->component.remove.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->custom.count, 0, memory_order_relaxed);

@@ -455,7 +455,7 @@ static void MutationCallback(ECSContext *Context, void *Data, ECSEntity *NewEnti
 
 static ECSContext Context;
 
-ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 1048576);
+ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 4096, 1048576);
 
 +(void) setUp
 {
@@ -482,6 +482,7 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSDuplicateLocalComponentDestructors = DuplicateLocalComponentDestructors;
     
     ECSMutableStateEntitiesMax = 4096;
+    ECSMutableStateReplaceRegistryMax = 4096;
     ECSMutableStateAddComponentMax = 4069;
     ECSMutableStateRemoveComponentMax = 4069;
     ECSMutableStateCustomCallbackMax = 4096;
@@ -2703,6 +2704,114 @@ if (OldDupB) CCArrayDestroy(OldDupB); \
     XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_9), 2, @"Should be registered");
     XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_14), 10, @"Should be registered");
     XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_15), 11, @"Should be registered");
+    
+    
+    Context.registry.id = NULL;
+    CCDictionaryDestroy(Context.registry.registeredEntities);
+    Context.registry.registeredEntities = NULL;
+    CCArrayDestroy(Context.registry.uniqueEntityIDs);
+    Context.registry.uniqueEntityIDs = NULL;
+    
+    ECSRegistryInit(&Context, CC_BIG_INT_FAST_0);
+    
+    ECSEntity Entity;
+    ECSEntityCreate(&Context, &Entity, 1);
+    
+    ECSProxyEntity *Entities = ECSMutationStageRegistryRegister(&Context, 2);
+    ECSProxyEntity NewEntity = ECSMutationStageEntityCreate(&Context, 2);
+    
+    Entities[0] = NewEntity;
+    Entities[1] = Entity;
+    
+    ECSProxyEntity *Entities2 = ECSMutationStageRegistryRegister(&Context, 1);
+    
+    *Entities2 = NewEntity + 1;
+    
+    size_t Count;
+    ECSProxyEntity *RegisteredEntities = ECSMutationInspectRegistryRegister(&Context, &Count);
+    
+    XCTAssertEqual(Count, 3, @"Should be the correct value");
+    XCTAssertEqual(RegisteredEntities[0], NewEntity, @"Should be the correct entity");
+    XCTAssertEqual(RegisteredEntities[1], Entity, @"Should be the correct entity");
+    XCTAssertEqual(RegisteredEntities[2], NewEntity + 1, @"Should be the correct entity");
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertNotEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), ECS_ENTITY_NULL, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), Entity, @"Should be registered");
+    XCTAssertNotEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should be registered");
+    
+    ECSEntity Entity0 = ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0);
+    ECSEntity Entity1 = ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1);
+    ECSEntity Entity2 = ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2);
+    
+    ECSEntity *DeregisterEntities = ECSMutationStageRegistryDeregister(&Context, 2);
+    
+    DeregisterEntities[0] = Entity0;
+    DeregisterEntities[1] = Entity1;
+    
+    ECSEntity *DeregisterEntities2 = ECSMutationStageRegistryDeregister(&Context, 1);
+    
+    *DeregisterEntities2 = Entity2;
+    
+    ECSEntity *DeregisteredEntities = ECSMutationInspectRegistryDeregister(&Context, &Count);
+    
+    XCTAssertEqual(Count, 3, @"Should be the correct value");
+    XCTAssertEqual(DeregisteredEntities[0], Entity0, @"Should be the correct entity");
+    XCTAssertEqual(DeregisteredEntities[1], Entity1, @"Should be the correct entity");
+    XCTAssertEqual(DeregisteredEntities[2], Entity2, @"Should be the correct entity");
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), ECS_ENTITY_NULL, @"Should not be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), ECS_ENTITY_NULL, @"Should not be registered");
+    
+    ECSMutableReplaceRegistryState *State = ECSMutationStageRegistryReregister(&Context, 2);
+    
+    State[0].entity = Entity0;
+    State[0].id = CC_BIG_INT_FAST_0;
+    State[0].acquire = FALSE;
+    
+    State[1].entity = Entity1;
+    State[1].id = CC_BIG_INT_FAST_1;
+    State[1].acquire = FALSE;
+    
+    NewEntity = ECSMutationStageEntityCreate(&Context, 1);
+    ECSMutableReplaceRegistryState *State2 = ECSMutationStageRegistryReregister(&Context, 2);
+    
+    State2[0].entity = Entity2;
+    State2[0].id = CC_BIG_INT_FAST_2;
+    State2[0].acquire = FALSE;
+    
+    State2[1].entity = NewEntity;
+    State2[1].id = CC_BIG_INT_FAST_0;
+    State2[1].acquire = TRUE;
+    
+    ECSMutableReplaceRegistryState *ReregisteredEntities = ECSMutationInspectRegistryReregister(&Context, &Count);
+    
+    XCTAssertEqual(Count, 4, @"Should be the correct value");
+    XCTAssertEqual(ReregisteredEntities[0].entity, Entity0, @"Should be the correct entity");
+    XCTAssertEqual(ReregisteredEntities[1].entity, Entity1, @"Should be the correct entity");
+    XCTAssertEqual(ReregisteredEntities[2].entity, Entity2, @"Should be the correct entity");
+    XCTAssertEqual(ReregisteredEntities[3].entity, NewEntity, @"Should be the correct entity");
+    
+    XCTAssertEqual(ReregisteredEntities[0].id, CC_BIG_INT_FAST_0, @"Should be the correct id");
+    XCTAssertEqual(ReregisteredEntities[1].id, CC_BIG_INT_FAST_1, @"Should be the correct id");
+    XCTAssertEqual(ReregisteredEntities[2].id, CC_BIG_INT_FAST_2, @"Should be the correct id");
+    XCTAssertEqual(ReregisteredEntities[3].id, CC_BIG_INT_FAST_0, @"Should be the correct id");
+    
+    XCTAssertEqual(ReregisteredEntities[0].acquire, FALSE, @"Should be the correct value");
+    XCTAssertEqual(ReregisteredEntities[1].acquire, FALSE, @"Should be the correct value");
+    XCTAssertEqual(ReregisteredEntities[2].acquire, FALSE, @"Should be the correct value");
+    XCTAssertEqual(ReregisteredEntities[3].acquire, TRUE, @"Should be the correct value");
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertNotEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), ECS_ENTITY_NULL, @"Should be registered");
+    XCTAssertNotEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), Entity0, @"Should replace entity");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), Entity1, @"Should be registered");
+    XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), Entity2, @"Should be registered");
 }
 
 @end
