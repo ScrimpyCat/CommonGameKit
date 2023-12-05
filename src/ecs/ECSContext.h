@@ -31,6 +31,7 @@
 #include <CommonGameKit/ECSArchetype.h>
 #include <CommonGameKit/ECSComponent.h>
 #include <CommonGameKit/ECSRegistry.h>
+#include <CommonGameKit/ECSLink.h>
 
 
 #if ECS_ARCHETYPE_COMPONENT_MAX < UINT8_MAX
@@ -88,6 +89,7 @@ typedef struct {
 
 typedef struct ECSContext {
     ECSRegistry registry;
+    ECSLinkMap links;
     struct ECSMutableState *mutations;
     ECSEntityManager manager;
     

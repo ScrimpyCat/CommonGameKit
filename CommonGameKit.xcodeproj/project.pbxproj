@@ -45,6 +45,8 @@
 		F36081F82B1069B8002B2A89 /* ECSNameComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F36081F62B1069B8002B2A89 /* ECSNameComponent.c */; };
 		F36081FF2B108352002B2A89 /* ECSRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081FD2B108352002B2A89 /* ECSRegistry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36082002B108352002B2A89 /* ECSRegistry.c in Sources */ = {isa = PBXBuildFile; fileRef = F36081FE2B108352002B2A89 /* ECSRegistry.c */; };
+		F36082072B15C224002B2A89 /* ECSLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F36082052B15C224002B2A89 /* ECSLink.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F36082082B15C224002B2A89 /* ECSLink.c in Sources */ = {isa = PBXBuildFile; fileRef = F36082062B15C224002B2A89 /* ECSLink.c */; };
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -586,6 +588,8 @@
 		F36081F62B1069B8002B2A89 /* ECSNameComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSNameComponent.c; sourceTree = "<group>"; };
 		F36081FD2B108352002B2A89 /* ECSRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSRegistry.h; sourceTree = "<group>"; };
 		F36081FE2B108352002B2A89 /* ECSRegistry.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSRegistry.c; sourceTree = "<group>"; };
+		F36082052B15C224002B2A89 /* ECSLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSLink.h; sourceTree = "<group>"; };
+		F36082062B15C224002B2A89 /* ECSLink.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSLink.c; sourceTree = "<group>"; };
 		F36954CD1E45E2DB00135AF0 /* Message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Message.c; sourceTree = "<group>"; };
 		F36954CE1E45E2DB00135AF0 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
@@ -904,6 +908,8 @@
 				F34551652AFBC29200316D15 /* ECSMonitor.h */,
 				F36081FE2B108352002B2A89 /* ECSRegistry.c */,
 				F36081FD2B108352002B2A89 /* ECSRegistry.h */,
+				F36082062B15C224002B2A89 /* ECSLink.c */,
+				F36082052B15C224002B2A89 /* ECSLink.h */,
 				F34551942AFCD5D000316D15 /* Monitors */,
 				F3BFD72B2AE8414100118816 /* Components */,
 				F36081ED2B0B06DC002B2A89 /* Systems */,
@@ -1849,6 +1855,7 @@
 				F3B34E352253448C00C2DEC1 /* MTLDraw.h in Headers */,
 				F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */,
 				F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */,
+				F36082072B15C224002B2A89 /* ECSLink.h in Headers */,
 				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
 				F3AF33F21DCCD4EC00CAD472 /* Pipeline.h in Headers */,
 				F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */,
@@ -2264,6 +2271,7 @@
 				F3A9F0DD2281CFAD00F52287 /* GFXCommandBuffer.c in Sources */,
 				F3E2742D20D17BC500D6AFE1 /* ScriptableInterfaceDynamicFieldComponent.c in Sources */,
 				F3AF33B11DCCD4EC00CAD472 /* RenderComponent.c in Sources */,
+				F36082082B15C224002B2A89 /* ECSLink.c in Sources */,
 				F3AF34971DCCD5AF00CAD472 /* ListExpressions.c in Sources */,
 				F33CAF971E79286900792063 /* EntityExpressions.c in Sources */,
 				F3AF33B51DCCD4EC00CAD472 /* Colour.c in Sources */,
