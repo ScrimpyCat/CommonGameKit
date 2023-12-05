@@ -518,7 +518,21 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
         Context.registry.uniqueEntityIDs = NULL;
     }
     
+    if (Context.links.associations)
+    {
+        for (size_t Loop = 0, Count = CCArrayGetCount(Context.links.associations); Loop < Count; Loop++)
+        {
+            CCDictionary Assoc = *(CCDictionary*)CCArrayGetElementAtIndex(Context.links.associations, Loop);
+            if (Assoc) CCDictionaryDestroy(Assoc);
+        }
+        
+        CCArrayDestroy(Context.links.associations);
+        Context.links.associations = NULL;
+    }
+    
     ECSRegistryInit(&Context, CC_BIG_INT_FAST_0);
+    
+    ECSLinkMapInit(&Context);
 }
 
 -(void) checkRun
@@ -2831,6 +2845,798 @@ if (OldDupB) CCArrayDestroy(OldDupB); \
     XCTAssertNotEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_0), Entity0, @"Should replace entity");
     XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_1), Entity1, @"Should be registered");
     XCTAssertEqual(ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2), Entity2, @"Should be registered");
+}
+
+static const ECSLink TestOneToOne = { .type = ECSLinkTypeRelationshipOneToOne };
+static const ECSLink TestOneToMany = { .type = ECSLinkTypeRelationshipOneToMany };
+static const ECSLink TestManyToMany = { .type = ECSLinkTypeRelationshipManyToMany };
+
+-(void) assertEntitiesA: (ECSEntity*)entitiesA Count: (size_t)countA Linked: (const ECSLink*)link ToEntitiesB: (ECSEntity*)entitiesB Count: (size_t)countB
+{
+    size_t Count;
+    const ECSEntity *LinkedEntities;
+    
+    for (size_t LoopA = 0; LoopA < countA; LoopA++)
+    {
+        for (size_t LoopB = 0; LoopB < countB; LoopB++)
+        {
+            if ((entitiesA[LoopA] != -1) && (entitiesB[LoopB] != -1))
+            {
+                XCTAssertTrue(ECSLinked(&Context, entitiesA[LoopA], link, entitiesB[LoopB]), @"Entities should be linked");
+                XCTAssertTrue(ECSLinked(&Context, entitiesB[LoopB], ECS_LINK_INVERT(link), entitiesA[LoopA]), @"Entities should be linked");
+            }
+        }
+    }
+    
+    for (size_t LoopA = 0; LoopA < countA; LoopA++)
+    {
+        if (entitiesA[LoopA] != -1)
+        {
+            LinkedEntities = ECSLinkGet(&Context, entitiesA[LoopA], link, &Count);
+            XCTAssertEqual(Count, countB, @"Should have the correct number of linked entities");
+            XCTAssertNotEqual(LinkedEntities, NULL, @"Should have linked entities");
+            
+            if (LinkedEntities)
+            {
+                for (size_t LoopB = 0, Check = CCMin(Count, countB); LoopB < Check; LoopB++)
+                {
+                    if (entitiesB[LoopB] != -1)
+                    {
+                        XCTAssertEqual(LinkedEntities[LoopB], entitiesB[LoopB], @"Should get the linked entity");
+                    }
+                }
+            }
+        }
+    }
+    
+    for (size_t LoopB = 0; LoopB < countB; LoopB++)
+    {
+        if (entitiesB[LoopB] != -1)
+        {
+            LinkedEntities = ECSLinkGet(&Context, entitiesB[LoopB], ECS_LINK_INVERT(link), &Count);
+            XCTAssertEqual(Count, countA, @"Should have the correct number of linked entities");
+            XCTAssertNotEqual(LinkedEntities, NULL, @"Should have linked entities");
+            
+            if (LinkedEntities)
+            {
+                for (size_t LoopA = 0, Check = CCMin(Count, countA); LoopA < Check; LoopA++)
+                {
+                    if (entitiesA[LoopA] != -1)
+                    {
+                        XCTAssertEqual(LinkedEntities[LoopA], entitiesA[LoopA], @"Should get the linked entity");
+                    }
+                }
+            }
+        }
+    }
+}
+
+-(void) assertEntityA: (ECSEntity)entityA Linked: (const ECSLink*)link ToEntitiesB: (ECSEntity*)entitiesB Count: (size_t)countB
+{
+    [self assertEntitiesA: &entityA Count: 1 Linked: link ToEntitiesB: entitiesB Count: countB];
+}
+
+-(void) assertEntityA: (ECSEntity)entityA Linked: (const ECSLink*)link ToEntityB: (ECSEntity)entityB
+{
+    [self assertEntitiesA: &entityA Count: 1 Linked: link ToEntitiesB: &entityB Count: 1];
+}
+
+-(void) assertEntityA: (ECSEntity)entityA WithCount: (size_t)countA NotLinked: (const ECSLink*)link ToEntityB: (ECSEntity)entityB WithCount: (size_t)countB
+{
+    size_t Count;
+    const ECSEntity *LinkedEntities;
+    
+    XCTAssertFalse(ECSLinked(&Context, entityA, link, entityB), @"Entities should be linked");
+    XCTAssertFalse(ECSLinked(&Context, entityB, ECS_LINK_INVERT(link), entityA), @"Entities should be linked");
+    
+    LinkedEntities = ECSLinkGet(&Context, entityA, link, &Count);
+    if (countA)
+    {
+        XCTAssertEqual(Count, countA, @"Should have the correct number of linked entities");
+        XCTAssertNotEqual(LinkedEntities, NULL, @"Should have linked entities");
+    }
+    
+    else
+    {
+        XCTAssertEqual(Count, 0, @"Should not have any linked entities");
+        XCTAssertEqual(LinkedEntities, NULL, @"Should not get any linked entity");
+    }
+    
+    LinkedEntities = ECSLinkGet(&Context, entityB, ECS_LINK_INVERT(link), &Count);
+    if (countB)
+    {
+        XCTAssertEqual(Count, countB, @"Should have the correct number of linked entities");
+        XCTAssertNotEqual(LinkedEntities, NULL, @"Should have linked entities");
+    }
+    
+    else
+    {
+        XCTAssertEqual(Count, 0, @"Should not have any linked entities");
+        XCTAssertEqual(LinkedEntities, NULL, @"Should not get any linked entity");
+    }
+}
+
+-(void) assertEntityA: (ECSEntity)entityA NotLinked: (const ECSLink*)link ToEntityB: (ECSEntity)entityB
+{
+    [self assertEntityA: entityA WithCount: 0 NotLinked: link ToEntityB: entityB WithCount: 0];
+}
+
+-(void) testLinks
+{
+    XCTAssertFalse(ECSLinked(&Context, 0, &TestOneToOne, 1), @"Entities should not be linked");
+    
+    size_t Count;
+    const ECSEntity *LinkedEntities = ECSLinkGet(&Context, 0, &TestOneToOne, &Count);
+    
+    XCTAssertEqual(Count, 0, @"Should have the correct number of linked entities");
+    XCTAssertEqual(LinkedEntities, NULL, @"Should not get any linked entities");
+    
+    
+    // Add link: 0 -> 0
+    // Links: 0 -> 0
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToOne, 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 0 -> 1
+    // Links: 0 -> 1
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToOne, 1, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Replace link: 0 -> 1 with: 0 -> 2
+    // Links: 0 -> 2
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToOne, 2, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestOneToOne ToEntityB: 1 WithCount: 0];
+    
+    
+    // Add link: 0 -> 1 (reversed)
+    // Links: 0 -> 1
+    ECSLinkAdd(&Context, 1, NULL, ECS_LINK_INVERT(&TestOneToOne), 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestOneToOne ToEntityB: 2 WithCount: 0];
+    
+    
+    // Add link: 1 -> 2
+    // Links: 0 -> 1 -> 2
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 2, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 1 WithCount: 1 NotLinked: &TestOneToOne ToEntityB: 0 WithCount: 0];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToOne ToEntityB: 1 WithCount: 1];
+    
+    
+    // Add link: 2 -> 0
+    // Links: 0 -> 1 -> 2 -> 0
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToOne, 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 1 -> 0
+    // Links: 0 -> 1 -> 0
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 0];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToOne ToEntityB: 0 WithCount: 1];
+    
+    
+    // Add link: 2 -> 0
+    // Add link: 1 -> 2
+    // Links: 0 -> 1 -> 2 -> 0
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToOne, 0, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 2, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Remove link: 1 -> 0
+    // Links: 0 -> 1 -> 2 -> 0
+    ECSLinkRemove(&Context, 1, &TestOneToOne, 0);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Remove link: 1 -> 2
+    // Links: 0 -> 1,  2 -> 0
+    ECSLinkRemove(&Context, 1, &TestOneToOne, 2);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 1 -> 2
+    // Remove link: 0 -> ?
+    // Links: 1 -> 2 -> 0
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 2, NULL);
+    ECSLinkRemoveLinkForEntity(&Context, 0, &TestOneToOne);
+    
+    [self assertEntityA: 0 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 0 -> 1
+    // Remove link: ? -> 0
+    // Links: 0 -> 1 -> 2
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToOne, 1, NULL);
+    ECSLinkRemoveLinkForEntity(&Context, 0, ECS_LINK_INVERT(&TestOneToOne));
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 2 -> 0
+    // Remove all links: 2
+    // Links: 0 -> 1
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToOne, 0, NULL);
+    ECSLinkRemoveAllLinksForEntity(&Context, 2);
+    
+    [self assertEntityA: 0 Linked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 1 -> 2
+    // Add link: 2 -> 0
+    // Remove link: ? -> ?
+    // Links:
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 2, NULL);
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToOne, 0, NULL);
+    ECSLinkRemoveLink(&Context, &TestOneToOne);
+    
+    [self assertEntityA: 0 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    
+    // Add link: 0 -> 1
+    // Add link: 1 -> 2
+    // Add link: 2 -> 0
+    // Remove link: ? -> ? (reversed)
+    // Links:
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToOne, 1, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 2, NULL);
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToOne, 0, NULL);
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToOne));
+    
+    [self assertEntityA: 0 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 0];
+    
+    
+    
+    
+    // Add link: 0 -> [1]
+    // Links: 0 -> [1]
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 1, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 0 -> [2]
+    // Links: 0 -> [1, 2]
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 2, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 2 } Count: 2];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 0 -> [5]
+    // Links: 0 -> [1, 2, 5]
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 5, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 2, 5 } Count: 3];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 5 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 0 -> [4]
+    // Links: 0 -> [1, 2, 4, 5]
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 4, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 2, 4, 5 } Count: 4];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 5 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 0 -> [4]
+    // Links: 0 -> [1, 2, 3, 4, 5]
+    ECSLinkAdd(&Context, 3, NULL, ECS_LINK_INVERT(&TestOneToMany), 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 2, 3, 4, 5 } Count: 5];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 3 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 5 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 0 -> [0]
+    // Links: 0 -> [0, 1, 2, 3, 4, 5]
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 1, 2, 3, 4, 5 } Count: 6];
+    [self assertEntityA: 1 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 4 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 5 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Remove link: 0 -> [0]
+    // Links: 0 -> [1, 2, 3, 4, 5]
+    ECSLinkRemove(&Context, 0, &TestOneToMany, 0);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 2, 3, 4, 5 } Count: 5];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 3 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 5 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 1 -> [0]
+    // Links: 0 -> [1 -> [0], 2, 3, 4, 5]
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 0, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 2, 3, 4, 5 } Count: 5];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0 } Count: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 4 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 5 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Add link: 1 -> [2]
+    // Links: 0 -> [1 -> [0, 2], 3, 4, 5]
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 2, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 3, 4, 5 } Count: 4];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2 } Count: 2];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 4 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 5 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Add link: 4 -> [5]
+    // Add link: 1 -> [4]
+    // Links: 0 -> [1 -> [0, 2, 4 -> [5]], 3]
+    ECSLinkAdd(&Context, 4, NULL, &TestOneToMany, 5, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 4, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2, 4 } Count: 3];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 5 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Add link: 5 -> [3]
+    // Links: 0 -> [1 -> [0, 2, 4 -> [5 -> [3]]]]
+    ECSLinkAdd(&Context, 5, NULL, &TestOneToMany, 3, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2, 4 } Count: 3];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Add link: 5 -> [3]
+    // Links: 0 -> [1 -> [0, 2, 4 -> [5 -> [3]]]]
+    ECSLinkAdd(&Context, 5, NULL, &TestOneToMany, 3, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2, 4 } Count: 3];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Add link: 5 -> [3] (reversed)
+    // Links: 0 -> [1 -> [0, 2, 4 -> [5 -> [3]]]]
+    ECSLinkAdd(&Context, 3, NULL, ECS_LINK_INVERT(&TestOneToMany), 5, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2, 4 } Count: 3];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Remove link: 1 -> [0]
+    // Links: 0 -> [1 -> [2, 4 -> [5 -> [3]]]]
+    ECSLinkRemove(&Context, 1, &TestOneToMany, 0);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 2, 4 } Count: 2];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 3 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Remove link: 2 -> [1]
+    // Links: 0 -> [1 -> [2, 4 -> [5 -> [3]]]]
+    ECSLinkRemove(&Context, 2, &TestOneToMany, 1);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 2, 4 } Count: 2];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 3 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Remove link: 1 -> [2] (reversed)
+    // Links: 0 -> [1 -> [4 -> [5 -> [3]]]]
+    ECSLinkRemove(&Context, 2, ECS_LINK_INVERT(&TestOneToMany), 1);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 4 } Count: 1];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 3 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 1 -> [0]
+    // Add link: 1 -> [2]
+    // Links: 0 -> [1 -> [0, 2, 4 -> [5 -> [3]]]]
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 0, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 2, NULL);
+    ECSLinkRemoveLinkForEntity(&Context, 0, &TestOneToOne);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2, 4 } Count: 3];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Remove link: 0 -> ?
+    // Links: 1 -> [0, 2, 4 -> [5 -> [3]]]
+    ECSLinkRemoveLinkForEntity(&Context, 0, &TestOneToMany);
+    
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 0, 2, 4 } Count: 3];
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 0 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 1 WithCount: 0];
+    [self assertEntityA: 2 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    [self assertEntityA: 3 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 0 WithCount: 1];
+    
+    
+    // Remove link: 1 -> ?
+    // Links: 4 -> [5 -> [3]]
+    ECSLinkRemoveLinkForEntity(&Context, 1, &TestOneToMany);
+    
+    [self assertEntityA: 4 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 5 } Count: 1];
+    [self assertEntityA: 5 Linked: &TestOneToMany ToEntitiesB: (ECSEntity[]){ 3 } Count: 1];
+    [self assertEntityA: 0 NotLinked: &TestOneToMany ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 2];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 4];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 3 NotLinked: &TestOneToMany ToEntityB: 0];
+    
+    
+    // Add link: 4 -> 0
+    // Add link: 4 -> 2
+    // Remove link: ? -> ?
+    // Links:
+    ECSLinkAdd(&Context, 4, NULL, &TestOneToMany, 0, NULL);
+    ECSLinkAdd(&Context, 4, NULL, &TestOneToMany, 2, NULL);
+    ECSLinkRemoveLink(&Context, &TestOneToMany);
+    
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 2];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 5];
+    [self assertEntityA: 5 NotLinked: &TestOneToMany ToEntityB: 3];
+    
+    
+    // Add link: 4 -> 0
+    // Add link: 4 -> 2
+    // Add link: 4 -> 5
+    // Add link: 5 -> 3
+    // Remove link: ? -> ?
+    // Links:
+    ECSLinkAdd(&Context, 4, NULL, &TestOneToMany, 0, NULL);
+    ECSLinkAdd(&Context, 4, NULL, &TestOneToMany, 2, NULL);
+    ECSLinkAdd(&Context, 4, NULL, &TestOneToMany, 5, NULL);
+    ECSLinkAdd(&Context, 5, NULL, &TestOneToMany, 3, NULL);
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToMany));
+    
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 0];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 2];
+    [self assertEntityA: 4 NotLinked: &TestOneToMany ToEntityB: 5];
+    [self assertEntityA: 5 NotLinked: &TestOneToMany ToEntityB: 3];
+    
+    
+    
+    
+    // Add link: [0] -> [1]
+    // Links: [0] -> [1]
+    ECSLinkAdd(&Context, 0, NULL, &TestManyToMany, 1, NULL);
+    
+    [self assertEntityA: 0 Linked: &TestManyToMany ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 0];
+    
+    
+    // Add link: [1] -> [1]
+    // Links: [0, 1] -> [1]
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 1, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 WithCount: 1 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Add link: [1] -> [1]
+    // Links: [0, 1] -> [1]
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 1, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntityA: 1 WithCount: 1 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Add link: [1] -> [2]
+    // Links: [0, 1] -> [1], [1] -> [2]
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 2, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1 } Count: 1];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2 } Count: 2];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Add link: [1] -> [3]
+    // Add link: [0] -> [3]
+    // Links: [0, 1] -> [1, 3], [1] -> [2]
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 3, NULL);
+    ECSLinkAdd(&Context, 0, NULL, &TestManyToMany, 3, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1, 3 } Count: 3];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2, -1 } Count: 3];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 3 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Add link: [1] -> [4] (reversed)
+    // Links: [0, 1] -> [1, 3], [1] -> [2, 4]
+    ECSLinkAdd(&Context, 4, NULL, ECS_LINK_INVERT(&TestManyToMany), 1, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1, 3, -1 } Count: 4];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2, -1, 4 } Count: 4];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 4 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 4 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Remove link: [1] -> [4]
+    // Links: [0, 1] -> [1, 3], [1] -> [2]
+    ECSLinkRemove(&Context, 1, &TestManyToMany, 4);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1, 3 } Count: 3];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2, -1 } Count: 3];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 3 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    [self assertEntityA: 1 WithCount: 3 NotLinked: &TestManyToMany ToEntityB: 4 WithCount: 0];
+    
+    
+    // Remove link: [1] -> [3]
+    // Links: [0, 1] -> [1], [0] -> [3], [1] -> [2]
+    ECSLinkRemove(&Context, 1, &TestManyToMany, 3);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ 0 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 3 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2 } Count: 2];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    [self assertEntityA: 1 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 3 WithCount: 1];
+    
+    
+    // Add link: [1] -> [3]
+    // Add link: [1] -> [4]
+    // Links: [0, 1] -> [1, 3], [1] -> [2, 4]
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 3, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 4, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1, 3, -1 } Count: 4];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2, -1, 4 } Count: 4];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 4 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 4 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Remove link: [1] -> ?
+    // Links: [0] -> [1, 3]
+    ECSLinkRemoveLinkForEntity(&Context, 1, &TestManyToMany);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 0];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 4 WithCount: 0];
+    [self assertEntityA: 1 WithCount: 0 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    [self assertEntityA: 1 WithCount: 0 NotLinked: &TestManyToMany ToEntityB: 1 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 0 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 0];
+    [self assertEntityA: 1 WithCount: 0 NotLinked: &TestManyToMany ToEntityB: 3 WithCount: 1];
+    
+    
+    // Add link: [1] -> [3]
+    // Add link: [1] -> [4]
+    // Add link: [1] -> [2]
+    // Add link: [1] -> [1]
+    // Links: [0, 1] -> [1, 3], [1] -> [2, 4]
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 3, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 4, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 2, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 1, NULL);
+    
+    [self assertEntitiesA: (ECSEntity[]){ 0, -1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, 3 } Count: 2];
+    [self assertEntitiesA: (ECSEntity[]){ -1, 1 } Count: 2 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ 1, -1, 3, -1 } Count: 4];
+    [self assertEntitiesA: (ECSEntity[]){ 1 } Count: 1 Linked: &TestManyToMany ToEntitiesB: (ECSEntity[]){ -1, 2, -1, 4 } Count: 4];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 2 WithCount: 1];
+    [self assertEntityA: 0 WithCount: 2 NotLinked: &TestManyToMany ToEntityB: 4 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 4 NotLinked: &TestManyToMany ToEntityB: 0 WithCount: 0];
+    
+    
+    // Remove link: ? -> ?
+    // Links:
+    ECSLinkRemoveLink(&Context, &TestManyToMany);
+    
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 0];
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 1];
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 2];
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 3];
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 4];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 0];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 2];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 3];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 4];
+    
+    
+    
+    
+    // Add link: 0 -> 1
+    // Add link: 1 -> 2
+    // Add link: 2 -> 1
+    // Add link: 0 -> [1]
+    // Add link: 0 -> [3]
+    // Add link: 1 -> [2]
+    // Add link: 2 -> [1]
+    // Add link: [0] -> [1]
+    // Add link: [0] -> [3]
+    // Add link: [1] -> [2]
+    // Add link: [2] -> [1]
+    // Remove link: 1? -> 0?
+    // Links: 1 -> 2, 2 -> 1, 0 -> [3], 1 -> [2], 2 -> [1], [0] -> [3], [1] -> [2], [2] -> [1]
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToOne, 1, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToOne, 2, NULL);
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToOne, 1, NULL);
+    
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 1, NULL);
+    ECSLinkAdd(&Context, 0, NULL, &TestOneToMany, 3, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 2, NULL);
+    ECSLinkAdd(&Context, 2, NULL, &TestOneToMany, 1, NULL);
+    
+    ECSLinkAdd(&Context, 0, NULL, &TestManyToMany, 1, NULL);
+    ECSLinkAdd(&Context, 0, NULL, &TestManyToMany, 3, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestManyToMany, 2, NULL);
+    ECSLinkAdd(&Context, 2, NULL, &TestManyToMany, 1, NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, 1, 0);
+    
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 1];
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntityB: 3];
+    [self assertEntityA: 1 Linked: &TestOneToMany ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToMany ToEntityB: 1];
+    
+    [self assertEntityA: 0 Linked: &TestManyToMany ToEntityB: 3];
+    [self assertEntityA: 1 Linked: &TestManyToMany ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestManyToMany ToEntityB: 1];
+    
+    [self assertEntityA: 0 WithCount: 0 NotLinked: &TestOneToOne ToEntityB: 1 WithCount: 1];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestOneToMany ToEntityB: 1 WithCount: 1];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestManyToMany ToEntityB: 1 WithCount: 1];
+    
+    
+    // Remove link: 1 -> [?]
+    // Links: 1 -> 2, 2 -> 1, 0 -> [3], 2 -> [1], [0] -> [3], [1] -> [2], [2] -> [1]
+    ECSLinkRemoveLinkForEntity(&Context, 1, &TestOneToMany);
+    
+    [self assertEntityA: 1 Linked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestOneToOne ToEntityB: 1];
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntityB: 3];
+    [self assertEntityA: 2 Linked: &TestOneToMany ToEntityB: 1];
+    
+    [self assertEntityA: 0 Linked: &TestManyToMany ToEntityB: 3];
+    [self assertEntityA: 1 Linked: &TestManyToMany ToEntityB: 2];
+    [self assertEntityA: 2 Linked: &TestManyToMany ToEntityB: 1];
+    
+    [self assertEntityA: 0 WithCount: 0 NotLinked: &TestOneToOne ToEntityB: 1 WithCount: 1];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestOneToMany ToEntityB: 1 WithCount: 1];
+    [self assertEntityA: 1 WithCount: 0 NotLinked: &TestOneToMany ToEntityB: 2 WithCount: 0];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestManyToMany ToEntityB: 1 WithCount: 1];
+    
+    
+    // Remove link: 1? -> ?
+    // Links: 0 -> [3], [0] -> [3]
+    ECSLinkRemoveAllLinksForEntity(&Context, 1);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntityB: 3];
+    
+    [self assertEntityA: 0 Linked: &TestManyToMany ToEntityB: 3];
+    
+    [self assertEntityA: 0 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestOneToMany ToEntityB: 1 WithCount: 0];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 1];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestManyToMany ToEntityB: 1 WithCount: 0];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestManyToMany ToEntityB: 1];
+    
+    
+    // Remove link: [?] -> [?]
+    // Links: 0 -> [3]
+    ECSLinkRemoveAllLinksForEntity(&Context, 1);
+    ECSLinkRemoveLink(&Context, &TestManyToMany);
+    
+    [self assertEntityA: 0 Linked: &TestOneToMany ToEntityB: 3];
+    
+    [self assertEntityA: 0 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 1 NotLinked: &TestOneToOne ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToOne ToEntityB: 1];
+    [self assertEntityA: 0 WithCount: 1 NotLinked: &TestOneToMany ToEntityB: 1 WithCount: 0];
+    [self assertEntityA: 1 NotLinked: &TestOneToMany ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestOneToMany ToEntityB: 1];
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 1];
+    [self assertEntityA: 0 NotLinked: &TestManyToMany ToEntityB: 3];
+    [self assertEntityA: 1 NotLinked: &TestManyToMany ToEntityB: 2];
+    [self assertEntityA: 2 NotLinked: &TestManyToMany ToEntityB: 1];
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOne);
 }
 
 @end
