@@ -529,7 +529,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
  * @param ID The component ID of an archetype component.
  */
-void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID);
 
 /*!
  * @brief Remove an archetype component from an entity.
@@ -545,7 +545,7 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
  * @param ID The component ID of the archetype component to get the index of.
  * @return Returns the index of the archetype component.
  */
-size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID);
+size_t ECSArchetypeComponentIndex(const ECSComponentRefs *Refs, ECSComponentID ID);
 
 /*!
  * @brief Add a packed component.
@@ -555,7 +555,7 @@ size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID);
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
  * @param ID The component ID of a packed component.
  */
-void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID);
 
 /*!
  * @brief Remove a packed component from an entity.
@@ -574,7 +574,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
  * @param ID The component ID of an indexed component.
  */
-void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID);
 
 /*!
  * @brief Remove an indexed component from an entity.
@@ -593,7 +593,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
  * @param ID The component ID of a local component.
  */
-void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID);
 
 /*!
  * @brief Remove a local component from an entity.
@@ -632,7 +632,7 @@ void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count);
  * @param Entities A pointer to the entities to be destroyed.
  * @param Count The number of entities to destroy.
  */
-void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count);
+void ECSEntityDestroy(ECSContext *Context, const ECSEntity *Entities, size_t Count);
 
 /*!
  * @brief Add a component to an entity.
@@ -641,7 +641,7 @@ void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count);
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
  * @param ID The component ID.
  */
-static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID);
+static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID);
 
 /*!
  * @brief Remove a component from an entity.
@@ -658,7 +658,7 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
  * @param Components The type component data for the components to be added.
  * @param Count The number of components to add.
  */
-void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t Count);
+void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSTypedComponent *Components, size_t Count);
 
 /*!
  * @brief Remove multiple components from an entity.
@@ -667,7 +667,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
  * @param IDs The component IDs of the components to be removed.
  * @param Count The number of components to be removed.
  */
-void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSComponentID *IDs, size_t Count);
+void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, const ECSComponentID *IDs, size_t Count);
 
 /*!
  * @brief Check whether an entity has a component.
@@ -708,7 +708,7 @@ void ECSEntityGetComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
  * @param ID The component ID of the duplicate component.
  * @param Count The number of duplicate components to add.
  */
-static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count);
+static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID, size_t Count);
 
 /*!
  * @brief Remove multiple duplicate components from an entity.
@@ -752,7 +752,7 @@ static inline size_t ECSDuplicateComponentSize(ECSComponentID ID);
  * @param Size The size of the data to be copied.
  * @return Returns a pointer to the stored data.
  */
-static inline void *ECSSharedZoneStore(void *Data, size_t Size);
+static inline void *ECSSharedZoneStore(const void *Data, size_t Size);
 
 /*!
  * @brief The destructor for duplicate components.
@@ -857,7 +857,7 @@ static inline size_t ECSDuplicateComponentSize(ECSComponentID ID)
     return SIZE_MAX;
 }
 
-static inline void *ECSSharedZoneStore(void *Data, size_t Size)
+static inline void *ECSSharedZoneStore(const void *Data, size_t Size)
 {
     CCAssertLog(Data, "Data must not be null");
     
@@ -881,7 +881,7 @@ static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponen
     return (ID & ~ECSComponentStorageMask) >> CCBitCountSet(CCBitMaskForValue(ECS_LOCAL_COMPONENT_MAX));
 }
 
-static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     
@@ -997,7 +997,7 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
     return NULL;
 }
 
-static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID, size_t Count)
+static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
     

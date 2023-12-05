@@ -616,13 +616,15 @@ void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count)
 
 const ECSComponentID *ECSComponentIDs;
 
-void ECSEntityDestroy(ECSContext *Context, ECSEntity *Entities, size_t Count)
+void ECSEntityDestroy(ECSContext *Context, const ECSEntity *Entities, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(Entities, "Entities must not be null");
     
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
+        ECSLinkRemoveAllLinksForEntity(Context, Entities[Loop]);
+        
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entities[Loop]);
         ECSComponentID IDs[32];
         size_t ComponentCount = 0;
@@ -857,7 +859,7 @@ static void ArchetypeRemove(ECSContext *Context, ECSArchetype *Arch, size_t Coun
     }
 }
 
-static size_t ArchtypeIndex(ECSArchetypeComponentID *set, size_t n)
+static size_t ArchtypeIndex(const ECSArchetypeComponentID *set, size_t n)
 {
     size_t result = 0;
     size_t factorial = 1;
@@ -889,7 +891,7 @@ static const struct {
     ECS_ARCHETYPE_INIT_OFFSETS(ECS_ARCHETYPE_MAX)
 };
 
-void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     
@@ -1034,7 +1036,7 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
     }
 }
 
-void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     
@@ -1130,7 +1132,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
     }
 }
 
-void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     
@@ -1186,7 +1188,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
     }
 }
 
-void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
+void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     
@@ -1232,7 +1234,7 @@ void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponent
     }
 }
 
-void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedComponent *Components, size_t Count)
+void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSTypedComponent *Components, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(Components, "Components must not be null");
@@ -1385,7 +1387,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
     }
 }
 
-void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSComponentID *IDs, size_t Count)
+void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, const ECSComponentID *IDs, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(IDs, "IDs must not be null");
@@ -1596,7 +1598,7 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, ECSCompone
 #endif
 }
 
-size_t ECSArchetypeComponentIndex(ECSComponentRefs *Refs, ECSComponentID ID)
+size_t ECSArchetypeComponentIndex(const ECSComponentRefs *Refs, ECSComponentID ID)
 {
     CCAssertLog((ID & ECSComponentStorageMask) == 0, "ID must not have any modifiers");
     
