@@ -75,7 +75,7 @@ typedef struct ECSLink {
     union {
         struct {
             ECSComponentID id;
-            void *data;
+            const void *data;
         } component;
         struct {
             ECSLinkAddCallback add;
