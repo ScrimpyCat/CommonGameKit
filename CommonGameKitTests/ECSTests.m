@@ -3933,6 +3933,414 @@ static const ECSLink TestManyToManyRightCallback = {
     XCTAssertEqual(TestCallbackEntity, (1 << Entities[2]), "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
     
+    ECSEntityDestroy(&Context, Entities, 3);
+    ECSEntityCreate(&Context, Entities, 3);
+    
+    ECSEntityAddComponent(&Context, Entities[1], NULL, COMP_A);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToOneLeftCompA, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneLeftCompA), Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOneLeftCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToOneLeftCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToOneLeftCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneLeftCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSEntityAddComponent(&Context, Entities[0], NULL, COMP_A);
+    ECSEntityRemoveComponent(&Context, Entities[1], COMP_A);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToOneRightCompA, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneRightCompA), Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOneRightCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToOneRightCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToOneRightCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneRightCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToOneLeftCallback, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneLeftCallback), Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOneLeftCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToOneLeftCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToOneLeftCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneLeftCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToOneRightCallback, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneRightCallback), Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOneRightCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToOneRightCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToOneRightCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToOneRightCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
     
     
     ECSEntityDestroy(&Context, Entities, 3);
@@ -4073,6 +4481,414 @@ static const ECSLink TestManyToManyRightCallback = {
     XCTAssertEqual(TestCallbackAddCount, 112, "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 2, "Right entity should not have called the remove callback");
+    
+    ECSEntityDestroy(&Context, Entities, 3);
+    ECSEntityCreate(&Context, Entities, 3);
+    
+    ECSEntityAddComponent(&Context, Entities[1], NULL, COMP_A);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyLeftCompA, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyLeftCompA), Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyLeftCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToManyLeftCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToManyLeftCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyLeftCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSEntityAddComponent(&Context, Entities[0], NULL, COMP_A);
+    ECSEntityRemoveComponent(&Context, Entities[1], COMP_A);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyRightCompA, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyRightCompA), Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyRightCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToManyRightCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToManyRightCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyRightCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyLeftCallback, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyLeftCallback), Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyLeftCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToManyLeftCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToManyLeftCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyLeftCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyRightCallback, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyRightCallback), Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyRightCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestOneToManyRightCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToManyRightCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestOneToManyRightCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
     
     
     
@@ -4222,6 +5038,414 @@ static const ECSLink TestManyToManyRightCallback = {
     XCTAssertEqual(TestCallbackAddCount, 112, "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 2, "Right entity should not have called the remove callback");
+    
+    ECSEntityDestroy(&Context, Entities, 3);
+    ECSEntityCreate(&Context, Entities, 3);
+    
+    ECSEntityAddComponent(&Context, Entities[1], NULL, COMP_A);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyLeftCompA, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyLeftCompA), Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyLeftCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestManyToManyLeftCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestManyToManyLeftCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyLeftCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should have component");
+    
+    ECSEntityAddComponent(&Context, Entities[0], NULL, COMP_A);
+    ECSEntityRemoveComponent(&Context, Entities[1], COMP_A);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyRightCompA, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyRightCompA), Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyRightCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestManyToManyRightCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestManyToManyRightCompA);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyRightCompA));
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entities[1], COMP_A), "Entity should not have component");
+    XCTAssertTrue(ECSEntityHasComponent(&Context, Entities[0], COMP_A), "Entity should have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyLeftCallback, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyLeftCallback), Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyLeftCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestManyToManyLeftCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestManyToManyLeftCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyLeftCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyRightCallback, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemove(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyRightCallback), Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyRightCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLink(&Context, ECS_LINK_INVERT(&TestManyToManyRightCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestManyToManyRightCallback);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], ECS_LINK_INVERT(&TestManyToManyRightCallback));
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[1], Entities[0]);
+    
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
 }
 
 @end
