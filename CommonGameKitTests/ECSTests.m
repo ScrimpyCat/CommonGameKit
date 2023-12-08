@@ -2852,14 +2852,14 @@ static int TestCallbackAddCount = 0;
 static void TestLinkAddCallback(ECSContext *Context, ECSEntity Entity, void *Data)
 {
     TestCallbackAddCount += Data ? *(int*)Data : 1;
-    TestCallbackEntity |= Entity;
+    TestCallbackEntity |= (1 << Entity);
 }
 
 static int TestCallbackRemoveCount = 0;
 static void TestLinkRemoveCallback(ECSContext *Context, ECSEntity Entity)
 {
     TestCallbackRemoveCount++;
-    TestCallbackEntity |= Entity;
+    TestCallbackEntity |= (1 << Entity);
 }
 
 static const ECSLink TestOneToOne = { .type = ECSLinkTypeRelationshipOneToOne };
@@ -2903,6 +2903,82 @@ static const ECSLink TestOneToOneLeftCallback = {
 };
 static const ECSLink TestOneToOneRightCallback = {
     .type = ECSLinkTypeRelationshipOneToOne | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight),
+    .associate[1] = {
+        .callback = { .add = TestLinkAddCallback, .remove = TestLinkRemoveCallback }
+    }
+};
+
+static const ECSLink TestOneToManyLeftCompA = {
+    .type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithLeft),
+    .associate[0] = {
+        .component = { .id = COMP_A, .data = &TestDefaultCompA_10 }
+    }
+};
+static const ECSLink TestOneToManyRightCompA = {
+    .type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithRight),
+    .associate[1] = {
+        .component = { .id = COMP_A, .data = &TestDefaultCompA_20 }
+    }
+};
+static const ECSLink TestOneToManyCompA = {
+    .type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithLeft) | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithRight),
+    .associate = {
+        { .component = { .id = COMP_A, .data = &TestDefaultCompA_10 } },
+        { .component = { .id = COMP_A, .data = &TestDefaultCompA_20 } }
+    }
+};
+static const ECSLink TestOneToManyLeftCompB = {
+    .type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithLeft),
+    .associate[0] = {
+        .component = { .id = COMP_B, .data = &TestDefaultCompB_10_20 }
+    }
+};
+static const ECSLink TestOneToManyLeftCallback = {
+    .type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft),
+    .associate[0] = {
+        .callback = { .add = TestLinkAddCallback, .remove = TestLinkRemoveCallback }
+    }
+};
+static const ECSLink TestOneToManyRightCallback = {
+    .type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight),
+    .associate[1] = {
+        .callback = { .add = TestLinkAddCallback, .remove = TestLinkRemoveCallback }
+    }
+};
+
+static const ECSLink TestManyToManyLeftCompA = {
+    .type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithLeft),
+    .associate[0] = {
+        .component = { .id = COMP_A, .data = &TestDefaultCompA_10 }
+    }
+};
+static const ECSLink TestManyToManyRightCompA = {
+    .type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithRight),
+    .associate[1] = {
+        .component = { .id = COMP_A, .data = &TestDefaultCompA_20 }
+    }
+};
+static const ECSLink TestManyToManyCompA = {
+    .type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithLeft) | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithRight),
+    .associate = {
+        { .component = { .id = COMP_A, .data = &TestDefaultCompA_10 } },
+        { .component = { .id = COMP_A, .data = &TestDefaultCompA_20 } }
+    }
+};
+static const ECSLink TestManyToManyLeftCompB = {
+    .type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateComponent << ECSLinkTypeWithLeft),
+    .associate[0] = {
+        .component = { .id = COMP_B, .data = &TestDefaultCompB_10_20 }
+    }
+};
+static const ECSLink TestManyToManyLeftCallback = {
+    .type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft),
+    .associate[0] = {
+        .callback = { .add = TestLinkAddCallback, .remove = TestLinkRemoveCallback }
+    }
+};
+static const ECSLink TestManyToManyRightCallback = {
+    .type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight),
     .associate[1] = {
         .callback = { .add = TestLinkAddCallback, .remove = TestLinkRemoveCallback }
     }
@@ -3697,7 +3773,7 @@ static const ECSLink TestOneToOneRightCallback = {
     
     
     
-    ECSEntity Entities[3];
+    ECSEntity Entities[4];
     ECSEntityCreate(&Context, Entities, 3);
     
     ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOne, Entities[1], NULL);
@@ -3751,11 +3827,11 @@ static const ECSLink TestOneToOneRightCallback = {
     ECSLinkRemoveLink(&Context, &TestOneToOneRightCompA);
     
     A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
-    XCTAssertEqual(A, NULL, "Middle entity should not have component");
+    XCTAssertEqual(A, NULL, "Entity should not have component");
     A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
-    XCTAssertEqual(A, NULL, "Middle entity should not have component");
+    XCTAssertEqual(A, NULL, "Entity should not have component");
     A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
-    XCTAssertEqual(A, NULL, "Middle entity should not have component");
+    XCTAssertEqual(A, NULL, "Entity should not have component");
     
     ECSLinkAdd(&Context, Entities[0], &(CompA){ { 1 } }, &TestOneToOneLeftCompA, Entities[1], &(CompA){ { 2 } });
     ECSLinkAdd(&Context, Entities[1], &(CompA){ { 1 } }, &TestOneToOneRightCompA, Entities[2], &(CompA){ { 2 } });
@@ -3814,18 +3890,22 @@ static const ECSLink TestOneToOneRightCallback = {
     ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCallback, Entities[1], NULL);
     
     XCTAssertEqual(TestCallbackAddCount, 1, "Left entity should have called the add callback");
-    XCTAssertEqual(TestCallbackEntity, Entities[0], "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 0, "Left entity should not have called the remove callback");
+    
+    TestCallbackEntity = 0;
     
     ECSLinkRemoveLink(&Context, &TestOneToOneLeftCallback);
     
     XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should have called the remove callback");
-    XCTAssertEqual(TestCallbackEntity, Entities[0], "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    
+    TestCallbackEntity = 0;
     
     ECSLinkAdd(&Context, Entities[0], &(int){ 10 }, &TestOneToOneLeftCallback, Entities[1], NULL);
     
     XCTAssertEqual(TestCallbackAddCount, 11, "Left entity should have called the add callback");
-    XCTAssertEqual(TestCallbackEntity, Entities[0], "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
     
     TestCallbackAddCount = 0;
@@ -3835,19 +3915,313 @@ static const ECSLink TestOneToOneRightCallback = {
     ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCallback, Entities[2], NULL);
     
     XCTAssertEqual(TestCallbackAddCount, 1, "Right entity should have called the add callback");
-    XCTAssertEqual(TestCallbackEntity, Entities[2], "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[2]), "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 0, "Right entity should not have called the remove callback");
+    
+    TestCallbackEntity = 0;
     
     ECSLinkRemoveLink(&Context, &TestOneToOneRightCallback);
     
     XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should have called the remove callback");
-    XCTAssertEqual(TestCallbackEntity, Entities[2], "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[2]), "Right entity should have called the remove callback");
+    
+    TestCallbackEntity = 0;
     
     ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCallback, Entities[2], &(int){ 10 });
     
     XCTAssertEqual(TestCallbackAddCount, 11, "Right entity should have called the add callback");
-    XCTAssertEqual(TestCallbackEntity, Entities[2], "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[2]), "Right entity should have called the add callback");
     XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    
+    
+    ECSEntityDestroy(&Context, Entities, 3);
+    ECSEntityCreate(&Context, Entities, 3);
+    
+    TestCallbackAddCount = 0;
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 10, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Right entity should not have component");
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyLeftCompA);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    
+    ECSLinkAdd(&Context, Entities[0], &(CompA){ { 1 } }, &TestOneToManyLeftCompA, Entities[1], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 1, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Right entity should not have component");
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyLeftCompA);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[2], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Left entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 20, "Right entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 20, "Right entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyRightCompA);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[1], &(CompA){ { 2 } });
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCompA, Entities[2], &(CompA){ { 3 } });
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Left entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 2, "Right entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 3, "Right entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyRightCompA);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyCompA, Entities[1], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 10, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 20, "Right entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyCompA);
+    
+    ECSLinkAdd(&Context, Entities[0], &(CompA){ { 1 } }, &TestOneToManyCompA, Entities[1], &(CompA){ { 2 } });
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 1, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 2, "Right entity should have component with correct value");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCallback, Entities[2], NULL);
+    
+    XCTAssertEqual(TestCallbackAddCount, 2, "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 0, "Left entity should not have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyLeftCallback);
+    
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkAdd(&Context, Entities[0], &(int){ 10 }, &TestOneToManyLeftCallback, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], &(int){ 100 }, &TestOneToManyLeftCallback, Entities[2], NULL);
+    
+    XCTAssertEqual(TestCallbackAddCount, 112, "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]), "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 1, "Left entity should not have called the remove callback");
+    
+    TestCallbackAddCount = 0;
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCallback, Entities[2], NULL);
+    
+    XCTAssertEqual(TestCallbackAddCount, 2, "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 0, "Right entity should not have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyRightCallback);
+    
+    XCTAssertEqual(TestCallbackRemoveCount, 2, "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCallback, Entities[1], &(int){ 10 });
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCallback, Entities[2], &(int){ 100 });
+    
+    XCTAssertEqual(TestCallbackAddCount, 112, "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 2, "Right entity should not have called the remove callback");
+    
+    
+    
+    ECSEntityDestroy(&Context, Entities, 3);
+    ECSEntityCreate(&Context, Entities, 3);
+    
+    TestCallbackAddCount = 0;
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 10, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Right entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 10, "Left entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyLeftCompA);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    
+    ECSLinkAdd(&Context, Entities[0], &(CompA){ { 1 } }, &TestManyToManyLeftCompA, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], &(CompA){ { 2 } }, &TestManyToManyLeftCompA, Entities[1], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 1, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Right entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 2, "Left entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyLeftCompA);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[2], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Left entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 20, "Right entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 20, "Right entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyRightCompA);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertEqual(A, NULL, "Entity should not have component");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[1], &(CompA){ { 2 } });
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCompA, Entities[2], &(CompA){ { 3 } });
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertEqual(A, NULL, "Left entity should not have component");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 2, "Right entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[2], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 3, "Right entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyRightCompA);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyCompA, Entities[1], NULL);
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 10, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 20, "Right entity should have component with correct value");
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyCompA);
+    
+    ECSLinkAdd(&Context, Entities[0], &(CompA){ { 1 } }, &TestManyToManyCompA, Entities[1], &(CompA){ { 2 } });
+    
+    A = ECSEntityGetComponent(&Context, Entities[0], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Left entity should have component");
+    XCTAssertEqual(A->v[0], 1, "Left entity should have component with correct value");
+    A = ECSEntityGetComponent(&Context, Entities[1], COMP_A);
+    XCTAssertNotEqual(A, NULL, "Right entity should have component");
+    XCTAssertEqual(A->v[0], 2, "Right entity should have component with correct value");
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    XCTAssertEqual(TestCallbackAddCount, 2, "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]) | (1 << Entities[2]), "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 0, "Left entity should not have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyLeftCallback);
+    
+    XCTAssertEqual(TestCallbackRemoveCount, 2, "Left entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]) | (1 << Entities[2]), "Left entity should have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkAdd(&Context, Entities[0], &(int){ 10 }, &TestManyToManyLeftCallback, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], &(int){ 100 }, &TestManyToManyLeftCallback, Entities[1], NULL);
+    
+    XCTAssertEqual(TestCallbackAddCount, 112, "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[0]) | (1 << Entities[2]), "Left entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 2, "Left entity should not have called the remove callback");
+    
+    TestCallbackAddCount = 0;
+    TestCallbackEntity = 0;
+    TestCallbackRemoveCount = 0;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCallback, Entities[2], NULL);
+    
+    XCTAssertEqual(TestCallbackAddCount, 2, "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 0, "Right entity should not have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyRightCallback);
+    
+    XCTAssertEqual(TestCallbackRemoveCount, 2, "Right entity should have called the remove callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the remove callback");
+    
+    TestCallbackEntity = 0;
+    
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCallback, Entities[1], &(int){ 10 });
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCallback, Entities[2], &(int){ 100 });
+    
+    XCTAssertEqual(TestCallbackAddCount, 112, "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]) | (1 << Entities[2]), "Right entity should have called the add callback");
+    XCTAssertEqual(TestCallbackRemoveCount, 2, "Right entity should not have called the remove callback");
 }
 
 @end
