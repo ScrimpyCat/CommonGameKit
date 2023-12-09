@@ -26,7 +26,7 @@
 /*!
  * @header ECS
  * @abstract The ECS (Entity Component System)
- * @discussion This overview for the ECS is split into a number of concepts. These are Setup, Contexts, Groups, Systems, Components, Entities, Registry, Mutations, Concurrency,
+ * @discussion This overview for the ECS is split into a number of concepts. These are Setup, Contexts, Groups, Systems, Components, Entities, Registry, Links, Mutations, Concurrency,
  *             ecs\_tool, Configuration.
  *
  *             ## Setup
@@ -163,6 +163,9 @@
  *
  *             ## Registry
  *             The registry allows for entities to be associated with a context unique ID that can optionally persist across runtimes.
+ *
+ *             ## Links
+ *             Links allow for entity to entity relationships to be defined with optional additional behaviours. The supported relationship types are 1:1, 1:N, M:N.
  *
  *             ## Mutations
  *             Mutations allow for breaking changes to be deferred until a later point. As it can be unsafe for a system to add or remove components of a certain storage type, creating
