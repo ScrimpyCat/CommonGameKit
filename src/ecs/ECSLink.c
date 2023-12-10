@@ -74,6 +74,8 @@ static _Bool ECSLinkFindEntity(const ECSEntity *Entities, size_t Count, ECSEntit
 void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLink *Link, ECSEntity EntityB, void *DataB)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, EntityA), "EntityA must be alive");
+    CCAssertLog(ECSEntityIsAlive(Context, EntityB), "EntityB must be alive");
     CCAssertLog(Link, "Link must not be null");
     
     if (ECS_LINK_IS_INVERTED(Link))

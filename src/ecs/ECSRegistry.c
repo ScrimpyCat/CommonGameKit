@@ -25,6 +25,7 @@
 
 #include "ECSRegistry.h"
 #include "ECSContext.h"
+#include "ECS.h"
 
 void ECSRegistryInit(ECSContext *Context, ECSRegistryID ID)
 {
@@ -46,6 +47,7 @@ void ECSRegistryInit(ECSContext *Context, ECSRegistryID ID)
 ECSRegistryID ECSRegistryRegister(ECSContext *Context, ECSEntity Entity)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     const size_t Count = CCArrayGetCount(Context->registry.uniqueEntityIDs);
     
@@ -97,6 +99,7 @@ void ECSRegistryDeregister(ECSContext *Context, ECSEntity Entity)
 void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID ID, _Bool AcquireID)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     if (CCBigIntFastCompareLessThan(Context->registry.id, ID))
     {
