@@ -158,8 +158,14 @@
  *             ## Entities
  *             An entity is what groups associated component data together.
  *
- *             Entity destruction will remove the components from that entity and make it available for reuse. Certain operations can still be safely performed on a destroyed entity,
- *             but mutating the entity should be avoided.
+ *             Entity destruction will remove the components from that entity, deregister it from the @b registry, remove any @b links, and make the entity available for reuse. Certain
+ *             operations (such as entity destroy, any queries, and component, registry, link removals) can still be safely performed on a destroyed entity, but mutating the entity should
+ *             be avoided. @b ECSEntityIsAlive can be used to determine whether an entity is currently alive or dead.
+ *
+ *             When mutations are used as the only way to mutate ECS state (specifically to create and destroy entities), it guarantees that the IDs for any destroyed entities will remain
+ *             destroyed until the next mutation is applied. So any systems that run during the next tick can accurately tell whether an entity from the tick before was destroyed or not.
+ *             After that tick the guarantee can no longer be made, as it will depend on whether any application logic staged some entity create mutations which may then reclaim those old
+ *             IDs. If you need to track entity destruction beyond that, you should either use the @b registry or communicate which entities have been destroyed in your application logic.
  *
  *             ## Registry
  *             The registry allows for entities to be associated with a context unique ID that can optionally persist across runtimes.
