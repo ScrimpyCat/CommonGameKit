@@ -61,6 +61,11 @@ typedef size_t ECSArchetypeComponentID;
 #define ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT 1
 #endif
 
+CC_ENUM(size_t) {
+    ECSHasBitEntityDestroyed = ECS_COMPONENT_MAX + 1,
+    ECSHasBitCount
+};
+
 typedef struct {
     struct {
         ECSArchetype *ptr;
@@ -71,7 +76,7 @@ typedef struct {
         } component;
     } archetype;
     
-    CCBits(uint8_t, ECS_COMPONENT_MAX) has;
+    CCBits(uint8_t, ECSHasBitCount) has;
     
     struct {
         size_t indexes[ECS_PACKED_COMPONENT_MAX];

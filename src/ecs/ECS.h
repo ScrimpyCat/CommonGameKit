@@ -537,6 +537,7 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void 
 /*!
  * @brief Remove an archetype component from an entity.
  * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove a component from.
  * @param ID The component ID of the archetype component to be removed.
@@ -563,6 +564,7 @@ void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Da
 /*!
  * @brief Remove a packed component from an entity.
  * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove a component from.
  * @param ID The component ID of the packed component to be removed.
@@ -582,6 +584,7 @@ void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *D
 /*!
  * @brief Remove an indexed component from an entity.
  * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove a component from.
  * @param ID The component ID of the indexed component to be removed.
@@ -601,6 +604,7 @@ void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Dat
 /*!
  * @brief Remove a local component from an entity.
  * @note Should typically use @b ECSEntityRemoveComponent or @b ECSEntityRemoveComponents instead.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove a component from.
  * @param ID The component ID of the local component to be removed.
@@ -631,6 +635,7 @@ void ECSEntityCreate(ECSContext *Context, ECSEntity *Entities, size_t Count);
 
 /*!
  * @brief Destroy entities.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entities A pointer to the entities to be destroyed.
  * @param Count The number of entities to destroy.
@@ -648,6 +653,7 @@ static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, 
 
 /*!
  * @brief Remove a component from an entity.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove a component from.
  * @param ID The component ID of the component to be removed.
@@ -665,12 +671,22 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
 
 /*!
  * @brief Remove multiple components from an entity.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove the components from.
  * @param IDs The component IDs of the components to be removed.
  * @param Count The number of components to be removed.
  */
 void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, const ECSComponentID *IDs, size_t Count);
+
+/*!
+ * @brief Check whether an entity is alive.
+ * @note This function can be safely called on destroyed entity references where it will return FALSE.
+ * @param Context The context to be used.
+ * @param Entity The entity to check.
+ * @return Returns whether the entity is alive (TRUE) or not/has been destroyed (FALSE).
+ */
+static inline _Bool ECSEntityIsAlive(ECSContext *Context, ECSEntity Entity);
 
 /*!
  * @brief Check whether an entity has a component.
@@ -715,6 +731,7 @@ static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity
 
 /*!
  * @brief Remove multiple duplicate components from an entity.
+ * @note This function can be safely called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to remove the duplicate components from.
  * @param ID The component ID of the duplicate component.
@@ -887,6 +904,7 @@ static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponen
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
@@ -954,6 +972,15 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
     }
 }
 
+static inline _Bool ECSEntityIsAlive(ECSContext *Context, ECSEntity Entity)
+{
+    CCAssertLog(Context, "Context must not be null");
+    
+    ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+    
+    return !CCBitsGet(Refs->has, ECSHasBitEntityDestroyed);
+}
+
 static inline _Bool ECSEntityHasComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
@@ -1003,6 +1030,7 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     if (ID & ECSComponentStorageModifierDuplicate)
     {

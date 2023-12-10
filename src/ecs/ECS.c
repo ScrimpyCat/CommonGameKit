@@ -621,11 +621,24 @@ void ECSEntityDestroy(ECSContext *Context, const ECSEntity *Entities, size_t Cou
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(Entities, "Entities must not be null");
     
+    size_t Offset = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
-        ECSLinkRemoveAllLinksForEntity(Context, Entities[Loop]);
+        if (!ECSEntityIsAlive(Context, Entities[Loop]))
+        {
+            const size_t SegmentCount = Loop - Offset;
+            if (SegmentCount) CCArrayAppendElements(Context->manager.available, Entities + Offset, SegmentCount);
+            
+            Offset = Loop + 1;
+            
+            continue;
+        }
         
         ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entities[Loop]);
+        CCBitsSet(Refs->has, ECSHasBitEntityDestroyed);
+        
+        ECSLinkRemoveAllLinksForEntity(Context, Entities[Loop]);
+        
         ECSComponentID IDs[32];
         size_t ComponentCount = 0;
         const size_t BlockSize = CC_BITS_BLOCK_SIZE(Refs->has);
@@ -657,7 +670,8 @@ void ECSEntityDestroy(ECSContext *Context, const ECSEntity *Entities, size_t Cou
         ECSRegistryDeregister(Context, Entities[Loop]);
     }
     
-    CCArrayAppendElements(Context->manager.available, Entities, Count);
+    const size_t SegmentCount = Count - Offset;
+    if (SegmentCount) CCArrayAppendElements(Context->manager.available, Entities + Offset, SegmentCount);
 }
 
 void ECSDuplicateDestructor(void *Data, ECSComponentID ID)
@@ -894,6 +908,7 @@ static const struct {
 void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     if (!ECSEntityHasComponent(Context, Entity, ID))
     {
@@ -1039,6 +1054,7 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
 void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     if (!ECSEntityHasComponent(Context, Entity, ID))
     {
@@ -1135,6 +1151,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
 void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     if (!ECSEntityHasComponent(Context, Entity, ID))
     {
@@ -1191,6 +1208,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
 void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
     if (!ECSEntityHasComponent(Context, Entity, ID))
     {
@@ -1237,6 +1255,7 @@ void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponent
 void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSTypedComponent *Components, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
+    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     CCAssertLog(Components, "Components must not be null");
     
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
