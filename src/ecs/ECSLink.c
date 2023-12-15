@@ -103,9 +103,10 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
         ECSEntity entity;
         void *data;
         ECSLinkType side;
+        ECSEntity prev;
     } Pair[2] = {
-        { EntityA, DataA, ECSLinkTypeWithLeft },
-        { EntityB, DataB, ECSLinkTypeWithRight},
+        { EntityA, DataA, ECSLinkTypeWithLeft, ECS_ENTITY_NULL },
+        { EntityB, DataB, ECSLinkTypeWithRight, ECS_ENTITY_NULL }
     };
     
     const void *Key = Link;
@@ -177,6 +178,8 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
                 
                 if (PrevEntity == Pair[(Loop + 1) & 1].entity) return;
                 
+                Pair[Loop].prev = PrevEntity;
+                
                 const _Bool OppositeHasMany = ((Link->type >> Pair[Loop].side) & ECSLinkTypeGroupMask) == ECSLinkTypeGroupMany;
                 
                 CCDictionary OppositeAssoc = *(CCDictionary*)CCArrayGetElementAtIndex(Context->links.associations, PrevEntity);
@@ -199,28 +202,30 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
                 }
                 
                 else CCDictionaryRemoveEntry(OppositeAssoc, OppositeLinkEntry);
-                
-                
-                switch (OppositeSide & ECSLinkTypeAssociateMask)
-                {
-                    case ECSLinkTypeAssociateCallback:
-                        Link->associate[(Loop + 1) & 1].callback.remove(Context, PrevEntity);
-                        break;
-                        
-                    case ECSLinkTypeAssociateComponent:
-                        ECSEntityRemoveComponent(Context, PrevEntity, Link->associate[(Loop + 1) & 1].component.id);
-                        break;
-                        
-                    default:
-                        break;
-                }
             }
             
             CCDictionarySetEntry(*Assoc, LinkEntry, &LinkedEntity);
         }
-        
-        
+    }
+    
+    for (size_t Loop = 0; Loop < 2; Loop++)
+    {
         const ECSLinkType Side = Link->type >> Pair[Loop].side;
+        
+        const ECSEntity PrevEntity = Pair[Loop].prev;
+        
+        if (PrevEntity != ECS_ENTITY_NULL)
+        {
+            switch (Side & ECSLinkTypeAssociateMask)
+            {
+                case ECSLinkTypeAssociateCallback:
+                    Link->associate[Loop].callback.remove(Context, Pair[Loop].entity);
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
         
         switch (Side & ECSLinkTypeAssociateMask)
         {
@@ -234,6 +239,30 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
                 
             default:
                 break;
+        }
+        
+        if (PrevEntity != ECS_ENTITY_NULL)
+        {
+            const ECSLinkType OppositeSide = Link->type >> Pair[(Loop + 1) & 1].side;
+            
+            switch (OppositeSide & ECSLinkTypeAssociateMask)
+            {
+                case ECSLinkTypeAssociateCallback:
+                    Link->associate[(Loop + 1) & 1].callback.remove(Context, PrevEntity);
+                    break;
+                    
+                case ECSLinkTypeAssociateComponent:
+                    ECSEntityRemoveComponent(Context, PrevEntity, Link->associate[(Loop + 1) & 1].component.id);
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            if ((OppositeSide & ECSLinkTypeDeletionMask) == ECSLinkTypeDeletionCascading)
+            {
+                ECSEntityDestroy(Context, &PrevEntity, 1);
+            }
         }
     }
 }
@@ -408,8 +437,10 @@ void ECSLinkRemoveLinkForEntity(ECSContext *Context, ECSEntity Entity, const ECS
         
         if (HasMany)
         {
-            CCArray(ECSEntity) LinkedEntities = *(CCArray*)Linked;
+            CCArray(ECSEntity) LinkedEntities = CCRetain(*(CCArray*)Linked);
             const size_t LinkedCount = CCArrayGetCount(LinkedEntities);
+            
+            CCDictionaryRemoveEntry(Assoc, LinkEntry);
             
             if (LinkedCount)
             {
@@ -452,11 +483,15 @@ void ECSLinkRemoveLinkForEntity(ECSContext *Context, ECSEntity Entity, const ECS
                     ECSEntityDestroy(Context, CCArrayGetData(LinkedEntities), LinkedCount);
                 }
             }
+            
+            CCArrayDestroy(LinkedEntities);
         }
         
         else
         {
             const ECSEntity LinkedEntity = *(ECSEntity*)Linked;
+            
+            CCDictionaryRemoveEntry(Assoc, LinkEntry);
             
             ECSLinkRemoveLinkForOppositeEntity(Context, LinkedEntity, OppositeHasMany, OppositeKey, Entity);
             
@@ -479,8 +514,6 @@ void ECSLinkRemoveLinkForEntity(ECSContext *Context, ECSEntity Entity, const ECS
                 ECSEntityDestroy(Context, &LinkedEntity, 1);
             }
         }
-        
-        CCDictionaryRemoveEntry(Assoc, LinkEntry);
         
         
         switch (Side & ECSLinkTypeAssociateMask)
@@ -511,10 +544,26 @@ void ECSLinkRemoveAllLinksForEntity(ECSContext *Context, ECSEntity Entity)
     CCEnumerable Enumerable;
     ECSLinkEnumerable(Context, Entity, &Enumerable);
     
+    CCMemoryZoneSave(ECSSharedZone);
+    
+    CCMemoryZoneBlock *Block = CCMemoryZoneGetCurrentBlock(ECSSharedZone);
+    ptrdiff_t Offset = CCMemoryZoneBlockGetCurrentOffset(Block);
+    
+    size_t Count = 0;
     for (void **Link = CCEnumerableGetCurrent(&Enumerable); Link; Link = CCEnumerableNext(&Enumerable))
     {
-        ECSLinkRemoveLinkForEntity(Context, Entity, *Link);
+        ECSSharedZoneStore(Link, sizeof(void*));
+        Count++;
     }
+    
+    for (size_t Loop = 0; Loop < Count; Loop++)
+    {
+        void **Link = CCMemoryZoneBlockGetPointer(&Block, &Offset, NULL);
+        ECSLinkRemoveLinkForEntity(Context, Entity, *Link);
+        Offset += sizeof(void*);
+    }
+    
+    CCMemoryZoneRestore(ECSSharedZone);
 }
 
 void ECSLinkRemoveAllLinksBetweenEntities(ECSContext *Context, ECSEntity EntityA, ECSEntity EntityB)
@@ -524,10 +573,26 @@ void ECSLinkRemoveAllLinksBetweenEntities(ECSContext *Context, ECSEntity EntityA
     CCEnumerable Enumerable;
     ECSLinkEnumerable(Context, EntityA, &Enumerable);
     
+    CCMemoryZoneSave(ECSSharedZone);
+    
+    CCMemoryZoneBlock *Block = CCMemoryZoneGetCurrentBlock(ECSSharedZone);
+    ptrdiff_t Offset = CCMemoryZoneBlockGetCurrentOffset(Block);
+    
+    size_t Count = 0;
     for (void **Link = CCEnumerableGetCurrent(&Enumerable); Link; Link = CCEnumerableNext(&Enumerable))
     {
-        ECSLinkRemove(Context, EntityA, *Link, EntityB);
+        ECSSharedZoneStore(Link, sizeof(void*));
+        Count++;
     }
+    
+    for (size_t Loop = 0; Loop < Count; Loop++)
+    {
+        void **Link = CCMemoryZoneBlockGetPointer(&Block, &Offset, NULL);
+        ECSLinkRemove(Context, EntityA, *Link, EntityB);
+        Offset += sizeof(void*);
+    }
+    
+    CCMemoryZoneRestore(ECSSharedZone);
 }
 
 void ECSLinkRemoveLink(ECSContext *Context, const ECSLink *Link)
