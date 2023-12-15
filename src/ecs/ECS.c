@@ -910,11 +910,52 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void 
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
-    if (!ECSEntityHasComponent(Context, Entity, ID))
+    ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+    
+    const size_t CompIndex = ID & ~ECSComponentStorageMask;
+    
+    if (ECSEntityHasComponent(Context, Entity, ID))
     {
-        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+        size_t Index = ECSArchetypeComponentIndex(Refs, ID & ~ECSComponentStorageMask);
+        ECSArchetype *Archetype = Refs->archetype.ptr;
         
-        const size_t CompIndex = ID & ~ECSComponentStorageMask;
+        if (ID & ECSComponentStorageModifierDestructor)
+        {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+            // NOTE: Consider changing ECSComponentStorageModifierDestructor to a 2-bit mask, and adding ECSComponentStorageModifierDestructorImpure and ECSComponentStorageModifierDestructorPure.
+            ECSArchetypeRemoveComponent(Context, Entity, ID);
+            ECSArchetypeAddComponent(Context, Entity, Data, ID);
+            
+            return;
+#else
+            _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+            CCBitsClear(Refs->has, CompIndex);
+            
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+            ECSArchetypeComponentDestructors[CompIndex](CCArrayGetElementAtIndex(Archetype->components[Index], Refs->archetype.index), ID);
+#else
+            CCMemoryZoneSave(ECSSharedZone);
+            
+            ECSArchetypeComponentDestructors[CompIndex](ECSSharedZoneStore(CCArrayGetElementAtIndex(Archetype->components[Index], Refs->archetype.index), ECSArchetypeComponentSizes[CompIndex]), ID);
+            
+            CCMemoryZoneRestore(ECSSharedZone);
+#endif
+            
+            CCBitsSet(Refs->has, CompIndex);
+            
+            if (Archetype != Refs->archetype.ptr)
+            {
+                Archetype = Refs->archetype.ptr;
+                Index = ECSArchetypeComponentIndex(Refs, ID & ~ECSComponentStorageMask);
+            }
+#endif
+        }
+        
+        CCArrayReplaceElementAtIndex(Archetype->components[Index], Refs->archetype.index, Data);
+    }
+    
+    else
+    {
         const size_t AddedIndex = SortedAdd(Refs->archetype.component.ids, Refs->archetype.component.count++, CompIndex);
         const size_t Count = Refs->archetype.component.count;
         const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
@@ -925,7 +966,7 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void 
             const size_t ChunkSize = ECS_ARCHETYPE_COMPONENT_ARRAY_CHUNK_SIZE(ArchID, Count);
             
             Archetype->entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize);
-
+            
             for (size_t Loop = 0; Loop < Count; Loop++) Archetype->components[Loop] = CCArrayCreate(CC_STD_ALLOCATOR, ECSArchetypeComponentSizes[Refs->archetype.component.ids[Loop]], ChunkSize);
         }
         
@@ -1066,19 +1107,56 @@ void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Da
         CCArray(ECSEntity) Entities = Packed->entities;
         CCArray Components = *Packed->components;
         
-        if (CC_UNLIKELY(!Components))
+        if (ECSEntityHasComponent(Context, Entity, ID))
         {
-            const size_t ChunkSize = ECS_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(Index);
+            const size_t EntityIndex = Refs->packed.indexes[Index];
             
-            Packed->entities = (Entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize));
+            if (ID & ECSComponentStorageModifierDestructor)
+            {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+                // NOTE: Consider changing ECSComponentStorageModifierDestructor to a 2-bit mask, and adding ECSComponentStorageModifierDestructorImpure and ECSComponentStorageModifierDestructorPure.
+                ECSPackedRemoveComponent(Context, Entity, ID);
+                ECSPackedAddComponent(Context, Entity, Data, ID);
+                
+                return;
+#else
+                const size_t CompIndex = Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked);
+                
+                CCBitsClear(Refs->has, CompIndex);
+                
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+                ECSPackedComponentDestructors[Index](CCArrayGetElementAtIndex(Components, EntityIndex), ID);
+#else
+                CCMemoryZoneSave(ECSSharedZone);
+                
+                ECSPackedComponentDestructors[Index](ECSSharedZoneStore(CCArrayGetElementAtIndex(Components, EntityIndex), ECSPackedComponentSizes[Index]), ID);
+                
+                CCMemoryZoneRestore(ECSSharedZone);
+#endif
+                
+                CCBitsSet(Refs->has, CompIndex);
+#endif
+            }
             
-            *Packed->components = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSPackedComponentSizes[Index], ChunkSize));
+            CCArrayReplaceElementAtIndex(Components, EntityIndex, Data);
         }
         
-        CCArrayAppendElement(Components, Data);
-        Refs->packed.indexes[Index] = CCArrayAppendElement(Entities, &Entity);
-        
-        CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked));
+        else
+        {
+            if (CC_UNLIKELY(!Components))
+            {
+                const size_t ChunkSize = ECS_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(Index);
+                
+                Packed->entities = (Entities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), ChunkSize));
+                
+                *Packed->components = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSPackedComponentSizes[Index], ChunkSize));
+            }
+            
+            CCArrayAppendElement(Components, Data);
+            Refs->packed.indexes[Index] = CCArrayAppendElement(Entities, &Entity);
+            
+            CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypePacked));
+        }
     }
 }
 
@@ -1153,30 +1231,52 @@ void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *D
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
-    if (!ECSEntityHasComponent(Context, Entity, ID))
+    ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+    
+    const size_t Index = (ID & ~ECSComponentStorageMask);
+    ECSIndexedComponent *Indexed = &Context->indexed[Index];
+    
+    CCArray Components = *Indexed;
+    
+    if (CC_UNLIKELY(!Components))
     {
-        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
-        
-        const size_t Index = (ID & ~ECSComponentStorageMask);
-        ECSIndexedComponent *Indexed = &Context->indexed[Index];
-        
-        CCArray Components = *Indexed;
-        
-        if (CC_UNLIKELY(!Components))
-        {
-            *Indexed = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSIndexedComponentSizes[Index], ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index)));
-        }
-        
-        const size_t Count = CCArrayGetCount(Components);
-        if (Entity >= Count)
-        {
-            CCArrayAppendElements(Components, NULL, CC_ALIGN((Entity - Count) + 1, ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index)));
-        }
-        
-        CCArrayReplaceElementAtIndex(Components, Entity, Data);
-        
-        CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed));
+        *Indexed = (Components = CCArrayCreate(CC_STD_ALLOCATOR, ECSIndexedComponentSizes[Index], ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index)));
     }
+    
+    const size_t Count = CCArrayGetCount(Components);
+    if (Entity >= Count)
+    {
+        CCArrayAppendElements(Components, NULL, CC_ALIGN((Entity - Count) + 1, ECS_INDEXED_COMPONENT_ARRAY_CHUNK_SIZE(Index)));
+    }
+    
+    const size_t CompIndex = Index + ECSComponentBaseIndex(ECSComponentStorageTypeIndexed);
+    
+    if ((ID & ECSComponentStorageModifierDestructor) && (ECSEntityHasComponent(Context, Entity, ID)))
+    {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+        // NOTE: Consider changing ECSComponentStorageModifierDestructor to a 2-bit mask, and adding ECSComponentStorageModifierDestructorImpure and ECSComponentStorageModifierDestructorPure.
+        ECSIndexedRemoveComponent(Context, Entity, ID);
+        ECSIndexedAddComponent(Context, Entity, Data, ID);
+            
+            return;
+#else
+        CCBitsClear(Refs->has, CompIndex);
+        
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+        ECSIndexedComponentDestructors[Index](CCArrayGetElementAtIndex(Context->indexed[Index], Entity), ID);
+#else
+        CCMemoryZoneSave(ECSSharedZone);
+        
+        ECSIndexedComponentDestructors[Index](ECSSharedZoneStore(CCArrayGetElementAtIndex(Context->indexed[Index], Entity), ECSIndexedComponentSizes[Index]), ID);
+        
+        CCMemoryZoneRestore(ECSSharedZone);
+#endif
+#endif
+    }
+    
+    CCArrayReplaceElementAtIndex(Components, Entity, Data);
+    
+    CCBitsSet(Refs->has, CompIndex);
 }
 
 void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
@@ -1210,20 +1310,41 @@ void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Dat
     CCAssertLog(Context, "Context must not be null");
     CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
     
-    if (!ECSEntityHasComponent(Context, Entity, ID))
+    ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+    
+    const size_t Index = ECSLocalComponentIndex(ID);
+    const size_t CompIndex = Index + ECSComponentBaseIndex(ECSComponentStorageTypeLocal);
+    
+    if ((ID & ECSComponentStorageModifierDestructor) && (ECSEntityHasComponent(Context, Entity, ID)))
     {
-        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+        // NOTE: Consider changing ECSComponentStorageModifierDestructor to a 2-bit mask, and adding ECSComponentStorageModifierDestructorImpure and ECSComponentStorageModifierDestructorPure.
+        ECSLocalRemoveComponent(Context, Entity, ID);
+        ECSLocalAddComponent(Context, Entity, Data, ID);
         
-        const size_t Index = ECSLocalComponentIndex(ID);
+        return;
+#else
+        CCBitsClear(Refs->has, CompIndex);
         
-        if (Data)
-        {
-            const ptrdiff_t Offset = ECSLocalComponentOffset(ID);
-            memcpy(&Refs->local[Offset], Data, ECSLocalComponentSizes[Index]);
-        }
+#if ECS_UNSAFE_COMPONENT_DESTRUCTION
+        ECSLocalComponentDestructors[Index](&Refs->local[ECSLocalComponentOffset(ID)], ID);
+#else
+        CCMemoryZoneSave(ECSSharedZone);
         
-        CCBitsSet(Refs->has, Index + ECSComponentBaseIndex(ECSComponentStorageTypeLocal));
+        ECSLocalComponentDestructors[Index](ECSSharedZoneStore(&Refs->local[ECSLocalComponentOffset(ID)], ECSLocalComponentSizes[Index]), ID);
+        
+        CCMemoryZoneRestore(ECSSharedZone);
+#endif
+#endif
     }
+    
+    if (Data)
+    {
+        const ptrdiff_t Offset = ECSLocalComponentOffset(ID);
+        memcpy(&Refs->local[Offset], Data, ECSLocalComponentSizes[Index]);
+    }
+    
+    CCBitsSet(Refs->has, CompIndex);
 }
 
 void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponentID ID)
