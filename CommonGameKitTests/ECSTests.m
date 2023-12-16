@@ -3113,6 +3113,28 @@ static int EntityCompare(const void *a, const void *b)
     else return 0;
 }
 
+static ECSEntity LeftEntityAdd, LeftEntityRemove;
+static ECSEntity RightEntityAdd, RightEntityRemove;
+static void TestLinkAddCallbackLeft(ECSContext *Context, ECSEntity Entity, void *Data)
+{
+    LeftEntityAdd = Entity;
+}
+
+static void TestLinkAddCallbackRight(ECSContext *Context, ECSEntity Entity, void *Data)
+{
+    RightEntityAdd = Entity;
+}
+
+static void TestLinkRemoveCallbackLeft(ECSContext *Context, ECSEntity Entity)
+{
+    LeftEntityRemove = Entity;
+}
+
+static void TestLinkRemoveCallbackRight(ECSContext *Context, ECSEntity Entity)
+{
+    RightEntityRemove = Entity;
+}
+
 -(void) testLinks
 {
     ECSEntity Entities[6];
@@ -3794,6 +3816,198 @@ static int EntityCompare(const void *a, const void *b)
     [self assertEntityA: Entities[2] NotLinked: &TestManyToMany ToEntityB: Entities[1]];
     
     ECSLinkRemoveLink(&Context, &TestOneToOne);
+    
+    
+    ECSLink Key = {
+        .type = ECSLinkTypeRelationshipOneToOne | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft),
+        .associate[0] = {
+            .callback = { .add = TestLinkAddCallbackLeft, .remove = TestLinkRemoveCallbackLeft }
+        },
+        .associate[1] = {
+            .callback = { .add = TestLinkAddCallbackRight, .remove = TestLinkRemoveCallbackRight }
+        }
+    };
+    
+#define CLEAR_CALLBACK_STATE \
+LeftEntityAdd = ECS_ENTITY_NULL; \
+RightEntityAdd = ECS_ENTITY_NULL; \
+LeftEntityRemove = ECS_ENTITY_NULL; \
+RightEntityRemove = ECS_ENTITY_NULL;
+    
+#define ASSERT_CALLBACKS(leftAdd, leftRemove, rightAdd, rightRemove) \
+XCTAssertEqual(LeftEntityAdd, leftAdd, @"Should %scall add callback for left entity", leftAdd == ECS_ENTITY_NULL ? "not " : ""); \
+XCTAssertEqual(LeftEntityRemove, leftRemove, @"Should %scall remove callback for left entity", leftRemove == ECS_ENTITY_NULL ? "not " : ""); \
+XCTAssertEqual(RightEntityAdd, rightAdd, @"Should %scall add callback for right entity", rightAdd == ECS_ENTITY_NULL ? "not " : ""); \
+XCTAssertEqual(RightEntityRemove, rightRemove, @"Should %scall remove callback for right entity", rightRemove == ECS_ENTITY_NULL ? "not " : ""); \
+CLEAR_CALLBACK_STATE;
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[0], Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[3], Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipOneToOne | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[2], Entities[1]);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[2], Entities[2]);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1]);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipOneToOne | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft) | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[0], Entities[0], Entities[2], Entities[1]);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[3], Entities[0], Entities[2], Entities[2]);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, Entities[0], ECS_ENTITY_NULL, Entities[1]);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[3], Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[2], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[2], Entities[2]);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1]);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipOneToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft) | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, Entities[2], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[3], Entities[0], Entities[2], Entities[2]);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, Entities[0], ECS_ENTITY_NULL, Entities[1]);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[3], ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, Entities[0], ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[2], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[2], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, Entities[1]);
+    
+    ECSLinkRemoveLink(&Context, &Key);
+    Key.type = ECSLinkTypeRelationshipManyToMany | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithLeft) | (ECSLinkTypeAssociateCallback << ECSLinkTypeWithRight);
+    
+    CLEAR_CALLBACK_STATE;
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, Entities[1], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[0], ECS_ENTITY_NULL, Entities[2], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &Key, Entities[2], NULL);
+    ASSERT_CALLBACKS(Entities[3], ECS_ENTITY_NULL, Entities[2], ECS_ENTITY_NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &Key, Entities[1], NULL);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL, ECS_ENTITY_NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &Key, Entities[1]);
+    ASSERT_CALLBACKS(ECS_ENTITY_NULL, Entities[0], ECS_ENTITY_NULL, Entities[1]);
     
     ECSEntityDestroy(&Context, Entities, 6);
     
