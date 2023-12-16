@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define CC_QUICK_COMPILE
 #include "ECSMonitorComponent.h"
 
 void ECSMonitorComponentDestructor(void *Monitor, ECSComponentID ID)
