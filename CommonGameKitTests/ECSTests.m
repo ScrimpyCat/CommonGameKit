@@ -5684,6 +5684,807 @@ CLEAR_CALLBACK_STATE;
     
     XCTAssertEqual(TestCallbackEntity, (1 << Entities[1]), "Right entity should have called the remove callback");
     XCTAssertEqual(TestCallbackRemoveCount, 1, "Right entity should not have called the remove callback");
+    
+    
+    
+    ECSEntityDestroy(&Context, Entities, 3);
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemove(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOneLeftCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToOneLeftCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]);
+    
+    XCTAssertTrue(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should not be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemove(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveLink(&Context, &TestOneToOneRightCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToOneRightCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToOneRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToOneRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToOneRightCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToOneRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToOneRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToOneRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToOneRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemove(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    ECSEntityCreate(&Context, &Entities[2], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToManyLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestOneToManyLeftCascade, Entities[0]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    ECSEntityCreate(&Context, &Entities[2], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToManyLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyLeftCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestOneToManyLeftCascade, Entities[0]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 1);
+    ECSEntityCreate(&Context, &Entities[2], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToManyLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[2], &TestOneToManyLeftCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestOneToManyLeftCascade, Entities[0]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 1);
+    ECSEntityCreate(&Context, &Entities[2], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToManyLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[2]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestOneToManyLeftCascade, Entities[0]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 1);
+    ECSEntityCreate(&Context, &Entities[2], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyLeftCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToManyLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[2], Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyLeftCascade, Entities[3]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestOneToManyLeftCascade, Entities[0]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 1);
+    ECSEntityCreate(&Context, &Entities[2], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyRightCascade, Entities[2]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestOneToManyRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyRightCascade, Entities[2]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestOneToManyRightCascade, Entities[0]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[2], &TestOneToManyRightCascade, Entities[3]);
+    
+    XCTAssertTrue(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[2]), "Link should not be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[3], 1);
+    
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveLink(&Context, &TestOneToManyRightCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestOneToManyRightCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestOneToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestOneToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestOneToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestOneToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[1]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[3]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[1]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[3]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCascade, Entities[0], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    ECSEntityCreate(&Context, &Entities[2], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCascade, Entities[0], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestManyToManyLeftCascade, Entities[2]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[1]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[0], 1);
+    ECSEntityCreate(&Context, &Entities[2], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyLeftCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestManyToManyLeftCascade, Entities[2]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 2);
+    ECSEntityCreate(&Context, &Entities[3], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[1], &TestManyToManyLeftCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[3], &TestManyToManyLeftCascade, Entities[2]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[3], &TestManyToManyLeftCascade, Entities[2]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyLeftCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyLeftCascade, Entities[0], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestManyToManyLeftCascade, Entities[2], NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyLeftCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyLeftCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyLeftCascade, Entities[0]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[3], &TestManyToManyLeftCascade, Entities[2]), "Link should not be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestManyToManyRightCascade, Entities[3]), "Link should not be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[2]), "Link should not be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entities[2], &TestManyToManyRightCascade, Entities[3]), "Link should not be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 1);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[0], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[0]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, Entities, 4);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[2], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[3], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    
+    ECSLinkRemove(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyRightCascade, Entities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[2], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[3], &TestManyToManyRightCascade, Entities[2]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[3]), "Entity should not be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 2);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveLink(&Context, &TestManyToManyRightCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveLinkForEntity(&Context, Entities[0], &TestManyToManyRightCascade);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveAllLinksForEntity(&Context, Entities[0]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityCreate(&Context, &Entities[1], 3);
+    
+    ECSLinkAdd(&Context, Entities[0], NULL, &TestManyToManyRightCascade, Entities[1], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[2], NULL);
+    ECSLinkAdd(&Context, Entities[1], NULL, &TestManyToManyRightCascade, Entities[3], NULL);
+    
+    ECSLinkRemoveAllLinksBetweenEntities(&Context, Entities[0], Entities[1]);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entities[0], &TestManyToManyRightCascade, Entities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[2]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entities[1], &TestManyToManyRightCascade, Entities[3]), "Link should be removed");
+    
+    XCTAssertTrue(ECSEntityIsAlive(&Context, Entities[0]), "Entity should not be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[1]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[2]), "Entity should be destroyed");
+    XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
+    
+    ECSEntityDestroy(&Context, Entities, 1);
 }
 
 @end
