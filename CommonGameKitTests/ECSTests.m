@@ -23,12 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_COMPONENT_ID_BASE=1' CommonGameKitTests/ECSTestData.h
+//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_PACKED_COMPONENT_ID_BASE=1' -e 'ECS_INDEXED_COMPONENT_ID_BASE=2' CommonGameKitTests/ECSTestData.h
 
 #import <XCTest/XCTest.h>
 #import "ECS.h"
 #define ECS_PACKED_COMPONENT_ID_BASE 1
+#define ECS_INDEXED_COMPONENT_ID_BASE 2
 #import "ECSComponentIDs.h"
+#import "ECSNameComponent.h"
 #import "ECSMonitorComponent.h"
 #import "ECSMonitorSystem.h"
 #import "ECSTestAccessors.h"
@@ -1930,6 +1932,56 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     XCTAssertFalse(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_C), @"should have removed the component that was previously added");
     XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_A), @"should still have the remaining components");
     XCTAssertTrue(ECSEntityHasComponent(&Context, MutationCallbackEntityFirst, COMP_B), @"should still have the remaining components");
+    
+    
+    ECSEntity Entity;
+    ECSEntityCreate(&Context, &Entity, 1);
+    
+    ECSEntityAddComponent(&Context, Entity, &(CompA){ { 5 } }, COMP_A);
+    ECSEntityAddComponent(&Context, Entity, &(CompA){ { 15 } }, COMP_A);
+    
+    XCTAssertEqual(((CompA*)ECSEntityGetComponent(&Context, Entity, COMP_A))->v[0], 15, @"should override old data");
+    
+    TestDestructionCount = 0;
+    
+    ECSEntityAddComponent(&Context, Entity, &(LocalH){ { 1, 2, 3, 4, 5, 6, 7, 8 } }, LOCAL_H);
+    ECSEntityAddComponent(&Context, Entity, &(LocalH){ { 10, 2, 3, 4, 5, 6, 7, 8 } }, LOCAL_H);
+    
+    XCTAssertEqual(((LocalH*)ECSEntityGetComponent(&Context, Entity, LOCAL_H))->v[0], 10, @"should override old data");
+    
+    XCTAssertEqual(TestDestructionCount, 1, @"should destroy old data when being replaced");
+    
+    
+    TestDestructionCount = 0;
+    
+    ECSEntityAddComponent(&Context, Entity, &(ArchH){ { 1, 2, 3, 4, 5, 6, 7, 8 } }, ARCH_H);
+    ECSEntityAddComponent(&Context, Entity, &(ArchH){ { 11, 2, 3, 4, 5, 6, 7, 8 } }, ARCH_H);
+    
+    XCTAssertEqual(((ArchH*)ECSEntityGetComponent(&Context, Entity, ARCH_H))->v[0], 11, @"should override old data");
+    
+    XCTAssertEqual(TestDestructionCount, 1, @"should destroy old data when being replaced");
+    
+    
+    TestDestructionCount = 0;
+    
+    ECSEntityAddComponent(&Context, Entity, &(PackedH){ { 1, 2, 3, 4, 5, 6, 7, 8 } }, PACKED_H);
+    ECSEntityAddComponent(&Context, Entity, &(PackedH){ { 12, 2, 3, 4, 5, 6, 7, 8 } }, PACKED_H);
+    
+    XCTAssertEqual(((PackedH*)ECSEntityGetComponent(&Context, Entity, PACKED_H))->v[0], 12, @"should override old data");
+    
+    XCTAssertEqual(TestDestructionCount, 1, @"should destroy old data when being replaced");
+    
+    
+    TestDestructionCount = 0;
+    
+    ECSEntityAddComponent(&Context, Entity, &(IndexedH){ { 1, 2, 3, 4, 5, 6, 7, 8 } }, INDEXED_H);
+    ECSEntityAddComponent(&Context, Entity, &(IndexedH){ { 13, 2, 3, 4, 5, 6, 7, 8 } }, INDEXED_H);
+    
+    XCTAssertEqual(((IndexedH*)ECSEntityGetComponent(&Context, Entity, INDEXED_H))->v[0], 13, @"should override old data");
+    
+    XCTAssertEqual(TestDestructionCount, 1, @"should destroy old data when being replaced");
+    
+    ECSEntityDestroy(&Context, &Entity, 1);
 }
 
 -(void) testTime

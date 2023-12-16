@@ -78,6 +78,10 @@ typedef CompB LocalDuplicateB;
 
 typedef CompH LocalH;
 
+typedef CompH ArchH;
+typedef CompH PackedH;
+typedef CompH IndexedH;
+
 ECS_ARCHETYPE_COMPONENT(CompA, 0);
 ECS_ARCHETYPE_COMPONENT(CompB, 1);
 ECS_ARCHETYPE_COMPONENT(CompC, 2);
@@ -98,7 +102,11 @@ ECS_LOCAL_COMPONENT(LocalH);
 ECS_PACKED_TAG(DestroyMeTag);
 ECS_PACKED_TAG(CheckRunStateTag);
 
-ECS_DESTRUCTOR(TestDestructor, DuplicateA, LocalH);
+ECS_ARCHETYPE_COMPONENT(ArchH);
+ECS_PACKED_COMPONENT(PackedH);
+ECS_INDEXED_COMPONENT(IndexedH);
+
+ECS_DESTRUCTOR(TestDestructor, DuplicateA, LocalH, ArchH, PackedH, IndexedH);
 
 ECS_DESTRUCTOR(MutationDestructor, DestroyMeTag);
 
