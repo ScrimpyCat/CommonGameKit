@@ -29,6 +29,8 @@
 
 size_t ECSMutableStateEntitiesMax;
 size_t ECSMutableStateReplaceRegistryMax;
+size_t ECSMutableStateAddLinkMax;
+size_t ECSMutableStateRemoveLinkMax;
 size_t ECSMutableStateAddComponentMax;
 size_t ECSMutableStateRemoveComponentMax;
 size_t ECSMutableStateCustomCallbackMax;
@@ -114,6 +116,42 @@ ECSMutableReplaceRegistryState *ECSMutationInspectRegistryReregister(ECSContext 
     *Count = atomic_load_explicit(&Context->mutations->registry.replace.count, memory_order_relaxed);
     
     return Context->mutations->registry.replace.state;
+}
+
+ECSMutableAddLinkState *ECSMutationStageAddLink(ECSContext *Context, size_t Count)
+{
+    const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->link.add.count, Count, memory_order_relaxed);
+    
+    CCAssertLog(Offset <= ECSMutableStateAddLinkMax, "Exceeds ECSMutableStateAddLinkMax (%zu)", ECSMutableStateAddLinkMax);
+    
+    return Context->mutations->link.add.state + Offset;
+}
+
+ECSMutableAddLinkState *ECSMutationInspectAddLink(ECSContext *Context, size_t *Count)
+{
+    CCAssertLog(Count, "Count must not be null");
+    
+    *Count = atomic_load_explicit(&Context->mutations->link.add.count, memory_order_relaxed);
+    
+    return Context->mutations->link.add.state;
+}
+
+ECSMutableRemoveLinkState *ECSMutationStageRemoveLink(ECSContext *Context, size_t Count)
+{
+    const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->link.remove.count, Count, memory_order_relaxed);
+    
+    CCAssertLog(Offset <= ECSMutableStateRemoveLinkMax, "Exceeds ECSMutableStateRemoveLinkMax (%zu)", ECSMutableStateRemoveLinkMax);
+    
+    return Context->mutations->link.remove.state + Offset;
+}
+
+ECSMutableRemoveLinkState *ECSMutationInspectRemoveLink(ECSContext *Context, size_t *Count)
+{
+    CCAssertLog(Count, "Count must not be null");
+    
+    *Count = atomic_load_explicit(&Context->mutations->link.remove.count, memory_order_relaxed);
+    
+    return Context->mutations->link.remove.state;
 }
 
 ECSMutableAddComponentState *ECSMutationStageEntityAddComponents(ECSContext *Context, size_t Count)
@@ -213,6 +251,13 @@ void ECSMutationApply(ECSContext *Context)
         ECSRegistryRegister(Context, ECSProxyEntityResolve(RegisterEntities[Loop], NewEntities, NewEntityCount));
     }
     
+    size_t AddLinkCount;
+    ECSMutableAddLinkState *AddLinkState = ECSMutationInspectAddLink(Context, &AddLinkCount);
+    for (size_t Loop = 0; Loop < AddLinkCount; Loop++)
+    {
+        ECSLinkAdd(Context, ECSProxyEntityResolve(AddLinkState[Loop].left.entity, NewEntities, NewEntityCount), AddLinkState[Loop].left.data, AddLinkState[Loop].link, ECSProxyEntityResolve(AddLinkState[Loop].right.entity, NewEntities, NewEntityCount), AddLinkState[Loop].right.data);
+    }
+    
     size_t RemoveComponentCount;
     ECSMutableRemoveComponentState *RemoveComponentState = ECSMutationInspectEntityRemoveComponents(Context, &RemoveComponentCount);
     for (size_t Loop = 0; Loop < RemoveComponentCount; Loop++)
@@ -234,6 +279,71 @@ void ECSMutationApply(ECSContext *Context)
         CallbackState[Loop].callback(Context, CallbackState[Loop].data, NewEntities, NewEntityCount);
     }
     
+    size_t RemoveLinkCount;
+    ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationInspectRemoveLink(Context, &RemoveLinkCount);
+    for (size_t Loop = 0; Loop < RemoveLinkCount; Loop++)
+    {
+        const ECSLink *Link = RemoveLinkState[Loop].link;
+        
+        if (Link)
+        {
+            ECSEntity Entity = RemoveLinkState[Loop].left.entity;
+            
+            if (RemoveLinkState[Loop].right.entity)
+            {
+                if (Entity)
+                {
+                    ECSLinkRemove(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount), Link, ECSProxyEntityResolve(RemoveLinkState[Loop].right.entity, NewEntities, NewEntityCount));
+                }
+                
+                else
+                {
+                    Entity = RemoveLinkState[Loop].right.entity;
+                    
+                    Link = ECS_LINK_INVERT(Link);
+                    
+                    goto RemoveLinkForEntity;
+                }
+            }
+            
+            else if (Entity)
+            {
+            RemoveLinkForEntity:
+                ECSLinkRemoveLinkForEntity(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount), Link);
+            }
+            
+            else
+            {
+                ECSLinkRemoveLink(Context, Link);
+            }
+        }
+        
+        else
+        {
+            ECSEntity Entity = RemoveLinkState[Loop].left.entity;
+            
+            if (RemoveLinkState[Loop].right.entity)
+            {
+                if (Entity)
+                {
+                    ECSLinkRemoveAllLinksBetweenEntities(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount), ECSProxyEntityResolve(RemoveLinkState[Loop].right.entity, NewEntities, NewEntityCount));
+                }
+                
+                else
+                {
+                    Entity = RemoveLinkState[Loop].right.entity;
+                    goto RemoveAllLinksForEntity;
+                }
+            }
+            
+            else if (Entity)
+            {
+            RemoveAllLinksForEntity:
+                ECSLinkRemoveAllLinksForEntity(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount));
+            }
+        }
+    }
+    
     size_t DeregisterEntityCount;
     ECSProxyEntity *DeregisterEntities = ECSMutationInspectRegistryDeregister(Context, &DeregisterEntityCount);
     for (size_t Loop = 0; Loop < DeregisterEntityCount; Loop++)
@@ -253,6 +363,8 @@ void ECSMutationApply(ECSContext *Context)
     atomic_store_explicit(&Context->mutations->registry.add.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->registry.remove.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->registry.replace.count, 0, memory_order_relaxed);
+    atomic_store_explicit(&Context->mutations->link.add.count, 0, memory_order_relaxed);
+    atomic_store_explicit(&Context->mutations->link.remove.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->component.add.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->component.remove.count, 0, memory_order_relaxed);
     atomic_store_explicit(&Context->mutations->custom.count, 0, memory_order_relaxed);

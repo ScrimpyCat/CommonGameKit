@@ -47,6 +47,21 @@ typedef struct {
 } ECSMutableReplaceRegistryState;
 
 typedef struct {
+    const ECSLink *link;
+    struct {
+        ECSProxyEntity entity;
+        void *data;
+    } left, right;
+} ECSMutableAddLinkState;
+
+typedef struct {
+    const ECSLink *link;
+    struct {
+        ECSProxyEntity entity;
+    } left, right;
+} ECSMutableRemoveLinkState;
+
+typedef struct {
     ECSProxyEntity entity;
     size_t count;
     ECSTypedComponent *components;
@@ -88,6 +103,16 @@ typedef struct ECSMutableState {
     struct {
         struct {
             _Atomic(size_t) count;
+            ECSMutableAddLinkState *state;
+        } add;
+        struct {
+            _Atomic(size_t) count;
+            ECSMutableRemoveLinkState *state;
+        } remove;
+    } link;
+    struct {
+        struct {
+            _Atomic(size_t) count;
             ECSMutableAddComponentState *state;
         } add;
         struct {
@@ -123,6 +148,14 @@ typedef struct ECSMutableState {
         .count = ATOMIC_VAR_INIT(0) \
     } \
 }, \
+.link = { \
+    .add = { \
+        .count = ATOMIC_VAR_INIT(0) \
+    }, \
+    .remove = { \
+        .count = ATOMIC_VAR_INIT(0) \
+    } \
+}, \
 .component = { \
     .add = { \
         .count = ATOMIC_VAR_INIT(0) \
@@ -138,12 +171,14 @@ typedef struct ECSMutableState {
     .size = ATOMIC_VAR_INIT(0) \
 }
 
-#define ECS_MUTABLE_STATE_CREATE(entitiesMax, replaceRegistryMax, addComponentMax, removeComponentMax, customCallbackMax, sharedDataMax) (ECSMutableState){ \
+#define ECS_MUTABLE_STATE_CREATE(entitiesMax, replaceRegistryMax, addLinkMax, removeLinkMax, addComponentMax, removeComponentMax, customCallbackMax, sharedDataMax) (ECSMutableState){ \
     ECS_MUTABLE_STATE_INIT, \
     .entity.remove.entities = (ECSEntity[entitiesMax]){}, \
     .registry.add.entities = (ECSEntity[entitiesMax]){}, \
     .registry.remove.entities = (ECSEntity[entitiesMax]){}, \
     .registry.replace.state = (ECSMutableReplaceRegistryState[replaceRegistryMax]){}, \
+    .link.add.state = (ECSMutableAddLinkState[addLinkMax]){}, \
+    .link.remove.state = (ECSMutableRemoveLinkState[removeLinkMax]){}, \
     .component.add.state = (ECSMutableAddComponentState[addComponentMax]){}, \
     .component.remove.state = (ECSMutableRemoveComponentState[removeComponentMax]){}, \
     .custom.state = (ECSMutableCustomCallbackState[customCallbackMax]){}, \
@@ -161,6 +196,18 @@ extern size_t ECSMutableStateEntitiesMax;
  * @warning This must be set prior to any mutation calls.
  */
 extern size_t ECSMutableStateReplaceRegistryMax;
+
+/*!
+ * @brief Set the maximum number of add link states that can be staged in a mutation.
+ * @warning This must be set prior to any mutation calls.
+ */
+extern size_t ECSMutableStateAddLinkMax;
+
+/*!
+ * @brief Set the maximum number of remove link states that can be staged in a mutation.
+ * @warning This must be set prior to any mutation calls.
+ */
+extern size_t ECSMutableStateRemoveLinkMax;
 
 /*!
  * @brief Set the maximum number of add component states that can be staged in a mutation.
@@ -243,6 +290,24 @@ ECSEntity *ECSMutationStageRegistryDeregister(ECSContext *Context, size_t Count)
 ECSMutableReplaceRegistryState *ECSMutationStageRegistryReregister(ECSContext *Context, size_t Count);
 
 /*!
+ * @brief Stage an add link mutation.
+ * @param Context The ECS context to stage mutations for. Must not be NULL.
+ * @param Count The number of add link requests.
+ * @return A pointer to an array to store the add link states. The state should only be set to data that is safe to access from the thread that will
+ *         apply it, or can store the data in the memory from @b ECSMutationSetSharedData.
+ */
+ECSMutableAddLinkState *ECSMutationStageAddLinks(ECSContext *Context, size_t Count);
+
+/*!
+ * @brief Stage a remove link mutation.
+ * @param Context The ECS context to stage mutations for. Must not be NULL.
+ * @param Count The number of remove link requests.
+ * @return A pointer to an array to store the remove link states. The state should only be set to data that is safe to access from the thread that will
+ *         apply it, or can store the data in the memory from @b ECSMutationSetSharedData.
+ */
+ECSMutableRemoveLinkState *ECSMutationStageRemoveLinks(ECSContext *Context, size_t Count);
+
+/*!
  * @brief Stage an add components mutation.
  * @param Context The ECS context to stage mutations for. Must not be NULL.
  * @param Count The number of add component requests.
@@ -312,6 +377,24 @@ ECSEntity *ECSMutationInspectRegistryDeregister(ECSContext *Context, size_t *Cou
  * @return Returns a pointer to an array of entities that will be reregistered.
  */
 ECSMutableReplaceRegistryState *ECSMutationInspectRegistryReregister(ECSContext *Context, size_t *Count);
+
+/*!
+ * @brief Get the number of staged add link requests.
+ * @warning This is not threadsafe. It shouldn't be used at the same time other mutation calls are made on the context.
+ * @param Context The ECS context to inspect. Must not be NULL.
+ * @param Count A pointer to where the size of the array should be stored. Must not be NULL.
+ * @return Returns a pointer to an array of add link states.
+ */
+ECSMutableAddLinkState *ECSMutationInspectAddLinks(ECSContext *Context, size_t *Count);
+
+/*!
+ * @brief Get the number of staged remove link requests.
+ * @warning This is not threadsafe. It shouldn't be used at the same time other mutation calls are made on the context.
+ * @param Context The ECS context to inspect. Must not be NULL.
+ * @param Count A pointer to where the size of the array should be stored. Must not be NULL.
+ * @return Returns a pointer to an array of remove link states.
+ */
+ECSMutableRemoveLinkState *ECSMutationInspectRemoveLinks(ECSContext *Context, size_t *Count);
 
 /*!
  * @brief Get the number of staged add component requests.
