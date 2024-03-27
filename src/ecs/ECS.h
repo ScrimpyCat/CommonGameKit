@@ -235,6 +235,10 @@
  *                      - `ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE(index)` : @b index is the index of the duplicate local component
  *
  *                  By default these are all set to 16.
+ *
+ *                  ##### ECS_IGNORE_DEAD_ENTITIES
+ *                  If dead entities should be ignored by functions that expect living entities, then @b ECS_IGNORE_DEAD_ENTITIES can be defined as 1 to ignore dead entities. Ignoring dead entities
+ *                  is slower than not ignoring them (when assertions are disabled), but it may make certain applications of the ECS easier.
  */
 
 #ifndef CommonGameKit_ECS_h
@@ -815,6 +819,12 @@ void ECSDuplicateDestructor(void *Data, ECSComponentID ID);
 #define ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE(index) 16
 #endif
 
+#if ECS_IGNORE_DEAD_ENTITIES
+#define ECS_DEAD_ENTITY_GUARD(context, entity, ...) if (!ECSEntityIsAlive((context), (entity))) { __VA_ARGS__; return; }
+#else
+#define ECS_DEAD_ENTITY_GUARD(context, entity, ...) CCAssertLog(ECSEntityIsAlive((context), (entity)), "Entity must be alive"); __VA_ARGS__;
+#endif
+
 #pragma mark -
 
 static inline CC_CONSTANT_FUNCTION size_t ECSComponentBaseIndex(ECSComponentID ID)
@@ -910,7 +920,7 @@ static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponen
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
@@ -1036,7 +1046,7 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     if (ID & ECSComponentStorageModifierDuplicate)
     {

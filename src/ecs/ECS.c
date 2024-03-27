@@ -909,7 +909,7 @@ static const struct {
 void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
@@ -1096,7 +1096,7 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
 void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
@@ -1227,7 +1227,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
 void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
@@ -1256,7 +1256,7 @@ void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *D
         ECSIndexedRemoveComponent(Context, Entity, ID);
         ECSIndexedAddComponent(Context, Entity, Data, ID);
             
-            return;
+        return;
 #else
         CCBitsClear(Refs->has, CompIndex);
         
@@ -1306,7 +1306,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
 void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
     
@@ -1374,7 +1374,7 @@ void ECSLocalRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponent
 void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSTypedComponent *Components, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
-    CCAssertLog(ECSEntityIsAlive(Context, Entity), "Entity must be alive");
+    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     CCAssertLog(Components, "Components must not be null");
     
     ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context->manager.map, Entity);
@@ -1387,17 +1387,70 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
     CC_BITS_INIT_CLEAR(AddedComponent);
     CC_BITS_INIT_CLEAR(CachedComponentLookup);
     
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+    _Bool CheckEntity = FALSE;
+#endif
+    
+    CCMemoryZoneSave(ECSSharedZone);
+    
+    CCList DestroyComponents = CCListCreate(CC_ZONE_ALLOCATOR(ECSSharedZone), sizeof(ECSTypedComponent), 32, 32);
+    
+    
+    _Bool Replace = FALSE;
     size_t IndexCount = 0, LastIndex = 0, RefDataCount = 0;
     ECSArchetypeComponentID LastID = 0;
     for (size_t Loop = 0; Loop < Count; Loop++)
     {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+        if (CheckEntity)
+        {
+            // NOTE: Consider changing ECSComponentStorageModifierDestructor to a 2-bit mask, and adding ECSComponentStorageModifierDestructorImpure and ECSComponentStorageModifierDestructorPure.
+            ECS_DEAD_ENTITY_GUARD(Context, Entity, goto Cleanup);
+            
+            CheckEntity = Components[Loop].id & ECSComponentStorageModifierDestructor;
+        }
+#endif
+        
         switch (Components[Loop].id & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
         {
             case ECSComponentStorageTypeArchetype:
             {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+                ECSArchetypeAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+#else
                 const ECSArchetypeComponentID ID = Components[Loop].id & ~ECSComponentStorageMask;
                 
-                if (!ECSEntityHasComponent(Context, Entity, ID))
+                if (ECSEntityHasComponent(Context, Entity, ID))
+                {
+                    if (Components[Loop].id & ECSComponentStorageModifierDestructor)
+                    {
+                        if (!CCBitsGet(AddedComponent, ID))
+                        {
+                            const size_t Offset = ID ? CCBitsCount(AddedComponent, 0, ID - 1) : 0;
+                            size_t Index = ECSArchetypeComponentIndex(Refs, ID) - Offset;
+                            
+                            CCListAppendElement(DestroyComponents, &(ECSTypedComponent){
+                                .id = Components[Loop].id & ~ECSComponentStorageModifierDestructor,
+                                .data = ECSSharedZoneStore(CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index), ECSArchetypeComponentSizes[ID])
+                            });
+                            
+                            CCBitsSet(AddedComponent, ID);
+                        }
+                        
+                        else
+                        {
+                            CCListAppendElement(DestroyComponents, &(ECSTypedComponent){
+                                .id = Components[Loop].id,
+                                .data = ComponentData[ID]
+                            });
+                        }
+                    }
+                    
+                    ComponentData[ID] = Components[Loop].data;
+                    Replace = TRUE;
+                }
+                
+                else
                 {
                     const size_t Offset = LastID < ID ? LastIndex : 0;
                     
@@ -1409,6 +1462,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
                     
                     LastID = ID;
                 }
+#endif
                 break;
             }
                 
@@ -1426,6 +1480,9 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
                 
             case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
             {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+                ECSArchetypeAddComponent(Context, Entity, Components[Loop].data, Components[Loop].id);
+#else
                 const ECSArchetypeComponentID ID = Components[Loop].id & ~ECSComponentStorageMask;
                 
                 if (!ECSEntityHasComponent(Context, Entity, ID))
@@ -1453,6 +1510,7 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
                 
                 CCArray *Duplicates = ComponentData[ID];
                 CCArrayAppendElement(*Duplicates, Components[Loop].data);
+#endif
                 break;
             }
                 
@@ -1468,8 +1526,20 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
         }
     }
     
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+    return;
+#endif
+    
     if (IndexCount)
     {
+#if ECS_IMPURE_COMPONENT_DESTRUCTION
+        if (CheckEntity)
+        {
+            // NOTE: Consider changing ECSComponentStorageModifierDestructor to a 2-bit mask, and adding ECSComponentStorageModifierDestructorImpure and ECSComponentStorageModifierDestructorPure.
+            ECS_DEAD_ENTITY_GUARD(Context, Entity, goto Cleanup);
+        }
+#endif
+        
         Count = Refs->archetype.component.count;
         
         const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
@@ -1523,6 +1593,46 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
         Refs->archetype.ptr = Archetype;
         Refs->archetype.index = Index;
     }
+    
+    else if (Replace)
+    {
+        Count = Refs->archetype.component.count;
+        
+        const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
+        ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
+        
+        for (size_t Loop = 0; Loop < Count; Loop++)
+        {
+            _Static_assert(ECSComponentStorageTypeArchetype == 0, "Expects archetype storage type to be 0");
+            
+            const ECSArchetypeComponentID ID = Refs->archetype.component.ids[Loop];
+            
+            if (CCBitsGet(AddedComponent, ID))
+            {
+                CCArrayReplaceElementAtIndex(Archetype->components[Loop], Refs->archetype.index, ComponentData[ID]);
+            }
+        }
+    }
+    
+    
+Cleanup:;
+    
+    _Bool Alive = ECSEntityIsAlive(Context, Entity);
+    
+    CCEnumerable Enumerable;
+    CCListGetEnumerable(DestroyComponents, &Enumerable);
+    
+    for (ECSTypedComponent *Destroy = CCEnumerableGetCurrent(&Enumerable); Destroy; Destroy = CCEnumerableNext(&Enumerable))
+    {
+        if ((Destroy->id & ECSComponentStorageModifierDestructor) || (Alive))
+        {
+            const ECSArchetypeComponentID ID = Destroy->id & ~ECSComponentStorageMask;
+            
+            ECSArchetypeComponentDestructors[ID](Destroy->data, Destroy->id | ECSComponentStorageModifierDestructor);
+        }
+    }
+    
+    CCMemoryZoneRestore(ECSSharedZone);
 }
 
 void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, const ECSComponentID *IDs, size_t Count)
