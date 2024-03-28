@@ -216,10 +216,6 @@
  *                  This will allow the default maximums to be overriden. Changing these values may require the ECSConfig.h to be regenerated, or for the @b ecs_tool to regenerate the project
  *                  boilerplate.
  *
- *                  ##### ECS_UNSAFE_COMPONENT_DESTRUCTION
- *                  If component destructors don't reference any other component data than the component being destroyed, then @b ECS_UNSAFE_COMPONENT_DESTRUCTION can be defined as 1 to enable
- *                  the unsafe destruction pathway. The benefit of this is it will avoid a copy of the component data.
- *
  *                  ##### ECS_ACCESS_RELEASE_INDEX_PAD_TO_CACHE_LINE
  *                  If the cost of false sharing access release indexes by workers is greater than the benefit of the @b ECSTick thread iterating the packed indexes, then @b ECS_ACCESS_RELEASE_INDEX_PAD_TO_CACHE_LINE
  *                  can be defined as 1 to enable a single index per cache line.
@@ -774,6 +770,13 @@ static inline size_t ECSComponentSize(ECSComponentID ID);
 static inline size_t ECSDuplicateComponentSize(ECSComponentID ID);
 
 /*!
+ * @brief Destroy the component data with its destructor.
+ * @param Data The component data to be destroyed.
+ * @param ID The component ID of the data to be destroyed.
+ */
+static inline void ECSComponentDestroy(const void *Data, ECSComponentID ID);
+
+/*!
  * @brief Store some data in the shared memory zone.
  * @note This should only be called from the same thread that is also executing other ECS functions. And will automatically be deallocated by the ECS if the data
  *       is stored during a callback (such as an @b ECSComponentDestructor callback).
@@ -822,7 +825,7 @@ void ECSDuplicateDestructor(void *Data, ECSComponentID ID);
 #if ECS_IGNORE_DEAD_ENTITIES
 #define ECS_DEAD_ENTITY_GUARD(context, entity, ...) if (!ECSEntityIsAlive((context), (entity))) { __VA_ARGS__; return; }
 #else
-#define ECS_DEAD_ENTITY_GUARD(context, entity, ...) CCAssertLog(ECSEntityIsAlive((context), (entity)), "Entity must be alive"); __VA_ARGS__;
+#define ECS_DEAD_ENTITY_GUARD(context, entity, ...) CCAssertLog(ECSEntityIsAlive((context), (entity)), "Entity must be alive"); if (0) { __VA_ARGS__; }
 #endif
 
 #pragma mark -
@@ -893,6 +896,46 @@ static inline size_t ECSDuplicateComponentSize(ECSComponentID ID)
     return SIZE_MAX;
 }
 
+static inline void ECSComponentDestroy(const void *Data, ECSComponentID ID)
+{
+    const size_t Index = ECSComponentBaseIndex(ID);
+    
+    switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
+    {
+        case ECSComponentStorageTypeArchetype:
+            ECSArchetypeComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageTypePacked:
+            ECSPackedComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageTypeIndexed:
+            ECSIndexedComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageTypeLocal:
+            ECSLocalComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeArchetype:
+            ECSDuplicateArchetypeComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypePacked:
+            ECSDuplicatePackedComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeIndexed:
+            ECSDuplicateIndexedComponentDestructors[Index](Data, ID);
+            break;
+            
+        case ECSComponentStorageModifierDuplicate | ECSComponentStorageTypeLocal:
+            ECSDuplicateLocalComponentDestructors[Index](Data, ID);
+            break;
+    }
+}
+
 static inline void *ECSSharedZoneStore(const void *Data, size_t Size)
 {
     CCAssertLog(Data, "Data must not be null");
@@ -920,7 +963,6 @@ static inline CC_CONSTANT_FUNCTION ptrdiff_t ECSLocalComponentOffset(ECSComponen
 static inline void ECSEntityAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
-    ECS_DEAD_ENTITY_GUARD(Context, Entity);
     
     switch (ID & (ECSComponentStorageTypeMask | ECSComponentStorageModifierDuplicate))
     {
@@ -1046,7 +1088,7 @@ static inline void *ECSEntityGetComponent(ECSContext *Context, ECSEntity Entity,
 static inline void ECSEntityAddDuplicateComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID, size_t Count)
 {
     CCAssertLog(Context, "Context must not be null");
-    ECS_DEAD_ENTITY_GUARD(Context, Entity);
+    ECS_DEAD_ENTITY_GUARD(Context, Entity, for (size_t Loop = 0, Size = ECSDuplicateComponentSize(ID); Loop < Count; Loop++) ECSComponentDestroy(Data + (Loop * Size), ID));
     
     if (ID & ECSComponentStorageModifierDuplicate)
     {
@@ -1104,10 +1146,8 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
     {
         ECSComponentDestructor Destructor = NULL;
         
-#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
         size_t CopiedComponentCount = 0;
         void **CopiedComponents;
-#endif
         
         if (ID & ECSComponentStorageModifierDestructor)
         {
@@ -1135,9 +1175,7 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                     
             }
             
-#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
-            CCMemoryZoneSave(ECSSharedZone);
-#endif
+            if (ID & ECSComponentStorageModifierDestructorImpure) CCMemoryZoneSave(ECSSharedZone);
         }
         
         CCArray *Component = ECSEntityGetComponent(Context, Entity, ID);
@@ -1168,13 +1206,17 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                         
                         if (ID & ECSComponentStorageModifierDestructor)
                         {
-#if ECS_UNSAFE_COMPONENT_DESTRUCTION
-                            for (size_t Loop = 0; Loop < ElementCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
-#else
-                            CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * ElementCount);
-                            const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
-                            for (size_t Loop = 0; Loop < ElementCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
-#endif
+                            if (ID & ECSComponentStorageModifierDestructorImpure)
+                            {
+                                CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * ElementCount);
+                                const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
+                                for (size_t Loop = 0; Loop < ElementCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+                            }
+                            
+                            else
+                            {
+                                for (size_t Loop = 0; Loop < ElementCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
+                            }
                         }
                         
                         CCArrayRemoveElementsAtIndex(Duplicates, Index, ElementCount);
@@ -1184,13 +1226,17 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                     {
                         if (ID & ECSComponentStorageModifierDestructor)
                         {
-#if ECS_UNSAFE_COMPONENT_DESTRUCTION
-                            for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop), ID);
-#else
-                            CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * DuplicatesCount);
-                            const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
-                            for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
-#endif
+                            if (ID & ECSComponentStorageModifierDestructorImpure)
+                            {
+                                CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * DuplicatesCount);
+                                const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
+                                for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+                            }
+                            
+                            else
+                            {
+                                for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop), ID);
+                            }
                             
                             CCArrayDestroy(Duplicates);
                         }
@@ -1233,13 +1279,17 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                     
                     if (ID & ECSComponentStorageModifierDestructor)
                     {
-#if ECS_UNSAFE_COMPONENT_DESTRUCTION
-                        for (size_t Loop = 0; Loop < Count; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
-#else
-                        CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * Count);
-                        const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
-                        for (size_t Loop = 0; Loop < Count; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
-#endif
+                        if (ID & ECSComponentStorageModifierDestructorImpure)
+                        {
+                            CopiedComponents = CCMemoryZoneAllocate(ECSSharedZone, sizeof(*CopiedComponents) * Count);
+                            const size_t DuplicateComponentSize = CCArrayGetElementSize(Duplicates);
+                            for (size_t Loop = 0; Loop < Count; Loop++) CopiedComponents[CopiedComponentCount++] = ECSSharedZoneStore(CCArrayGetElementAtIndex(Duplicates, Loop + Index), DuplicateComponentSize); // TODO: don't loop and copy entire list of components at once
+                        }
+                        
+                        else
+                        {
+                            for (size_t Loop = 0; Loop < Count; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop + Index), ID);
+                        }
                     }
                     
                     CCArrayCopyElementsAtIndex(Duplicates, CopyIndex, Index, CopyCount);
@@ -1248,8 +1298,7 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
             }
         }
         
-#if !ECS_UNSAFE_COMPONENT_DESTRUCTION
-        if (ID & ECSComponentStorageModifierDestructor)
+        if (ID & ECSComponentStorageModifierDestructorImpure)
         {
             for (size_t Loop = 0; Loop < CopiedComponentCount; Loop++)
             {
@@ -1261,7 +1310,6 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
             
             CCMemoryZoneRestore(ECSSharedZone);
         }
-#endif
     }
     
     else CCAssertLog(0, "Component does not allow duplicates");

@@ -418,6 +418,29 @@ static ECS_SYSTEM_FUN()
 #undef ECS_SYSTEM_NAME
 
 
+static int TrackDestructorCount[4] = {0};
+static void TrackDestructor(void *Data, ECSComponentID ID)
+{
+    switch (ID)
+    {
+        case ARCH_K:
+            TrackDestructorCount[0]++;
+            break;
+            
+        case PACKED_K:
+            TrackDestructorCount[1]++;
+            break;
+            
+        case INDEXED_K:
+            TrackDestructorCount[2]++;
+            break;
+            
+        case LOCAL_K:
+            TrackDestructorCount[3]++;
+            break;
+    }
+}
+
 static int TestDestructionCount = 0;
 static void TestDestructor(void *Data, ECSComponentID ID)
 {
@@ -457,7 +480,7 @@ static void MutationCallback(ECSContext *Context, void *Data, ECSEntity *NewEnti
 
 static ECSContext Context;
 
-ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 4096, 1048576);
+ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 4096, 4096, 4096, 1048576);
 
 +(void) setUp
 {
@@ -485,6 +508,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     
     ECSMutableStateEntitiesMax = 4096;
     ECSMutableStateReplaceRegistryMax = 4096;
+    ECSMutableStateAddLinkMax = 4069;
+    ECSMutableStateRemoveLinkMax = 4069;
     ECSMutableStateAddComponentMax = 4069;
     ECSMutableStateRemoveComponentMax = 4069;
     ECSMutableStateCustomCallbackMax = 4096;
@@ -1980,6 +2005,58 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     XCTAssertEqual(((IndexedH*)ECSEntityGetComponent(&Context, Entity, INDEXED_H))->v[0], 13, @"should override old data");
     
     XCTAssertEqual(TestDestructionCount, 1, @"should destroy old data when being replaced");
+    
+    ECSEntityDestroy(&Context, &Entity, 1);
+    
+    
+    
+    ECSEntityCreate(&Context, &Entity, 1);
+    ECSEntityAddComponent(&Context, Entity, &(ArchK){ 0 }, ARCH_K);
+    ECSEntityAddComponent(&Context, Entity, &(PackedK){ 1 }, PACKED_K);
+    ECSEntityAddComponent(&Context, Entity, &(IndexedK){ 2 }, INDEXED_K);
+    ECSEntityAddComponent(&Context, Entity, &(LocalK){ 3 }, LOCAL_K);
+    
+    ECSEntityAddComponent(&Context, Entity, &(ArchK){ 4 }, ARCH_K);
+    ECSEntityAddComponent(&Context, Entity, &(PackedK){ 5 }, PACKED_K);
+    ECSEntityAddComponent(&Context, Entity, &(IndexedK){ 6 }, INDEXED_K);
+    ECSEntityAddComponent(&Context, Entity, &(LocalK){ 7 }, LOCAL_K);
+    
+    XCTAssertEqual(*((ArchK*)ECSEntityGetComponent(&Context, Entity, ARCH_K)), 4, @"should overwrite old component data");
+    XCTAssertEqual(*((PackedK*)ECSEntityGetComponent(&Context, Entity, PACKED_K)), 5, @"should overwrite old component data");
+    XCTAssertEqual(*((IndexedK*)ECSEntityGetComponent(&Context, Entity, INDEXED_K)), 6, @"should overwrite old component data");
+    XCTAssertEqual(*((LocalK*)ECSEntityGetComponent(&Context, Entity, LOCAL_K)), 7, @"should overwrite old component data");
+    
+    XCTAssertEqual(TrackDestructorCount[0], 1, @"should destroy the old component");
+    XCTAssertEqual(TrackDestructorCount[1], 1, @"should destroy the old component");
+    XCTAssertEqual(TrackDestructorCount[2], 1, @"should destroy the old component");
+    XCTAssertEqual(TrackDestructorCount[3], 1, @"should destroy the old component");
+    
+    ECSEntityAddComponents(&Context, Entity, (ECSTypedComponent[]){
+        { ARCH_K, &(ArchK){ 8 } }, { PACKED_K, &(PackedK){ 9 } }, { INDEXED_K, &(IndexedK){ 10 } }, { LOCAL_K, &(LocalK){ 11 } },
+        { ARCH_K, &(ArchK){ 12 } }, { PACKED_K, &(PackedK){ 13 } }, { INDEXED_K, &(IndexedK){ 14 } }, { LOCAL_K, &(LocalK){ 15 } }
+    }, 8);
+    
+    XCTAssertEqual(*((ArchK*)ECSEntityGetComponent(&Context, Entity, ARCH_K)), 12, @"should overwrite old component data");
+    XCTAssertEqual(*((PackedK*)ECSEntityGetComponent(&Context, Entity, PACKED_K)), 13, @"should overwrite old component data");
+    XCTAssertEqual(*((IndexedK*)ECSEntityGetComponent(&Context, Entity, INDEXED_K)), 14, @"should overwrite old component data");
+    XCTAssertEqual(*((LocalK*)ECSEntityGetComponent(&Context, Entity, LOCAL_K)), 15,  @"should overwrite old component data");
+    
+    XCTAssertEqual(TrackDestructorCount[0], 3, @"should destroy the old component and the first one being added");
+    XCTAssertEqual(TrackDestructorCount[1], 3, @"should destroy the old component and the first one being added");
+    XCTAssertEqual(TrackDestructorCount[2], 3, @"should destroy the old component and the first one being added");
+    XCTAssertEqual(TrackDestructorCount[3], 3, @"should destroy the old component and the first one being added");
+    
+    ECSEntityRemoveComponents(&Context, Entity, (ECSComponentID[]){ ARCH_K, PACKED_K, INDEXED_K, LOCAL_K }, 4);
+    
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entity, ARCH_K), @"should remove the component");
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entity, PACKED_K), @"should remove the component");
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entity, INDEXED_K), @"should remove the component");
+    XCTAssertFalse(ECSEntityHasComponent(&Context, Entity, LOCAL_K), @"should remove the component");
+    
+    XCTAssertEqual(TrackDestructorCount[0], 4, @"should destroy the old component and the first one being added");
+    XCTAssertEqual(TrackDestructorCount[1], 4, @"should destroy the old component and the first one being added");
+    XCTAssertEqual(TrackDestructorCount[2], 4, @"should destroy the old component and the first one being added");
+    XCTAssertEqual(TrackDestructorCount[3], 4, @"should destroy the old component and the first one being added");
     
     ECSEntityDestroy(&Context, &Entity, 1);
 }

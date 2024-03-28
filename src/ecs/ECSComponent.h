@@ -35,17 +35,18 @@ typedef CCArray ECSIndexedComponent;
 typedef uint32_t ECSComponentID;
 
 typedef CC_FLAG_ENUM(ECSComponentStorage, ECSComponentID) {
-    ECSComponentStorageTypeArchetype = (0 << 27),
-    ECSComponentStorageTypePacked = (1 << 27),
-    ECSComponentStorageTypeIndexed = (2 << 27),
-    ECSComponentStorageTypeLocal = (3 << 27),
+    ECSComponentStorageTypeArchetype = (0 << 26),
+    ECSComponentStorageTypePacked = (1 << 26),
+    ECSComponentStorageTypeIndexed = (2 << 26),
+    ECSComponentStorageTypeLocal = (3 << 26),
     
+    ECSComponentStorageModifierDestructorImpure = (1 << 28),
     ECSComponentStorageModifierDestructor = (1 << 29),
     ECSComponentStorageModifierDuplicate = (1 << 30),
     ECSComponentStorageModifierTag = (1 << 31),
     
-    ECSComponentStorageTypeMask = 0x18000000,
-    ECSComponentStorageModifierMask = 0xe0000000,
+    ECSComponentStorageTypeMask = 0xc000000,
+    ECSComponentStorageModifierMask = 0xf0000000,
     ECSComponentStorageMask = ECSComponentStorageTypeMask | ECSComponentStorageModifierMask
 };
 
@@ -59,6 +60,6 @@ typedef struct {
  * @param Data The data for the component.
  * @param ID The ID of the component.
  */
-typedef void (*ECSComponentDestructor)(void *Data, ECSComponentID ID);
+typedef void (*ECSComponentDestructor)(const void *Data, ECSComponentID ID);
 
 #endif

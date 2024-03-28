@@ -82,6 +82,11 @@ typedef CompH ArchH;
 typedef CompH PackedH;
 typedef CompH IndexedH;
 
+typedef int ArchK;
+typedef int PackedK;
+typedef int IndexedK;
+typedef int LocalK;
+
 ECS_ARCHETYPE_COMPONENT(CompA, 0);
 ECS_ARCHETYPE_COMPONENT(CompB, 1);
 ECS_ARCHETYPE_COMPONENT(CompC, 2);
@@ -105,6 +110,13 @@ ECS_PACKED_TAG(CheckRunStateTag);
 ECS_ARCHETYPE_COMPONENT(ArchH);
 ECS_PACKED_COMPONENT(PackedH);
 ECS_INDEXED_COMPONENT(IndexedH);
+
+ECS_ARCHETYPE_COMPONENT(ArchK);
+ECS_PACKED_COMPONENT(PackedK);
+ECS_INDEXED_COMPONENT(IndexedK);
+ECS_LOCAL_COMPONENT(LocalK);
+
+ECS_DESTRUCTOR(TrackDestructor, ArchK, PackedK, IndexedK, LocalK);
 
 ECS_DESTRUCTOR(TestDestructor, DuplicateA, LocalH, ArchH, PackedH, IndexedH);
 
@@ -142,6 +154,8 @@ ECS_SYSTEM_GROUP(TEST_GROUP, ECS_TIME_FROM_SECONDS(1.0 / 60.0), FALSE,
     PRIORITY(2, (Sys16ReadCheckRunStateTag)),
     PRIORITY(3, (ECSMonitorSystem))
 );
+
+static void TrackDestructor(void *Data, ECSComponentID ID);
 
 static void TestDestructor(void *Data, ECSComponentID ID);
 
