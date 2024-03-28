@@ -118,7 +118,7 @@ ECSMutableReplaceRegistryState *ECSMutationInspectRegistryReregister(ECSContext 
     return Context->mutations->registry.replace.state;
 }
 
-ECSMutableAddLinkState *ECSMutationStageAddLink(ECSContext *Context, size_t Count)
+ECSMutableAddLinkState *ECSMutationStageAddLinks(ECSContext *Context, size_t Count)
 {
     const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->link.add.count, Count, memory_order_relaxed);
     
@@ -127,7 +127,7 @@ ECSMutableAddLinkState *ECSMutationStageAddLink(ECSContext *Context, size_t Coun
     return Context->mutations->link.add.state + Offset;
 }
 
-ECSMutableAddLinkState *ECSMutationInspectAddLink(ECSContext *Context, size_t *Count)
+ECSMutableAddLinkState *ECSMutationInspectAddLinks(ECSContext *Context, size_t *Count)
 {
     CCAssertLog(Count, "Count must not be null");
     
@@ -136,7 +136,7 @@ ECSMutableAddLinkState *ECSMutationInspectAddLink(ECSContext *Context, size_t *C
     return Context->mutations->link.add.state;
 }
 
-ECSMutableRemoveLinkState *ECSMutationStageRemoveLink(ECSContext *Context, size_t Count)
+ECSMutableRemoveLinkState *ECSMutationStageRemoveLinks(ECSContext *Context, size_t Count)
 {
     const size_t Offset = atomic_fetch_add_explicit(&Context->mutations->link.remove.count, Count, memory_order_relaxed);
     
@@ -145,7 +145,7 @@ ECSMutableRemoveLinkState *ECSMutationStageRemoveLink(ECSContext *Context, size_
     return Context->mutations->link.remove.state + Offset;
 }
 
-ECSMutableRemoveLinkState *ECSMutationInspectRemoveLink(ECSContext *Context, size_t *Count)
+ECSMutableRemoveLinkState *ECSMutationInspectRemoveLinks(ECSContext *Context, size_t *Count)
 {
     CCAssertLog(Count, "Count must not be null");
     
@@ -252,7 +252,7 @@ void ECSMutationApply(ECSContext *Context)
     }
     
     size_t AddLinkCount;
-    ECSMutableAddLinkState *AddLinkState = ECSMutationInspectAddLink(Context, &AddLinkCount);
+    ECSMutableAddLinkState *AddLinkState = ECSMutationInspectAddLinks(Context, &AddLinkCount);
     for (size_t Loop = 0; Loop < AddLinkCount; Loop++)
     {
         ECSLinkAdd(Context, ECSProxyEntityResolve(AddLinkState[Loop].left.entity, NewEntities, NewEntityCount), AddLinkState[Loop].left.data, AddLinkState[Loop].link, ECSProxyEntityResolve(AddLinkState[Loop].right.entity, NewEntities, NewEntityCount), AddLinkState[Loop].right.data);
@@ -280,7 +280,7 @@ void ECSMutationApply(ECSContext *Context)
     }
     
     size_t RemoveLinkCount;
-    ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationInspectRemoveLink(Context, &RemoveLinkCount);
+    ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationInspectRemoveLinks(Context, &RemoveLinkCount);
     for (size_t Loop = 0; Loop < RemoveLinkCount; Loop++)
     {
         const ECSLink *Link = RemoveLinkState[Loop].link;
