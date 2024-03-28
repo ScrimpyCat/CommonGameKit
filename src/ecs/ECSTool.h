@@ -131,6 +131,14 @@
 #define ECS_DESTRUCTOR(destructor, ...)
 
 /*!
+ * @define ECS_DESTRUCTOR_DIRTY
+ * @abstract Mark an impure component destructor for the ecs\_tool.
+ * @param destructor The impure @b ECSComponentDestructor callback to be used. Note if a callback is already marked this will override the previous one.
+ * @param va_arg The type names of components that should use this destructor.
+ */
+#define ECS_DESTRUCTOR_DIRTY(destructor, ...)
+
+/*!
  * @define ECS_SYSTEM
  * @abstract Mark a system for the ecs\_tool.
  * @param system The @b ECSSystemUpdateCallback callback for the system.
