@@ -289,9 +289,9 @@ void ECSMutationApply(ECSContext *Context)
         {
             ECSEntity Entity = RemoveLinkState[Loop].left.entity;
             
-            if (RemoveLinkState[Loop].right.entity)
+            if (RemoveLinkState[Loop].right.entity != ECS_ENTITY_NULL)
             {
-                if (Entity)
+                if (Entity != ECS_ENTITY_NULL)
                 {
                     ECSLinkRemove(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount), Link, ECSProxyEntityResolve(RemoveLinkState[Loop].right.entity, NewEntities, NewEntityCount));
                 }
@@ -306,7 +306,7 @@ void ECSMutationApply(ECSContext *Context)
                 }
             }
             
-            else if (Entity)
+            else if (Entity != ECS_ENTITY_NULL)
             {
             RemoveLinkForEntity:
                 ECSLinkRemoveLinkForEntity(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount), Link);
@@ -322,9 +322,9 @@ void ECSMutationApply(ECSContext *Context)
         {
             ECSEntity Entity = RemoveLinkState[Loop].left.entity;
             
-            if (RemoveLinkState[Loop].right.entity)
+            if (RemoveLinkState[Loop].right.entity != ECS_ENTITY_NULL)
             {
-                if (Entity)
+                if (Entity != ECS_ENTITY_NULL)
                 {
                     ECSLinkRemoveAllLinksBetweenEntities(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount), ECSProxyEntityResolve(RemoveLinkState[Loop].right.entity, NewEntities, NewEntityCount));
                 }
@@ -336,7 +336,7 @@ void ECSMutationApply(ECSContext *Context)
                 }
             }
             
-            else if (Entity)
+            else if (Entity != ECS_ENTITY_NULL)
             {
             RemoveAllLinksForEntity:
                 ECSLinkRemoveAllLinksForEntity(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount));
