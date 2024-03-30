@@ -60,6 +60,6 @@ typedef struct {
  * @param Data The data for the component.
  * @param ID The ID of the component.
  */
-typedef void (*ECSComponentDestructor)(const void *Data, ECSComponentID ID);
+typedef void (*ECSComponentDestructor)(void *Data, ECSComponentID ID);
 
 #endif

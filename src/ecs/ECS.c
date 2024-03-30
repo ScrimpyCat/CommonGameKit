@@ -906,7 +906,7 @@ static const struct {
     ECS_ARCHETYPE_INIT_OFFSETS(ECS_ARCHETYPE_MAX)
 };
 
-void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
+void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     ECS_DEAD_ENTITY_GUARD(Context, Entity, ECSArchetypeComponentDestructors[ECSComponentBaseIndex(ID)](Data, ID));
@@ -1087,7 +1087,7 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
     }
 }
 
-void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
+void ECSPackedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     ECS_DEAD_ENTITY_GUARD(Context, Entity, ECSPackedComponentDestructors[ECSComponentBaseIndex(ID)](Data, ID));
@@ -1213,7 +1213,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
     }
 }
 
-void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
+void ECSIndexedAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     ECS_DEAD_ENTITY_GUARD(Context, Entity, ECSIndexedComponentDestructors[ECSComponentBaseIndex(ID)](Data, ID));
@@ -1288,7 +1288,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
     }
 }
 
-void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, const void *Data, ECSComponentID ID)
+void ECSLocalAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
     CCAssertLog(Context, "Context must not be null");
     ECS_DEAD_ENTITY_GUARD(Context, Entity, ECSLocalComponentDestructors[ECSComponentBaseIndex(ID)](Data, ID));
