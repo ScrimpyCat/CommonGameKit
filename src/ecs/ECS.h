@@ -533,6 +533,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
 /*!
  * @brief Add an archetype component.
  * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add a component to.
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
@@ -560,6 +561,7 @@ size_t ECSArchetypeComponentIndex(const ECSComponentRefs *Refs, ECSComponentID I
 /*!
  * @brief Add a packed component.
  * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add a component to.
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
@@ -580,6 +582,7 @@ void ECSPackedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSComponen
 /*!
  * @brief Add an indexed component.
  * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add a component to.
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
@@ -600,6 +603,7 @@ void ECSIndexedRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompone
 /*!
  * @brief Add a local component.
  * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add a component to.
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
@@ -650,6 +654,7 @@ void ECSEntityDestroy(ECSContext *Context, const ECSEntity *Entities, size_t Cou
 
 /*!
  * @brief Add a component to an entity.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add a component to.
  * @param Data The data to initialise the component with. If NULL the component data will be uninitialised.
@@ -668,6 +673,7 @@ static inline void ECSEntityRemoveComponent(ECSContext *Context, ECSEntity Entit
 
 /*!
  * @brief Add multiple components to an entity.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add the components to.
  * @param Components The type component data for the components to be added.
@@ -727,6 +733,7 @@ void ECSEntityGetComponents(ECSContext *Context, ECSEntity Entity, ECSTypedCompo
 
 /*!
  * @brief Add multiple duplicate components to an entity.
+ * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
  * @param Context The context to be used.
  * @param Entity The entity to add the duplicate components to.
  * @param Data The array of component data (of size @b Count).
