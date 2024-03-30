@@ -162,6 +162,12 @@ void ECSLinkRemoveAllLinksBetweenEntities(ECSContext *Context, ECSEntity EntityA
  */
 void ECSLinkRemoveLink(ECSContext *Context, const ECSLink *Link);
 
+/*!
+ * @brief Remove all links all entities.
+ * @param Context The context to remove the link from.
+ */
+void ECSLinkRemoveAllLinks(ECSContext *Context);
+
 #pragma - Query
 
 /*!

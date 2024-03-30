@@ -607,6 +607,16 @@ void ECSLinkRemoveLink(ECSContext *Context, const ECSLink *Link)
     }
 }
 
+void ECSLinkRemoveAllLinks(ECSContext *Context)
+{
+    CCAssertLog(Context, "Context must not be null");
+    
+    for (size_t Loop = 0, Count = CCArrayGetCount(Context->links.associations); Loop < Count; Loop++)
+    {
+        ECSLinkRemoveAllLinksForEntity(Context, Loop);
+    }
+}
+
 #pragma - Query
 
 _Bool ECSLinked(ECSContext *Context, ECSEntity EntityA, const ECSLink *Link, ECSEntity EntityB)

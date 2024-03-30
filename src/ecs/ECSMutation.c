@@ -341,6 +341,11 @@ void ECSMutationApply(ECSContext *Context)
             RemoveAllLinksForEntity:
                 ECSLinkRemoveAllLinksForEntity(Context, ECSProxyEntityResolve(Entity, NewEntities, NewEntityCount));
             }
+            
+            else
+            {
+                ECSLinkRemoveAllLinks(Context);
+            }
         }
     }
     
