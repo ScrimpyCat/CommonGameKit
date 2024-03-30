@@ -6614,6 +6614,249 @@ CLEAR_CALLBACK_STATE;
     XCTAssertFalse(ECSEntityIsAlive(&Context, Entities[3]), "Entity should be destroyed");
     
     ECSEntityDestroy(&Context, Entities, 1);
+    
+    
+    
+    ECSEntity Entity;
+    ECSEntityCreate(&Context, &Entity, 1);
+    
+    ECSMutableAddLinkState *StagedAddLinks = ECSMutationStageAddLinks(&Context, 7);
+    ECSProxyEntity NewEntity = ECSMutationStageEntityCreate(&Context, 2);
+    
+    StagedAddLinks[0].link = &TestOneToOne;
+    StagedAddLinks[0].left.entity = Entity;
+    StagedAddLinks[0].left.data = NULL;
+    StagedAddLinks[0].right.entity = NewEntity;
+    StagedAddLinks[0].right.data = NULL;
+    
+    StagedAddLinks[1].link = &TestOneToOne;
+    StagedAddLinks[1].left.entity = NewEntity;
+    StagedAddLinks[1].left.data = NULL;
+    StagedAddLinks[1].right.entity = NewEntity + 1;
+    StagedAddLinks[1].right.data = NULL;
+    
+    StagedAddLinks[2].link = &TestOneToMany;
+    StagedAddLinks[2].left.entity = Entity;
+    StagedAddLinks[2].left.data = NULL;
+    StagedAddLinks[2].right.entity = NewEntity;
+    StagedAddLinks[2].right.data = NULL;
+    
+    StagedAddLinks[3].link = &TestOneToMany;
+    StagedAddLinks[3].left.entity = Entity;
+    StagedAddLinks[3].left.data = NULL;
+    StagedAddLinks[3].right.entity = NewEntity + 1;
+    StagedAddLinks[3].right.data = NULL;
+    
+    StagedAddLinks[4].link = &TestOneToMany;
+    StagedAddLinks[4].left.entity = NewEntity;
+    StagedAddLinks[4].left.data = NULL;
+    StagedAddLinks[4].right.entity = NewEntity + 1;
+    StagedAddLinks[4].right.data = NULL;
+    
+    StagedAddLinks[5].link = &TestManyToMany;
+    StagedAddLinks[5].left.entity = Entity;
+    StagedAddLinks[5].left.data = NULL;
+    StagedAddLinks[5].right.entity = NewEntity;
+    StagedAddLinks[5].right.data = NULL;
+    
+    StagedAddLinks[6].link = &TestManyToMany;
+    StagedAddLinks[6].left.entity = NewEntity;
+    StagedAddLinks[6].left.data = NULL;
+    StagedAddLinks[6].right.entity = NewEntity + 1;
+    StagedAddLinks[6].right.data = NULL;
+    
+    ECSMutableAddLinkState *StagedAddLinks2 = ECSMutationStageAddLinks(&Context, 1);
+    
+    StagedAddLinks2[0].link = &TestManyToMany;
+    StagedAddLinks2[0].left.entity = Entity;
+    StagedAddLinks2[0].left.data = NULL;
+    StagedAddLinks2[0].right.entity = NewEntity + 1;
+    StagedAddLinks2[0].right.data = NULL;
+    
+    ECSMutableAddLinkState *AddedLinks = ECSMutationInspectAddLinks(&Context, &Count);
+    
+    XCTAssertEqual(Count, 8, @"Should be the correct value");
+    
+    for (size_t Loop = 0; Loop < 7; Loop++)
+    {
+        XCTAssertEqual(AddedLinks[Loop].link, StagedAddLinks[Loop].link, @"Should be the correct link");
+        XCTAssertEqual(AddedLinks[Loop].left.entity, StagedAddLinks[Loop].left.entity, @"Should be the correct entity");
+        XCTAssertEqual(AddedLinks[Loop].left.data, StagedAddLinks[Loop].left.data, @"Should be the correct value");
+        XCTAssertEqual(AddedLinks[Loop].right.entity, StagedAddLinks[Loop].right.entity, @"Should be the correct entity");
+        XCTAssertEqual(AddedLinks[Loop].right.data, StagedAddLinks[Loop].right.data, @"Should be the correct value");
+    }
+    
+    XCTAssertEqual(AddedLinks[7].link, StagedAddLinks2[0].link, @"Should be the correct link");
+    XCTAssertEqual(AddedLinks[7].left.entity, StagedAddLinks2[0].left.entity, @"Should be the correct entity");
+    XCTAssertEqual(AddedLinks[7].left.data, StagedAddLinks2[0].left.data, @"Should be the correct value");
+    XCTAssertEqual(AddedLinks[7].right.entity, StagedAddLinks2[0].right.entity, @"Should be the correct entity");
+    XCTAssertEqual(AddedLinks[7].right.data, StagedAddLinks2[0].right.data, @"Should be the correct value");
+    
+    ECSMutationApply(&Context);
+    
+    LinkedEntities = ECSLinkGet(&Context, Entity, &TestOneToOne, &Count);
+    XCTAssertEqual(Count, 1, @"Should be linked to the new entity");
+    
+    ECSEntity NewEntities[2] = { LinkedEntities[0] };
+    LinkedEntities = ECSLinkGet(&Context, NewEntities[0], &TestOneToOne, &Count);
+    XCTAssertEqual(Count, 1, @"Should be linked to the new entity");
+    
+    NewEntities[1] = LinkedEntities[0];
+    
+    XCTAssertTrue(ECSLinked(&Context, Entity, &TestOneToMany, NewEntities[0]), "Link should be added");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToMany, NewEntities[1]), "Link should be replaced");
+    XCTAssertTrue(ECSLinked(&Context, NewEntities[0], &TestOneToMany, NewEntities[1]), "Link should be added");
+    XCTAssertTrue(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[0]), "Link should be added");
+    XCTAssertTrue(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[1]), "Link should be added");
+    XCTAssertTrue(ECSLinked(&Context, NewEntities[0], &TestManyToMany, NewEntities[1]), "Link should be added");
+    
+    ECSMutableRemoveLinkState *StagedRemoveLinks = ECSMutationStageRemoveLinks(&Context, 2);
+    
+    StagedRemoveLinks[0].link = &TestOneToOne;
+    StagedRemoveLinks[0].left.entity = ECS_ENTITY_NULL;
+    StagedRemoveLinks[0].right.entity = ECS_ENTITY_NULL;
+    
+    StagedRemoveLinks[1].link = &TestManyToMany;
+    StagedRemoveLinks[1].left.entity = Entity;
+    StagedRemoveLinks[1].right.entity = NewEntities[0];
+    
+    ECSMutableRemoveLinkState *StagedRemoveLinks2 = ECSMutationStageRemoveLinks(&Context, 1);
+    
+    StagedRemoveLinks2[0].link = &TestOneToMany;
+    StagedRemoveLinks2[0].left.entity = Entity;
+    StagedRemoveLinks2[0].right.entity = ECS_ENTITY_NULL;
+    
+    ECSMutableRemoveLinkState *RemovedLinks = ECSMutationInspectRemoveLinks(&Context, &Count);
+    
+    XCTAssertEqual(Count, 3, @"Should be the correct value");
+    
+    for (size_t Loop = 0; Loop < 2; Loop++)
+    {
+        XCTAssertEqual(RemovedLinks[Loop].link, StagedRemoveLinks[Loop].link, @"Should be the correct link");
+        XCTAssertEqual(RemovedLinks[Loop].left.entity, StagedRemoveLinks[Loop].left.entity, @"Should be the correct entity");
+        XCTAssertEqual(RemovedLinks[Loop].right.entity, StagedRemoveLinks[Loop].right.entity, @"Should be the correct entity");
+    }
+    
+    XCTAssertEqual(RemovedLinks[2].link, StagedRemoveLinks2[0].link, @"Should be the correct link");
+    XCTAssertEqual(RemovedLinks[2].left.entity, StagedRemoveLinks2[0].left.entity, @"Should be the correct entity");
+    XCTAssertEqual(RemovedLinks[2].right.entity, StagedRemoveLinks2[0].right.entity, @"Should be the correct entity");
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToOne, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestOneToOne, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, NewEntities[0], &TestOneToMany, NewEntities[1]), "Link should be added");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[1]), "Link should be added");
+    XCTAssertTrue(ECSLinked(&Context, NewEntities[0], &TestManyToMany, NewEntities[1]), "Link should be added");
+    
+    StagedRemoveLinks = ECSMutationStageRemoveLinks(&Context, 1);
+    
+    StagedRemoveLinks[0].link = &TestManyToMany;
+    StagedRemoveLinks[0].left.entity = ECS_ENTITY_NULL;
+    StagedRemoveLinks[0].right.entity = NewEntities[1];
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToOne, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestOneToOne, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, NewEntities[0], &TestOneToMany, NewEntities[1]), "Link should be added");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestManyToMany, NewEntities[1]), "Link should be removed");
+    
+    StagedAddLinks = ECSMutationStageAddLinks(&Context, 4);
+    
+    StagedAddLinks[0].link = &TestOneToOne;
+    StagedAddLinks[0].left.entity = Entity;
+    StagedAddLinks[0].left.data = NULL;
+    StagedAddLinks[0].right.entity = NewEntities[0];
+    StagedAddLinks[0].right.data = NULL;
+    
+    StagedAddLinks[1].link = &TestOneToOne;
+    StagedAddLinks[1].left.entity = NewEntities[0];
+    StagedAddLinks[1].left.data = NULL;
+    StagedAddLinks[1].right.entity = NewEntities[1];
+    StagedAddLinks[1].right.data = NULL;
+    
+    StagedAddLinks[2].link = &TestManyToMany;
+    StagedAddLinks[2].left.entity = Entity;
+    StagedAddLinks[2].left.data = NULL;
+    StagedAddLinks[2].right.entity = NewEntities[0];
+    StagedAddLinks[2].right.data = NULL;
+    
+    StagedAddLinks[3].link = &TestManyToMany;
+    StagedAddLinks[3].left.entity = Entity;
+    StagedAddLinks[3].left.data = NULL;
+    StagedAddLinks[3].right.entity = NewEntities[1];
+    StagedAddLinks[3].right.data = NULL;
+    
+    StagedRemoveLinks = ECSMutationStageRemoveLinks(&Context, 1);
+    
+    StagedRemoveLinks[0].link = NULL;
+    StagedRemoveLinks[0].left.entity = NewEntities[0];
+    StagedRemoveLinks[0].right.entity = ECS_ENTITY_NULL;
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToOne, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestOneToOne, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestOneToMany, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertTrue(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[1]), "Link should be added");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestManyToMany, NewEntities[1]), "Link should be removed");
+    
+    StagedRemoveLinks = ECSMutationStageRemoveLinks(&Context, 1);
+    
+    StagedRemoveLinks[0].link = NULL;
+    StagedRemoveLinks[0].left.entity = ECS_ENTITY_NULL;
+    StagedRemoveLinks[0].right.entity = Entity;
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToOne, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestOneToOne, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestOneToMany, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[0]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestManyToMany, NewEntities[1]), "Link should be removed");
+    XCTAssertFalse(ECSLinked(&Context, NewEntities[0], &TestManyToMany, NewEntities[1]), "Link should be removed");
+    
+    StagedAddLinks = ECSMutationStageAddLinks(&Context, 1);
+    
+    CompA *StagedCompA = ECSMutationSetSharedData(&Context, sizeof(CompA) * 2);
+    
+    StagedCompA[0].v[0] = 1;
+    StagedCompA[1].v[0] = 2;
+    
+    StagedAddLinks[0].link = &TestOneToOneCompA;
+    StagedAddLinks[0].left.entity = Entity;
+    StagedAddLinks[0].left.data = &StagedCompA[0];
+    StagedAddLinks[0].right.entity = NewEntities[0];
+    StagedAddLinks[0].right.data = &StagedCompA[1];
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertTrue(ECSLinked(&Context, Entity, &TestOneToOneCompA, NewEntities[0]), "Link should be added");
+    
+    XCTAssertEqual(((CompA*)ECSEntityGetComponent(&Context, Entity, COMP_A))->v[0], 1, "Component should be initialised correctly");
+    XCTAssertEqual(((CompA*)ECSEntityGetComponent(&Context, NewEntities[0], COMP_A))->v[0], 2, "Component should be initialised correctly");
+    
+    StagedRemoveLinks = ECSMutationStageRemoveLinks(&Context, 1);
+    
+    StagedRemoveLinks[0].link = NULL;
+    StagedRemoveLinks[0].left.entity = ECS_ENTITY_NULL;
+    StagedRemoveLinks[0].right.entity = ECS_ENTITY_NULL;
+    
+    ECSMutationApply(&Context);
+    
+    XCTAssertFalse(ECSLinked(&Context, Entity, &TestOneToOneCompA, NewEntities[0]), "Link should be removed");
+    
+    ECSEntityDestroy(&Context, &Entity, 1);
+    ECSEntityDestroy(&Context, NewEntities, 2);
 }
 
 @end
