@@ -39,6 +39,9 @@
 		F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */; };
 		F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F3569A9329F70CA50075C6A1 /* ECSContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
+		F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = F35B1F702C34301F009325F0 /* ExpressionReflection.h */; };
+		F35B1F732C34301F009325F0 /* ExpressionReflection.c in Sources */ = {isa = PBXBuildFile; fileRef = F35B1F712C34301F009325F0 /* ExpressionReflection.c */; };
+		F35B1F752C384795009325F0 /* ExpressionSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */; };
 		F36081F02B0B075A002B2A89 /* ECSMonitorSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081EE2B0B075A002B2A89 /* ECSMonitorSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36081F12B0B075A002B2A89 /* ECSMonitorSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F36081EF2B0B075A002B2A89 /* ECSMonitorSystem.c */; };
 		F36081F72B1069B8002B2A89 /* ECSNameComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081F52B1069B8002B2A89 /* ECSNameComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -580,6 +583,9 @@
 		F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataFileTests.m; sourceTree = "<group>"; };
 		F3569A9329F70CA50075C6A1 /* ECSContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSContext.h; sourceTree = "<group>"; };
 		F3569A9D29FAFD210075C6A1 /* ECSTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTests.h; sourceTree = "<group>"; };
+		F35B1F702C34301F009325F0 /* ExpressionReflection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionReflection.h; sourceTree = "<group>"; };
+		F35B1F712C34301F009325F0 /* ExpressionReflection.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExpressionReflection.c; sourceTree = "<group>"; };
+		F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionSerializationTests.m; sourceTree = "<group>"; };
 		F36081EE2B0B075A002B2A89 /* ECSMonitorSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSMonitorSystem.h; sourceTree = "<group>"; };
 		F36081EF2B0B075A002B2A89 /* ECSMonitorSystem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSMonitorSystem.c; sourceTree = "<group>"; };
 		F36081F22B0CF3F5002B2A89 /* ECSSystemAccessors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSSystemAccessors.h; sourceTree = "<group>"; };
@@ -1088,6 +1094,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */,
+				F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */,
 				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
 				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
 				F3897BA51DCD764E008D6C1D /* ExpressionControlFlowTests.m */,
@@ -1608,6 +1615,8 @@
 				F3AF347C1DCCD5AF00CAD472 /* ExpressionEvaluator.h */,
 				F3AF347D1DCCD5AF00CAD472 /* ExpressionHelpers.c */,
 				F3AF347E1DCCD5AF00CAD472 /* ExpressionHelpers.h */,
+				F35B1F712C34301F009325F0 /* ExpressionReflection.c */,
+				F35B1F702C34301F009325F0 /* ExpressionReflection.h */,
 				F3E2742920D17B3F00D6AFE1 /* Components */,
 				F3E2740820D164CA00D6AFE1 /* Systems */,
 			);
@@ -1810,6 +1819,7 @@
 				F3AF33C21DCCD4EC00CAD472 /* PixelDataGenerator.h in Headers */,
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
 				F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */,
+				F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */,
 				F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */,
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
@@ -2249,6 +2259,7 @@
 				F3B34E362253448C00C2DEC1 /* MTLDraw.m in Sources */,
 				F3AF34391DCCD4EC00CAD472 /* Font.c in Sources */,
 				F3AF33C31DCCD4EC00CAD472 /* PixelDataStatic.c in Sources */,
+				F35B1F732C34301F009325F0 /* ExpressionReflection.c in Sources */,
 				F3AF33821DCCD4EC00CAD472 /* ComponentSystem.c in Sources */,
 				F3AF33981DCCD4EC00CAD472 /* InputMapControllerComponent.c in Sources */,
 				F3AF339B1DCCD4EC00CAD472 /* InputMapGroupComponent.c in Sources */,
@@ -2373,6 +2384,7 @@
 				F3897BB91DCD764E008D6C1D /* ComponentTests.m in Sources */,
 				F3897BC71DCD764E008D6C1D /* GLDebugTests.m in Sources */,
 				F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */,
+				F35B1F752C384795009325F0 /* ExpressionSerializationTests.m in Sources */,
 				F3897BBC1DCD764E008D6C1D /* ExpressionControlFlowTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
