@@ -1215,11 +1215,63 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
                 return *(CCString*)Data ? CCExpressionCreateString(CC_STD_ALLOCATOR, *(CCString*)Data, TRUE) : CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0);
             }
             
-            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCCollectionMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCCollectionUnmapper))
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCArrayMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCArrayUnmapper))
             {
+                CCArray Array = *(CCArray*)Data;
+                
+                if (!Array) return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
+                
                 CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 
-                CC_COLLECTION_FOREACH_PTR(void, Element, *(CCCollection*)Data)
+                for (size_t Loop = 0, Count = CCArrayGetCount(Array); Loop < Count; Loop++)
+                {
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCArray*)Type)->elementType, CCArrayGetElementAtIndex(Array, Loop), Zone) });
+                }
+                
+                return List;
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCLinkedListMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCLinkedListUnmapper))
+            {
+                CCLinkedList LinkedList = *(CCLinkedList*)Data;
+                
+                if (!LinkedList) return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
+                
+                CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                
+                for (CCLinkedListNode *Node = LinkedList; Node; Node = CCLinkedListEnumerateNext(Node))
+                {
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCLinkedList*)Type)->elementType, CCLinkedListGetNodeData(Node), Zone) });
+                }
+                
+                return List;
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCListMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCListUnmapper))
+            {
+                CCList List = *(CCList*)Data;
+                
+                if (!List) return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
+                
+                CCExpression ListExpr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                
+                for (size_t Loop = 0, Count = CCListGetCount(List); Loop < Count; Loop++)
+                {
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(ListExpr), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCList*)Type)->elementType, CCListGetElementAtIndex(List, Loop), Zone) });
+                }
+                
+                return ListExpr;
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCCollectionMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCCollectionUnmapper))
+            {
+                CCCollection Collection = *(CCCollection*)Data;
+                
+                if (!Collection) return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
+                
+                CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                
+                CC_COLLECTION_FOREACH_PTR(void, Element, Collection)
                 {
                     CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCCollection*)Type)->elementType, Element, Zone) });
                 }
@@ -1229,8 +1281,11 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
             
             else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCDictionaryMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCDictionaryUnmapper))
             {
-                CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 CCDictionary Dictionary = *(CCDictionary*)Data;
+                
+                if (!Dictionary) return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
+                
+                CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 
                 CC_DICTIONARY_FOREACH_KEY_PTR(void, Key, Dictionary)
                 {
@@ -1502,9 +1557,119 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                 }
             }
             
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCArrayMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCArrayUnmapper))
+            {
+                if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                    {
+                        *(CCLinkedList*)Data = NULL;
+                        
+                        return;
+                    }
+                }
+                
+                else if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                {
+                    CCAllocatorType CustomAllocator = ((const CCReflectCCArray*)Type)->allocator;
+                    if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
+                    
+                    CCArray Array = CCArrayCreate(CustomAllocator, CCReflectTypeSize(((const CCReflectCCArray*)Type)->elementType), ((const CCReflectCCArray*)Type)->chunkSize);
+                    
+                    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
+                    {
+                        const size_t Index = CCArrayAppendElement(Array, NULL);
+                        CCExpressionReflectionDeserialize(Element, ((const CCReflectCCArray*)Type)->elementType, CCArrayGetElementAtIndex(Array, Index), Zone, Allocator);
+                    }
+                    
+                    *(CCArray*)Data = Array;
+                    
+                    return;
+                }
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCLinkedListMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCLinkedListUnmapper))
+            {
+                if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                    {
+                        *(CCLinkedList*)Data = NULL;
+                        
+                        return;
+                    }
+                }
+                
+                else if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                {
+                    CCAllocatorType CustomAllocator = ((const CCReflectCCLinkedList*)Type)->allocator;
+                    if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
+                    
+                    const size_t ElementSize = CCReflectTypeSize(((const CCReflectCCLinkedList*)Type)->elementType);
+                    
+                    CCLinkedList LinkedList = NULL;
+                    
+                    CCLinkedListNode *Node = CCLinkedListCreateNode(CustomAllocator, ElementSize, NULL);
+                    
+                    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
+                    {
+                        CCLinkedListNode *Node = CCLinkedListCreateNode(CustomAllocator, ElementSize, NULL);
+                        CCExpressionReflectionDeserialize(Element, ((const CCReflectCCLinkedList*)Type)->elementType, CCLinkedListGetNodeData(Node), Zone, Allocator);
+                        
+                        if (LinkedList) CCLinkedListAppend(LinkedList, Node);
+                        else LinkedList = Node;
+                    }
+                    
+                    *(CCLinkedList*)Data = LinkedList;
+                    
+                    return;
+                }
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCListMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCListUnmapper))
+            {
+                if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                    {
+                        *(CCLinkedList*)Data = NULL;
+                        
+                        return;
+                    }
+                }
+                
+                else if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                {
+                    CCAllocatorType CustomAllocator = ((const CCReflectCCList*)Type)->allocator;
+                    if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
+                    
+                    CCList List = CCListCreate(CustomAllocator, CCReflectTypeSize(((const CCReflectCCList*)Type)->elementType), ((const CCReflectCCList*)Type)->chunkSize, ((const CCReflectCCList*)Type)->pageSize);
+                    
+                    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
+                    {
+                        const size_t Index = CCListAppendElement(List, NULL);
+                        CCExpressionReflectionDeserialize(Element, ((const CCReflectCCList*)Type)->elementType, CCListGetElementAtIndex(List, Index), Zone, Allocator);
+                    }
+                    
+                    *(CCList*)Data = List;
+                    
+                    return;
+                }
+            }
+            
             else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCCollectionMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCCollectionUnmapper))
             {
-                if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                    {
+                        *(CCLinkedList*)Data = NULL;
+                        
+                        return;
+                    }
+                }
+                
+                else if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
                 {
                     CCAllocatorType CustomAllocator = ((const CCReflectCCCollection*)Type)->allocator;
                     if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
@@ -1537,7 +1702,17 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
             
             else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCDictionaryMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCDictionaryUnmapper))
             {
-                if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                    {
+                        *(CCLinkedList*)Data = NULL;
+                        
+                        return;
+                    }
+                }
+                
+                else if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
                 {
                     CCAllocatorType CustomAllocator = ((const CCReflectCCDictionary*)Type)->allocator;
                     if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
