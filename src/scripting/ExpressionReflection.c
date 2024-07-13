@@ -1210,6 +1210,39 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
             
         case CCReflectTypeOpaque:
         {
+            if (Type == &CC_REFLECT(CCString))
+            {
+                return *(CCString*)Data ? CCExpressionCreateString(CC_STD_ALLOCATOR, *(CCString*)Data, TRUE) : CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0);
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCCollectionMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCCollectionUnmapper))
+            {
+                CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                
+                CC_COLLECTION_FOREACH_PTR(void, Element, *(CCCollection*)Data)
+                {
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(List), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCCollection*)Type)->elementType, Element, Zone) });
+                }
+                
+                return List;
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCDictionaryMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCDictionaryUnmapper))
+            {
+                CCExpression List = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                CCDictionary Dictionary = *(CCDictionary*)Data;
+                
+                CC_DICTIONARY_FOREACH_KEY_PTR(void, Key, Dictionary)
+                {
+                    CCExpression Pair = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Pair), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCDictionary*)Type)->keyType, Key, Zone) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Pair), &(CCExpression){ CCExpressionReflectionSerialize(((const CCReflectCCDictionary*)Type)->valueType, CCDictionaryGetValue(Dictionary, Key), Zone) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(List), &Pair);
+                }
+                
+                return List;
+            }
+            
             CCExpression Result = NULL;
             
             ((const CCReflectOpaque*)Type)->map(Type, Data, &(CCExpressionReflectionSerializeHandlerArgs){
@@ -1257,6 +1290,48 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
     }
     
     return NULL;
+}
+
+static _Bool CCExpressionReflectionListIsFallback(CCExpression Expression)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+    {
+        CCExpression TypeExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
+        
+        if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) >= 1)
+            {
+                CCExpression TypeNameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(TypeExpr), 0);
+                
+                if (CCExpressionGetType(TypeNameExpr) == CCExpressionValueTypeAtom)
+                {
+                    CCString Name = CCExpressionGetAtom(TypeNameExpr);
+                    
+                    CCString Names[] = {
+                        CC_STRING(":pointer"),
+                        CC_STRING(":integer"),
+                        CC_STRING(":float"),
+                        CC_STRING(":struct"),
+                        CC_STRING(":opaque"),
+                        CC_STRING(":array"),
+                        CC_STRING(":validator"),
+                        CC_STRING(":enumerable")
+                    };
+                    
+                    for (size_t Loop = 0; Loop < sizeof(Names) / sizeof(*Names); Loop++)
+                    {
+                        if (CCStringEqual(Name, Names[Loop]))
+                        {
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    return FALSE;
 }
 
 void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Type, void *Data, CCMemoryZone Zone, CCAllocatorType Allocator)
@@ -1410,6 +1485,102 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
             break;
             
         case CCReflectTypeOpaque:
+            if ((((const CCReflectOpaque*)Type)->map == CC_REFLECT(CCString).map) && (((const CCReflectOpaque*)Type)->unmap == CC_REFLECT(CCString).unmap))
+            {
+                switch (CCExpressionGetType(Expression))
+                {
+                    case CCExpressionValueTypeString:
+                        *(CCString*)Data = CCStringCopy(CCExpressionGetString(Expression));
+                        return;
+                        
+                    case CCExpressionValueTypeInteger:
+                        *(CCString*)Data = 0;
+                        return;
+                    
+                    default:
+                        break;
+                }
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCCollectionMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCCollectionUnmapper))
+            {
+                if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                {
+                    CCAllocatorType CustomAllocator = ((const CCReflectCCCollection*)Type)->allocator;
+                    if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
+                    
+                    CCCollection Collection = CCCollectionCreate(CustomAllocator, ((const CCReflectCCCollection*)Type)->hint, CCReflectTypeSize(((const CCReflectCCCollection*)Type)->elementType), ((const CCReflectCCCollection*)Type)->elementDestructor);
+                    
+                    if (((const CCReflectCCCollection*)Type)->hint & CCCollectionHintOrdered)
+                    {
+                        CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
+                        {
+                            CCCollectionEntry Entry = CCOrderedCollectionAppendElement(Collection, NULL);
+                            CCExpressionReflectionDeserialize(Element, ((const CCReflectCCCollection*)Type)->elementType, CCCollectionGetElement(Collection, Entry), Zone, Allocator);
+                        }
+                    }
+                    
+                    else
+                    {
+                        CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
+                        {
+                            CCCollectionEntry Entry = CCCollectionInsertElement(Collection, NULL);
+                            CCExpressionReflectionDeserialize(Element, ((const CCReflectCCCollection*)Type)->elementType, CCCollectionGetElement(Collection, Entry), Zone, Allocator);
+                        }
+                    }
+                    
+                    *(CCCollection*)Data = Collection;
+                    
+                    return;
+                }
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCDictionaryMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCDictionaryUnmapper))
+            {
+                if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                {
+                    CCAllocatorType CustomAllocator = ((const CCReflectCCDictionary*)Type)->allocator;
+                    if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
+                    
+                    const size_t KeySize = CCReflectTypeSize(((const CCReflectCCDictionary*)Type)->keyType);
+                    
+                    void *Key = CCMemoryZoneAllocate(Zone, KeySize);
+                    
+                    CCDictionary Dictionary = CCDictionaryCreate(CustomAllocator, ((const CCReflectCCDictionary*)Type)->hint, KeySize, CCReflectTypeSize(((const CCReflectCCDictionary*)Type)->valueType), ((const CCReflectCCDictionary*)Type)->callbacks);
+                    
+                    CC_COLLECTION_FOREACH(CCExpression, KVExpr, CCExpressionGetList(Expression))
+                    {
+                        if (CCExpressionGetType(KVExpr) == CCExpressionValueTypeList)
+                        {
+                            CCCollection KV = CCExpressionGetList(KVExpr);
+                            
+                            if (CCCollectionGetCount(KV) == 2)
+                            {
+                                CCExpression KeyExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(KV, 0);
+                                CCExpression ValueExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(KV, 1);
+                                
+                                CCExpressionReflectionDeserialize(KeyExpr, ((const CCReflectCCDictionary*)Type)->keyType, Key, Zone, Allocator);
+                                
+                                CCDictionaryEntry Entry = CCDictionaryEntryForKey(Dictionary, Key);
+                                CCExpressionReflectionDeserialize(ValueExpr, ((const CCReflectCCDictionary*)Type)->valueType, CCDictionaryGetEntry(Dictionary, Entry), Zone, Allocator);
+                            }
+                            
+                            else goto SkipDictionary;
+                        }
+                        
+                        else goto SkipDictionary;
+                    }
+                    
+                    *(CCDictionary*)Data = Dictionary;
+                    
+                    return;
+                    
+                SkipDictionary:
+                    
+                    CCDictionaryDestroy(Dictionary);
+                }
+            }
+            
             if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2))
             {
                 CCExpression TypeExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
