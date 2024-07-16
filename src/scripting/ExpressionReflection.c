@@ -1609,8 +1609,6 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                     
                     CCLinkedList LinkedList = NULL;
                     
-                    CCLinkedListNode *Node = CCLinkedListCreateNode(CustomAllocator, ElementSize, NULL);
-                    
                     CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
                     {
                         CCLinkedListNode *Node = CCLinkedListCreateNode(CustomAllocator, ElementSize, NULL);
@@ -1753,6 +1751,41 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                 SkipDictionary:
                     
                     CCDictionaryDestroy(Dictionary);
+                }
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCQueueMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCQueueUnmapper))
+            {
+                if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+                {
+                    if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                    {
+                        *(CCQueue*)Data = NULL;
+                        
+                        return;
+                    }
+                }
+                
+                else if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (!CCExpressionReflectionListIsFallback(Expression)))
+                {
+                    CCAllocatorType CustomAllocator = ((const CCReflectCCLinkedList*)Type)->allocator;
+                    if (CustomAllocator.allocator == CC_NULL_ALLOCATOR.allocator) CustomAllocator = Allocator;
+                    
+                    const size_t ElementSize = CCReflectTypeSize(((const CCReflectCCQueue*)Type)->elementType);
+                    
+                    CCQueue Queue = CCQueueCreate(CustomAllocator);
+                    
+                    CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
+                    {
+                        CCQueueNode *Node = CCQueueCreateNode(CustomAllocator, ElementSize, NULL);
+                        CCExpressionReflectionDeserialize(Element, ((const CCReflectCCQueue*)Type)->elementType, CCQueueGetNodeData(Node), Zone, Allocator);
+                        
+                        CCQueuePush(Queue, Node);
+                    }
+                    
+                    *(CCQueue*)Data = Queue;
+                    
+                    return;
                 }
             }
             
