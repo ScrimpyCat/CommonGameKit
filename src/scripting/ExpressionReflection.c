@@ -25,6 +25,7 @@
 
 #include "ExpressionReflection.h"
 #include "ExpressionEvaluator.h"
+#include "ExpressionHelpers.h"
 
 static CCExpression CCExpressionReflectionSerializeHex(const void *Data, size_t Size, size_t PrintStart, size_t PrintInvert)
 {
@@ -1188,6 +1189,61 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
             
         case CCReflectTypeStruct:
         {
+            if (Type == &CC_REFLECT(CCVector2D))
+            {
+                return CCExpressionCreateVector2(CC_STD_ALLOCATOR, *(const CCVector2D*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector3D))
+            {
+                return CCExpressionCreateVector3(CC_STD_ALLOCATOR, *(const CCVector3D*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector4D))
+            {
+                return CCExpressionCreateVector4(CC_STD_ALLOCATOR, *(const CCVector4D*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGB))
+            {
+                return CCExpressionCreateVector3(CC_STD_ALLOCATOR, *(const CCColourRGB*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGBA))
+            {
+                return CCExpressionCreateVector4(CC_STD_ALLOCATOR, *(const CCColourRGBA*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector2Di))
+            {
+                return CCExpressionCreateVector2i(CC_STD_ALLOCATOR, *(const CCVector2Di*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector3Di))
+            {
+                return CCExpressionCreateVector3i(CC_STD_ALLOCATOR, *(const CCVector3Di*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector4Di))
+            {
+                return CCExpressionCreateVector4i(CC_STD_ALLOCATOR, *(const CCVector4Di*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGBi))
+            {
+                return CCExpressionCreateVector3i(CC_STD_ALLOCATOR, *(const CCColourRGBi*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGBAi))
+            {
+                return CCExpressionCreateVector4i(CC_STD_ALLOCATOR, *(const CCColourRGBAi*)Data);
+            }
+            
+            else if (Type == &CC_REFLECT(CCRect))
+            {
+                return CCExpressionCreateRect(CC_STD_ALLOCATOR, *(const CCRect*)Data);
+            }
+            
             CCExpression Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
             
             for (size_t Loop = 0, Count = ((const CCReflectStruct*)Type)->count; Loop < Count; Loop++)
@@ -1212,7 +1268,7 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
         {
             if (Type == &CC_REFLECT(CCString))
             {
-                return *(CCString*)Data ? CCExpressionCreateString(CC_STD_ALLOCATOR, *(CCString*)Data, TRUE) : CCExpressionCreateInteger(CC_STD_ALLOCATOR, 0);
+                return *(CCString*)Data ? CCExpressionCreateString(CC_STD_ALLOCATOR, *(CCString*)Data, TRUE) : CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
             }
             
             else if ((((const CCReflectOpaque*)Type)->map == CCReflectCCArrayMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCArrayUnmapper))
@@ -1480,6 +1536,126 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
             break;
             
         case CCReflectTypeStruct:
+            if (Type == &CC_REFLECT(CCVector2D))
+            {
+                if (CCExpressionIsVector2(Expression))
+                {
+                    *(CCVector2D*)Data = CCExpressionGetVector2(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector3D))
+            {
+                if (CCExpressionIsVector3(Expression))
+                {
+                    *(CCVector3D*)Data = CCExpressionGetVector3(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector4D))
+            {
+                if (CCExpressionIsVector4(Expression))
+                {
+                    *(CCVector4D*)Data = CCExpressionGetVector4(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGB))
+            {
+                if (CCExpressionIsColour(Expression))
+                {
+                    const CCColourRGBA Colour = CCExpressionGetColour(Expression);
+                    ((CCColourRGB*)Data)->r = Colour.r;
+                    ((CCColourRGB*)Data)->g = Colour.g;
+                    ((CCColourRGB*)Data)->b = Colour.b;
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGBA))
+            {
+                if (CCExpressionIsColour(Expression))
+                {
+                    *(CCColourRGBA*)Data = CCExpressionGetColour(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector2Di))
+            {
+                if (CCExpressionIsVector2i(Expression))
+                {
+                    *(CCVector2Di*)Data = CCExpressionGetVector2i(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector3Di))
+            {
+                if (CCExpressionIsVector3i(Expression))
+                {
+                    *(CCVector3Di*)Data = CCExpressionGetVector3i(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCVector4Di))
+            {
+                if (CCExpressionIsVector4i(Expression))
+                {
+                    *(CCVector4Di*)Data = CCExpressionGetVector4i(Expression);
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGBi))
+            {
+                if (CCExpressionIsColour(Expression))
+                {
+                    const CCColourRGBA Colour = CCExpressionGetColour(Expression);
+                    ((CCColourRGBi*)Data)->r = Colour.r * 255.0f;
+                    ((CCColourRGBi*)Data)->g = Colour.g * 255.0f;
+                    ((CCColourRGBi*)Data)->b = Colour.b * 255.0f;
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCColourRGBAi))
+            {
+                if (CCExpressionIsColour(Expression))
+                {
+                    const CCColourRGBA Colour = CCExpressionGetColour(Expression);
+                    ((CCColourRGBAi*)Data)->r = Colour.r * 255.0f;
+                    ((CCColourRGBAi*)Data)->g = Colour.g * 255.0f;
+                    ((CCColourRGBAi*)Data)->b = Colour.b * 255.0f;
+                    ((CCColourRGBAi*)Data)->a = Colour.a * 255.0f;
+                    
+                    return;
+                }
+            }
+            
+            else if (Type == &CC_REFLECT(CCRect))
+            {
+                if (CCExpressionIsRect(Expression))
+                {
+                    *(CCRect*)Data = CCExpressionGetRect(Expression);
+                    
+                    return;
+                }
+            }
+            
             if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
             {
                 const size_t Size = CC_ALIGN(((const CCReflectStruct*)Type)->count, (sizeof(uint8_t) * 8)) / (sizeof(uint8_t) * 8);
@@ -1548,8 +1724,11 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                         *(CCString*)Data = CCStringCopy(CCExpressionGetString(Expression));
                         return;
                         
-                    case CCExpressionValueTypeInteger:
-                        *(CCString*)Data = 0;
+                    case CCExpressionValueTypeAtom:
+                        if (CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":null")))
+                        {
+                            *(CCString*)Data = 0;
+                        }
                         return;
                     
                     default:
