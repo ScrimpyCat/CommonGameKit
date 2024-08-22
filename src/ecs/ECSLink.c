@@ -35,12 +35,12 @@ void ECSLinkMapInit(ECSContext *Context)
     if (!Context->links.associations) Context->links.associations = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(CCDictionary), Context->manager.map->chunkSize);
 }
 
-static uintmax_t ECSLinkHasher(const void **Key)
+uintmax_t ECSLinkHasher(const void **Key)
 {
     return (uintptr_t)*Key;
 }
 
-static CCComparisonResult ECSLinkComparator(const void **Left, const void **Right)
+CCComparisonResult ECSLinkComparator(const void **Left, const void **Right)
 {
     return *Left == *Right ? CCComparisonResultEqual : CCComparisonResultInvalid;
 }

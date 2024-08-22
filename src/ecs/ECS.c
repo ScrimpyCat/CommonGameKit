@@ -874,25 +874,26 @@ static void ArchetypeRemove(ECSContext *Context, ECSArchetype *Arch, size_t Coun
     }
 }
 
-static size_t ArchtypeIndex(const ECSArchetypeComponentID *set, size_t n)
+size_t ECSArchtypeIndex(const ECSArchetypeComponentID *Set, size_t Count)
 {
-    size_t result = 0;
-    size_t factorial = 1;
+    // See: https://github.com/ScrimpyCat/Generalisable-Unique-Ordered-Pairing-Function
+    size_t Result = 0;
+    size_t Factorial = 1;
     
-    for (size_t i = 0; i < n; i++)
+    for (size_t Dimension = 0; Dimension < Count; Dimension++)
     {
-        factorial *= (i + 1) * 1;
-
-        size_t p = 1;
-        for (size_t j = 0; j <= i; j++)
+        Factorial *= Dimension + 1;
+        
+        size_t Product = 1;
+        for (size_t Offset = 0, Length = Set[Dimension]; Offset <= Dimension; Offset++)
         {
-            p *= (set[i] - j);
+            Product *= Length - Offset;
         }
-
-        result += p / factorial;
+        
+        Result += Product / Factorial;
     }
-
-    return result;
+    
+    return Result;
 }
 
 #define ECS_ARCHETYPE_OFFSET(x, index) { offsetof(ECSContext, archetypes##index), sizeof(ECSArchetype(index)) }
@@ -905,6 +906,13 @@ static const struct {
     { 0, 0 },
     ECS_ARCHETYPE_INIT_OFFSETS(ECS_ARCHETYPE_MAX)
 };
+
+ECSArchetype *ECSArchetypeLookup(ECSContext *Context, size_t ArchID, size_t Count)
+{
+    const size_t ArchOffset = ArchetypeOffset[Count].base + (ArchetypeOffset[Count].size * ArchID);
+    
+    return (ECSArchetype*)((uint8_t*)Context + ArchOffset);
+}
 
 void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data, ECSComponentID ID)
 {
@@ -951,8 +959,9 @@ void ECSArchetypeAddComponent(ECSContext *Context, ECSEntity Entity, void *Data,
     {
         const size_t AddedIndex = SortedAdd(Refs->archetype.component.ids, Refs->archetype.component.count++, CompIndex);
         const size_t Count = Refs->archetype.component.count;
-        const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
-        ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
+        const size_t ArchID = ECSArchtypeIndex(Refs->archetype.component.ids, Count);
+        const size_t ArchOffset = ArchetypeOffset[Count].base + (ArchetypeOffset[Count].size * ArchID);
+        ECSArchetype *Archetype = (ECSArchetype*)((uint8_t*)Context + ArchOffset);
         
         if (CC_UNLIKELY(!Archetype->entities))
         {
@@ -1029,8 +1038,9 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
         const size_t Count = Refs->archetype.component.count;
         if (Count)
         {
-            const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
-            ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
+            const size_t ArchID = ECSArchtypeIndex(Refs->archetype.component.ids, Count);
+            const size_t ArchOffset = ArchetypeOffset[Count].base + (ArchetypeOffset[Count].size * ArchID);
+            ECSArchetype *Archetype = (ECSArchetype*)((uint8_t*)Context + ArchOffset);
             
             if (CC_UNLIKELY(!Archetype->entities))
             {
@@ -1542,8 +1552,9 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
     {
         Count = Refs->archetype.component.count;
         
-        const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
-        ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
+        const size_t ArchID = ECSArchtypeIndex(Refs->archetype.component.ids, Count);
+        const size_t ArchOffset = ArchetypeOffset[Count].base + (ArchetypeOffset[Count].size * ArchID);
+        ECSArchetype *Archetype = (ECSArchetype*)((uint8_t*)Context + ArchOffset);
         
         if (CC_UNLIKELY(!Archetype->entities))
         {
@@ -1598,8 +1609,9 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
     {
         Count = Refs->archetype.component.count;
         
-        const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
-        ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
+        const size_t ArchID = ECSArchtypeIndex(Refs->archetype.component.ids, Count);
+        const size_t ArchOffset = ArchetypeOffset[Count].base + (ArchetypeOffset[Count].size * ArchID);
+        ECSArchetype *Archetype = (ECSArchetype*)((uint8_t*)Context + ArchOffset);
         
         for (size_t Loop = 0; Loop < Count; Loop++)
         {
@@ -1802,8 +1814,9 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, const ECSC
     {
         if ((Count = Refs->archetype.component.count))
         {
-            const size_t ArchID = ArchtypeIndex(Refs->archetype.component.ids, Count);
-            ECSArchetype *Archetype = ((void*)Context + ArchetypeOffset[Count].base) + (ArchetypeOffset[Count].size * ArchID);
+            const size_t ArchID = ECSArchtypeIndex(Refs->archetype.component.ids, Count);
+            const size_t ArchOffset = ArchetypeOffset[Count].base + (ArchetypeOffset[Count].size * ArchID);
+            ECSArchetype *Archetype = (ECSArchetype*)((uint8_t*)Context + ArchOffset);
             
             if (CC_UNLIKELY(!Archetype->entities))
             {

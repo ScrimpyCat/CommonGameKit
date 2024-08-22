@@ -559,6 +559,23 @@ void ECSArchetypeRemoveComponent(ECSContext *Context, ECSEntity Entity, ECSCompo
 size_t ECSArchetypeComponentIndex(const ECSComponentRefs *Refs, ECSComponentID ID);
 
 /*!
+ * @brief Get the archetype index for a set of archetype component IDs.
+ * @param Set The component IDs.
+ * @param Count The number of component IDs.
+ * @return Returns the index of the archetype.
+ */
+size_t ECSArchtypeIndex(const ECSArchetypeComponentID *Set, size_t Count);
+
+/*!
+ * @brief Get the archetype for a given archetype index and component count.
+ * @param Context The context to get the archetype from.
+ * @param ArchID The archetype index.
+ * @param Count The number of components in the archetype.
+ * @return Returns the archetype.
+ */
+ECSArchetype *ECSArchetypeLookup(ECSContext *Context, size_t ArchID, size_t Count);
+
+/*!
  * @brief Add a packed component.
  * @note Should typically use @b ECSEntityAddComponent or @b ECSEntityAddComponents instead.
  * @note If @b ECS_IGNORE_DEAD_ENTITIES is defined this function can be called on destroyed entity references.
