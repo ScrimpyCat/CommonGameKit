@@ -235,7 +235,7 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
                 break;
                 
             case ECSLinkTypeAssociateComponent:
-                ECSEntityAddComponent(Context, Pair[Loop].entity, (Pair[Loop].data ? Pair[Loop].data : Link->associate[Loop].component.data), Link->associate[Loop].component.id);
+                ECSEntityAddComponent(Context, Pair[Loop].entity, (void*)(Pair[Loop].data ? Pair[Loop].data : Link->associate[Loop].component.data), Link->associate[Loop].component.id);
                 break;
                 
             default:

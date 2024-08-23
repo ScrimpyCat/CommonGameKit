@@ -202,4 +202,20 @@ const ECSEntity *ECSLinkGet(ECSContext *Context, ECSEntity Entity, const ECSLink
  */
 void ECSLinkEnumerable(ECSContext *Context, ECSEntity Entity, CCEnumerable *Enumerable);
 
+#pragma mark - Helpers
+
+/*!
+ * @brief A link hasher.
+ * @param Key The key to be hashed.
+ */
+uintmax_t ECSLinkHasher(const void **Key);
+
+/*!
+ * @brief A link comparator.
+ * @param Left The first link.
+ * @param Right The second link.
+ * @return The result of the comparison. Either equal or invalid.
+ */
+CCComparisonResult ECSLinkComparator(const void **Left, const void **Right);
+
 #endif

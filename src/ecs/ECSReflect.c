@@ -87,8 +87,6 @@ const CCReflectStaticPointer CC_REFLECT(PTYPE(ECSLink, weak, static)) = CC_REFLE
 
 static const CCReflectInteger CC_REFLECT(ECSSerializeChunk) = CC_REFLECT_UNSIGNED_FIXED_WIDTH_INTEGER(ECSSerializeChunk, CCReflectEndianNative);
 
-typedef void (*ECSSerializeHandler)(CCReflectType Type, const void *Data, void *State);
-
 void ECSSerialize(ECSContext *Context, void *State, ECSSerializeHandler Handler, CCMemoryZone Zone)
 {
     CCAssertLog(Context, "Context must not be null");
@@ -267,11 +265,6 @@ void ECSSerialize(ECSContext *Context, void *State, ECSSerializeHandler Handler,
     
     CCDictionaryDestroy(ArchetypesSerialized);
 }
-
-uintmax_t ECSLinkHasher(const void **Key);
-CCComparisonResult ECSLinkComparator(const void **Left, const void **Right);
-
-typedef void (*ECSDeserializeHandler)(CCReflectType Type, void *Data, void *State);
 
 void ECSDeserialize(ECSContext *Context, void *State, ECSDeserializeHandler Handler)
 {
