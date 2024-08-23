@@ -36,4 +36,9 @@ ECS_DESTRUCTOR(ECSNameComponentDestructor, ECSNameComponent);
 
 void ECSNameComponentDestructor(void *Name, ECSComponentID ID);
 
+#pragma mark -
+
+#define CC_TYPE_ECSNameComponent(...) CCString
+#define CC_TYPE_0_ECSNameComponent CC_TYPE_ECSNameComponent,
+
 #endif
