@@ -308,6 +308,8 @@
 #define ECS_COMPONENT_BASE_INDEX_2(type, index, next, offset) ECS_COMPONENT_BASE_INDEX_3(type, index, (type) == ECSComponentStorageTypeIndexed ? ((index) + (offset)) : (next), (offset) + ECS_INDEXED_COMPONENT_MAX)
 #define ECS_COMPONENT_BASE_INDEX_3(type, index, next, offset) ((type) == ECSComponentStorageTypeLocal ? (((index) & ECS_LOCAL_INDEX_MASK) + (offset)) : (next))
 
+#define ECS_COMPONENT_INDEX(id) ((id) & ~ECSComponentStorageMask) & (((id) & ECSComponentStorageTypeMask) == ECSComponentStorageTypeLocal ? ECS_LOCAL_INDEX_MASK : (ECSComponentID)-1)
+
 #pragma mark - Iterator
 
 #define ECS_ITER_CONSUME(...) __VA_ARGS__
