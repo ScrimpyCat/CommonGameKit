@@ -157,22 +157,22 @@ void GUIManagerDestroy(void)
 void GUIManagerUpdate(void)
 {
     //Add to active
-    while (!atomic_flag_test_and_set(&ObjectManager.addedLock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&ObjectManager.addedLock, memory_order_acquire)) CC_SPIN_WAIT();
     CCCollectionInsertCollection(ObjectManager.active, ObjectManager.added, NULL); //TODO: make a consumed insert or a retained list?
     
     CCCollectionRemoveAllElements(ObjectManager.added);
     
-    atomic_flag_clear(&ObjectManager.addedLock);
+    atomic_flag_clear_explicit(&ObjectManager.addedLock, memory_order_release);
     
     
     //Remove from active
-    while (!atomic_flag_test_and_set(&ObjectManager.removedLock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&ObjectManager.removedLock, memory_order_acquire)) CC_SPIN_WAIT();
     CCCollection(CCCollectionEntry) Entries = CCCollectionFindCollection(ObjectManager.active, ObjectManager.removed, NULL);
     CCCollectionRemoveCollection(ObjectManager.active, Entries);
     CCCollectionDestroy(Entries);
     
     CCCollectionRemoveAllElements(ObjectManager.removed);
-    atomic_flag_clear(&ObjectManager.removedLock);
+    atomic_flag_clear_explicit(&ObjectManager.removedLock, memory_order_release);
 }
 
 void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index)
@@ -207,16 +207,16 @@ void GUIManagerHandleEvent(GUIEvent Event)
 
 void GUIManagerAddObject(GUIObject Object)
 {
-    while (!atomic_flag_test_and_set(&ObjectManager.addedLock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&ObjectManager.addedLock, memory_order_acquire)) CC_SPIN_WAIT();
     CCCollectionInsertElement(ObjectManager.added, &Object);
-    atomic_flag_clear(&ObjectManager.addedLock);
+    atomic_flag_clear_explicit(&ObjectManager.addedLock, memory_order_release);
 }
 
 void GUIManagerRemoveObject(GUIObject Object)
 {
-    while (!atomic_flag_test_and_set(&ObjectManager.removedLock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&ObjectManager.removedLock, memory_order_acquire)) CC_SPIN_WAIT();
     CCCollectionInsertElement(ObjectManager.removed, &Object);
-    atomic_flag_clear(&ObjectManager.removedLock);
+    atomic_flag_clear_explicit(&ObjectManager.removedLock, memory_order_release);
 }
 
 CCCollection(GUIObject) GUIManagerGetObjects(void)
