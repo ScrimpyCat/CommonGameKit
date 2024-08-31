@@ -521,6 +521,81 @@ const ECSComponentDestructor DuplicateLocalComponentDestructors[ECS_LOCAL_COMPON
     NULL,
 };
 
+const CCReflectType ArchetypeComponentTypes[ECS_ARCHETYPE_COMPONENT_MAX] = {
+    &CC_REFLECT(CompA),
+    &CC_REFLECT(CompB),
+    &CC_REFLECT(CompC),
+    &CC_REFLECT(CompD),
+    &CC_REFLECT(CompE),
+    &CC_REFLECT(ArchK),
+    &CC_REFLECT(ArchH),
+    &CC_REFLECT(ArchTag),
+};
+const CCReflectType DuplicateArchetypeComponentTypes[ECS_ARCHETYPE_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+const CCReflectType PackedComponentTypes[ECS_PACKED_COMPONENT_MAX] = {
+    &CC_REFLECT(CompF),
+    NULL, //&CC_REFLECT_CCArray(&CC_REFLECT(ECSMonitorComponent), CC_STD_ALLOCATOR, ECS_DUPLICATE_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(ECS_COMPONENT_INDEX(ECS_MONITOR_COMPONENT))),
+    &CC_REFLECT(CompJ),
+    &CC_REFLECT(PackedK),
+    &CC_REFLECT(PackedH),
+    &CC_REFLECT(CheckRunStateTag),
+    &CC_REFLECT(DestroyMeTag),
+    &CC_REFLECT_CCArray(&CC_REFLECT(DuplicateA), CC_STD_ALLOCATOR, ECS_DUPLICATE_PACKED_COMPONENT_ARRAY_CHUNK_SIZE(ECS_COMPONENT_INDEX(DUPLICATE_A))),
+    &CC_REFLECT(PackedTag),
+    NULL,
+    &CC_REFLECT(CompG),
+};
+const CCReflectType DuplicatePackedComponentTypes[ECS_PACKED_COMPONENT_MAX] = {
+    NULL,
+    NULL, //&CC_REFLECT(ECSMonitorComponent),
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    &CC_REFLECT(DuplicateA),
+    NULL,
+    NULL,
+    NULL,
+};
+const CCReflectType IndexedComponentTypes[ECS_INDEXED_COMPONENT_MAX] = {
+    &CC_REFLECT(CompH),
+    &CC_REFLECT(CompI),
+    &CC_REFLECT(ECSNameComponent),
+    &CC_REFLECT(IndexedK),
+    &CC_REFLECT(IndexedH),
+    &CC_REFLECT(IndexedTag),
+};
+const CCReflectType DuplicateIndexedComponentTypes[ECS_INDEXED_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+const CCReflectType LocalComponentTypes[ECS_LOCAL_COMPONENT_MAX] = {
+    &CC_REFLECT(LocalK),
+    &CC_REFLECT(LocalH),
+    &CC_REFLECT_CCArray(&CC_REFLECT(LocalDuplicateB), CC_STD_ALLOCATOR, ECS_DUPLICATE_LOCAL_COMPONENT_ARRAY_CHUNK_SIZE(ECS_COMPONENT_INDEX(LOCAL_DUPLICATE_B))),
+    &CC_REFLECT(LocalTag),
+};
+const CCReflectType DuplicateLocalComponentTypes[ECS_LOCAL_COMPONENT_MAX] = {
+    NULL,
+    NULL,
+    &CC_REFLECT(LocalDuplicateB),
+    NULL,
+};
+
 const ECSArchetypePointer ArchetypeDependencies[] = {
 #define ARCHETYPE_DEPENDENCIES_CompA_CompC_CompD 0
     { offsetof(ECSContext, archetypes3[ECS_ARCHETYPE3_INDEX(COMP_A, COMP_C, COMP_D)]), INDEX_0_1_2 },

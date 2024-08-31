@@ -27,6 +27,8 @@
 
 #import <XCTest/XCTest.h>
 #import "ECS.h"
+#import "ECSReflect.h"
+#import "ExpressionReflection.h"
 #define ECS_PACKED_COMPONENT_ID_BASE 1
 #define ECS_INDEXED_COMPONENT_ID_BASE 2
 #import "ECSComponentIDs.h"
@@ -38,6 +40,46 @@
 #import "ECSTestData.h"
 #import "ECSMonitor.h"
 #import "ECSBinaryMonitor.h"
+
+const CCReflectStruct1 CC_REFLECT(CompA) = CC_REFLECT_STRUCT(CompA,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 1))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompB) = CC_REFLECT_STRUCT(CompB,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 2))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompC) = CC_REFLECT_STRUCT(CompC,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 3))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompD) = CC_REFLECT_STRUCT(CompD,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 4))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompE) = CC_REFLECT_STRUCT(CompE,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 5))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompF) = CC_REFLECT_STRUCT(CompF,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 6))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompG) = CC_REFLECT_STRUCT(CompG,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 7))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompH) = CC_REFLECT_STRUCT(CompH,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 8))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompI) = CC_REFLECT_STRUCT(CompI,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 9))
+);
+
+const CCReflectStruct1 CC_REFLECT(CompJ) = CC_REFLECT_STRUCT(CompJ,
+    (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 10))
+);
 
 
 static _Atomic(size_t) RunCount = ATOMIC_VAR_INIT(0);
@@ -506,6 +548,16 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSDuplicateIndexedComponentDestructors = DuplicateIndexedComponentDestructors;
     ECSDuplicateLocalComponentDestructors = DuplicateLocalComponentDestructors;
     
+    ECSArchetypeComponentTypes = ArchetypeComponentTypes;
+    ECSPackedComponentTypes = PackedComponentTypes;
+    ECSIndexedComponentTypes = IndexedComponentTypes;
+    ECSLocalComponentTypes = LocalComponentTypes;
+    
+    ECSDuplicateArchetypeComponentTypes = DuplicateArchetypeComponentTypes;
+    ECSDuplicatePackedComponentTypes = DuplicatePackedComponentTypes;
+    ECSDuplicateIndexedComponentTypes = DuplicateIndexedComponentTypes;
+    ECSDuplicateLocalComponentTypes = DuplicateLocalComponentTypes;
+    
     ECSMutableStateEntitiesMax = 4096;
     ECSMutableStateReplaceRegistryMax = 4096;
     ECSMutableStateAddLinkMax = 4069;
@@ -567,6 +619,269 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     XCTAssertFalse(RunCheckError, @"should not execute systems with conflicting read/write access at the same time");
     
     RunCheckError = FALSE;
+}
+
+static void TestLinkPointerMap(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent)
+{
+    Handler(&CC_REFLECT(uint8_t), &(uint8_t){ 0 }, Args);
+}
+
+void TestLinkPointerUnmap(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator)
+{
+    Handler(&CC_REFLECT(uintptr_t), &(uintptr_t){ (uintptr_t)&TestOneToMany }, Args);
+}
+
+typedef struct {
+    CCReflectStreamRLE *stream;
+    CCMemoryZone zone;
+} TestBinarySerializerState;
+
+static void TestBinarySerializeHandler(CCReflectType Type, const void *Data, void *State)
+{
+    
+    if (*(CCReflectTypeID*)Type == CCReflectTypeArray)
+    {
+        if (*(CCReflectTypeID*)((const CCReflectArray*)Type)->type == CCReflectTypeInteger)
+        {
+            if (((const CCReflectArray*)Type)->type != &CC_REFLECT(int))
+            {
+                CCReflectSerializeBinary(Type, Data, CCReflectEndianLittle, 2, ((TestBinarySerializerState*)State)->stream, (CCReflectStreamWriter)CCReflectStreamRLEWrite, ((TestBinarySerializerState*)State)->zone);
+                
+                return;
+            }
+        }
+    }
+    
+    CCReflectSerializeBinary(Type, Data, CCReflectEndianLittle, 2, ((TestBinarySerializerState*)State)->stream, (CCReflectStreamWriter)CCReflectStreamRLEWriteContinue, ((TestBinarySerializerState*)State)->zone);
+}
+
+static void TestBinaryDeserializeHandler(CCReflectType Type, void *Data, void *State)
+{
+    
+    if (*(CCReflectTypeID*)Type == CCReflectTypeArray)
+    {
+        if (*(CCReflectTypeID*)((const CCReflectArray*)Type)->type == CCReflectTypeInteger)
+        {
+            if (((const CCReflectArray*)Type)->type != &CC_REFLECT(int))
+            {
+                CCReflectDeserializeBinary(Type, Data, CCReflectEndianLittle, 2, ((TestBinarySerializerState*)State)->stream, (CCReflectStreamReader)CCReflectStreamRLERead, ((TestBinarySerializerState*)State)->zone, CC_STD_ALLOCATOR);
+                
+                return;
+            }
+        }
+    }
+    
+    CCReflectDeserializeBinary(Type, Data, CCReflectEndianLittle, 2, ((TestBinarySerializerState*)State)->stream, (CCReflectStreamReader)CCReflectStreamRLEReadContinue, ((TestBinarySerializerState*)State)->zone, CC_STD_ALLOCATOR);
+}
+
+static ECSContext CopiedContext;
+-(void) checkContextSerialization
+{
+    ECSLinkPointerMap = TestLinkPointerMap;
+    ECSLinkPointerUnmap = TestLinkPointerUnmap;
+    
+    ECSRegistryRegister(&Context, 0);
+    ECSRegistryRegister(&Context, 1);
+    ECSRegistryRegister(&Context, 3);
+    
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 0, NULL);
+    ECSLinkAdd(&Context, 1, NULL, &TestOneToMany, 2, NULL);
+    
+    CopiedContext.mutations = &MutableState;
+    
+    CopiedContext.manager.map = CCArrayCreate(CC_ALIGNED_ALLOCATOR(ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), CC_ALIGN(sizeof(ECSComponentRefs) + LOCAL_STORAGE_SIZE, ECS_ARCHETYPE_COMPONENT_IDS_ALIGNMENT), 16);
+    CopiedContext.manager.available = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(size_t), 16);
+    
+    CopiedContext.registry.id = NULL;
+    
+    ECSRegistryInit(&CopiedContext, CC_BIG_INT_FAST_0);
+    
+    ECSLinkMapInit(&CopiedContext);
+    
+    CCReflectSerializeBinaryTypeLookup = TestSerializeLookup;
+    CCReflectDeserializeBinaryTypeLookup = TestDeserializeLookup;
+    
+    FSPath Path = FSPathCreate("//[MEMORY]/ecs-data");
+    XCTAssertEqual(FSManagerCreate(Path, FALSE), FSOperationSuccess, @"should create the ecs data file");
+    
+    FSHandle Handle;
+    XCTAssertEqual(FSHandleOpen(Path, FSHandleTypeUpdate, &Handle), FSOperationSuccess, @"should open the ecs data file for updating");
+    
+    CCReflectStreamFile StreamFile = CC_REFLECT_STREAM_FILE(Handle, TRUE);
+    CCReflectStreamRLE Stream = CC_REFLECT_STREAM_WRITE_RLE_ZERO_8(&StreamFile, (CCReflectStreamWriter)CCReflectStreamFileWrite);
+    
+    CCMemoryZone SerializerZone = CCMemoryZoneCreate(CC_STD_ALLOCATOR, 60000);
+    
+    ECSSerialize(&Context, &(TestBinarySerializerState){ .stream = &Stream, .zone = SerializerZone }, TestBinarySerializeHandler, SerializerZone);
+    CCReflectStreamRLEWriteFlush(&Stream);
+    
+    Stream.into.read = (CCReflectStreamReader)CCReflectStreamFileRead;
+    FSHandleSetOffset(Handle, 0);
+    ECSDeserialize(&CopiedContext, &(TestBinarySerializerState){ .stream = &Stream, .zone = SerializerZone }, TestBinaryDeserializeHandler);
+    CCMemoryZoneDestroy(SerializerZone);
+    
+    XCTAssertEqual(FSHandleClose(Handle), FSOperationSuccess, @"should close the stream data file");
+    
+    XCTAssertEqual(FSManagerRemove(Path), FSOperationSuccess, @"should remove the stream data file");
+    FSPathDestroy(Path);
+    
+    
+    XCTAssertEqual(CCArrayGetCount(CopiedContext.manager.map), CCArrayGetCount(Context.manager.map), @"should be serialized correctly");
+    
+    for (size_t Loop = 0, Count = CCArrayGetCount(Context.manager.map); Loop < Count; Loop++)
+    {
+        ECSComponentRefs *RefsCopy = CCArrayGetElementAtIndex(CopiedContext.manager.map, Loop);
+        ECSComponentRefs *Refs = CCArrayGetElementAtIndex(Context.manager.map, Loop);
+        
+        
+        XCTAssertEqual((RefsCopy->archetype.ptr ? (ptrdiff_t)&CopiedContext - (ptrdiff_t)RefsCopy->archetype.ptr : 0), (Refs->archetype.ptr ? (ptrdiff_t)&Context - (ptrdiff_t)Refs->archetype.ptr : 0), @"should be serialized correctly");
+        XCTAssertEqual(RefsCopy->archetype.index, Refs->archetype.index, @"should be serialized correctly");
+        XCTAssertEqual(RefsCopy->archetype.component.count, Refs->archetype.component.count, @"should be serialized correctly");
+        
+        for (size_t Loop2 = 0, Count2 = Refs->archetype.component.count; Loop2 < Count2; Loop2++)
+        {
+            XCTAssertEqual(RefsCopy->archetype.component.ids[Loop2], Refs->archetype.component.ids[Loop2], @"should be serialized correctly");
+        }
+        
+        for (size_t Loop2 = 0; Loop2 < ECS_PACKED_COMPONENT_MAX; Loop2++)
+        {
+            if (CCBitsGet(Refs->has, Loop2 + ECS_ARCHETYPE_COMPONENT_MAX))
+            {
+                XCTAssertEqual(RefsCopy->packed.indexes[Loop2], Refs->packed.indexes[Loop2], @"should be serialized correctly");
+            }
+        }
+        
+        for (size_t Loop2 = 0; Loop2 < ECSHasBitCount; Loop2++)
+        {
+            if (Loop2 == ECSComponentBaseIndex(ECS_MONITOR_COMPONENT)) continue;
+            
+            XCTAssertEqual(CCBitsGet(RefsCopy->has, Loop2), CCBitsGet(Refs->has, Loop2), @"should be serialized correctly");
+            
+            void *Comp = ECSEntityGetComponent(&Context, Loop, ECSComponentIDs[Loop2]);
+            void *CompCopy = ECSEntityGetComponent(&CopiedContext, Loop, ECSComponentIDs[Loop2]);
+            
+            XCTAssertTrue((!Comp && !CompCopy) || (Comp && CompCopy), @"should be serialized correctly");
+            
+            if (Comp)
+            {
+                switch (ECSComponentIDs[Loop2])
+                {
+                    case COMP_A:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompA)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_B:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompB)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_C:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompC)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_D:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompD)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_E:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompE)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_F:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompF)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_G:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompG)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_H:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompH)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_I:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompI)), @"should be serialized correctly");
+                        break;
+                        
+                    case COMP_J:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(CompJ)), @"should be serialized correctly");
+                        break;
+                        
+                    case ARCH_H:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(ArchK)), @"should be serialized correctly");
+                        break;
+                        
+                    case PACKED_H:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(PackedK)), @"should be serialized correctly");
+                        break;
+                        
+                    case INDEXED_H:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(IndexedK)), @"should be serialized correctly");
+                        break;
+                        
+                    case LOCAL_H:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(LocalK)), @"should be serialized correctly");
+                        break;
+                        
+                    case ARCH_K:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(ArchK)), @"should be serialized correctly");
+                        break;
+                        
+                    case PACKED_K:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(PackedK)), @"should be serialized correctly");
+                        break;
+                        
+                    case INDEXED_K:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(IndexedK)), @"should be serialized correctly");
+                        break;
+                        
+                    case LOCAL_K:
+                        XCTAssertTrue(!memcmp(Comp, CompCopy, sizeof(LocalK)), @"should be serialized correctly");
+                        break;
+                        
+                    case DUPLICATE_A:
+                        XCTAssertEqual(CCArrayGetCount(*(CCArray*)CompCopy), CCArrayGetCount(*(CCArray*)Comp), @"should be serialized correctly");
+                        XCTAssertTrue(!memcmp(CCArrayGetData(*(CCArray*)Comp), CCArrayGetData(*(CCArray*)CompCopy), sizeof(DuplicateA) * CCArrayGetCount(*(CCArray*)Comp)), @"should be serialized correctly");
+                        break;
+                        
+                    case LOCAL_DUPLICATE_B:
+                        XCTAssertEqual(CCArrayGetCount(*(CCArray*)CompCopy), CCArrayGetCount(*(CCArray*)Comp), @"should be serialized correctly");
+                        XCTAssertTrue(!memcmp(CCArrayGetData(*(CCArray*)Comp), CCArrayGetData(*(CCArray*)CompCopy), sizeof(LocalDuplicateB) * CCArrayGetCount(*(CCArray*)Comp)), @"should be serialized correctly");
+                        break;
+                        
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    
+    XCTAssertEqual(CCArrayGetCount(CopiedContext.manager.available), CCArrayGetCount(Context.manager.available), @"should be serialized correctly");
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(CopiedContext.registry.id, Context.registry.id), @"should be serialized correctly");
+    
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&CopiedContext, 0), ECSRegistryGetID(&Context, 0)), @"should be serialized correctly");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&CopiedContext, 1), ECSRegistryGetID(&Context, 1)), @"should be serialized correctly");
+    XCTAssertTrue(CCBigIntFastCompareEqual(ECSRegistryGetID(&CopiedContext, 3), ECSRegistryGetID(&Context, 3)), @"should be serialized correctly");
+    
+    XCTAssertEqual(ECSRegistryLookup(&CopiedContext, ECSRegistryGetID(&CopiedContext, 0)), 0, @"should be serialized correctly");
+    XCTAssertEqual(ECSRegistryLookup(&CopiedContext, ECSRegistryGetID(&CopiedContext, 1)), 1, @"should be serialized correctly");
+    XCTAssertEqual(ECSRegistryLookup(&CopiedContext, ECSRegistryGetID(&CopiedContext, 3)), 3, @"should be serialized correctly");
+    
+    XCTAssertTrue(ECSLinked(&CopiedContext, 1, &TestOneToMany, 0), @"should be serialized correctly");
+    XCTAssertTrue(ECSLinked(&CopiedContext, 1, &TestOneToMany, 2), @"should be serialized correctly");
+    
+    XCTAssertTrue(ECSLinked(&CopiedContext, 0, ECS_LINK_INVERT(&TestOneToMany), 1), @"should be serialized correctly");
+    XCTAssertTrue(ECSLinked(&CopiedContext, 2, ECS_LINK_INVERT(&TestOneToMany), 1), @"should be serialized correctly");
+}
+
+typedef struct {
+    CCExpression list;
+    CCMemoryZone zone;
+} TestExpressionSerializerState;
+
+static void TestExpressionSerializeHandler(CCReflectType Type, const void *Data, void *State)
+{
+    CCOrderedCollectionAppendElement(CCExpressionGetList(((TestExpressionSerializerState*)State)->list), &(CCExpression){ CCExpressionReflectionSerialize(Type, Data, ((TestExpressionSerializerState*)State)->zone) });
 }
 
 -(void) testExample
@@ -665,6 +980,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &Monitor, ECS_MONITOR_COMPONENT);
     Monitor = ECSBinaryMonitorCreate(CC_STD_ALLOCATOR, COMP_J, 3, 4, sizeof(int));
     ECSEntityAddComponent(&Context, EntitiesAFGHIJ[0], &Monitor, ECS_MONITOR_COMPONENT);
+    
+    [self checkContextSerialization];
     
     ECSTick(&Context, Groups, GroupCount, State, ECS_TIME_FROM_SECONDS(1.0 / 60.0));
     

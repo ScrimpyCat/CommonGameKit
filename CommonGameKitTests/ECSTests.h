@@ -161,4 +161,93 @@ static void TestDestructor(void *Data, ECSComponentID ID);
 
 static void MutationDestructor(void *Data, ECSComponentID ID);
 
+#define CC_TYPE_CompA(...) CompA
+#define CC_TYPE_0_CompA CC_TYPE_CompA,
+
+#define CC_TYPE_CompB(...) CompB
+#define CC_TYPE_0_CompB CC_TYPE_CompB,
+
+#define CC_TYPE_CompC(...) CompC
+#define CC_TYPE_0_CompC CC_TYPE_CompC,
+
+#define CC_TYPE_CompD(...) CompD
+#define CC_TYPE_0_CompD CC_TYPE_CompD,
+
+#define CC_TYPE_CompE(...) CompE
+#define CC_TYPE_0_CompE CC_TYPE_CompE,
+
+#define CC_TYPE_CompF(...) CompF
+#define CC_TYPE_0_CompF CC_TYPE_CompF,
+
+#define CC_TYPE_CompG(...) CompG
+#define CC_TYPE_0_CompG CC_TYPE_CompG,
+
+#define CC_TYPE_CompH(...) CompH
+#define CC_TYPE_0_CompH CC_TYPE_CompH,
+
+#define CC_TYPE_CompI(...) CompI
+#define CC_TYPE_0_CompI CC_TYPE_CompI,
+
+#define CC_TYPE_CompJ(...) CompJ
+#define CC_TYPE_0_CompJ CC_TYPE_CompJ,
+
+#define CC_TYPE_ArchTag(...) void
+#define CC_TYPE_0_ArchTag CC_TYPE_ArchTag,
+
+#define CC_TYPE_PackedTag(...) void
+#define CC_TYPE_0_PackedTag CC_TYPE_PackedTag,
+
+#define CC_TYPE_IndexedTag(...) void
+#define CC_TYPE_0_IndexedTag CC_TYPE_IndexedTag,
+
+#define CC_TYPE_LocalTag(...) void
+#define CC_TYPE_0_LocalTag CC_TYPE_LocalTag,
+
+#define CC_TYPE_DuplicateA(...) CompA
+#define CC_TYPE_0_DuplicateA CC_TYPE_DuplicateA,
+
+#define CC_TYPE_LocalDuplicateB(...) CompB
+#define CC_TYPE_0_LocalDuplicateB CC_TYPE_LocalDuplicateB,
+
+#define CC_TYPE_LocalH(...) CompH
+#define CC_TYPE_0_LocalH CC_TYPE_LocalH,
+
+#define CC_TYPE_DestroyMeTag(...) void
+#define CC_TYPE_0_DestroyMeTag CC_TYPE_DestroyMeTag,
+
+#define CC_TYPE_CheckRunStateTag(...) void
+#define CC_TYPE_0_CheckRunStateTag CC_TYPE_CheckRunStateTag,
+
+#define CC_TYPE_ArchH(...) CompH
+#define CC_TYPE_0_ArchH CC_TYPE_ArchH,
+
+#define CC_TYPE_PackedH(...) CompH
+#define CC_TYPE_0_PackedH CC_TYPE_PackedH,
+
+#define CC_TYPE_IndexedH(...) CompH
+#define CC_TYPE_0_IndexedH CC_TYPE_IndexedH,
+
+#define CC_TYPE_ArchK(...) int
+#define CC_TYPE_0_ArchK CC_TYPE_ArchK,
+
+#define CC_TYPE_PackedK(...) int
+#define CC_TYPE_0_PackedK CC_TYPE_PackedK,
+
+#define CC_TYPE_IndexedK(...) int
+#define CC_TYPE_0_IndexedK CC_TYPE_IndexedK,
+
+#define CC_TYPE_LocalK(...) int
+#define CC_TYPE_0_LocalK CC_TYPE_LocalK,
+
+const CCReflectStruct1 CC_REFLECT(CompA);
+const CCReflectStruct1 CC_REFLECT(CompB);
+const CCReflectStruct1 CC_REFLECT(CompC);
+const CCReflectStruct1 CC_REFLECT(CompD);
+const CCReflectStruct1 CC_REFLECT(CompE);
+const CCReflectStruct1 CC_REFLECT(CompF);
+const CCReflectStruct1 CC_REFLECT(CompG);
+const CCReflectStruct1 CC_REFLECT(CompH);
+const CCReflectStruct1 CC_REFLECT(CompI);
+const CCReflectStruct1 CC_REFLECT(CompJ);
+
 #endif
