@@ -698,9 +698,6 @@ static ECSContext CopiedContext;
     
     ECSLinkMapInit(&CopiedContext);
     
-    CCReflectSerializeBinaryTypeLookup = TestSerializeLookup;
-    CCReflectDeserializeBinaryTypeLookup = TestDeserializeLookup;
-    
     FSPath Path = FSPathCreate("//[MEMORY]/ecs-data");
     XCTAssertEqual(FSManagerCreate(Path, FALSE), FSOperationSuccess, @"should create the ecs data file");
     
