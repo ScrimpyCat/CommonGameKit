@@ -36,9 +36,9 @@ typedef struct {
 
 const CCAssetManagerInterface CCAssetManagerNamedInterface = {
     .identifier = {
-        .destructor = &CCStringDestructorForDictionary,
-        .hasher = &CCStringHasherForDictionary,
-        .comparator = &CCStringComparatorForDictionary,
+        .destructor = CCStringDestructorForDictionary,
+        .hasher = CCStringHasherForDictionary,
+        .comparator = CCStringComparatorForDictionary,
         .size = sizeof(CCString)
     }
 };
@@ -52,21 +52,21 @@ static void CCAssetElementDestructor(CCDictionary Dictionary, CCAssetInfo *Eleme
 
 static void CCAssetManagerRegisterAsset(CCAssetManager *Manager, const void *Identifier, CCAssetInfo *Asset)
 {
-    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&Manager->lock, memory_order_acquire)) CC_SPIN_WAIT();
     
     if (!Manager->assets)
     {
         Manager->assets = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding, Manager->interface->identifier.size, sizeof(CCAssetInfo), &(CCDictionaryCallbacks){
-            .getHash = *Manager->interface->identifier.hasher,
-            .compareKeys = *Manager->interface->identifier.comparator,
-            .keyDestructor = *Manager->interface->identifier.destructor,
+            .getHash = Manager->interface->identifier.hasher,
+            .compareKeys = Manager->interface->identifier.comparator,
+            .keyDestructor = Manager->interface->identifier.destructor,
             .valueDestructor = (CCDictionaryElementDestructor)CCAssetElementDestructor
         });
     }
     
     CCDictionarySetValue(Manager->assets, Identifier, Asset);
     
-    atomic_flag_clear(&Manager->lock);
+    atomic_flag_clear_explicit(&Manager->lock, memory_order_release);
 }
 
 void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, void *Asset, void *Reference, const CCAssetManagerSourceCallbacks *Callbacks)
@@ -83,31 +83,31 @@ void CCAssetManagerRegister(CCAssetManager *Manager, const void *Identifier, voi
 
 void CCAssetManagerDeregister(CCAssetManager *Manager, const void *Identifier)
 {
-    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&Manager->lock, memory_order_acquire)) CC_SPIN_WAIT();
     
     if (Manager->assets)
     {
         CCDictionaryRemoveValue(Manager->assets, Identifier);
     }
     
-    atomic_flag_clear(&Manager->lock);
+    atomic_flag_clear_explicit(&Manager->lock, memory_order_release);
 }
 
 void CCAssetManagerDeregisterAll(CCAssetManager *Manager)
 {
     CCDictionary Assets = NULL;
     
-    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&Manager->lock, memory_order_acquire)) CC_SPIN_WAIT();
     Assets = Manager->assets;
     Manager->assets = NULL;
-    atomic_flag_clear(&Manager->lock);
+    atomic_flag_clear_explicit(&Manager->lock, memory_order_release);
     
     if (Assets) CCDictionaryDestroy(Assets);
 }
 
 void CCAssetManagerPurge(CCAssetManager *Manager, double Threshold)
 {
-    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&Manager->lock, memory_order_acquire)) CC_SPIN_WAIT();
     
     const double Timestamp = CCTimestamp() - Threshold;
     CC_DICTIONARY_FOREACH_VALUE_PTR(CCAssetInfo, Info, Manager->assets)
@@ -119,14 +119,14 @@ void CCAssetManagerPurge(CCAssetManager *Manager, double Threshold)
         }
     }
     
-    atomic_flag_clear(&Manager->lock);
+    atomic_flag_clear_explicit(&Manager->lock, memory_order_release);
 }
 
 void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
 {
     void *Asset = NULL;
     
-    while (!atomic_flag_test_and_set(&Manager->lock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&Manager->lock, memory_order_acquire)) CC_SPIN_WAIT();
     
     if (Manager->assets)
     {
@@ -141,7 +141,7 @@ void *CCAssetManagerCreate(CCAssetManager *Manager, const void *Identifier)
         }
     }
     
-    atomic_flag_clear(&Manager->lock);
+    atomic_flag_clear_explicit(&Manager->lock, memory_order_release);
     
     return Asset;
 }

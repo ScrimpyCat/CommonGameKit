@@ -50,9 +50,9 @@ typedef struct {
 
 typedef struct {
     struct {
-        const CCDictionaryElementDestructor *destructor;
-        const CCDictionaryKeyHasher *hasher;
-        const CCComparator *comparator;
+        const CCDictionaryElementDestructor destructor;
+        const CCDictionaryKeyHasher hasher;
+        const CCComparator comparator;
         size_t size;
     } identifier;
 } CCAssetManagerInterface;
