@@ -81,7 +81,7 @@ void CCControllerSetup(size_t Count, CCControllerGetNameCallback Name, CCControl
 
 void CCControllerConnect(size_t Index, _Bool Connected)
 {
-    while (!atomic_flag_test_and_set(&Controller[Index].lock)) CC_SPIN_WAIT();
+    while (!atomic_flag_test_and_set_explicit(&Controller[Index].lock, memory_order_acquire)) CC_SPIN_WAIT();
     
     if ((Controller[Index].connected = Connected))
     {
@@ -111,21 +111,21 @@ void CCControllerConnect(size_t Index, _Bool Connected)
         }
     }
     
-    atomic_flag_clear(&Controller[Index].lock);
+    atomic_flag_clear_explicit(&Controller[Index].lock, memory_order_release);
 }
 
 void CCControllerUpdateState(void)
 {
     for (int Loop = 0; Loop < ControllerCount; Loop++)
     {
-        while (!atomic_flag_test_and_set(&Controller[Loop].lock)) CC_SPIN_WAIT();
+        while (!atomic_flag_test_and_set_explicit(&Controller[Loop].lock, memory_order_acquire)) CC_SPIN_WAIT();
         if (Controller[Loop].connected)
         {
             Controller[Loop].timestamp = CCTimestamp();
             ControllerUpdateAxes(Loop, Controller[Loop].axes);
             ControllerUpdateButtons(Loop, Controller[Loop].buttons);
         }
-        atomic_flag_clear(&Controller[Loop].lock);
+        atomic_flag_clear_explicit(&Controller[Loop].lock, memory_order_release);
     }
     
     /*
@@ -160,7 +160,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             
             CCVector3D Position = CCVector3DZero;
             
-            while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
+            while (!atomic_flag_test_and_set_explicit(&Controller[Connection].lock, memory_order_acquire)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
                 if ((!Device) || (CCStringEqual(Device, Controller[Connection].name)))
@@ -171,7 +171,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
                     if ((z >= 0) && (x < Count)) Position.z = *(float*)CCOrderedCollectionGetElementAtIndex(Controller[Connection].axes, z);
                 }
             }
-            atomic_flag_clear(&Controller[Connection].lock);
+            atomic_flag_clear_explicit(&Controller[Connection].lock, memory_order_release);
             
             if (CCInputMapControllerAxesComponentGetFlipX(Component)) Position.x = -Position.x;
             if (CCInputMapControllerAxesComponentGetFlipY(Component)) Position.y = -Position.y;
@@ -209,7 +209,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
             _Bool Active = FALSE;
             double Timestamp = -INFINITY;
             
-            while (!atomic_flag_test_and_set(&Controller[Connection].lock)) CC_SPIN_WAIT();
+            while (!atomic_flag_test_and_set_explicit(&Controller[Connection].lock, memory_order_acquire)) CC_SPIN_WAIT();
             if (Controller[Connection].connected)
             {
                 if ((!Device) || (CCStringEqual(Device, Controller[Connection].name)))
@@ -220,7 +220,7 @@ CCControllerState CCControllerGetStateForComponent(CCComponent Component)
                     Timestamp = Controller[Connection].timestamp;
                 }
             }
-            atomic_flag_clear(&Controller[Connection].lock);
+            atomic_flag_clear_explicit(&Controller[Connection].lock, memory_order_release);
             
             
             return (CCControllerState){ .button = { .timestamp = Timestamp, .down = Active } };
