@@ -423,14 +423,341 @@ void CCExpressionReflectionSerializeHandler(CCReflectType Type, const void *Data
     *Args->result = Expr;
 }
 
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_TYPE(type, index) CC_EXPRESSION_REFLECTION_SERIALIZE_TYPE_(CC_EXPAND type)
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_TYPE_(...) CC_EXPRESSION_REFLECTION_SERIALIZE_TYPE__(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_TYPE__(type, atom) (Type == &CC_REFLECT(type)) return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":" #atom), TRUE);
+
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(...) if CC_SOFT_JOIN(else if, CC_MAP(CC_EXPRESSION_REFLECTION_SERIALIZE_TYPE, __VA_ARGS__))
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPE(type, index) CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPE_(CC_EXPAND type)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPE_(...) CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPE__(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPE__(type, atom) (CCStringEqual(Name, CC_STRING(":" #atom))) return &CC_REFLECT(type);
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPES(...) if CC_SOFT_JOIN(else if, CC_MAP(CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPE, __VA_ARGS__))
+
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE(type, index) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_(CC_EXPAND type)
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_(...) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE__(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE__(type, atom, group) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_##group(type, atom)
+
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer(args, index) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_ args
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_(type, atom) \
+(Type == &CC_REFLECT(type)) \
+{ \
+    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("pointer:"), TRUE) }); \
+    \
+    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":" #atom), TRUE) }); \
+    CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_##type \
+    \
+    return Expr; \
+}
+
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_PTYPE(type, ownership, storage) \
+CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":" #ownership), TRUE) }); \
+CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":" #storage), TRUE) });
+
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_dynamic_pointer(args, index) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_dynamic_pointer_ args
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_dynamic_pointer_(type, atom) \
+CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_(PTYPE(type, weak, dynamic), atom) \
+else if CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_(PTYPE(type, transfer, dynamic), atom) \
+else if CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_pointer_(PTYPE(type, retain, dynamic), atom)
+
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES(...) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES_(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES_(head, ...) CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES__(head, 0, if) CC_MAP_WITH(CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES__, else if, __VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES__(arg, index, statement) statement CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES___ arg
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES___(group, ...) CC_SOFT_JOIN(else if, CC_MAP(CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPE_##group, __VA_ARGS__))
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(filter, ...) CC_SOFT_JOIN(, CC_RECURSIVE_0_MAP_WITH(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES_, filter, __VA_ARGS__))
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES_(arg, index, filter) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES__(filter, CC_EXPAND arg)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES__(...) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES___(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES___(filter, group, ...) CC_MAP_WITH(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_##group, filter, __VA_ARGS__)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_dynamic_pointer(arg, index, filter) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_dynamic_pointer_(filter, CC_EXPAND arg)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_dynamic_pointer_(...) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_dynamic_pointer__(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_dynamic_pointer__(filter, type, name) \
+filter##_MATCH_weak_dynamic(PTYPE(type, weak, dynamic), name) \
+filter##_MATCH_transfer_dynamic(PTYPE(type, transfer, dynamic), name) \
+filter##_MATCH_retain_dynamic(PTYPE(type, retain, dynamic), name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer(arg, index, filter) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer_(filter, CC_EXPAND arg)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer_(...) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer__(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer__(filter, type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer___(filter, type, name, CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer_##type)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer___(...) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer____(__VA_ARGS__)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer____(filter, type, name, ownership, storage) filter##_MATCH_##ownership##_##storage(type, name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_pointer_PTYPE(_, ownership, storage) ownership, storage
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name) if (CCStringEqual(Name, CC_STRING(":" #name))) return &CC_REFLECT(type);
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static_MATCH_weak_static(type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static_MATCH_weak_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static_MATCH_transfer_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static_MATCH_transfer_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static_MATCH_retain_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static_MATCH_retain_dynamic(type, name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic_MATCH_weak_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic_MATCH_weak_dynamic(type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic_MATCH_transfer_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic_MATCH_transfer_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic_MATCH_retain_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic_MATCH_retain_dynamic(type, name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static_MATCH_weak_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static_MATCH_weak_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static_MATCH_transfer_static(type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static_MATCH_transfer_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static_MATCH_retain_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static_MATCH_retain_dynamic(type, name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic_MATCH_weak_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic_MATCH_weak_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic_MATCH_transfer_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic_MATCH_transfer_dynamic(type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic_MATCH_retain_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic_MATCH_retain_dynamic(type, name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static_MATCH_weak_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static_MATCH_weak_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static_MATCH_transfer_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static_MATCH_transfer_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static_MATCH_retain_static(type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static_MATCH_retain_dynamic(type, name)
+
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic_MATCH_weak_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic_MATCH_weak_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic_MATCH_transfer_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic_MATCH_transfer_dynamic(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic_MATCH_retain_static(type, name)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic_MATCH_retain_dynamic(type, name) CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_MATCH(type, name)
+
+
+
+#define CC_EXPRESSION_REFLECTION_POINTER_TYPES \
+    (CCReflectTypeMapper, CCReflectTypeMapper), \
+    (CCReflectTypeUnmapper, CCReflectTypeUnmapper), \
+    (CCReflectValidation, CCReflectValidation), \
+    (CCMemoryDestructorCallback, CCMemoryDestructorCallback), \
+    (CCComparator, CCComparator), \
+    (CCCollectionElementDestructor, CCCollectionElementDestructor), \
+    (CCHashMapKeyHasher, CCHashMapKeyHasher), \
+    (CCDictionaryKeyHasher, CCDictionaryKeyHasher), \
+    (CCDictionaryElementDestructor, CCDictionaryElementDestructor)
+
+#define CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES \
+    (pointer, (PTYPE(CCHashMapInterface, weak, static), CCHashMapInterface)), \
+    (dynamic_pointer, \
+        (CCString, CCString), \
+        (CCAllocatorType, CCAllocatorType), \
+        (CCReflectType, CCReflectType), \
+        (CCReflectTypeID, CCReflectTypeID), \
+        (CCReflectStorage, CCReflectStorage), \
+        (CCReflectOwnership, CCReflectOwnership), \
+        (CCReflectPointer, CCReflectPointer), \
+        (CCReflectStaticPointer, CCReflectStaticPointer), \
+        (CCReflectDynamicPointer, CCReflectDynamicPointer), \
+        (CCReflectEndian, CCReflectEndian), \
+        (CCReflectInteger, CCReflectInteger), \
+        (CCReflectFloat, CCReflectFloat), \
+        (CCReflectStructField, CCReflectStructField), \
+        (CCReflectStruct, CCReflectStruct), \
+        (CCReflectArray, CCReflectArray), \
+        (CCReflectTypeMapper, CCReflectTypeMapper), \
+        (CCReflectTypeUnmapper, CCReflectTypeUnmapper), \
+        (CCReflectOpaque, CCReflectOpaque), \
+        (CCReflectEnumerable, CCReflectEnumerable), \
+        (CCReflectValidation, CCReflectValidation), \
+        (CCReflectValue, CCReflectValue), \
+        (CCReflectValidator, CCReflectValidator), \
+        (void, void), \
+        (char, char), \
+        (short, short), \
+        (int, int), \
+        (long, long), \
+        (long long, long), \
+        (unsigned char, unsigned), \
+        (unsigned short, unsigned), \
+        (unsigned int, unsigned), \
+        (unsigned long, unsigned), \
+        (unsigned long long, unsigned), \
+        (int8_t, int8_t), \
+        (int16_t, int16_t), \
+        (int32_t, int32_t), \
+        (int64_t, int64_t), \
+        (uint8_t, uint8_t), \
+        (uint16_t, uint16_t), \
+        (uint32_t, uint32_t), \
+        (uint64_t, uint64_t), \
+        (ptrdiff_t, ptrdiff_t), \
+        (intptr_t, intptr_t), \
+        (uintptr_t, uintptr_t), \
+        (size_t, size_t), \
+        (int_fast8_t, int_fast8_t), \
+        (int_fast16_t, int_fast16_t), \
+        (int_fast32_t, int_fast32_t), \
+        (int_fast64_t, int_fast64_t), \
+        (int_least8_t, int_least8_t), \
+        (int_least16_t, int_least16_t), \
+        (int_least32_t, int_least32_t), \
+        (int_least64_t, int_least64_t), \
+        (uint_fast8_t, uint_fast8_t), \
+        (uint_fast16_t, uint_fast16_t), \
+        (uint_fast32_t, uint_fast32_t), \
+        (uint_fast64_t, uint_fast64_t), \
+        (uint_least8_t, uint_least8_t), \
+        (uint_least16_t, uint_least16_t), \
+        (uint_least32_t, uint_least32_t), \
+        (uint_least64_t, uint_least64_t), \
+        (intmax_t, intmax_t), \
+        (uintmax_t, uintmax_t), \
+        (float, float), \
+        (double, double), \
+        (long double, long), \
+        (CCVector2D, CCVector2D), \
+        (CCVector2Di, CCVector2Di), \
+        (CCVector3D, CCVector3D), \
+        (CCColourRGB, CCColourRGB), \
+        (CCVector3Di, CCVector3Di), \
+        (CCColourRGBi, CCColourRGBi), \
+        (CCVector4D, CCVector4D), \
+        (CCColourRGBA, CCColourRGBA), \
+        (CCVector4Di, CCVector4Di), \
+        (CCColourRGBAi, CCColourRGBAi), \
+        (CCRect, CCRect), \
+        (CCMatrix2, CCMatrix2), \
+        (CCMatrix3, CCMatrix3), \
+        (CCMatrix4, CCMatrix4), \
+        (ARRAY(char, v8), v8), \
+        (ARRAY(char, v16), v16), \
+        (ARRAY(char, v32), v32), \
+        (ARRAY(char, v64), v64), \
+        (ARRAY(char, v128), v128), \
+        (ARRAY(char, v256), v256), \
+        (ARRAY(char, v512), v512), \
+        (ARRAY(char, v1024), v1024), \
+        (ARRAY(char, v4096), v4096), \
+        (ARRAY(char, v65536), v65536), \
+        (CCDictionaryCallbacks, CCDictionaryCallbacks) \
+    )
+
+#define CC_EXPRESSION_REFLECTION_INTEGER_TYPES \
+    (_Bool, bool), \
+    (char, char), \
+    (short, short), \
+    (int, int), \
+    (long, long), \
+    (long long, long_long), \
+    (unsigned char, unsigned_char), \
+    (unsigned short, unsigned_short), \
+    (unsigned int, unsigned_int), \
+    (unsigned long, unsigned_long), \
+    (unsigned long long, unsigned_long_long), \
+    (int8_t, int8_t), \
+    (int16_t, int16_t), \
+    (int32_t, int32_t), \
+    (int64_t, int64_t), \
+    (uint8_t, uint8_t), \
+    (uint16_t, uint16_t), \
+    (uint32_t, uint32_t), \
+    (uint64_t, uint64_t), \
+    (ptrdiff_t, ptrdiff_t), \
+    (intptr_t, intptr_t), \
+    (uintptr_t, uintptr_t), \
+    (size_t, size_t), \
+    (int_fast8_t, int_fast8_t), \
+    (int_fast16_t, int_fast16_t), \
+    (int_fast32_t, int_fast32_t), \
+    (int_fast64_t, int_fast64_t), \
+    (int_least8_t, int_least8_t), \
+    (int_least16_t, int_least16_t), \
+    (int_least32_t, int_least32_t), \
+    (int_least64_t, int_least64_t), \
+    (uint_fast8_t, uint_fast8_t), \
+    (uint_fast16_t, uint_fast16_t), \
+    (uint_fast32_t, uint_fast32_t), \
+    (uint_fast64_t, uint_fast64_t), \
+    (uint_least8_t, uint_least8_t), \
+    (uint_least16_t, uint_least16_t), \
+    (uint_least32_t, uint_least32_t), \
+    (uint_least64_t, uint_least64_t), \
+    (intmax_t, intmax_t), \
+    (uintmax_t, uintmax_t), \
+    (CCReflectTypeID, CCReflectTypeID), \
+    (CCReflectStorage, CCReflectStorage), \
+    (CCReflectOwnership, CCReflectOwnership), \
+    (CCReflectEndian, CCReflectEndian), \
+    (CCCollectionHint, CCCollectionHint), \
+    (CCDictionaryHint, CCDictionaryHint)
+
+#define CC_EXPRESSION_REFLECTION_FLOAT_TYPES \
+    (float, float), \
+    (double, double), \
+    (long double, long_double)
+
+#define CC_EXPRESSION_REFLECTION_STRUCT_TYPES \
+    (CCVector2D,CCVector2D), \
+    (CCVector2Di,CCVector2Di), \
+    (CCVector3D,CCVector3D), \
+    (CCColourRGB,CCColourRGB), \
+    (CCVector3Di,CCVector3Di), \
+    (CCColourRGBi,CCColourRGBi), \
+    (CCVector4D,CCVector4D), \
+    (CCColourRGBA,CCColourRGBA), \
+    (CCVector4Di,CCVector4Di), \
+    (CCColourRGBAi,CCColourRGBAi), \
+    (CCRect,CCRect), \
+    (CCMatrix2,CCMatrix2), \
+    (CCMatrix3,CCMatrix3), \
+    (CCMatrix4,CCMatrix4), \
+    (CCReflectPointer,CCReflectPointer), \
+    (CCReflectStaticPointer,CCReflectStaticPointer), \
+    (CCReflectDynamicPointer,CCReflectDynamicPointer), \
+    (CCReflectInteger,CCReflectInteger), \
+    (CCReflectFloat,CCReflectFloat), \
+    (CCReflectStructField,CCReflectStructField), \
+    (CCReflectStruct,CCReflectStruct), \
+    (CCReflectArray,CCReflectArray), \
+    (CCReflectEnumerable,CCReflectEnumerable), \
+    (CCReflectOpaque,CCReflectOpaque), \
+    (CCReflectValue,CCReflectValue), \
+    (CCReflectValidator,CCReflectValidator), \
+    (CCDebugAllocatorInfo,CCDebugAllocatorInfo), \
+    (CCDictionaryCallbacks,CCDictionaryCallbacks)
+
+#define CC_EXPRESSION_REFLECTION_OPAQUE_TYPES \
+    (void, void), \
+    (CCReflectType, CCReflectType), \
+    (CCString, CCString), \
+    (ARRAY(char, v8), v8), \
+    (ARRAY(char, v16), v16), \
+    (ARRAY(char, v32), v32), \
+    (ARRAY(char, v64), v64), \
+    (ARRAY(char, v128), v128), \
+    (ARRAY(char, v256), v256), \
+    (ARRAY(char, v512), v512), \
+    (ARRAY(char, v1024), v1024), \
+    (ARRAY(char, v4096), v4096), \
+    (ARRAY(char, v65536), v65536), \
+    (CCAllocatorType, CCAllocatorType)
+
+#undef CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES
+#undef CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPES
+#define CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(...)
+#define CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPES(...)
+
 static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMemoryZone Zone)
 {
-    CCExpression Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+    CCExpression Expr = NULL;
     
     switch (*(const CCReflectTypeID*)Type)
     {
         case CCReflectTypePointer:
         {
+            CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(CC_EXPRESSION_REFLECTION_POINTER_TYPES);
+            
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
+            CC_EXPRESSION_REFLECTION_SERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":pointer"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -488,6 +815,10 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
             
         case CCReflectTypeInteger:
         {
+            CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(CC_EXPRESSION_REFLECTION_INTEGER_TYPES);
+            
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":integer"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -515,6 +846,10 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
             
         case CCReflectTypeFloat:
         {
+            CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(CC_EXPRESSION_REFLECTION_FLOAT_TYPES);
+            
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":float"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -532,6 +867,10 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
             
         case CCReflectTypeStruct:
         {
+            CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(CC_EXPRESSION_REFLECTION_STRUCT_TYPES);
+            
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":struct"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -551,10 +890,13 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
                 CCExpression StructField = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Fields), &StructField);
                 
-                Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("name:"), TRUE) });
-                CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, ((const CCReflectStruct*)Type)->fields[Loop].name, TRUE) });
-                CCOrderedCollectionAppendElement(CCExpressionGetList(StructField), &Field);
+                if (((const CCReflectStruct*)Type)->fields[Loop].name)
+                {
+                    Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("name:"), TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, ((const CCReflectStruct*)Type)->fields[Loop].name, TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(StructField), &Field);
+                }
                 
                 Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
                 CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("offset:"), TRUE) });
@@ -572,6 +914,23 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
             
         case CCReflectTypeOpaque:
         {
+            CC_EXPRESSION_REFLECTION_SERIALIZE_TYPES(CC_EXPRESSION_REFLECTION_OPAQUE_TYPES);
+            
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
+            if ((((const CCReflectOpaque*)Type)->map == CCReflectCCArrayMapper) && (((const CCReflectOpaque*)Type)->unmap == CCReflectCCArrayUnmapper))
+            {
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("CCArray:"), TRUE) });
+                
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCAllocatorType), &((const CCReflectCCArray*)Type)->allocator, Zone) });
+                
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionReflectionSerializeInteger(&CC_REFLECT(size_t), &((const CCReflectCCArray*)Type)->chunkSize) });
+                
+                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionReflectionSerializeType(((const CCReflectCCArray*)Type)->elementType, Zone) });
+                
+                return Expr;
+            }
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":opaque"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -598,6 +957,8 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
             
         case CCReflectTypeArray:
         {
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":array"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -619,6 +980,8 @@ static CCExpression CCExpressionReflectionSerializeType(CCReflectType Type, CCMe
             
         case CCReflectTypeEnumerable:
         {
+            Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
             CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":enumerable"), TRUE) });
             
             CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
@@ -643,9 +1006,57 @@ void CCExpressionReflectionDeserializeHandler(CCReflectType Type, const void *Da
     CCReflectCopy(Type, Args->dest, Data, Args->zone, Args->allocator, CCReflectAssignmentShare, TRUE);
 }
 
+static inline CCReflectOwnership CCExpressionReflectionResolvePointerOwnership(CCString Name)
+{
+    if (CCStringEqual(Name, CC_STRING(":weak")))
+    {
+        return CCReflectOwnershipWeak;
+    }
+    
+    else if (CCStringEqual(Name, CC_STRING(":transfer")))
+    {
+        return CCReflectOwnershipTransfer;
+    }
+    
+    else if (CCStringEqual(Name, CC_STRING(":retain")))
+    {
+        return CCReflectOwnershipRetain;
+    }
+    
+    else CC_LOG_ERROR_CUSTOM("Invalid pointer ownership atom (%S). Expects ':weak', ':transfer', or ':retain'.", Name);
+    
+    return -1;
+}
+
+static inline CCReflectStorage CCExpressionReflectionResolvePointerStorage(CCString Name)
+{
+    if (CCStringEqual(Name, CC_STRING(":static")))
+    {
+        return CCReflectStorageStatic;
+    }
+    
+    else if (CCStringEqual(Name, CC_STRING(":dynamic")))
+    {
+        return CCReflectStorageDynamic;
+    }
+    
+    else CC_LOG_ERROR_CUSTOM("Invalid pointer storage atom (%S). Expects ':static', or ':dynamic'.", Name);
+    
+    return -1;
+}
+
 static CCReflectType CCExpressionReflectionDeserializeType(CCExpression Expression, CCMemoryZone Zone)
 {
-    if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
+    if (CCExpressionGetType(Expression) == CCExpressionValueTypeAtom)
+    {
+        CCString Name = CCExpressionGetAtom(Expression);
+        
+        CC_EXPRESSION_REFLECTION_DESERIALIZE_TYPES(CC_EXPRESSION_REFLECTION_POINTER_TYPES, CC_EXPRESSION_REFLECTION_INTEGER_TYPES, CC_EXPRESSION_REFLECTION_FLOAT_TYPES, CC_EXPRESSION_REFLECTION_STRUCT_TYPES, CC_EXPRESSION_REFLECTION_OPAQUE_TYPES);
+        
+        CC_LOG_ERROR_CUSTOM("Deserializing unknown type (%S).", Name);
+    }
+    
+    else if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
     {
         CCEnumerator Enumerator;
         CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
@@ -655,7 +1066,88 @@ static CCReflectType CCExpressionReflectionDeserializeType(CCExpression Expressi
         {
             CCString Type = CCExpressionGetAtom(*TypeExpr);
             
-            if (CCStringEqual(Type, CC_STRING(":pointer")))
+            if (CCStringEqual(Type, CC_STRING("CCArray:")))
+            {
+                if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 4)
+                {
+                    CCExpression AllocatorExpr = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+                    CCExpression ChunkSizeExpr = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+                    CCExpression ElementTypeExpr = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+                    
+
+                    CCAllocatorType Allocator = CC_NULL_ALLOCATOR;
+                    size_t ChunkSize;
+                    CCReflectType ElementType = CCExpressionReflectionDeserializeType(ElementTypeExpr, Zone);
+                    
+                    CCExpressionReflectionDeserialize(AllocatorExpr, &CC_REFLECT(CCAllocatorType), &Allocator, Zone, CC_AUTORELEASE_ALLOCATOR(Zone));
+                    
+                    CCExpressionReflectionDeserializeInteger(&CC_REFLECT(size_t), ChunkSizeExpr, &ChunkSize);
+                    
+                    CCReflectCCArray *Array = CCMemoryZoneAllocate(Zone, sizeof(CCReflectCCArray));
+                    
+                    *Array = CC_REFLECT_CCArray(ElementType, Allocator, ChunkSize);
+                    
+                    return Array;
+                    
+                }
+                
+                CC_LOG_ERROR_CUSTOM("Deserializing unknown value for type CCArray:. Expects allocator, chunk-size, element-type.");
+            }
+            
+            else if (CCStringEqual(Type, CC_STRING("pointer:")))
+            {
+                if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 4)
+                {
+                    CCExpression PointerTypeExpr = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+                    CCExpression OwnershipExpr = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+                    CCExpression StorageExpr = *(CCExpression*)CCCollectionEnumeratorNext(&Enumerator);
+                    
+                    if ((CCExpressionGetType(PointerTypeExpr) == CCExpressionValueTypeAtom) && (CCExpressionGetType(OwnershipExpr) == CCExpressionValueTypeAtom) && (CCExpressionGetType(StorageExpr) == CCExpressionValueTypeAtom))
+                    {
+                        CCString Name = CCExpressionGetAtom(PointerTypeExpr);
+                        
+                        const CCReflectOwnership Ownership = CCExpressionReflectionResolvePointerOwnership(CCExpressionGetAtom(OwnershipExpr));
+                        const CCReflectStorage Storage = CCExpressionReflectionResolvePointerStorage(CCExpressionGetAtom(StorageExpr));
+                        
+                        _Static_assert((CCReflectStorageStatic == 0) &&
+                                       (CCReflectStorageDynamic == 1), "Expects storage values to take first bit");
+                        
+                        switch ((Ownership << 1) | Storage)
+                        {
+                            case (CCReflectOwnershipWeak << 1) | CCReflectStorageStatic:
+                                CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_static, CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+                                break;
+                                
+                            case (CCReflectOwnershipWeak << 1) | CCReflectStorageDynamic:
+                                CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_weak_dynamic, CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+                                break;
+                                
+                            case (CCReflectOwnershipTransfer << 1) | CCReflectStorageStatic:
+                                CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_static, CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+                                break;
+                                
+                            case (CCReflectOwnershipTransfer << 1) | CCReflectStorageDynamic:
+                                CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_transfer_dynamic, CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+                                break;
+                                
+                            case (CCReflectOwnershipRetain << 1) | CCReflectStorageStatic:
+                                CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_static, CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+                                break;
+                                
+                            case (CCReflectOwnershipRetain << 1) | CCReflectStorageDynamic:
+                                CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPES(CC_EXPRESSION_REFLECTION_DESERIALIZE_WRAPPED_TYPE_FILTER_pointer_retain_dynamic, CC_EXPRESSION_REFLECTION_WRAPPED_POINTER_TYPES);
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                    }
+                }
+                
+                CC_LOG_ERROR_CUSTOM("Deserializing unknown value for type pointer:. Expects name, ownership, storage.");
+            }
+            
+            else if (CCStringEqual(Type, CC_STRING(":pointer")))
             {
                 CCReflectPointer *Pointer = CCMemoryZoneAllocate(Zone, sizeof(union { CCReflectStaticPointer staticPointer; CCReflectDynamicPointer dynamicPointer; }));
                 
@@ -685,14 +1177,24 @@ static CCReflectType CCExpressionReflectionDeserializeType(CCExpression Expressi
                                 
                                 else if (CCStringEqual(Name, CC_STRING("storage:")))
                                 {
-                                    CCExpressionReflectionDeserializeInteger(&CC_REFLECT(CCReflectStorage), ArgExpr, &Pointer->storage);
+                                    if (CCExpressionGetType(ArgExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        Pointer->storage = CCExpressionReflectionResolvePointerStorage(CCExpressionGetAtom(ArgExpr));
+                                    }
+                                    
+                                    else CCExpressionReflectionDeserializeInteger(&CC_REFLECT(CCReflectStorage), ArgExpr, &Pointer->storage);
                                     
                                     if (Pointer->storage == CCReflectStorageDynamic) ((CCReflectDynamicPointer*)Pointer)->allocator = CC_NULL_ALLOCATOR;
                                 }
                                 
                                 else if (CCStringEqual(Name, CC_STRING("ownership:")))
                                 {
-                                    CCExpressionReflectionDeserializeInteger(&CC_REFLECT(CCReflectOwnership), ArgExpr, &Pointer->ownership);
+                                    if (CCExpressionGetType(ArgExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        Pointer->ownership = CCExpressionReflectionResolvePointerOwnership(CCExpressionGetAtom(ArgExpr));
+                                    }
+                                    
+                                    else CCExpressionReflectionDeserializeInteger(&CC_REFLECT(CCReflectOwnership), ArgExpr, &Pointer->ownership);
                                 }
                                 
                                 else if (Pointer->storage == CCReflectStorageStatic)
@@ -1266,7 +1768,12 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
             
         case CCReflectTypeOpaque:
         {
-            if (Type == &CC_REFLECT(CCString))
+            if (Type == &CC_REFLECT(void))
+            {
+                return CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":void"), TRUE);
+            }
+            
+            else if (Type == &CC_REFLECT(CCString))
             {
                 return *(CCString*)Data ? CCExpressionCreateString(CC_STD_ALLOCATOR, *(CCString*)Data, TRUE) : CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":null"), TRUE);
             }
@@ -1716,7 +2223,15 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
             break;
             
         case CCReflectTypeOpaque:
-            if ((((const CCReflectOpaque*)Type)->map == CC_REFLECT(CCString).map) && (((const CCReflectOpaque*)Type)->unmap == CC_REFLECT(CCString).unmap))
+            if ((((const CCReflectOpaque*)Type)->map == CC_REFLECT(void).map) && (((const CCReflectOpaque*)Type)->unmap == CC_REFLECT(void).unmap))
+            {
+                if ((CCExpressionGetType(Expression) != CCExpressionValueTypeAtom) || (!CCStringEqual(CCExpressionGetAtom(Expression), CC_STRING(":void"))))
+                {
+                    CC_LOG_ERROR_CUSTOM("Deserializing malformed void. Expects :void.");
+                }
+            }
+            
+            else if ((((const CCReflectOpaque*)Type)->map == CC_REFLECT(CCString).map) && (((const CCReflectOpaque*)Type)->unmap == CC_REFLECT(CCString).unmap))
             {
                 switch (CCExpressionGetType(Expression))
                 {
