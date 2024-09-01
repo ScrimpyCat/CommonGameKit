@@ -306,6 +306,8 @@
 		F3E747FE227C9354007690A2 /* CoreShaderLibrary.metallib in Copy Metal Library */ = {isa = PBXBuildFile; fileRef = F3E747FB227C930F007690A2 /* CoreShaderLibrary.metallib */; };
 		F3E855B92248CCC1008896E1 /* MTLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E855B72248CCC1008896E1 /* MTLBuffer.h */; };
 		F3E855BA2248CCC1008896E1 /* MTLBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = F3E855B82248CCC1008896E1 /* MTLBuffer.m */; };
+		F3EAB9502C4758A5009D72DD /* ECSReflect.h in Headers */ = {isa = PBXBuildFile; fileRef = F3EAB94E2C4758A5009D72DD /* ECSReflect.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3EAB9512C4758A5009D72DD /* ECSReflect.c in Sources */ = {isa = PBXBuildFile; fileRef = F3EAB94F2C4758A5009D72DD /* ECSReflect.c */; };
 		F3F2305320CEDD6E003F9E47 /* RenderCameraComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */; };
 		F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */; };
 		F3F43C0229E6BCB900304F65 /* ECSTestAccessors.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F43BE229E6BCB800304F65 /* ECSTestAccessors.h */; };
@@ -858,6 +860,8 @@
 		F3E747F6227C930E007690A2 /* CoreShaderLibrary.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CoreShaderLibrary.xcodeproj; path = CoreShaderLibrary/CoreShaderLibrary.xcodeproj; sourceTree = "<group>"; };
 		F3E855B72248CCC1008896E1 /* MTLBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLBuffer.h; sourceTree = "<group>"; };
 		F3E855B82248CCC1008896E1 /* MTLBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLBuffer.m; sourceTree = "<group>"; };
+		F3EAB94E2C4758A5009D72DD /* ECSReflect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSReflect.h; sourceTree = "<group>"; };
+		F3EAB94F2C4758A5009D72DD /* ECSReflect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSReflect.c; sourceTree = "<group>"; };
 		F3F2305120CEDD6E003F9E47 /* RenderCameraComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCameraComponent.h; sourceTree = "<group>"; };
 		F3F2305220CEDD6E003F9E47 /* RenderCameraComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RenderCameraComponent.c; sourceTree = "<group>"; };
 		F3F43BE229E6BCB800304F65 /* ECSTestAccessors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ECSTestAccessors.h; sourceTree = "<group>"; };
@@ -916,6 +920,8 @@
 				F36081FD2B108352002B2A89 /* ECSRegistry.h */,
 				F36082062B15C224002B2A89 /* ECSLink.c */,
 				F36082052B15C224002B2A89 /* ECSLink.h */,
+				F3EAB94F2C4758A5009D72DD /* ECSReflect.c */,
+				F3EAB94E2C4758A5009D72DD /* ECSReflect.h */,
 				F34551942AFCD5D000316D15 /* Monitors */,
 				F3BFD72B2AE8414100118816 /* Components */,
 				F36081ED2B0B06DC002B2A89 /* Systems */,
@@ -1930,6 +1936,7 @@
 				F3AD4CEA2AB332B6006C20E4 /* ECSMutation.h in Headers */,
 				F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */,
 				F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */,
+				F3EAB9502C4758A5009D72DD /* ECSReflect.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2343,6 +2350,7 @@
 				F3897B201DCD3A1C008D6C1D /* Callbacks.c in Sources */,
 				F3AF33B71DCCD4EC00CAD472 /* ColourComponent.c in Sources */,
 				F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */,
+				F3EAB9512C4758A5009D72DD /* ECSReflect.c in Sources */,
 				F3AF33D71DCCD4EC00CAD472 /* GFXTexture.c in Sources */,
 				F3AF34AF1DCCD5AF00CAD472 /* WindowExpressions.c in Sources */,
 			);
