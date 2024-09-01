@@ -29,8 +29,23 @@
 #include <CommonGameKit/Base.h>
 #include <CommonGameKit/Expression.h>
 
+/*!
+ * @brief Serialize the data as an expression.
+ * @param Type The type of data to be serialized.
+ * @param Data The data to be serialized.
+ * @param Zone The memory zone to use for internal allocations.
+ * @return The expression represeting the data. Must destroy the expression.
+ */
 CC_NEW CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Data, CCMemoryZone Zone);
 
+/*!
+ * @brief Deserialize a data expression.
+ * @param Expression The expression to be deserialized.
+ * @param Type The type of data.
+ * @param Data Where the deserialized data should be stored.
+ * @param Zone The memory zone to use for internal allocations.
+ * @param Allocator The allocator to use for allocations.
+ */
 void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Type, void *Data, CCMemoryZone Zone, CCAllocatorType Allocator);
 
 typedef struct {

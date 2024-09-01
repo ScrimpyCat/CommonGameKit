@@ -63,10 +63,37 @@ extern CCReflectTypeUnmapper ECSLinkPointerUnmap;
 void ECSLinkPointerMapDefaults(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent);
 void ECSLinkPointerUnmapDefaults(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator);
 
+/*!
+ * @brief A serialization handler.
+ * @param Type The type of @b Data.
+ * @param Data The data to be serialized.
+ * @param State Custom state to be used by the handler.
+ */
 typedef void (*ECSSerializeHandler)(CCReflectType Type, const void *Data, void *State);
+
+/*!
+ * @brief A deserialization handler.
+ * @param Type The type of @b Data.
+ * @param Data Where the deserialized data should be written to.
+ * @param State Custom state to be used by the handler.
+ */
 typedef void (*ECSDeserializeHandler)(CCReflectType Type, void *Data, void *State);
 
+/*!
+ * @brief Serialize an ECS context.
+ * @param Context The context to serialize.
+ * @param State The state for the @b Handler.
+ * @param Handler The serialization handler.
+ * @param Zone The memory zone to use for internal allocations.
+ */
 void ECSSerialize(ECSContext *Context, void *State, ECSSerializeHandler Handler, CCMemoryZone Zone);
+
+/*!
+ * @brief Deserialize an ECS context.
+ * @param Context The context to write to.
+ * @param State The state for the @b Handler.
+ * @param Handler The deserialization handler.
+ */
 void ECSDeserialize(ECSContext *Context, void *State, ECSDeserializeHandler Handler);
 
 #endif
