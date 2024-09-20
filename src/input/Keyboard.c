@@ -33,7 +33,35 @@
 #include <math.h>
 
 
-static _Atomic(CCKeyboardMap) KeyList[CCKeyboardKeycodeCount];
+typedef struct {
+    CCChar character : 21;
+    CCKeyboardModifier flags : 4;
+    _Bool down : 1, repeat : 1;
+    uint64_t timestamp : 37;
+} CC_PACKED CCKeyboardStatus;
+
+_Static_assert(sizeof(CCKeyboardStatus) == 8, "Exceeds 8 bytes");
+
+static inline CCKeyboardState CCKeyboardStateFromStatus(CCKeyboardStatus Key)
+{
+    return (CCKeyboardState){
+        .timestamp = (((CCTimestamp() / 1000) & ~0x1fffffffff) | Key.timestamp) * 1000,
+        .down = Key.down,
+        .repeat = Key.repeat
+    };
+}
+
+static inline CCKeyboardMap CCKeyboardMapFromStatus(CCKeyboardStatus Key, CCKeyboardKeycode Keycode)
+{
+    return (CCKeyboardMap){
+        .keycode = Keycode,
+        .character = Key.character,
+        .flags = Key.flags,
+        .state = CCKeyboardStateFromStatus(Key)
+    };
+}
+
+static _Atomic(CCKeyboardStatus) KeyList[CCKeyboardKeycodeCount];
 
 /*
  TODO: Unsure if we can make this guarantee across all platforms or with future minor verson of GLFW.
@@ -41,10 +69,12 @@ static _Atomic(CCKeyboardMap) KeyList[CCKeyboardKeycodeCount];
  input sequence of events will always be keycode, followed by character (or at least character, followed by keycode).
  Must make sure it won't possibly send in another keycode inbetween.
  */
-static CCKeyboardMap TempKey;
+static CCKeyboardKeycode TempKeycode;
+static CCKeyboardStatus TempKey;
+
 void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeyboardModifier Mods)
 {
-    if ((TempKey.keycode = Keycode) != CCKeyboardKeycodeUnknown)
+    if ((TempKeycode = Keycode) != CCKeyboardKeycodeUnknown)
     {
         CCAssertLog(Keycode >= 0 && Keycode < CCKeyboardKeycodeCount, "Keycode is not within bounds");
         
@@ -52,23 +82,23 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
         
         if (Action == CCKeyboardActionRepeat)
         {
-            CCKeyboardMap Prev = atomic_load(&KeyList[Keycode]);
-            TempKey.state.timestamp = Prev.state.timestamp;
-            TempKey.state.down = TRUE;
-            TempKey.state.repeat = TRUE;
+            CCKeyboardStatus Prev = atomic_load_explicit(&KeyList[Keycode], memory_order_relaxed);
+            TempKey.timestamp = Prev.timestamp;
+            TempKey.down = TRUE;
+            TempKey.repeat = TRUE;
         }
         
         else
         {
-            TempKey.state.timestamp = CCTimestamp();
-            TempKey.state.down = Action == CCKeyboardActionPress;
-            TempKey.state.repeat = FALSE;
+            TempKey.timestamp = (CCTimestamp() / 1000) & 0x1fffffffff;
+            TempKey.down = Action == CCKeyboardActionPress;
+            TempKey.repeat = FALSE;
         }
         
-        if ((!TempKey.state.down) || (TempKey.keycode & CCKeyboardKeycodeFunctionMask))
+        if ((!TempKey.down) || (Keycode & CCKeyboardKeycodeFunctionMask))
         {
             TempKey.character = 0;
-            atomic_store(&KeyList[TempKey.keycode], TempKey);
+            atomic_store_explicit(&KeyList[Keycode], TempKey, memory_order_relaxed);
             
             CCCollection(CCComponent) InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
             
@@ -83,7 +113,7 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
                     if ((CCInputMapKeyboardComponentGetIsKeycode(*Input) && ((CCInputMapKeyboardComponentGetKeycode(*Input) == Keycode) || (CCInputMapKeyboardComponentGetKeycode(*Input) == CCInputMapKeyboardComponentKeycodeAny))) &&
                         (CCInputMapKeyboardComponentGetIgnoreModifier(*Input) || (CCInputMapKeyboardComponentGetFlags(*Input) == Mods)))
                     {
-                        Callback(*Input, TempKey);
+                        Callback(*Input, CCKeyboardMapFromStatus(TempKey, Keycode));
                     }
                 }
             }
@@ -95,11 +125,10 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
 
 void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods)
 {
-    if (TempKey.keycode != CCKeyboardKeycodeUnknown)
+    if (TempKeycode != CCKeyboardKeycodeUnknown)
     {
         TempKey.character = Codepoint;
-        atomic_store(&KeyList[TempKey.keycode], TempKey);
-        
+        atomic_store_explicit(&KeyList[TempKeycode], TempKey, memory_order_relaxed);
         
         CCCollection(CCComponent) InputKeys = CCInputSystemGetComponents(CCInputMapTypeKeyboard);
         
@@ -111,11 +140,11 @@ void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods)
             CCInputMapKeyboardCallback Callback = CCInputMapComponentGetCallback(*Input);
             if (Callback)
             {
-                if (((CCInputMapKeyboardComponentGetIsKeycode(*Input) && ((CCInputMapKeyboardComponentGetKeycode(*Input) == TempKey.keycode) || (CCInputMapKeyboardComponentGetKeycode(*Input) == CCInputMapKeyboardComponentKeycodeAny))) ||
+                if (((CCInputMapKeyboardComponentGetIsKeycode(*Input) && ((CCInputMapKeyboardComponentGetKeycode(*Input) == TempKeycode) || (CCInputMapKeyboardComponentGetKeycode(*Input) == CCInputMapKeyboardComponentKeycodeAny))) ||
                      (CCInputMapKeyboardComponentGetCharacter(*Input) == Codepoint)) &&
                     (CCInputMapKeyboardComponentGetIgnoreModifier(*Input) || (CCInputMapKeyboardComponentGetFlags(*Input) == Mods)))
                 {
-                    Callback(*Input, TempKey);
+                    Callback(*Input, CCKeyboardMapFromStatus(TempKey, TempKeycode));
                 }
             }
         }
@@ -128,7 +157,7 @@ void CCKeyboardStateReset(void)
 {
     for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
     {
-        atomic_store(&KeyList[Loop], ((CCKeyboardMap){ .keycode = (CCKeyboardKeycode)Loop, .state = { .timestamp = -INFINITY, .down = FALSE, .repeat = FALSE } }));
+        atomic_store_explicit(&KeyList[Loop], ((CCKeyboardStatus){ .timestamp = 0, .down = FALSE, .repeat = FALSE }), memory_order_relaxed);
     }
 }
 
@@ -138,13 +167,13 @@ CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
     
     if (CCInputMapKeyboardComponentGetKeycode(Component) != CCInputMapKeyboardComponentKeycodeAny)
     {
-        CCKeyboardMap Key = atomic_load(&KeyList[CCInputMapKeyboardComponentGetKeycode(Component)]);
+        CCKeyboardStatus Key = atomic_load_explicit(&KeyList[CCInputMapKeyboardComponentGetKeycode(Component)], memory_order_relaxed);
         if (((CCInputMapKeyboardComponentGetIsKeycode(Component)) ||
              (CCInputMapKeyboardComponentGetCharacter(Component) == Key.character)) &&
             (CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags)) &&
-            (CCInputMapKeyboardComponentGetRepeats(Component) || (!Key.state.repeat)))
+            (CCInputMapKeyboardComponentGetRepeats(Component) || (!Key.repeat)))
         {
-            return Key.state;
+            return CCKeyboardStateFromStatus(Key);
         }
     }
     
@@ -155,17 +184,17 @@ CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component)
         const CCChar Character = CCInputMapKeyboardComponentGetCharacter(Component);
         for (size_t Loop = 0; Loop < sizeof(KeyList) / sizeof(typeof(*KeyList)); Loop++)
         {
-            CCKeyboardMap Key = atomic_load(&KeyList[Loop]);
+            CCKeyboardStatus Key = atomic_load_explicit(&KeyList[Loop], memory_order_relaxed);
             if (Key.character == Character)
             {
                 if ((CCInputMapKeyboardComponentGetIgnoreModifier(Component) || (CCInputMapKeyboardComponentGetFlags(Component) == Key.flags)) &&
-                    (CCInputMapKeyboardComponentGetRepeats(Component) || (!Key.state.repeat)))
+                    (CCInputMapKeyboardComponentGetRepeats(Component) || (!Key.repeat)))
                 {
-                    return Key.state;
+                    return CCKeyboardStateFromStatus(Key);
                 }
             }
         }
     }
     
-    return (CCKeyboardState){ .timestamp = 0.0, .down = FALSE, .repeat = FALSE };
+    return (CCKeyboardState){ .timestamp = 0, .down = FALSE, .repeat = FALSE };
 }
