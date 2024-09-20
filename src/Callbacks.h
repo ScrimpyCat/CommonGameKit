@@ -59,10 +59,10 @@ int CCMain(CCEngineMain Main, int argc, const char *argv[]);
 extern FSPath CCAssetPath;
 
 /*!
- * @brief Set this to a function that can provide a high frequency timestamp.
+ * @brief Set this to a function that can provide a high frequency nanosecond timestamp.
  * @warning Must not be NULL.
  * @result The timestamp.
  */
-extern double (*CCTimestamp)(void);
+extern uint64_t (*CCTimestamp)(void);
 
 #endif

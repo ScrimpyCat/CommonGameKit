@@ -34,7 +34,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-double (*CCTimestamp)(void) = NULL;
+uint64_t (*CCTimestamp)(void) = NULL;
 
 FSPath CCAssetPath = NULL;
 
