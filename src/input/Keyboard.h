@@ -176,7 +176,7 @@ typedef enum {
 } CCKeyboardKeycode;
 
 typedef struct {
-    double timestamp;
+    uint64_t timestamp;
     _Bool down : 1, repeat : 1;
 } CC_PACKED CCKeyboardState;
 
@@ -211,10 +211,76 @@ void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods); //TODO: Com
 void CCKeyboardStateReset(void);
 
 /*!
- * @brief Get the keyboard state for the given component.
- * @param Component The input map keyboard component.
- * @return The keyboard state for the given component, or empty state if there is none available.
+ * @brief Get the keyboard state for the given keycode.
+ * @param Keycode The keycode to lookup.
+ * @param MatchCharacter An optional character to match.
+ * @param Modifier The modifier to match. Ignored if @b IgnoreModifier is TRUE.
+ * @param IgnoreModifier Whether the modifier should be matched or not.
+ * @param Repeats Whether it should match repeating key presses or not.
+ * @return The keyboard state that matches the given keycode, or empty state if there is none available.
  */
-CCKeyboardState CCKeyboardGetStateForComponent(CCComponent Component);
+CCKeyboardState CCKeyboardGetStateForKeycode(CCKeyboardKeycode Keycode, CCChar MatchCharacter, CCKeyboardModifier Modifier, _Bool IgnoreModifier, _Bool Repeats);
+
+/*!
+ * @brief Get the keyboard state for the given character.
+ * @param Character The character to match.
+ * @param Modifier The modifier to match. Ignored if @b IgnoreModifier is TRUE.
+ * @param IgnoreModifier Whether the modifier should be matched or not.
+ * @param Repeats Whether it should match repeating key presses or not.
+ * @return The keyboard state that matches the given character, or empty state if there is none available.
+ */
+CCKeyboardState CCKeyboardGetStateForCharacter(CCChar Character, CCKeyboardModifier Modifier, _Bool IgnoreModifier, _Bool Repeats);
+
+
+#pragma mark - Events
+
+#define CC_TYPE_CCKeyboardMap(...) CCKeyboardMap
+#define CC_TYPE_0_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_1_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_2_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_3_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_4_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_5_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_6_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_7_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_8_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_9_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+
+#define CC_PRESERVE_CC_TYPE_CCConcurrentPoolStage CC_TYPE_CCConcurrentPoolStage
+
+#define CC_TYPE_DECL_CCKeyboardMap(...) CCKeyboardMap, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_1_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_2_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_3_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_4_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_5_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_6_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_7_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_8_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_9_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+
+#define CC_MANGLE_TYPE_0_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_1_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_2_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_3_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_4_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_5_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_6_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_7_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_8_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_9_CCKeyboardMap CCKeyboardMap
+
+#ifndef CC_KEYBOARD_EVENT_MAX
+#define CC_KEYBOARD_EVENT_MAX 1024
+#endif
+
+#define Titem CCKeyboardMap
+#define Tmax CC_KEYBOARD_EVENT_MAX
+#include <CommonC/ConcurrentCircularBuffer.h>
+
+extern CCConcurrentCircularBuffer(CCKeyboardMap, CC_KEYBOARD_EVENT_MAX) CCKeyboardInputEventBuffer;
+
+extern CCConcurrentCircularBuffer(CCKeyboardMap, CC_KEYBOARD_EVENT_MAX) CCKeyboardCharInputEventBuffer;
 
 #endif
