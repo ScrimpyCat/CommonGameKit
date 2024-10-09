@@ -25,134 +25,114 @@
 
 #define CC_QUICK_COMPILE
 #include "Mouse.h"
-#include "Window.h"
 #include "Callbacks.h"
-#include <stdatomic.h>
-#include "InputSystem.h"
-#include "InputMapMousePositionComponent.h"
-#include "InputMapMouseButtonComponent.h"
-#include "InputMapMouseScrollComponent.h"
-#include "InputMapMouseDropComponent.h"
+
+typedef struct {
+    CCKeyboardModifier flags : 4;
+    _Bool down : 1;
+    uint64_t timestamp : 59;
+} CC_PACKED CCMouseButtonStatus;
+
+_Static_assert(sizeof(CCMouseButtonStatus) == 8, "Exceeds 8 bytes");
+
+static inline uint64_t CCMouseButtonRealTimestamp(CCMouseButtonStatus Mouse)
+{
+    const uint64_t Timestamp = CCTimestamp();
+    const uint64_t BaseTimestamp = Timestamp & ~0x7ffffffffffffff;
+    const uint64_t CurrentRelative = Timestamp & 0x7ffffffffffffff;
+    
+    const uint64_t AdjustedTimestamp = CurrentRelative >= Mouse.timestamp ? (BaseTimestamp | Mouse.timestamp) : ((BaseTimestamp - 0x800000000000000) | Mouse.timestamp);
+    
+    return AdjustedTimestamp * 1000;
+}
+
+static inline CCMouseButtonState CCMouseButtonStateFromStatus(CCMouseButtonStatus Mouse, uint64_t Timestamp)
+{
+    return (CCMouseButtonState){
+        .timestamp = Timestamp,
+        .down = Mouse.down
+    };
+}
+
+static inline CCMouseButtonMap CCMouseButtonMapFromStatus(CCMouseButtonStatus Mouse, CCMouseButton Button, uint64_t Timestamp)
+{
+    return (CCMouseButtonMap){
+        .button = Button,
+        .flags = Mouse.flags,
+        .state = CCMouseButtonStateFromStatus(Mouse, Timestamp)
+    };
+}
 
 static struct {
     _Atomic(CCVector2D) position;
-    _Atomic(CCMouseButtonMap) buttons[CCMouseButtonCount];
+    _Atomic(CCMouseButtonStatus) buttons[CCMouseButtonCount];
 } Mouse;
+
+CCConcurrentCircularBuffer(CCMouseMap, CC_MOUSE_EVENT_MAX) CCMouseInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
 
 void CCMouseDropInput(CCCollection(CCString) Files)
 {
     CCAssertLog(Files, "Files must not be null");
-    
-    CCMouseMap State = { .position = atomic_load(&Mouse.position), .drop = { .files = Files } };
-    
-    CCCollection(CCComponent) InputFileDrops = CCInputSystemGetComponents(CCInputMapTypeMouseDrop);
-    
-    CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(InputFileDrops, &Enumerator);
-    
-    for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
-    {
-        CCInputMapMouseCallback Callback = CCInputMapComponentGetCallback(*Input);
-        if (Callback) Callback(*Input, CCMouseEventDrop, State);
-    }
-    
-    CCCollectionDestroy(InputFileDrops);
+        
+    const CCMouseMap Event = { .event = CCMouseEventDrop, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .drop = { .files = CCRetain(Files) } };
+    if (!CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event)) CCCollectionDestroy(Files);
 }
 
 void CCMouseScrollInput(CCVector2D ScrollDelta)
 {
-    CCMouseMap State = { .position = atomic_load(&Mouse.position), .scroll = { .delta = ScrollDelta } };
-    
-    CCCollection(CCComponent) InputScrolls = CCInputSystemGetComponents(CCInputMapTypeMouseScroll);
-    
-    CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(InputScrolls, &Enumerator);
-    
-    for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
-    {
-        CCInputMapMouseCallback Callback = CCInputMapComponentGetCallback(*Input);
-        if (Callback) Callback(*Input, CCMouseEventScroll, State);
-    }
-    
-    CCCollectionDestroy(InputScrolls);
+    const CCMouseMap Event = { .event = CCMouseEventScroll, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .scroll = { .delta = ScrollDelta } };
+    CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
 }
 
 void CCMouseButtonInput(CCMouseButton Button, CCKeyboardAction Action, CCKeyboardModifier Mods)
 {
     if (Button != CCMouseButtonUnknown)
     {
-        CCMouseButtonMap ButtonMap = { .button = Button, .flags = Mods, .state = { .timestamp = CCTimestamp(), .down = Action == CCKeyboardActionPress } };
+        const CCMouseButtonMap ButtonMap = { .button = Button, .flags = Mods, .state = { .timestamp = CCTimestamp(), .down = Action == CCKeyboardActionPress } };
         
-        atomic_store(&Mouse.buttons[Button], ButtonMap);
+        atomic_store_explicit(&Mouse.buttons[Button], (CCMouseButtonStatus){ .flags = Mods, .down = ButtonMap.state.down, .timestamp = ButtonMap.state.timestamp & 0x7ffffffffffffff }, memory_order_relaxed);
         
-        
-        CCMouseMap State = { .position = atomic_load(&Mouse.position), .button = ButtonMap };
-        
-        CCCollection(CCComponent) InputButtons = CCInputSystemGetComponents(CCInputMapTypeMouseButton);
-        
-        CCEnumerator Enumerator;
-        CCCollectionGetEnumerator(InputButtons, &Enumerator);
-        
-        for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
-        {
-            CCInputMapMouseCallback Callback = CCInputMapComponentGetCallback(*Input);
-            if ((CCInputMapMouseButtonComponentGetButton(*Input) == Button) &&
-                (CCInputMapMouseButtonComponentGetIgnoreModifier(*Input) || (CCInputMapMouseButtonComponentGetFlags(*Input) == Mods)))
-            {
-                if (Callback) Callback(*Input, CCMouseEventButton, State);
-            }
-        }
-        
-        CCCollectionDestroy(InputButtons);
+        const CCMouseMap Event = { .event = CCMouseEventButton, .timestamp = ButtonMap.state.timestamp, .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .button = ButtonMap };
+        CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
     }
 }
 
 void CCMousePositionInput(CCVector2D Position)
 {
-    CCVector2D PreviousPosition = atomic_load(&Mouse.position);
+    CCVector2D PreviousPosition = atomic_load_explicit(&Mouse.position, memory_order_relaxed);
     CCVector2D Delta = CCVector2Sub(Position, PreviousPosition);
     
-    atomic_store(&Mouse.position, Position);
+    atomic_store_explicit(&Mouse.position, Position, memory_order_relaxed);
     
-    
-    CCMouseMap State = { .position = atomic_load(&Mouse.position), .move = { .delta = Delta } };
-    
-    CCCollection(CCComponent) InputPositions = CCInputSystemGetComponents(CCInputMapTypeMousePosition);
-    
-    CCEnumerator Enumerator;
-    CCCollectionGetEnumerator(InputPositions, &Enumerator);
-    
-    for (CCComponent *Input = CCCollectionEnumeratorGetCurrent(&Enumerator); Input; Input = CCCollectionEnumeratorNext(&Enumerator))
-    {
-        CCInputMapMouseCallback Callback = CCInputMapComponentGetCallback(*Input);
-        if (Callback) Callback(*Input, CCMouseEventMove, State);
-    }
-    
-    CCCollectionDestroy(InputPositions);
+    const CCMouseMap Event = { .event = CCMouseEventMove, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .move = { .delta = Delta } };
+    CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
 }
 
 void CCMouseEnterInput(_Bool Entered)
 {
-    //TODO: Do we want to provide a callback here?
+    const CCMouseMap Event = { .event = CCMouseEventEntered, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .entered = Entered };
+    CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
 }
 
 void CCMouseStateReset(void)
 {
     for (size_t Loop = 0; Loop < sizeof(Mouse.buttons) / sizeof(typeof(*Mouse.buttons)); Loop++)
     {
-        atomic_store(&Mouse.buttons[Loop], ((CCMouseButtonMap){ .button = (uint32_t)Loop, .state = { .timestamp = -INFINITY, .down = FALSE } }));
+        atomic_store_explicit(&Mouse.buttons[Loop], ((CCMouseButtonStatus){ .timestamp = 0, .down = FALSE }), memory_order_relaxed);
     }
 }
 
-CCMouseButtonState CCMouseButtonGetStateForComponent(CCComponent Component)
+CCMouseButtonState CCMouseButtonGetStateForButton(CCMouseButton Button, CCKeyboardModifier Modifier, _Bool IgnoreModifier)
 {
-    CCAssertLog(CCComponentGetID(Component) == CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID, "Must be a input map mouse button component");
-    
-    CCMouseButtonMap Button = atomic_load(&Mouse.buttons[CCInputMapMouseButtonComponentGetButton(Component)]);
-    if (CCInputMapMouseButtonComponentGetIgnoreModifier(Component) || (CCInputMapMouseButtonComponentGetFlags(Component) == Button.flags))
+    if (Button != CCKeyboardKeycodeUnknown)
     {
-        return Button.state;
+        CCMouseButtonStatus Status = atomic_load_explicit(&Mouse.buttons[Button], memory_order_relaxed);
+        
+        if ((IgnoreModifier) || (Modifier == Status.flags))
+        {
+            return CCMouseButtonStateFromStatus(Status, CCMouseButtonRealTimestamp(Status));
+        }
     }
     
-    return (CCMouseButtonState){ .timestamp = 0.0, .down = FALSE };
+    return (CCMouseButtonState){ .timestamp = 0, .down = FALSE };
 }

@@ -27,7 +27,6 @@
 #define CommonGameKit_Mouse_h
 
 #include <CommonGameKit/Base.h>
-#include <CommonGameKit/Component.h>
 #include <CommonGameKit/Keyboard.h>
 
 /// The button input for the mouse input event. This is compatible with GLFW mouse buttons.
@@ -53,11 +52,12 @@ typedef enum {
     CCMouseEventMove,
     CCMouseEventButton,
     CCMouseEventScroll,
-    CCMouseEventDrop
+    CCMouseEventDrop,
+    CCMouseEventEntered
 } CCMouseEvent;
 
 typedef struct {
-    double timestamp;
+    uint64_t timestamp;
     _Bool down : 1;
 } CC_PACKED CCMouseButtonState;
 
@@ -78,12 +78,15 @@ typedef struct {
 } CCMouseDropItemsMap;
 
 typedef struct {
+    CCMouseEvent event;
+    uint64_t timestamp;
     CCVector2D position;
     union {
         CCMouseMoveMap move;
         CCMouseButtonMap button;
         CCMouseScrollMap scroll;
         CCMouseDropItemsMap drop;
+        _Bool entered;
     };
 } CCMouseMap;
 
@@ -121,10 +124,62 @@ void CCMousePositionInput(CCVector2D Position);
 void CCMouseEnterInput(_Bool Entered);
 
 /*!
- * @brief Get the mouse button state for the given component.
- * @param Component The input map mouse button component.
- * @return The mouse button state for the given component, or empty state if there is none available.
+ * @brief Get the mouse button state for the given button.
+ * @param Button The button to lookup.
+ * @param Modifier The modifier to match. Ignored if @b IgnoreModifier is TRUE.
+ * @param IgnoreModifier Whether the modifier should be matched or not.
+ * @return The mouse button state that matches the given button, or empty state if there is none available.
  */
-CCMouseButtonState CCMouseButtonGetStateForComponent(CCComponent Component);
+CCMouseButtonState CCMouseButtonGetStateForButton(CCMouseButton Button, CCKeyboardModifier Modifier, _Bool IgnoreModifier);
+
+
+#pragma mark - Events
+
+#define CC_TYPE_CCMouseMap(...) CCMouseMap
+#define CC_TYPE_0_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_1_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_2_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_3_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_4_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_5_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_6_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_7_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_8_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_9_CCMouseMap CC_TYPE_CCMouseMap,
+
+#define CC_PRESERVE_CC_TYPE_CCMouseMap CC_TYPE_CCMouseMap
+
+#define CC_TYPE_DECL_CCMouseMap(...) CCMouseMap, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_1_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_2_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_3_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_4_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_5_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_6_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_7_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_8_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_9_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+
+#define CC_MANGLE_TYPE_0_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_1_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_2_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_3_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_4_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_5_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_6_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_7_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_8_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_9_CCMouseMap CCMouseMap
+
+#ifndef CC_MOUSE_EVENT_MAX
+#define CC_MOUSE_EVENT_MAX 1024
+#endif
+
+#define Titem CCMouseMap
+#define Tmax CC_MOUSE_EVENT_MAX
+#include <CommonC/ConcurrentCircularBuffer.h>
+
+extern CCConcurrentCircularBuffer(CCMouseMap, CC_MOUSE_EVENT_MAX) CCMouseInputEventBuffer;
 
 #endif
