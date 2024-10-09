@@ -26,7 +26,6 @@
 #define CC_QUICK_COMPILE
 #include "Keyboard.h"
 #include "Callbacks.h"
-#include <stdatomic.h>
 
 
 typedef struct {
@@ -38,22 +37,33 @@ typedef struct {
 
 _Static_assert(sizeof(CCKeyboardStatus) == 8, "Exceeds 8 bytes");
 
-static inline CCKeyboardState CCKeyboardStateFromStatus(CCKeyboardStatus Key)
+static inline uint64_t CCKeyboardRealTimestamp(CCKeyboardStatus Key)
+{
+    const uint64_t Timestamp = CCTimestamp() / 1000;
+    const uint64_t BaseTimestamp = Timestamp & ~0x1fffffffff;
+    const uint64_t CurrentRelative = Timestamp & 0x1fffffffff;
+    
+    const uint64_t AdjustedTimestamp = CurrentRelative >= Key.timestamp ? (BaseTimestamp | Key.timestamp) : ((BaseTimestamp - 0x2000000000) | Key.timestamp);
+    
+    return AdjustedTimestamp * 1000;
+}
+
+static inline CCKeyboardState CCKeyboardStateFromStatus(CCKeyboardStatus Key, uint64_t Timestamp)
 {
     return (CCKeyboardState){
-        .timestamp = (((CCTimestamp() / 1000) & ~0x1fffffffff) | Key.timestamp) * 1000,
+        .timestamp = Timestamp,
         .down = Key.down,
         .repeat = Key.repeat
     };
 }
 
-static inline CCKeyboardMap CCKeyboardMapFromStatus(CCKeyboardStatus Key, CCKeyboardKeycode Keycode)
+static inline CCKeyboardMap CCKeyboardMapFromStatus(CCKeyboardStatus Key, CCKeyboardKeycode Keycode, uint64_t Timestamp)
 {
     return (CCKeyboardMap){
         .keycode = Keycode,
         .character = Key.character,
         .flags = Key.flags,
-        .state = CCKeyboardStateFromStatus(Key)
+        .state = CCKeyboardStateFromStatus(Key, Timestamp)
     };
 }
 
@@ -99,8 +109,8 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
             TempKey.character = 0;
             atomic_store_explicit(&KeyList[Keycode], TempKey, memory_order_relaxed);
             
-            const CCKeyboardMap Status = CCKeyboardMapFromStatus(TempKey, Keycode);
-            CCConcurrentCircularBufferAddItem(&CCKeyboardInputEventBuffer, &Status);
+            CCKeyboardMap Event = CCKeyboardMapFromStatus(TempKey, Keycode, CCTimestamp());
+            CCConcurrentCircularBufferAddItem(&CCKeyboardInputEventBuffer, &Event);
         }
     }
 }
@@ -112,8 +122,8 @@ void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods)
         TempKey.character = Codepoint;
         atomic_store_explicit(&KeyList[TempKeycode], TempKey, memory_order_relaxed);
         
-        const CCKeyboardMap Status = CCKeyboardMapFromStatus(TempKey, TempKeycode);
-        CCConcurrentCircularBufferAddItem(&CCKeyboardCharInputEventBuffer, &Status);
+        CCKeyboardMap Event = CCKeyboardMapFromStatus(TempKey, TempKeycode, CCTimestamp());
+        CCConcurrentCircularBufferAddItem(&CCKeyboardCharInputEventBuffer, &Event);
     }
 }
 
@@ -135,7 +145,7 @@ CCKeyboardState CCKeyboardGetStateForKeycode(CCKeyboardKeycode Keycode, CCChar M
             ((IgnoreModifier) || (Modifier == Key.flags)) &&
             ((Repeats) || (!Key.repeat)))
         {
-            return CCKeyboardStateFromStatus(Key);
+            return CCKeyboardStateFromStatus(Key, CCKeyboardRealTimestamp(Key));
         }
     }
     
@@ -153,7 +163,7 @@ CCKeyboardState CCKeyboardGetStateForCharacter(CCChar Character, CCKeyboardModif
             if (((IgnoreModifier) || (Modifier == Key.flags)) &&
                 ((Repeats) || (!Key.repeat)))
             {
-                return CCKeyboardStateFromStatus(Key);
+                return CCKeyboardStateFromStatus(Key, CCKeyboardRealTimestamp(Key));
             }
         }
     }

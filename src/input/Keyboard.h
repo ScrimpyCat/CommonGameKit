@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_Keyboard_h
 #define CommonGameKit_Keyboard_h
 
-#include <CommonGameKit/Component.h>
+#include <CommonGameKit/Base.h>
 
 /// The action type of the keyboard input event. This is compatible with GLFW actions.
 typedef enum {
@@ -246,7 +246,7 @@ CCKeyboardState CCKeyboardGetStateForCharacter(CCChar Character, CCKeyboardModif
 #define CC_TYPE_8_CCKeyboardMap CC_TYPE_CCKeyboardMap,
 #define CC_TYPE_9_CCKeyboardMap CC_TYPE_CCKeyboardMap,
 
-#define CC_PRESERVE_CC_TYPE_CCConcurrentPoolStage CC_TYPE_CCConcurrentPoolStage
+#define CC_PRESERVE_CC_TYPE_CCKeyboardMap CC_TYPE_CCKeyboardMap
 
 #define CC_TYPE_DECL_CCKeyboardMap(...) CCKeyboardMap, __VA_ARGS__
 #define CC_TYPE_DECL_0_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
