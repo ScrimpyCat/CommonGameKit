@@ -57,9 +57,9 @@ static inline CCKeyboardState CCKeyboardStateFromStatus(CCKeyboardStatus Key, ui
     };
 }
 
-static inline CCKeyboardMap CCKeyboardMapFromStatus(CCKeyboardStatus Key, CCKeyboardKeycode Keycode, uint64_t Timestamp)
+static inline CCKeyboardEvent CCKeyboardEventFromStatus(CCKeyboardStatus Key, CCKeyboardKeycode Keycode, uint64_t Timestamp)
 {
-    return (CCKeyboardMap){
+    return (CCKeyboardEvent){
         .keycode = Keycode,
         .character = Key.character,
         .flags = Key.flags,
@@ -69,8 +69,8 @@ static inline CCKeyboardMap CCKeyboardMapFromStatus(CCKeyboardStatus Key, CCKeyb
 
 static _Atomic(CCKeyboardStatus) KeyList[CCKeyboardKeycodeCount];
 
-CCConcurrentCircularBuffer(CCKeyboardMap, CC_KEYBOARD_EVENT_MAX) CCKeyboardInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
-CCConcurrentCircularBuffer(CCKeyboardMap, CC_KEYBOARD_EVENT_MAX) CCKeyboardCharInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
+CCConcurrentCircularBuffer(CCKeyboardEvent, CC_KEYBOARD_EVENT_MAX) CCKeyboardInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
+CCConcurrentCircularBuffer(CCKeyboardEvent, CC_KEYBOARD_EVENT_MAX) CCKeyboardCharInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
 
 /*
  TODO: Unsure if we can make this guarantee across all platforms or with future minor verson of GLFW.
@@ -109,7 +109,7 @@ void CCKeyboardInput(CCKeyboardKeycode Keycode, CCKeyboardAction Action, CCKeybo
             TempKey.character = 0;
             atomic_store_explicit(&KeyList[Keycode], TempKey, memory_order_relaxed);
             
-            CCKeyboardMap Event = CCKeyboardMapFromStatus(TempKey, Keycode, CCTimestamp());
+            CCKeyboardEvent Event = CCKeyboardEventFromStatus(TempKey, Keycode, CCTimestamp());
             CCConcurrentCircularBufferAddItem(&CCKeyboardInputEventBuffer, &Event);
         }
     }
@@ -122,7 +122,7 @@ void CCKeyboardCharInput(CCChar Codepoint, CCKeyboardModifier Mods)
         TempKey.character = Codepoint;
         atomic_store_explicit(&KeyList[TempKeycode], TempKey, memory_order_relaxed);
         
-        CCKeyboardMap Event = CCKeyboardMapFromStatus(TempKey, TempKeycode, CCTimestamp());
+        CCKeyboardEvent Event = CCKeyboardEventFromStatus(TempKey, TempKeycode, CCTimestamp());
         CCConcurrentCircularBufferAddItem(&CCKeyboardCharInputEventBuffer, &Event);
     }
 }

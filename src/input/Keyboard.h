@@ -185,9 +185,9 @@ typedef struct {
     CCChar character; // : 21
     CCKeyboardModifier flags : 4;
     CCKeyboardState state;
-} CC_PACKED CCKeyboardMap;
+} CC_PACKED CCKeyboardEvent;
 
-_Static_assert(sizeof(CCKeyboardMap) <= 16, "Exceeds 16 bytes");
+_Static_assert(sizeof(CCKeyboardEvent) <= 16, "Exceeds 16 bytes");
 
 /*!
  * @brief Register a new keyboard input event.
@@ -234,53 +234,53 @@ CCKeyboardState CCKeyboardGetStateForCharacter(CCChar Character, CCKeyboardModif
 
 #pragma mark - Events
 
-#define CC_TYPE_CCKeyboardMap(...) CCKeyboardMap
-#define CC_TYPE_0_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_1_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_2_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_3_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_4_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_5_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_6_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_7_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_8_CCKeyboardMap CC_TYPE_CCKeyboardMap,
-#define CC_TYPE_9_CCKeyboardMap CC_TYPE_CCKeyboardMap,
+#define CC_TYPE_CCKeyboardEvent(...) CCKeyboardEvent
+#define CC_TYPE_0_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_1_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_2_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_3_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_4_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_5_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_6_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_7_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_8_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
+#define CC_TYPE_9_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
 
-#define CC_PRESERVE_CC_TYPE_CCKeyboardMap CC_TYPE_CCKeyboardMap
+#define CC_PRESERVE_CC_TYPE_CCKeyboardEvent CC_TYPE_CCKeyboardEvent
 
-#define CC_TYPE_DECL_CCKeyboardMap(...) CCKeyboardMap, __VA_ARGS__
-#define CC_TYPE_DECL_0_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_1_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_2_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_3_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_4_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_5_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_6_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_7_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_8_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
-#define CC_TYPE_DECL_9_CCKeyboardMap CC_TYPE_DECL_CCKeyboardMap,
+#define CC_TYPE_DECL_CCKeyboardEvent(...) CCKeyboardEvent, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_1_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_2_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_3_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_4_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_5_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_6_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_7_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_8_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
+#define CC_TYPE_DECL_9_CCKeyboardEvent CC_TYPE_DECL_CCKeyboardEvent,
 
-#define CC_MANGLE_TYPE_0_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_1_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_2_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_3_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_4_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_5_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_6_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_7_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_8_CCKeyboardMap CCKeyboardMap
-#define CC_MANGLE_TYPE_9_CCKeyboardMap CCKeyboardMap
+#define CC_MANGLE_TYPE_0_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_1_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_2_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_3_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_4_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_5_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_6_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_7_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_8_CCKeyboardEvent CCKeyboardEvent
+#define CC_MANGLE_TYPE_9_CCKeyboardEvent CCKeyboardEvent
 
 #ifndef CC_KEYBOARD_EVENT_MAX
 #define CC_KEYBOARD_EVENT_MAX 1024
 #endif
 
-#define Titem CCKeyboardMap
+#define Titem CCKeyboardEvent
 #define Tmax CC_KEYBOARD_EVENT_MAX
 #include <CommonC/ConcurrentCircularBuffer.h>
 
-extern CCConcurrentCircularBuffer(CCKeyboardMap, CC_KEYBOARD_EVENT_MAX) CCKeyboardInputEventBuffer;
+extern CCConcurrentCircularBuffer(CCKeyboardEvent, CC_KEYBOARD_EVENT_MAX) CCKeyboardInputEventBuffer;
 
-extern CCConcurrentCircularBuffer(CCKeyboardMap, CC_KEYBOARD_EVENT_MAX) CCKeyboardCharInputEventBuffer;
+extern CCConcurrentCircularBuffer(CCKeyboardEvent, CC_KEYBOARD_EVENT_MAX) CCKeyboardCharInputEventBuffer;
 
 #endif

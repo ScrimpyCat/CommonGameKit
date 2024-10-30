@@ -49,12 +49,12 @@ typedef enum {
 } CCMouseButton;
 
 typedef enum {
-    CCMouseEventMove,
-    CCMouseEventButton,
-    CCMouseEventScroll,
-    CCMouseEventDrop,
-    CCMouseEventEntered
-} CCMouseEvent;
+    CCMouseEventTypeMove,
+    CCMouseEventTypeButton,
+    CCMouseEventTypeScroll,
+    CCMouseEventTypeDrop,
+    CCMouseEventTypeEntered
+} CCMouseEventType;
 
 typedef struct {
     uint64_t timestamp;
@@ -65,30 +65,30 @@ typedef struct {
     CCMouseButton button : 4;
     CCKeyboardModifier flags : 4;
     CCMouseButtonState state;
-} CC_PACKED CCMouseButtonMap;
+} CC_PACKED CCMouseButtonEvent;
 
-_Static_assert(sizeof(CCMouseButtonMap) <= 16, "Exceeds 16 bytes");
+_Static_assert(sizeof(CCMouseButtonEvent) <= 16, "Exceeds 16 bytes");
 
 typedef struct {
     CCVector2D delta;
-} CCMouseMoveMap, CCMouseScrollMap;
+} CCMouseMoveEvent, CCMouseScrollEvent;
 
 typedef struct {
     CCCollection(CCString) files;
-} CCMouseDropItemsMap;
+} CCMouseDropItemsEvent;
 
 typedef struct {
-    CCMouseEvent event;
+    CCMouseEventType type;
     uint64_t timestamp;
     CCVector2D position;
     union {
-        CCMouseMoveMap move;
-        CCMouseButtonMap button;
-        CCMouseScrollMap scroll;
-        CCMouseDropItemsMap drop;
+        CCMouseMoveEvent move;
+        CCMouseButtonEvent button;
+        CCMouseScrollEvent scroll;
+        CCMouseDropItemsEvent drop;
         _Bool entered;
     };
-} CCMouseMap;
+} CCMouseEvent;
 
 /*!
  * @brief Register a mouse drop event.
@@ -135,51 +135,51 @@ CCMouseButtonState CCMouseButtonGetStateForButton(CCMouseButton Button, CCKeyboa
 
 #pragma mark - Events
 
-#define CC_TYPE_CCMouseMap(...) CCMouseMap
-#define CC_TYPE_0_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_1_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_2_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_3_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_4_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_5_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_6_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_7_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_8_CCMouseMap CC_TYPE_CCMouseMap,
-#define CC_TYPE_9_CCMouseMap CC_TYPE_CCMouseMap,
+#define CC_TYPE_CCMouseEvent(...) CCMouseEvent
+#define CC_TYPE_0_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_1_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_2_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_3_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_4_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_5_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_6_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_7_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_8_CCMouseEvent CC_TYPE_CCMouseEvent,
+#define CC_TYPE_9_CCMouseEvent CC_TYPE_CCMouseEvent,
 
-#define CC_PRESERVE_CC_TYPE_CCMouseMap CC_TYPE_CCMouseMap
+#define CC_PRESERVE_CC_TYPE_CCMouseEvent CC_TYPE_CCMouseEvent
 
-#define CC_TYPE_DECL_CCMouseMap(...) CCMouseMap, __VA_ARGS__
-#define CC_TYPE_DECL_0_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_1_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_2_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_3_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_4_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_5_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_6_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_7_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_8_CCMouseMap CC_TYPE_DECL_CCMouseMap,
-#define CC_TYPE_DECL_9_CCMouseMap CC_TYPE_DECL_CCMouseMap,
+#define CC_TYPE_DECL_CCMouseEvent(...) CCMouseEvent, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_1_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_2_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_3_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_4_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_5_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_6_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_7_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_8_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
+#define CC_TYPE_DECL_9_CCMouseEvent CC_TYPE_DECL_CCMouseEvent,
 
-#define CC_MANGLE_TYPE_0_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_1_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_2_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_3_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_4_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_5_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_6_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_7_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_8_CCMouseMap CCMouseMap
-#define CC_MANGLE_TYPE_9_CCMouseMap CCMouseMap
+#define CC_MANGLE_TYPE_0_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_1_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_2_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_3_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_4_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_5_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_6_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_7_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_8_CCMouseEvent CCMouseEvent
+#define CC_MANGLE_TYPE_9_CCMouseEvent CCMouseEvent
 
 #ifndef CC_MOUSE_EVENT_MAX
 #define CC_MOUSE_EVENT_MAX 1024
 #endif
 
-#define Titem CCMouseMap
+#define Titem CCMouseEvent
 #define Tmax CC_MOUSE_EVENT_MAX
 #include <CommonC/ConcurrentCircularBuffer.h>
 
-extern CCConcurrentCircularBuffer(CCMouseMap, CC_MOUSE_EVENT_MAX) CCMouseInputEventBuffer;
+extern CCConcurrentCircularBuffer(CCMouseEvent, CC_MOUSE_EVENT_MAX) CCMouseInputEventBuffer;
 
 #endif

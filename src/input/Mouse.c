@@ -54,33 +54,24 @@ static inline CCMouseButtonState CCMouseButtonStateFromStatus(CCMouseButtonStatu
     };
 }
 
-static inline CCMouseButtonMap CCMouseButtonMapFromStatus(CCMouseButtonStatus Mouse, CCMouseButton Button, uint64_t Timestamp)
-{
-    return (CCMouseButtonMap){
-        .button = Button,
-        .flags = Mouse.flags,
-        .state = CCMouseButtonStateFromStatus(Mouse, Timestamp)
-    };
-}
-
 static struct {
     _Atomic(CCVector2D) position;
     _Atomic(CCMouseButtonStatus) buttons[CCMouseButtonCount];
 } Mouse;
 
-CCConcurrentCircularBuffer(CCMouseMap, CC_MOUSE_EVENT_MAX) CCMouseInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
+CCConcurrentCircularBuffer(CCMouseEvent, CC_MOUSE_EVENT_MAX) CCMouseInputEventBuffer = CC_CONCURRENT_CIRCULAR_BUFFER_INIT;
 
 void CCMouseDropInput(CCCollection(CCString) Files)
 {
     CCAssertLog(Files, "Files must not be null");
         
-    const CCMouseMap Event = { .event = CCMouseEventDrop, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .drop = { .files = CCRetain(Files) } };
+    const CCMouseEvent Event = { .type = CCMouseEventTypeDrop, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .drop = { .files = CCRetain(Files) } };
     if (!CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event)) CCCollectionDestroy(Files);
 }
 
 void CCMouseScrollInput(CCVector2D ScrollDelta)
 {
-    const CCMouseMap Event = { .event = CCMouseEventScroll, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .scroll = { .delta = ScrollDelta } };
+    const CCMouseEvent Event = { .type = CCMouseEventTypeScroll, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .scroll = { .delta = ScrollDelta } };
     CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
 }
 
@@ -88,11 +79,11 @@ void CCMouseButtonInput(CCMouseButton Button, CCKeyboardAction Action, CCKeyboar
 {
     if (Button != CCMouseButtonUnknown)
     {
-        const CCMouseButtonMap ButtonMap = { .button = Button, .flags = Mods, .state = { .timestamp = CCTimestamp(), .down = Action == CCKeyboardActionPress } };
+        const CCMouseButtonEvent ButtonEvent = { .button = Button, .flags = Mods, .state = { .timestamp = CCTimestamp(), .down = Action == CCKeyboardActionPress } };
         
-        atomic_store_explicit(&Mouse.buttons[Button], (CCMouseButtonStatus){ .flags = Mods, .down = ButtonMap.state.down, .timestamp = ButtonMap.state.timestamp & 0x7ffffffffffffff }, memory_order_relaxed);
+        atomic_store_explicit(&Mouse.buttons[Button], (CCMouseButtonStatus){ .flags = Mods, .down = ButtonEvent.state.down, .timestamp = ButtonEvent.state.timestamp & 0x7ffffffffffffff }, memory_order_relaxed);
         
-        const CCMouseMap Event = { .event = CCMouseEventButton, .timestamp = ButtonMap.state.timestamp, .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .button = ButtonMap };
+        const CCMouseEvent Event = { .type = CCMouseEventTypeButton, .timestamp = ButtonEvent.state.timestamp, .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .button = ButtonEvent };
         CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
     }
 }
@@ -104,13 +95,13 @@ void CCMousePositionInput(CCVector2D Position)
     
     atomic_store_explicit(&Mouse.position, Position, memory_order_relaxed);
     
-    const CCMouseMap Event = { .event = CCMouseEventMove, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .move = { .delta = Delta } };
+    const CCMouseEvent Event = { .type = CCMouseEventTypeMove, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .move = { .delta = Delta } };
     CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
 }
 
 void CCMouseEnterInput(_Bool Entered)
 {
-    const CCMouseMap Event = { .event = CCMouseEventEntered, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .entered = Entered };
+    const CCMouseEvent Event = { .type = CCMouseEventTypeEntered, .timestamp = CCTimestamp(), .position = atomic_load_explicit(&Mouse.position, memory_order_relaxed), .entered = Entered };
     CCConcurrentCircularBufferAddItem(&CCMouseInputEventBuffer, &Event);
 }
 
