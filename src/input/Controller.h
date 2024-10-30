@@ -30,23 +30,65 @@
 #include <CommonGameKit/Component.h>
 
 typedef enum {
-    CCControllerEventAxes,
-    CCControllerEventButton
-} CCControllerEvent;
+    CCControllerHatCenter,
+    CCControllerHatUp = (1 << 0),
+    CCControllerHatRight = (1 << 1),
+    CCControllerHatDown = (1 << 2),
+    CCControllerHatLeft = (1 << 3),
+    CCControllerHatRightUp = CCControllerHatRight | CCControllerHatUp,
+    CCControllerHatRightDown = CCControllerHatRight | CCControllerHatDown,
+    CCControllerHatLeftUp = CCControllerHatLeft | CCControllerHatUp,
+    CCControllerHatLeftDown = CCControllerHatLeft | CCControllerHatDown
+} CCControllerHat;
+
+typedef enum {
+    CCControllerEventTypeConnection,
+    CCControllerEventTypeAxis,
+    CCControllerEventTypeButton,
+    CCControllerEventTypeHat
+} CCControllerEventType;
 
 typedef struct {
-    double timestamp;
+    int32_t index;
+    _Bool flip;
+    _Bool oneSided;
+} CCControllerAxisMap;
+
+typedef struct {
+    CCString name;
+    uint64_t timestamp;
+    CCArray(float) axes;
+    CCArray(_Bool) buttons;
+    CCArray(CCControllerHat) hats;
+    _Bool connected;
+} CCController;
+
+typedef struct {
+    size_t index;
+    float value;
+} CCControllerAxisEvent;
+
+typedef struct {
+    size_t index;
     _Bool down;
-} CCControllerButtonState;
+} CCControllerButtonEvent;
 
 typedef struct {
-    CCVector3D position;
-} CCControllerAxesState;
+    size_t index;
+    CCControllerHat position;
+} CCControllerHatEvent;
 
-typedef union {
-    CCControllerAxesState axes;
-    CCControllerButtonState button;
-} CCControllerState;
+typedef struct {
+    CCControllerEventType type;
+    uint64_t timestamp;
+    size_t index;
+    union {
+        CCControllerAxisEvent axis;
+        CCControllerButtonEvent button;
+        CCControllerHatEvent hat;
+        _Bool connected;
+    };
+} CCControllerEvent;
 
 /*!
  * @brief A callback to get the device name for the controller.
@@ -58,19 +100,34 @@ typedef CC_NEW CCString (*CCControllerGetNameCallback)(size_t Index);
 /*!
  * @brief A callback to update the axes of a controller.
  * @param Index The index to identify the controller by.
- * @param Axes The list of controller axes. Axes must be of type @b float. The collection will either be
+ * @param Axes The list of controller axes. Axes must be of type @b float. The array will either be
  *        empty or populated with the previous axes' values.
  */
-typedef void (*CCControllerUpdateAxesCallback)(size_t Index, CCOrderedCollection(float) Axes);
+typedef void (*CCControllerUpdateAxesCallback)(size_t Index, CCArray(float) Axes);
 
 /*!
  * @brief A callback to update the buttons of a controller.
  * @param Index The index to identify the controller by.
  * @param Buttons The list of controller buttons. Buttons must be of type @b _Bool, where TRUE represents
- *        a down state and FALSE represents an up state. The collection will either be empty or populated
- *        with the previous buttons' values.
+ *        a down state and FALSE represents an up state. The array will either be empty or populated with
+ *        the previous buttons' values.
  */
-typedef void (*CCControllerUpdateButtonsCallback)(size_t Index, CCOrderedCollection(_Bool) Buttons);
+typedef void (*CCControllerUpdateButtonsCallback)(size_t Index, CCArray(_Bool) Buttons);
+
+/*!
+ * @brief A callback to update the hats of a controller.
+ * @param Index The index to identify the controller by.
+ * @param Hats The list of controller hats. Hats must be of type @b CCControllerHat. The array will either
+ *        be empty or populated with the previous hats' values.
+ */
+typedef void (*CCControllerUpdateHatsCallback)(size_t Index, CCArray(CCControllerHat) Hats);
+
+/*!
+ * @brief How much movement of the analog input is needed to trigger an event.
+ * @description The value should be between 0.0 to 1.0, ranging from the smallest amount of movement to the
+ *              most before triggering an event.
+ */
+extern float CCControllerAxisEventSensitivity;
 
 /*!
  * @brief Setup the controller manager.
@@ -83,8 +140,9 @@ typedef void (*CCControllerUpdateButtonsCallback)(size_t Index, CCOrderedCollect
  * @param Name The callback to retrieve the name for the controller.
  * @param Axes The callback to retrieve the axes' state for the controller.
  * @param Buttons The callback to retrieve the buttons' state for the controller.
+ * @param Hats The callback to retrieve the hats' state for the controller.
  */
-void CCControllerSetup(size_t Count, CCControllerGetNameCallback Name, CCControllerUpdateAxesCallback Axes, CCControllerUpdateButtonsCallback Buttons);
+void CCControllerSetup(size_t Count, CCControllerGetNameCallback Name, CCControllerUpdateAxesCallback Axes, CCControllerUpdateButtonsCallback Buttons, CCControllerUpdateHatsCallback Hats);
 
 /*!
  * @brief Indicate that a controller has been connected/disconnected.
@@ -94,16 +152,170 @@ void CCControllerSetup(size_t Count, CCControllerGetNameCallback Name, CCControl
 void CCControllerConnect(size_t Index, _Bool Connected);
 
 /*!
- * @brief Update the state of the controllers.
- * @description The more frequently this is polled, the more accurate the current state will be.
+ * @brief Update the state of the controllers with non-zero based events.
+ * @description The more frequently this is polled, the more accurate the current state will be. Events are
+ *              added for any non-zero/non-neutral state.
  */
 void CCControllerUpdateState(void);
 
 /*!
- * @brief Get the controller state for the given component.
- * @param Component The input map controller component.
- * @return The controller state for the given component, or empty state if there is none available.
+ * @brief Update the state of the controllers with diff based events.
+ * @description The more frequently this is polled, the more accurate the current state will be. Events are
+ *              added whenever they differ from the previous state.
  */
-CCControllerState CCControllerGetStateForComponent(CCComponent Component);
+void CCControllerDiffUpdateState(void);
+
+/*!
+ * @brief Sync the current controller state with the latest recorded state.
+ * @note This should only be called from one thread before any other thread checks the controller state.
+ */
+void CCControllerSync(void);
+
+/*!
+ * @brief Get the controller state.
+ * @note This should only be used after another thread has synced the controller state, after which the controller
+ *       state can be used up until a thread calls @b CCControllerSync again.
+ *
+ * @param Index The connection index for the controller.
+ * @return The controller state at that connection, or NULL if there is none.
+ */
+const CCController *CCControllerGetController(size_t Index);
+
+/*!
+ * @brief Check whether the controller has the provided device name.
+ * @param State The controller state.
+ * @param Device The device name to check.
+ * @return Whether the controller does have the device name (TRUE), or not (FALSE).
+ */
+_Bool CCControllerIsDevice(const CCController *State, CCString Device);
+
+/*!
+ * @brief Get the controller joystick state for 1D movement.
+ * @param State The controller state.
+ * @param Resolution The precision of the analog input. This is useful for smoothing out the values, so smaller
+ *                   movements end up being ignored.
+
+ * @param Deadzone The deadzone region of the joystick. The deadzone is the region of the joystick that will be
+ *                 mapped to 0. This is useful to alleviate any noise due to the analog input.
+ *
+ * @param X How the x-axis of the joystick should be mapped.
+ * @return The joystick state.
+ */
+float CCControllerGetStateForJoystick1D(const CCController *State, uint8_t Resolution, float Deadzone, CCControllerAxisMap X);
+
+/*!
+ * @brief Get the controller joystick state for 1D movement.
+ * @param State The controller state.
+ * @param Resolution The precision of the analog input. This is useful for smoothing out the values, so smaller
+ *                   movements end up being ignored.
+
+ * @param Deadzone The deadzone region of the joystick. The deadzone is the region of the joystick that will be
+ *                 mapped to 0. This is useful to alleviate any noise due to the analog input.
+ *
+ * @param X How the x-axis of the joystick should be mapped.
+ * @param Y How the y-axis of the joystick should be mapped.
+ * @return The joystick state.
+ */
+CCVector2D CCControllerGetStateForJoystick2D(const CCController *State, uint8_t Resolution, float Deadzone, CCControllerAxisMap X, CCControllerAxisMap Y);
+
+/*!
+ * @brief Get the controller joystick state for 1D movement.
+ * @param State The controller state.
+ * @param Resolution The precision of the analog input. This is useful for smoothing out the values, so smaller
+ *                   movements end up being ignored.
+
+ * @param Deadzone The deadzone region of the joystick. The deadzone is the region of the joystick that will be
+ *                 mapped to 0. This is useful to alleviate any noise due to the analog input.
+ *
+ * @param X How the x-axis of the joystick should be mapped.
+ * @param Y How the y-axis of the joystick should be mapped.
+ * @param Z How the z-axis of the joystick should be mapped.
+ * @return The joystick state.
+ */
+CCVector3D CCControllerGetStateForJoystick3D(const CCController *State, uint8_t Resolution, float Deadzone, CCControllerAxisMap X, CCControllerAxisMap Y, CCControllerAxisMap Z);
+
+/*!
+ * @brief Get the controller joystick state for 1D movement.
+ * @param State The controller state.
+ * @param Resolution The precision of the analog input. This is useful for smoothing out the values, so smaller
+ *                   movements end up being ignored.
+
+ * @param Deadzone The deadzone region of the joystick. The deadzone is the region of the joystick that will be
+ *                 mapped to 0. This is useful to alleviate any noise due to the analog input.
+ *
+ * @param X How the x-axis of the joystick should be mapped.
+ * @param Y How the y-axis of the joystick should be mapped.
+ * @param Z How the z-axis of the joystick should be mapped.
+ * @param W How the w-axis of the joystick should be mapped.
+ * @return The joystick state.
+ */
+CCVector4D CCControllerGetStateForJoystick4D(const CCController *State, uint8_t Resolution, float Deadzone, CCControllerAxisMap X, CCControllerAxisMap Y, CCControllerAxisMap Z, CCControllerAxisMap W);
+
+/*!
+ * @brief Get the controller button state.
+ * @param State The controller state.
+ * @param Button The button to get the state of. Use -1 to reference no button.
+ * @return Whether the button is active (TRUE), or inactive (FALSE). If button does not exist FALSE is returned.
+ */
+_Bool CCControllerGetStateForButton(const CCController *State, int32_t Button);
+
+/*!
+ * @brief Get the controller hat state.
+ * @param State The controller state.
+ * @param Hat The hat to get the state of. Use -1 to reference no hat.
+ * @return The state of the controller hat. If button does not exist @b CCControllerHatCenter is returned.
+ */
+CCControllerHat CCControllerGetStateForHat(const CCController *State, int32_t Hat);
+
+
+#pragma mark - Events
+
+#define CC_TYPE_CCControllerEvent(...) CCControllerEvent
+#define CC_TYPE_0_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_1_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_2_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_3_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_4_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_5_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_6_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_7_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_8_CCControllerEvent CC_TYPE_CCControllerEvent,
+#define CC_TYPE_9_CCControllerEvent CC_TYPE_CCControllerEvent,
+
+#define CC_PRESERVE_CC_TYPE_CCControllerEvent CC_TYPE_CCControllerEvent
+
+#define CC_TYPE_DECL_CCControllerEvent(...) CCControllerEvent, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_1_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_2_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_3_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_4_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_5_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_6_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_7_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_8_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+#define CC_TYPE_DECL_9_CCControllerEvent CC_TYPE_DECL_CCControllerEvent,
+
+#define CC_MANGLE_TYPE_0_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_1_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_2_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_3_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_4_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_5_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_6_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_7_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_8_CCControllerEvent CCControllerEvent
+#define CC_MANGLE_TYPE_9_CCControllerEvent CCControllerEvent
+
+#ifndef CC_CONTROLLER_EVENT_MAX
+#define CC_CONTROLLER_EVENT_MAX 1024
+#endif
+
+#define Titem CCControllerEvent
+#define Tmax CC_CONTROLLER_EVENT_MAX
+#include <CommonC/ConcurrentCircularBuffer.h>
+
+extern CCConcurrentCircularBuffer(CCControllerEvent, CC_CONTROLLER_EVENT_MAX) CCControllerInputEventBuffer;
+
 
 #endif
