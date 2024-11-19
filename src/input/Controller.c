@@ -33,6 +33,12 @@
 #include "InputMapControllerAxesComponent.h"
 #include "InputMapControllerButtonComponent.h"
 
+const CCReflectStruct3 CC_REFLECT(CCControllerAxisMap) = CC_REFLECT_STRUCT(CCControllerAxisMap,
+    (index, &CC_REFLECT(int32_t)),
+    (flip, &CC_REFLECT(_Bool)),
+    (oneSided, &CC_REFLECT(_Bool))
+);
+
 #ifndef CC_CONTROLLER_MAX
 #define CC_CONTROLLER_MAX 16
 #endif
@@ -420,9 +426,26 @@ void CCControllerSync(void)
     }
 }
 
+static _Thread_local struct {
+    const CCController *state;
+    _Bool cached;
+} ControllerCache[CC_CONTROLLER_MAX];
+
+void CCControllerClearCache(void)
+{
+    memset(ControllerCache, 0, sizeof(ControllerCache));
+}
+
 const CCController *CCControllerGetController(size_t Index)
 {
-    if (Index < ControllerCount) return atomic_load_explicit(&ControllerSnapshot[Index], memory_order_consume);
+    if (Index < ControllerCount)
+    {
+        if (ControllerCache[Index].cached) return ControllerCache[Index].state;
+        
+        ControllerCache[Index].cached = TRUE;
+        
+        return ControllerCache[Index].state = atomic_load_explicit(&ControllerSnapshot[Index], memory_order_consume);
+    }
     
     return NULL;
 }

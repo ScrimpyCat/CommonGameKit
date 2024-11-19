@@ -232,7 +232,7 @@ CCKeyboardState CCKeyboardGetStateForKeycode(CCKeyboardKeycode Keycode, CCChar M
 CCKeyboardState CCKeyboardGetStateForCharacter(CCChar Character, CCKeyboardModifier Modifier, _Bool IgnoreModifier, _Bool Repeats);
 
 
-#pragma mark - Events
+#pragma mark - Template Types
 
 #define CC_TYPE_CCKeyboardEvent(...) CCKeyboardEvent
 #define CC_TYPE_0_CCKeyboardEvent CC_TYPE_CCKeyboardEvent,
@@ -270,6 +270,92 @@ CCKeyboardState CCKeyboardGetStateForCharacter(CCChar Character, CCKeyboardModif
 #define CC_MANGLE_TYPE_7_CCKeyboardEvent CCKeyboardEvent
 #define CC_MANGLE_TYPE_8_CCKeyboardEvent CCKeyboardEvent
 #define CC_MANGLE_TYPE_9_CCKeyboardEvent CCKeyboardEvent
+
+
+#define CC_TYPE_CCKeyboardModifier(...) CCKeyboardModifier
+#define CC_TYPE_0_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_1_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_2_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_3_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_4_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_5_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_6_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_7_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_8_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+#define CC_TYPE_9_CCKeyboardModifier CC_TYPE_CCKeyboardModifier,
+
+#define CC_PRESERVE_CC_TYPE_CCKeyboardModifier CC_TYPE_CCKeyboardModifier
+
+#define CC_TYPE_DECL_CCKeyboardModifier(...) CCKeyboardModifier, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_1_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_2_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_3_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_4_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_5_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_6_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_7_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_8_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+#define CC_TYPE_DECL_9_CCKeyboardModifier CC_TYPE_DECL_CCKeyboardModifier,
+
+#define CC_MANGLE_TYPE_0_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_1_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_2_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_3_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_4_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_5_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_6_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_7_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_8_CCKeyboardModifier CCKeyboardModifier
+#define CC_MANGLE_TYPE_9_CCKeyboardModifier CCKeyboardModifier
+
+
+#define CC_TYPE_CCKeyboardKeycode(...) CCKeyboardKeycode
+#define CC_TYPE_0_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_1_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_2_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_3_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_4_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_5_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_6_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_7_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_8_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+#define CC_TYPE_9_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode,
+
+#define CC_PRESERVE_CC_TYPE_CCKeyboardKeycode CC_TYPE_CCKeyboardKeycode
+
+#define CC_TYPE_DECL_CCKeyboardKeycode(...) CCKeyboardKeycode, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_1_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_2_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_3_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_4_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_5_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_6_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_7_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_8_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+#define CC_TYPE_DECL_9_CCKeyboardKeycode CC_TYPE_DECL_CCKeyboardKeycode,
+
+#define CC_MANGLE_TYPE_0_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_1_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_2_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_3_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_4_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_5_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_6_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_7_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_8_CCKeyboardKeycode CCKeyboardKeycode
+#define CC_MANGLE_TYPE_9_CCKeyboardKeycode CCKeyboardKeycode
+
+
+#pragma mark - Reflection
+
+extern const CCReflectInteger CC_REFLECT(CCKeyboardModifier);
+
+extern const CCReflectInteger CC_REFLECT(CCKeyboardKeycode);
+
+
+#pragma mark - Events
 
 #ifndef CC_KEYBOARD_EVENT_MAX
 #define CC_KEYBOARD_EVENT_MAX 1024

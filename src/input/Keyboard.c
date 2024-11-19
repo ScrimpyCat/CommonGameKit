@@ -28,6 +28,11 @@
 #include "Callbacks.h"
 
 
+const CCReflectInteger CC_REFLECT(CCKeyboardModifier) = CC_REFLECT_SIGNED_INTEGER(CCKeyboardModifier, CCReflectEndianNative);
+
+const CCReflectInteger CC_REFLECT(CCKeyboardKeycode) = CC_REFLECT_SIGNED_INTEGER(CCKeyboardKeycode, CCReflectEndianNative);
+
+
 typedef struct {
     CCChar character : 21;
     CCKeyboardModifier flags : 4;

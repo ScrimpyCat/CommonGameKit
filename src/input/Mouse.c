@@ -27,6 +27,10 @@
 #include "Mouse.h"
 #include "Callbacks.h"
 
+
+const CCReflectInteger CC_REFLECT(CCMouseButton) = CC_REFLECT_SIGNED_INTEGER(CCMouseButton, CCReflectEndianNative);
+
+
 typedef struct {
     CCKeyboardModifier flags : 4;
     _Bool down : 1;

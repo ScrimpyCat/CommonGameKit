@@ -133,7 +133,7 @@ void CCMouseEnterInput(_Bool Entered);
 CCMouseButtonState CCMouseButtonGetStateForButton(CCMouseButton Button, CCKeyboardModifier Modifier, _Bool IgnoreModifier);
 
 
-#pragma mark - Events
+#pragma mark - Template Types
 
 #define CC_TYPE_CCMouseEvent(...) CCMouseEvent
 #define CC_TYPE_0_CCMouseEvent CC_TYPE_CCMouseEvent,
@@ -171,6 +171,52 @@ CCMouseButtonState CCMouseButtonGetStateForButton(CCMouseButton Button, CCKeyboa
 #define CC_MANGLE_TYPE_7_CCMouseEvent CCMouseEvent
 #define CC_MANGLE_TYPE_8_CCMouseEvent CCMouseEvent
 #define CC_MANGLE_TYPE_9_CCMouseEvent CCMouseEvent
+
+
+#define CC_TYPE_CCMouseButton(...) CCMouseButton
+#define CC_TYPE_0_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_1_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_2_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_3_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_4_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_5_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_6_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_7_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_8_CCMouseButton CC_TYPE_CCMouseButton,
+#define CC_TYPE_9_CCMouseButton CC_TYPE_CCMouseButton,
+
+#define CC_PRESERVE_CC_TYPE_CCMouseButton CC_TYPE_CCMouseButton
+
+#define CC_TYPE_DECL_CCMouseButton(...) CCMouseButton, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_1_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_2_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_3_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_4_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_5_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_6_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_7_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_8_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+#define CC_TYPE_DECL_9_CCMouseButton CC_TYPE_DECL_CCMouseButton,
+
+#define CC_MANGLE_TYPE_0_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_1_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_2_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_3_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_4_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_5_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_6_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_7_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_8_CCMouseButton CCMouseButton
+#define CC_MANGLE_TYPE_9_CCMouseButton CCMouseButton
+
+
+#pragma mark - Reflection
+
+extern const CCReflectInteger CC_REFLECT(CCMouseButton);
+
+
+#pragma mark - Events
 
 #ifndef CC_MOUSE_EVENT_MAX
 #define CC_MOUSE_EVENT_MAX 1024

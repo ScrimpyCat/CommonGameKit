@@ -172,6 +172,12 @@ void CCControllerDiffUpdateState(void);
 void CCControllerSync(void);
 
 /*!
+ * @brief Clears the local controller cache.
+ * @note After a sync has been performed this must be called by any threads that will access controller state.
+ */
+void CCControllerClearCache(void);
+
+/*!
  * @brief Get the controller state.
  * @note This should only be used after another thread has synced the controller state, after which the controller
  *       state can be used up until a thread calls @b CCControllerSync again.
@@ -268,7 +274,45 @@ _Bool CCControllerGetStateForButton(const CCController *State, int32_t Button);
 CCControllerHat CCControllerGetStateForHat(const CCController *State, int32_t Hat);
 
 
-#pragma mark - Events
+#pragma mark - Template Types
+
+#define CC_TYPE_CCControllerAxisMap(...) CCControllerAxisMap
+#define CC_TYPE_0_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_1_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_2_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_3_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_4_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_5_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_6_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_7_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_8_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+#define CC_TYPE_9_CCControllerAxisMap CC_TYPE_CCControllerAxisMap,
+
+#define CC_PRESERVE_CC_TYPE_CCControllerAxisMap CC_TYPE_CCControllerAxisMap
+
+#define CC_TYPE_DECL_CCControllerAxisMap(...) CCControllerAxisMap, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_1_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_2_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_3_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_4_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_5_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_6_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_7_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_8_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+#define CC_TYPE_DECL_9_CCControllerAxisMap CC_TYPE_DECL_CCControllerAxisMap,
+
+#define CC_MANGLE_TYPE_0_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_1_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_2_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_3_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_4_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_5_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_6_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_7_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_8_CCControllerAxisMap CCControllerAxisMap
+#define CC_MANGLE_TYPE_9_CCControllerAxisMap CCControllerAxisMap
+
 
 #define CC_TYPE_CCControllerEvent(...) CCControllerEvent
 #define CC_TYPE_0_CCControllerEvent CC_TYPE_CCControllerEvent,
@@ -306,6 +350,14 @@ CCControllerHat CCControllerGetStateForHat(const CCController *State, int32_t Ha
 #define CC_MANGLE_TYPE_7_CCControllerEvent CCControllerEvent
 #define CC_MANGLE_TYPE_8_CCControllerEvent CCControllerEvent
 #define CC_MANGLE_TYPE_9_CCControllerEvent CCControllerEvent
+
+
+#pragma mark - Reflection
+
+extern const CCReflectStruct3 CC_REFLECT(CCControllerAxisMap);
+
+
+#pragma mark - Events
 
 #ifndef CC_CONTROLLER_EVENT_MAX
 #define CC_CONTROLLER_EVENT_MAX 1024
