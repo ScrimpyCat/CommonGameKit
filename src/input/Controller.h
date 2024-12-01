@@ -27,7 +27,6 @@
 #define CommonGameKit_Controller_h
 
 #include <CommonGameKit/Base.h>
-#include <CommonGameKit/Component.h>
 
 typedef enum {
     CCControllerHatCenter,
