@@ -46,46 +46,72 @@ typedef enum {
 } CCInputMapType;
 
 typedef struct CCInputMap {
+    /// The type of input to map.
     CCInputMapType type;
     union {
         struct {
+            /// The input maps that are in the group.
             struct CCInputMap *inputMaps;
+            /// The number of input maps in the group.
             size_t count;
+            /// Whether all input maps in the group need to be active for the group to be considered active.
             _Bool wantsAllActive;
         } group;
         struct {
+            /// The keyboard keycode to match to apply this mapping.
             CCKeyboardKeycode keycode;
+            /// The keyboard character to match to apply this mapping. If 0 then it does not require matching a character.
             CCChar character;
+            /// The keyboard modifiers to match to apply this mapping.
             CCKeyboardModifier flags;
+            /// The ramping affects the speed of the build up/falloff per second.
             float ramp;
-            _Bool isKeycode, ignoreModifier, repeats;
+            /// Whether to use a keycode match or fallback to character match.
+            _Bool isKeycode;
+            /// Whether to ignore the modifier flag when matching.
+            _Bool ignoreModifier;
+            /// Whether to match repeats. Repeated key presses are when a key is being held down
+            _Bool repeats;
         } keyboard;
         union {
             struct {
+                /// The mouse button to match to apply this mapping.
                 CCMouseButton code;
+                /// The keyboard modifiers to match to apply this mapping.
                 CCKeyboardModifier flags;
+                /// The ramping affects the speed of the build up/falloff per second.
                 float ramp;
+                /// Whether to ignore the modifier flag when matching.
                 _Bool ignoreModifier;
             } button;
         } mouse;
         struct {
+            /// The device name is the assigned name of the controller this component should match with. If null then it maps to any controller at the specified connection.
             CCString device;
+            ///  The connection is the fixed index of the controller this mapping applies to.
             int8_t connection;
             union {
                 struct {
+                    /// The deadzone is the region of the control stick that will be mapped to 0. This is useful to alleviate any noise due to the analog input.
                     float deadzone;
+                    /// The resolution is the precision of the analog input. This is useful to smooth out the values, so smaller movements end up being ignored.
                     uint8_t resolution;
+                    /// The controller axis mappings.
                     CCControllerAxisMap x, y, z, w;
                 } axis;
                 struct {
+                    /// The ID of the input from the controller to map. A negative index is unmapped/ignored.
                     int32_t index;
+                    /// The ramping affects the speed of the build up/falloff per second.
                     float ramp;
                 } button, hat;
             };
         } controller;
         union {
             struct {
+                /// The input maps that form the virtual joystick. The inputs are mapped accordingly: [+x, -x, +y, -y, +z, -z, +w, -w]
                 struct CCInputMap *inputMaps;
+                /// The number of input maps that make up the virtual joystick.
                 size_t count;
             } joystick;
         } virtual;
@@ -118,6 +144,11 @@ typedef struct {
 } CCInputPressure4D;
 
 
+/*!
+ * @brief The input map destructor.
+ * @description This destroys the data in the input map, but not the pointer itself.
+ * @param InputMap The input map to destroy the contents of.
+ */
 void CCInputMapDestructor(CCInputMap *InputMap);
 
 /*!

@@ -48,8 +48,11 @@ typedef enum {
 } CCControllerEventType;
 
 typedef struct {
+    /// The ID of the axes input from the controller to map to the axis. A negative index is unmapped/ignored.
     int32_t index;
+    /// A flipped input means the value range is flipped in the opposite direction. Use this if you find the input range does not map in the desired direction.
     _Bool flip;
+    /// A one-sided input means it will only map the value range from 0 to +1, instead of -1 to +1.
     _Bool oneSided;
 } CCControllerAxisMap;
 
