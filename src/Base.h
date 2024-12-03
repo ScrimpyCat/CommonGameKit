@@ -49,6 +49,7 @@ func(__VA_ARGS__, CCControllerEvent); \
 func(__VA_ARGS__, CCControllerButtonState); \
 func(__VA_ARGS__, CCControllerAxesState); \
 func(__VA_ARGS__, CCControllerState); \
+func(__VA_ARGS__, CCControllerHat); \
 func(__VA_ARGS__, CCKeyboardAction); \
 func(__VA_ARGS__, CCKeyboardModifier); \
 func(__VA_ARGS__, CCKeyboardKeycode); \
@@ -138,6 +139,7 @@ func(__VA_ARGS__, CCControllerEvent); \
 func(__VA_ARGS__, CCControllerButtonState); \
 func(__VA_ARGS__, CCControllerAxesState); \
 func(__VA_ARGS__, CCControllerState); \
+func(__VA_ARGS__, CCControllerHat); \
 func(__VA_ARGS__, CCKeyboardAction); \
 func(__VA_ARGS__, CCKeyboardModifier); \
 func(__VA_ARGS__, CCKeyboardKeycode); \

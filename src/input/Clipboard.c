@@ -24,6 +24,7 @@
  */
 
 #include "Clipboard.h"
+#include <stdatomic.h>
 
 #ifndef CC_CLIPBOARD_MAX
 #define CC_CLIPBOARD_MAX 64
@@ -33,13 +34,13 @@ static inline CCClipboardClipping CCClipboardClippingShare(CCClipboardClipping C
 {
     if (Clipping.type == &CC_REFLECT(CCString))
     {
-        if (Clipping.data) Clipping.data = CCStringCopy((CCString)Clipping.data);
+        if (Clipping.data) Clipping.data = (void*)CCStringCopy((CCString)Clipping.data);
     }
     
     else
     {
         void *Copy;
-        CCReflectCopy(Clipping.type, &Copy, &Clipping.data, CCMemoryZoneLocal(), CC_STD_ALLOCATOR, CCReflectMapIntentShare, FALSE);
+        CCReflectCopy(Clipping.type, &Copy, &Clipping.data, CCMemoryZoneLocal(), CC_STD_ALLOCATOR, CCReflectAssignmentShare, FALSE);
         
         Clipping.data = Copy;
     }
@@ -68,7 +69,7 @@ void CCClipboardSet(CCClipboardClipping Clipping)
     
     atomic_signal_fence(memory_order_acquire);
     
-    atomic_fetch_add(&ClipboardClippingCount, memory_order_relaxed);
+    atomic_fetch_add_explicit(&ClipboardClippingCount, 1, memory_order_relaxed);
 }
 
 CCClipboardClipping CCClipboardGet(void)
@@ -78,5 +79,5 @@ CCClipboardClipping CCClipboardGet(void)
 
 size_t CCClipboardCounter(void)
 {
-    return atomic_load(&ClipboardClippingCount, memory_order_relaxed);
+    return atomic_load_explicit(&ClipboardClippingCount, memory_order_relaxed);
 }

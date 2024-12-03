@@ -51,7 +51,7 @@ CC_NEW CCClipboardClipping CCClipboardGet(void);
  * @description This can be used to identify if the clipboard has changed.
  * @return The current clipboard counter.
  */
-size_t CCClipboardCounter(void)
+size_t CCClipboardCounter(void);
 
 
 

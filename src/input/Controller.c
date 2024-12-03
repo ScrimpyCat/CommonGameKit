@@ -28,10 +28,6 @@
 #include "Window.h"
 #include "Callbacks.h"
 #include <stdatomic.h>
-#include "InputSystem.h"
-#include "InputMapControllerComponent.h"
-#include "InputMapControllerAxesComponent.h"
-#include "InputMapControllerButtonComponent.h"
 
 const CCReflectStruct3 CC_REFLECT(CCControllerAxisMap) = CC_REFLECT_STRUCT(CCControllerAxisMap,
     (index, &CC_REFLECT(int32_t)),
