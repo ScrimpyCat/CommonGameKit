@@ -30,12 +30,7 @@
 #include "EntityManager.h"
 #include "TypeCallbacks.h"
 
-#include "InputSystem.h"
-#include "InputMapKeyboardComponent.h"
-#include "InputMapMousePositionComponent.h"
-#include "InputMapMouseButtonComponent.h"
-#include "InputMapMouseScrollComponent.h"
-#include "InputMapMouseDropComponent.h"
+#include "Input.h"
 
 #include <threads.h>
 #include <stdatomic.h>
@@ -44,7 +39,7 @@
 #define GUI_MANAGER_ENTITY_ID CC_STRING("gui")
 
 typedef struct {
-    CCEntity entity;
+    uint64_t timestamp;
     CCCollection(GUIObject) active, added, removed;
     atomic_flag addedLock, removedLock;
 } GUIManager;
@@ -54,22 +49,22 @@ static GUIManager ObjectManager = {
     .removedLock = ATOMIC_FLAG_INIT
 };
 
-static void GUIManagerEventMouseCallback(CCComponent Component, CCMouseEvent Event, CCMouseMap State)
+static void GUIManagerEventMouseCallback(const CCMouseEvent *Event)
 {
     GUIManagerLock();
     GUIManagerHandleEvent(&(GUIEventInfo){
         .type = GUIEventTypeMouse,
-        .mouse = { .event = Event, .state = State }
+        .mouse = *Event
     });
     GUIManagerUnlock();
 }
 
-static void GUIManagerEventKeyboardCallback(CCComponent Component, CCKeyboardMap State)
+static void GUIManagerEventKeyboardCallback(const CCKeyboardEvent *Event)
 {
     GUIManagerLock();
     GUIManagerHandleEvent(&(GUIEventInfo){
         .type = GUIEventTypeKey,
-        .key = { .state = State }
+        .key = *Event
     });
     GUIManagerUnlock();
 }
@@ -85,7 +80,7 @@ void GUIManagerCreate(void)
     }
     
     ObjectManager = (GUIManager){
-        .entity = CCEntityCreate(GUI_MANAGER_ENTITY_ID, CC_STD_ALLOCATOR),
+        .timestamp = 0,
         .active = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeMedium | CCCollectionHintHeavyEnumerating, sizeof(GUIObject), NULL),
         .added = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), NULL),
         .removed = CCCollectionCreate(CC_STD_ALLOCATOR, CCCollectionHintSizeSmall | CCCollectionHintHeavyInserting | CCCollectionHintHeavyDeleting, sizeof(GUIObject), GUIObjectDestructorForCollection),
@@ -95,52 +90,60 @@ void GUIManagerCreate(void)
     
     
     //TODO: This will get quite awkward, need to separate input from the ECS.
-    CCComponent Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
+//    CCComponent Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_POSITION_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+//    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonLeft);
+//    CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+//    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonRight);
+//    CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+//    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonMiddle);
+//    CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_SCROLL_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    Input = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
+//    CCInputMapComponentSetCallback(Input, GUIManagerEventKeyboardCallback);
+//    CCInputMapKeyboardComponentSetKeycode(Input, CCInputMapKeyboardComponentKeycodeAny);
+//    CCInputMapKeyboardComponentSetIsKeycode(Input, TRUE);
+//    CCInputMapKeyboardComponentSetRepeats(Input, TRUE);
+//    CCInputMapKeyboardComponentSetIgnoreModifier(Input, TRUE);
+//    CCEntityAttachComponent(ObjectManager.entity, Input);
+//    CCComponentSystemAddComponent(Input);
+//
+//    CCEntityManagerAddEntity(ObjectManager.entity);
     
-    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonLeft);
-    CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
-    
-    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonRight);
-    CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
-    
-    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_BUTTON_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCInputMapMouseButtonComponentSetButton(Input, CCMouseButtonMiddle);
-    CCInputMapMouseButtonComponentSetIgnoreModifier(Input, TRUE);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
-    
-    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_SCROLL_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
-    
-    Input = CCComponentCreate(CC_INPUT_MAP_MOUSE_DROP_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventMouseCallback);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
-    
-    Input = CCComponentCreate(CC_INPUT_MAP_KEYBOARD_COMPONENT_ID);
-    CCInputMapComponentSetCallback(Input, GUIManagerEventKeyboardCallback);
-    CCInputMapKeyboardComponentSetKeycode(Input, CCInputMapKeyboardComponentKeycodeAny);
-    CCInputMapKeyboardComponentSetIsKeycode(Input, TRUE);
-    CCInputMapKeyboardComponentSetRepeats(Input, TRUE);
-    CCInputMapKeyboardComponentSetIgnoreModifier(Input, TRUE);
-    CCEntityAttachComponent(ObjectManager.entity, Input);
-    CCComponentSystemAddComponent(Input);
-    
-    CCEntityManagerAddEntity(ObjectManager.entity);
+    /*
+     Either add event processor to the update function or add a new function that takes in event enumerables.
+     The manager keeps track of the latest event timestamp, then processes any events that occur after it.
+     Need to make sure it advances through all enumerables evenly so it only processes them in order.
+     
+     No need to release the event enumerables as we keep track of the timestamp.
+     */
 }
 
 void GUIManagerDestroy(void)
@@ -151,7 +154,7 @@ void GUIManagerDestroy(void)
     if (ObjectManager.added) CCCollectionDestroy(ObjectManager.added);
     if (ObjectManager.removed) CCCollectionDestroy(ObjectManager.removed);
     
-    CCEntityDestroy(ObjectManager.entity);
+//    CCEntityDestroy(ObjectManager.entity);
 }
 
 void GUIManagerUpdate(void)
@@ -173,6 +176,79 @@ void GUIManagerUpdate(void)
     
     CCCollectionRemoveAllElements(ObjectManager.removed);
     atomic_flag_clear_explicit(&ObjectManager.removedLock, memory_order_release);
+    
+    
+    CCEnumerable KeyboardInputEventEnumerable, KeyboardCharInputEventEnumerable, MouseInputEventEnumerable;
+    
+    CCConcurrentCircularBufferGetEnumerable(&CCKeyboardInputEventBuffer, &KeyboardInputEventEnumerable);
+    CCConcurrentCircularBufferGetEnumerable(&CCKeyboardCharInputEventBuffer, &KeyboardCharInputEventEnumerable);
+    CCConcurrentCircularBufferGetEnumerable(&CCMouseInputEventBuffer, &MouseInputEventEnumerable);
+    
+    uint64_t CurrentTimestamp = ObjectManager.timestamp;
+    
+    
+//    CCKeyboardEvent
+//    CCMouseEvent
+    const CCKeyboardEvent *KeyboardInputEvent = CCEnumerableGetCurrent(&KeyboardInputEventEnumerable), *KeyboardCharInputEvent = CCEnumerableGetCurrent(&KeyboardCharInputEventEnumerable);
+    const CCMouseEvent *MouseInputEvent = CCEnumerableGetCurrent(&MouseInputEventEnumerable);
+    
+    while ((KeyboardInputEvent) && (KeyboardInputEvent->state.timestamp < CurrentTimestamp)) KeyboardInputEvent = CCEnumerableNext(&KeyboardInputEventEnumerable);
+    while ((KeyboardCharInputEvent) && (KeyboardCharInputEvent->state.timestamp < CurrentTimestamp)) KeyboardCharInputEvent = CCEnumerableNext(&KeyboardCharInputEventEnumerable);
+    while ((MouseInputEvent) && (MouseInputEvent->timestamp < CurrentTimestamp)) MouseInputEvent = CCEnumerableNext(&MouseInputEventEnumerable);
+    
+    uint64_t KeyboardInputEventTimestamp = KeyboardInputEvent ? KeyboardInputEvent->state.timestamp : UINT64_MAX;
+    uint64_t KeyboardCharInputEventTimestamp = KeyboardCharInputEvent ? KeyboardCharInputEvent->state.timestamp : UINT64_MAX;
+    uint64_t MouseInputEventTimestamp = MouseInputEvent ? MouseInputEvent->timestamp : UINT64_MAX;
+    
+    while ((KeyboardInputEvent) || (KeyboardCharInputEvent) || (MouseInputEvent))
+    {
+        const uint8_t Match = ((KeyboardInputEventTimestamp <= KeyboardCharInputEventTimestamp) << 2) | ((KeyboardInputEventTimestamp <= MouseInputEventTimestamp) << 1) | (KeyboardCharInputEventTimestamp <= MouseInputEventTimestamp);
+        
+        switch (Match)
+        {
+            //mouse input
+            case 0:
+            case 4:
+                GUIManagerEventMouseCallback(MouseInputEvent);
+                MouseInputEvent = CCEnumerableNext(&MouseInputEventEnumerable);
+                break;
+                
+            //keyboard char input
+            case 1:
+            case 3:
+                GUIManagerEventKeyboardCallback(KeyboardCharInputEvent);
+                KeyboardCharInputEvent = CCEnumerableNext(&KeyboardCharInputEventEnumerable);
+                break;
+                
+            //keybaord input
+            case 6:
+            case 7:
+                GUIManagerEventKeyboardCallback(KeyboardInputEvent);
+                KeyboardInputEvent = CCEnumerableNext(&KeyboardInputEventEnumerable);
+                break;
+        }
+        
+        if (KeyboardInputEvent->state.timestamp <= KeyboardCharInputEvent->state.timestamp)
+        {
+            if (KeyboardInputEvent->state.timestamp <= MouseInputEvent->timestamp)
+            {
+                //KeyboardInputEvent
+            }
+            
+            else if (KeyboardCharInputEvent->state.timestamp <= MouseInputEvent->timestamp) goto KeyboardCharInputHandler;
+            else goto MouseInputHandler;
+        }
+        
+        else if (KeyboardCharInputEvent->state.timestamp <= MouseInputEvent->timestamp)
+        {
+        KeyboardCharInputHandler:;
+        }
+        
+        else
+        {
+        MouseInputHandler:;
+        }
+    }
 }
 
 void GUIManagerRender(GFXFramebuffer Framebuffer, size_t Index)

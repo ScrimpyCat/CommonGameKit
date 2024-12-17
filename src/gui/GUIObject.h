@@ -28,7 +28,7 @@
 
 #include <CommonGameKit/Base.h>
 #include <CommonGameKit/GFX.h>
-#include <CommonGameKit/InputSystem.h>
+#include <CommonGameKit/Input.h>
 #include <CommonGameKit/Expression.h>
 #include <threads.h>
 
@@ -38,13 +38,8 @@ typedef const struct {
         GUIEventTypeMouse
     } type;
     union {
-        struct {
-            CCKeyboardMap state;
-        } key;
-        struct {
-            CCMouseEvent event;
-            CCMouseMap state;
-        } mouse;
+        CCKeyboardEvent key;
+        CCMouseEvent mouse;
     };
 } GUIEventInfo, *GUIEvent;
 

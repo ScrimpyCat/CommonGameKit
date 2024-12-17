@@ -507,4 +507,44 @@ static inline void CCExpressionStateSetPrivate(CCExpression Expression, CCExpres
     }
 }
 
+#pragma mark -
+
+#define CC_TYPE_CCExpression(...) CCExpression
+#define CC_TYPE_0_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_1_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_2_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_3_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_4_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_5_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_6_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_7_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_8_CCExpression CC_TYPE_CCExpression,
+#define CC_TYPE_9_CCExpression CC_TYPE_CCExpression,
+
+#define CC_PRESERVE_CC_TYPE_CCString CC_TYPE_CCString
+
+#define CC_TYPE_DECL_CCExpression(...) CCExpression, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_1_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_2_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_3_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_4_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_5_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_6_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_7_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_8_CCExpression CC_TYPE_DECL_CCExpression,
+#define CC_TYPE_DECL_9_CCExpression CC_TYPE_DECL_CCExpression,
+
+#define CC_MANGLE_TYPE_0_CCExpression CCExpression
+#define CC_MANGLE_TYPE_1_CCExpression CCExpression
+#define CC_MANGLE_TYPE_2_CCExpression CCExpression
+#define CC_MANGLE_TYPE_3_CCExpression CCExpression
+#define CC_MANGLE_TYPE_4_CCExpression CCExpression
+#define CC_MANGLE_TYPE_5_CCExpression CCExpression
+#define CC_MANGLE_TYPE_6_CCExpression CCExpression
+#define CC_MANGLE_TYPE_7_CCExpression CCExpression
+#define CC_MANGLE_TYPE_8_CCExpression CCExpression
+#define CC_MANGLE_TYPE_9_CCExpression CCExpression
+
+
 #endif

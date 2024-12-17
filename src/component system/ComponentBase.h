@@ -28,6 +28,7 @@
 
 #include <CommonGameKit/Component.h>
 #include <CommonGameKit/Entity.h>
+#include <CommonGameKit/ECSTool.h>
 
 #define CC_COMPONENT_ID 0
 

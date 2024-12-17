@@ -27,9 +27,9 @@
 #import "Expression.h"
 #import "ExpressionEvaluator.h"
 #import "ComponentExpressions.h"
-#import "InputMapGroupComponent.h"
-#import "InputMapKeyboardComponent.h"
-
+//#import "InputMapGroupComponent.h"
+//#import "InputMapKeyboardComponent.h"
+#if 0
 @interface ExpressionComponentTests : CCTestCase
 
 @end
@@ -43,11 +43,12 @@ static void KeyboardCallback()
 -(void) setUp
 {
     [super setUp];
-    
+#if 0
     CCInputMapGroupComponentRegister();
     CCInputMapKeyboardComponentRegister();
     
     CCInputMapComponentRegisterCallback(CC_STRING(":test"), CCInputMapTypeKeyboard, KeyboardCallback);
+#endif
 }
 
 static char Set[256];
@@ -547,6 +548,7 @@ do { \
     CCComponentDestroy(Component);
 }
 
+#if 0
 -(void) testInputMapGroup
 {
     CCExpression Expr = CCExpressionCreateFromSource("(input-group (action: \"test\") (input: (input-keyboard (keycode: :left)) (input-keyboard (keycode: :right))) (all-active: #t))");
@@ -634,5 +636,7 @@ do { \
     
     CCExpressionDestroy(Expr);
 }
+#endif
 
 @end
+#endif

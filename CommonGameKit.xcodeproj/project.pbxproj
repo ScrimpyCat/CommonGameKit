@@ -57,8 +57,6 @@
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3750F892347B94500DFE104 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = F3750F882347B94500DFE104 /* Base.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F378DAFD234D5278000600CC /* ContainerTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F37A6E692C8572D600F97BC3 /* ECSExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A6E672C8572D600F97BC3 /* ECSExpression.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F37A6E6A2C8572D600F97BC3 /* ECSExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A6E682C8572D600F97BC3 /* ECSExpression.c */; };
 		F37A6E992C91465F00F97BC3 /* Input.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A6E972C91465F00F97BC3 /* Input.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F37A6E9A2C91465F00F97BC3 /* Input.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A6E982C91465F00F97BC3 /* Input.c */; };
 		F380C2D224B21CEA00151C4F /* PixelDataComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = F380C2D024B21CEA00151C4F /* PixelDataComposite.h */; };
@@ -146,33 +144,12 @@
 		F3AF33911DCCD4EC00CAD472 /* GUIManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B31DCCD4EB00CAD472 /* GUIManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33921DCCD4EC00CAD472 /* GUIObject.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B41DCCD4EB00CAD472 /* GUIObject.c */; };
 		F3AF33931DCCD4EC00CAD472 /* GUIObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32B51DCCD4EB00CAD472 /* GUIObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33941DCCD4EC00CAD472 /* InputMapControllerAxesComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32B91DCCD4EB00CAD472 /* InputMapControllerAxesComponent.c */; };
-		F3AF33951DCCD4EC00CAD472 /* InputMapControllerAxesComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BA1DCCD4EB00CAD472 /* InputMapControllerAxesComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33961DCCD4EC00CAD472 /* InputMapControllerButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32BB1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.c */; };
-		F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BC1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33981DCCD4EC00CAD472 /* InputMapControllerComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32BD1DCCD4EB00CAD472 /* InputMapControllerComponent.c */; };
-		F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BE1DCCD4EB00CAD472 /* InputMapControllerComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32BF1DCCD4EB00CAD472 /* InputMapComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF339B1DCCD4EC00CAD472 /* InputMapGroupComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C01DCCD4EB00CAD472 /* InputMapGroupComponent.c */; };
-		F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C11DCCD4EB00CAD472 /* InputMapGroupComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF339D1DCCD4EC00CAD472 /* InputMapKeyboardComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C31DCCD4EB00CAD472 /* InputMapKeyboardComponent.c */; };
-		F3AF339E1DCCD4EC00CAD472 /* InputMapKeyboardComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C41DCCD4EB00CAD472 /* InputMapKeyboardComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF339F1DCCD4EC00CAD472 /* InputMapMouseButtonComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C61DCCD4EB00CAD472 /* InputMapMouseButtonComponent.c */; };
-		F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C71DCCD4EB00CAD472 /* InputMapMouseButtonComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33A11DCCD4EC00CAD472 /* InputMapMouseDropComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32C81DCCD4EB00CAD472 /* InputMapMouseDropComponent.c */; };
-		F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32C91DCCD4EB00CAD472 /* InputMapMouseDropComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33A31DCCD4EC00CAD472 /* InputMapMousePositionComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32CA1DCCD4EB00CAD472 /* InputMapMousePositionComponent.c */; };
-		F3AF33A41DCCD4EC00CAD472 /* InputMapMousePositionComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CB1DCCD4EB00CAD472 /* InputMapMousePositionComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33A51DCCD4EC00CAD472 /* InputMapMouseScrollComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32CC1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.c */; };
-		F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CD1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A71DCCD4EC00CAD472 /* Controller.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32CE1DCCD4EB00CAD472 /* Controller.c */; };
 		F3AF33A81DCCD4EC00CAD472 /* Controller.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32CF1DCCD4EB00CAD472 /* Controller.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33A91DCCD4EC00CAD472 /* Keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32D01DCCD4EB00CAD472 /* Keyboard.c */; };
 		F3AF33AA1DCCD4EC00CAD472 /* Keyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D11DCCD4EB00CAD472 /* Keyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33AB1DCCD4EC00CAD472 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32D21DCCD4EB00CAD472 /* Mouse.c */; };
 		F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D31DCCD4EB00CAD472 /* Mouse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3AF33AD1DCCD4EC00CAD472 /* InputSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32D51DCCD4EB00CAD472 /* InputSystem.c */; };
-		F3AF33AE1DCCD4EC00CAD472 /* InputSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32D61DCCD4EB00CAD472 /* InputSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B11DCCD4EC00CAD472 /* RenderComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32DC1DCCD4EB00CAD472 /* RenderComponent.c */; };
 		F3AF33B21DCCD4EC00CAD472 /* RenderComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3AF32DD1DCCD4EB00CAD472 /* RenderComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3AF33B31DCCD4EC00CAD472 /* RenderSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F3AF32DF1DCCD4EB00CAD472 /* RenderSystem.c */; };
@@ -299,6 +276,11 @@
 		F3BEC1C023C1131500014B5B /* TypeCallbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */; };
 		F3BFD7592AE9416500118816 /* ECSMonitorComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3BFD7572AE9416500118816 /* ECSMonitorComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3BFD75A2AE9416500118816 /* ECSMonitorComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3BFD7582AE9416500118816 /* ECSMonitorComponent.c */; };
+		F3CB83B82D0374EE006C6920 /* InputExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3CB83B62D0374EE006C6920 /* InputExpressions.h */; };
+		F3CB83B92D0374EE006C6920 /* InputExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83B72D0374EE006C6920 /* InputExpressions.c */; };
+		F3CB83E42D0C7CE1006C6920 /* ExpressionMapTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83E32D0C7CE1006C6920 /* ExpressionMapTests.m */; };
+		F3CB83E72D0F9286006C6920 /* ExpressionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F3CB83E52D0F9286006C6920 /* ExpressionMap.h */; };
+		F3CB83E82D0F9286006C6920 /* ExpressionMap.c in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83E62D0F9286006C6920 /* ExpressionMap.c */; };
 		F3D4A48C299B43C800B38AF8 /* ECSConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D4A46C299B43B600B38AF8 /* ECSConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -322,7 +304,6 @@
 		F3FA881A2233887A0087A318 /* MTLGFX.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA8815223383850087A318 /* MTLGFX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FA881B2233C4AC0087A318 /* MTLTexture.h */; };
 		F3FA881E2233C4AC0087A318 /* MTLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FA881C2233C4AC0087A318 /* MTLTexture.m */; };
-		F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */ = {isa = PBXBuildFile; fileRef = F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */; };
 		F3FE7453223AEAFF004D1386 /* MTLBlit.h in Headers */ = {isa = PBXBuildFile; fileRef = F3FE7451223AEAFF004D1386 /* MTLBlit.h */; };
 		F3FE7454223AEAFF004D1386 /* MTLBlit.m in Sources */ = {isa = PBXBuildFile; fileRef = F3FE7452223AEAFF004D1386 /* MTLBlit.m */; };
 /* End PBXBuildFile section */
@@ -611,8 +592,6 @@
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 		F3750F882347B94500DFE104 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		F378DAFD234D5278000600CC /* ContainerTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerTypes.h; sourceTree = "<group>"; };
-		F37A6E672C8572D600F97BC3 /* ECSExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSExpression.h; sourceTree = "<group>"; };
-		F37A6E682C8572D600F97BC3 /* ECSExpression.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSExpression.c; sourceTree = "<group>"; };
 		F37A6E972C91465F00F97BC3 /* Input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		F37A6E982C91465F00F97BC3 /* Input.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Input.c; sourceTree = "<group>"; };
 		F380C2D024B21CEA00151C4F /* PixelDataComposite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PixelDataComposite.h; sourceTree = "<group>"; };
@@ -707,33 +686,12 @@
 		F3AF32B31DCCD4EB00CAD472 /* GUIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIManager.h; sourceTree = "<group>"; };
 		F3AF32B41DCCD4EB00CAD472 /* GUIObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = GUIObject.c; sourceTree = "<group>"; };
 		F3AF32B51DCCD4EB00CAD472 /* GUIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUIObject.h; sourceTree = "<group>"; };
-		F3AF32B91DCCD4EB00CAD472 /* InputMapControllerAxesComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapControllerAxesComponent.c; sourceTree = "<group>"; };
-		F3AF32BA1DCCD4EB00CAD472 /* InputMapControllerAxesComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapControllerAxesComponent.h; sourceTree = "<group>"; };
-		F3AF32BB1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapControllerButtonComponent.c; sourceTree = "<group>"; };
-		F3AF32BC1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapControllerButtonComponent.h; sourceTree = "<group>"; };
-		F3AF32BD1DCCD4EB00CAD472 /* InputMapControllerComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapControllerComponent.c; sourceTree = "<group>"; };
-		F3AF32BE1DCCD4EB00CAD472 /* InputMapControllerComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapControllerComponent.h; sourceTree = "<group>"; };
-		F3AF32BF1DCCD4EB00CAD472 /* InputMapComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapComponent.h; sourceTree = "<group>"; };
-		F3AF32C01DCCD4EB00CAD472 /* InputMapGroupComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapGroupComponent.c; sourceTree = "<group>"; };
-		F3AF32C11DCCD4EB00CAD472 /* InputMapGroupComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapGroupComponent.h; sourceTree = "<group>"; };
-		F3AF32C31DCCD4EB00CAD472 /* InputMapKeyboardComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapKeyboardComponent.c; sourceTree = "<group>"; };
-		F3AF32C41DCCD4EB00CAD472 /* InputMapKeyboardComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapKeyboardComponent.h; sourceTree = "<group>"; };
-		F3AF32C61DCCD4EB00CAD472 /* InputMapMouseButtonComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMouseButtonComponent.c; sourceTree = "<group>"; };
-		F3AF32C71DCCD4EB00CAD472 /* InputMapMouseButtonComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMouseButtonComponent.h; sourceTree = "<group>"; };
-		F3AF32C81DCCD4EB00CAD472 /* InputMapMouseDropComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMouseDropComponent.c; sourceTree = "<group>"; };
-		F3AF32C91DCCD4EB00CAD472 /* InputMapMouseDropComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMouseDropComponent.h; sourceTree = "<group>"; };
-		F3AF32CA1DCCD4EB00CAD472 /* InputMapMousePositionComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMousePositionComponent.c; sourceTree = "<group>"; };
-		F3AF32CB1DCCD4EB00CAD472 /* InputMapMousePositionComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMousePositionComponent.h; sourceTree = "<group>"; };
-		F3AF32CC1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapMouseScrollComponent.c; sourceTree = "<group>"; };
-		F3AF32CD1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputMapMouseScrollComponent.h; sourceTree = "<group>"; };
 		F3AF32CE1DCCD4EB00CAD472 /* Controller.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Controller.c; sourceTree = "<group>"; };
 		F3AF32CF1DCCD4EB00CAD472 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
 		F3AF32D01DCCD4EB00CAD472 /* Keyboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Keyboard.c; sourceTree = "<group>"; };
 		F3AF32D11DCCD4EB00CAD472 /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F3AF32D21DCCD4EB00CAD472 /* Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Mouse.c; sourceTree = "<group>"; };
 		F3AF32D31DCCD4EB00CAD472 /* Mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mouse.h; sourceTree = "<group>"; };
-		F3AF32D51DCCD4EB00CAD472 /* InputSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputSystem.c; sourceTree = "<group>"; };
-		F3AF32D61DCCD4EB00CAD472 /* InputSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputSystem.h; sourceTree = "<group>"; };
 		F3AF32DC1DCCD4EB00CAD472 /* RenderComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RenderComponent.c; sourceTree = "<group>"; };
 		F3AF32DD1DCCD4EB00CAD472 /* RenderComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderComponent.h; sourceTree = "<group>"; };
 		F3AF32DF1DCCD4EB00CAD472 /* RenderSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RenderSystem.c; sourceTree = "<group>"; };
@@ -859,6 +817,11 @@
 		F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = TypeCallbacks.c; sourceTree = "<group>"; };
 		F3BFD7572AE9416500118816 /* ECSMonitorComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSMonitorComponent.h; sourceTree = "<group>"; };
 		F3BFD7582AE9416500118816 /* ECSMonitorComponent.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSMonitorComponent.c; sourceTree = "<group>"; };
+		F3CB83B62D0374EE006C6920 /* InputExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InputExpressions.h; sourceTree = "<group>"; };
+		F3CB83B72D0374EE006C6920 /* InputExpressions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = InputExpressions.c; sourceTree = "<group>"; };
+		F3CB83E32D0C7CE1006C6920 /* ExpressionMapTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionMapTests.m; sourceTree = "<group>"; };
+		F3CB83E52D0F9286006C6920 /* ExpressionMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionMap.h; sourceTree = "<group>"; };
+		F3CB83E62D0F9286006C6920 /* ExpressionMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExpressionMap.c; sourceTree = "<group>"; };
 		F3D4A46C299B43B600B38AF8 /* ECSConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSConfig.h; sourceTree = "<group>"; };
 		F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelationSystemTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
@@ -882,7 +845,6 @@
 		F3FA8818223388290087A318 /* MTLGFX_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLGFX_Private.h; sourceTree = "<group>"; };
 		F3FA881B2233C4AC0087A318 /* MTLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLTexture.h; sourceTree = "<group>"; };
 		F3FA881C2233C4AC0087A318 /* MTLTexture.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLTexture.m; sourceTree = "<group>"; };
-		F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = InputMapComponent.c; sourceTree = "<group>"; };
 		F3FE7451223AEAFF004D1386 /* MTLBlit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTLBlit.h; sourceTree = "<group>"; };
 		F3FE7452223AEAFF004D1386 /* MTLBlit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLBlit.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -934,8 +896,6 @@
 				F36082052B15C224002B2A89 /* ECSLink.h */,
 				F3EAB94F2C4758A5009D72DD /* ECSReflect.c */,
 				F3EAB94E2C4758A5009D72DD /* ECSReflect.h */,
-				F37A6E682C8572D600F97BC3 /* ECSExpression.c */,
-				F37A6E672C8572D600F97BC3 /* ECSExpression.h */,
 				F34551942AFCD5D000316D15 /* Monitors */,
 				F3BFD72B2AE8414100118816 /* Components */,
 				F36081ED2B0B06DC002B2A89 /* Systems */,
@@ -1114,6 +1074,7 @@
 			isa = PBXGroup;
 			children = (
 				F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */,
+				F3CB83E32D0C7CE1006C6920 /* ExpressionMapTests.m */,
 				F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */,
 				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
 				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
@@ -1342,8 +1303,6 @@
 		F3AF32B61DCCD4EB00CAD472 /* Input */ = {
 			isa = PBXGroup;
 			children = (
-				F3AF32B71DCCD4EB00CAD472 /* Components */,
-				F3AF32D41DCCD4EB00CAD472 /* Systems */,
 				F3AF32CE1DCCD4EB00CAD472 /* Controller.c */,
 				F3AF32CF1DCCD4EB00CAD472 /* Controller.h */,
 				F3AF32D01DCCD4EB00CAD472 /* Keyboard.c */,
@@ -1357,71 +1316,6 @@
 			);
 			name = Input;
 			path = input;
-			sourceTree = "<group>";
-		};
-		F3AF32B71DCCD4EB00CAD472 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				F3FD6FF61E7A3EAB0002FEF1 /* InputMapComponent.c */,
-				F3AF32BF1DCCD4EB00CAD472 /* InputMapComponent.h */,
-				F3AF32C01DCCD4EB00CAD472 /* InputMapGroupComponent.c */,
-				F3AF32C11DCCD4EB00CAD472 /* InputMapGroupComponent.h */,
-				F3AF32B81DCCD4EB00CAD472 /* Controller */,
-				F3AF32C21DCCD4EB00CAD472 /* Keyboard */,
-				F3AF32C51DCCD4EB00CAD472 /* Mouse */,
-			);
-			name = Components;
-			path = components;
-			sourceTree = "<group>";
-		};
-		F3AF32B81DCCD4EB00CAD472 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				F3AF32B91DCCD4EB00CAD472 /* InputMapControllerAxesComponent.c */,
-				F3AF32BA1DCCD4EB00CAD472 /* InputMapControllerAxesComponent.h */,
-				F3AF32BB1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.c */,
-				F3AF32BC1DCCD4EB00CAD472 /* InputMapControllerButtonComponent.h */,
-				F3AF32BD1DCCD4EB00CAD472 /* InputMapControllerComponent.c */,
-				F3AF32BE1DCCD4EB00CAD472 /* InputMapControllerComponent.h */,
-			);
-			name = Controller;
-			path = controller;
-			sourceTree = "<group>";
-		};
-		F3AF32C21DCCD4EB00CAD472 /* Keyboard */ = {
-			isa = PBXGroup;
-			children = (
-				F3AF32C31DCCD4EB00CAD472 /* InputMapKeyboardComponent.c */,
-				F3AF32C41DCCD4EB00CAD472 /* InputMapKeyboardComponent.h */,
-			);
-			name = Keyboard;
-			path = keyboard;
-			sourceTree = "<group>";
-		};
-		F3AF32C51DCCD4EB00CAD472 /* Mouse */ = {
-			isa = PBXGroup;
-			children = (
-				F3AF32C61DCCD4EB00CAD472 /* InputMapMouseButtonComponent.c */,
-				F3AF32C71DCCD4EB00CAD472 /* InputMapMouseButtonComponent.h */,
-				F3AF32C81DCCD4EB00CAD472 /* InputMapMouseDropComponent.c */,
-				F3AF32C91DCCD4EB00CAD472 /* InputMapMouseDropComponent.h */,
-				F3AF32CA1DCCD4EB00CAD472 /* InputMapMousePositionComponent.c */,
-				F3AF32CB1DCCD4EB00CAD472 /* InputMapMousePositionComponent.h */,
-				F3AF32CC1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.c */,
-				F3AF32CD1DCCD4EB00CAD472 /* InputMapMouseScrollComponent.h */,
-			);
-			name = Mouse;
-			path = mouse;
-			sourceTree = "<group>";
-		};
-		F3AF32D41DCCD4EB00CAD472 /* Systems */ = {
-			isa = PBXGroup;
-			children = (
-				F3AF32D51DCCD4EB00CAD472 /* InputSystem.c */,
-				F3AF32D61DCCD4EB00CAD472 /* InputSystem.h */,
-			);
-			name = Systems;
-			path = systems;
 			sourceTree = "<group>";
 		};
 		F3AF32DA1DCCD4EB00CAD472 /* Rendering */ = {
@@ -1641,6 +1535,8 @@
 				F3AF347E1DCCD5AF00CAD472 /* ExpressionHelpers.h */,
 				F35B1F712C34301F009325F0 /* ExpressionReflection.c */,
 				F35B1F702C34301F009325F0 /* ExpressionReflection.h */,
+				F3CB83E62D0F9286006C6920 /* ExpressionMap.c */,
+				F3CB83E52D0F9286006C6920 /* ExpressionMap.h */,
 				F3E2742920D17B3F00D6AFE1 /* Components */,
 				F3E2740820D164CA00D6AFE1 /* Systems */,
 			);
@@ -1671,6 +1567,8 @@
 				F30730B52410E7D10078AEC4 /* FontExpressions.h */,
 				F3AF34591DCCD5AF00CAD472 /* GraphicsExpressions.c */,
 				F3AF345A1DCCD5AF00CAD472 /* GraphicsExpressions.h */,
+				F3CB83B72D0374EE006C6920 /* InputExpressions.c */,
+				F3CB83B62D0374EE006C6920 /* InputExpressions.h */,
 				F3AF345C1DCCD5AF00CAD472 /* IOExpressions.c */,
 				F3AF345D1DCCD5AF00CAD472 /* IOExpressions.h */,
 				F3AF345F1DCCD5AF00CAD472 /* ListExpressions.c */,
@@ -1822,7 +1720,6 @@
 				F3AF34921DCCD5AF00CAD472 /* GraphicsExpressions.h in Headers */,
 				F3AF33CD1DCCD4EC00CAD472 /* GFXDraw.h in Headers */,
 				F3A9F0FF228444CD00F52287 /* GLCommandBuffer.h in Headers */,
-				F3AF33AE1DCCD4EC00CAD472 /* InputSystem.h in Headers */,
 				F3BFD7592AE9416500118816 /* ECSMonitorComponent.h in Headers */,
 				F3AF349B1DCCD5AF00CAD472 /* MacroExpressions.h in Headers */,
 				F3AF348F1DCCD5AF00CAD472 /* EqualityExpressions.h in Headers */,
@@ -1834,7 +1731,6 @@
 				F3AD06B01F66BEAE004AE159 /* RelationParentComponent.h in Headers */,
 				F3AF34951DCCD5AF00CAD472 /* IOExpressions.h in Headers */,
 				F36954D01E45E2DB00135AF0 /* Message.h in Headers */,
-				F3AF339E1DCCD4EC00CAD472 /* InputMapKeyboardComponent.h in Headers */,
 				F3AF33F31DCCD4EC00CAD472 /* PipelineVersion.h in Headers */,
 				F3AF33A81DCCD4EC00CAD472 /* Controller.h in Headers */,
 				F3AF34D31DCCFB7C00CAD472 /* Defined.h in Headers */,
@@ -1844,7 +1740,6 @@
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
 				F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */,
 				F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */,
-				F3AF33A21DCCD4EC00CAD472 /* InputMapMouseDropComponent.h in Headers */,
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
 				F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */,
@@ -1864,10 +1759,8 @@
 				F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */,
 				F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */,
 				F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */,
-				F3AF33A61DCCD4EC00CAD472 /* InputMapMouseScrollComponent.h in Headers */,
 				F38A33F129E2957300661500 /* ECSComponent.h in Headers */,
 				F380C2D224B21CEA00151C4F /* PixelDataComposite.h in Headers */,
-				F3AF339C1DCCD4EC00CAD472 /* InputMapGroupComponent.h in Headers */,
 				F3AF33EB1DCCD4EC00CAD472 /* GLShaderLibrary.h in Headers */,
 				F3AF33E91DCCD4EC00CAD472 /* GLShader.h in Headers */,
 				F342B6A02239711B00B44319 /* MTLFramebuffer.h in Headers */,
@@ -1885,13 +1778,12 @@
 				F3AF327D1DCCD29000CAD472 /* CommonGameKit.h in Headers */,
 				F3BEC1BF23C1131500014B5B /* TypeCallbacks.h in Headers */,
 				F3AF33F01DCCD4EC00CAD472 /* GLTexture.h in Headers */,
-				F3AF33A01DCCD4EC00CAD472 /* InputMapMouseButtonComponent.h in Headers */,
 				F3AF33D61DCCD4EC00CAD472 /* GFXShaderLibrary.h in Headers */,
 				F32C1C081F6A071600C68B43 /* RelationSystem.h in Headers */,
 				F3B34E352253448C00C2DEC1 /* MTLDraw.h in Headers */,
 				F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */,
-				F3AF33991DCCD4EC00CAD472 /* InputMapControllerComponent.h in Headers */,
 				F36082072B15C224002B2A89 /* ECSLink.h in Headers */,
+				F3CB83E72D0F9286006C6920 /* ExpressionMap.h in Headers */,
 				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
 				F3AF33F21DCCD4EC00CAD472 /* Pipeline.h in Headers */,
 				F3AF33AC1DCCD4EC00CAD472 /* Mouse.h in Headers */,
@@ -1902,6 +1794,7 @@
 				F3897B211DCD3A1C008D6C1D /* Callbacks.h in Headers */,
 				F3897B2F1DCD6B32008D6C1D /* stdatomic_clang.h in Headers */,
 				F342B62B223824B700B44319 /* MTLShaderLibrary.h in Headers */,
+				F3CB83B82D0374EE006C6920 /* InputExpressions.h in Headers */,
 				F3AF33DC1DCCD4EC00CAD472 /* GLBuffer.h in Headers */,
 				F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */,
 				F3AF337C1DCCD4EC00CAD472 /* AnimationKeyframeComponent.h in Headers */,
@@ -1909,7 +1802,6 @@
 				F3AF33D01DCCD4EC00CAD472 /* GFXInterface.h in Headers */,
 				F3AF33C51DCCD4EC00CAD472 /* GFX.h in Headers */,
 				F3AF33E01DCCD4EC00CAD472 /* GLDraw.h in Headers */,
-				F3AF33951DCCD4EC00CAD472 /* InputMapControllerAxesComponent.h in Headers */,
 				F3AF33C01DCCD4EC00CAD472 /* PixelDataFile.h in Headers */,
 				F3AF33B81DCCD4EC00CAD472 /* ColourComponent.h in Headers */,
 				F3AF34AA1DCCD5AF00CAD472 /* TextExpressions.h in Headers */,
@@ -1926,7 +1818,6 @@
 				F3AF33BA1DCCD4EC00CAD472 /* ColourFormat.h in Headers */,
 				F3AF33DE1DCCD4EC00CAD472 /* GLDebug.h in Headers */,
 				F3FA881A2233887A0087A318 /* MTLGFX.h in Headers */,
-				F3AF339A1DCCD4EC00CAD472 /* InputMapComponent.h in Headers */,
 				F3FE7453223AEAFF004D1386 /* MTLBlit.h in Headers */,
 				F3AF33C81DCCD4EC00CAD472 /* GFXBlit.h in Headers */,
 				F3AF33ED1DCCD4EC00CAD472 /* GLState.h in Headers */,
@@ -1937,7 +1828,6 @@
 				F3AF33EE1DCCD4EC00CAD472 /* GLStateChange.h in Headers */,
 				F3AF338D1DCCD4EC00CAD472 /* GUIContainer.h in Headers */,
 				F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */,
-				F3AF33A41DCCD4EC00CAD472 /* InputMapMousePositionComponent.h in Headers */,
 				F3897BE01DCDFFB4008D6C1D /* ExpressionSetup.h in Headers */,
 				F3AF33831DCCD4EC00CAD472 /* ComponentSystem.h in Headers */,
 				F3AF34AD1DCCD5AF00CAD472 /* TypeExpressions.h in Headers */,
@@ -1950,10 +1840,8 @@
 				F3AF343E1DCCD4EC00CAD472 /* TextAttribute.h in Headers */,
 				F3AF33D21DCCD4EC00CAD472 /* GFXMain.h in Headers */,
 				F36081F02B0B075A002B2A89 /* ECSMonitorSystem.h in Headers */,
-				F37A6E692C8572D600F97BC3 /* ECSExpression.h in Headers */,
 				F3AF33871DCCD4EC00CAD472 /* EntityManager.h in Headers */,
 				F3FA881D2233C4AC0087A318 /* MTLTexture.h in Headers */,
-				F3AF33971DCCD4EC00CAD472 /* InputMapControllerButtonComponent.h in Headers */,
 				F3AD4CEA2AB332B6006C20E4 /* ECSMutation.h in Headers */,
 				F3897B531DCD6E12008D6C1D /* tinycthread.h in Headers */,
 				F3AF33BB1DCCD4EC00CAD472 /* ColourFormatHSV.h in Headers */,
@@ -2265,23 +2153,19 @@
 				F3AF34821DCCD5AF00CAD472 /* AssetExpressions.c in Sources */,
 				F3AF33A71DCCD4EC00CAD472 /* Controller.c in Sources */,
 				F3AF33DD1DCCD4EC00CAD472 /* GLDebug.c in Sources */,
-				F3AF339D1DCCD4EC00CAD472 /* InputMapKeyboardComponent.c in Sources */,
-				F3AF339F1DCCD4EC00CAD472 /* InputMapMouseButtonComponent.c in Sources */,
 				F36954CF1E45E2DB00135AF0 /* Message.c in Sources */,
 				F3AF33E21DCCD4EC00CAD472 /* GLFramebuffer.c in Sources */,
-				F3AF33A31DCCD4EC00CAD472 /* InputMapMousePositionComponent.c in Sources */,
 				F3AD06A11F645544004AE159 /* SpatialTransformComponent.c in Sources */,
 				F3AF33D11DCCD4EC00CAD472 /* GFXMain.c in Sources */,
 				F3AF33EC1DCCD4EC00CAD472 /* GLState.c in Sources */,
 				F3AF33861DCCD4EC00CAD472 /* EntityManager.c in Sources */,
 				F3AF34DA1DCD014700CAD472 /* Window.c in Sources */,
 				F36081F12B0B075A002B2A89 /* ECSMonitorSystem.c in Sources */,
-				F3AF33961DCCD4EC00CAD472 /* InputMapControllerButtonComponent.c in Sources */,
 				F3AF343B1DCCD4EC00CAD472 /* Text.c in Sources */,
 				F3AF33C71DCCD4EC00CAD472 /* GFXBlit.c in Sources */,
 				F342B62C223824B700B44319 /* MTLShaderLibrary.m in Sources */,
-				F3FD6FF71E7A3EAB0002FEF1 /* InputMapComponent.c in Sources */,
 				F3FA881E2233C4AC0087A318 /* MTLTexture.m in Sources */,
+				F3CB83B92D0374EE006C6920 /* InputExpressions.c in Sources */,
 				F3FA88172233876E0087A318 /* MTLGFX.m in Sources */,
 				F3E855BA2248CCC1008896E1 /* MTLBuffer.m in Sources */,
 				F3B34E362253448C00C2DEC1 /* MTLDraw.m in Sources */,
@@ -2289,15 +2173,13 @@
 				F3AF33C31DCCD4EC00CAD472 /* PixelDataStatic.c in Sources */,
 				F35B1F732C34301F009325F0 /* ExpressionReflection.c in Sources */,
 				F3AF33821DCCD4EC00CAD472 /* ComponentSystem.c in Sources */,
-				F3AF33981DCCD4EC00CAD472 /* InputMapControllerComponent.c in Sources */,
-				F3AF339B1DCCD4EC00CAD472 /* InputMapGroupComponent.c in Sources */,
 				F3AF33C91DCCD4EC00CAD472 /* GFXBuffer.c in Sources */,
 				F3AF34851DCCD5AF00CAD472 /* ColourExpressions.c in Sources */,
 				F3AF33B31DCCD4EC00CAD472 /* RenderSystem.c in Sources */,
-				F3AF33941DCCD4EC00CAD472 /* InputMapControllerAxesComponent.c in Sources */,
 				F34551982AFCD68700316D15 /* ECSBinaryMonitor.c in Sources */,
 				F3AF337B1DCCD4EC00CAD472 /* AnimationKeyframeComponent.c in Sources */,
 				F3AF33A91DCCD4EC00CAD472 /* Keyboard.c in Sources */,
+				F3CB83E82D0F9286006C6920 /* ExpressionMap.c in Sources */,
 				F3AF33E41DCCD4EC00CAD472 /* GLGFX.c in Sources */,
 				F3AF34A61DCCD5AF00CAD472 /* StringExpressions.c in Sources */,
 				F3AF349D1DCCD5AF00CAD472 /* MathExpressions.c in Sources */,
@@ -2317,7 +2199,6 @@
 				F33CAF971E79286900792063 /* EntityExpressions.c in Sources */,
 				F3AF33B51DCCD4EC00CAD472 /* Colour.c in Sources */,
 				F3AF33921DCCD4EC00CAD472 /* GUIObject.c in Sources */,
-				F3AF33A51DCCD4EC00CAD472 /* InputMapMouseScrollComponent.c in Sources */,
 				F3AF33D51DCCD4EC00CAD472 /* GFXShaderLibrary.c in Sources */,
 				F3AF33BD1DCCD4EC00CAD472 /* PixelData.c in Sources */,
 				F3AF348E1DCCD5AF00CAD472 /* EqualityExpressions.c in Sources */,
@@ -2329,19 +2210,16 @@
 				F3AF34A31DCCD5AF00CAD472 /* StateExpressions.c in Sources */,
 				F3AF343D1DCCD4EC00CAD472 /* TextAttribute.c in Sources */,
 				F3AF338C1DCCD4EC00CAD472 /* GUIContainer.c in Sources */,
-				F3AF33AD1DCCD4EC00CAD472 /* InputSystem.c in Sources */,
 				F3AF34B51DCCD5AF00CAD472 /* ExpressionHelpers.c in Sources */,
 				F3F2305420CEDD6E003F9E47 /* RenderCameraComponent.c in Sources */,
 				F3AF33791DCCD4EC00CAD472 /* AnimationInterpolateComponent.c in Sources */,
 				F3AF33CE1DCCD4EC00CAD472 /* GFXFramebuffer.c in Sources */,
 				F3AF33771DCCD4EC00CAD472 /* AnimationComponent.c in Sources */,
 				F30730B82410E7D10078AEC4 /* FontExpressions.c in Sources */,
-				F37A6E6A2C8572D600F97BC3 /* ECSExpression.c in Sources */,
 				F342B660223918D600B44319 /* MTLShader.m in Sources */,
 				F3AF338E1DCCD4EC00CAD472 /* GUIExpression.c in Sources */,
 				F3AF34B31DCCD5AF00CAD472 /* ExpressionEvaluator.c in Sources */,
 				F3AF33EF1DCCD4EC00CAD472 /* GLTexture.c in Sources */,
-				F3AF33A11DCCD4EC00CAD472 /* InputMapMouseDropComponent.c in Sources */,
 				F3A9F100228444CD00F52287 /* GLCommandBuffer.c in Sources */,
 				F3E2742820D1669B00D6AFE1 /* ScriptableInterfaceSystem.c in Sources */,
 				F3AF34941DCCD5AF00CAD472 /* IOExpressions.c in Sources */,
@@ -2407,6 +2285,7 @@
 				F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */,
 				F332EB071EA1016300BCDAC7 /* ExpressionBitwiseTests.m in Sources */,
 				F3897BC31DCD764E008D6C1D /* ExpressionStateTests.m in Sources */,
+				F3CB83E42D0C7CE1006C6920 /* ExpressionMapTests.m in Sources */,
 				F39C5F2A2519C29600D80F0D /* PixelDataCompositeTests.m in Sources */,
 				F3897BC91DCD764E008D6C1D /* PixelDataGeneratorTests.m in Sources */,
 				F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */,

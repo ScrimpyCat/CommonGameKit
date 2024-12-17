@@ -75,11 +75,22 @@ static void ECSLinkPointerUnmapper(CCReflectType Type, CCReflectType MappedType,
 
 void ECSLinkPointerMapDefaults(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent)
 {
-    CCAssertLog(0, "Unknown link pointer");
+//#define CC_REFLECT_STATELESS_COMPARATORS \
+//    CCStringComparatorForCollection, \
+//    CCBigIntComparatorForCollection, \
+//    CCBigIntFastComparatorForCollection, \
+//    CCStringComparatorForDictionary, \
+//    CCBigIntComparatorForDictionary, \
+//    CCBigIntFastComparatorForDictionary
+//
+//    if CC_REFLECT_MAP_STATELESS_VALUES_WHEN(CC_REFLECT_VALUE_IS_POINTER, CC_REFLECT_STATELESS_COMPARATORS)
+    /*else*/ CCAssertLog(0, "Unknown link pointer");
 }
 
 void ECSLinkPointerUnmapDefaults(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator)
 {
+//    if CC_REFLECT_UNMAP_STATELESS_VALUES(CC_REFLECT_VALUE_TO_POINTER(CCComparator), CC_REFLECT_STATELESS_COMPARATORS)
+    
     CCAssertLog(0, "Unknown link pointer");
 }
 

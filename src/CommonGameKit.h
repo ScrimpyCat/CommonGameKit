@@ -52,17 +52,8 @@
 #include <CommonGameKit/Controller.h>
 #include <CommonGameKit/Keyboard.h>
 #include <CommonGameKit/Mouse.h>
-#include <CommonGameKit/InputMapComponent.h>
-#include <CommonGameKit/InputMapGroupComponent.h>
-#include <CommonGameKit/InputMapControllerAxesComponent.h>
-#include <CommonGameKit/InputMapControllerButtonComponent.h>
-#include <CommonGameKit/InputMapControllerComponent.h>
-#include <CommonGameKit/InputMapKeyboardComponent.h>
-#include <CommonGameKit/InputMapMouseButtonComponent.h>
-#include <CommonGameKit/InputMapMouseDropComponent.h>
-#include <CommonGameKit/InputMapMousePositionComponent.h>
-#include <CommonGameKit/InputMapMouseScrollComponent.h>
-#include <CommonGameKit/InputSystem.h>
+#include <CommonGameKit/Clipboard.h>
+#include <CommonGameKit/Input.h>
 
 #include <CommonGameKit/RenderComponent.h>
 #include <CommonGameKit/RenderSystem.h>
