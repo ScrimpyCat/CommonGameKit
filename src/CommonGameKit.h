@@ -78,6 +78,8 @@
 #include <CommonGameKit/Expression.h>
 #include <CommonGameKit/ExpressionEvaluator.h>
 #include <CommonGameKit/ExpressionHelpers.h>
+#include <CommonGameKit/ExpressionReflection.h>
+#include <CommonGameKit/ExpressionMap.h>
 
 #include <CommonGameKit/ScriptableInterfaceDynamicFieldComponent.h>
 #include <CommonGameKit/ScriptableInterfaceSystem.h>
@@ -109,5 +111,7 @@
 #include <CommonGameKit/Font.h>
 #include <CommonGameKit/Text.h>
 #include <CommonGameKit/TextAttribute.h>
+
+#include <CommonGameKit/ReflectedTypes.h>
 
 #endif

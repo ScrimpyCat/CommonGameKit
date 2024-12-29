@@ -291,4 +291,7 @@ extern const CCReflectOpaque CC_REFLECT(CCInputMap);
 
 extern const CCReflectInteger CC_REFLECT(CCInputMapType);
 
+void CCInputMapMapper(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent);
+void CCInputMapUnmapper(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator);
+
 #endif

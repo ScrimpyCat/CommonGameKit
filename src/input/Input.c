@@ -56,9 +56,6 @@ void CCInputMapDestructor(CCInputMap *InputMap)
 
 const CCReflectInteger CC_REFLECT(CCInputMapType) = CC_REFLECT_SIGNED_INTEGER(CCInputMapType, CCReflectEndianNative);
 
-static void CCInputMapMapper(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent);
-static void CCInputMapUnmapper(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator);
-
 const CCReflectOpaque CC_REFLECT(CCInputMap) = CC_REFLECT_OPAQUE(sizeof(CCInputMap), sizeof(CCReflectOpaque), CCInputMapMapper, CCInputMapUnmapper);
 
 static const CCReflectStruct1 CCInputMapReflectBase = CC_REFLECT_STRUCT(CCInputMap,
@@ -125,7 +122,7 @@ static const CCReflectStruct3 CCInputMapReflectVirtualJoystickEmpty = CC_REFLECT
     (virtual.joystick.count, &CC_REFLECT(size_t))
 );
 
-static void CCInputMapMapper(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent)
+void CCInputMapMapper(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent)
 {
     switch (((const CCInputMap*)Data)->type)
     {
@@ -173,7 +170,7 @@ static void CCInputMapMapper(CCReflectType Type, const void *Data, void *Args, C
     }
 }
 
-static void CCInputMapUnmapper(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator)
+void CCInputMapUnmapper(CCReflectType Type, CCReflectType MappedType, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator)
 {
     Handler(MappedType, Data, Args);
 }
