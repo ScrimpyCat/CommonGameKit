@@ -11,6 +11,8 @@
 		F30730B82410E7D10078AEC4 /* FontExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F30730B62410E7D10078AEC4 /* FontExpressions.c */; };
 		F319CFE71E6A5C3600354BF3 /* ComponentExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */; };
 		F319CFE81E6A5C3600354BF3 /* ComponentExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F31D6BFA2D216967002E6735 /* ReflectedTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F31D6BF82D216967002E6735 /* ReflectedTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F31D6BFB2D216967002E6735 /* ReflectedTypes.c in Sources */ = {isa = PBXBuildFile; fileRef = F31D6BF92D216967002E6735 /* ReflectedTypes.c */; };
 		F3292C34297627940053B5B4 /* ECS.h in Headers */ = {isa = PBXBuildFile; fileRef = F3292C32297627940053B5B4 /* ECS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3292C35297627940053B5B4 /* ECS.c in Sources */ = {isa = PBXBuildFile; fileRef = F3292C33297627940053B5B4 /* ECS.c */; };
 		F32C1C071F6A071600C68B43 /* RelationSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = F32C1C051F6A071600C68B43 /* RelationSystem.c */; };
@@ -41,7 +43,7 @@
 		F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */; };
 		F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F3569A9329F70CA50075C6A1 /* ECSContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
-		F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = F35B1F702C34301F009325F0 /* ExpressionReflection.h */; };
+		F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = F35B1F702C34301F009325F0 /* ExpressionReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F35B1F732C34301F009325F0 /* ExpressionReflection.c in Sources */ = {isa = PBXBuildFile; fileRef = F35B1F712C34301F009325F0 /* ExpressionReflection.c */; };
 		F35B1F752C384795009325F0 /* ExpressionSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */; };
 		F36081F02B0B075A002B2A89 /* ECSMonitorSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = F36081EE2B0B075A002B2A89 /* ECSMonitorSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -279,8 +281,9 @@
 		F3CB83B82D0374EE006C6920 /* InputExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F3CB83B62D0374EE006C6920 /* InputExpressions.h */; };
 		F3CB83B92D0374EE006C6920 /* InputExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83B72D0374EE006C6920 /* InputExpressions.c */; };
 		F3CB83E42D0C7CE1006C6920 /* ExpressionMapTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83E32D0C7CE1006C6920 /* ExpressionMapTests.m */; };
-		F3CB83E72D0F9286006C6920 /* ExpressionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F3CB83E52D0F9286006C6920 /* ExpressionMap.h */; };
+		F3CB83E72D0F9286006C6920 /* ExpressionMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F3CB83E52D0F9286006C6920 /* ExpressionMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3CB83E82D0F9286006C6920 /* ExpressionMap.c in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83E62D0F9286006C6920 /* ExpressionMap.c */; };
+		F3CB83EA2D1133F3006C6920 /* ExpressionReflectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3CB83E92D1133F3006C6920 /* ExpressionReflectionTests.m */; };
 		F3D4A48C299B43C800B38AF8 /* ECSConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D4A46C299B43B600B38AF8 /* ECSConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */; };
 		F3E069581F978174009F23E4 /* SystemID.h in Headers */ = {isa = PBXBuildFile; fileRef = F3E0693B1F978114009F23E4 /* SystemID.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -545,6 +548,8 @@
 		F30730B62410E7D10078AEC4 /* FontExpressions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FontExpressions.c; sourceTree = "<group>"; };
 		F319CFE51E6A5C3600354BF3 /* ComponentExpressions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentExpressions.c; sourceTree = "<group>"; };
 		F319CFE61E6A5C3600354BF3 /* ComponentExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentExpressions.h; sourceTree = "<group>"; };
+		F31D6BF82D216967002E6735 /* ReflectedTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReflectedTypes.h; sourceTree = "<group>"; };
+		F31D6BF92D216967002E6735 /* ReflectedTypes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ReflectedTypes.c; sourceTree = "<group>"; };
 		F3292C32297627940053B5B4 /* ECS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECS.h; sourceTree = "<group>"; };
 		F3292C33297627940053B5B4 /* ECS.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECS.c; sourceTree = "<group>"; };
 		F32C1C051F6A071600C68B43 /* RelationSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RelationSystem.c; sourceTree = "<group>"; };
@@ -822,6 +827,7 @@
 		F3CB83E32D0C7CE1006C6920 /* ExpressionMapTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionMapTests.m; sourceTree = "<group>"; };
 		F3CB83E52D0F9286006C6920 /* ExpressionMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionMap.h; sourceTree = "<group>"; };
 		F3CB83E62D0F9286006C6920 /* ExpressionMap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ExpressionMap.c; sourceTree = "<group>"; };
+		F3CB83E92D1133F3006C6920 /* ExpressionReflectionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionReflectionTests.m; sourceTree = "<group>"; };
 		F3D4A46C299B43B600B38AF8 /* ECSConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSConfig.h; sourceTree = "<group>"; };
 		F3DB297D23C4B4F800D0D68E /* RelationSystemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RelationSystemTests.m; sourceTree = "<group>"; };
 		F3E0693B1F978114009F23E4 /* SystemID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemID.h; sourceTree = "<group>"; };
@@ -1075,6 +1081,7 @@
 			children = (
 				F3E2743620D5022E00D6AFE1 /* ScriptableInterfaceSystemTests.m */,
 				F3CB83E32D0C7CE1006C6920 /* ExpressionMapTests.m */,
+				F3CB83E92D1133F3006C6920 /* ExpressionReflectionTests.m */,
 				F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */,
 				F3897BA71DCD764E008D6C1D /* ExpressionEvaluatorTests.h */,
 				F3897BA81DCD764E008D6C1D /* ExpressionEvaluatorTests.m */,
@@ -1196,6 +1203,8 @@
 				F378DAFD234D5278000600CC /* ContainerTypes.h */,
 				F3BEC1BE23C1131500014B5B /* TypeCallbacks.c */,
 				F3BEC1BD23C1131500014B5B /* TypeCallbacks.h */,
+				F31D6BF92D216967002E6735 /* ReflectedTypes.c */,
+				F31D6BF82D216967002E6735 /* ReflectedTypes.h */,
 				F3AF32931DCCD4EB00CAD472 /* Animation */,
 				F3AF329E1DCCD4EB00CAD472 /* Component System */,
 				F3292C12297627450053B5B4 /* ECS */,
@@ -1744,6 +1753,7 @@
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
 				F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */,
 				F3AF33E61DCCD4EC00CAD472 /* GLPortability.h in Headers */,
+				F31D6BFA2D216967002E6735 /* ReflectedTypes.h in Headers */,
 				F3E855B92248CCC1008896E1 /* MTLBuffer.h in Headers */,
 				F332EAE91EA0FC4900BCDAC7 /* BitwiseExpressions.h in Headers */,
 				F33A69582CEC9EA200E427AE /* Clipboard.h in Headers */,
@@ -2149,6 +2159,7 @@
 			files = (
 				F36082002B108352002B2A89 /* ECSRegistry.c in Sources */,
 				F3AF34881DCCD5AF00CAD472 /* ControlFlowExpressions.c in Sources */,
+				F31D6BFB2D216967002E6735 /* ReflectedTypes.c in Sources */,
 				F3AF34371DCCD4EC00CAD472 /* AssetManager.c in Sources */,
 				F3AF34821DCCD5AF00CAD472 /* AssetExpressions.c in Sources */,
 				F3AF33A71DCCD4EC00CAD472 /* Controller.c in Sources */,
@@ -2278,6 +2289,7 @@
 				F3897BC11DCD764E008D6C1D /* ExpressionMathTests.m in Sources */,
 				F3ABBBC82988FA0A000AE08F /* ECSTests.m in Sources */,
 				F3897BBA1DCD764E008D6C1D /* EntityManagerTests.m in Sources */,
+				F3CB83EA2D1133F3006C6920 /* ExpressionReflectionTests.m in Sources */,
 				F34EB81D249BB4CE00B3D984 /* GFXTestCase.m in Sources */,
 				F3897BCB1DCD764E008D6C1D /* TextAttributeTests.m in Sources */,
 				F3897BCC1DCD764E008D6C1D /* TextTests.m in Sources */,
