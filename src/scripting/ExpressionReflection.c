@@ -27,32 +27,66 @@
 #include "ExpressionEvaluator.h"
 #include "ExpressionHelpers.h"
 
-static CCExpression CCExpressionReflectionSerializeHex(const void *Data, size_t Size, size_t PrintStart, size_t PrintInvert)
+static const CCString HexPrefixes[2] = { CC_STRING("0x"), CC_STRING("-0x") };
+
+static CCExpression CCExpressionReflectionSerializeHex(const void *Data, size_t Size, size_t Start, size_t Invert, _Bool Signed)
 {
-    CCString String = CC_STRING("0x");
+    CCString String;
     
+    uint8_t InvertMultiplier;
+    uint8_t InvertAdjust;
+    
+    if (Signed)
+    {
+        const uint8_t Sign = ((const uint8_t*)Data)[Start + (Invert * (Size - 1))] >> 7;
+        
+        String = HexPrefixes[Sign];
+        
+        InvertMultiplier = Sign ? 0xff : 1;
+        InvertAdjust = Sign;
+    }
+    
+    else
+    {
+        String = HexPrefixes[0];
+        
+        InvertMultiplier = 1;
+        InvertAdjust = 0;
+    }
+    
+    size_t Max = Size - 1;
+    while (Max && !(uint8_t)((InvertMultiplier * ((const uint8_t*)Data)[Start + (Invert * Max)]) - InvertAdjust)) Max--;
+
     static const char Hex[] = "0123456789abcdef";
     char Byte[3] = { 0, 0, 0 };
+    uint8_t Carry = InvertAdjust;
+    CCString Digits = CC_STRING("");
     
-    for (size_t Loop = 0; Loop < Size; Loop++)
+    for (size_t Loop = 0; Loop < Max + 1; Loop++)
     {
-        uint8_t Value = ((const uint8_t*)Data)[PrintStart + (PrintInvert * Loop)];
+        const uint8_t Value = (InvertMultiplier * ((const uint8_t*)Data)[Start + (Invert * Loop)]) - InvertAdjust + Carry;
+        
+        if ((Carry) && (Value)) Carry = 0;
         
         Byte[0] = Hex[Value >> 4];
         Byte[1] = Hex[Value & 0xf];
         
         CCString ByteStr = CCStringCreate(CC_STD_ALLOCATOR, (CCStringHint)CCStringEncodingASCII, Byte);
-        CCString NewStr = CCStringCreateByJoiningStrings((CCString[2]){ String, ByteStr }, 2, 0);
+        CCString NewStr = CCStringCreateByJoiningStrings((CCString[2]){ ByteStr, Digits }, 2, 0);
         CCStringDestroy(ByteStr);
-        CCStringDestroy(String);
+        CCStringDestroy(Digits);
         
-        String = NewStr;
+        Digits = NewStr;
     }
     
-    return CCExpressionCreateString(CC_STD_ALLOCATOR, String, FALSE);
+    CCString NewStr = CCStringCreateByJoiningStrings((CCString[2]){ String, Digits }, 2, 0);
+    CCStringDestroy(Digits);
+    CCStringDestroy(String);
+    
+    return CCExpressionCreateString(CC_STD_ALLOCATOR, NewStr, FALSE);
 }
 
-static void CCExpressionReflectionDeserializeHex(CCExpression Expression, void *Data, size_t Size, CCReflectEndian Endian)
+static void CCExpressionReflectionDeserializeHex(CCExpression Expression, void *Data, size_t Size, CCReflectEndian Endian, _Bool Sign)
 {
     size_t PrintStart, PrintInvert;
 #if CC_HARDWARE_ENDIAN_LITTLE
@@ -88,30 +122,86 @@ static void CCExpressionReflectionDeserializeHex(CCExpression Expression, void *
 #endif
     
     CCString String = CCExpressionGetString(Expression);
+    _Bool Neg = FALSE;
+    const size_t Offset = CCStringHasPrefix(String, CC_STRING("0x")) ? 2 : ((Neg = CCStringHasPrefix(String, CC_STRING("-0x"))) ? 3 : 0);
     
-    if (CCStringHasPrefix(String, CC_STRING("0x")))
+    memset(Data, 0, Size);
+    
+    if ((Offset) && ((Sign) || (!Neg)))
     {
-        memset(Data, 0, Size);
-        
         CC_STRING_TEMP_BUFFER(Buffer, String)
         {
-            const char *Hex = Buffer + 2;
+            const char *Hex = Buffer + Offset;
             
             size_t Length = 0;
             for (char Chr; ((Chr = Hex[Length]) >= '0') && ((Chr <= '9') || ((Chr <= 'f') && (Chr >= 'a')) || ((Chr <= 'F') && (Chr >= 'A'))); Length++);
             
-            for (size_t Loop = 0; Loop < Length; Loop++)
+            if ((Length / 2) <= Size)
             {
-                uint8_t Nibble = 0;
+                for (size_t Loop = 0; Loop < Length; Loop++)
+                {
+                    uint8_t Nibble = 0;
+                    
+                    const char Chr = Hex[Length - Loop - 1];
+                    
+                    if ((Chr >= '0') && (Chr <= '9')) Nibble = Chr - '0';
+                    else if ((Chr >= 'a') && (Chr <= 'f')) Nibble = Chr - 'a' + 10;
+                    else if ((Chr >= 'A') && (Chr <= 'F')) Nibble = Chr - 'A' + 10;
+                    
+                    const size_t Index = PrintStart + (PrintInvert * (Loop / 2));
+                    ((uint8_t*)Data)[Index] |= Nibble << ((Loop & 1) << 2);
+                }
                 
-                const char Chr = Hex[Length - Loop - 1];
+                if (Neg)
+                {
+                    const size_t Index = PrintStart + (PrintInvert * (Size - 1));
+                    
+                    if (((uint8_t*)Data)[Index] & 0x80)
+                    {
+                        memset(Data, 0, Size);
+                    }
+                    
+                    else
+                    {
+                        for (size_t Loop = 0; Loop < Size; Loop++)
+                        {
+                            ((uint8_t*)Data)[Loop] = ~((uint8_t*)Data)[Loop];
+                        }
+                        
+                        for (size_t Loop = 0; Loop < Size; Loop++)
+                        {
+                            const size_t Index = PrintStart + (PrintInvert * Loop);
+                            ((uint8_t*)Data)[Index] += 1;
+                            
+                            if (!((uint8_t*)Data)[Index]) break;
+                        }
+                    }
+                    
+                    ((uint8_t*)Data)[Index] |= 0x80;
+                }
                 
-                if ((Chr >= '0') && (Chr <= '9')) Nibble = Chr - '0';
-                else if ((Chr >= 'a') && (Chr <= 'f')) Nibble = Chr - 'a' + 10;
-                else if ((Chr >= 'A') && (Chr <= 'F')) Nibble = Chr - 'A' + 10;
+                else if (Sign)
+                {
+                    const size_t Index = PrintStart + (PrintInvert * (Size - 1));
+                    
+                    if (((uint8_t*)Data)[Index] & 0x80)
+                    {
+                        memset(Data, 0xff, Size);
+                        
+                        ((uint8_t*)Data)[Index] ^= 0x80;
+                    }
+                }
+            }
+            
+            else
+            {
+                if (!Neg) memset(Data, 0xff, Size);
                 
-                const size_t Index = PrintStart + (PrintInvert * (Loop / 2));
-                ((uint8_t*)Data)[Index] |= Nibble << ((Loop & 1) << 2);
+                if (Sign)
+                {
+                    const size_t Index = PrintStart + (PrintInvert * (Size - 1));
+                    ((uint8_t*)Data)[Index] ^= 0x80;
+                }
             }
         }
     }
@@ -177,7 +267,7 @@ static CCExpression CCExpressionReflectionSerializeInteger(const CCReflectIntege
         return CCExpressionCreateInteger(CC_STD_ALLOCATOR, Value);
     }
     
-    return CCExpressionReflectionSerializeHex(Data, Size, PrintStart, PrintInvert);
+    return CCExpressionReflectionSerializeHex(Data, Size, Start, Invert, Integer->sign);
 }
 
 static void CCExpressionReflectionCastInteger(intmax_t Value, const CCReflectInteger *Integer, void *Data)
@@ -241,7 +331,7 @@ static void CCExpressionReflectionCastInteger(intmax_t Value, const CCReflectInt
     
     memset(Data, 0xff, Integer->size);
     
-    ((uint8_t*)Data)[Start + (Invert * (Size - 1))] ^= 0x80;
+    if (Integer->sign) ((uint8_t*)Data)[Start + (Invert * (Size - 1))] ^= 0x80;
     
     if (CCReflectValidateMaximum(&CC_REFLECT(intmax_t), &Value, &CC_REFLECT_VALIDATE_MAXIMUM(&CC_REFLECT(intmax_t), CC_REFLECT_VALUE(Integer, Data), CC_REFLECT_RESULT_DEFAULT, CC_REFLECT_RESULT_DEFAULT)))
     {
@@ -252,7 +342,7 @@ static void CCExpressionReflectionCastInteger(intmax_t Value, const CCReflectInt
             ((uint8_t*)Data)[Start + (Invert * Loop)] = ((uint8_t*)&Value)[Loop];
         }
         
-        ((uint8_t*)Data)[Start + (Invert * (Size - 1))] = ((uint8_t*)Data)[Start + (Invert * (Size - 1))] & ~0x80;
+        if (Integer->sign) ((uint8_t*)Data)[Start + (Invert * (Size - 1))] = ((uint8_t*)Data)[Start + (Invert * (Size - 1))] & ~0x80;
     }
 }
 
@@ -283,7 +373,7 @@ static void CCExpressionReflectionDeserializeInteger(const CCReflectInteger *Int
         }
             
         case CCExpressionValueTypeString:
-            CCExpressionReflectionDeserializeHex(Expression, Data, Integer->size, Integer->endian);
+            CCExpressionReflectionDeserializeHex(Expression, Data, Integer->size, Integer->endian, Integer->sign);
             break;
             
         default:
@@ -355,7 +445,7 @@ static CCExpression CCExpressionReflectionSerializeFloat(const CCReflectFloat *F
             break;
     }
     
-    return CCExpressionReflectionSerializeHex(Data, Size, PrintStart, PrintInvert);
+    return CCExpressionReflectionSerializeHex(Data, Size, Start, Invert, FALSE);
 }
 
 static void CCExpressionReflectionCastFloat(long double Value, const CCReflectFloat *Float, void *Data)
@@ -402,7 +492,7 @@ static void CCExpressionReflectionDeserializeFloat(const CCReflectFloat *Float, 
             break;
             
         case CCExpressionValueTypeString:
-            CCExpressionReflectionDeserializeHex(Expression, Data, Float->size, Float->endian);
+            CCExpressionReflectionDeserializeHex(Expression, Data, Float->size, Float->endian, FALSE);
             break;
             
         default:
@@ -2507,10 +2597,13 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
             {
                 CCReflectType ElementType = ((const CCReflectArray*)Type)->type;
                 const size_t ElementSize = CCReflectTypeSize(ElementType);
+                const size_t Count = ((const CCReflectArray*)Type)->count;
                 
                 size_t Index = 0;
                 CC_COLLECTION_FOREACH(CCExpression, Element, CCExpressionGetList(Expression))
                 {
+                    if (Index >= Count) break;
+                    
                     CCExpressionReflectionDeserialize(Element, ElementType, Data + (ElementSize * Index++), Zone, Allocator);
                 }
             }
