@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ReflectedTypes.h"
-#include "Input.h"
-
 #ifndef CC_REFLECT_MAP_STATELESS_VALUE_MAPPED_INDEX_BASE
 #define CC_REFLECT_MAP_STATELESS_VALUE_MAPPED_INDEX_BASE 10
 #endif
+
+#include "ReflectedTypes.h"
+#include "Input.h"
 
 void CCReflectOpaqueTypeDescriptorMapCGKDefaults(CCReflectType Type, const void *Data, void *Args, CCReflectTypeHandler Handler, CCMemoryZone Zone, CCAllocatorType Allocator, CCReflectMapIntent Intent)
 {

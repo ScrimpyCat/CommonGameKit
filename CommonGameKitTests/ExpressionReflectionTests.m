@@ -599,7 +599,7 @@
         "                                    (type:"
         "                                        (:opaque"
         "                                            (type-size: 40)"
-        "                                            (descriptor: ((:integer (sign: 0) (fixed: 1) (endian: 0) (size: 1)) 0))"
+        "                                            (descriptor: ((:integer (sign: 0) (fixed: 1) (endian: 0) (size: 1)) 10))"
         "                                        )"
         "                                    )"
         "                                    (count: 2)"
