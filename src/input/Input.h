@@ -96,8 +96,14 @@ typedef struct CCInputMap {
                     float deadzone;
                     /// The resolution is the precision of the analog input. This is useful to smooth out the values, so smaller movements end up being ignored.
                     uint8_t resolution;
-                    /// The controller axis mappings.
-                    CCControllerAxisMap x, y, z, w;
+                    union {
+                        struct {
+                            /// The controller axis mappings.
+                            CCControllerAxisMap x, y, z, w;
+                        } CC_PACKED;
+                        /// The controller axis mappings.
+                        CCControllerAxisMap xyzw[4];
+                    };
                 } axis;
                 struct {
                     /// The ID of the input from the controller to map. A negative index is unmapped/ignored.
