@@ -904,6 +904,348 @@
     
     CCInputMapDestructor(&ResultInputMap);
     
+    
+    Expression = CCExpressionCreateFromSource("(input-mouse-button)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeMouseButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.code, CCMouseButtonUnknown, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.flags, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.ignoreModifier, TRUE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-mouse-button (button: :middle))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeMouseButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.code, CCMouseButtonMiddle, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.flags, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.ignoreModifier, TRUE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-mouse-button (button: 1) (ramp: 2) (flags: :control-shift))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeMouseButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.code, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.flags, CCKeyboardModifierControl | CCKeyboardModifierShift, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.ramp, 2.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.mouse.button.ignoreModifier, FALSE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-keyboard)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeKeyboard, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.keycode, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.character, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.flags, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.isKeycode, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.ignoreModifier, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.repeats, FALSE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-keyboard (keycode: :a) (character: \"a\") (ramp: 2) (flags: :control-shift) (repeat: #t))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeKeyboard, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.keycode, CCKeyboardKeycodeA, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.character, 'a', @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.flags, CCKeyboardModifierControl | CCKeyboardModifierShift, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.ramp, 2.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.isKeycode, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.ignoreModifier, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.repeats, TRUE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-keyboard (keycode: 1) (flags: 3))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeKeyboard, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.keycode, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.character, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.flags, 3, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.isKeycode, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.ignoreModifier, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.keyboard.repeats, FALSE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-none)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeNone, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-controller-axes)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeControllerAxis, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.deadzone, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.resolution, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.x.index, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.x.flip, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.x.oneSided, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.y.index, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.y.flip, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.y.oneSided, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.z.index, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.z.flip, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.z.oneSided, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.w.index, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.w.flip, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.w.oneSided, FALSE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-controller-axes (device: \"foo\") (connection: 2) (deadzone: 1.5) (resolution: 8) (x: 1) (y: 2 :flip) (z: 3 :one-sided) (w: 4 :flip :one-sided))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeControllerAxis, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(ResultInputMap.controller.device, CC_STRING("foo")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.connection, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.deadzone, 1.5f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.resolution, 8, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.x.index, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.x.flip, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.x.oneSided, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.y.index, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.y.flip, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.y.oneSided, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.z.index, 3, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.z.flip, FALSE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.z.oneSided, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.w.index, 4, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.w.flip, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.axis.w.oneSided, TRUE, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-controller-button)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.button.index, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-controller-button (device: \"foo\") (connection: 2) (button: 1) (ramp: 1.5))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(ResultInputMap.controller.device, CC_STRING("foo")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.connection, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.button.index, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.button.ramp, 1.5f, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-controller-hat)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeControllerHat, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.hat.index, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.hat.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-controller-hat (device: \"foo\") (connection: 2) (hat: 1) (ramp: 1.5))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeControllerHat, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(ResultInputMap.controller.device, CC_STRING("foo")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.connection, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.hat.index, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.controller.hat.ramp, 1.5f, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-group)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeGroup, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps, NULL, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.count, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.wantsAllActive, FALSE, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-group (input: (input-controller-button (button: 1)) (input-controller-button (button: 2))) (all-active: #t))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeGroup, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.count, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.wantsAllActive, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[0].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[0].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[0].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[0].controller.button.index, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[0].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.button.index, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-group (input: 1 (input-controller-button (button: 2))) (all-active: #t))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeGroup, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.count, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.wantsAllActive, TRUE, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[0].type, CCInputMapTypeNone, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.button.index, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.group.inputMaps[1].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-virtual-joystick)");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeVirtualJoystick, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps, NULL, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.count, 0, @"Should serialise and deserialise correctly");
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-virtual-joystick (input: (input-controller-button (button: 1)) (input-controller-button (button: 2))))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeVirtualJoystick, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.count, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.button.index, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.button.index, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
+    
+    Expression = CCExpressionCreateFromSource("(input-virtual-joystick (x: (input-controller-button (button: 1)) (input-controller-button (button: 2))) (y: (input-controller-button (button: 3))) (z: (input-controller-button (button: 4)) (input-controller-button (button: 5))) (w: (input-controller-button (button: 6)) (input-controller-button (button: 7))))");
+    
+    memset(&ResultInputMap, 0, sizeof(ResultInputMap));
+    CCExpressionReflectionDeserialize(Expression, &CC_REFLECT(CCInputMap), &ResultInputMap, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(ResultInputMap.type, CCInputMapTypeVirtualJoystick, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.count, 8, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.button.index, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[0].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.button.index, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[1].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[2].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[2].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[2].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[2].controller.button.index, 3, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[2].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[3].type, CCInputMapTypeNone, @"Should serialise and deserialise correctly");
+    
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[4].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[4].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[4].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[4].controller.button.index, 4, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[4].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[5].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[5].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[5].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[5].controller.button.index, 5, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[5].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[6].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[6].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[6].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[6].controller.button.index, 6, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[6].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[7].type, CCInputMapTypeControllerButton, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[7].controller.device, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[7].controller.connection, -1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[7].controller.button.index, 7, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(ResultInputMap.virtual.joystick.inputMaps[7].controller.button.ramp, 0.0f, @"Should serialise and deserialise correctly");
+    
+    CCInputMapDestructor(&ResultInputMap);
+    
     CCMemoryZoneDestroy(Zone);
     
     CCReflectOpaqueTypeDescriptorMap = CCReflectOpaqueTypeDescriptorMapDefaults;
