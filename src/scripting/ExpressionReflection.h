@@ -29,6 +29,9 @@
 #include <CommonGameKit/Base.h>
 #include <CommonGameKit/Expression.h>
 
+typedef CCExpression (*CCExpressionReflectionSerializer)(CCReflectType Type, const void *Data, CCMemoryZone Zone);
+typedef _Bool (*CCExpressionReflectionDeserializer)(CCExpression Expression, CCReflectType Type, void *Data, CCMemoryZone Zone, CCAllocatorType Allocator);
+
 /*!
  * @brief Serialize the data as an expression.
  * @param Type The type of data to be serialized.
@@ -62,5 +65,11 @@ typedef struct {
 } CCExpressionReflectionDeserializeHandlerArgs;
 
 void CCExpressionReflectionDeserializeHandler(CCReflectType Type, const void *Data, CCExpressionReflectionDeserializeHandlerArgs *Args);
+
+extern CCExpressionReflectionSerializer CCExpressionReflectionOpaqueSerialize;
+extern CCExpressionReflectionDeserializer CCExpressionReflectionOpaqueDeserialize;
+
+CCExpression CCExpressionReflectionOpaqueSerializeDefaults(CCReflectType Type, const void *Data, CCMemoryZone Zone);
+_Bool CCExpressionReflectionOpaqueDeserializeDefaults(CCExpression Expression, CCReflectType Type, void *Data, CCMemoryZone Zone, CCAllocatorType Allocator);
 
 #endif

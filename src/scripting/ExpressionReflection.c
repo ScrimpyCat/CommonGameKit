@@ -26,6 +26,7 @@
 #include "ExpressionReflection.h"
 #include "ExpressionEvaluator.h"
 #include "ExpressionHelpers.h"
+#include "ReflectedTypes.h"
 
 static const CCString HexPrefixes[2] = { CC_STRING("0x"), CC_STRING("-0x") };
 
@@ -1951,14 +1952,17 @@ CCExpression CCExpressionReflectionSerialize(CCReflectType Type, const void *Dat
                 return List;
             }
             
-            CCExpression Result = NULL;
+            CCExpression Result = CCExpressionReflectionOpaqueSerialize(Type, Data, Zone);
             
-            ((const CCReflectOpaque*)Type)->map(Type, Data, &(CCExpressionReflectionSerializeHandlerArgs){
-                .result = &Result,
-                .zone = Zone
-            }, (CCReflectTypeHandler)CCExpressionReflectionSerializeHandler, Zone, CC_AUTORELEASE_ALLOCATOR(Zone), CCReflectMapIntentSerialize);
-            
-            CCAssertLog(Result, "Result should be valid expression");
+            if (!Result)
+            {
+                ((const CCReflectOpaque*)Type)->map(Type, Data, &(CCExpressionReflectionSerializeHandlerArgs){
+                    .result = &Result,
+                    .zone = Zone
+                }, (CCReflectTypeHandler)CCExpressionReflectionSerializeHandler, Zone, CC_AUTORELEASE_ALLOCATOR(Zone), CCReflectMapIntentSerialize);
+                
+                CCAssertLog(Result, "Result should be valid expression");
+            }
             
             return Result;
         }
@@ -2573,6 +2577,8 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                 }
             }
             
+            else if (CCExpressionReflectionOpaqueDeserialize(Expression, Type, Data, Zone, Allocator)) return;
+            
             if ((CCExpressionGetType(Expression) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2))
             {
                 CCExpression TypeExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
@@ -2641,4 +2647,1200 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
             else CC_LOG_ERROR_CUSTOM("Deserializing malformed enumerable. Expects a list.");
             break;
     }
+}
+
+#include "Input.h"
+
+CCExpressionReflectionSerializer CCExpressionReflectionOpaqueSerialize = CCExpressionReflectionOpaqueSerializeDefaults;
+CCExpressionReflectionDeserializer CCExpressionReflectionOpaqueDeserialize = CCExpressionReflectionOpaqueDeserializeDefaults;
+
+static CCString KeyboardKeycodeNames[CCKeyboardKeycodeCount] = {
+    [CCKeyboardKeycodeSpace] = CC_STRING(":space"),
+    [CCKeyboardKeycodeApostrophe] = CC_STRING(":apostrophe"),
+    [CCKeyboardKeycodeComma] = CC_STRING(":comma"),
+    [CCKeyboardKeycodeMinus] = CC_STRING(":minus"),
+    [CCKeyboardKeycodePeriod] = CC_STRING(":period"),
+    [CCKeyboardKeycodeSlash] = CC_STRING(":slash"),
+    [CCKeyboardKeycode0] = CC_STRING(":0"),
+    [CCKeyboardKeycode1] = CC_STRING(":1"),
+    [CCKeyboardKeycode2] = CC_STRING(":2"),
+    [CCKeyboardKeycode3] = CC_STRING(":3"),
+    [CCKeyboardKeycode4] = CC_STRING(":4"),
+    [CCKeyboardKeycode5] = CC_STRING(":5"),
+    [CCKeyboardKeycode6] = CC_STRING(":6"),
+    [CCKeyboardKeycode7] = CC_STRING(":7"),
+    [CCKeyboardKeycode8] = CC_STRING(":8"),
+    [CCKeyboardKeycode9] = CC_STRING(":9"),
+    [CCKeyboardKeycodeSemicolon] = CC_STRING(":semicolon"),
+    [CCKeyboardKeycodeEqual] = CC_STRING(":equal"),
+    [CCKeyboardKeycodeA] = CC_STRING(":a"),
+    [CCKeyboardKeycodeB] = CC_STRING(":b"),
+    [CCKeyboardKeycodeC] = CC_STRING(":c"),
+    [CCKeyboardKeycodeD] = CC_STRING(":d"),
+    [CCKeyboardKeycodeE] = CC_STRING(":e"),
+    [CCKeyboardKeycodeF] = CC_STRING(":f"),
+    [CCKeyboardKeycodeG] = CC_STRING(":g"),
+    [CCKeyboardKeycodeH] = CC_STRING(":h"),
+    [CCKeyboardKeycodeI] = CC_STRING(":i"),
+    [CCKeyboardKeycodeJ] = CC_STRING(":j"),
+    [CCKeyboardKeycodeK] = CC_STRING(":k"),
+    [CCKeyboardKeycodeL] = CC_STRING(":l"),
+    [CCKeyboardKeycodeM] = CC_STRING(":m"),
+    [CCKeyboardKeycodeN] = CC_STRING(":n"),
+    [CCKeyboardKeycodeO] = CC_STRING(":o"),
+    [CCKeyboardKeycodeP] = CC_STRING(":p"),
+    [CCKeyboardKeycodeQ] = CC_STRING(":q"),
+    [CCKeyboardKeycodeR] = CC_STRING(":r"),
+    [CCKeyboardKeycodeS] = CC_STRING(":s"),
+    [CCKeyboardKeycodeT] = CC_STRING(":t"),
+    [CCKeyboardKeycodeU] = CC_STRING(":u"),
+    [CCKeyboardKeycodeV] = CC_STRING(":v"),
+    [CCKeyboardKeycodeW] = CC_STRING(":w"),
+    [CCKeyboardKeycodeX] = CC_STRING(":x"),
+    [CCKeyboardKeycodeY] = CC_STRING(":y"),
+    [CCKeyboardKeycodeZ] = CC_STRING(":z"),
+    [CCKeyboardKeycodeLeftBracket] = CC_STRING(":left-bracket"),
+    [CCKeyboardKeycodeBackslash] = CC_STRING(":backslash"),
+    [CCKeyboardKeycodeRightBracket] = CC_STRING(":right-bracket"),
+    [CCKeyboardKeycodeGraveAccent] = CC_STRING(":grave-accent"),
+    [CCKeyboardKeycodeWorld1] = CC_STRING(":world-1"),
+    [CCKeyboardKeycodeWorld2] = CC_STRING(":world-2"),
+    [CCKeyboardKeycodeEscape] = CC_STRING(":escape"),
+    [CCKeyboardKeycodeEnter] = CC_STRING(":enter"),
+    [CCKeyboardKeycodeTab] = CC_STRING(":tab"),
+    [CCKeyboardKeycodeBackspace] = CC_STRING(":backspace"),
+    [CCKeyboardKeycodeInsert] = CC_STRING(":insert"),
+    [CCKeyboardKeycodeDelete] = CC_STRING(":delete"),
+    [CCKeyboardKeycodeRight] = CC_STRING(":right"),
+    [CCKeyboardKeycodeLeft] = CC_STRING(":left"),
+    [CCKeyboardKeycodeDown] = CC_STRING(":down"),
+    [CCKeyboardKeycodeUp] = CC_STRING(":up"),
+    [CCKeyboardKeycodePageUp] = CC_STRING(":page-up"),
+    [CCKeyboardKeycodePageDown] = CC_STRING(":page-down"),
+    [CCKeyboardKeycodeHome] = CC_STRING(":home"),
+    [CCKeyboardKeycodeEnd] = CC_STRING(":end"),
+    [CCKeyboardKeycodeCapsLock] = CC_STRING(":caps-lock"),
+    [CCKeyboardKeycodeScrollLock] = CC_STRING(":scroll-lock"),
+    [CCKeyboardKeycodeNumLock] = CC_STRING(":num-lock"),
+    [CCKeyboardKeycodePrintScreen] = CC_STRING(":print-screen"),
+    [CCKeyboardKeycodePause] = CC_STRING(":pause"),
+    [CCKeyboardKeycodeF1] = CC_STRING(":f1"),
+    [CCKeyboardKeycodeF2] = CC_STRING(":f2"),
+    [CCKeyboardKeycodeF3] = CC_STRING(":f3"),
+    [CCKeyboardKeycodeF4] = CC_STRING(":f4"),
+    [CCKeyboardKeycodeF5] = CC_STRING(":f5"),
+    [CCKeyboardKeycodeF6] = CC_STRING(":f6"),
+    [CCKeyboardKeycodeF7] = CC_STRING(":f7"),
+    [CCKeyboardKeycodeF8] = CC_STRING(":f8"),
+    [CCKeyboardKeycodeF9] = CC_STRING(":f9"),
+    [CCKeyboardKeycodeF10] = CC_STRING(":f10"),
+    [CCKeyboardKeycodeF11] = CC_STRING(":f11"),
+    [CCKeyboardKeycodeF12] = CC_STRING(":f12"),
+    [CCKeyboardKeycodeF13] = CC_STRING(":f13"),
+    [CCKeyboardKeycodeF14] = CC_STRING(":f14"),
+    [CCKeyboardKeycodeF15] = CC_STRING(":f15"),
+    [CCKeyboardKeycodeF16] = CC_STRING(":f16"),
+    [CCKeyboardKeycodeF17] = CC_STRING(":f17"),
+    [CCKeyboardKeycodeF18] = CC_STRING(":f18"),
+    [CCKeyboardKeycodeF19] = CC_STRING(":f19"),
+    [CCKeyboardKeycodeF20] = CC_STRING(":f20"),
+    [CCKeyboardKeycodeF21] = CC_STRING(":f21"),
+    [CCKeyboardKeycodeF22] = CC_STRING(":f22"),
+    [CCKeyboardKeycodeF23] = CC_STRING(":f23"),
+    [CCKeyboardKeycodeF24] = CC_STRING(":f24"),
+    [CCKeyboardKeycodeF25] = CC_STRING(":f25"),
+    [CCKeyboardKeycodeKeypad0] = CC_STRING(":keypad-0"),
+    [CCKeyboardKeycodeKeypad1] = CC_STRING(":keypad-1"),
+    [CCKeyboardKeycodeKeypad2] = CC_STRING(":keypad-2"),
+    [CCKeyboardKeycodeKeypad3] = CC_STRING(":keypad-3"),
+    [CCKeyboardKeycodeKeypad4] = CC_STRING(":keypad-4"),
+    [CCKeyboardKeycodeKeypad5] = CC_STRING(":keypad-5"),
+    [CCKeyboardKeycodeKeypad6] = CC_STRING(":keypad-6"),
+    [CCKeyboardKeycodeKeypad7] = CC_STRING(":keypad-7"),
+    [CCKeyboardKeycodeKeypad8] = CC_STRING(":keypad-8"),
+    [CCKeyboardKeycodeKeypad9] = CC_STRING(":keypad-9"),
+    [CCKeyboardKeycodeKeypadDecimal] = CC_STRING(":keypad-decimal"),
+    [CCKeyboardKeycodeKeypadDivide] = CC_STRING(":keypad-divide"),
+    [CCKeyboardKeycodeKeypadMultiply] = CC_STRING(":keypad-multiply"),
+    [CCKeyboardKeycodeKeypadSubtract] = CC_STRING(":keypad-subtract"),
+    [CCKeyboardKeycodeKeypadAdd] = CC_STRING(":keypad-add"),
+    [CCKeyboardKeycodeKeypadEnter] = CC_STRING(":keypad-enter"),
+    [CCKeyboardKeycodeKeypadEqual] = CC_STRING(":keypad-equal"),
+    [CCKeyboardKeycodeLeftShift] = CC_STRING(":left-shift"),
+    [CCKeyboardKeycodeLeftControl] = CC_STRING(":left-control"),
+    [CCKeyboardKeycodeLeftAlt] = CC_STRING(":left-alt"),
+    [CCKeyboardKeycodeLeftSuper] = CC_STRING(":left-super"),
+    [CCKeyboardKeycodeRightShift] = CC_STRING(":right-shift"),
+    [CCKeyboardKeycodeRightControl] = CC_STRING(":right-control"),
+    [CCKeyboardKeycodeRightAlt] = CC_STRING(":right-alt"),
+    [CCKeyboardKeycodeRightSuper] = CC_STRING(":right-super"),
+    [CCKeyboardKeycodeMenu] = CC_STRING(":menu")
+};
+
+static CCKeyboardKeycode CCExpressionReflectionGetKeyboardKeycode(CCString Name)
+{
+    static _Atomic(CCDictionary(CCString, CCKeyboardKeycode)) KeycodeLookup = NULL;
+    static _Thread_local CCDictionary(CCString, CCKeyboardKeycode) Keycodes = NULL;
+    
+    if (!Keycodes)
+    {
+        CCDictionary Lookup = atomic_load_explicit(&KeycodeLookup, memory_order_acquire);
+        
+        if (!Lookup)
+        {
+            static atomic_flag Lock = ATOMIC_FLAG_INIT;
+            while (!atomic_flag_test_and_set_explicit(&Lock, memory_order_relaxed)) CC_SPIN_WAIT();
+            
+            Lookup = atomic_load_explicit(&KeycodeLookup, memory_order_acquire);
+            
+            if (!Lookup)
+            {
+                Lookup = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCKeyboardKeycode), &(CCDictionaryCallbacks){
+                    .getHash = CCStringHasherForDictionary,
+                    .compareKeys = CCStringComparatorForDictionary
+                });
+                
+                for (size_t Loop = 0; Loop < CCKeyboardKeycodeCount; Loop++)
+                {
+                    if (KeyboardKeycodeNames[Loop]) CCDictionarySetValue(Lookup, &KeyboardKeycodeNames[Loop], &(CCKeyboardKeycode){ (CCKeyboardKeycode)Loop });
+                }
+                
+                atomic_store_explicit(&KeycodeLookup, Lookup, memory_order_release);
+            }
+            
+            atomic_flag_clear_explicit(&Lock, memory_order_relaxed);
+        }
+        
+        Keycodes = Lookup;
+    }
+    
+    const CCKeyboardKeycode *Keycode = CCDictionaryGetValue(Keycodes, &Name);
+    
+    return Keycode ? *Keycode : CCKeyboardKeycodeUnknown;
+}
+
+static CCString KeyboardModifierNames[] = {
+    CC_STRING(":none"),
+    [CCKeyboardModifierShift] = CC_STRING(":shift"),
+    [CCKeyboardModifierControl] = CC_STRING(":control"),
+    [CCKeyboardModifierAlt] = CC_STRING(":alt"),
+    [CCKeyboardModifierSuper] = CC_STRING(":super"),
+    [CCKeyboardModifierShift | CCKeyboardModifierControl] = CC_STRING(":control-shift"),
+    [CCKeyboardModifierShift | CCKeyboardModifierAlt] = CC_STRING(":alt-shift"),
+    [CCKeyboardModifierShift | CCKeyboardModifierSuper] = CC_STRING(":shift-super"),
+    [CCKeyboardModifierControl | CCKeyboardModifierAlt] = CC_STRING(":control-alt"),
+    [CCKeyboardModifierControl | CCKeyboardModifierSuper] = CC_STRING(":control-super"),
+    [CCKeyboardModifierAlt | CCKeyboardModifierSuper] = CC_STRING(":alt-super"),
+    [CCKeyboardModifierShift | CCKeyboardModifierControl | CCKeyboardModifierAlt] = CC_STRING(":control-alt-shift"),
+    [CCKeyboardModifierShift | CCKeyboardModifierControl | CCKeyboardModifierSuper] = CC_STRING(":control-shift-super"),
+    [CCKeyboardModifierShift | CCKeyboardModifierAlt | CCKeyboardModifierSuper] = CC_STRING(":alt-shift-super"),
+    [CCKeyboardModifierControl | CCKeyboardModifierAlt | CCKeyboardModifierSuper] = CC_STRING(":control-alt-super"),
+    [CCKeyboardModifierShift | CCKeyboardModifierControl | CCKeyboardModifierAlt | CCKeyboardModifierSuper] = CC_STRING(":control-alt-shift-super")
+};
+
+static CCKeyboardModifier CCExpressionReflectionGetKeyboardModifier(CCString Name)
+{
+    static _Atomic(CCDictionary(CCString, CCKeyboardModifier)) ModifierLookup = NULL;
+    static _Thread_local CCDictionary(CCString, CCKeyboardModifier) Modifiers = NULL;
+    
+    if (!Modifiers)
+    {
+        CCDictionary Lookup = atomic_load_explicit(&ModifierLookup, memory_order_acquire);
+        
+        if (!Lookup)
+        {
+            static atomic_flag Lock = ATOMIC_FLAG_INIT;
+            while (!atomic_flag_test_and_set_explicit(&Lock, memory_order_relaxed)) CC_SPIN_WAIT();
+            
+            Lookup = atomic_load_explicit(&ModifierLookup, memory_order_acquire);
+            
+            if (!Lookup)
+            {
+                Lookup = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCKeyboardModifier), &(CCDictionaryCallbacks){
+                    .getHash = CCStringHasherForDictionary,
+                    .compareKeys = CCStringComparatorForDictionary
+                });
+                
+                for (size_t Loop = 0; Loop < sizeof(KeyboardModifierNames) / sizeof(*KeyboardModifierNames); Loop++)
+                {
+                    if (KeyboardModifierNames[Loop]) CCDictionarySetValue(Lookup, &KeyboardModifierNames[Loop], &(CCKeyboardModifier){ (CCKeyboardModifier)Loop });
+                }
+                
+                atomic_store_explicit(&ModifierLookup, Lookup, memory_order_release);
+            }
+            
+            atomic_flag_clear_explicit(&Lock, memory_order_relaxed);
+        }
+        
+        Modifiers = Lookup;
+    }
+    
+    const CCKeyboardModifier *Modifier = CCDictionaryGetValue(Modifiers, &Name);
+    
+    return Modifier ? *Modifier : -1;
+}
+
+static CCString MouseButtonNames[CCMouseButtonCount] = {
+    [CCMouseButton1] = CC_STRING(":btn-1"),
+    [CCMouseButton2] = CC_STRING(":btn-2"),
+    [CCMouseButton3] = CC_STRING(":btn-3"),
+    [CCMouseButton4] = CC_STRING(":btn-4"),
+    [CCMouseButton5] = CC_STRING(":btn-5"),
+    [CCMouseButton6] = CC_STRING(":btn-6"),
+    [CCMouseButton7] = CC_STRING(":btn-7"),
+    [CCMouseButton8] = CC_STRING(":btn-8")
+};
+
+static CCString MouseButtonAliases[CCMouseButtonCount] = {
+    [CCMouseButtonLeft] = CC_STRING(":left"),
+    [CCMouseButtonRight] = CC_STRING(":right"),
+    [CCMouseButtonMiddle] = CC_STRING(":middle")
+};
+
+static CCMouseButton CCExpressionReflectionGetMouseButton(CCString Name)
+{
+    static _Atomic(CCDictionary(CCString, CCMouseButton)) ButtonLookup = NULL;
+    static _Thread_local CCDictionary(CCString, CCMouseButton) Buttons = NULL;
+    
+    if (!Buttons)
+    {
+        CCDictionary Lookup = atomic_load_explicit(&ButtonLookup, memory_order_acquire);
+        
+        if (!Lookup)
+        {
+            static atomic_flag Lock = ATOMIC_FLAG_INIT;
+            while (!atomic_flag_test_and_set_explicit(&Lock, memory_order_relaxed)) CC_SPIN_WAIT();
+            
+            Lookup = atomic_load_explicit(&ButtonLookup, memory_order_acquire);
+            
+            if (!Lookup)
+            {
+                Lookup = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCMouseButton), &(CCDictionaryCallbacks){
+                    .getHash = CCStringHasherForDictionary,
+                    .compareKeys = CCStringComparatorForDictionary
+                });
+                
+                CCDictionarySetValue(Lookup, &MouseButtonAliases[CCMouseButtonLeft], &(CCMouseButton){ CCMouseButtonLeft });
+                CCDictionarySetValue(Lookup, &MouseButtonAliases[CCMouseButtonRight], &(CCMouseButton){ CCMouseButtonRight });
+                CCDictionarySetValue(Lookup, &MouseButtonAliases[CCMouseButtonMiddle], &(CCMouseButton){ CCMouseButtonMiddle });
+                
+                for (size_t Loop = 0; Loop < CCMouseButtonCount; Loop++)
+                {
+                    if (MouseButtonNames[Loop]) CCDictionarySetValue(Lookup, &MouseButtonNames[Loop], &(CCMouseButton){ (CCMouseButton)Loop });
+                }
+                
+                atomic_store_explicit(&ButtonLookup, Lookup, memory_order_release);
+            }
+            
+            atomic_flag_clear_explicit(&Lock, memory_order_relaxed);
+        }
+        
+        Buttons = Lookup;
+    }
+    
+    const CCMouseButton *Button = CCDictionaryGetValue(Buttons, &Name);
+    
+    return Button ? *Button : CCMouseButtonUnknown;
+}
+
+static CCString InputMapNames[CCInputMapTypeCount] = {
+    [CCInputMapTypeNone] = CC_STRING("input-none"),
+    [CCInputMapTypeGroup] = CC_STRING("input-group"),
+    [CCInputMapTypeKeyboard] = CC_STRING("input-keyboard"),
+    [CCInputMapTypeMouseButton] = CC_STRING("input-mouse-button"),
+    [CCInputMapTypeControllerAxis] = CC_STRING("input-controller-axes"),
+    [CCInputMapTypeControllerButton] = CC_STRING("input-controller-button"),
+    [CCInputMapTypeControllerHat] = CC_STRING("input-controller-hat"),
+    [CCInputMapTypeVirtualJoystick] = CC_STRING("input-virtual-joystick")
+};
+
+static CCInputMapType CCExpressionReflectionGetInputMapType(CCString Name)
+{
+    static _Atomic(CCDictionary(CCString, CCInputMapType)) TypeLookup = NULL;
+    static _Thread_local CCDictionary(CCString, CCInputMapType) Types = NULL;
+    
+    if (!Types)
+    {
+        CCDictionary Lookup = atomic_load_explicit(&TypeLookup, memory_order_acquire);
+        
+        if (!Lookup)
+        {
+            static atomic_flag Lock = ATOMIC_FLAG_INIT;
+            while (!atomic_flag_test_and_set_explicit(&Lock, memory_order_relaxed)) CC_SPIN_WAIT();
+            
+            Lookup = atomic_load_explicit(&TypeLookup, memory_order_acquire);
+            
+            if (!Lookup)
+            {
+                Lookup = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintConstantLength | CCDictionaryHintConstantElements, sizeof(CCString), sizeof(CCInputMapType), &(CCDictionaryCallbacks){
+                    .getHash = CCStringHasherForDictionary,
+                    .compareKeys = CCStringComparatorForDictionary
+                });
+                
+                for (size_t Loop = 0; Loop < CCInputMapTypeCount; Loop++)
+                {
+                    if (InputMapNames[Loop]) CCDictionarySetValue(Lookup, &InputMapNames[Loop], &(CCInputMapType){ (CCInputMapType)Loop });
+                }
+                
+                atomic_store_explicit(&TypeLookup, Lookup, memory_order_release);
+            }
+            
+            atomic_flag_clear_explicit(&Lock, memory_order_relaxed);
+        }
+        
+        Types = Lookup;
+    }
+    
+    const CCInputMapType *Type = CCDictionaryGetValue(Types, &Name);
+    
+    return Type ? *Type : -1;
+}
+
+CCExpression CCExpressionReflectionOpaqueSerializeDefaults(CCReflectType Type, const void *Data, CCMemoryZone Zone)
+{
+    if (Type == &CC_REFLECT(CCInputMap))
+    {
+        CCString Name;
+        
+        if ((((const CCInputMap*)Data)->type < CCInputMapTypeCount) && (Name = InputMapNames[((const CCInputMap*)Data)->type]))
+        {
+            CCExpression Expr = CCExpressionCreateList(CC_STD_ALLOCATOR);
+            
+            CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, Name, TRUE) });
+            
+            switch (((const CCInputMap*)Data)->type)
+            {
+                case CCInputMapTypeGroup:
+                {
+                    CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("all-active:"), TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->group.wantsAllActive) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("input:"), TRUE) });
+                    
+                    for (size_t Loop = 0; Loop < ((const CCInputMap*)Data)->group.count; Loop++)
+                    {
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->group.inputMaps[Loop], Zone) });
+                    }
+                    
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    break;
+                }
+                    
+                case CCInputMapTypeKeyboard:
+                {
+                    if (((const CCInputMap*)Data)->keyboard.isKeycode)
+                    {
+                        CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("keycode:"), TRUE) });
+                        
+                        if ((((const CCInputMap*)Data)->keyboard.keycode < CCKeyboardKeycodeCount) && (KeyboardKeycodeNames[((const CCInputMap*)Data)->keyboard.keycode]))
+                        {
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, KeyboardKeycodeNames[((const CCInputMap*)Data)->keyboard.keycode], TRUE) });
+                        }
+                        
+                        else CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->keyboard.keycode) });
+                        
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    }
+                    
+                    if (((const CCInputMap*)Data)->keyboard.character)
+                    {
+                        CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("character:"), TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, CCStringCreateWithCharacter(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->keyboard.character), FALSE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    }
+                    
+                    if (!((const CCInputMap*)Data)->keyboard.ignoreModifier)
+                    {
+                        CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("flags:"), TRUE) });
+                        
+                        if ((((const CCInputMap*)Data)->keyboard.flags < sizeof(KeyboardModifierNames) / sizeof(*KeyboardModifierNames)) && (KeyboardModifierNames[((const CCInputMap*)Data)->keyboard.flags]))
+                        {
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, KeyboardModifierNames[((const CCInputMap*)Data)->keyboard.flags], TRUE) });
+                        }
+                        
+                        else CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->keyboard.flags) });
+                        
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    }
+                    
+                    CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("ramp:"), TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->keyboard.ramp) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("repeat:"), TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->keyboard.repeats) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    break;
+                }
+                    
+                case CCInputMapTypeMouseButton:
+                {
+                    CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("button:"), TRUE) });
+                    
+                    if ((((const CCInputMap*)Data)->mouse.button.code < CCMouseButtonCount) && (MouseButtonNames[((const CCInputMap*)Data)->mouse.button.code]))
+                    {
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, MouseButtonNames[((const CCInputMap*)Data)->mouse.button.code], TRUE) });
+                    }
+                    
+                    else CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->mouse.button.code) });
+                    
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    if (!((const CCInputMap*)Data)->mouse.button.ignoreModifier)
+                    {
+                        CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("flags:"), TRUE) });
+                        
+                        if ((((const CCInputMap*)Data)->mouse.button.flags < sizeof(KeyboardModifierNames) / sizeof(*KeyboardModifierNames)) && (KeyboardModifierNames[((const CCInputMap*)Data)->mouse.button.flags]))
+                        {
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, KeyboardModifierNames[((const CCInputMap*)Data)->mouse.button.flags], TRUE) });
+                        }
+                        
+                        else CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->mouse.button.flags) });
+                        
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    }
+                    
+                    Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("ramp:"), TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->mouse.button.ramp) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    break;
+                }
+                    
+                case CCInputMapTypeControllerAxis:
+                case CCInputMapTypeControllerButton:
+                case CCInputMapTypeControllerHat:
+                {
+                    if (((const CCInputMap*)Data)->controller.device)
+                    {
+                        CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("device:"), TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateString(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->controller.device, TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    }
+                    
+                    CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("connection:"), TRUE) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->controller.connection) });
+                    CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    
+                    if (((const CCInputMap*)Data)->type == CCInputMapTypeControllerAxis)
+                    {
+                        Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("deadzone:"), TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateFloat(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->controller.axis.deadzone) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                        
+                        Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("resolution:"), TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, ((const CCInputMap*)Data)->controller.axis.resolution) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                        
+                        const CCString AxesName[4] = {
+                            CC_STRING("x:"),
+                            CC_STRING("y:"),
+                            CC_STRING("z:"),
+                            CC_STRING("w:")
+                        };
+                        
+                        for (size_t Loop = 0; Loop < 4; Loop++)
+                        {
+                            const CCControllerAxisMap *Axis = &((const CCInputMap*)Data)->controller.axis.xyzw[Loop];
+                            
+                            if (Axis->index >= 0)
+                            {
+                                Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                                CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, AxesName[Loop], TRUE) });
+                                CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, Axis->index) });
+                                
+                                if (Axis->flip) CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":flip"), TRUE) });
+                                
+                                if (Axis->oneSided) CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING(":one-sided"), TRUE) });
+                                
+                                CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                            }
+                        }
+                    }
+                    
+                    else
+                    {
+                        const struct {
+                            const typeof(((const CCInputMap*)Data)->controller.button) *map;
+                            CCString name;
+                        } Input[2] = {
+                            { &((const CCInputMap*)Data)->controller.button, CC_STRING("button:") },
+                            { &((const CCInputMap*)Data)->controller.hat, CC_STRING("hat:") }
+                        };
+                        
+                        const size_t Index = ((const CCInputMap*)Data)->type == CCInputMapTypeControllerHat;
+                        
+                        Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, Input[Index].name, TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, Input[Index].map->index) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                        
+                        Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("ramp:"), TRUE) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateInteger(CC_STD_ALLOCATOR, Input[Index].map->ramp) });
+                        CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                    }
+                    
+                    break;
+                }
+                    
+                case CCInputMapTypeVirtualJoystick:
+                {
+                    CCExpression Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                    
+                    switch (((const CCInputMap*)Data)->virtual.joystick.count)
+                    {
+                        case 8:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[7], Zone) });
+                        case 7:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[6], Zone) });
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("w:"), TRUE) });
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                            
+                            Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        case 6:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[5], Zone) });
+                        case 5:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[4], Zone) });
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("z:"), TRUE) });
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                            
+                            Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        case 4:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[3], Zone) });
+                        case 3:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[2], Zone) });
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("y:"), TRUE) });
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                            
+                            Field = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        case 2:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[1], Zone) });
+                        case 1:
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->virtual.joystick.inputMaps[0], Zone) });
+                            CCOrderedCollectionPrependElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("x:"), TRUE) });
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                            break;
+                            
+                        default:
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionCreateAtom(CC_STD_ALLOCATOR, CC_STRING("input:"), TRUE) });
+                            
+                            for (size_t Loop = 0; Loop < ((const CCInputMap*)Data)->group.count; Loop++)
+                            {
+                                CCOrderedCollectionAppendElement(CCExpressionGetList(Field), &(CCExpression){ CCExpressionReflectionSerialize(&CC_REFLECT(CCInputMap), &((const CCInputMap*)Data)->group.inputMaps[Loop], Zone) });
+                            }
+                            
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Expr), &Field);
+                            break;
+                    }
+                    
+                    break;
+                }
+                    
+                default:
+                    break;
+            }
+            
+            return Expr;
+        }
+    }
+    
+    return NULL;
+}
+
+static void CCExpressionReflectionDeserializeControllerAxisArgs(CCString Name, CCExpression Expr, size_t Count, void *Data)
+{
+    if (CCStringEqual(Name, CC_STRING("deadzone:")))
+    {
+        CCExpression DeadzoneExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+        
+        CCExpressionReflectionDeserializeFloat(&CC_REFLECT(float), DeadzoneExpr, &((CCInputMap*)Data)->controller.axis.deadzone);
+    }
+    
+    else if (CCStringEqual(Name, CC_STRING("resolution:")))
+    {
+        CCExpression ResolutionExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+        
+        if (CCExpressionGetType(ResolutionExpr) == CCExpressionValueTypeInteger)
+        {
+            ((CCInputMap*)Data)->controller.axis.resolution = CCExpressionGetInteger(ResolutionExpr);
+        }
+        
+        else CC_LOG_ERROR_CUSTOM("Deserializing malformed resolution. Expects integer.");
+    }
+    
+    else
+    {
+        const CCString AxesName[4] = {
+            CC_STRING("x:"),
+            CC_STRING("y:"),
+            CC_STRING("z:"),
+            CC_STRING("w:")
+        };
+        
+        for (size_t Loop = 0; Loop < 4; Loop++)
+        {
+            if (CCStringEqual(Name, AxesName[Loop]))
+            {
+                CCControllerAxisMap *Axis = &((CCInputMap*)Data)->controller.axis.xyzw[Loop];
+                
+                Axis->index = -1;
+                Axis->flip = FALSE;
+                Axis->oneSided = FALSE;
+                
+                CCExpression IndexExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+                
+                if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger)
+                {
+                    Axis->index = CCExpressionGetInteger(IndexExpr);
+                }
+                
+                else CC_LOG_ERROR_CUSTOM("Deserializing malformed axis identifier. Expects integer.");
+                
+                for (size_t Loop = 2; Loop < Count; Loop++)
+                {
+                    CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), Loop);
+                    
+                    if (CCExpressionGetType(ArgExpr) == CCExpressionValueTypeAtom)
+                    {
+                        CCString ArgName = CCExpressionGetAtom(ArgExpr);
+                        
+                        if (CCStringEqual(ArgName, CC_STRING(":flip")))
+                        {
+                            Axis->flip = TRUE;
+                        }
+                        
+                        else if (CCStringEqual(ArgName, CC_STRING(":one-sided")))
+                        {
+                            Axis->oneSided = TRUE;
+                        }
+                        
+                        else CC_LOG_ERROR_CUSTOM("Deserializing malformed argument. Expects :flip or :one-sided got %S.", ArgName);
+                    }
+                    
+                    else CC_LOG_ERROR_CUSTOM("Deserializing malformed argument. Expects atom.");
+                }
+                
+                break;
+            }
+        }
+    }
+}
+
+static void CCExpressionReflectionDeserializeControllerButtonArgs(CCString Name, CCExpression Expr, size_t Count, void *Data)
+{
+    if (CCStringEqual(Name, CC_STRING("button:")))
+    {
+        CCExpression IndexExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+        
+        if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger)
+        {
+            ((CCInputMap*)Data)->controller.button.index = CCExpressionGetInteger(IndexExpr);
+        }
+        
+        else CC_LOG_ERROR_CUSTOM("Deserializing malformed identifier. Expects integer.");
+    }
+    
+    else if (CCStringEqual(Name, CC_STRING("ramp:")))
+    {
+        CCExpression RampExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+        
+        CCExpressionReflectionDeserializeFloat(&CC_REFLECT(float), RampExpr, &((CCInputMap*)Data)->controller.button.ramp);
+    }
+}
+
+static void CCExpressionReflectionDeserializeControllerHatArgs(CCString Name, CCExpression Expr, size_t Count, void *Data)
+{
+    if (CCStringEqual(Name, CC_STRING("hat:")))
+    {
+        CCExpression IndexExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+        
+        if (CCExpressionGetType(IndexExpr) == CCExpressionValueTypeInteger)
+        {
+            ((CCInputMap*)Data)->controller.hat.index = CCExpressionGetInteger(IndexExpr);
+        }
+        
+        else CC_LOG_ERROR_CUSTOM("Deserializing malformed identifier. Expects integer.");
+    }
+    
+    else if (CCStringEqual(Name, CC_STRING("ramp:")))
+    {
+        CCExpression RampExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expr), 1);
+        
+        CCExpressionReflectionDeserializeFloat(&CC_REFLECT(float), RampExpr, &((CCInputMap*)Data)->controller.hat.ramp);
+    }
+}
+
+_Bool CCExpressionReflectionOpaqueDeserializeDefaults(CCExpression Expression, CCReflectType Type, void *Data, CCMemoryZone Zone, CCAllocatorType Allocator)
+{
+    if ((Type == &CC_REFLECT(CCInputMap)) || ((((const CCReflectOpaque*)Type)->map == CC_REFLECT(CCInputMap).map) && (((const CCReflectOpaque*)Type)->unmap == CC_REFLECT(CCInputMap).unmap)))
+    {
+        if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
+        {
+            CCEnumerator Enumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
+            
+            CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
+            
+            if ((Expr) && (CCExpressionGetType(*Expr) == CCExpressionValueTypeAtom))
+            {
+                const CCInputMapType InputMapType = CCExpressionReflectionGetInputMapType(CCExpressionGetAtom(*Expr));
+                
+                switch (InputMapType)
+                {
+                    case CCInputMapTypeNone:
+                        break;
+                        
+                    case CCInputMapTypeGroup:
+                        ((CCInputMap*)Data)->group.wantsAllActive = FALSE;
+                        ((CCInputMap*)Data)->group.inputMaps = NULL;
+                        ((CCInputMap*)Data)->group.count = 0;
+                        
+                        while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+                        {
+                            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+                            {
+                                const size_t Count = CCCollectionGetCount(CCExpressionGetList(*Expr));
+                                
+                                if (Count >= 2)
+                                {
+                                    CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0);
+                                    
+                                    if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        CCString Name = CCExpressionGetAtom(NameExpr);
+                                        
+                                        if (CCStringEqual(Name, CC_STRING("input:")))
+                                        {
+                                            ((CCInputMap*)Data)->group.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * (Count - 1), NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                            
+                                            for (size_t Loop = 1; Loop < Count; Loop++)
+                                            {
+                                                ((CCInputMap*)Data)->group.inputMaps[Loop - 1].type = CCInputMapTypeNone;
+                                                
+                                                CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), Loop), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->group.inputMaps[Loop - 1], Zone, Allocator);
+                                            }
+                                            
+                                            ((CCInputMap*)Data)->group.count = Count - 1;
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("all-active:")))
+                                        {
+                                            CCExpression ActiveExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(ActiveExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                ((CCInputMap*)Data)->group.wantsAllActive = CCExpressionGetInteger(ActiveExpr);
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed all-active. Expects boolean.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case CCInputMapTypeKeyboard:
+                        ((CCInputMap*)Data)->keyboard.character = 0;
+                        ((CCInputMap*)Data)->keyboard.ramp = 0.0f;
+                        ((CCInputMap*)Data)->keyboard.isKeycode = FALSE;
+                        ((CCInputMap*)Data)->keyboard.ignoreModifier = TRUE;
+                        ((CCInputMap*)Data)->keyboard.repeats = FALSE;
+                        
+                        while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+                        {
+                            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+                            {
+                                const size_t Count = CCCollectionGetCount(CCExpressionGetList(*Expr));
+                                
+                                if (Count >= 2)
+                                {
+                                    CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0);
+                                    
+                                    if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        CCString Name = CCExpressionGetAtom(NameExpr);
+                                        
+                                        if (CCStringEqual(Name, CC_STRING("keycode:")))
+                                        {
+                                            CCExpression KeycodeExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(KeycodeExpr) == CCExpressionValueTypeAtom)
+                                            {
+                                                const CCKeyboardKeycode Keycode = CCExpressionReflectionGetKeyboardKeycode(CCExpressionGetAtom(KeycodeExpr));
+                                                
+                                                if (Keycode != CCKeyboardKeycodeUnknown)
+                                                {
+                                                    ((CCInputMap*)Data)->keyboard.keycode = Keycode;
+                                                    ((CCInputMap*)Data)->keyboard.isKeycode = TRUE;
+                                                }
+                                                
+                                                else CC_LOG_ERROR_CUSTOM("Deserializing malformed keycode. Expects keycode got %S.", CCExpressionGetAtom(KeycodeExpr));
+                                            }
+                                            
+                                            else if (CCExpressionGetType(KeycodeExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                const CCKeyboardKeycode Keycode = CCExpressionGetInteger(KeycodeExpr);
+                                                
+                                                if ((Keycode >= 0) && (Keycode < CCKeyboardKeycodeCount))
+                                                {
+                                                    ((CCInputMap*)Data)->keyboard.keycode = Keycode;
+                                                    ((CCInputMap*)Data)->keyboard.isKeycode = TRUE;
+                                                }
+                                                
+                                                else CC_LOG_ERROR_CUSTOM("Deserializing malformed keycode. Expects keycode got %S.", CCExpressionGetInteger(KeycodeExpr));
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed keycode. Expects atom or integer.");
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("character:")))
+                                        {
+                                            CCExpression CharacterExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(CharacterExpr) == CCExpressionValueTypeString)
+                                            {
+                                                CCString Character = CCExpressionGetString(CharacterExpr);
+                                                
+                                                ((CCInputMap*)Data)->keyboard.character = CCStringGetLength(Character) ? CCStringGetCharacterAtIndex(Character, 0) : 0;
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed character. Expects string.");
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("flags:")))
+                                        {
+                                            CCExpression FlagsExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(FlagsExpr) == CCExpressionValueTypeAtom)
+                                            {
+                                                const CCKeyboardModifier Flags = CCExpressionReflectionGetKeyboardModifier(CCExpressionGetAtom(FlagsExpr));
+                                                
+                                                if (Flags != -1)
+                                                {
+                                                    ((CCInputMap*)Data)->keyboard.flags = Flags;
+                                                    ((CCInputMap*)Data)->keyboard.ignoreModifier = FALSE;
+                                                }
+                                                
+                                                else CC_LOG_ERROR_CUSTOM("Deserializing malformed flags. Expects flags got %S.", CCExpressionGetAtom(FlagsExpr));
+                                            }
+                                            
+                                            else if (CCExpressionGetType(FlagsExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                const CCKeyboardModifier Flags = CCExpressionGetInteger(FlagsExpr);
+                                                
+                                                ((CCInputMap*)Data)->keyboard.flags = Flags;
+                                                ((CCInputMap*)Data)->keyboard.ignoreModifier = FALSE;
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed flags. Expects atom or integer.");
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("ramp:")))
+                                        {
+                                            CCExpression RampExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            CCExpressionReflectionDeserializeFloat(&CC_REFLECT(float), RampExpr, &((CCInputMap*)Data)->keyboard.ramp);
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("repeat:")))
+                                        {
+                                            CCExpression RepeatExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(RepeatExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                ((CCInputMap*)Data)->keyboard.repeats = CCExpressionGetInteger(RepeatExpr);
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed repeat. Expects boolean.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case CCInputMapTypeMouseButton:
+                        ((CCInputMap*)Data)->mouse.button.ramp = 0.0f;
+                        ((CCInputMap*)Data)->mouse.button.code = CCMouseButtonUnknown;
+                        ((CCInputMap*)Data)->mouse.button.ignoreModifier = TRUE;
+                        
+                        while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+                        {
+                            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+                            {
+                                const size_t Count = CCCollectionGetCount(CCExpressionGetList(*Expr));
+                                
+                                if (Count >= 2)
+                                {
+                                    CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0);
+                                    
+                                    if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        CCString Name = CCExpressionGetAtom(NameExpr);
+                                        
+                                        if (CCStringEqual(Name, CC_STRING("button:")))
+                                        {
+                                            CCExpression ButtonExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(ButtonExpr) == CCExpressionValueTypeAtom)
+                                            {
+                                                const CCMouseButton Button = CCExpressionReflectionGetMouseButton(CCExpressionGetAtom(ButtonExpr));
+                                                
+                                                if (Button != CCMouseButtonUnknown)
+                                                {
+                                                    ((CCInputMap*)Data)->mouse.button.code = Button;
+                                                }
+                                                
+                                                else CC_LOG_ERROR_CUSTOM("Deserializing malformed button. Expects button got %S.", CCExpressionGetAtom(ButtonExpr));
+                                            }
+                                            
+                                            else if (CCExpressionGetType(ButtonExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                const CCMouseButton Button = CCExpressionGetInteger(ButtonExpr);
+                                                
+                                                if ((Button >= 0) && (Button < CCMouseButtonCount))
+                                                {
+                                                    ((CCInputMap*)Data)->mouse.button.code = Button;
+                                                }
+                                                
+                                                else CC_LOG_ERROR_CUSTOM("Deserializing malformed button. Expects button got %S.", CCExpressionGetInteger(ButtonExpr));
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed button. Expects atom or integer.");
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("flags:")))
+                                        {
+                                            CCExpression FlagsExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(FlagsExpr) == CCExpressionValueTypeAtom)
+                                            {
+                                                const CCKeyboardModifier Flags = CCExpressionReflectionGetKeyboardModifier(CCExpressionGetAtom(FlagsExpr));
+                                                
+                                                if (Flags != -1)
+                                                {
+                                                    ((CCInputMap*)Data)->mouse.button.flags = Flags;
+                                                    ((CCInputMap*)Data)->mouse.button.ignoreModifier = FALSE;
+                                                }
+                                                
+                                                else CC_LOG_ERROR_CUSTOM("Deserializing malformed flags. Expects flags got %S.", CCExpressionGetAtom(FlagsExpr));
+                                            }
+                                            
+                                            else if (CCExpressionGetType(FlagsExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                const CCKeyboardModifier Flags = CCExpressionGetInteger(FlagsExpr);
+                                                
+                                                ((CCInputMap*)Data)->mouse.button.flags = Flags;
+                                                ((CCInputMap*)Data)->mouse.button.ignoreModifier = FALSE;
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed flags. Expects atom or integer.");
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("ramp:")))
+                                        {
+                                            CCExpression RampExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            CCExpressionReflectionDeserializeFloat(&CC_REFLECT(float), RampExpr, &((CCInputMap*)Data)->mouse.button.ramp);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case CCInputMapTypeControllerAxis:
+                        ((CCInputMap*)Data)->controller.axis.x.index = -1;
+                        ((CCInputMap*)Data)->controller.axis.y.index = -1;
+                        ((CCInputMap*)Data)->controller.axis.z.index = -1;
+                        ((CCInputMap*)Data)->controller.axis.w.index = -1;
+                        goto DeserializeController;
+                    case CCInputMapTypeControllerButton:
+                        ((CCInputMap*)Data)->controller.button.index = -1;
+                        ((CCInputMap*)Data)->controller.hat.ramp = 0.0f;
+                        goto DeserializeController;
+                    case CCInputMapTypeControllerHat:
+                        ((CCInputMap*)Data)->controller.hat.index = -1;
+                        ((CCInputMap*)Data)->controller.hat.ramp = 0.0f;
+                        
+                    DeserializeController:;
+                        _Static_assert((CCInputMapTypeControllerAxis + 1 == CCInputMapTypeControllerButton) && (CCInputMapTypeControllerAxis + 2 == CCInputMapTypeControllerHat), "Type ordering changed");
+                        
+                        void (*DeserializeControllerCustomArgs)(CCString, CCExpression, size_t, void *) = (void(*[3])(CCString,CCExpression,size_t,void*)){
+                            CCExpressionReflectionDeserializeControllerAxisArgs,
+                            CCExpressionReflectionDeserializeControllerButtonArgs,
+                            CCExpressionReflectionDeserializeControllerHatArgs
+                        }[InputMapType - CCInputMapTypeControllerAxis];
+                        
+                        ((CCInputMap*)Data)->controller.device = 0;
+                        ((CCInputMap*)Data)->controller.connection = -1;
+                        
+                        while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+                        {
+                            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+                            {
+                                const size_t Count = CCCollectionGetCount(CCExpressionGetList(*Expr));
+                                
+                                if (Count >= 2)
+                                {
+                                    CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0);
+                                    
+                                    if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        CCString Name = CCExpressionGetAtom(NameExpr);
+                                        
+                                        if (CCStringEqual(Name, CC_STRING("device:")))
+                                        {
+                                            CCExpression DeviceExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(DeviceExpr) == CCExpressionValueTypeString)
+                                            {
+                                                CCString Device = CCExpressionGetString(DeviceExpr);
+                                                
+                                                if (((CCInputMap*)Data)->controller.device) CCStringDestroy(((CCInputMap*)Data)->controller.device);
+                                                
+                                                ((CCInputMap*)Data)->controller.device = CCStringCopy(Device);
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed device. Expects string.");
+                                        }
+                                        
+                                        else if (CCStringEqual(Name, CC_STRING("connection:")))
+                                        {
+                                            CCExpression ConnectionExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 1);
+                                            
+                                            if (CCExpressionGetType(ConnectionExpr) == CCExpressionValueTypeInteger)
+                                            {
+                                                ((CCInputMap*)Data)->controller.connection = CCExpressionGetInteger(ConnectionExpr);
+                                            }
+                                            
+                                            else CC_LOG_ERROR_CUSTOM("Deserializing malformed connection. Expects integer.");
+                                        }
+                                        
+                                        else DeserializeControllerCustomArgs(Name, *Expr, Count, Data);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case CCInputMapTypeVirtualJoystick:
+                        ((CCInputMap*)Data)->virtual.joystick.inputMaps = NULL;
+                        ((CCInputMap*)Data)->virtual.joystick.count = 0;
+                        
+                        while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+                        {
+                            if (CCExpressionGetType(*Expr) == CCExpressionValueTypeList)
+                            {
+                                const size_t Count = CCCollectionGetCount(CCExpressionGetList(*Expr));
+                                
+                                if (Count >= 2)
+                                {
+                                    CCExpression NameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), 0);
+                                    
+                                    if (CCExpressionGetType(NameExpr) == CCExpressionValueTypeAtom)
+                                    {
+                                        CCString Name = CCExpressionGetAtom(NameExpr);
+                                        
+                                        if (CCStringEqual(Name, CC_STRING("input:")))
+                                        {
+                                            if (((CCInputMap*)Data)->virtual.joystick.inputMaps)
+                                            {
+                                                for (size_t Loop = 0; Loop < ((CCInputMap*)Data)->virtual.joystick.count; Loop++)
+                                                {
+                                                    CCInputMapDestructor(&((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop]);
+                                                }
+                                                
+                                                CCFree(((CCInputMap*)Data)->virtual.joystick.inputMaps);
+                                            }
+                                            
+                                            ((CCInputMap*)Data)->virtual.joystick.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * CCMax(Count - 1, 8), NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                            
+                                            for (size_t Loop = 1; Loop < Count; Loop++)
+                                            {
+                                                ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop - 1].type = CCInputMapTypeNone;
+                                                
+                                                CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), Loop), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop - 1], Zone, Allocator);
+                                            }
+                                            
+                                            for (size_t Loop = Count - 1, Max = CCMax(Count - 1, 8); Loop < Max; Loop++) ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop].type = CCInputMapTypeNone;
+                                            
+                                            ((CCInputMap*)Data)->virtual.joystick.count = Count - 1;
+                                        }
+                                        
+                                        else
+                                        {
+                                            const CCString AxesName[4] = {
+                                                CC_STRING("x:"),
+                                                CC_STRING("y:"),
+                                                CC_STRING("z:"),
+                                                CC_STRING("w:")
+                                            };
+                                            
+                                            for (size_t Loop = 0; Loop < 4; Loop++)
+                                            {
+                                                if (CCStringEqual(Name, AxesName[Loop]))
+                                                {
+                                                    if (!((CCInputMap*)Data)->virtual.joystick.inputMaps)
+                                                    {
+                                                        ((CCInputMap*)Data)->virtual.joystick.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * 8, NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                                        
+                                                        for (size_t Loop2 = 0; Loop2 < 8; Loop2++) ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop2].type = CCInputMapTypeNone;
+                                                    }
+                                                    
+                                                    for (size_t Loop2 = 0; Loop2 < 2; Loop2++)
+                                                    {
+                                                        CCInputMapDestructor(&((CCInputMap*)Data)->virtual.joystick.inputMaps[(Loop * 2) + Loop2]);
+                                                        
+                                                        ((CCInputMap*)Data)->virtual.joystick.inputMaps[(Loop * 2) + Loop2].type = CCInputMapTypeNone;
+                                                    }
+                                                    
+                                                    for (size_t Loop2 = 1; Loop2 < Count; Loop2++)
+                                                    {
+                                                        CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), Loop2), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->virtual.joystick.inputMaps[(Loop * 2) + (Loop2 - 1)], Zone, Allocator);
+                                                    }
+                                                    
+                                                    ((CCInputMap*)Data)->virtual.joystick.count = CCMax(((CCInputMap*)Data)->virtual.joystick.count, (Loop * 2) + 2);
+                                                    
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    default:
+                        return FALSE;
+                }
+                
+                ((CCInputMap*)Data)->type = InputMapType;
+                
+                return TRUE;
+            }
+        }
+    }
+    
+    return FALSE;
 }
