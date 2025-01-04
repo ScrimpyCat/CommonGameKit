@@ -1297,6 +1297,7 @@ static CCReflectType CCExpressionReflectionDeserializeType(CCExpression Expressi
                                         
                                         CCReflectType MappedType = CCExpressionReflectionDeserializeType(DescriptorTypeExpr, Zone);
                                         void *MappedData = CCMemoryZoneAllocate(Zone, CCReflectTypeSize(MappedType));
+                                        memset(MappedData, 0, CCReflectTypeSize(MappedType));
                                         CCExpressionReflectionDeserialize(DescriptorDataExpr, MappedType, MappedData, Zone, CC_AUTORELEASE_ALLOCATOR(Zone));
                                         
                                         CCReflectStaticPointerTypeDescriptorUnmap(&CC_REFLECT(CCReflectStaticPointer), MappedType, MappedData, &(CCExpressionReflectionDeserializeHandlerArgs){
@@ -1600,6 +1601,7 @@ static CCReflectType CCExpressionReflectionDeserializeType(CCExpression Expressi
                                         
                                         CCReflectType MappedType = CCExpressionReflectionDeserializeType(DescriptorTypeExpr, Zone);
                                         void *MappedData = CCMemoryZoneAllocate(Zone, CCReflectTypeSize(MappedType));
+                                        memset(MappedData, 0, CCReflectTypeSize(MappedType));
                                         CCExpressionReflectionDeserialize(DescriptorDataExpr, MappedType, MappedData, Zone, CC_AUTORELEASE_ALLOCATOR(Zone));
                                         
                                         CCReflectOpaqueTypeDescriptorUnmap(&CC_REFLECT(CCReflectType), MappedType, MappedData, &(CCExpressionReflectionDeserializeHandlerArgs){
@@ -2074,6 +2076,7 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                             CCExpression Expr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, 0); // TODO: Other elements could be options to customise the allocation
                             
                             void *Ptr = CCMalloc(CustomAllocator, Size, NULL, CC_DEFAULT_ERROR_CALLBACK);
+                            memset(Ptr, 0, Size);
                             CCExpressionReflectionDeserialize(Expr, ((const CCReflectPointer*)Type)->type, Ptr, Zone, Allocator);
                             
                             *(void**)Data = Ptr;
@@ -2095,6 +2098,7 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                                 
                                 CCReflectType MappedType = CCExpressionReflectionDeserializeType(TypeExpr, Zone);
                                 void *MappedData = CCMemoryZoneAllocate(Zone, CCReflectTypeSize(MappedType));
+                                memset(MappedData, 0, CCReflectTypeSize(MappedType));
                                 CCExpressionReflectionDeserialize(DataExpr, MappedType, MappedData, Zone, CC_AUTORELEASE_ALLOCATOR(Zone));
                                 
                                 ((const CCReflectStaticPointer*)Type)->unmap(Type, MappedType, MappedData, &(CCExpressionReflectionDeserializeHandlerArgs){
@@ -2520,6 +2524,8 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                                 CCExpression KeyExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(KV, 0);
                                 CCExpression ValueExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(KV, 1);
                                 
+                                memset(Key, 0, KeySize);
+                                
                                 CCExpressionReflectionDeserialize(KeyExpr, ((const CCReflectCCDictionary*)Type)->keyType, Key, Zone, Allocator);
                                 
                                 CCDictionaryEntry Entry = CCDictionaryEntryForKey(Dictionary, Key);
@@ -2586,6 +2592,7 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                 
                 CCReflectType MappedType = CCExpressionReflectionDeserializeType(TypeExpr, Zone);
                 void *MappedData = CCMemoryZoneAllocate(Zone, CCReflectTypeSize(MappedType));
+                memset(MappedData, 0, CCReflectTypeSize(MappedType));
                 CCExpressionReflectionDeserialize(DataExpr, MappedType, MappedData, Zone, CC_AUTORELEASE_ALLOCATOR(Zone));
                 
                 ((const CCReflectOpaque*)Type)->unmap(Type, MappedType, MappedData, &(CCExpressionReflectionDeserializeHandlerArgs){
@@ -2635,6 +2642,7 @@ void CCExpressionReflectionDeserialize(CCExpression Expression, CCReflectType Ty
                 CC_COLLECTION_FOREACH(CCExpression, Expr, CCExpressionGetList(Expression))
                 {
                     void *Element = CCMemoryZoneAllocate(Zone, ElementSize);
+                    memset(Element, 0, ElementSize);
                     
                     CCMemoryZoneSave(Zone);
                     CCExpressionReflectionDeserialize(Expr, ElementType, Element, Zone, Allocator);
