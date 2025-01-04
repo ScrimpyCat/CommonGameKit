@@ -1252,4 +1252,116 @@
     CCReflectOpaqueTypeDescriptorUnmap = CCReflectOpaqueTypeDescriptorUnmapDefaults;
 }
 
+struct Foo {
+    uint32_t x, y;
+    struct Foo *next;
+    CCString name;
+    uint8_t values[4];
+};
+
+static const CCReflectStruct5 TestFoo = CC_REFLECT_STRUCT(struct Foo, (x, &CC_REFLECT(uint32_t)), (y, &CC_REFLECT(uint32_t)), (next, &CC_REFLECT_DYNAMIC_POINTER(&TestFoo, CCReflectOwnershipRetain)), (name, &CC_REFLECT(CCString)), (values, &CC_REFLECT_ARRAY(&CC_REFLECT(uint8_t), 4)));
+
+-(void) testStructs
+{
+    CCMemoryZone Zone = CCMemoryZoneCreate(CC_STD_ALLOCATOR, 1024);
+    
+    struct Foo Result = { 0 };
+    CCExpression Expression = CCExpressionReflectionSerialize(&TestFoo, &(struct Foo){
+        .x = 1,
+        .y = 2,
+        .next = &(struct Foo){
+            .x = 3,
+            .y = 4,
+            .next = NULL,
+            .name = CC_STRING("bar"),
+            .values = { 50, 60, 70, 80 }
+        },
+        .name = CC_STRING("foo"),
+        .values = { 10, 20, 30, 40 }
+    }, Zone);
+    CCExpressionReflectionDeserialize(Expression, &TestFoo, &Result, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(Result.x, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.y, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->x, 3, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->y, 4, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->next, NULL, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(Result.next->name, CC_STRING("bar")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[0], 50, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[1], 60, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[2], 70, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[3], 80, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(Result.name, CC_STRING("foo")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[0], 10, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[1], 20, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[2], 30, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[3], 40, @"Should serialise and deserialise correctly");
+    
+    CCStringDestroy(Result.next->name);
+    CCStringDestroy(Result.name);
+    CCFree(Result.next);
+    
+    
+    Expression = CCExpressionCreateFromSource(
+        "("
+        "    (x: 1)"
+        "    (y: 2)"
+        "    (next: "
+        "        ("
+        "            ("
+        "                (x: 3)"
+        "                (y: 4)"
+        "                (next: ())"
+        "                (name: \"bar\")"
+        "                (values: (50 60 70 80 ))"
+        "            )"
+        "        )"
+        "    )"
+        "    (name: \"foo\")"
+        "    (values: (10 20 30 40 ))"
+        ")"
+    );
+    
+    memset(&Result, 0, sizeof(Result));
+    CCExpressionReflectionDeserialize(Expression, &TestFoo, &Result, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(Result.x, 1, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.y, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->x, 3, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->y, 4, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->next, NULL, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(Result.next->name, CC_STRING("bar")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[0], 50, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[1], 60, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[2], 70, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next->values[3], 80, @"Should serialise and deserialise correctly");
+    XCTAssertTrue(CCStringEqual(Result.name, CC_STRING("foo")), @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[0], 10, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[1], 20, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[2], 30, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[3], 40, @"Should serialise and deserialise correctly");
+    
+    CCStringDestroy(Result.next->name);
+    CCStringDestroy(Result.name);
+    CCFree(Result.next);
+    
+    
+    Expression = CCExpressionCreateFromSource("((y: 2) (next: :null) (values: (10 20))");
+    
+    memset(&Result, 0, sizeof(Result));
+    CCExpressionReflectionDeserialize(Expression, &TestFoo, &Result, Zone, CC_STD_ALLOCATOR);
+    CCExpressionDestroy(Expression);
+    
+    XCTAssertEqual(Result.x, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.y, 2, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.next, NULL, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.name, 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[0], 10, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[1], 20, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[2], 0, @"Should serialise and deserialise correctly");
+    XCTAssertEqual(Result.values[3], 0, @"Should serialise and deserialise correctly");
+}
+
 @end
