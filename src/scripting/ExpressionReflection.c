@@ -3437,16 +3437,44 @@ _Bool CCExpressionReflectionOpaqueDeserializeDefaults(CCExpression Expression, C
                                         
                                         if (CCStringEqual(Name, CC_STRING("input:")))
                                         {
-                                            ((CCInputMap*)Data)->group.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * (Count - 1), NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                            CCOrderedCollection List = CCExpressionGetList(*Expr);
+                                            size_t ItemCount = Count - 1, Start = 1;
                                             
-                                            for (size_t Loop = 1; Loop < Count; Loop++)
+                                            if (Count == 2)
                                             {
-                                                ((CCInputMap*)Data)->group.inputMaps[Loop - 1].type = CCInputMapTypeNone;
+                                                CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, 1);
                                                 
-                                                CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), Loop), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->group.inputMaps[Loop - 1], Zone, Allocator);
+                                                if (CCExpressionGetType(ArgExpr) == CCExpressionValueTypeList)
+                                                {
+                                                    const size_t InnerCount = CCCollectionGetCount(CCExpressionGetList(ArgExpr));
+                                                    
+                                                    if (InnerCount)
+                                                    {
+                                                        if (CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(ArgExpr), 0)) == CCExpressionValueTypeList)
+                                                        {
+                                                            List = CCExpressionGetList(ArgExpr);
+                                                            Start = 0;
+                                                            ItemCount = InnerCount;
+                                                        }
+                                                    }
+                                                    
+                                                    else ItemCount = 0;
+                                                }
                                             }
                                             
-                                            ((CCInputMap*)Data)->group.count = Count - 1;
+                                            if (ItemCount)
+                                            {
+                                                ((CCInputMap*)Data)->group.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * ItemCount, NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                                
+                                                for (size_t Loop = 0; Loop < ItemCount; Loop++)
+                                                {
+                                                    ((CCInputMap*)Data)->group.inputMaps[Loop].type = CCInputMapTypeNone;
+                                                    
+                                                    CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Loop + Start), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->group.inputMaps[Loop], Zone, Allocator);
+                                                }
+                                                
+                                                ((CCInputMap*)Data)->group.count = ItemCount;
+                                            }
                                         }
                                         
                                         else if (CCStringEqual(Name, CC_STRING("all-active:")))
@@ -3781,18 +3809,46 @@ _Bool CCExpressionReflectionOpaqueDeserializeDefaults(CCExpression Expression, C
                                                 CCFree(((CCInputMap*)Data)->virtual.joystick.inputMaps);
                                             }
                                             
-                                            ((CCInputMap*)Data)->virtual.joystick.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * CCMax(Count - 1, 8), NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                            CCOrderedCollection List = CCExpressionGetList(*Expr);
+                                            size_t ItemCount = Count - 1, Start = 1;
                                             
-                                            for (size_t Loop = 1; Loop < Count; Loop++)
+                                            if (Count == 2)
                                             {
-                                                ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop - 1].type = CCInputMapTypeNone;
+                                                CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, 1);
                                                 
-                                                CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(*Expr), Loop), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop - 1], Zone, Allocator);
+                                                if (CCExpressionGetType(ArgExpr) == CCExpressionValueTypeList)
+                                                {
+                                                    const size_t InnerCount = CCCollectionGetCount(CCExpressionGetList(ArgExpr));
+                                                    
+                                                    if (InnerCount)
+                                                    {
+                                                        if (CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(ArgExpr), 0)) == CCExpressionValueTypeList)
+                                                        {
+                                                            List = CCExpressionGetList(ArgExpr);
+                                                            Start = 0;
+                                                            ItemCount = InnerCount;
+                                                        }
+                                                    }
+                                                    
+                                                    else ItemCount = 0;
+                                                }
                                             }
                                             
-                                            for (size_t Loop = Count - 1, Max = CCMax(Count - 1, 8); Loop < Max; Loop++) ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop].type = CCInputMapTypeNone;
-                                            
-                                            ((CCInputMap*)Data)->virtual.joystick.count = Count - 1;
+                                            if (ItemCount)
+                                            {
+                                                ((CCInputMap*)Data)->virtual.joystick.inputMaps = CCMalloc(CC_STD_ALLOCATOR, sizeof(CCInputMap) * CCMax(ItemCount -1, 8), NULL, CC_DEFAULT_ERROR_CALLBACK);
+                                                
+                                                for (size_t Loop = 0; Loop < ItemCount; Loop++)
+                                                {
+                                                    ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop].type = CCInputMapTypeNone;
+                                                    
+                                                    CCExpressionReflectionDeserialize(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(List, Loop + Start), &CC_REFLECT(CCInputMap), &((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop], Zone, Allocator);
+                                                }
+                                                
+                                                for (size_t Loop = ItemCount, Max = CCMax(ItemCount, 8); Loop < Max; Loop++) ((CCInputMap*)Data)->virtual.joystick.inputMaps[Loop].type = CCInputMapTypeNone;
+                                                
+                                                ((CCInputMap*)Data)->virtual.joystick.count = ItemCount;
+                                            }
                                         }
                                         
                                         else
