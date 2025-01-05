@@ -2,21 +2,16 @@
     "functions": [
         {
             "name": "input-group",
-            "description": "Create an input map group component.",
-            "examples": ["(input-group\n\t(action: \"move\")\n\t(input:\n\t\t(input-keyboard (keycode: :left))\n\t\t(input-keyboard (keycode: :right))\n\t)\n)"],
-            "return": { "type": "custom:component" },
+            "description": "Create an input map group.",
+            "examples": ["(input-group\n\t(input:\n\t\t(input-keyboard (keycode: :left))\n\t\t(input-keyboard (keycode: :right))\n\t)\n)"],
+            "return": { "type": "custom:input-map" },
             "options": [
-                {
-                    "name": "action",
-                    "description": "The name of the action.",
-                    "args": [[{ "type": "string" }]]
-                },
                 {
                     "name": "input",
                     "description": "The inputs to be grouped together.",
                     "args": [
-                        [{ "type": "list", "name": "inputs", "value": [{ "type": "custom:component", "name": "input" }] }],
-                        { "repeat": [{ "type": "custom:component", "name": "input" }] }
+                        [{ "type": "list", "name": "inputs", "value": [{ "type": "custom:input-map", "name": "input" }] }],
+                        { "repeat": [{ "type": "custom:input-map", "name": "input" }] }
                     ]
                 },
                 {
@@ -28,26 +23,15 @@
         },
         {
             "name": "input-keyboard",
-            "description": "Create an input map keyboard component.",
-            "examples": ["(input-keyboard (action: \"action\") (keycode: :any) (repeat: #t))"],
-            "return": { "type": "custom:component" },
+            "description": "Create an input map keyboard.",
+            "examples": ["(input-keyboard (keycode: :any) (repeat: #t))"],
+            "return": { "type": "custom:input-map" },
             "options": [
-                {
-                    "name": "action",
-                    "description": "The name of the action.",
-                    "args": [[{ "type": "string" }]]
-                },
-                {
-                    "name": "callback",
-                    "description": "The name of the callback.",
-                    "args": [[{ "type": "atom" }]]
-                },
                 {
                     "name": "keycode",
                     "description": "The keycode to be mapped.",
                     "args": [
                         [{ "type": "atom", "name": "key" }],
-                        [{ "type": "atom", "value": "any" }],
                         [{ "type": "atom", "value": "space" }],
                         [{ "type": "atom", "value": "apostrophe" }],
                         [{ "type": "atom", "value": "comma" }],
@@ -179,7 +163,18 @@
                         [{ "type": "atom", "value": "shift" }],
                         [{ "type": "atom", "value": "control" }],
                         [{ "type": "atom", "value": "alt" }],
-                        [{ "type": "atom", "value": "super" }]
+                        [{ "type": "atom", "value": "super" }],
+                        [{ "type": "atom", "value": "control-shift" }],
+                        [{ "type": "atom", "value": "alt-shift" }],
+                        [{ "type": "atom", "value": "shift-super" }],
+                        [{ "type": "atom", "value": "control-alt" }],
+                        [{ "type": "atom", "value": "control-super" }],
+                        [{ "type": "atom", "value": "alt-super" }],
+                        [{ "type": "atom", "value": "control-alt-shift" }],
+                        [{ "type": "atom", "value": "control-shift-super" }],
+                        [{ "type": "atom", "value": "alt-shift-super" }],
+                        [{ "type": "atom", "value": "control-alt-super" }],
+                        [{ "type": "atom", "value": "control-alt-shift-super" }]
                     ]
                 },
                 {
@@ -201,20 +196,10 @@
         },
         {
             "name": "input-controller-axes",
-            "description": "Create an input map controller axes component.",
-            "examples": ["(input-controller-axes (action: \"action\") (x: 0) (y: 1 :flip) (deadzone: 0.05))"],
-            "return": { "type": "custom:component" },
+            "description": "Create an input map controller axes.",
+            "examples": ["(input-controller-axes (x: 0) (y: 1 :flip) (deadzone: 0.05))"],
+            "return": { "type": "custom:input-map" },
             "options": [
-                {
-                    "name": "action",
-                    "description": "The name of the action.",
-                    "args": [[{ "type": "string" }]]
-                },
-                {
-                    "name": "callback",
-                    "description": "The name of the callback.",
-                    "args": [[{ "type": "atom" }]]
-                },
                 {
                     "name": "device",
                     "description": "The name of the device to be mapped. Use this to target a specific device.",
@@ -256,6 +241,16 @@
                     ]
                 },
                 {
+                    "name": "w",
+                    "description": "The w axis to be mapped.",
+                    "args": [
+                        [{ "type": "integer", "name": "identifier" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "one-sided" }],
+                        [{ "type": "integer", "name": "identifier" }, { "type": "atom", "value": "flip" }, { "type": "atom", "value": "one-sided" }]
+                    ]
+                },
+                {
                     "name": "deadzone",
                     "description": "The deadzone to be applied to the axes.",
                     "args": [[{ "type": "float", "name": "radius" }]]
@@ -269,20 +264,10 @@
         },
         {
             "name": "input-controller-button",
-            "description": "Create an input map controller button component.",
-            "examples": ["(input-controller-button (action: \"action\") (x: 0) (y: 1 :flip) (deadzone: 0.05))"],
-            "return": { "type": "custom:component" },
+            "description": "Create an input map controller button.",
+            "examples": ["(input-controller-button (button: 1))"],
+            "return": { "type": "custom:input-map" },
             "options": [
-                {
-                    "name": "action",
-                    "description": "The name of the action.",
-                    "args": [[{ "type": "string" }]]
-                },
-                {
-                    "name": "callback",
-                    "description": "The name of the callback.",
-                    "args": [[{ "type": "atom" }]]
-                },
                 {
                     "name": "device",
                     "description": "The name of the device to be mapped. Use this to target a specific device.",
@@ -306,27 +291,44 @@
             ]
         },
         {
-            "name": "input-mouse-button",
-            "description": "Create an input map mouse button component.",
-            "examples": ["(input-mouse-button (action: \"action\") (button: :left))"],
-            "return": { "type": "custom:component" },
+            "name": "input-controller-hat",
+            "description": "Create an input map controller hat.",
+            "examples": ["(input-controller-hat (hat: 1)))"],
+            "return": { "type": "custom:input-map" },
             "options": [
                 {
-                    "name": "action",
-                    "description": "The name of the action.",
+                    "name": "device",
+                    "description": "The name of the device to be mapped. Use this to target a specific device.",
                     "args": [[{ "type": "string" }]]
                 },
                 {
-                    "name": "callback",
-                    "description": "The name of the callback.",
-                    "args": [[{ "type": "atom" }]]
+                    "name": "connection",
+                    "description": "The index of the connected device to be mapped.",
+                    "args": [[{ "type": "integer" }]]
                 },
+                {
+                    "name": "hat",
+                    "description": "The hat to be mapped.",
+                    "args": [[{ "type": "integer", "name": "identifier" }]]
+                },
+                {
+                    "name": "ramp",
+                    "description": "The ramping applied when retrieving pressure states. The value effects the speed of the build up/falloff per second.",
+                    "args": [[{ "type": "number", "name": "speed" }]]
+                }
+            ]
+        },
+        {
+            "name": "input-mouse-button",
+            "description": "Create an input map mouse button.",
+            "examples": ["(input-mouse-button (button: :left))"],
+            "return": { "type": "custom:input-map" },
+            "options": [
                 {
                     "name": "button",
                     "description": "The button to be mapped.",
                     "args": [
                         [{ "type": "atom", "name": "button" }],
-                        [{ "type": "atom", "value": "any" }],
                         [{ "type": "atom", "value": "left" }],
                         [{ "type": "atom", "value": "right" }],
                         [{ "type": "atom", "value": "middle" }],
@@ -349,7 +351,18 @@
                         [{ "type": "atom", "value": "shift" }],
                         [{ "type": "atom", "value": "control" }],
                         [{ "type": "atom", "value": "alt" }],
-                        [{ "type": "atom", "value": "super" }]
+                        [{ "type": "atom", "value": "super" }],
+                        [{ "type": "atom", "value": "control-shift" }],
+                        [{ "type": "atom", "value": "alt-shift" }],
+                        [{ "type": "atom", "value": "shift-super" }],
+                        [{ "type": "atom", "value": "control-alt" }],
+                        [{ "type": "atom", "value": "control-super" }],
+                        [{ "type": "atom", "value": "alt-super" }],
+                        [{ "type": "atom", "value": "control-alt-shift" }],
+                        [{ "type": "atom", "value": "control-shift-super" }],
+                        [{ "type": "atom", "value": "alt-shift-super" }],
+                        [{ "type": "atom", "value": "control-alt-super" }],
+                        [{ "type": "atom", "value": "control-alt-shift-super" }]
                     ]
                 },
                 {
@@ -360,22 +373,66 @@
             ]
         },
         {
-            "name": "input-mouse-drop",
-            "description": "Create an input map mouse drop component.",
-            "examples": ["(input-mouse-drop (action: \"action\"))"],
-            "return": { "type": "custom:component" },
+            "name": "input-virtual-joystick",
+            "description": "Create an input map virtual joystick.",
+            "examples": ["(input-virtual-joystick\n\t(input:\n\t\t(input-keyboard (keycode: :left))\n\t\t(input-keyboard (keycode: :right))\n\t)\n)"],
+            "return": { "type": "custom:input-map" },
             "options": [
                 {
-                    "name": "action",
-                    "description": "The name of the action.",
-                    "args": [[{ "type": "string" }]]
+                    "name": "input",
+                    "description": "The inputs to form the virtual joystick together.",
+                    "args": [
+                        [{ "type": "list", "name": "inputs", "value": [{ "type": "custom:input-map", "name": "input" }] }],
+                        { "repeat": [{ "type": "custom:input-map", "name": "input" }] }
+                    ]
                 },
                 {
-                    "name": "callback",
-                    "description": "The name of the callback.",
-                    "args": [[{ "type": "atom" }]]
+                    "name": "x",
+                    "description": "The inputs to form the virtual joystick x-axis.",
+                    "args": [
+                        [
+                            { "type": "custom:input-map", "name": "positive-input" },
+                            { "type": "custom:input-map", "name": "negative-input" }
+                        ]
+                    ]
+                },
+                {
+                    "name": "y",
+                    "description": "The inputs to form the virtual joystick y-axis.",
+                    "args": [
+                        [
+                            { "type": "custom:input-map", "name": "positive-input" },
+                            { "type": "custom:input-map", "name": "negative-input" }
+                        ]
+                    ]
+                },
+                {
+                    "name": "z",
+                    "description": "The inputs to form the virtual joystick z-axis.",
+                    "args": [
+                        [
+                            { "type": "custom:input-map", "name": "positive-input" },
+                            { "type": "custom:input-map", "name": "negative-input" }
+                        ]
+                    ]
+                },
+                {
+                    "name": "w",
+                    "description": "The inputs to form the virtual joystick w-axis.",
+                    "args": [
+                        [
+                            { "type": "custom:input-map", "name": "positive-input" },
+                            { "type": "custom:input-map", "name": "negative-input" }
+                        ]
+                    ]
                 }
             ]
+        },
+        {
+            "name": "input-none",
+            "description": "Create an unmapped input map.",
+            "examples": ["(input-none))"],
+            "return": { "type": "custom:input-map" }
         }
     ]
 }
