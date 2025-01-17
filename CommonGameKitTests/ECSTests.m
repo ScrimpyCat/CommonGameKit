@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_PACKED_COMPONENT_ID_BASE=1' -e 'ECS_INDEXED_COMPONENT_ID_BASE=2' CommonGameKitTests/ECSTestData.h
+//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_PACKED_COMPONENT_ID_BASE=1' -e 'ECS_INDEXED_COMPONENT_ID_BASE=2' -fn ecs_filters CommonGameKitTests/ECSTestData.h
 
-#import <XCTest/XCTest.h>
+#import "CCTestCase.h"
 #import "ECS.h"
 #import "ECSReflect.h"
 #import "ExpressionReflection.h"
@@ -40,6 +40,7 @@
 #import "ECSTestData.h"
 #import "ECSMonitor.h"
 #import "ECSBinaryMonitor.h"
+#import "ECSExpression.h"
 
 const CCReflectStruct1 CC_REFLECT(CompA) = CC_REFLECT_STRUCT(CompA,
     (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 1))
@@ -515,7 +516,7 @@ static void MutationCallback(ECSContext *Context, void *Data, ECSEntity *NewEnti
     }
 }
 
-@interface ECSTests : XCTestCase
+@interface ECSTests : CCTestCase
 @end
 
 @implementation ECSTests
@@ -526,6 +527,8 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
 
 +(void) setUp
 {
+    [super setUp];
+    
     ECSComponentIDs = ComponentIDs;
     
     ECSArchetypeComponentIndexes = ArchetypeComponentIndexes;
@@ -566,6 +569,11 @@ ECSMutableState MutableState = ECS_MUTABLE_STATE_CREATE(4096, 4096, 4096, 4096, 
     ECSMutableStateRemoveComponentMax = 4069;
     ECSMutableStateCustomCallbackMax = 4096;
     ECSMutableStateSharedDataMax = 1048576;
+    
+    ECSExpressionComponentExpressionNames = ComponentExpressionNames;
+    ECSExpressionComponentExpressionMaps = ComponentExpressionMaps;
+    
+    ECSExpressionRegisterComponentEvaluators();
     
     ECSInit();
     ECSWorkerCreate();
@@ -7171,6 +7179,64 @@ CLEAR_CALLBACK_STATE;
     
     ECSEntityDestroy(&Context, &Entity, 1);
     ECSEntityDestroy(&Context, NewEntities, 2);
+}
+
+-(void) testScripting
+{
+    CCDictionarySetValue(ECSExpressionEntityRelationships, &(CCString){ CC_STRING("children:") }, &(const ECSLink*){ &TestOneToMany });
+    
+    CCDictionarySetValue(ECSExpressionECSContexts, &(CCString){ CC_STRING("test") }, &(ECSContext*){ &Context });
+    
+    CCExpression Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity \"foo\" (comp-b (v: (1, 2))) (children: (entity (name \"bar\")))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    ECSEntity FooEntity = ECS_ENTITY_NULL, BarEntity = ECS_ENTITY_NULL;
+    
+    for (ECSEntity Entity = 0, Count = CCArrayGetCount(Context.manager.map); Entity < Count; Entity++)
+    {
+        ECSNameComponent *Name = ECSEntityGetComponent(&Context, Entity, ECS_NAME_COMPONENT);
+        
+        if ((Name) && (*Name))
+        {
+            if (CCStringEqual(*Name, CC_STRING("foo"))) FooEntity = Entity;
+            else if (CCStringEqual(*Name, CC_STRING("bar"))) BarEntity = Entity;
+        }
+    }
+    
+    XCTAssertNotEqual(FooEntity, ECS_ENTITY_NULL, @"should have created entity");
+    XCTAssertNotEqual(BarEntity, ECS_ENTITY_NULL, @"should have created entity");
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, FooEntity, COMP_B);
+        
+        XCTAssertNotEqual(B, NULL, @"should have component");
+        
+        XCTAssertEqual(B->v[0], 1, @"should initialise the component correctly");
+        XCTAssertEqual(B->v[1], 2, @"should initialise the component correctly");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], BarEntity, @"should have the correct linked entity");
+    }
+    
+    if (BarEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, BarEntity, COMP_B);
+        
+        XCTAssertEqual(B, NULL, @"should not have component");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, BarEntity, ECS_LINK_INVERT(&TestOneToMany), &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], FooEntity, @"should have the correct linked entity");
+    }
 }
 
 @end

@@ -1330,6 +1330,40 @@ const ECSArchetypePointer ArchetypeDependencies[] = {
 #define COMPONENT_SYSTEM_ACCESS_ARCHETYPE7(x1, x2, x3, x4, x5, x6, x7) { .count = ARCHETYPE7_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2##_##x3##_##x4##_##x5##_##x6##_##x7] }
 #define COMPONENT_SYSTEM_ACCESS_ARCHETYPE8(x1, x2, x3, x4, x5, x6, x7, x8) { .count = ARCHETYPE8_DEPENDENCIES_COUNT, .pointer = &ArchetypeDependencies[ARCHETYPE_DEPENDENCIES_##x1##_##x2##_##x3##_##x4##_##x5##_##x6##_##x7##_##x8] }
 
+const CCString ComponentExpressionNames[ECS_COMPONENT_MAX] = {
+    [ECS_COMPONENT_BASE_INDEX(COMP_A)] = CC_STRING("comp-a"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_B)] = CC_STRING("comp-b"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_C)] = CC_STRING("comp-c"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_D)] = CC_STRING("comp-d"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_E)] = CC_STRING("comp-e"),
+    [ECS_COMPONENT_BASE_INDEX(ARCH_K)] = CC_STRING("arch-k"),
+    [ECS_COMPONENT_BASE_INDEX(ARCH_H)] = CC_STRING("arch-h"),
+    [ECS_COMPONENT_BASE_INDEX(ARCH_TAG)] = CC_STRING("arch-tag"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_F)] = CC_STRING("comp-f"),
+    [ECS_COMPONENT_BASE_INDEX(ECS_MONITOR_COMPONENT)] = CC_STRING("monitor"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_J)] = CC_STRING("comp-j"),
+    [ECS_COMPONENT_BASE_INDEX(PACKED_K)] = CC_STRING("packed-k"),
+    [ECS_COMPONENT_BASE_INDEX(PACKED_H)] = CC_STRING("packed-h"),
+    [ECS_COMPONENT_BASE_INDEX(CHECK_RUN_STATE_TAG)] = CC_STRING("check-run-state-tag"),
+    [ECS_COMPONENT_BASE_INDEX(DESTROY_ME_TAG)] = CC_STRING("destroy-me-tag"),
+    [ECS_COMPONENT_BASE_INDEX(DUPLICATE_A)] = CC_STRING("duplicate-a"),
+    [ECS_COMPONENT_BASE_INDEX(PACKED_TAG)] = CC_STRING("packed-tag"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_G)] = CC_STRING("comp-g"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_H)] = CC_STRING("comp-h"),
+    [ECS_COMPONENT_BASE_INDEX(COMP_I)] = CC_STRING("comp-i"),
+    [ECS_COMPONENT_BASE_INDEX(ECS_NAME_COMPONENT)] = CC_STRING("name"),
+    [ECS_COMPONENT_BASE_INDEX(INDEXED_K)] = CC_STRING("indexed-k"),
+    [ECS_COMPONENT_BASE_INDEX(INDEXED_H)] = CC_STRING("indexed-h"),
+    [ECS_COMPONENT_BASE_INDEX(INDEXED_TAG)] = CC_STRING("indexed-tag"),
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_K)] = CC_STRING("local-k"),
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_H)] = CC_STRING("local-h"),
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_DUPLICATE_B)] = CC_STRING("local-duplicate-b"),
+    [ECS_COMPONENT_BASE_INDEX(LOCAL_TAG)] = CC_STRING("local-tag"),
+};
+
+const CCDictionary ComponentExpressionMaps[ECS_COMPONENT_MAX] = {
+};
+
 const ECSComponentID ComponentIDList[] = {
     COMP_F, COMP_G, COMP_H, 
     ARCH_TAG, COMP_A, 
