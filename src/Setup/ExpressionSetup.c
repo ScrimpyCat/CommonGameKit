@@ -4,7 +4,6 @@
 #include "ExpressionEvaluator.h"
 
 #include "MacroExpressions.h"
-#include "EntityExpressions.h"
 #include "TypeExpressions.h"
 #include "IOExpressions.h"
 #include "MessageExpressions.h"
@@ -21,16 +20,14 @@
 #include "ControlFlowExpressions.h"
 #include "FontExpressions.h"
 #include "ListExpressions.h"
-#include "ComponentExpressions.h"
 #include "TextExpressions.h"
+#include "ECSExpression.h"
 #include "GUIExpression.h"
 
 void CCExpressionSetup(void)
 {
     CCExpressionEvaluatorRegister(CC_STRING("quote"), CCMacroExpressionQuote);
     CCExpressionEvaluatorRegister(CC_STRING("unquote"), CCMacroExpressionUnquote);
-    CCExpressionEvaluatorRegister(CC_STRING("entity"), CCEntityExpressionEntity);
-    CCExpressionEvaluatorRegister(CC_STRING("entity-lookup"), CCEntityExpressionEntityLookup);
     CCExpressionEvaluatorRegister(CC_STRING("type"), CCTypeExpressionGetType);
     CCExpressionEvaluatorRegister(CC_STRING("integer->float"), CCTypeExpressionIntegerToFloat);
     CCExpressionEvaluatorRegister(CC_STRING("float->integer"), CCTypeExpressionFloatToInteger);
@@ -110,10 +107,12 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("parts"), CCListExpressionParts);
     CCExpressionEvaluatorRegister(CC_STRING("split"), CCListExpressionSplit);
     CCExpressionEvaluatorRegister(CC_STRING("count"), CCListExpressionCount);
-    CCExpressionEvaluatorRegister(CC_STRING("component"), CCComponentExpressionComponent);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
     CCExpressionEvaluatorRegister(CC_STRING("text-cursor-position"), CCTextExpressionGetCursorPosition);
     CCExpressionEvaluatorRegister(CC_STRING("text-cursor-offset"), CCTextExpressionGetCursorOffset);
+    CCExpressionEvaluatorRegister(CC_STRING("component"), ECSExpressionComponent);
+    CCExpressionEvaluatorRegister(CC_STRING("entity"), ECSExpressionEntity);
+    CCExpressionEvaluatorRegister(CC_STRING("ecs"), ECSExpressionECS);
     CCExpressionEvaluatorRegister(CC_STRING("gui"), GUIExpressionRegisterObject);
     CCExpressionEvaluatorRegister(CC_STRING("percent-width"), GUIExpressionPercentWidth);
     CCExpressionEvaluatorRegister(CC_STRING("percent-height"), GUIExpressionPercentHeight);
