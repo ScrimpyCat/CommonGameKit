@@ -28,6 +28,7 @@
 
 #include <CommonGameKit/Base.h>
 #include <CommonGameKit/ECSContext.h>
+#include <CommonGameKit/ECS.h>
 
 extern const CCReflectType *ECSArchetypeComponentTypes;
 extern const CCReflectType *ECSPackedComponentTypes;
@@ -95,5 +96,65 @@ void ECSSerialize(ECSContext *Context, void *State, ECSSerializeHandler Handler,
  * @param Handler The deserialization handler.
  */
 void ECSDeserialize(ECSContext *Context, void *State, ECSDeserializeHandler Handler);
+
+/*!
+ * @brief Get the component type.
+ * @param ID The component ID to get the type for.
+ * @return Returns the type of the component.
+ */
+static inline CCReflectType ECSComponentType(ECSComponentID ID);
+
+/*!
+ * @brief Get the duplicate component type.
+ * @param ID The component ID to get the duplicate type for.
+ * @return Returns the duplicate type of the component.
+ */
+static inline CCReflectType ECSDuplicateComponentType(ECSComponentID ID);
+
+#pragma mark -
+
+static inline CCReflectType ECSComponentType(ECSComponentID ID)
+{
+    switch (ID & ECSComponentStorageTypeMask)
+    {
+        case ECSComponentStorageTypeArchetype:
+            return ECSArchetypeComponentTypes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypePacked:
+            return ECSPackedComponentTypes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeIndexed:
+            return ECSIndexedComponentTypes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeLocal:
+            return ECSLocalComponentTypes[ECSLocalComponentIndex(ID)];
+    }
+    
+    CCAssertLog(0, "Unsupported component type");
+    
+    return NULL;
+}
+
+static inline CCReflectType ECSDuplicateComponentType(ECSComponentID ID)
+{
+    switch (ID & ECSComponentStorageTypeMask)
+    {
+        case ECSComponentStorageTypeArchetype:
+            return ECSDuplicateArchetypeComponentTypes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypePacked:
+            return ECSDuplicatePackedComponentTypes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeIndexed:
+            return ECSDuplicateIndexedComponentTypes[ID & ~ECSComponentStorageMask];
+            
+        case ECSComponentStorageTypeLocal:
+            return ECSDuplicateLocalComponentTypes[ECSLocalComponentIndex(ID)];
+    }
+    
+    CCAssertLog(0, "Unsupported component type");
+    
+    return NULL;
+}
 
 #endif
