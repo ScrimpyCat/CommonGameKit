@@ -85,6 +85,6 @@ struct CCExpressionMapArg {
  * @param Map The mapping to be used.
  * @return Returns the transformed expression.
  */
-CCExpression CCExpressionMap(CCExpression Expression, CCDictionary Map);
+CC_NEW CCExpression CCExpressionMap(CCExpression Expression, CCDictionary Map);
 
 #endif
