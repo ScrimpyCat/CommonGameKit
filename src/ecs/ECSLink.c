@@ -72,6 +72,22 @@ static _Bool ECSLinkFindEntity(const ECSEntity *Entities, size_t Count, ECSEntit
     return Entities[M] == Entity;
 }
 
+typedef struct {
+    union {
+        CCArray entities;
+        ECSEntity entity;
+    };
+    _Bool hasMany;
+} ECSLinkAssociation;
+
+static void ECSLinkAssociationDestructor(CCDictionary Dictionary, ECSLinkAssociation *Linked)
+{
+    if (Linked->hasMany)
+    {
+        CCArrayDestroy(Linked->entities);
+    }
+}
+
 void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLink *Link, ECSEntity EntityB, void *DataB)
 {
     CCAssertLog(Context, "Context must not be null");
@@ -122,25 +138,10 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
         
         if (!*Assoc)
         {
-            size_t Size;
-            CCDictionaryElementDestructor Destructor;
-            
-            if (HasMany)
-            {
-                Size = sizeof(CCArray);
-                Destructor = CCArrayDestructorForDictionary;
-            }
-            
-            else
-            {
-                Size = sizeof(ECSEntity);
-                Destructor = NULL;
-            }
-            
-            *Assoc = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintHeavyInserting | CCDictionaryHintHeavyDeleting, sizeof(void*), Size, &(CCDictionaryCallbacks){
+            *Assoc = CCDictionaryCreate(CC_STD_ALLOCATOR, CCDictionaryHintHeavyFinding | CCDictionaryHintHeavyInserting | CCDictionaryHintHeavyDeleting, sizeof(void*), sizeof(ECSLinkAssociation), &(CCDictionaryCallbacks){
                 .getHash = (CCDictionaryKeyHasher)ECSLinkHasher,
                 .compareKeys = (CCComparator)ECSLinkComparator,
-                .valueDestructor = Destructor
+                .valueDestructor = (CCDictionaryElementDestructor)ECSLinkAssociationDestructor
             });
         }
         
@@ -154,10 +155,10 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
             if (!CCDictionaryEntryIsInitialized(*Assoc, LinkEntry))
             {
                 LinkedEntities = CCArrayCreate(CC_STD_ALLOCATOR, sizeof(ECSEntity), 16);
-                CCDictionarySetEntry(*Assoc, LinkEntry, &LinkedEntities);
+                CCDictionarySetEntry(*Assoc, LinkEntry, &(ECSLinkAssociation){ .entities = LinkedEntities, .hasMany = TRUE });
             }
             
-            else LinkedEntities = *(CCArray*)CCDictionaryGetEntry(*Assoc, LinkEntry);
+            else LinkedEntities = ((ECSLinkAssociation*)CCDictionaryGetEntry(*Assoc, LinkEntry))->entities;
             
             const size_t LinkedCount = CCArrayGetCount(LinkedEntities);
             
@@ -175,7 +176,7 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
         {
             if (CCDictionaryEntryIsInitialized(*Assoc, LinkEntry))
             {
-                const ECSEntity PrevEntity = *(ECSEntity*)CCDictionaryGetEntry(*Assoc, LinkEntry);
+                const ECSEntity PrevEntity = ((ECSLinkAssociation*)CCDictionaryGetEntry(*Assoc, LinkEntry))->entity;
                 
                 if (PrevEntity == Pair[(Loop + 1) & 1].entity) return;
                 
@@ -188,7 +189,7 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
                 
                 if (OppositeHasMany)
                 {
-                    CCArray OppositeLinkedEntities = *(CCArray*)CCDictionaryGetEntry(OppositeAssoc, OppositeLinkEntry);
+                    CCArray OppositeLinkedEntities = ((ECSLinkAssociation*)CCDictionaryGetEntry(OppositeAssoc, OppositeLinkEntry))->entities;
                     const size_t OppositeLinkedCount = CCArrayGetCount(OppositeLinkedEntities);
                     
                     if (OppositeLinkedCount > 1)
@@ -205,7 +206,7 @@ void ECSLinkAdd(ECSContext *Context, ECSEntity EntityA, void *DataA, const ECSLi
                 else CCDictionaryRemoveEntry(OppositeAssoc, OppositeLinkEntry);
             }
             
-            CCDictionarySetEntry(*Assoc, LinkEntry, &LinkedEntity);
+            CCDictionarySetEntry(*Assoc, LinkEntry, &(ECSLinkAssociation){ .entity = LinkedEntity, .hasMany = FALSE });
         }
     }
     
@@ -368,9 +369,9 @@ static void ECSLinkRemoveLinkForOppositeEntity(ECSContext *Context, ECSEntity Li
     if (HasMany)
     {
         CCDictionaryEntry LinkEntry = CCDictionaryFindKey(OppositeAssoc, &Key);
-        void *OppositedLinked = CCDictionaryGetEntry(OppositeAssoc, LinkEntry);
+        ECSLinkAssociation *OppositedLinked = CCDictionaryGetEntry(OppositeAssoc, LinkEntry);
         
-        CCArray(ECSEntity) OppositeLinkedEntities = *(CCArray*)OppositedLinked;
+        CCArray(ECSEntity) OppositeLinkedEntities = OppositedLinked->entities;
         const size_t OppositeLinkedCount = CCArrayGetCount(OppositeLinkedEntities);
         
         size_t Index = 0;
@@ -434,11 +435,11 @@ void ECSLinkRemoveLinkForEntity(ECSContext *Context, ECSEntity Entity, const ECS
         
         if (!LinkEntry) return;
         
-        void *Linked = CCDictionaryGetEntry(Assoc, LinkEntry);
+        ECSLinkAssociation *Linked = CCDictionaryGetEntry(Assoc, LinkEntry);
         
         if (HasMany)
         {
-            CCArray(ECSEntity) LinkedEntities = CCRetain(*(CCArray*)Linked);
+            CCArray(ECSEntity) LinkedEntities = CCRetain(Linked->entities);
             const size_t LinkedCount = CCArrayGetCount(LinkedEntities);
             
             CCDictionaryRemoveEntry(Assoc, LinkEntry);
@@ -490,7 +491,7 @@ void ECSLinkRemoveLinkForEntity(ECSContext *Context, ECSEntity Entity, const ECS
         
         else
         {
-            const ECSEntity LinkedEntity = *(ECSEntity*)Linked;
+            const ECSEntity LinkedEntity = Linked->entity;
             
             CCDictionaryRemoveEntry(Assoc, LinkEntry);
             
@@ -666,11 +667,11 @@ const ECSEntity *ECSLinkGet(ECSContext *Context, ECSEntity Entity, const ECSLink
         
         if (!LinkEntry) goto Empty;
         
-        void *Linked = CCDictionaryGetEntry(Assoc, LinkEntry);
+        ECSLinkAssociation *Linked = CCDictionaryGetEntry(Assoc, LinkEntry);
         
         if (HasMany)
         {
-            CCArray(ECSEntity) LinkedEntities = *(CCArray*)Linked;
+            CCArray(ECSEntity) LinkedEntities = Linked->entities;
             *Count = CCArrayGetCount(LinkedEntities);
             
             return CCArrayGetData(LinkedEntities);
@@ -680,7 +681,7 @@ const ECSEntity *ECSLinkGet(ECSContext *Context, ECSEntity Entity, const ECSLink
         {
             *Count = 1;
             
-            return Linked;
+            return &Linked->entity;
         }
     }
     
