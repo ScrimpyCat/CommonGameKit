@@ -59,6 +59,8 @@
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F37329542D301EC500A3DC98 /* ECSExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329522D301EC500A3DC98 /* ECSExpression.h */; };
 		F37329552D301EC500A3DC98 /* ECSExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F37329532D301EC500A3DC98 /* ECSExpression.c */; };
+		F37329BD2D3B312100A3DC98 /* ECSParentChildRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329BB2D3B312100A3DC98 /* ECSParentChildRelationship.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F37329BE2D3B312100A3DC98 /* ECSParentChildRelationship.c in Sources */ = {isa = PBXBuildFile; fileRef = F37329BC2D3B312100A3DC98 /* ECSParentChildRelationship.c */; };
 		F3750F892347B94500DFE104 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = F3750F882347B94500DFE104 /* Base.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F378DAFD234D5278000600CC /* ContainerTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F37A6E992C91465F00F97BC3 /* Input.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A6E972C91465F00F97BC3 /* Input.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -597,6 +599,8 @@
 		F36954EC1E475E0F00135AF0 /* MessageType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageType.h; sourceTree = "<group>"; };
 		F37329522D301EC500A3DC98 /* ECSExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSExpression.h; sourceTree = "<group>"; };
 		F37329532D301EC500A3DC98 /* ECSExpression.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSExpression.c; sourceTree = "<group>"; };
+		F37329BB2D3B312100A3DC98 /* ECSParentChildRelationship.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSParentChildRelationship.h; sourceTree = "<group>"; };
+		F37329BC2D3B312100A3DC98 /* ECSParentChildRelationship.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSParentChildRelationship.c; sourceTree = "<group>"; };
 		F3750F882347B94500DFE104 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		F378DAFD234D5278000600CC /* ContainerTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerTypes.h; sourceTree = "<group>"; };
 		F37A6E972C91465F00F97BC3 /* Input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
@@ -904,6 +908,7 @@
 				F3EAB94E2C4758A5009D72DD /* ECSReflect.h */,
 				F37329532D301EC500A3DC98 /* ECSExpression.c */,
 				F37329522D301EC500A3DC98 /* ECSExpression.h */,
+				F37329BA2D3B2A5700A3DC98 /* Relationships */,
 				F34551942AFCD5D000316D15 /* Monitors */,
 				F3BFD72B2AE8414100118816 /* Components */,
 				F36081ED2B0B06DC002B2A89 /* Systems */,
@@ -978,6 +983,16 @@
 			);
 			name = Systems;
 			path = systems;
+			sourceTree = "<group>";
+		};
+		F37329BA2D3B2A5700A3DC98 /* Relationships */ = {
+			isa = PBXGroup;
+			children = (
+				F37329BC2D3B312100A3DC98 /* ECSParentChildRelationship.c */,
+				F37329BB2D3B312100A3DC98 /* ECSParentChildRelationship.h */,
+			);
+			name = Relationships;
+			path = relationships;
 			sourceTree = "<group>";
 		};
 		F38828321E9B293400E6D7A3 /* Products */ = {
@@ -1713,6 +1728,7 @@
 			files = (
 				F3750F892347B94500DFE104 /* Base.h in Headers */,
 				F3AF33F11DCCD4EC00CAD472 /* GLVersionMacro.h in Headers */,
+				F37329BD2D3B312100A3DC98 /* ECSParentChildRelationship.h in Headers */,
 				F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */,
 				F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */,
 				F34551972AFCD68700316D15 /* ECSBinaryMonitor.h in Headers */,
@@ -2210,6 +2226,7 @@
 				F3AF33B51DCCD4EC00CAD472 /* Colour.c in Sources */,
 				F3AF33921DCCD4EC00CAD472 /* GUIObject.c in Sources */,
 				F3AF33D51DCCD4EC00CAD472 /* GFXShaderLibrary.c in Sources */,
+				F37329BE2D3B312100A3DC98 /* ECSParentChildRelationship.c in Sources */,
 				F3AF33BD1DCCD4EC00CAD472 /* PixelData.c in Sources */,
 				F3AF348E1DCCD5AF00CAD472 /* EqualityExpressions.c in Sources */,
 				F37329552D301EC500A3DC98 /* ECSExpression.c in Sources */,

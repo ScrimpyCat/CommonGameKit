@@ -30,6 +30,7 @@
 #include "ECSReflect.h"
 #include "ECSNameComponent.h"
 #include "ECSComponentIDs.h"
+#include "ECSParentChildRelationship.h"
 
 const CCString *ECSExpressionComponentExpressionNames = NULL;
 
@@ -42,6 +43,8 @@ CCDictionary ECSExpressionECSContexts = CC_STATIC_DICTIONARY(CCDictionaryHintHea
 CC_DICTIONARY_DECLARE(CCString, ECSComponentID);
 
 static CCDictionary(CCString, ECSComponentID) ECSExpressionComponentIDLookup;
+
+const CCString ECSExpressionEntityChildrenRelationshipOption = CC_STRING("children:");
 
 void ECSExpressionRegisterComponentEvaluators(void)
 {
@@ -61,6 +64,8 @@ void ECSExpressionRegisterComponentEvaluators(void)
             CCDictionarySetValue(ECSExpressionComponentIDLookup, &(CCString){ CCStringCreateByInsertingString(ECSExpressionComponentExpressionNames[Loop], 0, CC_STRING(":")) }, &ECSComponentIDs[Loop]);
         }
     }
+    
+    CCDictionarySetValue(ECSExpressionEntityRelationships, &ECSExpressionEntityChildrenRelationshipOption, &(const ECSLink*){ &ECSParentChildRelationship });
 }
 
 enum {
@@ -306,6 +311,6 @@ CCExpression ECSExpressionECS(CCExpression Expression)
     }
     
     else CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("ecs", "name:string [args:expression]");
-        
+    
     return Expression;
 }
