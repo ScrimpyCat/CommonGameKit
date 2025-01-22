@@ -190,7 +190,8 @@ _Bool ECSLinked(ECSContext *Context, ECSEntity EntityA, const ECSLink *Link, ECS
  *             alignment greater than 1.
  *
  * @param Count A pointer to where to set the number of returned entities.
- * @return Return a pointer to the linked entities. Or NULL if there aren't any.
+ * @return Return a pointer to the linked entities. Or NULL if there aren't any. The pointer should no longer be accessed after any
+ *         link mutations.
  */
 const ECSEntity *ECSLinkGet(ECSContext *Context, ECSEntity Entity, const ECSLink *Link, size_t *Count);
 
@@ -198,7 +199,8 @@ const ECSEntity *ECSLinkGet(ECSContext *Context, ECSEntity Entity, const ECSLink
  * @brief Get the link enumerable for the given entity.
  * @param Context The context to query the link of.
  * @param Entity The entity to get the entities linked to.
- * @param Enumerable A pointer to where to store the link enumerable.
+ * @param Enumerable A pointer to where to store the link enumerable. The enumerable and its items should no longer be accessed after
+ *                   any link mutations.
  */
 void ECSLinkEnumerable(ECSContext *Context, ECSEntity Entity, CCEnumerable *Enumerable);
 
