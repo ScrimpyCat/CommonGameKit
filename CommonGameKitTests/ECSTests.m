@@ -41,6 +41,7 @@
 #import "ECSMonitor.h"
 #import "ECSBinaryMonitor.h"
 #import "ECSExpression.h"
+#import "ECSParentChildRelationship.h"
 
 const CCReflectStruct1 CC_REFLECT(CompA) = CC_REFLECT_STRUCT(CompA,
     (v, &CC_REFLECT_ARRAY(&CC_REFLECT(int), 1))
@@ -7183,8 +7184,6 @@ CLEAR_CALLBACK_STATE;
 
 -(void) testScripting
 {
-    CCDictionarySetValue(ECSExpressionEntityRelationships, &(CCString){ CC_STRING("children:") }, &(const ECSLink*){ &TestOneToMany });
-    
     CCDictionarySetValue(ECSExpressionECSContexts, &(CCString){ CC_STRING("test") }, &(ECSContext*){ &Context });
     
     CCExpression Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity \"foo\" (comp-b (v: (1, 2))) (children: (entity (name \"bar\")))))");
@@ -7194,6 +7193,65 @@ CLEAR_CALLBACK_STATE;
     ECSMutationApply(&Context);
     
     ECSEntity FooEntity = ECS_ENTITY_NULL, BarEntity = ECS_ENTITY_NULL;
+    
+    for (ECSEntity Entity = 0, Count = CCArrayGetCount(Context.manager.map); Entity < Count; Entity++)
+    {
+        ECSNameComponent *Name = ECSEntityGetComponent(&Context, Entity, ECS_NAME_COMPONENT);
+        
+        if ((Name) && (*Name))
+        {
+            if (CCStringEqual(*Name, CC_STRING("foo"))) FooEntity = Entity;
+            else if (CCStringEqual(*Name, CC_STRING("bar"))) BarEntity = Entity;
+        }
+    }
+    
+    XCTAssertNotEqual(FooEntity, ECS_ENTITY_NULL, @"should have created entity");
+    XCTAssertNotEqual(BarEntity, ECS_ENTITY_NULL, @"should have created entity");
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, FooEntity, COMP_B);
+        
+        XCTAssertNotEqual(B, NULL, @"should have component");
+        
+        XCTAssertEqual(B->v[0], 1, @"should initialise the component correctly");
+        XCTAssertEqual(B->v[1], 2, @"should initialise the component correctly");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, FooEntity, &ECSParentChildRelationship, &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], BarEntity, @"should have the correct linked entity");
+    }
+    
+    if (BarEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, BarEntity, COMP_B);
+        
+        XCTAssertEqual(B, NULL, @"should not have component");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, BarEntity, ECS_LINK_INVERT(&ECSParentChildRelationship), &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], FooEntity, @"should have the correct linked entity");
+    }
+    
+    if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
+    if (BarEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
+    
+    
+    
+    CCDictionarySetValue(ECSExpressionEntityRelationships, &ECSExpressionEntityChildrenRelationshipOption, &(const ECSLink*){ &TestOneToMany });
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity \"foo\" (comp-b (v: (1, 2))) (children: (entity (name \"bar\")))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    FooEntity = ECS_ENTITY_NULL;
+    BarEntity = ECS_ENTITY_NULL;
     
     for (ECSEntity Entity = 0, Count = CCArrayGetCount(Context.manager.map); Entity < Count; Entity++)
     {
@@ -7237,6 +7295,9 @@ CLEAR_CALLBACK_STATE;
         XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
         XCTAssertEqual(Entities[0], FooEntity, @"should have the correct linked entity");
     }
+    
+    if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
+    if (BarEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
 }
 
 @end
