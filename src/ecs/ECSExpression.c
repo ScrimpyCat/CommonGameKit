@@ -314,3 +314,146 @@ CCExpression ECSExpressionECS(CCExpression Expression)
     
     return Expression;
 }
+
+CCExpression ECSExpressionEntityRegister(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            const size_t Count = CCCollectionGetCount(CCExpressionGetList(Expression));
+            
+            if ((Count >= 2) && (Count <= 4))
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                
+                if (CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity)
+                {
+                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                    
+                    if (Count >= 3)
+                    {
+                        CCExpression IDExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+                        
+                        if (CCExpressionGetType(IDExpr) == CCExpressionValueTypeString)
+                        {
+                            _Bool Acquire = FALSE;
+                            
+                            if (Count == 4)
+                            {
+                                CCExpression AcquireExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+                                
+                                if (CCExpressionGetType(AcquireExpr) != CCExpressionValueTypeInteger) goto Error;
+                                
+                                Acquire = CCExpressionGetInteger(AcquireExpr);
+                            }
+                            
+                            CCBigIntFast ID = CCBigIntFastCreate(CC_STD_ALLOCATOR);
+                            CCBigIntFastSetString(&ID, CCExpressionGetString(IDExpr));
+                            
+                            ECSMutableReplaceRegistryState *ReplacingRegistryState = ECSMutationStageRegistryReregister(Context, 1);
+                            
+                            ReplacingRegistryState->entity = Entity;
+                            ReplacingRegistryState->id = ID;
+                            ReplacingRegistryState->acquire = Acquire;
+                        }
+                    }
+                    
+                    else
+                    {
+                        ECSProxyEntity *Register = ECSMutationStageRegistryRegister(Context, 1);
+                        
+                        *Register = Entity;
+                        
+                        return EntityExpr;
+                    }
+                }
+            }
+            
+        Error:;
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-register", "entity:entity [id:string] [acquire-id:boolean]");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityUnregister(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                
+                if (CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity)
+                {
+                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                    ECSEntity *Unregister = ECSMutationStageRegistryDeregister(Context, 1);
+                    
+                    *Unregister = Entity;
+                    
+                    return EntityExpr;
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-unregister", "entity:entity");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityLookup(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+            {
+                CCExpression IDExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                
+                if (CCExpressionGetType(IDExpr) == CCExpressionValueTypeString)
+                {
+                    CCBigIntFast ID = CCBigIntFastCreate(CC_STD_ALLOCATOR);
+                    CCBigIntFastSetString(&ID, CCExpressionGetString(IDExpr));
+                    
+                    ECSEntity Entity = ECSRegistryLookup(Context, ID);
+                    
+                    return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, ECSExpressionValueTypeEntity, (void*)Entity, NULL, NULL);
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-lookup", "id:string");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
