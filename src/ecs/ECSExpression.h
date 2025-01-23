@@ -65,7 +65,7 @@ CC_EXPRESSION_EVALUATOR(component) CCExpression ECSExpressionComponent(CCExpress
 CC_EXPRESSION_EVALUATOR(entity) CCExpression ECSExpressionEntity(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(ecs) CCExpression ECSExpressionECS(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-register) CCExpression ECSExpressionEntityRegister(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(entity-unregister) CCExpression ECSExpressionEntityUnregister(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-deregister) CCExpression ECSExpressionEntityDeregister(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-lookup) CCExpression ECSExpressionEntityLookup(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-link) CCExpression ECSExpressionEntityLink(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-unlink) CCExpression ECSExpressionEntityUnlink(CCExpression Expression);

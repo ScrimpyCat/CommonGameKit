@@ -386,7 +386,7 @@ CCExpression ECSExpressionEntityRegister(CCExpression Expression)
     return Expression;
 }
 
-CCExpression ECSExpressionEntityUnregister(CCExpression Expression)
+CCExpression ECSExpressionEntityDeregister(CCExpression Expression)
 {
     CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
     
@@ -403,15 +403,15 @@ CCExpression ECSExpressionEntityUnregister(CCExpression Expression)
                 if (CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity)
                 {
                     ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
-                    ECSEntity *Unregister = ECSMutationStageRegistryDeregister(Context, 1);
+                    ECSEntity *Deregister = ECSMutationStageRegistryDeregister(Context, 1);
                     
-                    *Unregister = Entity;
+                    *Deregister = Entity;
                     
                     return EntityExpr;
                 }
             }
             
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-unregister", "entity:entity");
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-deregister", "entity:entity");
         }
         
         else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
