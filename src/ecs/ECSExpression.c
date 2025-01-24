@@ -691,7 +691,7 @@ CCExpression ECSExpressionEntityRemove(CCExpression Expression)
                         
                         RemoveComponentState->entity = Entity;
                         RemoveComponentState->count = 1;
-                        ECSComponentID *ids = IDs;
+                        RemoveComponentState->ids = IDs;
                         
                         *IDs = *ID;
                         
