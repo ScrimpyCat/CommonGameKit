@@ -134,6 +134,67 @@ CCExpression ECSExpressionComponent(CCExpression Expression)
     return Result;
 }
 
+static _Bool ECSExpressionAddComponent(ECSContext *Context, ECSEntity Entity, CCExpression Expression)
+{
+    CCExpression Private = CCExpressionStateGetPrivate(Expression);
+    
+    if ((Private) && (CCExpressionGetType(Private) == ECSExpressionValueTypeComponent))
+    {
+        if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+        {
+            CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
+            
+            if ((CCExpressionGetType(ArgExpr) != CCExpressionValueTypeList) || (CCCollectionGetCount(CCExpressionGetList(ArgExpr)) != 2) || (CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(ArgExpr), 0)) != CCExpressionValueTypeAtom))
+            {
+                Expression = ArgExpr;
+            }
+        }
+        
+        ECSComponentID *ID = CCExpressionGetData(Private);
+        CCReflectType Type = NULL;
+        size_t Size = 0;
+        
+        if (*ID & ECSComponentStorageModifierDuplicate)
+        {
+            Type = ECSDuplicateComponentType(*ID);
+            Size = ECSDuplicateComponentSize(*ID);
+        }
+        
+        else
+        {
+            Type = ECSComponentType(*ID);
+            Size = ECSComponentSize(*ID);
+        }
+        
+        
+        void *Data = ECSMutationSetSharedData(Context, Size);
+        
+        memset(Data, 0, Size);
+        
+        // TODO: support custom initialisation?
+        
+        CCMemoryZone Zone = CCMemoryZoneLocal();
+        CCMemoryZoneSave(Zone);
+        CCExpressionReflectionDeserialize(Expression, Type, Data, Zone, CC_STD_ALLOCATOR);
+        CCMemoryZoneRestore(Zone);
+        
+        
+        ECSMutableAddComponentState *ComponentState = ECSMutationStageEntityAddComponents(Context, 1);
+        
+        ComponentState->entity = Entity;
+        ComponentState->count = 1;
+        ComponentState->components = ECSMutationSetSharedData(Context, sizeof(ECSTypedComponent));
+        ComponentState->components[0] = (ECSTypedComponent){
+            .id = *ID,
+            .data = Data
+        };
+        
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
 CCExpression ECSExpressionEntity(CCExpression Expression)
 {
     CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
@@ -178,61 +239,7 @@ CCExpression ECSExpressionEntity(CCExpression Expression)
                 
                 if (CCExpressionGetType(Result) == CCExpressionValueTypeList)
                 {
-                    CCExpression Private = CCExpressionStateGetPrivate(Result);
-                    
-                    if ((Private) && (CCExpressionGetType(Private) == ECSExpressionValueTypeComponent))
-                    {
-                        if (CCCollectionGetCount(CCExpressionGetList(Result)) == 1)
-                        {
-                            CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Result), 0);
-                            
-                            if ((CCExpressionGetType(ArgExpr) != CCExpressionValueTypeList) || (CCCollectionGetCount(CCExpressionGetList(ArgExpr)) != 2) || (CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(ArgExpr), 0)) != CCExpressionValueTypeAtom))
-                            {
-                                Result = ArgExpr;
-                            }
-                        }
-                        
-                        ECSComponentID *ID = CCExpressionGetData(Private);
-                        CCReflectType Type = NULL;
-                        size_t Size = 0;
-                        
-                        if (*ID & ECSComponentStorageModifierDuplicate)
-                        {
-                            Type = ECSDuplicateComponentType(*ID);
-                            Size = ECSDuplicateComponentSize(*ID);
-                        }
-                        
-                        else
-                        {
-                            Type = ECSComponentType(*ID);
-                            Size = ECSComponentSize(*ID);
-                        }
-                        
-                        
-                        void *Data = ECSMutationSetSharedData(Context, Size);
-                        
-                        memset(Data, 0, Size);
-                        
-                        // TODO: support custom initialisation?
-                        
-                        CCMemoryZone Zone = CCMemoryZoneLocal();
-                        CCMemoryZoneSave(Zone);
-                        CCExpressionReflectionDeserialize(Result, Type, Data, Zone, CC_STD_ALLOCATOR);
-                        CCMemoryZoneRestore(Zone);
-                        
-                        
-                        ECSMutableAddComponentState *ComponentState = ECSMutationStageEntityAddComponents(Context, 1);
-                        
-                        ComponentState->entity = Entity;
-                        ComponentState->count = 1;
-                        ComponentState->components = ECSMutationSetSharedData(Context, sizeof(ECSTypedComponent));
-                        ComponentState->components[0] = (ECSTypedComponent){
-                            .id = *ID,
-                            .data = Data
-                        };
-                    }
-                    
-                    else
+                    if (!ECSExpressionAddComponent(Context, Entity, Result))
                     {
                         CCEnumerator RelationshipEnumerator;
                         CCCollectionGetEnumerator(CCExpressionGetList(Result), &RelationshipEnumerator);
@@ -609,6 +616,128 @@ CCExpression ECSExpressionEntityUnlink(CCExpression Expression)
             }
             
             CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-unlink", "entity:entity [(relationship:option [...:entity])]");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityAdd(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                CCExpression ComponentExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+                
+                if ((CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity) && (CCExpressionGetType(ComponentExpr) == CCExpressionValueTypeList))
+                {
+                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                    
+                    if (ECSExpressionAddComponent(Context, Entity, ComponentExpr))
+                    {
+                        return EntityExpr;
+                    }
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-add", "entity:entity component:component");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityRemove(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                CCExpression ComponentTypeExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+                
+                if ((CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity) && (CCExpressionGetType(ComponentTypeExpr) == CCExpressionValueTypeAtom))
+                {
+                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                    CCString ComponentName = CCExpressionGetAtom(ComponentTypeExpr);
+                    ECSComponentID *ID = CCDictionaryGetValue(ECSExpressionComponentIDLookup, &ComponentName);
+                    
+                    if (ID)
+                    {
+                        ECSComponentID *IDs = ECSMutationSetSharedData(Context, sizeof(ECSComponentID));
+                        ECSMutableRemoveComponentState *RemoveComponentState = ECSMutationStageEntityRemoveComponents(Context, 1);
+                        
+                        RemoveComponentState->entity = Entity;
+                        RemoveComponentState->count = 1;
+                        ECSComponentID *ids = IDs;
+                        
+                        *IDs = *ID;
+                        
+                        return EntityExpr;
+                    }
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-remove", "entity:entity component-name:atom");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityDestroy(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 2)
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                
+                if (CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity)
+                {
+                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                    
+                    ECSEntity *Destroy = ECSMutationStageEntityDestroy(Context, 1);
+                    
+                    *Destroy = Entity;
+                    
+                    return EntityExpr;
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-destroy", "entity:entity");
         }
         
         else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");

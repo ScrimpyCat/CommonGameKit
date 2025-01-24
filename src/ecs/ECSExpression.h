@@ -69,5 +69,8 @@ CC_EXPRESSION_EVALUATOR(entity-deregister) CCExpression ECSExpressionEntityDereg
 CC_EXPRESSION_EVALUATOR(entity-lookup) CCExpression ECSExpressionEntityLookup(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-link) CCExpression ECSExpressionEntityLink(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-unlink) CCExpression ECSExpressionEntityUnlink(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-add) CCExpression ECSExpressionEntityAdd(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-remove) CCExpression ECSExpressionEntityRemove(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-destroy) CCExpression ECSExpressionEntityDestroy(CCExpression Expression);
 
 #endif
