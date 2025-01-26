@@ -68,11 +68,11 @@ void ECSRegistryDeregister(ECSContext *Context, ECSEntity Entity);
  * @brief Reregister an entity with the provided ID.
  * @param Context The context to reregister the entity with.
  * @param Entity The entity to be registered.
- * @param ID The ID to register the entity with.
+ * @param ID The ID to register the entity with. Ownership is passed to the function.
  * @param AcquireID Whether a pre-existing registration should be replaced (TRUE) or not (FALSE). If the ID should not be acquired
  *                  then the function will assert that the ID is not already in use.
  */
-void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID ID, _Bool AcquireID);
+void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID CC_OWN(ID), _Bool AcquireID);
 
 /*!
  * @brief Lookup the entity for the given registry ID.

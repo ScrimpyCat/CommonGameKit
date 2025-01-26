@@ -112,6 +112,8 @@ void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID 
     
     if (CCDictionaryEntryIsInitialized(Context->registry.registeredEntities, Entry))
     {
+        CCBigIntFastDestroy(ID);
+        
         ECSEntity RegisteredEntity = *(ECSEntity*)CCDictionaryGetEntry(Context->registry.registeredEntities, Entry);
         
         if (RegisteredEntity == Entity) return;
@@ -119,6 +121,8 @@ void ECSRegistryReregister(ECSContext *Context, ECSEntity Entity, ECSRegistryID 
         CCAssertLog(AcquireID, "Cannot reregister a registered ID unless AcquireID is set to TRUE");
         
         CCArrayReplaceElementAtIndex(Context->registry.uniqueEntityIDs, RegisteredEntity, &(ECSRegistryID){ NULL });
+        
+        ID = *(ECSRegistryID*)CCDictionaryGetKey(Context->registry.registeredEntities, Entry);
     }
     
     const size_t Count = CCArrayGetCount(Context->registry.uniqueEntityIDs);
