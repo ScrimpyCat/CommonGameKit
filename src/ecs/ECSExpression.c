@@ -360,7 +360,7 @@ CCExpression ECSExpressionEntityRegister(CCExpression Expression)
                             }
                             
                             CCBigIntFast ID = CCBigIntFastCreate(CC_STD_ALLOCATOR);
-                            CCBigIntFastSetString(&ID, CCExpressionGetString(IDExpr));
+                            CCBigIntFastSet(&ID, CCExpressionGetString(IDExpr));
                             
                             ECSMutableReplaceRegistryState *ReplacingRegistryState = ECSMutationStageRegistryReregister(Context, 1);
                             
@@ -375,9 +375,9 @@ CCExpression ECSExpressionEntityRegister(CCExpression Expression)
                         ECSProxyEntity *Register = ECSMutationStageRegistryRegister(Context, 1);
                         
                         *Register = Entity;
-                        
-                        return EntityExpr;
                     }
+                    
+                    return CCExpressionRetain(EntityExpr);
                 }
             }
             
@@ -414,7 +414,7 @@ CCExpression ECSExpressionEntityDeregister(CCExpression Expression)
                     
                     *Deregister = Entity;
                     
-                    return EntityExpr;
+                    return CCExpressionRetain(EntityExpr);
                 }
             }
             
@@ -449,6 +449,7 @@ CCExpression ECSExpressionEntityLookup(CCExpression Expression)
                     CCBigIntFastSetString(&ID, CCExpressionGetString(IDExpr));
                     
                     ECSEntity Entity = ECSRegistryLookup(Context, ID);
+                    CCBigIntFastDestroy(ID);
                     
                     return CCExpressionCreateCustomType(CC_STD_ALLOCATOR, ECSExpressionValueTypeEntity, (void*)Entity, NULL, NULL);
                 }
@@ -513,7 +514,7 @@ CCExpression ECSExpressionEntityLink(CCExpression Expression)
                                 else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S: entity)", Relationship, Relationship);
                             }
                             
-                            return EntityExpr;
+                            return CCExpressionRetain(EntityExpr);
                         }
                     }
                 }
@@ -548,6 +549,8 @@ CCExpression ECSExpressionEntityUnlink(CCExpression Expression)
                 
                 if (CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity)
                 {
+                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                    
                     if (Count == 3)
                     {
                         CCExpression OptionExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
@@ -561,61 +564,174 @@ CCExpression ECSExpressionEntityUnlink(CCExpression Expression)
                             
                             if ((RelationshipExpr) && (CCExpressionGetType(*RelationshipExpr) == CCExpressionValueTypeAtom))
                             {
+                                if (CCCollectionGetCount(CCExpressionGetList(OptionExpr)) == 1)
+                                {
+                                    OptionExpr = *RelationshipExpr;
+                                    
+                                    goto RemoveAllForLink;
+                                }
+                                
                                 CCString Relationship = CCExpressionGetAtom(*RelationshipExpr);
                                 const ECSLink **Link = CCDictionaryGetValue(ECSExpressionEntityRelationships, &(CCString){ Relationship });
                                 
                                 if (Link)
                                 {
-                                    ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
-                                    
-                                    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+                                    for (CCExpression *ToEntityExpr = CCCollectionEnumeratorNext(&RelationshipEnumerator); ToEntityExpr; ToEntityExpr = CCCollectionEnumeratorNext(&RelationshipEnumerator))
                                     {
-                                        ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationStageRemoveLinks(Context, 1);
-                                        
-                                        RemoveLinkState->link = *Link;
-                                        RemoveLinkState->left.entity = Entity;
-                                        RemoveLinkState->right.entity = ECS_ENTITY_NULL;
-                                    }
-                                    
-                                    else
-                                    {
-                                        for (CCExpression *ToEntityExpr = CCCollectionEnumeratorNext(&RelationshipEnumerator); ToEntityExpr; ToEntityExpr = CCCollectionEnumeratorNext(&RelationshipEnumerator))
+                                        if (CCExpressionGetType(*ToEntityExpr) == ECSExpressionValueTypeEntity)
                                         {
-                                            if (CCExpressionGetType(*ToEntityExpr) == ECSExpressionValueTypeEntity)
-                                            {
-                                                ECSEntity ToEntity = (ECSEntity)CCExpressionGetData(*ToEntityExpr);
-                                                ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationStageRemoveLinks(Context, 1);
-                                                
-                                                RemoveLinkState->link = *Link;
-                                                RemoveLinkState->left.entity = Entity;
-                                                RemoveLinkState->right.entity = ToEntity;
-                                            }
+                                            ECSEntity ToEntity = (ECSEntity)CCExpressionGetData(*ToEntityExpr);
+                                            ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationStageRemoveLinks(Context, 1);
                                             
-                                            else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S: entity)", Relationship, Relationship);
+                                            RemoveLinkState->link = *Link;
+                                            RemoveLinkState->left.entity = Entity;
+                                            RemoveLinkState->right.entity = ToEntity;
                                         }
+                                        
+                                        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Incorrect usage of %S: (%S: entity)", Relationship, Relationship);
                                     }
                                     
-                                    return EntityExpr;
+                                    return CCExpressionRetain(EntityExpr);
                                 }
+                            }
+                        }
+                        
+                        else if (CCExpressionGetType(OptionExpr) == CCExpressionValueTypeAtom)
+                        {
+                        RemoveAllForLink:;
+                            CCString Relationship = CCExpressionGetAtom(OptionExpr);
+                            const ECSLink **Link = CCDictionaryGetValue(ECSExpressionEntityRelationships, &(CCString){ Relationship });
+                            
+                            if (Link)
+                            {
+                                ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationStageRemoveLinks(Context, 1);
+                                
+                                RemoveLinkState->link = *Link;
+                                RemoveLinkState->left.entity = Entity;
+                                RemoveLinkState->right.entity = ECS_ENTITY_NULL;
+                                
+                                return CCExpressionRetain(EntityExpr);
                             }
                         }
                     }
                     
                     else
                     {
-                        ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
                         ECSMutableRemoveLinkState *RemoveLinkState = ECSMutationStageRemoveLinks(Context, 1);
                         
                         RemoveLinkState->link = NULL;
                         RemoveLinkState->left.entity = Entity;
                         RemoveLinkState->right.entity = ECS_ENTITY_NULL;
                         
-                        return EntityExpr;
+                        return CCExpressionRetain(EntityExpr);
                     }
                 }
             }
             
             CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-unlink", "entity:entity [(relationship:option [...:entity])]");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityLinked(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                CCExpression OptionExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+                
+                if ((CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity) && (CCExpressionGetType(OptionExpr) == CCExpressionValueTypeList))
+                {
+                    CCEnumerator RelationshipEnumerator;
+                    CCCollectionGetEnumerator(CCExpressionGetList(OptionExpr), &RelationshipEnumerator);
+                    
+                    CCExpression *RelationshipExpr = CCCollectionEnumeratorGetCurrent(&RelationshipEnumerator);
+                    
+                    if ((RelationshipExpr) && (CCExpressionGetType(*RelationshipExpr) == CCExpressionValueTypeAtom))
+                    {
+                        CCString Relationship = CCExpressionGetAtom(*RelationshipExpr);
+                        const ECSLink **Link = CCDictionaryGetValue(ECSExpressionEntityRelationships, &(CCString){ Relationship });
+                        
+                        if (Link)
+                        {
+                            CCExpression *ToEntityExpr = CCCollectionEnumeratorNext(&RelationshipEnumerator);
+                            
+                            if ((ToEntityExpr) && (CCExpressionGetType(*ToEntityExpr) == ECSExpressionValueTypeEntity))
+                            {
+                                ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                                ECSEntity ToEntity = (ECSEntity)CCExpressionGetData(*ToEntityExpr);
+                                
+                                return CCExpressionCreateInteger(CC_STD_ALLOCATOR, ECSLinked(Context, Entity, *Link, ToEntity));
+                            }
+                        }
+                    }
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-linked?", "entity:entity (relationship:option with-entity:entity)");
+        }
+        
+        else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
+    }
+    
+    else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Missing ecs context");
+    
+    return Expression;
+}
+
+CCExpression ECSExpressionEntityLinkGet(CCExpression Expression)
+{
+    CCExpression ContextExpr = CCExpressionGetState(Expression, CC_STRING("@ecs"));
+    
+    if ((ContextExpr) && (CCExpressionGetType(ContextExpr) == ECSExpressionValueTypeContext))
+    {
+        ECSContext *Context = CCExpressionGetData(ContextExpr);
+        
+        if (Context)
+        {
+            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+            {
+                CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
+                CCExpression RelationshipExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
+                
+                if ((CCExpressionGetType(EntityExpr) == ECSExpressionValueTypeEntity) && (CCExpressionGetType(RelationshipExpr) == CCExpressionValueTypeAtom))
+                {
+                    CCString Relationship = CCExpressionGetAtom(RelationshipExpr);
+                    const ECSLink **Link = CCDictionaryGetValue(ECSExpressionEntityRelationships, &(CCString){ Relationship });
+                    
+                    if (Link)
+                    {
+                        size_t Count;
+                        ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
+                        const ECSEntity *Entities = ECSLinkGet(Context, Entity, *Link, &Count);
+                        
+                        CCExpression Result = CCExpressionCreateList(CC_STD_ALLOCATOR);
+                        
+                        for (size_t Loop = 0; Loop < Count; Loop++)
+                        {
+                            CCOrderedCollectionAppendElement(CCExpressionGetList(Result), &(CCExpression){ CCExpressionCreateCustomType(CC_STD_ALLOCATOR, ECSExpressionValueTypeEntity, (void*)Entities[Loop], NULL, NULL) });
+                        }
+                        
+                        return Result;
+                    }
+                }
+            }
+            
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-link-get", "entity:entity relationship:option");
         }
         
         else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
@@ -647,7 +763,7 @@ CCExpression ECSExpressionEntityAdd(CCExpression Expression)
                     
                     if (ECSExpressionAddComponent(Context, Entity, ComponentExpr))
                     {
-                        return EntityExpr;
+                        return CCExpressionRetain(EntityExpr);
                     }
                 }
             }
@@ -695,7 +811,7 @@ CCExpression ECSExpressionEntityRemove(CCExpression Expression)
                         
                         *IDs = *ID;
                         
-                        return EntityExpr;
+                        return CCExpressionRetain(EntityExpr);
                     }
                 }
             }
@@ -733,7 +849,7 @@ CCExpression ECSExpressionEntityDestroy(CCExpression Expression)
                     
                     *Destroy = Entity;
                     
-                    return EntityExpr;
+                    return CCExpressionRetain(EntityExpr);
                 }
             }
             
