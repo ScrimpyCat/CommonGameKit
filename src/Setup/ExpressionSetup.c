@@ -113,6 +113,16 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("component"), ECSExpressionComponent);
     CCExpressionEvaluatorRegister(CC_STRING("entity"), ECSExpressionEntity);
     CCExpressionEvaluatorRegister(CC_STRING("ecs"), ECSExpressionECS);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-register"), ECSExpressionEntityRegister);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-deregister"), ECSExpressionEntityDeregister);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-lookup"), ECSExpressionEntityLookup);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-link"), ECSExpressionEntityLink);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-unlink"), ECSExpressionEntityUnlink);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-linked?"), ECSExpressionEntityLinked);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-link-get"), ECSExpressionEntityLinkGet);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-add"), ECSExpressionEntityAdd);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-remove"), ECSExpressionEntityRemove);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-destroy"), ECSExpressionEntityDestroy);
     CCExpressionEvaluatorRegister(CC_STRING("gui"), GUIExpressionRegisterObject);
     CCExpressionEvaluatorRegister(CC_STRING("percent-width"), GUIExpressionPercentWidth);
     CCExpressionEvaluatorRegister(CC_STRING("percent-height"), GUIExpressionPercentHeight);
