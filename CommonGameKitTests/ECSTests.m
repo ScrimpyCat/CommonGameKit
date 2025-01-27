@@ -7298,6 +7298,192 @@ CLEAR_CALLBACK_STATE;
     
     if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
     if (BarEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
+    
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-register (entity \"foo\" (comp-b (v: (1, 2))) (children: (entity (name \"bar\"))))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+   
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-link (entity-lookup \"0x00\") (children: (entity-register (entity \"baz\") \"0x02\"))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    FooEntity = ECS_ENTITY_NULL;
+    BarEntity = ECS_ENTITY_NULL;
+    ECSEntity BazEntity = ECS_ENTITY_NULL;
+    
+    for (ECSEntity Entity = 0, Count = CCArrayGetCount(Context.manager.map); Entity < Count; Entity++)
+    {
+        ECSNameComponent *Name = ECSEntityGetComponent(&Context, Entity, ECS_NAME_COMPONENT);
+        
+        if ((Name) && (*Name))
+        {
+            if (CCStringEqual(*Name, CC_STRING("foo"))) FooEntity = Entity;
+            else if (CCStringEqual(*Name, CC_STRING("bar"))) BarEntity = Entity;
+            else if (CCStringEqual(*Name, CC_STRING("baz"))) BazEntity = Entity;
+        }
+    }
+    
+    XCTAssertNotEqual(FooEntity, ECS_ENTITY_NULL, @"should have created entity");
+    XCTAssertNotEqual(BarEntity, ECS_ENTITY_NULL, @"should have created entity");
+    XCTAssertNotEqual(BazEntity, ECS_ENTITY_NULL, @"should have created entity");
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, FooEntity, COMP_B);
+        
+        XCTAssertNotEqual(B, NULL, @"should have component");
+        
+        XCTAssertEqual(B->v[0], 1, @"should initialise the component correctly");
+        XCTAssertEqual(B->v[1], 2, @"should initialise the component correctly");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
+        
+        XCTAssertEqual(Count, 2, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], BarEntity, @"should have the correct linked entity");
+        XCTAssertEqual(Entities[1], BazEntity, @"should have the correct linked entity");
+    }
+    
+    if (BarEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, BarEntity, COMP_B);
+        
+        XCTAssertEqual(B, NULL, @"should not have component");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, BarEntity, ECS_LINK_INVERT(&TestOneToMany), &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], FooEntity, @"should have the correct linked entity");
+    }
+    
+    if (BazEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, BazEntity, COMP_B);
+        
+        XCTAssertEqual(B, NULL, @"should not have component");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, BazEntity, ECS_LINK_INVERT(&TestOneToMany), &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], FooEntity, @"should have the correct linked entity");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (if (entity-linked? (entity-lookup \"0x00\") (children: (entity-lookup \"0x02\"))) (entity-add (entity-lookup \"0x02\") (comp-b (v: (3 4))))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (BazEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, BazEntity, COMP_B);
+        
+        XCTAssertNotEqual(B, NULL, @"should have component");
+        
+        XCTAssertEqual(B->v[0], 3, @"should initialise the component correctly");
+        XCTAssertEqual(B->v[1], 4, @"should initialise the component correctly");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x00\")) (entity-remove .entity :comp-b) (if (= (count (entity-link-get .entity children:)) 2) (entity-unlink .entity (children: (entity-lookup \"0x02\")))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, FooEntity, COMP_B);
+        
+        XCTAssertEqual(B, NULL, @"should not have component");
+        
+        size_t Count;
+        const ECSEntity *Entities = ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
+        
+        XCTAssertEqual(Count, 1, @"should have the correct number of linked entities");
+        XCTAssertEqual(Entities[0], BarEntity, @"should have the correct linked entity");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-unlink (entity-lookup \"0x00\") (children:)) (entity-deregister (entity-lookup \"0x02\")))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        size_t Count;
+        ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
+        
+        XCTAssertEqual(Count, 0, @"should have the correct number of linked entities");
+    }
+    
+    if (BazEntity != ECS_ENTITY_NULL)
+    {
+        ECSRegistryID ID = ECSRegistryGetID(&Context, BazEntity);
+        
+        XCTAssertEqual(ID, NULL, @"should no longer be registered");
+    }
+    
+    
+    ECSLinkAdd(&Context, FooEntity, NULL, &TestOneToMany, BarEntity, NULL);
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-unlink (entity-lookup \"0x00\") children:))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        size_t Count;
+        ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
+        
+        XCTAssertEqual(Count, 0, @"should have the correct number of linked entities");
+    }
+    
+    
+    ECSLinkAdd(&Context, FooEntity, NULL, &TestOneToMany, BarEntity, NULL);
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-unlink (entity-lookup \"0x00\")))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        size_t Count;
+        ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
+        
+        XCTAssertEqual(Count, 0, @"should have the correct number of linked entities");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-destroy (entity-lookup \"0x00\")))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (FooEntity != ECS_ENTITY_NULL)
+    {
+        XCTAssertFalse(ECSEntityIsAlive(&Context, FooEntity), @"should have destroyed the entity");
+    }
+    
+    if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
+    if (BarEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
+    if (BazEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
 }
 
 @end
