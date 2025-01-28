@@ -7484,7 +7484,7 @@ CLEAR_CALLBACK_STATE;
     
     ECSRegistryReregister(&Context, BazEntity, CC_BIG_INT_FAST_2, TRUE);
     
-    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (entity-get .entity :comp-b) ((v: (3 4)))) (entity-set .entity (comp-b (v: (10 20))))))");
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (entity-has? .entity :comp-b) (if (= (entity-get .entity :comp-b) ((v: (3 4)))) (entity-set .entity (comp-b (v: (10 20)))))))");
     CCExpressionEvaluate(Expression);
     CCExpressionDestroy(Expression);
     
