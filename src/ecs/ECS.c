@@ -1441,44 +1441,45 @@ void ECSEntityAddComponents(ECSContext *Context, ECSEntity Entity, const ECSType
             {
                 const ECSArchetypeComponentID ID = Components[Loop].id & ~ECSComponentStorageMask;
                 
-                if (ECSEntityHasComponent(Context, Entity, ID))
+                if (Components[Loop].id & ECSComponentStorageModifierDestructorImpure)
+                {
+                    CCListAppendElement(DeferredComponents, &(ECSTypedComponent){
+                        .id = Components[Loop].id,
+                        .data = ComponentData[ID]
+                    });
+                    
+                    break;
+                }
+                
+                else if (CCBitsGet(AddedComponent, ID))
                 {
                     if (Components[Loop].id & ECSComponentStorageModifierDestructor)
                     {
-                        if (Components[Loop].id & ECSComponentStorageModifierDestructorImpure)
-                        {
-                            CCListAppendElement(DeferredComponents, &(ECSTypedComponent){
-                                .id = Components[Loop].id,
-                                .data = ComponentData[ID]
-                            });
-                            
-                            break;
-                        }
+                        CCListAppendElement(DestroyComponents, &(ECSTypedComponent){
+                            .id = Components[Loop].id,
+                            .data = ComponentData[ID]
+                        });
+                    }
+                    
+                    ComponentData[ID] = Components[Loop].data;
+                }
+                
+                else if (ECSEntityHasComponent(Context, Entity, ID))
+                {
+                    if (Components[Loop].id & ECSComponentStorageModifierDestructor)
+                    {
+                        const size_t Offset = ID ? CCBitsCount(AddedComponent, 0, ID - 1) : 0;
+                        size_t Index = ECSArchetypeComponentIndex(Refs, ID) - Offset;
                         
-                        else if (!CCBitsGet(AddedComponent, ID))
-                        {
-                            const size_t Offset = ID ? CCBitsCount(AddedComponent, 0, ID - 1) : 0;
-                            size_t Index = ECSArchetypeComponentIndex(Refs, ID) - Offset;
-                            
-                            CCListAppendElement(DestroyComponents, &(ECSTypedComponent){
-                                .id = Components[Loop].id & ~ECSComponentStorageModifierDestructor,
-                                .data = ECSSharedZoneStore(CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index), ECSArchetypeComponentSizes[ID])
-                            });
-                            
-                            CCBitsSet(AddedComponent, ID);
-                        }
-                        
-                        else
-                        {
-                            CCListAppendElement(DestroyComponents, &(ECSTypedComponent){
-                                .id = Components[Loop].id,
-                                .data = ComponentData[ID]
-                            });
-                        }
+                        CCListAppendElement(DestroyComponents, &(ECSTypedComponent){
+                            .id = Components[Loop].id & ~ECSComponentStorageModifierDestructor,
+                            .data = ECSSharedZoneStore(CCArrayGetElementAtIndex(Refs->archetype.ptr->components[Index], Refs->archetype.index), ECSArchetypeComponentSizes[ID])
+                        });
                     }
                     
                     ComponentData[ID] = Components[Loop].data;
                     Replace = TRUE;
+                    CCBitsSet(AddedComponent, ID);
                 }
                 
                 else
