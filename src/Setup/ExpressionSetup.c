@@ -122,6 +122,9 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("entity-link-get"), ECSExpressionEntityLinkGet);
     CCExpressionEvaluatorRegister(CC_STRING("entity-add"), ECSExpressionEntityAdd);
     CCExpressionEvaluatorRegister(CC_STRING("entity-remove"), ECSExpressionEntityRemove);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-has?"), ECSExpressionEntityHas);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-get"), ECSExpressionEntityGet);
+    CCExpressionEvaluatorRegister(CC_STRING("entity-set"), ECSExpressionEntitySet);
     CCExpressionEvaluatorRegister(CC_STRING("entity-destroy"), ECSExpressionEntityDestroy);
     CCExpressionEvaluatorRegister(CC_STRING("gui"), GUIExpressionRegisterObject);
     CCExpressionEvaluatorRegister(CC_STRING("percent-width"), GUIExpressionPercentWidth);

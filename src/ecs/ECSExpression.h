@@ -73,6 +73,9 @@ CC_EXPRESSION_EVALUATOR(entity-linked?) CCExpression ECSExpressionEntityLinked(C
 CC_EXPRESSION_EVALUATOR(entity-link-get) CCExpression ECSExpressionEntityLinkGet(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-add) CCExpression ECSExpressionEntityAdd(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-remove) CCExpression ECSExpressionEntityRemove(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-has?) CCExpression ECSExpressionEntityHas(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-get) CCExpression ECSExpressionEntityGet(CCExpression Expression);
+CC_EXPRESSION_EVALUATOR(entity-set) CCExpression ECSExpressionEntitySet(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-destroy) CCExpression ECSExpressionEntityDestroy(CCExpression Expression);
 
 #endif
