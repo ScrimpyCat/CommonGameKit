@@ -7346,8 +7346,8 @@ CLEAR_CALLBACK_STATE;
         const ECSEntity *Entities = ECSLinkGet(&Context, FooEntity, &TestOneToMany, &Count);
         
         XCTAssertEqual(Count, 2, @"should have the correct number of linked entities");
-        XCTAssertEqual(Entities[0], BarEntity, @"should have the correct linked entity");
-        XCTAssertEqual(Entities[1], BazEntity, @"should have the correct linked entity");
+        XCTAssertEqual(Entities[0], CCMin(BarEntity, BazEntity), @"should have the correct linked entity");
+        XCTAssertEqual(Entities[1], CCMax(BarEntity, BazEntity), @"should have the correct linked entity");
     }
     
     if (BarEntity != ECS_ENTITY_NULL)
@@ -7479,6 +7479,25 @@ CLEAR_CALLBACK_STATE;
     if (FooEntity != ECS_ENTITY_NULL)
     {
         XCTAssertFalse(ECSEntityIsAlive(&Context, FooEntity), @"should have destroyed the entity");
+    }
+    
+    
+    ECSRegistryReregister(&Context, BazEntity, CC_BIG_INT_FAST_2, TRUE);
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (entity-get .entity :comp-b) ((v: (3 4)))) (entity-set .entity (comp-b (v: (10 20))))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (BazEntity != ECS_ENTITY_NULL)
+    {
+        CompB *B = ECSEntityGetComponent(&Context, BazEntity, COMP_B);
+        
+        XCTAssertNotEqual(B, NULL, @"should have component");
+        
+        XCTAssertEqual(B->v[0], 10, @"should initialise the component correctly");
+        XCTAssertEqual(B->v[1], 20, @"should initialise the component correctly");
     }
     
     if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
