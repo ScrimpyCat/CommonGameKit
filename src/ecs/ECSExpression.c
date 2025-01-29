@@ -134,64 +134,107 @@ CCExpression ECSExpressionComponent(CCExpression Expression)
     return Result;
 }
 
+static _Bool ECSExpressionAddComponentData(ECSContext *Context, ECSEntity Entity, CCExpression Expression, _Bool IgnoreDuplicate, ECSComponentID ID)
+{
+    if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+    {
+        CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
+        
+        if ((CCExpressionGetType(ArgExpr) != CCExpressionValueTypeList) || (CCCollectionGetCount(CCExpressionGetList(ArgExpr)) != 2) || (CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(ArgExpr), 0)) != CCExpressionValueTypeAtom))
+        {
+            Expression = ArgExpr;
+        }
+    }
+    
+    CCReflectType Type = NULL;
+    size_t Size = 0;
+    
+    if ((ID & ECSComponentStorageModifierDuplicate) && (!IgnoreDuplicate))
+    {
+        Type = ECSDuplicateComponentType(ID);
+        Size = ECSDuplicateComponentSize(ID);
+    }
+    
+    else
+    {
+        Type = ECSComponentType(ID);
+        Size = ECSComponentSize(ID);
+        
+        ID &= ~ECSComponentStorageModifierDuplicate;
+    }
+    
+    
+    void *Data = ECSMutationSetSharedData(Context, Size);
+    
+    memset(Data, 0, Size);
+    
+    // TODO: support custom initialisation?
+    
+    CCMemoryZone Zone = CCMemoryZoneLocal();
+    CCMemoryZoneSave(Zone);
+    CCExpressionReflectionDeserialize(Expression, Type, Data, Zone, CC_STD_ALLOCATOR);
+    CCMemoryZoneRestore(Zone);
+    
+    
+    ECSMutableAddComponentState *ComponentState = ECSMutationStageEntityAddComponents(Context, 1);
+    
+    ComponentState->entity = Entity;
+    ComponentState->count = 1;
+    ComponentState->components = ECSMutationSetSharedData(Context, sizeof(ECSTypedComponent));
+    ComponentState->components[0] = (ECSTypedComponent){
+        .id = ID,
+        .data = Data
+    };
+    
+    return TRUE;
+}
+
 static _Bool ECSExpressionAddComponent(ECSContext *Context, ECSEntity Entity, CCExpression Expression, _Bool IgnoreDuplicate)
 {
     CCExpression Private = CCExpressionStateGetPrivate(Expression);
     
     if ((Private) && (CCExpressionGetType(Private) == ECSExpressionValueTypeComponent))
     {
-        if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 1)
+        return ECSExpressionAddComponentData(Context, Entity, Expression, IgnoreDuplicate, (ECSComponentID)(uintptr_t)CCExpressionGetData(Private));
+    }
+    
+    else if (CCExpressionGetType(Expression) == CCExpressionValueTypeList)
+    {
+        if (CCCollectionGetCount(CCExpressionGetList(Expression)))
         {
-            CCExpression ArgExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 0);
+            CCEnumerator Enumerator;
+            CCCollectionGetEnumerator(CCExpressionGetList(Expression), &Enumerator);
             
-            if ((CCExpressionGetType(ArgExpr) != CCExpressionValueTypeList) || (CCCollectionGetCount(CCExpressionGetList(ArgExpr)) != 2) || (CCExpressionGetType(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(ArgExpr), 0)) != CCExpressionValueTypeAtom))
+            CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator);
+            ECSComponentID ID;
+            
+            Private = CCExpressionStateGetPrivate(*Expr);
+            
+            if ((Private) && (CCExpressionGetType(Private) == ECSExpressionValueTypeComponent))
             {
-                Expression = ArgExpr;
+                ID = (ECSComponentID)(uintptr_t)CCExpressionGetData(Private);
+                
+                if (!(ID & ECSComponentStorageModifierDuplicate)) return FALSE;
             }
-        }
-        
-        ECSComponentID ID = (ECSComponentID)(uintptr_t)CCExpressionGetData(Private);
-        CCReflectType Type = NULL;
-        size_t Size = 0;
-        
-        if ((ID & ECSComponentStorageModifierDuplicate) && (!IgnoreDuplicate))
-        {
-            Type = ECSDuplicateComponentType(ID);
-            Size = ECSDuplicateComponentSize(ID);
-        }
-        
-        else
-        {
-            Type = ECSComponentType(ID);
-            Size = ECSComponentSize(ID);
             
-            ID &= ~ECSComponentStorageModifierDuplicate;
+            else return FALSE;
+            
+            while ((Expr = CCCollectionEnumeratorNext(&Enumerator)))
+            {
+                Private = CCExpressionStateGetPrivate(*Expr);
+                
+                if ((Private) && (CCExpressionGetType(Private) == ECSExpressionValueTypeComponent))
+                {
+                    const ECSComponentID ItemID = (ECSComponentID)(uintptr_t)CCExpressionGetData(Private);
+                    
+                    if (ItemID != ID) return FALSE;
+                }
+                
+                else return FALSE;
+            }
+            
+            return ECSExpressionAddComponentData(Context, Entity, Expression, IgnoreDuplicate, ID & ~ECSComponentStorageModifierDuplicate);
         }
-        
-        
-        void *Data = ECSMutationSetSharedData(Context, Size);
-        
-        memset(Data, 0, Size);
-        
-        // TODO: support custom initialisation?
-        
-        CCMemoryZone Zone = CCMemoryZoneLocal();
-        CCMemoryZoneSave(Zone);
-        CCExpressionReflectionDeserialize(Expression, Type, Data, Zone, CC_STD_ALLOCATOR);
-        CCMemoryZoneRestore(Zone);
-        
-        
-        ECSMutableAddComponentState *ComponentState = ECSMutationStageEntityAddComponents(Context, 1);
-        
-        ComponentState->entity = Entity;
-        ComponentState->count = 1;
-        ComponentState->components = ECSMutationSetSharedData(Context, sizeof(ECSTypedComponent));
-        ComponentState->components[0] = (ECSTypedComponent){
-            .id = ID,
-            .data = Data
-        };
-        
-        return TRUE;
     }
     
     return FALSE;
@@ -898,6 +941,21 @@ CCExpression ECSExpressionEntityGet(CCExpression Expression)
                         CCMemoryZoneSave(Zone);
                         CCExpression Result = CCExpressionReflectionSerialize(Type, Data, Zone);
                         CCMemoryZoneRestore(Zone);
+                        
+                        if (*ID & ECSComponentStorageModifierDuplicate)
+                        {
+                            const ECSComponentID ItemID = *ID & ~ECSComponentStorageModifierDuplicate;
+                            
+                            CCEnumerator Enumerator;
+                            CCCollectionGetEnumerator(CCExpressionGetList(Result), &Enumerator);
+                            
+                            for (CCExpression *Expr = CCCollectionEnumeratorGetCurrent(&Enumerator); Expr; Expr = CCCollectionEnumeratorNext(&Enumerator))
+                            {
+                                CCExpressionStateSetPrivate(*Expr, CCExpressionCreateCustomType(CC_STD_ALLOCATOR, ECSExpressionValueTypeComponent, (void*)(uintptr_t)ItemID, NULL, NULL));
+                            }
+                        }
+                        
+                        CCExpressionStateSetPrivate(Result, CCExpressionCreateCustomType(CC_STD_ALLOCATOR, ECSExpressionValueTypeComponent, (void*)(uintptr_t)*ID, NULL, NULL));
                         
                         return Result;
                     }
