@@ -7500,9 +7500,85 @@ CLEAR_CALLBACK_STATE;
         XCTAssertEqual(B->v[1], 20, @"should initialise the component correctly");
     }
     
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-register (entity (duplicate-a (v: (100))) (duplicate-a (v: (200)))) \"0x02\" #t))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    ECSEntity QuxEntity = ECSRegistryLookup(&Context, CC_BIG_INT_FAST_2);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCArray *Dups = ECSEntityGetComponent(&Context, QuxEntity, DUPLICATE_A);
+        
+        XCTAssertNotEqual(Dups, NULL, @"should have component");
+        
+        XCTAssertEqual(CCArrayGetCount(*Dups), 2, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 0))->v[0], 100, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 1))->v[0], 200, @"should initialise the component correctly");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-add (entity-lookup \"0x02\") (duplicate-a (v: (300)))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCArray *Dups = ECSEntityGetComponent(&Context, QuxEntity, DUPLICATE_A);
+        
+        XCTAssertNotEqual(Dups, NULL, @"should have component");
+        
+        XCTAssertEqual(CCArrayGetCount(*Dups), 3, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 0))->v[0], 100, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 1))->v[0], 200, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 2))->v[0], 300, @"should initialise the component correctly");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-remove (entity-lookup \"0x02\") :duplicate-a))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCArray *Dups = ECSEntityGetComponent(&Context, QuxEntity, DUPLICATE_A);
+        
+        XCTAssertNotEqual(Dups, NULL, @"should have component");
+        
+        XCTAssertEqual(CCArrayGetCount(*Dups), 2, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 0))->v[0], 100, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 1))->v[0], 200, @"should initialise the component correctly");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (entity-get .entity :duplicate-a) (((v: (100))) ((v: (200))))) (entity-set .entity ((duplicate-a (v: (1))) (duplicate-a (v: (2)))))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCArray *Dups = ECSEntityGetComponent(&Context, QuxEntity, DUPLICATE_A);
+        
+        XCTAssertNotEqual(Dups, NULL, @"should have component");
+        
+        XCTAssertEqual(CCArrayGetCount(*Dups), 2, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 0))->v[0], 1, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 1))->v[0], 2, @"should initialise the component correctly");
+    }
+    
     if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
     if (BarEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
     if (BazEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
+    if (QuxEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &QuxEntity, 1);
 }
 
 @end
