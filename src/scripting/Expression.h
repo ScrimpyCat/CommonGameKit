@@ -505,6 +505,8 @@ static inline void CCExpressionStateSetPrivate(CCExpression Expression, CCExpres
         if (Expression->state.private) CCExpressionDestroy(Expression->state.private);
         Expression->state.private = Private;
     }
+    
+    else CCExpressionDestroy(Expression);
 }
 
 #pragma mark -
