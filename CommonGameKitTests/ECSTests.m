@@ -7575,6 +7575,39 @@ CLEAR_CALLBACK_STATE;
         XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 1))->v[0], 2, @"should initialise the component correctly");
     }
     
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-add (entity-lookup \"0x02\") (name \"test\")))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCString *Name = ECSEntityGetComponent(&Context, QuxEntity, ECS_NAME_COMPONENT);
+        
+        XCTAssertNotEqual(Name, NULL, @"should have component");
+        
+        XCTAssertTrue(CCStringEqual(*Name, CC_STRING("test")), @"should initialise the component correctly");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (inspect (entity-get .entity :name)) \"test\") (entity-set .entity (name \"new\"))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCString *Name = ECSEntityGetComponent(&Context, QuxEntity, ECS_NAME_COMPONENT);
+        
+        XCTAssertNotEqual(Name, NULL, @"should have component");
+        
+        XCTAssertTrue(CCStringEqual(*Name, CC_STRING("new")), @"should initialise the component correctly");
+
+    }
+    
     if (FooEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &FooEntity, 1);
     if (BarEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
     if (BazEntity != ECS_ENTITY_NULL) ECSEntityDestroy(&Context, &BarEntity, 1);
