@@ -61,6 +61,7 @@ extern const CCString ECSExpressionEntityChildrenRelationshipOption;
 
 void ECSExpressionRegisterComponentEvaluators(void);
 
+CC_EXPRESSION_EVALUATOR(component-cast) CCExpression ECSExpressionComponentCast(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(component) CCExpression ECSExpressionComponent(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity) CCExpression ECSExpressionEntity(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(ecs) CCExpression ECSExpressionECS(CCExpression Expression);

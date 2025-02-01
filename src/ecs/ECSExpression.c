@@ -74,12 +74,6 @@ enum {
     ECSExpressionValueTypeEntity = 'enty'
 };
 
-typedef struct {
-    
-    ECSComponentID id;
-    uint8_t data[];
-} ECSExpressionComponentValue;
-
 CCExpression ECSExpressionComponent(CCExpression Expression)
 {
     CCEnumerator Enumerator;
@@ -797,7 +791,9 @@ CCExpression ECSExpressionEntityAdd(CCExpression Expression)
         
         if (Context)
         {
-            if (CCCollectionGetCount(CCExpressionGetList(Expression)) == 3)
+            const size_t Count = CCCollectionGetCount(CCExpressionGetList(Expression));
+            
+            if (Count >= 3)
             {
                 CCExpression EntityExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 1));
                 CCExpression ComponentExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 2));
@@ -806,14 +802,55 @@ CCExpression ECSExpressionEntityAdd(CCExpression Expression)
                 {
                     ECSEntity Entity = (ECSEntity)CCExpressionGetData(EntityExpr);
                     
-                    if (ECSExpressionAddComponent(Context, Entity, ComponentExpr, FALSE))
+                    if (Count == 4)
+                    {
+                        CCExpression OptionExpr = CCExpressionEvaluate(*(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(Expression), 3));
+                        
+                        if ((CCExpressionGetType(OptionExpr) == CCExpressionValueTypeList) && (CCCollectionGetCount(CCExpressionGetList(OptionExpr)) == 2))
+                        {
+                            CCExpression TypeExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(OptionExpr), 0);
+                            CCExpression ComponentNameExpr = *(CCExpression*)CCOrderedCollectionGetElementAtIndex(CCExpressionGetList(OptionExpr), 1);
+                            
+                            if ((CCExpressionGetType(TypeExpr) == CCExpressionValueTypeAtom) && (CCExpressionGetType(ComponentNameExpr) == CCExpressionValueTypeAtom))
+                            {
+                                CCString Type = CCExpressionGetAtom(TypeExpr);
+                                CCString ComponentName = CCExpressionGetAtom(ComponentNameExpr);
+                                const ECSComponentID *ID = CCDictionaryGetValue(ECSExpressionComponentIDLookup, &ComponentName);
+                                
+                                if (!ID)
+                                {
+                                    CC_EXPRESSION_EVALUATOR_LOG_ERROR("Could not find the component %S", ComponentName);
+                                    
+                                    return Expression;
+                                }
+                                
+                                if (CCStringEqual(Type, CC_STRING("type:")))
+                                {
+                                    if (ECSExpressionAddComponentData(Context, Entity, ComponentExpr, FALSE, *ID & ~ECSComponentStorageModifierDuplicate))
+                                    {
+                                        return CCExpressionRetain(EntityExpr);
+                                    }
+                                }
+                                
+                                else if (CCStringEqual(Type, CC_STRING("duplicate-type:")))
+                                {
+                                    if (ECSExpressionAddComponentData(Context, Entity, ComponentExpr, FALSE, *ID | ECSComponentStorageModifierDuplicate))
+                                    {
+                                        return CCExpressionRetain(EntityExpr);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    else if (ECSExpressionAddComponent(Context, Entity, ComponentExpr, FALSE))
                     {
                         return CCExpressionRetain(EntityExpr);
                     }
                 }
             }
             
-            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-add", "entity:entity component:component");
+            CC_EXPRESSION_EVALUATOR_LOG_FUNCTION_ERROR("entity-add", "entity:entity component:component [option]");
         }
         
         else CC_EXPRESSION_EVALUATOR_LOG_ERROR("Invalid ecs context");
