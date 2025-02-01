@@ -7576,6 +7576,39 @@ CLEAR_CALLBACK_STATE;
     }
     
     
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-add (entity-lookup \"0x02\") () (type: :duplicate-a)))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCArray *Dups = ECSEntityGetComponent(&Context, QuxEntity, DUPLICATE_A);
+        
+        XCTAssertNotEqual(Dups, NULL, @"should have component");
+        
+        XCTAssertEqual(CCArrayGetCount(*Dups), 0, @"should initialise the component correctly");
+    }
+    
+    
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-add (entity-lookup \"0x02\") ((v: (4))) (duplicate-type: :duplicate-a))))");
+    CCExpressionEvaluate(Expression);
+    CCExpressionDestroy(Expression);
+    
+    ECSMutationApply(&Context);
+    
+    if (QuxEntity != ECS_ENTITY_NULL)
+    {
+        CCArray *Dups = ECSEntityGetComponent(&Context, QuxEntity, DUPLICATE_A);
+        
+        XCTAssertNotEqual(Dups, NULL, @"should have component");
+        
+        XCTAssertEqual(CCArrayGetCount(*Dups), 1, @"should initialise the component correctly");
+        XCTAssertEqual(((CompA*)CCArrayGetElementAtIndex(*Dups, 0))->v[0], 4, @"should initialise the component correctly");
+    }
+    
+    
     Expression = CCExpressionCreateFromSource("(ecs \"test\" (entity-add (entity-lookup \"0x02\") (name \"test\")))");
     CCExpressionEvaluate(Expression);
     CCExpressionDestroy(Expression);
