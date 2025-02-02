@@ -7484,7 +7484,7 @@ CLEAR_CALLBACK_STATE;
     
     ECSRegistryReregister(&Context, BazEntity, CC_BIG_INT_FAST_2, TRUE);
     
-    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (entity-has? .entity :comp-b) (if (= (entity-get .entity :comp-b) ((v: (3 4)))) (entity-set .entity (comp-b (v: (10 20)))))))");
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (entity-has? .entity :comp-b) (if (= (entity-get .entity :comp-b) ((v: (3 4)))) (entity-add .entity (comp-b (v: (10 20)))))))");
     CCExpressionEvaluate(Expression);
     CCExpressionDestroy(Expression);
     
@@ -7558,7 +7558,7 @@ CLEAR_CALLBACK_STATE;
     }
     
     
-    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (entity-get .entity :duplicate-a) (((v: (100))) ((v: (200))))) (entity-set .entity ((duplicate-a (v: (1))) (duplicate-a (v: (2)))))))");
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (entity-get .entity :duplicate-a) (((v: (100))) ((v: (200))))) (entity-add .entity ((duplicate-a (v: (1))) (duplicate-a (v: (2)))))))");
     CCExpressionEvaluate(Expression);
     CCExpressionDestroy(Expression);
     
@@ -7625,7 +7625,7 @@ CLEAR_CALLBACK_STATE;
     }
     
     
-    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (inspect (entity-get .entity :name)) \"test\") (entity-set .entity (name \"new\"))))");
+    Expression = CCExpressionCreateFromSource("(ecs \"test\" (state! \".entity\" (entity-lookup \"0x02\")) (if (= (entity-get .entity :name) \"test\") (entity-add .entity (name \"new\"))))");
     CCExpressionEvaluate(Expression);
     CCExpressionDestroy(Expression);
     

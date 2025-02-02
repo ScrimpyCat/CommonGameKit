@@ -61,7 +61,6 @@ extern const CCString ECSExpressionEntityChildrenRelationshipOption;
 
 void ECSExpressionRegisterComponentEvaluators(void);
 
-CC_EXPRESSION_EVALUATOR(component-cast) CCExpression ECSExpressionComponentCast(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(component) CCExpression ECSExpressionComponent(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity) CCExpression ECSExpressionEntity(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(ecs) CCExpression ECSExpressionECS(CCExpression Expression);
@@ -76,7 +75,6 @@ CC_EXPRESSION_EVALUATOR(entity-add) CCExpression ECSExpressionEntityAdd(CCExpres
 CC_EXPRESSION_EVALUATOR(entity-remove) CCExpression ECSExpressionEntityRemove(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-has?) CCExpression ECSExpressionEntityHas(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-get) CCExpression ECSExpressionEntityGet(CCExpression Expression);
-CC_EXPRESSION_EVALUATOR(entity-set) CCExpression ECSExpressionEntitySet(CCExpression Expression);
 CC_EXPRESSION_EVALUATOR(entity-destroy) CCExpression ECSExpressionEntityDestroy(CCExpression Expression);
 
 #endif
