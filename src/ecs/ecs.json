@@ -1,0 +1,174 @@
+{
+    "functions": [
+        {
+            "name": "component",
+            "description": "Create a component and initialize its state.",
+            "examples": ["(component :test (field: 1))"],
+            "return": { "type": "custom:component" },
+            "args": [[
+                { "type": "atom", "name": "name" }
+            ]]
+        },
+        {
+            "name": "entity",
+            "description": "Create a entity and initialize its state.",
+            "examples": ["(entity \"test\" (component :test (field: 1)))"],
+            "return": { "type": "custom:entity" },
+            "args": [
+                [],
+                [{ "type": "string", "name": "name" }]
+            ],
+            "options": [
+                {
+                    "name": "children",
+                    "description": "The child entities of this parent entity.",
+                    "args": [{ "repeat": [{ "type": "custom:entity" }] }]
+
+                }
+            ]
+        },
+        {
+            "name": "ecs",
+            "description": "Get an ECS context and apply changes to that context.",
+            "examples": ["(ecs \"test\" (entity \"foo\"))"],
+            "return": { "type": "custom:ecs-context" },
+            "args": [[
+                { "type": "atom", "name": "name" },
+                { "type": "expression", "optional": true }
+            ]]
+        },
+        {
+            "name": "entity-register",
+            "description": "Register an entity.",
+            "examples": ["(entity-register .entity)"],
+            "return": { "type": "custom:entity" },
+            "args": [
+                [{ "type": "entity", "name": "entity" }],
+                [{ "type": "entity", "name": "entity" }, { "type": "string", "name": "id" }],
+                [{ "type": "entity", "name": "entity" }, { "type": "string", "name": "id" }, { "type": "boolean", "name": "acquire" }]
+            ]
+        },
+        {
+            "name": "entity-deregister",
+            "description": "Deregister an entity.",
+            "examples": ["(entity-deregister .entity)"],
+            "return": { "type": "custom:entity" },
+            "args": [[
+                { "type": "entity", "name": "entity" }
+            ]]
+        },
+        {
+            "name": "entity-lookup",
+            "description": "Lookup an entity with the specified registry ID.",
+            "examples": ["(entity-lookup \"0x0000000000000001\")"],
+            "return": { "type": "custom:entity" },
+            "args": [[{ "type": "string", "name": "id" }]]
+        },
+        {
+            "name": "entity-link",
+            "description": "Link with the entity.",
+            "examples": ["(entity-link .entity (children: .child-entity))"],
+            "return": { "type": "custom:entity" },
+            "args": [
+                [
+                    { "type": "entity", "name": "entity" },
+                    { "type": "list", "value": [{ "type": "option", "name": "link" }, { "type": "custom:entity" }] }
+                ]
+            ],
+            "options": [
+                {
+                    "name": "children",
+                    "description": "The child entities of this parent entity.",
+                    "args": [{ "repeat": [{ "type": "custom:entity" }] }]
+                }
+            ]
+        },
+        {
+            "name": "entity-unlink",
+            "description": "Unlink an entity.",
+            "examples": ["(entity-unlink .entity (children: .child-entity))"],
+            "return": { "type": "custom:entity" },
+            "args": [
+                [
+                    { "type": "entity", "name": "entity" }
+                ],
+                [
+                    { "type": "entity", "name": "entity" },
+                    { "type": "list", "value": [{ "type": "option", "name": "link" }] }
+                ],
+                [
+                    { "type": "entity", "name": "entity" },
+                    { "type": "list", "value": [{ "type": "option", "name": "link" }, { "type": "custom:entity" }] }
+                ]
+            ],
+            "options": [
+                {
+                    "name": "children",
+                    "description": "The child entities of this parent entity.",
+                    "args": [{ "repeat": [{ "type": "custom:entity" }] }]
+                }
+            ]
+        },
+        {
+            "name": "entity-add",
+            "description": "Add/set a component for an entity.",
+            "examples": ["(entity-add .entity (component :test (field: 1)))"],
+            "return": { "type": "custom:entity" },
+            "args": [[
+                { "type": "entity", "name": "entity" },
+                { "type": "component", "name": "component" }
+            ]],
+            "options": [
+                {
+                    "name": "type",
+                    "description": "Override the component type.",
+                    "args": [[{ "type": "atom", "name": "component" }]]
+                },
+                {
+                    "name": "duplicate-type",
+                    "description": "Override the component duplicate type.",
+                    "args": [[{ "type": "atom", "name": "component" }]]
+                }
+            ]
+        },
+        {
+            "name": "entity-remove",
+            "description": "Remove a component from an entity.",
+            "examples": ["(entity-remove .entity :test)"],
+            "return": { "type": "custom:entity" },
+            "args": [[
+                { "type": "entity", "name": "entity" },
+                { "type": "atom", "name": "component" }
+            ]]
+        },
+        {
+            "name": "entity-has?",
+            "description": "Check whether an entity has the component.",
+            "examples": ["(entity-has? .entity :test)"],
+            "return": { "type": "boolean" },
+            "args": [[
+                { "type": "entity", "name": "entity" },
+                { "type": "atom", "name": "component" }
+            ]]
+        },
+        {
+            "name": "entity-get",
+            "description": "Get the component data for an entity.",
+            "examples": ["(entity-get .entity :test)"],
+            "return": { "type": "custom:component" },
+            "args": [[
+                { "type": "entity", "name": "entity" },
+                { "type": "atom", "name": "component" }
+            ]]
+        },
+        {
+            "name": "entity-destroy",
+            "description": "Destroy an entity.",
+            "examples": ["(entity-destroy .entity)"],
+            "return": { "type": "custom:entity" },
+            "args": [[
+                { "type": "entity", "name": "entity" }
+            ]]
+        }
+    ]
+}

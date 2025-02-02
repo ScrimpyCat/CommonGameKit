@@ -1,6 +1,7 @@
 {
     "includes": [
         "src/scripting/api.json",
+        "src/ecs/ecs.json",
         "src/gui/gui.json",
         "src/animation/components/animation.json",
         "src/input/input.json",
