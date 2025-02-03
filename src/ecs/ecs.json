@@ -170,5 +170,8 @@
                 { "type": "entity", "name": "entity" }
             ]]
         }
+    ],
+    "includes": [
+        "components/api.json"
     ]
 }

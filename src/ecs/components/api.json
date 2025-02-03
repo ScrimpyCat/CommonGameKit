@@ -1,0 +1,13 @@
+{
+    "functions": [
+        {
+            "name": "name",
+            "description": "Create a name component.",
+            "examples": ["(name \"test\")"],
+            "return": { "type": "custom:component" },
+            "args": [[
+                { "type": "string", "name": "name" }
+            ]]
+        }
+    ]
+}
