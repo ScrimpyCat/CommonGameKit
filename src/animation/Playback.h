@@ -71,7 +71,7 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
     {
         CCPlaybackTime Position = CCClamp(Playback->position, Playback->start, Playback->end);
         CCPlaybackTime Advance = Time * Playback->speed;
-        const CCPlaybackTime Length = (Playback->end - Playback->start) + 1;
+        const CCPlaybackTime Length = (Playback->end - Playback->start) + (Playback->loop != CCPlaybackLoopRepeatFlip);
         
         if (Advance < Time) Advance = (CCPlaybackTime)-1;
         
@@ -103,8 +103,8 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
                     case CCPlaybackLoopRepeatFlip:
                         if ((Count + 1) & 1) Playback->direction *= CCPlaybackDirectionReverse;
                         
-                        if (Playback->direction == CCPlaybackDirectionForward) Position = Playback->start + (Advance - Diff) - 1;
-                        else Position = Playback->end - (Advance - Diff) + 1;
+                        if (Playback->direction == CCPlaybackDirectionForward) Position = Playback->start + (Advance - Diff);
+                        else Position = Playback->end - (Advance - Diff);
                         break;
                 }
             }
@@ -125,7 +125,7 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
                         if (Count & 1) Playback->direction *= CCPlaybackDirectionReverse;
                         
                         if (Playback->direction == CCPlaybackDirectionForward) Position += Advance;
-                        else Position -= Advance;
+                        else Position = Playback->end - (Position + (Advance - Playback->start));
                         break;
                 }
             }
@@ -152,8 +152,8 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
                     case CCPlaybackLoopRepeatFlip:
                         if ((Count + 1) & 1) Playback->direction *= CCPlaybackDirectionReverse;
                         
-                        if (Playback->direction == CCPlaybackDirectionForward) Position = Playback->start + (Advance - Diff) - 1;
-                        else Position = Playback->end - (Advance - Diff) + 1;
+                        if (Playback->direction == CCPlaybackDirectionForward) Position = Playback->start + (Advance - Diff);
+                        else Position = Playback->end - (Advance - Diff);
                         break;
                 }
             }
@@ -173,7 +173,7 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
                     case CCPlaybackLoopRepeatFlip:
                         if (Count & 1) Playback->direction *= CCPlaybackDirectionReverse;
                         
-                        if (Playback->direction == CCPlaybackDirectionForward) Position += Advance;
+                        if (Playback->direction == CCPlaybackDirectionForward) Position = Playback->end - (Position - (Advance + Playback->start));
                         else Position -= Advance;
                         break;
                 }
