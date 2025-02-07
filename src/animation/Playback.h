@@ -46,7 +46,7 @@ typedef struct {
     CCPlaybackTime position;
     CCPlaybackTime start;
     CCPlaybackTime end;
-    double speed;
+    CCDecimal speed;
     CCPlaybackLoop loop;
     CCPlaybackDirection direction;
     _Bool playing;
@@ -70,7 +70,7 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
     if (Playback->playing)
     {
         CCPlaybackTime Position = CCClamp(Playback->position, Playback->start, Playback->end);
-        CCPlaybackTime Advance = Time * Playback->speed;
+        CCPlaybackTime Advance = CCDecimalMultiplyU64(Time, Playback->speed);
         const CCPlaybackTime Length = (Playback->end - Playback->start) + (Playback->loop != CCPlaybackLoopRepeatFlip);
         
         if (Advance < Time) Advance = (CCPlaybackTime)-1;
