@@ -73,8 +73,6 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
         CCPlaybackTime Advance = CCDecimalMultiplyU64(Time, Playback->speed);
         const CCPlaybackTime Length = (Playback->end - Playback->start) + (Playback->loop != CCPlaybackLoopRepeatFlip);
         
-        if (Advance < Time) Advance = (CCPlaybackTime)-1;
-        
         CCPlaybackTime Count = 0;
         
         if (Length)
@@ -83,6 +81,8 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
             
             Advance %= Length;
         }
+        
+        else Advance = 0;
         
         if (Playback->direction == CCPlaybackDirectionForward)
         {
