@@ -64,15 +64,43 @@ static inline CCPlaybackTime CCAnimationKeyframeGetFrameLength(const CCAnimation
  */
 static inline size_t CCAnimationKeyframeGetFrame(const CCAnimationKeyframe *Animation, CCPlaybackTime Time, _Bool *Finished);
 
+/*!
+ * @brief Get the min/max/avg frane times for the keyframe animation.
+ * @param Animation The keyframe animation to get the frame times for.
+ * @param Min The minimum amount of time a frame will take. May be null.
+ * @param Max The maximum amount of time a frame will take. May be null.
+ * @param Avg The average amount of time a frame will take. May be null.
+ */
+static inline void CCAnimationKeyframeGetFrameTimes(const CCAnimationKeyframe *Animation, CCPlaybackTime *Min, CCPlaybackTime *Max, CCPlaybackTime *Avg);
+
+/*!
+ * @brief Get the number of samples in keyframe animation when incrementing at the specified interval.
+ * @param Animation The keyframe animation to get the frame times for.
+ * @param Interval The amount of time between each sample.
+ * @return The number of samples.
+ */
+static inline size_t CCAnimationKeyframeGetSampleCount(const CCAnimationKeyframe *Animation, CCPlaybackTime Interval);
+
+/*!
+ * @brief Generate the jump indexes for the keyframe animation.
+ * @param Animation The keyframe animation to generate the jump indexes for.
+ * @param Indexes A pointer to an array of @b Count, where the jump indexes will be stored.
+ * @param Count The number of jump indexes to generate.
+ */
+static inline void CCAnimationKeyframeGenerateJumpIndexes(const CCAnimationKeyframe *Animation, size_t *Indexes, size_t Count);
+
 #pragma mark -
 
 static inline CCPlaybackTime CCAnimationKeyframeGetLength(const CCAnimationKeyframe *Animation)
 {
+    CCAssertLog(Animation, "Animation must not be null");
+    
     return CCAnimationKeyframeGetFrameLength(Animation, Animation->count);
 }
 
 static inline CCPlaybackTime CCAnimationKeyframeGetFrameLength(const CCAnimationKeyframe *Animation, size_t FrameCount)
 {
+    CCAssertLog(Animation, "Animation must not be null");
     CCAssertLog(FrameCount <= Animation->count, "FrameIndex must not exceed animation count");
     
     return FrameCount ? Animation->frames[FrameCount - 1] : 0;
@@ -80,6 +108,7 @@ static inline CCPlaybackTime CCAnimationKeyframeGetFrameLength(const CCAnimation
 
 static inline size_t CCAnimationKeyframeGetFrame(const CCAnimationKeyframe *Animation, CCPlaybackTime Time, _Bool *Finished)
 {
+    CCAssertLog(Animation, "Animation must not be null");
     CCAssertLog(Animation->jump.count, "Animation jump count must not be 0");
     
     const size_t JumpIndex = CCMin(Time / Animation->jump.time, Animation->jump.count - 1);
@@ -101,6 +130,52 @@ static inline size_t CCAnimationKeyframeGetFrame(const CCAnimationKeyframe *Anim
     if (Finished) *Finished = FALSE;
     
     return FrameIndex;
+}
+
+static inline void CCAnimationKeyframeGetFrameTimes(const CCAnimationKeyframe *Animation, CCPlaybackTime *Min, CCPlaybackTime *Max, CCPlaybackTime *Avg)
+{
+    CCAssertLog(Animation, "Animation must not be null");
+    
+    CCPlaybackTime Smallest = -1, Largest = 0, Prev = 0;
+    
+    for (size_t Loop = 0; Loop < Animation->count; Loop++)
+    {
+        CCPlaybackTime Time = Animation->frames[Loop] - Prev;
+        
+        if (Time < Smallest) Smallest = Time;
+        if (Time > Largest) Largest = Time;
+        
+        Prev = Animation->frames[Loop];
+    }
+    
+    if (Avg) *Avg = CCAnimationKeyframeGetLength(Animation) / Animation->count;
+    if (Min) *Min = Smallest;
+    if (Max) *Max = Largest;
+}
+
+static inline size_t CCAnimationKeyframeGetSampleCount(const CCAnimationKeyframe *Animation, CCPlaybackTime Interval)
+{
+    CCAssertLog(Animation, "Animation must not be null");
+    CCAssertLog(Interval, "Interval must not be 0");
+    
+    return CCAnimationKeyframeGetLength(Animation) / Interval;
+}
+
+static inline void CCAnimationKeyframeGenerateJumpIndexes(const CCAnimationKeyframe *Animation, size_t *Indexes, size_t Count)
+{
+    CCAssertLog(Animation, "Animation must not be null");
+    CCAssertLog(Indexes, "Indexes must not be null");
+    CCAssertLog(Count, "Count must not be 0");
+    
+    const CCPlaybackTime SampleTime = CCAnimationKeyframeGetLength(Animation) / Count;
+    CCPlaybackTime Time = 0;
+    
+    for (size_t Loop = 0, Index = 0; Loop < Count; Loop++, Time += SampleTime)
+    {
+        while (Animation->frames[Index] <= Time) Index++;
+        
+        Indexes[Loop] = Index;
+    }
 }
 
 #endif
