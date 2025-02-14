@@ -752,6 +752,11 @@ SEQ_FLIP_(n, end, end, CCPlaybackDirectionBackward, ((end) + n) - )
     Playback.speed = (CCDecimal){ .coef = UINT64_MAX, .exp = -1 };
     CCPlaybackAdvance(&Playback, 1000);
     XCTAssertEqual(Playback.position, 100, @"should be the correct position");
+    
+    Playback.position = 0;
+    Playback.loop = CCPlaybackLoopRepeatRoll;
+    CCPlaybackAdvance(&Playback, 1000);
+    XCTAssertEqual(Playback.position, 78, @"should be the correct position");
 }
 
 @end
