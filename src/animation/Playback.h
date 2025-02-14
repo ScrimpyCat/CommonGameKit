@@ -186,4 +186,119 @@ static inline void CCPlaybackAdvance(CCPlayback *Playback, CCPlaybackTime Time)
     }
 }
 
+#pragma - Template Types
+
+#define CC_TYPE_CCPlaybackTime(...) CCPlaybackTime
+#define CC_TYPE_0_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_1_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_2_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_3_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_4_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_5_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_6_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_7_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_8_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+#define CC_TYPE_9_CCPlaybackTime CC_TYPE_CCPlaybackTime,
+
+#define CC_PRESERVE_CC_TYPE_CCPlaybackTime CC_TYPE_CCPlaybackTime
+
+#define CC_TYPE_DECL_CCPlaybackTime(...) CCPlaybackTime, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_1_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_2_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_3_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_4_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_5_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_6_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_7_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_8_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+#define CC_TYPE_DECL_9_CCPlaybackTime CC_TYPE_DECL_CCPlaybackTime,
+
+#define CC_MANGLE_TYPE_0_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_1_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_2_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_3_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_4_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_5_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_6_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_7_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_8_CCPlaybackTime CCPlaybackTime
+#define CC_MANGLE_TYPE_9_CCPlaybackTime CCPlaybackTime
+
+
+#define CC_TYPE_CCPlaybackDirection(...) CCPlaybackDirection
+#define CC_TYPE_0_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_1_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_2_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_3_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_4_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_5_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_6_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_7_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_8_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+#define CC_TYPE_9_CCPlaybackDirection CC_TYPE_CCPlaybackDirection,
+
+#define CC_PRESERVE_CC_TYPE_CCPlaybackDirection CC_TYPE_CCPlaybackDirection
+
+#define CC_TYPE_DECL_CCPlaybackDirection(...) CCPlaybackDirection, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_1_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_2_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_3_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_4_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_5_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_6_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_7_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_8_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+#define CC_TYPE_DECL_9_CCPlaybackDirection CC_TYPE_DECL_CCPlaybackDirection,
+
+#define CC_MANGLE_TYPE_0_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_1_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_2_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_3_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_4_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_5_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_6_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_7_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_8_CCPlaybackDirection CCPlaybackDirection
+#define CC_MANGLE_TYPE_9_CCPlaybackDirection CCPlaybackDirection
+
+
+#define CC_TYPE_CCPlaybackLoop(...) CCPlaybackLoop
+#define CC_TYPE_0_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_1_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_2_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_3_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_4_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_5_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_6_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_7_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_8_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+#define CC_TYPE_9_CCPlaybackLoop CC_TYPE_CCPlaybackLoop,
+
+#define CC_PRESERVE_CC_TYPE_CCPlaybackLoop CC_TYPE_CCPlaybackLoop
+
+#define CC_TYPE_DECL_CCPlaybackLoop(...) CCPlaybackLoop, __VA_ARGS__
+#define CC_TYPE_DECL_0_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_1_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_2_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_3_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_4_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_5_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_6_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_7_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_8_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+#define CC_TYPE_DECL_9_CCPlaybackLoop CC_TYPE_DECL_CCPlaybackLoop,
+
+#define CC_MANGLE_TYPE_0_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_1_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_2_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_3_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_4_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_5_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_6_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_7_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_8_CCPlaybackLoop CCPlaybackLoop
+#define CC_MANGLE_TYPE_9_CCPlaybackLoop CCPlaybackLoop
+
 #endif
