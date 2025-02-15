@@ -50,7 +50,8 @@ static inline CCClipboardClipping CCClipboardClippingShare(CCClipboardClipping C
 
 static inline void CCClipboardClippingDestructor(CCClipboardClipping Clipping)
 {
-    CCFree(Clipping.data);
+    if (Clipping.type == &CC_REFLECT(CCString)) CCStringDestroy((CCString)Clipping.data);
+    else CCFree(Clipping.data);
 }
 
 #define Titem CCClipboardClipping
