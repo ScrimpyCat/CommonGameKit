@@ -33,17 +33,20 @@
 #include <CommonGameKit/Callbacks.h>
 #include <CommonGameKit/Window.h>
 
-#include <CommonGameKit/AnimationComponent.h>
-#include <CommonGameKit/AnimationInterpolateComponent.h>
-#include <CommonGameKit/AnimationKeyframeComponent.h>
-#include <CommonGameKit/AnimationSystem.h>
+#include <CommonGameKit/Playback.h>
+#include <CommonGameKit/AnimationKeyframe.h>
 
-#include <CommonGameKit/Component.h>
-#include <CommonGameKit/ComponentBase.h>
-#include <CommonGameKit/ComponentSystem.h>
-#include <CommonGameKit/Entity.h>
-#include <CommonGameKit/EntityManager.h>
-#include <CommonGameKit/Message.h>
+#include <CommonGameKit/ECS.h>
+#include <CommonGameKit/ECSReflect.h>
+#include <CommonGameKit/ECSExpression.h>
+#include <CommonGameKit/ECSMonitor.h>
+#include <CommonGameKit/ECSBinaryMonitor.h>
+
+#include <CommonGameKit/ECSParentChildRelationship.h>
+
+#include <CommonGameKit/ECSNameComponent.h>
+#include <CommonGameKit/ECSMonitorComponent.h>
+#include <CommonGameKit/ECSMonitorSystem.h>
 
 #include <CommonGameKit/GUIExpression.h>
 #include <CommonGameKit/GUIManager.h>
@@ -54,13 +57,6 @@
 #include <CommonGameKit/Mouse.h>
 #include <CommonGameKit/Clipboard.h>
 #include <CommonGameKit/Input.h>
-
-#include <CommonGameKit/RenderComponent.h>
-#include <CommonGameKit/RenderSystem.h>
-
-#include <CommonGameKit/RelationParentComponent.h>
-
-#include <CommonGameKit/SpatialTransformComponent.h>
 
 #include <CommonGameKit/Colour.h>
 #include <CommonGameKit/ColourComponent.h>
@@ -81,17 +77,12 @@
 #include <CommonGameKit/ExpressionReflection.h>
 #include <CommonGameKit/ExpressionMap.h>
 
-#include <CommonGameKit/ScriptableInterfaceDynamicFieldComponent.h>
-#include <CommonGameKit/ScriptableInterfaceSystem.h>
-
 //TODO: generate header for these
 #include <CommonGameKit/AssetExpressions.h>
 #include <CommonGameKit/BitwiseExpressions.h>
 #include <CommonGameKit/ColourExpressions.h>
-#include <CommonGameKit/ComponentExpressions.h>
 #include <CommonGameKit/ControlFlowExpressions.h>
 #include <CommonGameKit/DebugExpressions.h>
-#include <CommonGameKit/EntityExpressions.h>
 #include <CommonGameKit/EqualityExpressions.h>
 #include <CommonGameKit/FontExpressions.h>
 #include <CommonGameKit/GraphicsExpressions.h>
@@ -99,7 +90,6 @@
 #include <CommonGameKit/ListExpressions.h>
 #include <CommonGameKit/MacroExpressions.h>
 #include <CommonGameKit/MathExpressions.h>
-#include <CommonGameKit/MessageExpressions.h>
 #include <CommonGameKit/StateExpressions.h>
 #include <CommonGameKit/StringExpressions.h>
 #include <CommonGameKit/TextExpressions.h>
