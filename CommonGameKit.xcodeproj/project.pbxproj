@@ -57,7 +57,7 @@
 		F36954CF1E45E2DB00135AF0 /* Message.c in Sources */ = {isa = PBXBuildFile; fileRef = F36954CD1E45E2DB00135AF0 /* Message.c */; };
 		F36954D01E45E2DB00135AF0 /* Message.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954CE1E45E2DB00135AF0 /* Message.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F36954ED1E475E8200135AF0 /* MessageType.h in Headers */ = {isa = PBXBuildFile; fileRef = F36954EC1E475E0F00135AF0 /* MessageType.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F37329542D301EC500A3DC98 /* ECSExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329522D301EC500A3DC98 /* ECSExpression.h */; };
+		F37329542D301EC500A3DC98 /* ECSExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329522D301EC500A3DC98 /* ECSExpression.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F37329552D301EC500A3DC98 /* ECSExpression.c in Sources */ = {isa = PBXBuildFile; fileRef = F37329532D301EC500A3DC98 /* ECSExpression.c */; };
 		F37329BD2D3B312100A3DC98 /* ECSParentChildRelationship.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329BB2D3B312100A3DC98 /* ECSParentChildRelationship.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F37329BE2D3B312100A3DC98 /* ECSParentChildRelationship.c in Sources */ = {isa = PBXBuildFile; fileRef = F37329BC2D3B312100A3DC98 /* ECSParentChildRelationship.c */; };
@@ -67,6 +67,9 @@
 		F37329C62D51054F00A3DC98 /* AnimationKeyframe.c in Sources */ = {isa = PBXBuildFile; fileRef = F37329C42D51054F00A3DC98 /* AnimationKeyframe.c */; };
 		F37329C92D5167B900A3DC98 /* PlaybackTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37329C82D5167B900A3DC98 /* PlaybackTests.m */; };
 		F37329D02D59784900A3DC98 /* AnimationKeyframeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37329CF2D59784900A3DC98 /* AnimationKeyframeTests.m */; };
+		F37329D32D5A765900A3DC98 /* AnimationInterpolate.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329D12D5A765900A3DC98 /* AnimationInterpolate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F37329D62D5AB59900A3DC98 /* AnimationInterpolateTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F37329D52D5AB59900A3DC98 /* AnimationInterpolateTemplate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F37329D82D5BF63600A3DC98 /* AnimationInterpolateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F37329D72D5BF63600A3DC98 /* AnimationInterpolateTests.m */; };
 		F3750F892347B94500DFE104 /* Base.h in Headers */ = {isa = PBXBuildFile; fileRef = F3750F882347B94500DFE104 /* Base.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F378DB1D234D5278000600CC /* ContainerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F378DAFD234D5278000600CC /* ContainerTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F37A6E992C91465F00F97BC3 /* Input.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A6E972C91465F00F97BC3 /* Input.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -613,6 +616,9 @@
 		F37329C42D51054F00A3DC98 /* AnimationKeyframe.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AnimationKeyframe.c; sourceTree = "<group>"; };
 		F37329C82D5167B900A3DC98 /* PlaybackTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaybackTests.m; sourceTree = "<group>"; };
 		F37329CF2D59784900A3DC98 /* AnimationKeyframeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnimationKeyframeTests.m; sourceTree = "<group>"; };
+		F37329D12D5A765900A3DC98 /* AnimationInterpolate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnimationInterpolate.h; sourceTree = "<group>"; };
+		F37329D52D5AB59900A3DC98 /* AnimationInterpolateTemplate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnimationInterpolateTemplate.h; sourceTree = "<group>"; };
+		F37329D72D5BF63600A3DC98 /* AnimationInterpolateTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnimationInterpolateTests.m; sourceTree = "<group>"; };
 		F3750F882347B94500DFE104 /* Base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
 		F378DAFD234D5278000600CC /* ContainerTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerTypes.h; sourceTree = "<group>"; };
 		F37A6E972C91465F00F97BC3 /* Input.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
@@ -1012,6 +1018,7 @@
 			children = (
 				F37329C82D5167B900A3DC98 /* PlaybackTests.m */,
 				F37329CF2D59784900A3DC98 /* AnimationKeyframeTests.m */,
+				F37329D72D5BF63600A3DC98 /* AnimationInterpolateTests.m */,
 			);
 			name = Animation;
 			sourceTree = "<group>";
@@ -1287,6 +1294,8 @@
 				F37329BF2D5102D300A3DC98 /* Playback.h */,
 				F37329C42D51054F00A3DC98 /* AnimationKeyframe.c */,
 				F37329C32D51054F00A3DC98 /* AnimationKeyframe.h */,
+				F37329D12D5A765900A3DC98 /* AnimationInterpolate.h */,
+				F37329D52D5AB59900A3DC98 /* AnimationInterpolateTemplate.h */,
 			);
 			name = Animation;
 			path = animation;
@@ -1755,6 +1764,7 @@
 				F3750F892347B94500DFE104 /* Base.h in Headers */,
 				F3AF33F11DCCD4EC00CAD472 /* GLVersionMacro.h in Headers */,
 				F37329BD2D3B312100A3DC98 /* ECSParentChildRelationship.h in Headers */,
+				F37329D62D5AB59900A3DC98 /* AnimationInterpolateTemplate.h in Headers */,
 				F3AF343C1DCCD4EC00CAD472 /* Text.h in Headers */,
 				F3AF33801DCCD4EC00CAD472 /* Component.h in Headers */,
 				F34551972AFCD68700316D15 /* ECSBinaryMonitor.h in Headers */,
@@ -1791,6 +1801,7 @@
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
 				F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */,
 				F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */,
+				F37329D32D5A765900A3DC98 /* AnimationInterpolate.h in Headers */,
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
 				F3AF33DA1DCCD4EC00CAD472 /* GLBlit.h in Headers */,
@@ -2353,6 +2364,7 @@
 				F3897BBD1DCD764E008D6C1D /* ExpressionEqualityTests.m in Sources */,
 				F3897BC51DCD764E008D6C1D /* ExpressionTests.m in Sources */,
 				F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */,
+				F37329D82D5BF63600A3DC98 /* AnimationInterpolateTests.m in Sources */,
 				F3897BB91DCD764E008D6C1D /* ComponentTests.m in Sources */,
 				F3897BC71DCD764E008D6C1D /* GLDebugTests.m in Sources */,
 				F3DB297E23C4B4F800D0D68E /* RelationSystemTests.m in Sources */,
