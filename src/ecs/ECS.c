@@ -89,7 +89,12 @@ static ECSWorkerID WorkerThreadCount = 0;
 
 _Bool ECSWorkerCreate(void)
 {
-    CCAssertLog(WorkerThreadCount < ECS_WORKER_THREAD_MAX, "Increase size of ECS_WORKER_THREAD_MAX");
+    if (WorkerThreadCount >= ECS_WORKER_THREAD_MAX)
+    {
+        CC_LOG_DEBUG("Failed to create ECS worker (%" PRIuPTR ") thread: increase size of ECS_WORKER_THREAD_MAX", WorkerThreadCount);
+        
+        return FALSE;
+    }
     
     thrd_t Thread;
     if (thrd_create(&Thread, (thrd_start_t)ECSWorker, (void*)WorkerThreadCount) != thrd_success)
