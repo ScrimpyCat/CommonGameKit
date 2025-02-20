@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_GLGFX_h
 #define CommonGameKit_GLGFX_h
 
-#include "GFX.h"
+#include <CommonGameKit/GFX.h>
 
 extern GFXMainInfo * const GLGFX;
 

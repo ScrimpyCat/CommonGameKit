@@ -26,7 +26,7 @@
 #ifndef CommonGameKit_MTLGFX_h
 #define CommonGameKit_MTLGFX_h
 
-#include "GFX.h"
+#include <CommonGameKit/GFX.h>
 
 extern GFXMainInfo * const MTLGFX;
 
