@@ -47,7 +47,12 @@ CC_CONTAINER_DECLARE(CCConcurrentIndexMap, CCComponent);
 CC_CONTAINER_DECLARE(CCDictionary, CCComponent, size_t); \
 CC_CONTAINER_DECLARE(CCDictionary, CCEntity, CC_CONTAINER(CCCollection, CCComponent)); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CCAnimationInterpolator); \
+CC_CONTAINER_DECLARE(CCDictionary, CCString, CCInputMapType); \
+CC_CONTAINER_DECLARE(CCDictionary, CCString, CCKeyboardKeycode); \
+CC_CONTAINER_DECLARE(CCDictionary, CCString, CCKeyboardModifier); \
+CC_CONTAINER_DECLARE(CCDictionary, CCString, CCMouseButton); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, CFTypeRef); \
+CC_CONTAINER_DECLARE(CCDictionary, CCString, ECSComponentID); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, FSVirtualNode); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderAttributeInfo); \
 CC_CONTAINER_DECLARE(CCDictionary, CCString, GLShaderLibrarySource); \
