@@ -211,6 +211,7 @@ void GUIManagerUpdate(void)
             case 4:
                 GUIManagerEventMouseCallback(MouseInputEvent);
                 MouseInputEvent = CCEnumerableNext(&MouseInputEventEnumerable);
+                MouseInputEventTimestamp = MouseInputEvent ? MouseInputEvent->timestamp : UINT64_MAX;
                 break;
                 
             //keyboard char input
@@ -218,6 +219,7 @@ void GUIManagerUpdate(void)
             case 3:
                 GUIManagerEventKeyboardCallback(KeyboardCharInputEvent);
                 KeyboardCharInputEvent = CCEnumerableNext(&KeyboardCharInputEventEnumerable);
+                KeyboardCharInputEventTimestamp = KeyboardCharInputEvent ? KeyboardCharInputEvent->state.timestamp : UINT64_MAX;
                 break;
                 
             //keybaord input
@@ -225,6 +227,7 @@ void GUIManagerUpdate(void)
             case 7:
                 GUIManagerEventKeyboardCallback(KeyboardInputEvent);
                 KeyboardInputEvent = CCEnumerableNext(&KeyboardInputEventEnumerable);
+                KeyboardInputEventTimestamp = KeyboardInputEvent ? KeyboardInputEvent->state.timestamp : UINT64_MAX;
                 break;
         }
     }
