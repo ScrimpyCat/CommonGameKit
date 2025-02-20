@@ -54,14 +54,17 @@ void ECSExpressionRegisterComponentEvaluators(void)
         .compareKeys = CCStringComparatorForDictionary
     });
     
-    for (ECSComponentID Loop = 0; Loop < ECS_COMPONENT_MAX; Loop++)
+    if (ECSExpressionComponentExpressionNames)
     {
-        if (ECSExpressionComponentExpressionNames[Loop])
+        for (ECSComponentID Loop = 0; Loop < ECS_COMPONENT_MAX; Loop++)
         {
-            CCExpressionEvaluatorRegister(ECSExpressionComponentExpressionNames[Loop], ECSExpressionComponent);
-            
-            CCDictionarySetValue(ECSExpressionComponentIDLookup, &(CCString){ CCStringCopy(ECSExpressionComponentExpressionNames[Loop]) }, &ECSComponentIDs[Loop]);
-            CCDictionarySetValue(ECSExpressionComponentIDLookup, &(CCString){ CCStringCreateByInsertingString(ECSExpressionComponentExpressionNames[Loop], 0, CC_STRING(":")) }, &ECSComponentIDs[Loop]);
+            if (ECSExpressionComponentExpressionNames[Loop])
+            {
+                CCExpressionEvaluatorRegister(ECSExpressionComponentExpressionNames[Loop], ECSExpressionComponent);
+                
+                CCDictionarySetValue(ECSExpressionComponentIDLookup, &(CCString){ CCStringCopy(ECSExpressionComponentExpressionNames[Loop]) }, &ECSComponentIDs[Loop]);
+                CCDictionarySetValue(ECSExpressionComponentIDLookup, &(CCString){ CCStringCreateByInsertingString(ECSExpressionComponentExpressionNames[Loop], 0, CC_STRING(":")) }, &ECSComponentIDs[Loop]);
+            }
         }
     }
     
