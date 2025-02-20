@@ -227,27 +227,6 @@ void GUIManagerUpdate(void)
                 KeyboardInputEvent = CCEnumerableNext(&KeyboardInputEventEnumerable);
                 break;
         }
-        
-        if (KeyboardInputEvent->state.timestamp <= KeyboardCharInputEvent->state.timestamp)
-        {
-            if (KeyboardInputEvent->state.timestamp <= MouseInputEvent->timestamp)
-            {
-                //KeyboardInputEvent
-            }
-            
-            else if (KeyboardCharInputEvent->state.timestamp <= MouseInputEvent->timestamp) goto KeyboardCharInputHandler;
-            else goto MouseInputHandler;
-        }
-        
-        else if (KeyboardCharInputEvent->state.timestamp <= MouseInputEvent->timestamp)
-        {
-        KeyboardCharInputHandler:;
-        }
-        
-        else
-        {
-        MouseInputHandler:;
-        }
     }
 }
 
