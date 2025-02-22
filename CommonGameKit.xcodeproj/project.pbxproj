@@ -115,6 +115,8 @@
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
 		F38A33F129E2957300661500 /* ECSComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F38A33EF29E2957300661500 /* ECSComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F396A0542D6A1203004DC778 /* HardwareExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F396A0522D6A1203004DC778 /* HardwareExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F396A0552D6A1203004DC778 /* HardwareExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F396A0532D6A1203004DC778 /* HardwareExpressions.c */; };
 		F39C5F2A2519C29600D80F0D /* PixelDataCompositeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */; };
 		F3A304A1298ED47200BABB22 /* ECSTool.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A304A0298ED2E800BABB22 /* ECSTool.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3A304A42994432B00BABB22 /* ECSEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = F3A304A22994432B00BABB22 /* ECSEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -667,6 +669,8 @@
 		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		F38A33EF29E2957300661500 /* ECSComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSComponent.h; sourceTree = "<group>"; };
+		F396A0522D6A1203004DC778 /* HardwareExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareExpressions.h; sourceTree = "<group>"; };
+		F396A0532D6A1203004DC778 /* HardwareExpressions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HardwareExpressions.c; sourceTree = "<group>"; };
 		F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataCompositeTests.m; sourceTree = "<group>"; };
 		F3A30480298ED06000BABB22 /* ECSTestData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTestData.h; sourceTree = "<group>"; };
 		F3A304A0298ED2E800BABB22 /* ECSTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTool.h; sourceTree = "<group>"; };
@@ -1628,6 +1632,8 @@
 				F30730B52410E7D10078AEC4 /* FontExpressions.h */,
 				F3AF34591DCCD5AF00CAD472 /* GraphicsExpressions.c */,
 				F3AF345A1DCCD5AF00CAD472 /* GraphicsExpressions.h */,
+				F396A0532D6A1203004DC778 /* HardwareExpressions.c */,
+				F396A0522D6A1203004DC778 /* HardwareExpressions.h */,
 				F3AF345C1DCCD5AF00CAD472 /* IOExpressions.c */,
 				F3AF345D1DCCD5AF00CAD472 /* IOExpressions.h */,
 				F3AF345F1DCCD5AF00CAD472 /* ListExpressions.c */,
@@ -1818,6 +1824,7 @@
 				F3AF33B21DCCD4EC00CAD472 /* RenderComponent.h in Headers */,
 				F3AF33E31DCCD4EC00CAD472 /* GLFramebuffer.h in Headers */,
 				F3A304A1298ED47200BABB22 /* ECSTool.h in Headers */,
+				F396A0542D6A1203004DC778 /* HardwareExpressions.h in Headers */,
 				F3AF33E71DCCD4EC00CAD472 /* GLSelectedState.h in Headers */,
 				F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */,
 				F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */,
@@ -2243,6 +2250,7 @@
 				F3AF33C91DCCD4EC00CAD472 /* GFXBuffer.c in Sources */,
 				F3AF34851DCCD5AF00CAD472 /* ColourExpressions.c in Sources */,
 				F3AF33B31DCCD4EC00CAD472 /* RenderSystem.c in Sources */,
+				F396A0552D6A1203004DC778 /* HardwareExpressions.c in Sources */,
 				F34551982AFCD68700316D15 /* ECSBinaryMonitor.c in Sources */,
 				F3AF337B1DCCD4EC00CAD472 /* AnimationKeyframeComponent.c in Sources */,
 				F3AF33A91DCCD4EC00CAD472 /* Keyboard.c in Sources */,

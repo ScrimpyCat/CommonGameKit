@@ -1,0 +1,16 @@
+{
+    "functions": [
+        {
+            "name": "cpu-physical-core-count",
+            "description": "Get the number of physical CPU cores.",
+            "examples": ["(cpu-physical-core-count)"],
+            "return": { "type": "integer" }
+        },
+        {
+            "name": "cpu-logical-core-count",
+            "description": "Get the number of logical CPU cores.",
+            "examples": ["(cpu-logical-core-count)"],
+            "return": { "type": "integer" }
+        }
+    ]
+}

@@ -86,6 +86,7 @@
 #include <CommonGameKit/EqualityExpressions.h>
 #include <CommonGameKit/FontExpressions.h>
 #include <CommonGameKit/GraphicsExpressions.h>
+#include <CommonGameKit/HardwareExpressions.h>
 #include <CommonGameKit/IOExpressions.h>
 #include <CommonGameKit/ListExpressions.h>
 #include <CommonGameKit/MacroExpressions.h>

@@ -20,6 +20,7 @@
 #include "ControlFlowExpressions.h"
 #include "FontExpressions.h"
 #include "ListExpressions.h"
+#include "HardwareExpressions.h"
 #include "TextExpressions.h"
 #include "ECSExpression.h"
 #include "GUIExpression.h"
@@ -107,6 +108,8 @@ void CCExpressionSetup(void)
     CCExpressionEvaluatorRegister(CC_STRING("parts"), CCListExpressionParts);
     CCExpressionEvaluatorRegister(CC_STRING("split"), CCListExpressionSplit);
     CCExpressionEvaluatorRegister(CC_STRING("count"), CCListExpressionCount);
+    CCExpressionEvaluatorRegister(CC_STRING("cpu-physical-core-count"), CCHardwareExpressionCPUPhysicalCoreCount);
+    CCExpressionEvaluatorRegister(CC_STRING("cpu-logical-core-count"), CCHardwareExpressionCPULogicalCoreCount);
     CCExpressionEvaluatorRegister(CC_STRING("text-visible-length"), CCTextExpressionGetVisibleLength);
     CCExpressionEvaluatorRegister(CC_STRING("text-cursor-position"), CCTextExpressionGetCursorPosition);
     CCExpressionEvaluatorRegister(CC_STRING("text-cursor-offset"), CCTextExpressionGetCursorOffset);
