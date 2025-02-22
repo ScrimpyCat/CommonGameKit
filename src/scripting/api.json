@@ -27,6 +27,7 @@
         "evaluators/font.json",
         "evaluators/equality.json",
         "evaluators/graphics.json",
+        "evaluators/hardware.json",
         "evaluators/io.json",
         "evaluators/list.json",
         "evaluators/macro.json",
