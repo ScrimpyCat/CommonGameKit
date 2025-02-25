@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_PACKED_COMPONENT_ID_BASE=1' -e 'ECS_INDEXED_COMPONENT_ID_BASE=2' -fn ecs_filters CommonGameKitTests/ECSTestData.h
+//ecs_tool setup -i CommonGameKitTests/ECSTests.h src/ecs/systems/*.h src/ecs/components/*.h -a CommonGameKitTests/ECSTestAccessors.h --max-local 64 -c ecs_env -e 'ECS_PACKED_COMPONENT_ID_BASE=1' -e 'ECS_INDEXED_COMPONENT_ID_BASE=2' -e 'LAST_INDEXED_ID=count(type: indexed) - 1' -fn ecs_filters CommonGameKitTests/ECSTestData.h
 
 #import "CCTestCase.h"
 #import "ECS.h"

@@ -59,253 +59,253 @@ const size_t ArchetypeComponentIndexes[] = {
     0, 7,
 };
 
-#define INDEX_0_4 202, 2
-#define INDEX_1_3_5 93, 3
-#define INDEX_0_5 263, 2
-#define INDEX_2_4_5_6 31, 4
-#define INDEX_2_4_7 129, 3
-#define INDEX_1_3_6_7 153, 4
-#define INDEX_0_1_6 223, 3
-#define INDEX_1_2_5_6_7 81, 5
-#define INDEX_0_1_2_5_6 80, 5
-#define INDEX_1_3_4 37, 3
-#define INDEX_0_2_3_4_5_6 43, 6
-#define INDEX_0_1_2_3_4_5_6_7 0, 8
-#define INDEX_0_1_2_4_5 29, 5
-#define INDEX_0_1_2_4 29, 4
-#define INDEX_2_3_4_5 2, 4
-#define INDEX_2_3_6_7 64, 4
-#define INDEX_1_2_4_5_6_7 30, 6
-#define INDEX_2_4_5_6_7 31, 5
-#define INDEX_1_2_3_5_6 23, 5
-#define INDEX_0_3_5_7 247, 4
-#define INDEX_3_4_7 53, 3
-#define INDEX_0_1_2_4_5_6_7 29, 7
-#define INDEX_1_6 224, 2
-#define INDEX_0_1_2_6_7 137, 5
-#define INDEX_0_1_4_7 215, 4
-#define INDEX_2_5_7 134, 3
-#define INDEX_0_1_2_3_4_5_7 8, 7
-#define INDEX_0_1_2_5_7 132, 5
-#define INDEX_0_2 43, 2
-#define INDEX_0_1_2_4_5_6 29, 6
-#define INDEX_0_2_4_5 110, 4
-#define INDEX_4 4, 1
-#define INDEX_0_6_7 282, 3
-#define INDEX_1_3_4_5_6_7 37, 6
-#define INDEX_0_3_6 251, 3
-#define INDEX_1_2_4_5 30, 4
-#define INDEX_0_2_5_6 187, 4
-#define INDEX_1_2 1, 2
-#define INDEX_0_1_2_3_4_5_6 0, 7
-#define INDEX_5_6_7 5, 3
-#define INDEX_2_4_6_7 76, 4
-#define INDEX_0_1_2_3_4_6 15, 6
-#define INDEX_0_3_7 273, 3
-#define INDEX_0_2_3_7 227, 4
-#define INDEX_0_1_2_3_4 0, 5
-#define INDEX_0_1_2 0, 3
-#define INDEX_3_6 65, 2
-#define INDEX_0_1_2_6 137, 4
-#define INDEX_0_3_4 116, 3
-#define INDEX_4_5_7 12, 3
-#define INDEX_0_6 282, 2
-#define INDEX_0_2_5_6_7 187, 5
-#define INDEX_0_2_4 110, 3
-#define INDEX_0_2_3_4_5 43, 5
-#define INDEX_0_5_7 279, 3
-#define INDEX_2_3_5 24, 3
-#define INDEX_2_3_5_7 58, 4
-#define INDEX_0_3 116, 2
-#define INDEX_0_4_5 202, 3
-#define INDEX_7 7, 1
-#define INDEX_0_1_2_4_5_7 68, 6
-#define INDEX_4_5_6 4, 3
-#define INDEX_1_4_5_7 158, 4
-#define INDEX_0_4_5_7 255, 4
-#define INDEX_6_7 6, 2
-#define INDEX_2_3_5_6_7 24, 5
-#define INDEX_1_2_3_7 123, 4
-#define INDEX_0_3_4_6_7 192, 5
-#define INDEX_1_2_3_4_5_6 1, 6
-#define INDEX_0_3_5_6_7 197, 5
-#define INDEX_0_1_3_4_5_6 36, 6
-#define INDEX_2_3_4_5_6 2, 5
-#define INDEX_1_2_6_7 138, 4
-#define INDEX_0_1_2_3_6_7 62, 6
-#define INDEX_0_1 0, 2
-#define INDEX_2_4_5 31, 3
-#define INDEX_2_3_4 2, 3
-#define INDEX_4_7 54, 2
-#define INDEX_2_3_5_6 24, 4
-#define INDEX_0_2_4_6_7 182, 5
-#define INDEX_0_1_2_3_6 62, 5
-#define INDEX_5_6 5, 2
-#define INDEX_0_1_7 267, 3
-#define INDEX_6 6, 1
-#define INDEX_0_1_3_4_5_6_7 36, 7
-#define INDEX_0_1_3_7 211, 4
-#define INDEX_0_1_3_4_7 142, 5
-#define INDEX_0_2_3_4 43, 4
-#define INDEX_0_3_4_5_6_7 116, 6
-#define INDEX_1_4_5 99, 3
-#define INDEX_1_2_5_6 81, 4
-#define INDEX_0_1_3_4_6_7 86, 6
-#define INDEX_0_1_2_4_7 127, 5
-#define INDEX_1_3_7 212, 3
-#define INDEX_1_2_3_6_7 63, 5
-#define INDEX_0_3_4_5_6 116, 5
-#define INDEX_3_4_5_6 3, 4
-#define INDEX_1_2_4_6_7 75, 5
-#define INDEX_1_2_3_6 63, 4
-#define INDEX_3_4 3, 2
-#define INDEX_1_6_7 224, 3
-#define INDEX_0_1_2_3_4_5 0, 6
-#define INDEX_0_1_3 36, 3
-#define INDEX_2_3 2, 2
-#define INDEX_1_7 268, 2
-#define INDEX_0_2_7 270, 3
-#define INDEX_0_2_4_5_7 177, 5
-#define INDEX_0_1_2_4_6_7 74, 6
-#define INDEX_0_5_6 263, 3
-#define INDEX_0_1_3_5 92, 4
-#define INDEX_0_1_2_3 0, 4
-#define INDEX_3_4_5_6_7 3, 5
-#define INDEX_0_2_3_6 172, 4
-#define INDEX_0_2_3_6_7 172, 5
-#define INDEX_0_1_2_5 80, 4
-#define INDEX_0_2_4_7 231, 4
-#define INDEX_0_1_2_7 207, 4
-#define INDEX_2_4 31, 2
-#define INDEX_1_2_3_4_5 1, 5
-#define INDEX_2_4_6 76, 3
-#define INDEX_0_7 285, 2
-#define INDEX_3_4_6_7 18, 4
-#define INDEX_2_3_4_5_7 10, 5
-#define INDEX_2_3_4_5_6_7 2, 6
-#define INDEX_5_7 13, 2
-#define INDEX_0_2_5_7 235, 4
-#define INDEX_1_2_3_4_7 51, 5
-#define INDEX_1_2_4_7 128, 4
-#define INDEX_1_4_5_6_7 99, 5
-#define INDEX_0_2_4_5_6 110, 5
-#define INDEX_2_5 82, 2
-#define INDEX_4_6_7 19, 3
-#define INDEX_0_1_3_6_7 152, 5
-#define INDEX_0_1_5 167, 3
-#define INDEX_1_2_4_5_7 69, 5
-#define INDEX_0 0, 1
-#define INDEX_0_3_5_6 197, 4
-#define INDEX_1_2_3_4_5_6_7 1, 7
-#define INDEX_0_4_6 259, 3
-#define INDEX_1_3_4_5_6 37, 5
-#define INDEX_0_1_2_3_5_7 56, 6
-#define INDEX_1_2_4 30, 3
-#define INDEX_0_3_4_5 116, 4
-#define INDEX_3_5_6 25, 3
-#define INDEX_3_7 125, 2
-#define INDEX_0_1_3_5_7 147, 5
-#define INDEX_1_2_4_5_6 30, 5
-#define INDEX_2_6_7 139, 3
-#define INDEX_0_1_2_3_4_7 50, 6
-#define INDEX_3_4_6 18, 3
-#define INDEX_2_5_6 82, 3
-#define INDEX_1_2_3_4_6 16, 5
-#define INDEX_0_3_5 197, 3
-#define INDEX_1_2_3_4_5_7 9, 6
-#define INDEX_0_1_4_5_6 98, 5
-#define INDEX_0_2_4_5_6_7 110, 6
-#define INDEX_3_4_5 3, 3
 #define INDEX_0_1_4 98, 3
-#define INDEX_1_2_7 208, 3
-#define INDEX_0_2_6 239, 3
-#define INDEX_1_4_7 216, 3
-#define INDEX_4_6 19, 2
-#define INDEX_0_2_4_6 182, 4
-#define INDEX_1_2_3_5 23, 4
-#define INDEX_4_5_6_7 4, 4
-#define INDEX_0_1_3_5_6 92, 5
-#define INDEX_0_1_2_3_4_6_7 15, 7
-#define INDEX_0_1_2_3_5_6 22, 6
-#define INDEX_0_3_4_6 192, 4
-#define INDEX_0_1_5_7 219, 4
-#define INDEX_0_1_2_5_6_7 80, 6
-#define INDEX_1_2_3 1, 3
-#define INDEX_3_5 25, 2
-#define INDEX_2_3_4_7 52, 4
-#define INDEX_5 5, 1
-#define INDEX_1_3_4_6_7 87, 5
-#define INDEX_0_1_2_3_5_6_7 22, 7
-#define INDEX_2_4_5_7 70, 4
-#define INDEX_1_3 37, 2
-#define INDEX_1_2_6 138, 3
-#define INDEX_1_2_3_4 1, 4
-#define INDEX_0_1_3_4 36, 4
-#define INDEX_1_3_5_6_7 93, 5
-#define INDEX_2_5_6_7 82, 4
-#define INDEX_0_4_5_6 202, 4
-#define INDEX_0_1_2_3_7 122, 5
-#define INDEX_1_2_5_7 133, 4
-#define INDEX_2_3_7 124, 3
-#define INDEX_0_1_5_6_7 167, 5
-#define INDEX_3_5_7 59, 3
-#define INDEX_0_1_4_5_7 157, 5
-#define INDEX_2 2, 1
-#define INDEX_1_5_7 220, 3
-#define INDEX_0_3_4_7 243, 4
-#define INDEX_2_7 209, 2
-#define INDEX_0_1_4_5 98, 4
-#define INDEX_0_2_3 43, 3
-#define INDEX_0_2_3_4_5_6_7 43, 7
-#define INDEX_3_5_6_7 25, 4
+#define INDEX_1_2_4_5 30, 4
 #define INDEX_0_2_3_5_6_7 104, 6
-#define INDEX_0_1_3_4_5 36, 5
-#define INDEX_0_1_3_4_6 86, 5
-#define INDEX_3_6_7 65, 3
-#define INDEX_0_2_3_5 104, 4
-#define INDEX_0_1_4_5_6_7 98, 6
-#define INDEX_0_2_5 187, 3
-#define INDEX_1_3_4_5 37, 4
-#define INDEX_1_3_5_6 93, 4
-#define INDEX_0_1_4_6 162, 4
-#define INDEX_2_3_6 64, 3
-#define INDEX_0_1_6_7 223, 4
-#define INDEX_0_1_2_4_6 74, 5
-#define INDEX_3_4_5_7 11, 4
-#define INDEX_1_2_3_5_6_7 23, 6
-#define INDEX_1_4_6_7 163, 4
-#define INDEX_0_1_4_6_7 162, 5
-#define INDEX_1_3_6 153, 3
-#define INDEX_1_2_4_6 75, 4
-#define INDEX_1_2_3_5_7 57, 5
-#define INDEX_0_3_6_7 251, 4
-#define INDEX_0_4_5_6_7 202, 5
-#define INDEX_1_3_4_6 87, 4
-#define INDEX_2_6 139, 2
-#define INDEX_0_1_5_6 167, 4
-#define INDEX_2_3_4_6_7 17, 5
+#define INDEX_2_3_4_5 2, 4
+#define INDEX_0_4_5_6 202, 4
+#define INDEX_0_3_4 116, 3
+#define INDEX_1_3_5_6_7 93, 5
+#define INDEX_2_3_4_7 52, 4
+#define INDEX_0_1_3_4_5_6_7 36, 7
 #define INDEX_1_2_3_4_6_7 16, 6
-#define INDEX_0_5_6_7 263, 4
-#define INDEX_1_4_5_6 99, 4
-#define INDEX_1 1, 1
-#define INDEX_1_3_5_7 148, 4
-#define INDEX_0_1_3_5_6_7 92, 6
-#define INDEX_0_1_2_3_5 22, 5
-#define INDEX_1_5_6 168, 3
-#define INDEX_0_4_7 276, 3
-#define INDEX_1_5_6_7 168, 4
-#define INDEX_1_2_5 81, 3
-#define INDEX_1_5 168, 2
-#define INDEX_1_4 99, 2
-#define INDEX_3 3, 1
-#define INDEX_1_3_4_7 143, 4
-#define INDEX_4_5 4, 2
-#define INDEX_0_4_6_7 259, 4
-#define INDEX_1_4_6 163, 3
-#define INDEX_2_3_4_6 17, 4
+#define INDEX_0_4_5_7 255, 4
+#define INDEX_0_4 202, 2
+#define INDEX_3_4_6_7 18, 4
+#define INDEX_2_6 139, 2
+#define INDEX_2_3_5_6 24, 4
+#define INDEX_0_1_2_3_4_6_7 15, 7
+#define INDEX_3_4 3, 2
+#define INDEX_1_4_7 216, 3
+#define INDEX_0_1_2_3_4_5_7 8, 7
+#define INDEX_1_2_4_6 75, 4
 #define INDEX_0_1_3_6 152, 4
-#define INDEX_0_2_3_5_6 104, 5
+#define INDEX_2_7 209, 2
+#define INDEX_0_2_3_6_7 172, 5
+#define INDEX_0_1_2_4_7 127, 5
+#define INDEX_4_5_6_7 4, 4
+#define INDEX_3_5_6_7 25, 4
+#define INDEX_1_6 224, 2
+#define INDEX_2_3_5_7 58, 4
+#define INDEX_1_3_4_6 87, 4
+#define INDEX_1_5 168, 2
+#define INDEX_1_6_7 224, 3
+#define INDEX_1_5_6 168, 3
+#define INDEX_1_5_7 220, 3
+#define INDEX_1_2_3_4_7 51, 5
+#define INDEX_2_3_6_7 64, 4
+#define INDEX_0_1_2_4_5_6 29, 6
+#define INDEX_3_5_6 25, 3
+#define INDEX_3_4_5_6_7 3, 5
+#define INDEX_5_6 5, 2
+#define INDEX_0_3_5 197, 3
+#define INDEX_1_2_4_5_6_7 30, 6
+#define INDEX_3_5 25, 2
+#define INDEX_5_7 13, 2
+#define INDEX_0_2_4_5_6_7 110, 6
+#define INDEX_0_1_2_3_4 0, 5
+#define INDEX_0_1_4_7 215, 4
+#define INDEX_0_1_2_4_5 29, 5
+#define INDEX_0_4_5 202, 3
+#define INDEX_1_3_4_7 143, 4
+#define INDEX_0_2_3_4_5_6_7 43, 7
+#define INDEX_2_3 2, 2
+#define INDEX_0_2_3_4 43, 4
+#define INDEX_1_2_5_6_7 81, 5
+#define INDEX_1_2_3 1, 3
+#define INDEX_0_4_5_6_7 202, 5
+#define INDEX_0_2_4_5_6 110, 5
+#define INDEX_3_7 125, 2
+#define INDEX_2_6_7 139, 3
+#define INDEX_1_3_5_6 93, 4
+#define INDEX_0_2_3_5 104, 4
+#define INDEX_1_3_4 37, 3
+#define INDEX_0_3_4_5_6 116, 5
+#define INDEX_0_1_2_5_6 80, 5
+#define INDEX_2_5 82, 2
+#define INDEX_0_1_5_7 219, 4
+#define INDEX_0_1_4_6 162, 4
+#define INDEX_1_2_3_4_5_6 1, 6
+#define INDEX_0_1_2_4 29, 4
+#define INDEX_6_7 6, 2
+#define INDEX_1_2_6 138, 3
+#define INDEX_1_3_5_7 148, 4
+#define INDEX_0_2_5 187, 3
+#define INDEX_0_7 285, 2
+#define INDEX_0_3_4_7 243, 4
+#define INDEX_2_3_4_5_6 2, 5
+#define INDEX_2_3_5 24, 3
+#define INDEX_1_2_5 81, 3
+#define INDEX_0_3_4_6_7 192, 5
+#define INDEX_0_1_2_3_5 22, 5
+#define INDEX_1_5_6_7 168, 4
+#define INDEX_1_3_6_7 153, 4
+#define INDEX_0_3_6_7 251, 4
+#define INDEX_1_3_4_5 37, 4
+#define INDEX_0_3_4_5 116, 4
+#define INDEX_0_2_3_7 227, 4
+#define INDEX_1_2_7 208, 3
+#define INDEX_3_4_5_6 3, 4
+#define INDEX_1_2_4 30, 3
+#define INDEX_0_1_2_3_5_6_7 22, 7
+#define INDEX_0_1_3 36, 3
+#define INDEX_4_5_7 12, 3
+#define INDEX_2_4_5_7 70, 4
+#define INDEX_0_1_2_3_4_6 15, 6
+#define INDEX_1_2_3_5 23, 4
+#define INDEX_0_1_3_5_6_7 92, 6
+#define INDEX_0_1_7 267, 3
+#define INDEX_0_1_2_4_5_6_7 29, 7
+#define INDEX_1_7 268, 2
+#define INDEX_4_5 4, 2
+#define INDEX_3_4_5_7 11, 4
+#define INDEX_0_3 116, 2
+#define INDEX_2 2, 1
+#define INDEX_0_3_5_6 197, 4
+#define INDEX_1_3_4_5_6_7 37, 6
+#define INDEX_0_1_3_4_6 86, 5
+#define INDEX_1_2_4_6_7 75, 5
+#define INDEX_0_1_3_4_7 142, 5
+#define INDEX_0_1_2_7 207, 4
+#define INDEX_0_6 282, 2
+#define INDEX_3_4_6 18, 3
+#define INDEX_1_3_5 93, 3
+#define INDEX_0_1_2_3_4_7 50, 6
+#define INDEX_6 6, 1
+#define INDEX_2_4_5 31, 3
+#define INDEX_0_1_3_5_7 147, 5
+#define INDEX_1_2_4_5_7 69, 5
+#define INDEX_1_4 99, 2
+#define INDEX_0_1_2_3_4_5_6_7 0, 8
+#define INDEX_0_2_5_6_7 187, 5
+#define INDEX_2_3_4_5_7 10, 5
+#define INDEX_0_1_2_3_7 122, 5
+#define INDEX_0_1_3_5 92, 4
+#define INDEX_1_4_5_6_7 99, 5
+#define INDEX_1_2_3_5_6 23, 5
+#define INDEX_1_2_3_4_5_6_7 1, 7
+#define INDEX_0_1_2_4_6_7 74, 6
+#define INDEX_1_2_3_4_5 1, 5
+#define INDEX_0_1_4_5_6 98, 5
+#define INDEX_0_3_5_6_7 197, 5
+#define INDEX_0_2_3_6 172, 4
 #define INDEX_0_2_6_7 239, 4
+#define INDEX_0_1_2_5 80, 4
+#define INDEX_1_2_3_4_5_7 9, 6
+#define INDEX_1_4_5_7 158, 4
+#define INDEX_0_2_3_4_5_6 43, 6
+#define INDEX_0_3_4_5_6_7 116, 6
+#define INDEX_0_1_2_3 0, 4
+#define INDEX_0_1_3_6_7 152, 5
+#define INDEX_0_2_3_5_6 104, 5
+#define INDEX_0_3_7 273, 3
+#define INDEX_1_2_4_5_6 30, 5
+#define INDEX_3 3, 1
+#define INDEX_1_4_5_6 99, 4
+#define INDEX_2_3_4_6 17, 4
+#define INDEX_0_3_5_7 247, 4
+#define INDEX_1_2_3_7 123, 4
+#define INDEX_1_3_4_5_6 37, 5
+#define INDEX_2_3_5_6_7 24, 5
+#define INDEX_4_6_7 19, 3
+#define INDEX_2_3_7 124, 3
+#define INDEX_0 0, 1
+#define INDEX_0_2_7 270, 3
+#define INDEX_2_5_6_7 82, 4
+#define INDEX_2_3_4_5_6_7 2, 6
+#define INDEX_1_2_5_6 81, 4
+#define INDEX_5 5, 1
+#define INDEX_2_4_6_7 76, 4
+#define INDEX_2_4_5_6_7 31, 5
+#define INDEX_2_3_6 64, 3
+#define INDEX_0_2 43, 2
+#define INDEX_1_4_6 163, 3
+#define INDEX_1_2_3_5_7 57, 5
+#define INDEX_4_7 54, 2
+#define INDEX_1_2_3_6 63, 4
+#define INDEX_0_1_3_4_6_7 86, 6
+#define INDEX_0_1_6 223, 3
+#define INDEX_0_1_3_4 36, 4
+#define INDEX_0_6_7 282, 3
+#define INDEX_0_1_4_5 98, 4
+#define INDEX_1_3_7 212, 3
+#define INDEX_2_3_4_6_7 17, 5
+#define INDEX_0_1_2_3_5_6 22, 6
+#define INDEX_1_3_6 153, 3
+#define INDEX_0_2_3_4_5 43, 5
+#define INDEX_4 4, 1
+#define INDEX_2_3_4 2, 3
+#define INDEX_0_1_2 0, 3
+#define INDEX_2_5_6 82, 3
+#define INDEX_2_4_5_6 31, 4
+#define INDEX_0_2_4 110, 3
+#define INDEX_0_1_3_7 211, 4
+#define INDEX_1_2_4_7 128, 4
+#define INDEX_1_3 37, 2
+#define INDEX_0_5_6_7 263, 4
+#define INDEX_0_1_2_3_4_5 0, 6
+#define INDEX_0_1_2_4_5_7 68, 6
+#define INDEX_0_4_7 276, 3
+#define INDEX_3_6_7 65, 3
+#define INDEX_4_5_6 4, 3
+#define INDEX_0_1_2_3_4_5_6 0, 7
+#define INDEX_0_1 0, 2
+#define INDEX_1_2_6_7 138, 4
+#define INDEX_0_1_2_3_6 62, 5
+#define INDEX_0_5 263, 2
+#define INDEX_0_1_4_5_6_7 98, 6
+#define INDEX_0_3_6 251, 3
+#define INDEX_0_1_5_6_7 167, 5
+#define INDEX_2_4 31, 2
+#define INDEX_0_1_4_6_7 162, 5
+#define INDEX_0_1_3_4_5_6 36, 6
+#define INDEX_1_2_3_4_6 16, 5
+#define INDEX_0_2_4_7 231, 4
+#define INDEX_0_1_2_5_7 132, 5
+#define INDEX_0_1_5_6 167, 4
+#define INDEX_0_3_4_6 192, 4
+#define INDEX_1_3_4_6_7 87, 5
+#define INDEX_0_1_4_5_7 157, 5
+#define INDEX_1_2_5_7 133, 4
+#define INDEX_0_1_2_4_6 74, 5
+#define INDEX_0_1_2_6_7 137, 5
+#define INDEX_0_1_6_7 223, 4
+#define INDEX_0_2_5_6 187, 4
+#define INDEX_3_4_5 3, 3
+#define INDEX_1_2_3_4 1, 4
+#define INDEX_0_1_2_6 137, 4
+#define INDEX_1_2 1, 2
+#define INDEX_2_4_7 129, 3
+#define INDEX_0_2_4_6_7 182, 5
+#define INDEX_0_2_4_6 182, 4
+#define INDEX_0_5_6 263, 3
+#define INDEX_1 1, 1
+#define INDEX_5_6_7 5, 3
+#define INDEX_0_2_4_5_7 177, 5
+#define INDEX_0_1_2_3_5_7 56, 6
+#define INDEX_0_5_7 279, 3
+#define INDEX_3_6 65, 2
+#define INDEX_0_1_3_4_5 36, 5
+#define INDEX_0_1_5 167, 3
+#define INDEX_0_2_5_7 235, 4
+#define INDEX_0_4_6_7 259, 4
+#define INDEX_2_4_6 76, 3
+#define INDEX_3_5_7 59, 3
+#define INDEX_2_5_7 134, 3
+#define INDEX_1_4_6_7 163, 4
+#define INDEX_3_4_7 53, 3
+#define INDEX_1_4_5 99, 3
+#define INDEX_0_2_3 43, 3
+#define INDEX_0_1_3_5_6 92, 5
+#define INDEX_0_2_6 239, 3
+#define INDEX_0_1_2_3_6_7 62, 6
+#define INDEX_4_6 19, 2
+#define INDEX_0_1_2_5_6_7 80, 6
+#define INDEX_1_2_3_5_6_7 23, 6
+#define INDEX_0_2_4_5 110, 4
+#define INDEX_7 7, 1
+#define INDEX_1_2_3_6_7 63, 5
+#define INDEX_0_4_6 259, 3
 
 _Static_assert(64 == ECS_LOCAL_COMPONENT_MAX, "Regenerate file with new ECS_LOCAL_COMPONENT_MAX value.");
 
@@ -331,8 +331,8 @@ _Static_assert(64 == ECS_LOCAL_COMPONENT_MAX, "Regenerate file with new ECS_LOCA
 #define COMP_I (ECSComponentStorageTypeIndexed | 1)
 #define ECS_NAME_COMPONENT (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierDestructor | (ECS_NAME_COMPONENT_ID))
 #define INDEXED_K (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierDestructor | 3)
-#define INDEXED_H (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierDestructor | 4)
-#define INDEXED_TAG (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierTag | 5)
+#define INDEXED_TAG (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierTag | 4)
+#define INDEXED_H (ECSComponentStorageTypeIndexed | ECSComponentStorageModifierDestructor | 5)
 #define LOCAL_K (ECSComponentStorageTypeLocal | (0 << 7) | ECSComponentStorageModifierDestructor | 0)
 #define LOCAL_H (ECSComponentStorageTypeLocal | ((((LOCAL_K & ~ECSComponentStorageMask) >> 7) + sizeof(LocalK)) << 7) | ECSComponentStorageModifierDestructor | 1)
 #define LOCAL_DUPLICATE_B (ECSComponentStorageTypeLocal | ((((LOCAL_H & ~ECSComponentStorageMask) >> 7) + sizeof(LocalH)) << 7) | ECSComponentStorageModifierDuplicate | 2)
@@ -363,8 +363,8 @@ const ECSComponentID ComponentIDs[ECS_COMPONENT_MAX] = {
     [ECS_COMPONENT_BASE_INDEX(COMP_I)] = COMP_I,
     [ECS_COMPONENT_BASE_INDEX(ECS_NAME_COMPONENT)] = ECS_NAME_COMPONENT,
     [ECS_COMPONENT_BASE_INDEX(INDEXED_K)] = INDEXED_K,
-    [ECS_COMPONENT_BASE_INDEX(INDEXED_H)] = INDEXED_H,
     [ECS_COMPONENT_BASE_INDEX(INDEXED_TAG)] = INDEXED_TAG,
+    [ECS_COMPONENT_BASE_INDEX(INDEXED_H)] = INDEXED_H,
     [ECS_COMPONENT_BASE_INDEX(LOCAL_K)] = LOCAL_K,
     [ECS_COMPONENT_BASE_INDEX(LOCAL_H)] = LOCAL_H,
     [ECS_COMPONENT_BASE_INDEX(LOCAL_DUPLICATE_B)] = LOCAL_DUPLICATE_B,
@@ -422,8 +422,8 @@ const size_t IndexedComponentSizes[ECS_INDEXED_COMPONENT_MAX] = {
     sizeof(CompI),
     sizeof(ECSNameComponent),
     sizeof(IndexedK),
-    sizeof(IndexedH),
     sizeof(IndexedTag),
+    sizeof(IndexedH),
 };
 const size_t DuplicateIndexedComponentSizes[ECS_INDEXED_COMPONENT_MAX] = {
     0,
@@ -497,8 +497,8 @@ const ECSComponentDestructor IndexedComponentDestructors[ECS_INDEXED_COMPONENT_M
     NULL,
     ECSNameComponentDestructor,
     TrackDestructor,
-    TestDestructor,
     NULL,
+    TestDestructor,
 };
 const ECSComponentDestructor DuplicateIndexedComponentDestructors[ECS_INDEXED_COMPONENT_MAX] = {
     NULL,
@@ -572,8 +572,8 @@ const CCReflectType IndexedComponentTypes[ECS_INDEXED_COMPONENT_MAX] = {
     &CC_REFLECT(CompI),
     &CC_REFLECT(ECSNameComponent),
     &CC_REFLECT(IndexedK),
-    &CC_REFLECT(IndexedH),
     &CC_REFLECT(IndexedTag),
+    &CC_REFLECT(IndexedH),
 };
 const CCReflectType DuplicateIndexedComponentTypes[ECS_INDEXED_COMPONENT_MAX] = {
     NULL,
@@ -1353,8 +1353,8 @@ const CCString ComponentExpressionNames[ECS_COMPONENT_MAX] = {
     [ECS_COMPONENT_BASE_INDEX(COMP_I)] = CC_STRING("comp-i"),
     [ECS_COMPONENT_BASE_INDEX(ECS_NAME_COMPONENT)] = CC_STRING("name"),
     [ECS_COMPONENT_BASE_INDEX(INDEXED_K)] = CC_STRING("indexed-k"),
-    [ECS_COMPONENT_BASE_INDEX(INDEXED_H)] = CC_STRING("indexed-h"),
     [ECS_COMPONENT_BASE_INDEX(INDEXED_TAG)] = CC_STRING("indexed-tag"),
+    [ECS_COMPONENT_BASE_INDEX(INDEXED_H)] = CC_STRING("indexed-h"),
     [ECS_COMPONENT_BASE_INDEX(LOCAL_K)] = CC_STRING("local-k"),
     [ECS_COMPONENT_BASE_INDEX(LOCAL_H)] = CC_STRING("local-h"),
     [ECS_COMPONENT_BASE_INDEX(LOCAL_DUPLICATE_B)] = CC_STRING("local-duplicate-b"),
