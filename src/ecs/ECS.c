@@ -38,6 +38,7 @@
 CC_ARRAY_DECLARE(ECSEntity);
 
 typedef struct {
+    size_t tickIndex;
     const ECSSystemAccess *access;
     ECSTime time;
     ECSSystemUpdateCallback update;
@@ -74,6 +75,7 @@ static CCConcurrentPool(ECSSystemExecutor, ECS_SYSTEM_EXECUTION_POOL_MAX) Execut
 typedef struct {
     size_t count;
     struct {
+        size_t tickIndex;
         const ECSSystemAccess *access;
         ECSExecutionGroup *executionGroup;
     } release[ECS_COMPONENT_ACCESS_RELEASE_MAX];
@@ -171,6 +173,7 @@ int ECSWorker(ECSWorkerID WorkerID)
             }
             
             const size_t Index = AccessReleases[WorkerID][LocalAccessReleaseIndex].count++;
+            AccessReleases[WorkerID][LocalAccessReleaseIndex].release[Index].tickIndex = Executor->tickIndex;
             AccessReleases[WorkerID][LocalAccessReleaseIndex].release[Index].access = Access;
             AccessReleases[WorkerID][LocalAccessReleaseIndex].release[Index].executionGroup = Executor->executionGroup;
             
@@ -217,12 +220,12 @@ typedef enum {
     ECSSystemStatusCompleted
 } ECSSystemStatus;
 
-static ECSSystemStatus ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemIndex, const ECSSystemRange *Range, const ECSSystemAccess *Access, const ECSSystemUpdate *Update, ECSContextAccessFlag *AccessFlags, uint16_t *Refs, uint8_t *Block, uint8_t BlockBit, ECSExecutionGroup *State, CCConcurrentPoolStage *Stage)
+static ECSSystemStatus ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t SystemIndex, const ECSSystemRange *Range, const ECSSystemAccess *Access, const ECSSystemUpdate *Update, ECSContextAccessFlag *AccessFlags, uint16_t *Refs, size_t TickIndex, uint8_t *Block, uint8_t BlockBit, ECSExecutionGroup *State, CCConcurrentPoolStage *Stage)
 {
     for (size_t Loop = 0, IdCount = Access[SystemIndex].read.count; Loop < IdCount; Loop++)
     {
         const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop]);
-        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+        const size_t AccessFlagByteIndex = ((ComponentIndex * 2) + (ECS_COMPONENT_MAX * 2 * TickIndex)) / (sizeof(ECSContextAccessFlag) * 8);
         
         if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 1) return ECSSystemStatusDeferred;
     }
@@ -230,7 +233,7 @@ static ECSSystemStatus ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t
     for (size_t Loop = 0, IdCount = Access[SystemIndex].write.count; Loop < IdCount; Loop++)
     {
         const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop]);
-        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+        const size_t AccessFlagByteIndex = ((ComponentIndex * 2) + (ECS_COMPONENT_MAX * 2 * TickIndex)) / (sizeof(ECSContextAccessFlag) * 8);
         
         if ((AccessFlags[AccessFlagByteIndex] >> ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8))) & 3) return ECSSystemStatusDeferred;
     }
@@ -238,6 +241,7 @@ static ECSSystemStatus ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t
     *Block |= 1 << BlockBit;
     
     ECSSystemExecutor Executor = {
+        .tickIndex = TickIndex,
         .access = &Access[SystemIndex],
         .time = Time,
         .update = ECS_SYSTEM_UPDATE_GET_UPDATE(Update[SystemIndex]),
@@ -348,19 +352,19 @@ static ECSSystemStatus ECSSubmitSystem(ECSContext *Context, ECSTime Time, size_t
     for (size_t Loop = 0, IdCount = Access[SystemIndex].read.count; Loop < IdCount; Loop++)
     {
         const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].read.ids[Loop]);
-        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+        const size_t AccessFlagByteIndex = ((ComponentIndex * 2) + (ECS_COMPONENT_MAX * 2 * TickIndex)) / (sizeof(ECSContextAccessFlag) * 8);
         
         AccessFlags[AccessFlagByteIndex] |= 2 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8));
-        Refs[ComponentIndex] += RefCount;
+        Refs[ComponentIndex + (ECS_COMPONENT_MAX * TickIndex)] += RefCount;
     }
     
     for (size_t Loop = 0, IdCount = Access[SystemIndex].write.count; Loop < IdCount; Loop++)
     {
         const size_t ComponentIndex = ECSComponentBaseIndex(Access[SystemIndex].write.ids[Loop]);
-        const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+        const size_t AccessFlagByteIndex = ((ComponentIndex * 2) + (ECS_COMPONENT_MAX * 2 * TickIndex)) / (sizeof(ECSContextAccessFlag) * 8);
         
         AccessFlags[AccessFlagByteIndex] |= 1 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8));
-        Refs[ComponentIndex] += RefCount;
+        Refs[ComponentIndex + (ECS_COMPONENT_MAX * TickIndex)] += RefCount;
     }
     
     return ECSSystemStatusRunning;
@@ -370,22 +374,23 @@ static inline void ECSReleaseAccessRefs(size_t Worker, uint16_t *Refs, ECSContex
 {
     for (size_t Loop = 0, Count = AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].count; Loop < Count; Loop++)
     {
+        const size_t TickIndex = AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].release[Loop].tickIndex;
         const ECSSystemAccess *Access = AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].release[Loop].access;
         
         for (size_t Loop2 = 0, IdCount = Access->read.count; Loop2 < IdCount; Loop2++)
         {
             const size_t ComponentIndex = ECSComponentBaseIndex(Access->read.ids[Loop2]);
-            const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+            const size_t AccessFlagByteIndex = ((ComponentIndex * 2) + (ECS_COMPONENT_MAX * 2 * TickIndex)) / (sizeof(ECSContextAccessFlag) * 8);
             
-            if (!--Refs[ComponentIndex]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
+            if (!--Refs[ComponentIndex + (ECS_COMPONENT_MAX * TickIndex)]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
         }
         
         for (size_t Loop2 = 0, IdCount = Access->write.count; Loop2 < IdCount; Loop2++)
         {
             const size_t ComponentIndex = ECSComponentBaseIndex(Access->write.ids[Loop2]);
-            const size_t AccessFlagByteIndex = (ComponentIndex * 2) / (sizeof(ECSContextAccessFlag) * 8);
+            const size_t AccessFlagByteIndex = ((ComponentIndex * 2) + (ECS_COMPONENT_MAX * 2 * TickIndex)) / (sizeof(ECSContextAccessFlag) * 8);
             
-            if (!--Refs[ComponentIndex]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
+            if (!--Refs[ComponentIndex + (ECS_COMPONENT_MAX * TickIndex)]) AccessFlags[AccessFlagByteIndex] &= ~(3 << ((ComponentIndex * 2) % (sizeof(ECSContextAccessFlag) * 8)));
         }
         
         AccessReleases[Worker][LocalAccessReleaseIndexes[Worker]].release[Loop].executionGroup->running--;
@@ -400,46 +405,96 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
     CCAssertLog(Groups, "Groups must not be null");
     CCAssertLog(State, "State must not be null");
     
-    size_t RunGroupIndexes[GroupCount], RunCount = 0;
-    ECSTime GroupTimes[GroupCount];
+    ECSBatchTick(&(ECSTickState){
+        .context = Context,
+        .groups = Groups,
+        .groupCount = GroupCount,
+        .state = State,
+        .deltaTime = DeltaTime
+    }, 1);
+}
+
+void ECSBatchTick(ECSTickState *TickState, size_t Count)
+{
+    CCAssertLog(TickState, "TickState must not be null");
     
-    for (size_t Loop = 0; Loop < GroupCount; Loop++)
+    size_t MaxGroupCount = 0;
+    for (size_t TickIndex = 0; TickIndex < Count; TickIndex++)
     {
-        State[Loop].running = 0;
+        MaxGroupCount = CCMax(MaxGroupCount, TickState[TickIndex].groupCount);
         
-        State[Loop].time += DeltaTime;
-        ECSTime Ticks = State[Loop].time / Groups[Loop].freq;
-        State[Loop].time -= Ticks * Groups[Loop].freq;
+        CCAssertLog(TickState[TickIndex].context, "Context must not be null");
+        CCAssertLog(TickState[TickIndex].groups, "Groups must not be null");
+        CCAssertLog(TickState[TickIndex].state, "State must not be null");
+    }
+    
+    size_t RunGroupIndexes[Count * MaxGroupCount], RunGroupTickIndexes[Count * MaxGroupCount], RunCount = 0;
+    ECSTime GroupTimes[Count * MaxGroupCount];
+    
+    for (size_t TickIndex = 0; TickIndex < Count; TickIndex++)
+    {
+        const ECSGroup *Groups = TickState[TickIndex].groups;
+        const size_t GroupCount = TickState[TickIndex].groupCount;
+        ECSExecutionGroup *State = TickState[TickIndex].state;
+        const ECSTime DeltaTime = TickState[TickIndex].deltaTime;
         
-        if (Ticks)
+        for (size_t Loop = 0; Loop < GroupCount; Loop++)
         {
-            State[Loop].executing = 0;
-            RunGroupIndexes[RunCount++] = Loop;
+            State[Loop].running = 0;
             
-            if (!Groups[Loop].dynamic)
+            State[Loop].time += DeltaTime;
+            ECSTime Ticks = State[Loop].time / Groups[Loop].freq;
+            State[Loop].time -= Ticks * Groups[Loop].freq;
+            
+            if (Ticks)
             {
-                State[Loop].time += (Ticks - 1) * Groups[Loop].freq;
-                Ticks = 1;
+                State[Loop].executing = 0;
+                RunGroupTickIndexes[RunCount] = TickIndex;
+                RunGroupIndexes[RunCount++] = Loop;
+                
+                if (!Groups[Loop].dynamic)
+                {
+                    State[Loop].time += (Ticks - 1) * Groups[Loop].freq;
+                    Ticks = 1;
+                }
+                
+                GroupTimes[Loop] = Ticks * Groups[Loop].freq;
             }
             
-            GroupTimes[Loop] = Ticks * Groups[Loop].freq;
+            else State[Loop].executing = SIZE_MAX;
         }
-        
-        else State[Loop].executing = SIZE_MAX;
     }
     
     CCConcurrentPoolStage Stage = CCConcurrentPoolStageBegin(SystemExecutorPool);
     
     size_t TargetIndex = 0;
     
-    ECSContextAccessFlag AccessFlags[((ECS_COMPONENT_MAX * 2) / (sizeof(ECSContextAccessFlag) * 8)) + 1] = {0};
+#ifdef ECS_BATCH_TICK_MAX
+    CCAssertLog(Count <= ECS_BATCH_TICK_MAX, "Count must not exceed ECS_BATCH_TICK_MAX");
     
-    static uint16_t Refs[ECS_COMPONENT_MAX];
+    static ECSContextAccessFlag AccessFlags[((ECS_COMPONENT_MAX * 2 * ECS_BATCH_TICK_MAX) / (sizeof(ECSContextAccessFlag) * 8)) + 1];
+    
+    static uint16_t Refs[ECS_COMPONENT_MAX * ECS_BATCH_TICK_MAX];
+#else
+    ECSContextAccessFlag AccessFlags[((ECS_COMPONENT_MAX * 2 * Count) / (sizeof(ECSContextAccessFlag) * 8)) + 1];
+    
+    memset(AccessFlags, 0, sizeof(AccessFlags));
+    
+    uint16_t Refs[ECS_COMPONENT_MAX * Count];
+    
+    memset(Refs, 0, sizeof(Refs));
+#endif
     
     while (RunCount)
     {
         for (size_t Loop = 0; Loop < RunCount; Loop++)
         {
+            const size_t TickIndex = RunGroupTickIndexes[Loop];
+            
+            ECSContext *Context = TickState[TickIndex].context;
+            const ECSGroup *Groups = TickState[TickIndex].groups;
+            ECSExecutionGroup *State = TickState[TickIndex].state;
+            
             const size_t Index = RunGroupIndexes[Loop];
             const size_t Priority = State[Index].executing;
             
@@ -467,7 +522,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
                             {
                                 const size_t SystemIndex = Loop3 + (Loop2 * 8);
                                 
-                                switch (ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, &State[Index].state[Loop2], Loop3, &State[Index], &Stage))
+                                switch (ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, TickIndex, &State[Index].state[Loop2], Loop3, &State[Index], &Stage))
                                 {
                                     case ECSSystemStatusRunning:
                                         Completed = FALSE;
@@ -488,7 +543,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
                                                     {
                                                         const size_t SystemIndex = Loop5 + (Loop4 * 8);
                                                         
-                                                        ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, Block, Loop5, &State[Index], &Stage);
+                                                        ECSSubmitSystem(Context, GroupTimes[Index], SystemIndex, Range, Access, Update, AccessFlags, Refs, TickIndex, Block, Loop5, &State[Index], &Stage);
                                                     }
                                                 }
                                             }
@@ -518,6 +573,7 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
                         if (++State[Index].executing >= Groups[Index].priorities.count)
                         {
                             RunGroupIndexes[Loop] = RunGroupIndexes[--RunCount];
+                            RunGroupTickIndexes[Loop] = RunGroupTickIndexes[RunCount];
                         }
                         
                         memset(State[Index].state, 0, BlockCount);
@@ -537,9 +593,15 @@ void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECS
         {
         WaitForWorkers:;
             size_t RunningCount = 0;
-            for (size_t Loop = 0; Loop < GroupCount; Loop++)
+            for (size_t TickIndex = 0; TickIndex < Count; TickIndex++)
             {
-                RunningCount += State[Loop].running;
+                const size_t GroupCount = TickState[TickIndex].groupCount;
+                ECSExecutionGroup *State = TickState[TickIndex].state;
+                
+                for (size_t Loop = 0; Loop < GroupCount; Loop++)
+                {
+                    RunningCount += State[Loop].running;
+                }
             }
             
             if (!RunningCount) goto Finished;

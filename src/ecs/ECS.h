@@ -235,6 +235,10 @@
  *                  ##### ECS_IGNORE_DEAD_ENTITIES
  *                  If dead entities should be ignored by functions that expect living entities, then @b ECS_IGNORE_DEAD_ENTITIES can be defined as 1 to ignore dead entities. Ignoring dead entities
  *                  is slower than not ignoring them (when assertions are disabled), but it may make certain applications of the ECS easier.
+ *
+ *                  ##### ECS_BATCH_TICK_MAX
+ *                  If defined it will avoid certain runtime intialisations that otherwise would have depended on the dynamic batch count. If set it must be equal to or greather than the largest batch
+ *                  size passed to @b ECSBatchTick.
  */
 
 #ifndef CommonGameKit_ECS_h
@@ -365,6 +369,19 @@ typedef struct {
     ECSTime time;
     size_t running;
 } ECSExecutionGroup;
+
+typedef struct {
+    /// The context to be used for the update tick.
+    ECSContext *context;
+    /// The system groups to be used for the update tick.
+    const ECSGroup *groups;
+    /// The number of system groups.
+    size_t groupCount;
+    /// The array of execution state (size of @b GroupCount) to be used by the ECS. The @b state field should be at least as big as the maximum number of systems in the largest priority of any group.
+    ECSExecutionGroup *state;
+    /// The delta time of the tick.
+    ECSTime deltaTime;
+} ECSTickState;
 
 /*!
  * @brief Worker thread ID;
@@ -529,6 +546,14 @@ void ECSInit(void);
  * @param DeltaTime The delta time of the tick.
  */
 void ECSTick(ECSContext *Context, const ECSGroup *Groups, size_t GroupCount, ECSExecutionGroup *State, ECSTime DeltaTime);
+
+/*!
+ * @brief Batch update the ECS.
+ * @description This will perform all ticks concurrently for the provided contexts.
+ * @param TickState The ECS ticks to run together.
+ * @param Count The size of the batch.
+ */
+void ECSBatchTick(ECSTickState *TickState, size_t Count);
 
 /*!
  * @brief Add an archetype component.
