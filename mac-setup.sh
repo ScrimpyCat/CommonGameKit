@@ -11,6 +11,6 @@ cd ../../libpng
 cp scripts/pnglibconf.h.prebuilt pnglibconf.h
 rm -rf build
 mkdir build && cd build
-cmake -DPNG_BUILD_ZLIB=ON -DZLIB_INCLUDE_DIR=../zlib -G Xcode ..
+cmake -DZLIB_ROOT=../../zlib -DZLIB_INCLUDE_DIR=../../zlib -G Xcode ..
 sed -i -e 's/"make.*postBuildPhase.*"/""/' libpng.xcodeproj/project.pbxproj
 sed -i -e 's/SDKROOT[^;]*/MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)"; SDKROOT = macosx/' libpng.xcodeproj/project.pbxproj
