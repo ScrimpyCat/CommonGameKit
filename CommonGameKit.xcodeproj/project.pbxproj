@@ -462,14 +462,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B541DCD7149008D6C1D /* zlib.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 66FAD8027D724137B5B2D271;
+			remoteGlobalIDString = 34C789091CF738442AB08A6F;
 			remoteInfo = zlibstatic;
 		};
 		F3897B9E1DCD7514008D6C1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 0C41DD0377CA4F3C8D0E2AED;
+			remoteGlobalIDString = 21167BFDD2B17169AEE647C1;
 			remoteInfo = png_static;
 		};
 		F3897BD51DCD7DB3008D6C1D /* PBXContainerItemProxy */ = {
@@ -478,6 +478,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F362026617AC3FFD00153E85;
 			remoteInfo = CommonC;
+		};
+		F3A49E2E2D8285FE00DC1D15 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3897B671DCD715A008D6C1D /* libpng.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8E9DADCF4A7D43669E38A98E;
+			remoteInfo = png_framework;
 		};
 		F3AF32851DCCD29100CAD472 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -676,6 +683,7 @@
 		F3A304A0298ED2E800BABB22 /* ECSTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSTool.h; sourceTree = "<group>"; };
 		F3A304A22994432B00BABB22 /* ECSEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSEntity.h; sourceTree = "<group>"; };
 		F3A304AA299443F800BABB22 /* ECSArchetype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSArchetype.h; sourceTree = "<group>"; };
+		F3A49E3E2D828D2000DC1D15 /* libpng16.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng16.a; path = deps/libpng/build/Release/libpng16.a; sourceTree = "<group>"; };
 		F3A9F0DA2281CFAD00F52287 /* GFXCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXCommandBuffer.h; sourceTree = "<group>"; };
 		F3A9F0DB2281CFAD00F52287 /* GFXCommandBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GFXCommandBuffer.c; sourceTree = "<group>"; };
 		F3A9F0FD228444CD00F52287 /* GLCommandBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GLCommandBuffer.h; sourceTree = "<group>"; };
@@ -886,9 +894,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */,
 				F342B65B2239147C00B44319 /* CommonObjc.framework in Frameworks */,
 				F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */,
-				F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */,
 				F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */,
 				F3AF34C81DCCF4FE00CAD472 /* CommonC.framework in Frameworks */,
 			);
@@ -963,6 +971,7 @@
 		F342B65A2239147C00B44319 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F3A49E3E2D828D2000DC1D15 /* libpng16.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1072,6 +1081,7 @@
 			isa = PBXGroup;
 			children = (
 				F3897B7F1DCD715A008D6C1D /* png-fix-itxt */,
+				F3A49E2F2D8285FE00DC1D15 /* png.framework/png */,
 				F361E4D92A4763D300E52A6D /* libpng16d.dylib */,
 				F3897B811DCD715A008D6C1D /* libpng16d.a */,
 				F3897B831DCD715A008D6C1D /* pngfix */,
@@ -2063,7 +2073,7 @@
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			name = libpng16d.dylib;
-			path = libpng16d.16.40.0.dylib;
+			path = libpng16d.16.47.0.dylib;
 			remoteRef = F361E4D82A4763D300E52A6D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2157,6 +2167,14 @@
 			fileType = "compiled.mach-o.executable";
 			path = pngvalid;
 			remoteRef = F3897B8C1DCD715A008D6C1D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3A49E2F2D8285FE00DC1D15 /* png.framework/png */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			name = png.framework/png;
+			path = png.framework;
+			remoteRef = F3A49E2E2D8285FE00DC1D15 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3AF34C11DCCF4EC00CAD472 /* CommonC.framework */ = {
@@ -2510,6 +2528,10 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/libpng/build/Release",
+				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2696,6 +2718,10 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/libpng/build/Release",
+				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2733,6 +2759,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/deps/libpng/build/Release",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
