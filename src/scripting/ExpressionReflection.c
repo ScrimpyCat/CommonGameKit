@@ -461,9 +461,11 @@ static void CCExpressionReflectionCastFloat(long double Value, const CCReflectFl
             *(double*)Data = Value;
             break;
             
+#if LDBL_MAX_EXP > DBL_MAX_EXP
         case sizeof(long double):
             *(long double*)Data = Value;
             break;
+#endif
             
         default:
             CCAssertLog(0, "Unable to cast to float of size (%zu)", Float->size);
