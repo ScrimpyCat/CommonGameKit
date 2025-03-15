@@ -60,6 +60,20 @@
  *                  - @b ECSDuplicateIndexedComponentDestructors
  *                  - @b ECSDuplicateLocalComponentDestructors
  *
+ *                  Component Types
+ *                  - @b ECSArchetypeComponentTypes
+ *                  - @b ECSPackedComponentTypes
+ *                  - @b ECSIndexedComponentTypes
+ *                  - @b ECSLocalComponentTypes
+ *                  - @b ECSDuplicateArchetypeComponentTypes
+ *                  - @b ECSDuplicatePackedComponentTypes
+ *                  - @b ECSDuplicateIndexedComponentTypes
+ *                  - @b ECSDuplicateLocalComponentTypes
+ *
+ *                  Component Expressions
+ *                  - @b ECSExpressionComponentExpressionNames
+ *                  - @b ECSExpressionComponentExpressionMaps
+ *
  *                  Mutable State Sizes
  *                  - @b ECSMutableStateEntitiesMax
  *                  - @b ECSMutableStateReplaceRegistryMax
