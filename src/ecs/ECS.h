@@ -1301,7 +1301,7 @@ static inline void ECSEntityRemoveDuplicateComponent(ECSContext *Context, ECSEnt
                                 for (size_t Loop = 0; Loop < DuplicatesCount; Loop++) Destructor(CCArrayGetElementAtIndex(Duplicates, Loop), ID);
                             }
                             
-                            CCArrayDestroy(Duplicates);
+                            CCArrayRemoveAllElements(Duplicates);
                         }
                         
                         switch (ID & ECSComponentStorageTypeMask)
