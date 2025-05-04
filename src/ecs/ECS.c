@@ -709,12 +709,14 @@ void ECSEntityDestroy(ECSContext *Context, const ECSEntity *Entities, size_t Cou
         
         ECSComponentID IDs[32];
         size_t ComponentCount = 0;
-        const size_t BlockSize = CC_BITS_BLOCK_SIZE(Refs->has);
+        size_t BlockSize = CC_BITS_BLOCK_SIZE(Refs->has);
         
         for (size_t Loop2 = 0; Loop2 < ECS_COMPONENT_MAX; Loop2 += BlockSize)
         {
             if (CCBitsAny(Refs->has, Loop2, BlockSize))
             {
+                if ((Loop2 + BlockSize) > ECS_COMPONENT_MAX) BlockSize -= (ECS_COMPONENT_MAX % BlockSize);
+                
                 for (size_t Loop3 = 0; Loop3 < BlockSize; Loop3++)
                 {
                     const size_t Index = Loop2 + Loop3;
