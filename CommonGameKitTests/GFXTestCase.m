@@ -34,6 +34,11 @@
 #import "PixelDataFile.h"
 #import <CommonObjc/Common.h>
 
+static uint64_t Timestamp(void)
+{
+    return CACurrentMediaTime() * 1000000;
+}
+
 @implementation GFXTestCase
 
 +(Class) lastGFXTestCase: (XCTestSuite*)suite
@@ -80,7 +85,7 @@ static NSMutableDictionary<NSString *, NSMutableDictionary<NSString *, CCGeneric
     [super setUp];
     
     GFXShaderLibraryForName = CCAssetManagerCreateShaderLibrary;
-    CCTimestamp = CACurrentMediaTime;
+    CCTimestamp = Timestamp;
     
     FSPath Path = FSPathCreate([[[[[NSBundle bundleWithIdentifier: @"io.scrimpycat.CommonGameKit"] resourceURL] URLByAppendingPathComponent: @"assets/shaders/main.gfxlib" isDirectory: NO] path] UTF8String]);
     CCExpression Lib = CCExpressionCreateFromSourceFile(Path);
