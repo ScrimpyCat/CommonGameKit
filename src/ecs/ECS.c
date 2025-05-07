@@ -1785,7 +1785,7 @@ void ECSEntityRemoveComponents(ECSContext *Context, ECSEntity Entity, const ECSC
                     if (ID & ECSComponentStorageModifierDestructor)
                     {
                         const size_t CompOffset = CompID ? CCBitsCount(RemovedComponent, 0, CompID - 1) : 0;
-                        const size_t RemovedIndex = ECSArchetypeComponentIndex(Refs, CompID) + CompOffset;
+                        const size_t RemovedIndex = LastIndex + CompOffset;
                         
                         if (ID & ECSComponentStorageModifierDestructorImpure)
                         {
