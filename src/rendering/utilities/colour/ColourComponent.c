@@ -138,7 +138,16 @@ CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversio
                 Component.f32 *= (NewValueMax / 2) + (Component.f32 < 0 ? 1 : 0);
             }
             
-            Component.u64 = (uint64_t)Component.f32 & NewValueMax;
+            Component.i64 = Component.f32;
+            
+            if (Component.i64 < 0)
+            {
+                if ((Component.u64 & ~(NewValueMax >> 1)) == ~(NewValueMax >> 1)) Component.u64 &= NewValueMax;
+                else Component.i64 = 1 << (NewPrecision - 1);
+            }
+            
+            else Component.u64 &= (NewValueMax >> 1);
+            
             Component.type = (NewPrecision << CCColourFormatChannelBitSize) | (Component.type & CCColourFormatChannelIndexMask);
             
             return Component;
