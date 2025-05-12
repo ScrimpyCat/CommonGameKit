@@ -48,7 +48,7 @@ static CC_CONSTANT_FUNCTION uint64_t CCIntegerPrecisionConversionLinearSigned(ui
 
 CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversion(CCColourComponent Component, CCColourFormat OldType, CCColourFormat NewType, int NewPrecision)
 {
-    if ((OldType == NewType) && (((Component.type & CCColourFormatChannelBitSizeMask) >> CCColourFormatChannelBitSize) == NewPrecision)) return Component;
+    if ((OldType == NewType) && (CCColourComponentGetBitSize(Component) == NewPrecision)) return Component;
     
     if ((OldType & CCColourFormatTypeMask) == CCColourFormatTypeUnsignedInteger)
     {
@@ -62,13 +62,26 @@ CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversio
         
         else if ((NewType & CCColourFormatTypeMask) == CCColourFormatTypeFloat)
         {
-            CCAssertLog(NewPrecision == 32, "Only supports 32-bit floats");
+            CCAssertLog((NewPrecision == 32) || (NewPrecision == 64), "Only supports 32 and 64-bit floats");
             
-            Component.f32 = (float)(Component.u64 & (CCBitSet(CCColourComponentGetBitSize(Component))));
-            
-            if ((NewType & CCColourFormatNormalized))
+            if (NewPrecision == 32)
             {
-                Component.f32 /= CCBitSet(CCColourComponentGetBitSize(Component));
+                Component.f32 = (float)(Component.u64 & (CCBitSet(CCColourComponentGetBitSize(Component))));
+                
+                if ((NewType & CCColourFormatNormalized))
+                {
+                    Component.f32 /= CCBitSet(CCColourComponentGetBitSize(Component));
+                }
+            }
+            
+            else
+            {
+                Component.f64 = (double)(Component.u64 & (CCBitSet(CCColourComponentGetBitSize(Component))));
+                
+                if ((NewType & CCColourFormatNormalized))
+                {
+                    Component.f64 /= CCBitSet(CCColourComponentGetBitSize(Component));
+                }
             }
             
             Component.type = (NewPrecision << CCColourFormatChannelBitSize) | (Component.type & CCColourFormatChannelIndexMask);
@@ -89,14 +102,28 @@ CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversio
         
         else if ((NewType & CCColourFormatTypeMask) == CCColourFormatTypeFloat)
         {
-            CCAssertLog(NewPrecision == 32, "Only supports 32-bit floats");
+            CCAssertLog((NewPrecision == 32) || (NewPrecision == 64), "Only supports 32 and 64-bit floats");
             
-            Component.f32 = (float)((Component.u64 + (CCBitSet(CCColourComponentGetBitSize(Component)) / 2) + 1) & CCBitSet(CCColourComponentGetBitSize(Component)));
-            Component.f32 -= (CCBitSet(CCColourComponentGetBitSize(Component)) / 2) + 1;
-            
-            if ((NewType & CCColourFormatNormalized))
+            if (NewPrecision == 32)
             {
-                Component.f32 = fmaxf(Component.f32 / (CCBitSet(CCColourComponentGetBitSize(Component)) / 2), -1.0f);
+                Component.f32 = (float)((Component.u64 + (CCBitSet(CCColourComponentGetBitSize(Component)) / 2) + 1) & CCBitSet(CCColourComponentGetBitSize(Component)));
+                Component.f32 -= (CCBitSet(CCColourComponentGetBitSize(Component)) / 2) + 1;
+                
+                if ((NewType & CCColourFormatNormalized))
+                {
+                    Component.f32 = fmaxf(Component.f32 / (CCBitSet(CCColourComponentGetBitSize(Component)) / 2), -1.0f);
+                }
+            }
+            
+            else
+            {
+                Component.f64 = (double)((Component.u64 + (CCBitSet(CCColourComponentGetBitSize(Component)) / 2) + 1) & CCBitSet(CCColourComponentGetBitSize(Component)));
+                Component.f64 -= (CCBitSet(CCColourComponentGetBitSize(Component)) / 2) + 1;
+                
+                if ((NewType & CCColourFormatNormalized))
+                {
+                    Component.f64 = fmax(Component.f64 / (CCBitSet(CCColourComponentGetBitSize(Component)) / 2), -1.0);
+                }
             }
             
             Component.type = (NewPrecision << CCColourFormatChannelBitSize) | (Component.type & CCColourFormatChannelIndexMask);
@@ -107,9 +134,19 @@ CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversio
     
     else if ((OldType & CCColourFormatTypeMask) == CCColourFormatTypeFloat)
     {
+        const unsigned int BitSize = CCColourComponentGetBitSize(Component);
+        
+        CCAssertLog((BitSize == 32) || (BitSize == 64), "Only supports 32 and 64-bit floats");
+        
         if ((NewType & CCColourFormatTypeMask) == CCColourFormatTypeFloat)
         {
-            CCAssertLog(NewPrecision == 32, "Only supports 32-bit floats");
+            CCAssertLog((NewPrecision == 32) || (NewPrecision == 64), "Only supports 32 and 64-bit floats");
+            
+            if (BitSize != NewPrecision)
+            {
+                if (BitSize == 32) Component.f64 = Component.f32;
+                else Component.f32 = Component.f64;
+            }
             
             return Component;
         }
@@ -117,12 +154,27 @@ CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversio
         else if ((NewType & CCColourFormatTypeMask) == CCColourFormatTypeUnsignedInteger)
         {
             const uint64_t NewValueMax = CCBitSet(NewPrecision);
-            if ((OldType & CCColourFormatNormalized))
+            
+            if (BitSize == 32)
             {
-                Component.f32 *= NewValueMax;
+                if ((OldType & CCColourFormatNormalized))
+                {
+                    Component.f32 *= NewValueMax;
+                }
+                
+                Component.u64 = Component.f32 < 0.0f ? 0 : (uint64_t)Component.f32;
             }
             
-            Component.u64 = Component.f32 < 0.0f ? 0 : (uint64_t)Component.f32;
+            else
+            {
+                if ((OldType & CCColourFormatNormalized))
+                {
+                    Component.f64 *= NewValueMax;
+                }
+                
+                Component.u64 = Component.f64 < 0.0 ? 0 : (uint64_t)Component.f64;
+            }
+            
             if (Component.u64 > NewValueMax) Component.u64 = NewValueMax;
             
             Component.type = (NewPrecision << CCColourFormatChannelBitSize) | (Component.type & CCColourFormatChannelIndexMask);
@@ -133,12 +185,26 @@ CC_CONSTANT_FUNCTION CCColourComponent CCColourComponentLinearPrecisionConversio
         else if ((NewType & CCColourFormatTypeMask) == CCColourFormatTypeSignedInteger)
         {
             const uint64_t NewValueMax = CCBitSet(NewPrecision);
-            if ((OldType & CCColourFormatNormalized))
+            
+            if (BitSize == 32)
             {
-                Component.f32 *= (NewValueMax / 2) + (Component.f32 < 0 ? 1 : 0);
+                if ((OldType & CCColourFormatNormalized))
+                {
+                    Component.f32 *= (NewValueMax / 2) + (Component.f32 < 0 ? 1 : 0);
+                }
+                
+                Component.i64 = Component.f32;
             }
             
-            Component.i64 = Component.f32;
+            else
+            {
+                if ((OldType & CCColourFormatNormalized))
+                {
+                    Component.f64 *= (NewValueMax / 2) + (Component.f64 < 0 ? 1 : 0);
+                }
+                
+                Component.i64 = Component.f64;
+            }
             
             if (Component.i64 < 0)
             {
