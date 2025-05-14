@@ -305,7 +305,7 @@ static MTLGFXTexture TextureConstructor(CCAllocatorType Allocator, GFXTextureHin
         Texture->root.hint = Hint;
         Texture->stream = NULL;
         Texture->data = Data;
-        Texture->root.format = Format;
+        Texture->root.format = TextureInternalFormatReverse(TextureInternalFormat(Format));
         Texture->width = Width;
         Texture->height = Height;
         Texture->depth = Depth;
