@@ -85,7 +85,7 @@ _Static_assert(GFXTextureHintFilterMin == 2, "Smallest mask index was changed");
 
 id <MTLSamplerState>MTLGFXGetSampler(GFXTextureHint Hint)
 {
-    const size_t Index = Hint >> 2;
+    const size_t Index = (Hint >> 2) & 0xff;
     
     CCAssertLog(Index <= sizeof(MTLInfo.samplers) / sizeof(typeof(*MTLInfo.samplers)), "Unsupported hint");
     

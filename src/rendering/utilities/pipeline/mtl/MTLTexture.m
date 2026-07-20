@@ -100,6 +100,93 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
 {
     switch (Format)
     {
+            // Normal 8-bit formats
+        case CCColourFormatA8Unorm:
+            return MTLPixelFormatA8Unorm;
+            
+        case CCColourFormatR8Unorm:
+            return MTLPixelFormatR8Unorm;
+            
+#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_11_0, CC_PLATFORM_IOS_8_0)
+        case CCColourFormatR8Unorm_sRGB:
+            if (CC_AVAILABLE(macOS 11.0, iOS 8, *))
+            {
+                return MTLPixelFormatR8Unorm_sRGB;
+            }
+            break;
+#endif
+            
+        case CCColourFormatR8Snorm:
+            return MTLPixelFormatR8Snorm;
+            
+        case CCColourFormatR8Uint:
+            return MTLPixelFormatR8Uint;
+            
+        case CCColourFormatR8Sint:
+            return MTLPixelFormatR8Sint;
+            
+            // Normal 16-bit formats
+        case CCColourFormatR16Unorm:
+            return MTLPixelFormatR16Unorm;
+            
+        case CCColourFormatR16Snorm:
+            return MTLPixelFormatR16Snorm;
+            
+        case CCColourFormatR16Uint:
+            return MTLPixelFormatR16Uint;
+            
+        case CCColourFormatR16Sint:
+            return MTLPixelFormatR16Sint;
+            
+        case CCColourFormatR16Float:
+            return MTLPixelFormatR16Float;
+            
+        case CCColourFormatRG8Unorm:
+            return MTLPixelFormatRG8Unorm;
+            
+#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_11_0, CC_PLATFORM_IOS_8_0)
+        case CCColourFormatRG8Unorm_sRGB:
+            if (CC_AVAILABLE(macOS 11.0, iOS 8, *))
+            {
+                return MTLPixelFormatRG8Unorm_sRGB;
+            }
+            break;
+#endif
+            
+        case CCColourFormatRG8Snorm:
+            return MTLPixelFormatRG8Snorm;
+            
+        case CCColourFormatRG8Uint:
+            return MTLPixelFormatRG8Uint;
+            
+        case CCColourFormatRG8Sint:
+            return MTLPixelFormatRG8Sint;
+            
+            // Normal 32-bit formats
+        case CCColourFormatR32Uint:
+            return MTLPixelFormatR32Uint;
+            
+        case CCColourFormatR32Sint:
+            return MTLPixelFormatR32Sint;
+            
+        case CCColourFormatR32Float:
+            return MTLPixelFormatR32Float;
+            
+        case CCColourFormatRG16Unorm:
+            return MTLPixelFormatRG16Unorm;
+            
+        case CCColourFormatRG16Snorm:
+            return MTLPixelFormatRG16Snorm;
+            
+        case CCColourFormatRG16Uint:
+            return MTLPixelFormatRG16Uint;
+            
+        case CCColourFormatRG16Sint:
+            return MTLPixelFormatRG16Sint;
+            
+        case CCColourFormatRG16Float:
+            return MTLPixelFormatRG16Float;
+            
         case CCColourFormatRGB8Unorm:
         case CCColourFormatRGBA8Unorm:
             return MTLPixelFormatRGBA8Unorm;
@@ -108,6 +195,18 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
         case CCColourFormatRGBA8Unorm_sRGB:
             return MTLPixelFormatRGBA8Unorm_sRGB;
             
+        case CCColourFormatRGB8Snorm:
+        case CCColourFormatRGBA8Snorm:
+            return MTLPixelFormatRGBA8Unorm;
+            
+        case CCColourFormatRGB8Uint:
+        case CCColourFormatRGBA8Uint:
+            return MTLPixelFormatRGBA8Uint;
+            
+        case CCColourFormatRGB8Sint:
+        case CCColourFormatRGBA8Sint:
+            return MTLPixelFormatRGBA8Sint;
+            
         case CCColourFormatBGR8Unorm:
         case CCColourFormatBGRA8Unorm:
             return MTLPixelFormatBGRA8Unorm;
@@ -115,6 +214,63 @@ static CC_CONSTANT_FUNCTION MTLPixelFormat TextureInternalFormat(CCColourFormat 
         case CCColourFormatBGR8Unorm_sRGB:
         case CCColourFormatBGRA8Unorm_sRGB:
             return MTLPixelFormatBGRA8Unorm_sRGB;
+            
+            // Normal 64-bit formats
+        case CCColourFormatRG32Uint:
+            return MTLPixelFormatRG32Uint;
+            
+        case CCColourFormatRG32Sint:
+            return MTLPixelFormatRG32Sint;
+            
+        case CCColourFormatRG32Float:
+            return MTLPixelFormatRG32Float;
+            
+        case CCColourFormatRGBA16Unorm:
+            return MTLPixelFormatRGBA16Unorm;
+            
+        case CCColourFormatRGBA16Snorm:
+            return MTLPixelFormatRGBA16Snorm;
+            
+        case CCColourFormatRGBA16Uint:
+            return MTLPixelFormatRGBA16Uint;
+            
+        case CCColourFormatRGBA16Sint:
+            return MTLPixelFormatRGBA16Sint;
+            
+        case CCColourFormatRGBA16Float:
+            return MTLPixelFormatRGBA16Float;
+            
+            // Normal 128-bit formats
+        case CCColourFormatRGB32Uint:
+        case CCColourFormatRGBA32Uint:
+            return MTLPixelFormatRGBA32Uint;
+            
+        case CCColourFormatRGB32Sint:
+        case CCColourFormatRGBA32Sint:
+            return MTLPixelFormatRGBA32Sint;
+            
+        case CCColourFormatRGB32Float:
+        case CCColourFormatRGBA32Float:
+            return MTLPixelFormatRGBA32Float;
+            
+            // Depth formats
+        case CCColourFormatDepth16Unorm:
+            return MTLPixelFormatDepth16Unorm;
+            
+        case CCColourFormatDepth32Float:
+            return MTLPixelFormatDepth32Float;
+            
+            // Stencil formats
+        case CCColourFormatStencil8Uint:
+            return MTLPixelFormatStencil8;
+            
+            // Depth and stencil formats
+        case CCColourFormatDepth24Unorm_Stencil8Uint:
+            return MTLPixelFormatDepth24Unorm_Stencil8;
+            
+        case CCColourFormatDepth32Float_Stencil8Uint:
+        case CCColourFormatDepth32Float_Stencil8Uint_Pad24:
+            return MTLPixelFormatDepth32Float_Stencil8;
     }
     
     CCAssertLog(0, "Unsupported format");
@@ -124,17 +280,167 @@ static CC_CONSTANT_FUNCTION CCColourFormat TextureInternalFormatReverse(MTLPixel
 {
     switch (Format)
     {
+            // Normal 8-bit formats
+        case MTLPixelFormatA8Unorm:
+            return CCColourFormatA8Unorm;
+            
+        case MTLPixelFormatR8Unorm:
+            return CCColourFormatR8Unorm;
+            
+#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_11_0, CC_PLATFORM_IOS_8_0)
+        case MTLPixelFormatR8Unorm_sRGB:
+            if (CC_AVAILABLE(macOS 11.0, iOS 8, *))
+            {
+                return CCColourFormatR8Unorm_sRGB;
+            }
+            break;
+#endif
+            
+        case MTLPixelFormatR8Snorm:
+            return CCColourFormatR8Snorm;
+            
+        case MTLPixelFormatR8Uint:
+            return CCColourFormatR8Uint;
+            
+        case MTLPixelFormatR8Sint:
+            return CCColourFormatR8Sint;
+            
+            // Normal 16-bit formats
+        case MTLPixelFormatR16Unorm:
+            return CCColourFormatR16Unorm;
+            
+        case MTLPixelFormatR16Snorm:
+            return CCColourFormatR16Snorm;
+            
+        case MTLPixelFormatR16Uint:
+            return CCColourFormatR16Uint;
+            
+        case MTLPixelFormatR16Sint:
+            return CCColourFormatR16Sint;
+            
+        case MTLPixelFormatR16Float:
+            return CCColourFormatR16Float;
+            
+        case MTLPixelFormatRG8Unorm:
+            return CCColourFormatRG8Unorm;
+            
+#if CC_PLATFORM_APPLE_VERSION_MIN_REQUIRED(CC_PLATFORM_MAC_11_0, CC_PLATFORM_IOS_8_0)
+        case MTLPixelFormatRG8Unorm_sRGB:
+            if (CC_AVAILABLE(macOS 11.0, iOS 8, *))
+            {
+                return CCColourFormatRG8Unorm_sRGB;
+            }
+            break;
+#endif
+            
+        case MTLPixelFormatRG8Snorm:
+            return CCColourFormatRG8Snorm;
+            
+        case MTLPixelFormatRG8Uint:
+            return CCColourFormatRG8Uint;
+            
+        case MTLPixelFormatRG8Sint:
+            return CCColourFormatRG8Sint;
+            
+            // Normal 32-bit formats
+        case MTLPixelFormatR32Uint:
+            return CCColourFormatR32Uint;
+            
+        case MTLPixelFormatR32Sint:
+            return CCColourFormatR32Sint;
+            
+        case MTLPixelFormatR32Float:
+            return CCColourFormatR32Float;
+
+        case MTLPixelFormatRG16Unorm:
+            return CCColourFormatRG16Unorm;
+            
+        case MTLPixelFormatRG16Snorm:
+            return CCColourFormatRG16Snorm;
+            
+        case MTLPixelFormatRG16Uint:
+            return CCColourFormatRG16Uint;
+            
+        case MTLPixelFormatRG16Sint:
+            return CCColourFormatRG16Sint;
+            
+        case MTLPixelFormatRG16Float:
+            return CCColourFormatRG16Float;
+            
         case MTLPixelFormatRGBA8Unorm:
             return CCColourFormatRGBA8Unorm;
             
         case MTLPixelFormatRGBA8Unorm_sRGB:
             return CCColourFormatRGBA8Unorm_sRGB;
             
+        case MTLPixelFormatRGBA8Snorm:
+            return CCColourFormatRGBA8Snorm;
+            
+        case MTLPixelFormatRGBA8Uint:
+            return CCColourFormatRGBA8Uint;
+            
+        case MTLPixelFormatRGBA8Sint:
+            return CCColourFormatRGBA8Sint;
+            
         case MTLPixelFormatBGRA8Unorm:
             return CCColourFormatBGRA8Unorm;
             
         case MTLPixelFormatBGRA8Unorm_sRGB:
             return CCColourFormatBGRA8Unorm_sRGB;
+            
+            // Normal 64-bit formats
+        case MTLPixelFormatRG32Uint:
+            return CCColourFormatRG32Uint;
+            
+        case MTLPixelFormatRG32Sint:
+            return CCColourFormatRG32Sint;
+            
+        case MTLPixelFormatRG32Float:
+            return CCColourFormatRG32Float;
+            
+        case MTLPixelFormatRGBA16Unorm:
+            return CCColourFormatRGBA16Unorm;
+            
+        case MTLPixelFormatRGBA16Snorm:
+            return CCColourFormatRGBA16Snorm;
+            
+        case MTLPixelFormatRGBA16Uint:
+            return CCColourFormatRGBA16Uint;
+            
+        case MTLPixelFormatRGBA16Sint:
+            return CCColourFormatRGBA16Sint;
+            
+        case MTLPixelFormatRGBA16Float:
+            return CCColourFormatRGBA16Float;
+            
+            // Normal 128-bit formats
+        case MTLPixelFormatRGBA32Uint:
+            return CCColourFormatRGBA32Uint;
+        
+        case MTLPixelFormatRGBA32Sint:
+            return CCColourFormatRGBA32Sint;
+        
+        case MTLPixelFormatRGBA32Float:
+            return CCColourFormatRGBA32Float;
+            
+            // Depth formats
+        case MTLPixelFormatDepth16Unorm:
+            return CCColourFormatDepth16Unorm;
+            
+        case MTLPixelFormatDepth32Float:
+            return CCColourFormatDepth32Float;
+            
+            // Stencil formats
+        case MTLPixelFormatStencil8:
+            return CCColourFormatStencil8Uint;
+            
+            // Depth and stencil formats
+        case MTLPixelFormatDepth24Unorm_Stencil8:
+            return CCColourFormatDepth24Unorm_Stencil8Uint;
+            
+        case MTLPixelFormatDepth32Float_Stencil8:
+//            return CCColourFormatDepth32Float_Stencil8Uint;
+            return CCColourFormatDepth32Float_Stencil8Uint_Pad24;
             
         default:
             break;

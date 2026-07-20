@@ -33,6 +33,8 @@
 #include <CommonGameKit/GFXFramebuffer.h>
 #include <CommonGameKit/GFXBlend.h>
 #include <CommonGameKit/GFXViewport.h>
+#include <CommonGameKit/GFXDepth.h>
+#include <CommonGameKit/GFXStencil.h>
 
 
 typedef enum {
@@ -42,6 +44,48 @@ typedef enum {
     GFXPrimitiveTypeTriangle,
     GFXPrimitiveTypeTriangleStrip
 } GFXPrimitiveType;
+
+typedef enum {
+    GFXRasterModeFill = 0,
+    GFXRasterModeLines = 1
+} GFXRasterMode;
+
+typedef enum {
+    GFXCullModeNone = 0,
+    GFXCullModeFront = 1,
+    GFXCullModeBack = 2
+} GFXCullMode;
+
+typedef enum {
+    GFXWindingClockwise = 0,
+    GFXWindingCounterClockwise = 1
+} GFXWinding;
+
+typedef enum {
+    GFXRenderBehaviourRasterMode = 0,
+    GFXRenderBehaviourCullMode = 1,
+    GFXRenderBehaviourFrontFaceWinding = 3,
+    
+    GFXRenderBehaviourRasterModeMask = 1,
+    GFXRenderBehaviourRasterModeFill = GFXRasterModeFill,
+    GFXRenderBehaviourRasterModeLines = GFXRasterModeLines,
+    
+    GFXRenderBehaviourCullModeMask = 3,
+    GFXRenderBehaviourCullModeNone = GFXCullModeNone,
+    GFXRenderBehaviourCullModeFront = GFXCullModeFront,
+    GFXRenderBehaviourCullModeBack = GFXCullModeBack,
+    
+    GFXRenderBehaviourFrontFaceWindingMask = 1,
+    GFXRenderBehaviourFrontFaceWindingClockwise = GFXWindingClockwise,
+    GFXRenderBehaviourFrontFaceWindingCounterClockwise = GFXWindingCounterClockwise,
+    
+    GFXRenderBehaviourDefault = (GFXRenderBehaviourRasterModeFill << GFXRenderBehaviourRasterMode) | (GFXCullModeNone << GFXRenderBehaviourCullMode) | (GFXRenderBehaviourFrontFaceWindingClockwise << GFXRenderBehaviourFrontFaceWinding)
+} GFXRenderBehaviour;
+
+typedef enum {
+    GFXDepthClipModeClip = 0,
+    GFXDepthClipModeClamp = 1
+} GFXDepthClipMode;
 
 typedef struct {
     CCString name;
@@ -77,11 +121,45 @@ typedef struct {
 } GFXDrawDestination;
 
 typedef struct {
+    size_t index;
+    GFXDepth config;
+    GFXDepthClipMode clipMode;
+    struct {
+        _Bool enable;
+        float bias;
+        float slope;
+        float clamp;
+    } adjustment;
+} GFXDrawDepth;
+
+typedef struct {
+    size_t index;
+    GFXStencil config;
+    struct {
+        struct {
+            uint32_t read, write;
+        } mask;
+        uint32_t reference;
+    } front, back;
+} GFXDrawStencil;
+
+typedef struct {
+    size_t count;
+    struct {
+        size_t x, y, width, height;
+    } rects[];
+} GFXDrawScissor;
+
+typedef struct {
     void *internal;
     GFXShader shader;
     CCCollection(GFXDrawInputVertexBuffer) vertexBuffers;
     CCCollection(GFXDrawInputBuffer) buffers;
     CCCollection(GFXDrawInputTexture) textures;
+    GFXRenderBehaviour renderBehaviour;
+    GFXDrawDepth depth;
+    GFXDrawStencil stencil;
+    GFXDrawScissor *scissor;
     GFXDrawIndexBuffer index;
     GFXFramebuffer framebuffer;
     struct {
@@ -267,5 +345,64 @@ void GFXDrawSetNormalizedViewport(GFXDraw Draw, GFXViewport Viewport);
  * @return The viewport.
  */
 GFXViewport GFXDrawGetViewport(GFXDraw Draw);
+
+/*!
+ * @brief Set the render behaviour for the draw command.
+ * @description The default is @b GFXRenderBehaviourDefault does a fill, no culling, and front face triangle order is clock wise.
+ * @param Draw The draw operation.
+ * @param RasterMode The rasterisation mode.
+ * @param CullMode The cull mode.
+ * @param FrontFaceWinding The front face winding order.
+ */
+void GFXDrawSetRenderBehaviour(GFXDraw Draw, GFXRasterMode RasterMode, GFXCullMode CullMode, GFXWinding FrontFaceWinding);
+
+/*!
+ * @brief Set the depth test configuration for the draw command.
+ * @description The default is a depth test that always fails and does not update.
+ * @param Draw The draw operation.
+ * @param Config The depth test configuration.
+ * @param ClipMode The clip mode of the near and far planes.
+ * @param Index The index of the depth buffer.
+ */
+void GFXDrawSetDepth(GFXDraw Draw, GFXDepth Config, GFXDepthClipMode ClipMode, size_t Index);
+
+/*!
+ * @brief Disable custom depth bias adjustments for the draw command.
+ * @param Draw The draw operation.
+ */
+void GFXDrawDisableDepthBias(GFXDraw Draw);
+
+/*!
+ * @brief Enable custom depth bias adjustments for the draw command.
+ * @description By default the custom depth bias is disabled.
+ * @param Draw The draw operation.
+ * @param Bias A constant bias to apply.
+ * @param Slope A scaling slope to apply.
+ * @param Clamp The minimum or maximum value to clamp the bias adjustment to. Use 0.0 to disable clamping.
+ */
+void GFXDrawEnableDepthBias(GFXDraw Draw, float Bias, float Slope, float Clamp);
+
+/*!
+ * @brief Set the stencil test configuration for the draw command.
+ * @description The default is a stencil test that always fails and does not update.
+ * @param Draw The draw operation.
+ * @param Config The stencil test configuration
+ * @param FrontReadMask The front face mask to use for reading the stencil buffer and reference value.
+ * @param FrontWriteMask The front face  mask to use for writing the stencil buffer.
+ * @param FrontReferenceValue The front face reference value to be used.
+ * @param BackReadMask The back face mask to use for reading the stencil buffer and reference value.
+ * @param BackWriteMask The back face mask to use for writing the stencil buffer.
+ * @param BackReferenceValue The back face reference value to be used.
+ * @param Index The index of the stencil buffer.
+ */
+void GFXDrawSetStencil(GFXDraw Draw, GFXStencil Config, uint32_t FrontReadMask, uint32_t FrontWriteMask, uint32_t FrontReferenceValue, uint32_t BackReadMask, uint32_t BackWriteMask, uint32_t BackReferenceValue, size_t Index);
+
+/*!
+ * @brief Set the scissor test for the draw command.
+ * @description The default performs no scissor test.
+ * @param Draw The draw operation.
+ * @param Scissor The scissor test configuration object. Or NULL to disable.
+ */
+void GFXDrawSetScissor(GFXDraw Draw, GFXDrawScissor *CC_RETAIN(Scissor));
 
 #endif

@@ -117,6 +117,12 @@ typedef void (*GFXDrawSetTextureCallback)(GFXDraw Draw, GFXDrawInputTexture *Tex
 typedef void (*GFXDrawSetBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask);
 typedef void (*GFXDrawSetDestinationBlendingCallback)(GFXDraw Draw, GFXBlend BlendMask, size_t Index);
 typedef void (*GFXDrawSetViewportCallback)(GFXDraw Draw, GFXViewport Viewport);
+typedef void (*GFXDrawSetRenderBehaviourCallback)(GFXDraw Draw, GFXRasterMode RasterMode, GFXCullMode CullMode, GFXWinding FrontFaceWinding);
+typedef void (*GFXDrawSetDepthCallback)(GFXDraw Draw, GFXDepth Config, GFXDepthClipMode ClipMode, size_t Index);
+typedef void (*GFXDrawDisableDepthBiasCallback)(GFXDraw Draw);
+typedef void (*GFXDrawEnableDepthBiasCallback)(GFXDraw Draw, float Bias, float Slope, float Clamp);
+typedef void (*GFXDrawSetStencilCallback)(GFXDraw Draw, GFXStencil Config, uint32_t FrontReadMask, uint32_t FrontWriteMask, uint32_t FrontReferenceValue, uint32_t BackReadMask, uint32_t BackWriteMask, uint32_t BackReferenceValue, size_t Index);
+typedef void (*GFXDrawSetScissorCallback)(GFXDraw Draw, GFXDrawScissor *Scissor);
 
 #pragma mark Optional Blit Callbacks
 typedef void (*GFXBlitConstructorCallback)(CCAllocatorType Allocator, GFXBlit Blit);
@@ -201,6 +207,12 @@ typedef struct {
         GFXDrawSetBlendingCallback setBlend;
         GFXDrawSetDestinationBlendingCallback setDestinationBlend;
         GFXDrawSetViewportCallback setViewport;
+        GFXDrawSetRenderBehaviourCallback setRenderBehaviour;
+        GFXDrawSetDepthCallback setDepth;
+        GFXDrawDisableDepthBiasCallback disableDepthBias;
+        GFXDrawEnableDepthBiasCallback enableDepthBias;
+        GFXDrawSetStencilCallback setStencil;
+        GFXDrawSetScissorCallback setScissor;
     } optional;
 } GFXDrawInterface;
 

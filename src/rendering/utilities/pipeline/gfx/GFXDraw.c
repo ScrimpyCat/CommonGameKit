@@ -51,6 +51,7 @@ static void GFXDrawDestructor(GFXDraw Draw)
     CC_SAFE_Free(Draw->shader);
     CC_SAFE_Free(Draw->framebuffer);
     CC_SAFE_Free(Draw->index.buffer);
+    CC_SAFE_Free(Draw->scissor);
 }
 
 GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
@@ -66,6 +67,37 @@ GFXDraw GFXDrawCreate(CCAllocatorType Allocator)
             .vertexBuffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputVertexBuffer), (CCCollectionElementDestructor)GFXDrawInputBufferElementDestructor),
             .buffers = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputBuffer), (CCCollectionElementDestructor)GFXDrawInputBufferElementDestructor),
             .textures = CCCollectionCreate(Allocator, CCCollectionHintSizeSmall, sizeof(GFXDrawInputTexture), (CCCollectionElementDestructor)GFXDrawInputTextureElementDestructor),
+            .renderBehaviour = GFXRenderBehaviourDefault,
+            .depth = {
+                .index = SIZE_MAX,
+                .config = 0,
+                .clipMode = 0,
+                .adjustment = {
+                    .enable = FALSE,
+                    .bias = 0.0f,
+                    .slope = 0.0f,
+                    .clamp = 0.0f
+                }
+            },
+            .stencil = {
+                .index = SIZE_MAX,
+                .config = 0,
+                .front = {
+                    .mask = {
+                        .read = UINT32_MAX,
+                        .write = UINT32_MAX
+                    },
+                    .reference = 0
+                },
+                .back = {
+                    .mask = {
+                        .read = UINT32_MAX,
+                        .write = UINT32_MAX
+                    },
+                    .reference = 0
+                }
+            },
+            .scissor = NULL,
             .framebuffer = NULL,
             .index = {
                 .buffer = NULL,
@@ -329,4 +361,72 @@ GFXViewport GFXDrawGetViewport(GFXDraw Draw)
     }
     
     return Viewport;
+}
+
+void GFXDrawSetRenderBehaviour(GFXDraw Draw, GFXRasterMode RasterMode, GFXCullMode CullMode, GFXWinding FrontFaceWinding)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->renderBehaviour = (RasterMode << GFXRenderBehaviourRasterMode) | (CullMode << GFXRenderBehaviourCullMode) | (FrontFaceWinding << GFXRenderBehaviourFrontFaceWinding);
+    
+    if (GFXMain->draw->optional.setRenderBehaviour) GFXMain->draw->optional.setRenderBehaviour(Draw, RasterMode, CullMode, FrontFaceWinding);
+}
+
+void GFXDrawSetDepth(GFXDraw Draw, GFXDepth Config, GFXDepthClipMode ClipMode, size_t Index)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->depth.index = Index;
+    Draw->depth.config = Config;
+    Draw->depth.clipMode = ClipMode;
+    
+    if (GFXMain->draw->optional.setDepth) GFXMain->draw->optional.setDepth(Draw, Config, ClipMode, Index);
+}
+
+void GFXDrawDisableDepthBias(GFXDraw Draw)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->depth.adjustment.enable = FALSE;
+    
+    if (GFXMain->draw->optional.disableDepthBias) GFXMain->draw->optional.disableDepthBias(Draw);
+}
+
+void GFXDrawEnableDepthBias(GFXDraw Draw, float Bias, float Slope, float Clamp)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->depth.adjustment.enable = TRUE;
+    Draw->depth.adjustment.bias = Bias;
+    Draw->depth.adjustment.slope = Slope;
+    Draw->depth.adjustment.clamp = Clamp;
+    
+    if (GFXMain->draw->optional.enableDepthBias) GFXMain->draw->optional.enableDepthBias(Draw, Bias, Slope, Clamp);
+}
+
+void GFXDrawSetStencil(GFXDraw Draw, GFXStencil Config, uint32_t FrontReadMask, uint32_t FrontWriteMask, uint32_t FrontReferenceValue, uint32_t BackReadMask, uint32_t BackWriteMask, uint32_t BackReferenceValue, size_t Index)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    Draw->stencil.index = 0;
+    Draw->stencil.config = Config;
+    Draw->stencil.front.mask.read = FrontReadMask;
+    Draw->stencil.front.mask.write = FrontWriteMask;
+    Draw->stencil.front.reference = FrontReferenceValue;
+    
+    Draw->stencil.back.mask.read = BackReadMask;
+    Draw->stencil.back.mask.write = BackWriteMask;
+    Draw->stencil.back.reference = BackReferenceValue;
+    
+    if (GFXMain->draw->optional.setStencil) GFXMain->draw->optional.setStencil(Draw, Config, FrontReadMask, FrontWriteMask, FrontReferenceValue, BackReadMask, BackWriteMask, BackReferenceValue, Index);
+}
+
+void GFXDrawSetScissor(GFXDraw Draw, GFXDrawScissor *Scissor)
+{
+    CCAssertLog(Draw, "Draw must not be null");
+    
+    CCFree(Draw->scissor);
+    Draw->scissor = CCRetain(Scissor);
+    
+    if (GFXMain->draw->optional.setScissor) GFXMain->draw->optional.setScissor(Draw, Scissor);
 }

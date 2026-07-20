@@ -40,8 +40,8 @@ typedef enum {
 
 typedef enum {
     GFXFramebufferAttachmentTypeColour,
-//    GFXFramebufferAttachmentTypeDepth,
-//    GFXFramebufferAttachmentTypeStencil
+    GFXFramebufferAttachmentTypeDepth,
+    GFXFramebufferAttachmentTypeStencil
 } GFXFramebufferAttachmentType;
 
 typedef struct GFXFramebufferAttachment {
@@ -53,6 +53,12 @@ typedef struct GFXFramebufferAttachment {
         struct {
             CCColourRGBA clear;
         } colour;
+        struct {
+            double clear;
+        } depth;
+        struct {
+            uint32_t clear;
+        } stencil;
     };
 } GFXFramebufferAttachment;
 
@@ -75,6 +81,30 @@ typedef struct GFXFramebuffer *GFXFramebuffer;
 static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXTexture CC_OWN(Texture), GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, CCColourRGBA ClearColour);
 
 /*!
+ * @brief Create a framebuffer depth attachment.
+ * @param Texture The texture to be use for the attachment. Ownership only applies if the
+ *        attachment is passed to a framebuffer.
+ *
+ * @param Load The load action.
+ * @param Store The store action.
+ * @param ClearDepth The clear depth value to be used for clear actions.
+ * @return The framebuffer attachment.
+ */
+static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateDepth(GFXTexture CC_OWN(Texture), GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, double ClearDepth);
+
+/*!
+ * @brief Create a framebuffer stencil attachment.
+ * @param Texture The texture to be use for the attachment. Ownership only applies if the
+ *        attachment is passed to a framebuffer.
+ *
+ * @param Load The load action.
+ * @param Store The store action.
+ * @param ClearStencil The clear stencil value to be used for clear actions.
+ * @return The framebuffer attachment.
+ */
+static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateStencil(GFXTexture CC_OWN(Texture), GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, uint32_t ClearStencil);
+
+/*!
  * @brief Return the default framebuffer.
  * @return The default framebuffer. Do not destroy.
  */
@@ -84,7 +114,8 @@ GFXFramebuffer GFXFramebufferDefault(void);
  * @brief Create a framebuffer.
  * @param Allocator The allocator to be used for the allocations.
  * @param Attachments The attachments to be used for the framebuffer. Their order is the same
- *        order they are indexed in. The framebuffer takes over any textures in the attachments.
+ *        order they are indexed in. Depth and stencil attachments should be at the end (depth
+ *        before stencil). The framebuffer takes over any textures in the attachments.
  *
  * @param Count The number of attachments.
  * @return The created framebuffer.
@@ -117,6 +148,34 @@ static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateColour(GFXT
         .load = Load,
         .store = Store,
         .colour.clear = ClearColour
+    };
+}
+
+static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateDepth(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, double ClearDepth)
+{
+    CCAssertLog((Load & ~GFXFramebufferAttachmentActionFlagClearOnce) != GFXFramebufferAttachmentActionStore, "Load can not perform a store action");
+    CCAssertLog((Store & ~GFXFramebufferAttachmentActionFlagClearOnce) != GFXFramebufferAttachmentActionLoad, "Store can not perform a load action");
+    
+    return (GFXFramebufferAttachment){
+        .type = GFXFramebufferAttachmentTypeDepth,
+        .texture = Texture,
+        .load = Load,
+        .store = Store,
+        .depth.clear = ClearDepth
+    };
+}
+
+static inline GFXFramebufferAttachment GFXFramebufferAttachmentCreateStencil(GFXTexture Texture, GFXFramebufferAttachmentAction Load, GFXFramebufferAttachmentAction Store, uint32_t ClearStencil)
+{
+    CCAssertLog((Load & ~GFXFramebufferAttachmentActionFlagClearOnce) != GFXFramebufferAttachmentActionStore, "Load can not perform a store action");
+    CCAssertLog((Store & ~GFXFramebufferAttachmentActionFlagClearOnce) != GFXFramebufferAttachmentActionLoad, "Store can not perform a load action");
+    
+    return (GFXFramebufferAttachment){
+        .type = GFXFramebufferAttachmentTypeStencil,
+        .texture = Texture,
+        .load = Load,
+        .store = Store,
+        .stencil.clear = ClearStencil
     };
 }
 
