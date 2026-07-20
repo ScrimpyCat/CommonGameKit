@@ -78,6 +78,7 @@ typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
     CCColourFormatModelCMYK = (3 << 2), //whether the format is a CMYK colour model (e.g. CMY, CMYK)
     CCColourFormatModelCIE = (4 << 2), //whether the format is a CIE colour model (e.g. CIELAB, CIELUV)
     CCColourFormatModelMonochrome = (5 << 2),
+    CCColourFormatModelCustom = (7 << 2),
     
     //Colour Space
     CCColourFormatSpaceMask = CCColourFormatModelMask | (7 << 5),
@@ -95,6 +96,15 @@ typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
     //CMYK Colour Spaces
     //CIE Colour Spaces
     //Monochrome Colour Spaces
+    //Custom Colour Spaces
+    CCColourFormatSpaceCustom_0 = CCColourFormatModelCustom | (0 << 5),
+    CCColourFormatSpaceCustom_1 = CCColourFormatModelCustom | (1 << 5),
+    CCColourFormatSpaceCustom_2 = CCColourFormatModelCustom | (2 << 5),
+    CCColourFormatSpaceCustom_3 = CCColourFormatModelCustom | (3 << 5),
+    CCColourFormatSpaceCustom_4 = CCColourFormatModelCustom | (4 << 5),
+    CCColourFormatSpaceCustom_5 = CCColourFormatModelCustom | (5 << 5),
+    CCColourFormatSpaceCustom_6 = CCColourFormatModelCustom | (6 << 5),
+    CCColourFormatSpaceCustom_7 = CCColourFormatModelCustom | (7 << 5),
     
     //Compression
     CCColourFormatCompressionMask = (63 << 18),
@@ -204,7 +214,6 @@ typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
 //TODO: YUV formats
 
 #pragma mark - HSL/HSV Colour Formats
-//TODO: HSL
 #include <CommonGameKit/ColourFormatHSV.h>
 
 #pragma mark - CMYK Colour Formats
@@ -215,6 +224,9 @@ typedef CC_EXTENSIBLE_FLAG_ENUM(CCColourFormat, uint64_t) {
 
 #pragma mark - Monochrome Colour Formats
 //TODO: Monochrome formats
+
+#pragma mark - Custom Colour Formats
+#include <CommonGameKit/ColourFormatCustom.h>
 
 #pragma mark -
 
