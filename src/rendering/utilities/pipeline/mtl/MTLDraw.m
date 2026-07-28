@@ -386,6 +386,166 @@ static MTLIndexType IndexTypeTypeFromBufferFormat(GFXBufferFormat Format)
     CCAssertLog(0, "Unsupported index format %d", Format);
 }
 
+static CC_CONSTANT_FUNCTION MTLWinding DrawWinding(GFXRenderBehaviour RenderBehaviour)
+{
+    switch ((RenderBehaviour >> GFXRenderBehaviourFrontFaceWinding) & GFXRenderBehaviourFrontFaceWindingMask)
+    {
+        case GFXWindingClockwise:
+            return MTLWindingClockwise;
+            
+        case GFXWindingCounterClockwise:
+            return MTLWindingCounterClockwise;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported front face winding");
+}
+
+static CC_CONSTANT_FUNCTION MTLCullMode DrawCullMode(GFXRenderBehaviour RenderBehaviour)
+{
+    switch ((RenderBehaviour >> GFXRenderBehaviourCullMode) & GFXRenderBehaviourCullModeMask)
+    {
+        case GFXCullModeNone:
+            return MTLCullModeNone;
+            
+        case GFXCullModeFront:
+            return MTLCullModeFront;
+            
+        case GFXCullModeBack:
+            return MTLCullModeBack;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported cull mode");
+}
+
+static CC_CONSTANT_FUNCTION MTLTriangleFillMode DrawTriangleFillMode(GFXRenderBehaviour RenderBehaviour)
+{
+    switch ((RenderBehaviour >> GFXRenderBehaviourRasterMode) & GFXRenderBehaviourRasterModeMask)
+    {
+        case GFXRasterModeFill:
+            return MTLTriangleFillModeFill;
+            
+        case GFXRasterModeLines:
+            return MTLTriangleFillModeLines;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported triangle fill mode");
+}
+
+static CC_CONSTANT_FUNCTION MTLCompareFunction DrawCompareFunction(GFXCondition Condition)
+{
+    switch (Condition)
+    {
+        case GFXConditionPassNever:
+            return MTLCompareFunctionNever;
+            
+        case GFXConditionPassIfEqual:
+            return MTLCompareFunctionEqual;
+            
+        case GFXConditionPassIfNotEqual:
+            return MTLCompareFunctionNotEqual;
+            
+        case GFXConditionPassIfLessThan:
+            return MTLCompareFunctionLess;
+            
+        case GFXConditionPassIfLessThanEqual:
+            return MTLCompareFunctionLessEqual;
+            
+        case GFXConditionPassIfGreaterThan:
+            return MTLCompareFunctionGreater;
+            
+        case GFXConditionPassIfGreaterThanEqual:
+            return MTLCompareFunctionGreaterEqual;
+            
+        case GFXConditionPassAlways:
+            return MTLCompareFunctionAlways;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported compare function");
+}
+
+static CC_CONSTANT_FUNCTION MTLStencilOperation DrawStencilOperation(GFXStencilOperation Operation)
+{
+    switch (Operation)
+    {
+        case GFXStencilOperationKeep:
+            return MTLStencilOperationKeep;
+            
+        case GFXStencilOperationZero:
+            return MTLStencilOperationZero;
+            
+        case GFXStencilOperationReplace:
+            return MTLStencilOperationReplace;
+            
+        case GFXStencilOperationIncrementClamp:
+            return MTLStencilOperationIncrementClamp;
+            
+        case GFXStencilOperationDecrementClamp:
+            return MTLStencilOperationDecrementClamp;
+            
+        case GFXStencilOperationIncrementWrap:
+            return MTLStencilOperationIncrementWrap;
+            
+        case GFXStencilOperationDecrementWrap:
+            return MTLStencilOperationDecrementWrap;
+            
+        case GFXStencilOperationInvert:
+            return MTLStencilOperationInvert;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported stencil operation");
+}
+
+
+static MTLStencilDescriptor *DrawStencilDescriptor(GFXStencil Face, uint32_t ReadMask, uint32_t WriteMask)
+{
+    if (Face == GFXStencilNone) return nil;
+    
+    MTLStencilDescriptor *StencilDescriptor = [MTLStencilDescriptor new];
+    
+    StencilDescriptor.readMask = ReadMask;
+    StencilDescriptor.writeMask = WriteMask;
+    
+    StencilDescriptor.stencilCompareFunction = DrawCompareFunction(Face & GFXStencilPassMask);
+    
+    StencilDescriptor.stencilFailureOperation = DrawStencilOperation((Face >> GFXStencilFail) & GFXStencilOperationMask);
+    StencilDescriptor.depthFailureOperation = DrawStencilOperation((Face >> GFXStencilFailDepth) & GFXStencilOperationMask);
+    StencilDescriptor.depthStencilPassOperation = DrawStencilOperation((Face >> GFXStencilPass) & GFXStencilOperationMask);
+    
+    return StencilDescriptor;
+}
+
+MTLDepthClipMode DrawDepthClipMode(GFXDepthClipMode Mode)
+{
+    switch (Mode)
+    {
+        case GFXDepthClipModeClip:
+            return MTLDepthClipModeClip;
+            
+        case GFXDepthClipModeClamp:
+            return MTLDepthClipModeClamp;
+            
+        default:
+            break;
+    }
+    
+    CCAssertLog(0, "Unsupported depth clip mode");
+}
+
 static CCComparisonResult GFXDrawFindInput(const GFXDrawInput *left, const GFXDrawInput *right)
 {
     return CCStringEqual(left->name, right->name) ? CCComparisonResultEqual : CCComparisonResultInvalid;
@@ -395,6 +555,29 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
 {
     @autoreleasepool {
         MTLRenderPipelineDescriptor *RenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+        
+        GFXFramebufferAttachment *DepthAttachment = NULL, *StencilAttachment = NULL;
+        size_t AttachmentCount = ((MTLGFXFramebuffer)Draw->framebuffer)->attachmentCount;
+        if (AttachmentCount)
+        {
+            GFXFramebufferAttachment *Attachment = &((MTLGFXFramebuffer)Draw->framebuffer)->attachments[--AttachmentCount];
+            
+            if (Attachment->type == GFXFramebufferAttachmentTypeStencil)
+            {
+                RenderPipelineDescriptor.stencilAttachmentPixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
+                
+                StencilAttachment = Attachment;
+                
+                Attachment = &((MTLGFXFramebuffer)Draw->framebuffer)->attachments[--AttachmentCount];
+            }
+            
+            if (Attachment->type == GFXFramebufferAttachmentTypeDepth)
+            {
+                RenderPipelineDescriptor.depthAttachmentPixelFormat = MTLGFXFramebufferAttachmentGetTexture(Attachment).pixelFormat;
+                
+                DepthAttachment = Attachment;
+            }
+        }
         
         for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
         {
@@ -464,19 +647,51 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
         id <MTLRenderPipelineState>RenderPipelineState = [((MTLInternal*)MTLGFX->internal)->device newRenderPipelineStateWithDescriptor: RenderPipelineDescriptor options: MTLPipelineOptionArgumentInfo | MTLPipelineOptionBufferTypeInfo reflection: &Reflection error: NULL];
         
         MTLRenderPassDescriptor *RenderPassDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
-        _Bool ClearStore[sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))];
+        _Bool Clear = FALSE, ClearStore[sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))];
         for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
         {
             GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
             
-            RenderPassDescriptor.colorAttachments[0].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
-            RenderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
-            RenderPassDescriptor.colorAttachments[0].loadAction = DrawLoadAction(Attachment->load);
-            RenderPassDescriptor.colorAttachments[0].storeAction = DrawStoreAction(Attachment->store);
+            RenderPassDescriptor.colorAttachments[Loop].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
+            RenderPassDescriptor.colorAttachments[Loop].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+            RenderPassDescriptor.colorAttachments[Loop].loadAction = DrawLoadAction(Attachment->load);
+            RenderPassDescriptor.colorAttachments[Loop].storeAction = DrawStoreAction(Attachment->store);
             
             ClearStore[Loop] = (Attachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((Attachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
             Attachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
             Attachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+            
+            Clear |= ClearStore[Loop];
+        }
+        
+        _Bool ClearDepth = FALSE;
+        if (DepthAttachment)
+        {
+            RenderPassDescriptor.depthAttachment.texture = MTLGFXFramebufferAttachmentGetTexture(DepthAttachment);
+            RenderPassDescriptor.depthAttachment.clearDepth = DepthAttachment->depth.clear;
+            RenderPassDescriptor.depthAttachment.loadAction = DrawLoadAction(DepthAttachment->load);
+            RenderPassDescriptor.depthAttachment.storeAction = DrawStoreAction(DepthAttachment->store);
+            
+            ClearDepth = (DepthAttachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((DepthAttachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
+            DepthAttachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+            DepthAttachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+            
+            Clear |= ClearDepth;
+        }
+        
+        _Bool ClearStencil = FALSE;
+        if (StencilAttachment)
+        {
+            RenderPassDescriptor.stencilAttachment.texture = MTLGFXFramebufferAttachmentGetTexture(StencilAttachment);
+            RenderPassDescriptor.stencilAttachment.clearStencil = StencilAttachment->depth.clear;
+            RenderPassDescriptor.stencilAttachment.loadAction = DrawLoadAction(StencilAttachment->load);
+            RenderPassDescriptor.stencilAttachment.storeAction = DrawStoreAction(StencilAttachment->store);
+            
+            ClearStencil = (StencilAttachment->store & GFXFramebufferAttachmentActionFlagClearOnce) || ((StencilAttachment->store & ~GFXFramebufferAttachmentActionFlagClearOnce) == GFXFramebufferAttachmentActionClear);
+            StencilAttachment->load &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+            StencilAttachment->store &= ~GFXFramebufferAttachmentActionFlagClearOnce;
+            
+            Clear |= ClearStencil;
         }
         
         id <MTLRenderCommandEncoder>RenderCommand = [((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor:  RenderPassDescriptor];
@@ -518,7 +733,7 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
                     
                     if (Texture)
                     {
-                        [RenderCommand setVertexTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture)  atIndex: Arg.index];
+                        [RenderCommand setVertexTexture: MTLGFXTextureGetTexture((MTLGFXTexture)Texture->texture) atIndex: Arg.index];
                         [RenderCommand setVertexSamplerState: MTLGFXGetSampler(GFXTextureGetHints(Texture->texture)) atIndex: Arg.index];
                     }
                     
@@ -581,6 +796,56 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
             }
         }
         
+        /*
+         TODO:
+         Need multiple viewports for multiple scissor rects.
+         Unspecified scissor rects will default to using viewport (0,0,attachment.w,attachment.h).
+         Cache scissor rect and viewport arrays that we send to metal. And hook viewport and scissor setters so we can update it.
+         On GL pre 4.x it falls back to issuing multiply draw calls.
+         
+         on metal scissor rect origin is upper left, we will need to adjust so it's bottom left.
+         
+         ---
+         
+         Also cache metal pipeline state so only render command encoder needs to be created.
+         */
+        if ((Draw->scissor) && (Draw->scissor->count))
+        {
+            if (Draw->scissor->count > 1)
+            {
+                CCAssertLog(0, "Multiple scissor rects currently unsupported");
+                _Static_assert(sizeof(MTLScissorRect) == sizeof(Draw->scissor->rects[0]), "Expects scissor rect structure to match");
+                
+                [RenderCommand setScissorRects: (MTLScissorRect*)Draw->scissor->rects count: Draw->scissor->count];
+            }
+            
+            else
+            {
+                [RenderCommand setScissorRect: (MTLScissorRect){ .x = Draw->scissor->rects[0].x, .y = Draw->scissor->rects[0].y, .width = Draw->scissor->rects[0].width, .height = Draw->scissor->rects[0].height }];
+            }
+        }
+        
+        [RenderCommand setDepthClipMode: DrawDepthClipMode(Draw->depth.clipMode)];
+        if (Draw->depth.adjustment.enable) [RenderCommand setDepthBias: Draw->depth.adjustment.bias slopeScale: Draw->depth.adjustment.slope clamp: Draw->depth.adjustment.clamp];
+        
+        [RenderCommand setFrontFacingWinding: DrawWinding(Draw->renderBehaviour)];
+        [RenderCommand setCullMode: DrawCullMode(Draw->renderBehaviour)];
+        [RenderCommand setTriangleFillMode: DrawTriangleFillMode(Draw->renderBehaviour)];
+        
+        if ((Draw->depth.index != SIZE_MAX) || (Draw->stencil.index != SIZE_MAX))
+        {
+            MTLDepthStencilDescriptor *DepthStencilDescriptor = [MTLDepthStencilDescriptor new];
+            DepthStencilDescriptor.depthWriteEnabled = Draw->depth.config & GFXDepthWrite;
+            DepthStencilDescriptor.depthCompareFunction = DrawCompareFunction(GFXDepthGetFunction(Draw->depth.config));
+            DepthStencilDescriptor.frontFaceStencil = DrawStencilDescriptor(Draw->stencil.config >> GFXStencilFaceFront, Draw->stencil.front.mask.read, Draw->stencil.front.mask.write);
+            DepthStencilDescriptor.backFaceStencil = DrawStencilDescriptor(Draw->stencil.config >> GFXStencilFaceBack, Draw->stencil.back.mask.read, Draw->stencil.back.mask.write);
+            
+            id <MTLDepthStencilState>DepthStencilState = [((MTLInternal*)MTLGFX->internal)->device newDepthStencilStateWithDescriptor: DepthStencilDescriptor];
+            [RenderCommand setDepthStencilState: DepthStencilState];
+            
+            [RenderCommand setStencilFrontReferenceValue: Draw->stencil.front.reference backReferenceValue: Draw->stencil.back.reference];
+        }
+        
         if (Indexed)
         {
             [RenderCommand drawIndexedPrimitives: DrawPrimitiveType(Primitive) indexCount: Count indexType: IndexTypeTypeFromBufferFormat(Draw->index.format) indexBuffer: MTLGFXBufferGetBuffer((MTLGFXBuffer)Draw->index.buffer) indexBufferOffset: Offset instanceCount: Instances];
@@ -594,11 +859,37 @@ static void MTLGFXDraw(GFXDraw Draw, GFXPrimitiveType Primitive, size_t Offset, 
         [RenderCommand endEncoding];
         
         
-        for (size_t Loop = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
+        if (Clear)
         {
-            GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+            MTLRenderPassDescriptor *ClearDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
             
-            if (ClearStore[Loop]) [MTLGFXClearEncoder(Attachment) endEncoding];
+            for (size_t Loop = 0, Count = 0; (Draw->destination[Loop].index != SIZE_MAX) && (Loop < sizeof(Draw->destination) / sizeof(typeof(*Draw->destination))); Loop++)
+            {
+                GFXFramebufferAttachment *Attachment = GFXFramebufferGetAttachment(Draw->framebuffer, Draw->destination[Loop].index);
+                
+                if (ClearStore[Loop])
+                {
+                    ClearDescriptor.colorAttachments[Count].texture = MTLGFXFramebufferAttachmentGetTexture(Attachment);
+                    ClearDescriptor.colorAttachments[Count].clearColor = MTLClearColorMake(Attachment->colour.clear.r, Attachment->colour.clear.g, Attachment->colour.clear.b, Attachment->colour.clear.a);
+                    ClearDescriptor.colorAttachments[Count++].loadAction = MTLLoadActionClear;
+                }
+            }
+            
+            if (ClearDepth)
+            {
+                ClearDescriptor.depthAttachment.texture = MTLGFXFramebufferAttachmentGetTexture(DepthAttachment);
+                ClearDescriptor.depthAttachment.clearDepth = DepthAttachment->depth.clear;
+                ClearDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
+            }
+            
+            if (ClearStencil)
+            {
+                ClearDescriptor.stencilAttachment.texture = MTLGFXFramebufferAttachmentGetTexture(StencilAttachment);
+                ClearDescriptor.stencilAttachment.clearStencil = StencilAttachment->stencil.clear;
+                ClearDescriptor.stencilAttachment.loadAction = MTLLoadActionClear;
+            }
+            
+            [[((MTLGFXCommandBuffer)GFXCommandBufferRecording())->commandBuffer renderCommandEncoderWithDescriptor: ClearDescriptor] endEncoding];
         }
     }
 }
