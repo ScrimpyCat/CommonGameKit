@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -37,12 +37,16 @@
 		F34551972AFCD68700316D15 /* ECSBinaryMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = F34551952AFCD68700316D15 /* ECSBinaryMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F34551982AFCD68700316D15 /* ECSBinaryMonitor.c in Sources */ = {isa = PBXBuildFile; fileRef = F34551962AFCD68700316D15 /* ECSBinaryMonitor.c */; };
 		F347B6A91E8146A2003950F4 /* ExpressionComponentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */; };
+		F34E84E22E4A506400A8756C /* ColourFormatCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = F34E84B72E4A506000A8756C /* ColourFormatCustom.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F34E858A2E4B972100A8756C /* GFXDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = F34E855F2E4B971B00A8756C /* GFXDepth.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F34E858E2E4B9CF700A8756C /* GFXStencil.h in Headers */ = {isa = PBXBuildFile; fileRef = F34E858D2E4B9CF300A8756C /* GFXStencil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F34E85922E4BAF4E00A8756C /* GFXCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = F34E85912E4BAF4900A8756C /* GFXCondition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F34EB81D249BB4CE00B3D984 /* GFXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */; };
 		F34EB820249BB7B700B3D984 /* MTLGFXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */; };
 		F34EB824249F761700B3D984 /* CommonObjc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F342B6512239144C00B44319 /* CommonObjc.framework */; };
 		F34EB82E24A1DF4600B3D984 /* PixelDataFileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F34EB82D24A1DF4600B3D984 /* PixelDataFileTests.m */; };
 		F3569A9529F70CA60075C6A1 /* ECSContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F3569A9329F70CA50075C6A1 /* ECSContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16d.a */; };
+		F3569ABD2A128EC90075C6A1 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3897B811DCD715A008D6C1D /* libpng16.a */; };
 		F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = F35B1F702C34301F009325F0 /* ExpressionReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F35B1F732C34301F009325F0 /* ExpressionReflection.c in Sources */ = {isa = PBXBuildFile; fileRef = F35B1F712C34301F009325F0 /* ExpressionReflection.c */; };
 		F35B1F752C384795009325F0 /* ExpressionSerializationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F35B1F742C384795009325F0 /* ExpressionSerializationTests.m */; };
@@ -115,6 +119,7 @@
 		F3897BE81DCF2C2A008D6C1D /* GFXViewport.h in Headers */ = {isa = PBXBuildFile; fileRef = F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3897C5C1DD04010008D6C1D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F3897C5B1DD04010008D6C1D /* assets */; };
 		F38A33F129E2957300661500 /* ECSComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = F38A33EF29E2957300661500 /* ECSComponent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F38CC8F42DD64B180043EF27 /* Poxel.h in Headers */ = {isa = PBXBuildFile; fileRef = F38CC8F32DD64B180043EF27 /* Poxel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F396A0542D6A1203004DC778 /* HardwareExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = F396A0522D6A1203004DC778 /* HardwareExpressions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F396A0552D6A1203004DC778 /* HardwareExpressions.c in Sources */ = {isa = PBXBuildFile; fileRef = F396A0532D6A1203004DC778 /* HardwareExpressions.c */; };
 		F39C5F2A2519C29600D80F0D /* PixelDataCompositeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */; };
@@ -593,6 +598,10 @@
 		F34551952AFCD68700316D15 /* ECSBinaryMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSBinaryMonitor.h; sourceTree = "<group>"; };
 		F34551962AFCD68700316D15 /* ECSBinaryMonitor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ECSBinaryMonitor.c; sourceTree = "<group>"; };
 		F347B6A81E8146A2003950F4 /* ExpressionComponentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionComponentTests.m; sourceTree = "<group>"; };
+		F34E84B72E4A506000A8756C /* ColourFormatCustom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColourFormatCustom.h; sourceTree = "<group>"; };
+		F34E855F2E4B971B00A8756C /* GFXDepth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXDepth.h; sourceTree = "<group>"; };
+		F34E858D2E4B9CF300A8756C /* GFXStencil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXStencil.h; sourceTree = "<group>"; };
+		F34E85912E4BAF4900A8756C /* GFXCondition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXCondition.h; sourceTree = "<group>"; };
 		F34EB81C249BB4CE00B3D984 /* GFXTestCase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GFXTestCase.m; sourceTree = "<group>"; };
 		F34EB81E249BB4F900B3D984 /* GFXTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GFXTestCase.h; sourceTree = "<group>"; };
 		F34EB81F249BB7B700B3D984 /* MTLGFXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MTLGFXTests.m; sourceTree = "<group>"; };
@@ -676,6 +685,7 @@
 		F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFXViewport.h; sourceTree = "<group>"; };
 		F3897C5B1DD04010008D6C1D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		F38A33EF29E2957300661500 /* ECSComponent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ECSComponent.h; sourceTree = "<group>"; };
+		F38CC8F32DD64B180043EF27 /* Poxel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Poxel.h; sourceTree = "<group>"; };
 		F396A0522D6A1203004DC778 /* HardwareExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareExpressions.h; sourceTree = "<group>"; };
 		F396A0532D6A1203004DC778 /* HardwareExpressions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HardwareExpressions.c; sourceTree = "<group>"; };
 		F39C5F292519C29600D80F0D /* PixelDataCompositeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PixelDataCompositeTests.m; sourceTree = "<group>"; };
@@ -894,7 +904,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3569ABD2A128EC90075C6A1 /* libpng16d.a in Frameworks */,
+				F3569ABD2A128EC90075C6A1 /* libpng16.a in Frameworks */,
 				F342B65B2239147C00B44319 /* CommonObjc.framework in Frameworks */,
 				F3897B9B1DCD74C4008D6C1D /* libz.a in Frameworks */,
 				F3AF34D71DCCFC3E00CAD472 /* OpenGL.framework in Frameworks */,
@@ -1083,7 +1093,7 @@
 				F3897B7F1DCD715A008D6C1D /* png-fix-itxt */,
 				F3A49E2F2D8285FE00DC1D15 /* png.framework/png */,
 				F361E4D92A4763D300E52A6D /* libpng16d.dylib */,
-				F3897B811DCD715A008D6C1D /* libpng16d.a */,
+				F3897B811DCD715A008D6C1D /* libpng16.a */,
 				F3897B831DCD715A008D6C1D /* pngfix */,
 				F3897B851DCD715A008D6C1D /* pngimage */,
 				F3897B871DCD715A008D6C1D /* pngstest */,
@@ -1399,6 +1409,7 @@
 				F3AF32DB1DCCD4EB00CAD472 /* Components */,
 				F3AF32DE1DCCD4EB00CAD472 /* Systems */,
 				F3AF32E11DCCD4EB00CAD472 /* Utilities */,
+				F38CC8F32DD64B180043EF27 /* Poxel.h */,
 			);
 			name = Rendering;
 			path = rendering;
@@ -1447,6 +1458,7 @@
 				F3AF32E81DCCD4EB00CAD472 /* ColourFormat.h */,
 				F3AF32E91DCCD4EB00CAD472 /* ColourFormatHSV.h */,
 				F3AF32EA1DCCD4EB00CAD472 /* ColourFormatRGB.h */,
+				F34E84B72E4A506000A8756C /* ColourFormatCustom.h */,
 				F3AF32EB1DCCD4EB00CAD472 /* Pixel Data */,
 			);
 			name = Colour;
@@ -1490,6 +1502,9 @@
 				F3AF32F61DCCD4EB00CAD472 /* GFX.h */,
 				F3AF32F71DCCD4EB00CAD472 /* GFXBlend.h */,
 				F3897BE71DCF2C2A008D6C1D /* GFXViewport.h */,
+				F34E85912E4BAF4900A8756C /* GFXCondition.h */,
+				F34E855F2E4B971B00A8756C /* GFXDepth.h */,
+				F34E858D2E4B9CF300A8756C /* GFXStencil.h */,
 				F3AF32F81DCCD4EB00CAD472 /* GFXBlit.c */,
 				F3AF32F91DCCD4EB00CAD472 /* GFXBlit.h */,
 				F3AF32FA1DCCD4EB00CAD472 /* GFXBuffer.c */,
@@ -1817,6 +1832,7 @@
 				F3AF34A41DCCD5AF00CAD472 /* StateExpressions.h in Headers */,
 				F30730B72410E7D10078AEC4 /* FontExpressions.h in Headers */,
 				F35B1F722C34301F009325F0 /* ExpressionReflection.h in Headers */,
+				F34E858E2E4B9CF700A8756C /* GFXStencil.h in Headers */,
 				F37329D32D5A765900A3DC98 /* AnimationInterpolate.h in Headers */,
 				F3AF33E11DCCD4EC00CAD472 /* GLExtensions.h in Headers */,
 				F3E2742720D1669B00D6AFE1 /* ScriptableInterfaceSystem.h in Headers */,
@@ -1839,10 +1855,12 @@
 				F3A9F0DC2281CFAD00F52287 /* GFXCommandBuffer.h in Headers */,
 				F3A9F10322844CFE00F52287 /* MTLCommandBuffer.h in Headers */,
 				F3AF33CB1DCCD4EC00CAD472 /* GFXBufferFormat.h in Headers */,
+				F34E858A2E4B972100A8756C /* GFXDepth.h in Headers */,
 				F38A33F129E2957300661500 /* ECSComponent.h in Headers */,
 				F380C2D224B21CEA00151C4F /* PixelDataComposite.h in Headers */,
 				F3AF33EB1DCCD4EC00CAD472 /* GLShaderLibrary.h in Headers */,
 				F3AF33E91DCCD4EC00CAD472 /* GLShader.h in Headers */,
+				F34E85922E4BAF4E00A8756C /* GFXCondition.h in Headers */,
 				F342B6A02239711B00B44319 /* MTLFramebuffer.h in Headers */,
 				F3897B2E1DCD6B32008D6C1D /* stdatomic.h in Headers */,
 				F3AF338F1DCCD4EC00CAD472 /* GUIExpression.h in Headers */,
@@ -1862,6 +1880,8 @@
 				F32C1C081F6A071600C68B43 /* RelationSystem.h in Headers */,
 				F3B34E352253448C00C2DEC1 /* MTLDraw.h in Headers */,
 				F3AF34B21DCCD5AF00CAD472 /* Expression.h in Headers */,
+				F34E84E22E4A506400A8756C /* ColourFormatCustom.h in Headers */,
+				F38CC8F42DD64B180043EF27 /* Poxel.h in Headers */,
 				F36082072B15C224002B2A89 /* ECSLink.h in Headers */,
 				F3CB83E72D0F9286006C6920 /* ExpressionMap.h in Headers */,
 				F36954ED1E475E8200135AF0 /* MessageType.h in Headers */,
@@ -2102,7 +2122,7 @@
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			name = libz.dylib;
-			path = libz.1.2.13.dylib;
+			path = libz.1.3.1.dylib;
 			remoteRef = F3897B631DCD7149008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2120,10 +2140,10 @@
 			remoteRef = F3897B7E1DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3897B811DCD715A008D6C1D /* libpng16d.a */ = {
+		F3897B811DCD715A008D6C1D /* libpng16.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libpng16d.a;
+			path = libpng16.a;
 			remoteRef = F3897B801DCD715A008D6C1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -2500,9 +2520,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
+				DEVELOPMENT_TEAM = QDXW3B9H7X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2535,6 +2559,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALIDATE_PRODUCT = NO;
@@ -2569,7 +2594,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
@@ -2693,9 +2718,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
+				DEVELOPMENT_TEAM = QDXW3B9H7X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2725,6 +2754,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALIDATE_PRODUCT = NO;
@@ -2739,9 +2769,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = NO;
+				DEVELOPMENT_TEAM = QDXW3B9H7X;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -2767,6 +2801,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.scrimpycat.CommonGameKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALIDATE_PRODUCT = NO;
@@ -2800,7 +2835,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
@@ -2826,7 +2861,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.CommonGameKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WARNING_CFLAGS = "-Wno-ambiguous-macro";
