@@ -416,7 +416,7 @@ void ECSDeserialize(ECSContext *Context, void *State, ECSDeserializeHandler Hand
                         const size_t ArchID = ECSArchtypeIndex(ComponentIndexes, ArchComponentCount);
                         Refs->archetype.ptr = ECSArchetypeLookup(Context, ArchID, ArchComponentCount);
                         
-#if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP && CC_HARDWARE_VECTOR_SUPPORT_SSSE3
+#if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP
 #if ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX) < INT8_MAX
                         memset(Refs->archetype.component.ids + ArchComponentCount, INT8_MAX, sizeof(Refs->archetype.component.ids) - (ArchComponentCount * sizeof(*Refs->archetype.component.ids)));
 #else
@@ -431,7 +431,7 @@ void ECSDeserialize(ECSContext *Context, void *State, ECSDeserializeHandler Hand
                         Refs->archetype.index = 0;
                         Refs->archetype.component.count = 0;
                         
-#if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP && CC_HARDWARE_VECTOR_SUPPORT_SSSE3
+#if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP
 #if ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX) < INT8_MAX
                         memset(Refs->archetype.component.ids, INT8_MAX, sizeof(Refs->archetype.component.ids));
 #else

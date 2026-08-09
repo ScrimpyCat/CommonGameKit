@@ -26,6 +26,7 @@
 #define CC_QUICK_COMPILE
 #include "ECS.h"
 #include <threads.h>
+#include <CommonC/Simd.h>
 
 #ifndef ECS_SYSTEM_EXECUTOR_COMPONENT_MAX
 #define ECS_SYSTEM_EXECUTOR_COMPONENT_MAX 16
@@ -643,7 +644,7 @@ static inline void ECSEntityInit(ECSContext *Context, size_t BaseIndex, size_t C
         Ref->archetype.index = 0;
         Ref->archetype.component.count = 0;
         
-#if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP && CC_HARDWARE_VECTOR_SUPPORT_SSSE3
+#if ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP
 #if ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX) < INT8_MAX
         memset(Ref->archetype.component.ids, INT8_MAX, sizeof(Ref->archetype.component.ids));
 #else
@@ -2005,6 +2006,28 @@ size_t ECSArchetypeComponentIndex(const ECSComponentRefs *Refs, ECSComponentID I
     const uint32_t Index = _mm_cvtsi128_si32(_mm_hadd_epi16(_mm_hadd_epi16(_mm_hadd_epi16(Mask, Zero), Zero), Zero));
     
     return (Index & 0xff) + (Index >> 8) - 1;
+#endif
+#elif ECS_ARCHETYPE_COMPONENT_ID_SIMD_LOOKUP
+    const CCSimd_u8x16 Value = CCSimdFill_u8x16(ID);
+    
+#if ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX) < INT8_MAX
+    CCSimd_u8x16 Mask = CCSimdCompareLessThan_s8x16(CCSimdLoad_s8x16((const int8_t*)Refs->archetype.component.ids), Value);
+    
+    for (size_t Loop = 16; Loop < ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX); Loop += 16)
+    {
+        Mask = CCSimdAdd_s8x16(Mask, CCSimdCompareLessThan_s8x16(CCSimdLoad_s8x16((const int8_t*)(Refs->archetype.component.ids + Loop)), Value));
+    }
+    
+    return CCSimdSum_s8x16(Mask);
+#else
+    CCSimd_u8x16 Mask = CCSimdCompareLessThanEqual_u8x16(CCSimdLoad_u8x16((const uint8_t*)Refs->archetype.component.ids), Value);
+    
+    for (size_t Loop = 16; Loop < ECS_ARCHETYPE_COMPONENT_ID_COUNT(ECS_ARCHETYPE_MAX); Loop += 16)
+    {
+        Mask = CCSimdAdd_u8x16(Mask, CCSimdCompareLessThanEqual_u8x16(CCSimdLoad_u8x16((const uint8_t*)(Refs->archetype.component.ids + Loop)), Value));
+    }
+    
+    return CCSimdSum_u8x16(Mask) - 1;
 #endif
 #else
     const size_t Index = FindIndex(Refs->archetype.component.ids, Refs->archetype.component.count, ECS_ARCHETYPE_COMPONENT_MAX, ID);
